@@ -41,6 +41,14 @@ function isLicenseField(name) {
   );
 }
 
+function isCareerField(name) {
+  return (
+    name === 'Career.index' ||
+    name === 'InputStat.CareerInputStat' ||
+    name.startsWith('Career[')
+  );
+}
+
 /**
  * Create a pattern from a field name by replacing indices with wildcards.
  * e.g., "Career[c1].C_Name" → "Career[*].C_Name"
@@ -54,9 +62,13 @@ function fieldPattern(name) {
  * Matches by field pattern (ignoring index differences).
  */
 export function overlayTemplate(templateFields, targetFields) {
-  const templateFieldsToMerge = targetFields.some((field) => isLicenseField(field.name))
-    ? templateFields.filter((field) => !isLicenseField(field.name))
-    : templateFields;
+  const shouldReplaceCareers = targetFields.some((field) => isCareerField(field.name));
+  const shouldReplaceLicenses = targetFields.some((field) => isLicenseField(field.name));
+  const templateFieldsToMerge = templateFields.filter((field) => {
+    if (shouldReplaceCareers && isCareerField(field.name)) return false;
+    if (shouldReplaceLicenses && isLicenseField(field.name)) return false;
+    return true;
+  });
   const patternMap = new Map();
 
   // Group template fields by pattern
@@ -90,12 +102,14 @@ export function overlayTemplate(templateFields, targetFields) {
     }
   }
 
-  return targetFields.some((field) => isLicenseField(field.name))
-    ? [
-        ...templateFieldsToMerge,
-        ...targetFields.filter((field) => isLicenseField(field.name)),
-      ]
-    : templateFieldsToMerge;
+  return [
+    ...templateFieldsToMerge,
+    ...targetFields.filter(
+      (field) =>
+        (shouldReplaceCareers && isCareerField(field.name)) ||
+        (shouldReplaceLicenses && isLicenseField(field.name))
+    ),
+  ];
 }
 /**
  * Execute JobKorea sync purely via API (no browser automation).
