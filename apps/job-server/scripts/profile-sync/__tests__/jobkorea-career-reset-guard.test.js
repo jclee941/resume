@@ -83,36 +83,47 @@ describe('JobKorea career reset guard', () => {
     assert.deepStrictEqual(sectionIndices.career, ['c7', 'c8', 'c9']);
   });
 
-  it('throws before API-only portfolio or save side effects when payload is incomplete', async () => {
+  it('saves every SSoT career through API-only template overlay', async () => {
     const calls = [];
-    global.fetch = async (url) => {
-      calls.push(String(url));
+    let saveBody = '';
+    global.fetch = async (url, options = {}) => {
+      calls.push({ url: String(url), body: String(options.body ?? '') });
+      if (String(url).includes('/User/Resume/Save')) {
+        saveBody = String(options.body ?? '');
+        return {
+          ok: true,
+          status: 200,
+          url: String(url),
+          text: async () => JSON.stringify({ saveResult: { IsSuccess: true } }),
+        };
+      }
+
       return {
         ok: true,
+        status: 200,
         url: String(url),
         text: async () =>
           '<input name="IsEditPage" value="True"><input name="LastEditDateTicks" value="1">',
       };
     };
 
-    await assert.rejects(
-      () =>
-        syncToJobKoreaAPI(
-          {
-            careers: [
-              { company: 'A', period: '2024.01 ~ 2024.12' },
-              { company: 'B', period: '2025.01 ~ 현재' },
-            ],
-            personal: { portfolio: 'https://portfolio.example.test' },
-          },
-          { cookieString: 'ACNT_COOKIE=test', logger: () => {} }
-        ),
-      /JobKorea Career payload fields are incomplete/
+    const result = await syncToJobKoreaAPI(
+      {
+        careers: [
+          { company: 'A', period: '2024.01 ~ 2024.12' },
+          { company: 'B', period: '2025.01 ~ 현재' },
+        ],
+      },
+      { cookieString: 'ACNT_COOKIE=test', logger: () => {} }
     );
 
-    assert.strictEqual(calls.length, 1);
-    assert.match(calls[0], /\/User\/Resume\/Edit/);
-    assert.ok(!calls.some((url) => url.includes('/User/Resume/AddUserFileDB')));
-    assert.ok(!calls.some((url) => url.includes('/User/Resume/Save')));
+    const payload = new URLSearchParams(saveBody);
+    assert.strictEqual(result.success, true);
+    assert.strictEqual(calls.length, 2);
+    assert.match(calls[0].url, /\/User\/Resume\/Edit/);
+    assert.match(calls[1].url, /\/User\/Resume\/Save/);
+    assert.deepStrictEqual(payload.getAll('Career.index'), ['c1', 'c2']);
+    assert.strictEqual(payload.get('Career[c1].C_Name'), 'A');
+    assert.strictEqual(payload.get('Career[c2].C_Name'), 'B');
   });
 });

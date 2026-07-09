@@ -99,6 +99,33 @@ describe('JobKorea API payload helpers', () => {
     assert.strictEqual(map.get('Career[c1].CSYM'), '202301');
   });
 
+  it('smartMergeFields replaces stale base Career rows when target carries Career.index', () => {
+    const base = [
+      { name: 'Career.index', value: 'old1' },
+      { name: 'Career[old1].Index_Name', value: 'old1' },
+      { name: 'Career[old1].C_Name', value: 'Old Corp' },
+    ];
+    const target = [
+      { name: 'Career[c1].Index_Name', value: 'c1' },
+      { name: 'Career[c1].C_Name', value: 'New Corp A' },
+      { name: 'Career[c2].Index_Name', value: 'c2' },
+      { name: 'Career[c2].C_Name', value: 'New Corp B' },
+      { name: 'Career.index', value: 'c1' },
+      { name: 'Career.index', value: 'c2' },
+    ];
+
+    const merged = smartMergeFields(base, target);
+    const careerNames = merged
+      .filter((field) => /^Career\[[^\]]+\]\.C_Name$/.test(field.name))
+      .map((field) => field.value);
+    const careerIndexValues = merged
+      .filter((field) => field.name === 'Career.index')
+      .map((field) => field.value);
+
+    assert.deepStrictEqual(careerNames, ['New Corp A', 'New Corp B']);
+    assert.deepStrictEqual(careerIndexValues, ['c1', 'c2']);
+  });
+
   it('preserves every target license when the API template has one blank slot', () => {
     const base = [
       { name: 'License.index', value: 'c14' },
@@ -168,5 +195,82 @@ describe('JobKorea API payload helpers', () => {
     // Base-only extra fields preserved (not dropped)
     assert.strictEqual(map.get('UnivSchool[c3].UnivMajor[1].Major_Name'), '');
     assert.strictEqual(map.get('UnivSchool[c3].Grade'), '');
+  });
+
+  it('preserves incomplete Language base fields even when target carries Language.index', () => {
+    const base = [
+      { name: 'Language.index', value: 'c1' },
+      { name: 'Language[c1].Lang1_Name', value: 'English' },
+      { name: 'Language[c1].Lang1_Stat', value: 'fluent' },
+      { name: 'Language[c1].Eval_Category', value: '2' },
+    ];
+    const target = [
+      { name: 'Language.index', value: 'c1' },
+      { name: 'Language[c1].Lang1_Name', value: 'Japanese' },
+      { name: 'Language[c1].Lang1_Stat', value: 'business' },
+    ];
+
+    const merged = smartMergeFields(base, target);
+    const map = new Map(merged.map((field) => [field.name, field.value]));
+    const languageIndexes = merged
+      .filter((field) => field.name === 'Language.index')
+      .map((field) => field.value);
+
+    assert.deepStrictEqual(languageIndexes, ['c1']);
+    assert.strictEqual(map.get('Language[c1].Lang1_Name'), 'English');
+    assert.strictEqual(map.get('Language[c1].Lang1_Stat'), 'fluent');
+    assert.strictEqual(map.get('Language[c1].Eval_Category'), '2');
+  });
+
+  it('preserves live Language rows when target uses a different incomplete index', () => {
+    const base = [
+      { name: 'Language.index', value: 'c9' },
+      { name: 'Language[c9].Lang1_Name', value: 'English' },
+      { name: 'Language[c9].Lang1_Stat', value: 'fluent' },
+      { name: 'Language[c9].Eval_Category', value: '2' },
+    ];
+    const target = [
+      { name: 'Language.index', value: 'c1' },
+      { name: 'Language[c1].Lang1_Name', value: 'Japanese' },
+      { name: 'Language[c1].Lang1_Stat', value: 'business' },
+    ];
+
+    const merged = smartMergeFields(base, target);
+    const map = new Map(merged.map((field) => [field.name, field.value]));
+    const languageIndexes = merged
+      .filter((field) => field.name === 'Language.index')
+      .map((field) => field.value);
+
+    assert.deepStrictEqual(languageIndexes, ['c9']);
+    assert.strictEqual(map.get('Language[c9].Lang1_Name'), 'English');
+    assert.strictEqual(map.get('Language[c9].Lang1_Stat'), 'fluent');
+    assert.strictEqual(map.get('Language[c9].Eval_Category'), '2');
+    assert.strictEqual(map.has('Language[c1].Lang1_Name'), false);
+    assert.strictEqual(map.has('Language[c1].Lang1_Stat'), false);
+  });
+
+  it('treats live Language.Index and target Language.index as the same repeatable index', () => {
+    const base = [
+      { name: 'Language.Index', value: 'c9' },
+      { name: 'Language[c9].Lang1_Name', value: 'English' },
+      { name: 'Language[c9].Lang1_Stat', value: 'fluent' },
+      { name: 'Language[c9].Eval_Category', value: '2' },
+    ];
+    const target = [
+      { name: 'Language.index', value: 'c1' },
+      { name: 'Language[c1].Lang1_Name', value: 'Japanese' },
+      { name: 'Language[c1].Lang1_Stat', value: 'business' },
+    ];
+
+    const merged = smartMergeFields(base, target);
+    const map = new Map(merged.map((field) => [field.name, field.value]));
+    const languageIndexFields = merged.filter((field) => /^Language\.[Ii]ndex$/.test(field.name));
+
+    assert.deepStrictEqual(languageIndexFields, [{ name: 'Language.Index', value: 'c9' }]);
+    assert.strictEqual(map.get('Language[c9].Lang1_Name'), 'English');
+    assert.strictEqual(map.get('Language[c9].Lang1_Stat'), 'fluent');
+    assert.strictEqual(map.get('Language[c9].Eval_Category'), '2');
+    assert.strictEqual(map.has('Language[c1].Lang1_Name'), false);
+    assert.strictEqual(map.has('Language[c1].Lang1_Stat'), false);
   });
 });
