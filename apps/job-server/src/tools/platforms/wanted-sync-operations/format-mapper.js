@@ -3,7 +3,11 @@ import {
   resolveJobCategoryId,
 } from '../../../../scripts/profile-sync/constants.js';
 import { mapWorkTypeToWantedEmploymentType } from '@resume/shared/employment-types';
-import { normalizeCareerRole, normalizeCompanyName } from '@resume/shared/normalize';
+import {
+  normalizeCareerRole,
+  normalizeCompanyName,
+  normalizeEducationStatus,
+} from '@resume/shared/normalize';
 import { parseDate } from '../../date-parser.js';
 
 import { WANTED_HEADLINE_LIMIT } from './constants.js';
@@ -12,6 +16,7 @@ export function mapToWantedFormat(source) {
   const currentPosition = source.current?.position || source.careers?.[0]?.role || '';
   const totalExperience = source.summary?.totalExperience || '';
   const expertise = source.summary?.expertise || [];
+  const isAttending = normalizeEducationStatus(source.education?.status) === '재학중';
 
   const wantedVariant = source.platformVariants?.wanted || {};
 
@@ -72,12 +77,8 @@ export function mapToWantedFormat(source) {
         major: source.education?.major,
         degree: '학사',
         start_time: parseDate(source.education?.startDate),
-        end_time:
-          source.education?.status === '재학중' ? null : parseDate(source.education?.endDate),
-        description:
-          source.education?.status === '재학중'
-            ? `재학중 (${source.education?.startDate || ''} ~ )`
-            : null,
+        end_time: isAttending ? null : parseDate(source.education?.endDate),
+        description: isAttending ? `재학중 (${source.education?.startDate || ''} ~ )` : null,
       },
     ],
     skills: flattenSkills(source.skills).slice(0, 20),

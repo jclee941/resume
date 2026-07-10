@@ -55,6 +55,7 @@ describe('JobKorea new resume payload contract from real SSoT', () => {
 
   it('includes university education from real SSoT', () => {
     assert.strictEqual(byName.get('UnivSchool[c1].Schl_Name'), realSSoT.education.school);
+    assert.strictEqual(byName.get('UnivSchool[c1].Grad_Type_Code'), '4');
   });
 
   it('includes at least one dated license', () => {
@@ -138,6 +139,7 @@ describe('JobKorea new resume payload contract from real SSoT', () => {
         byName.get('HighSchool.Schl_Name')
       )}`
     );
+    assert.strictEqual(byName.get('HighSchool.Grad_Type_Code'), '10');
   });
 
   it('does not include auth/session/cookie/token/password material', () => {

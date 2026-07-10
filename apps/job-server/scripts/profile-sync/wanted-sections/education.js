@@ -1,6 +1,7 @@
 import { CONFIG } from '../constants.js';
 import { log } from '../sync-logger.js';
 import { formatYYYY_MM_DD } from '../../../src/shared/utils/date-formatters.js';
+import { normalizeEducationStatus } from '@resume/shared/normalize';
 
 // Map SSoT schoolType to a Wanted degree label.
 const DEGREE_BY_SCHOOL_TYPE = {
@@ -12,7 +13,7 @@ const DEGREE_BY_SCHOOL_TYPE = {
 };
 
 function mapEducationToWanted(ssotEducation) {
-  const isAttending = ssotEducation.status === '재학중';
+  const isAttending = normalizeEducationStatus(ssotEducation.status) === '재학중';
   return {
     school_name: ssotEducation.school,
     major: ssotEducation.major,

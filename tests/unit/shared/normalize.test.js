@@ -85,6 +85,15 @@ describe('@resume/shared/normalize', () => {
   });
 
   describe('career platform field normalization', () => {
+    test('normalizeEducationStatus removes whitespace and handles non-string input safely', () => {
+      expect(normalize.normalizeEducationStatus('재학 중')).toBe('재학중');
+      expect(normalize.normalizeEducationStatus('재학중')).toBe('재학중');
+      expect(normalize.normalizeEducationStatus(' 재학\t중 ')).toBe('재학중');
+      expect(normalize.normalizeEducationStatus('졸업')).toBe('졸업');
+      expect(normalize.normalizeEducationStatus(undefined)).toBe('');
+      expect(normalize.normalizeEducationStatus(null)).toBe('');
+    });
+
     test('normalizeCareerRole maps compact Korean security-ops roles to platform label', () => {
       expect(normalize.normalizeCareerRole('보안운영 담당')).toBe('보안 운영');
       expect(normalize.normalizeCareerRole('보안운영')).toBe('보안 운영');
