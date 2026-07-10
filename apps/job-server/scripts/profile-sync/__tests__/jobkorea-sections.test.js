@@ -8,6 +8,7 @@ import {
   mapCareersToFormFields,
   normalizeCompanyName,
   mapHopeJobToFormFields,
+  mapHighSchoolToFormFields,
   mapIntroToFormFields,
   mapLicensesToFormFields,
   mapMilitaryToFormFields,
@@ -419,7 +420,7 @@ describe('mapSchoolToFormFields', () => {
       school: '한양사이버대학교',
       major: '컴퓨터공학과',
       startDate: '2024.03',
-      status: '재학중',
+      status: '재학 중',
     },
   };
 
@@ -432,7 +433,7 @@ describe('mapSchoolToFormFields', () => {
     assert.strictEqual(byName.get('UnivSchool.index'), 'c10');
   });
 
-  it('estimates grad year for 재학중 and sets grad type code', () => {
+  it('estimates grad year for 재학 중 and sets grad type code', () => {
     const fields = mapSchoolToFormFields(ssotEducation);
     const byName = toMap(fields);
 
@@ -449,6 +450,51 @@ describe('mapSchoolToFormFields', () => {
         startDate: '2014.03',
         endDate: '2018.02',
         status: '졸업',
+      },
+    });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('UnivSchool[c1].Grad_YM'), '201802');
+    assert.strictEqual(byName.get('UnivSchool[c1].Grad_Type_Code'), '10');
+  });
+
+  it('uses a completed fallback when status is missing but endDate is present', () => {
+    const fields = mapSchoolToFormFields({
+      education: {
+        school: '테스트대학교',
+        major: '전산학',
+        startDate: '2014.03',
+        endDate: '2018.02',
+      },
+    });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('UnivSchool[c1].Grad_YM'), '201802');
+    assert.strictEqual(byName.get('UnivSchool[c1].Grad_Type_Code'), '10');
+  });
+
+  it('uses an attending fallback when status and endDate are both missing', () => {
+    const fields = mapSchoolToFormFields({
+      education: {
+        school: '테스트대학교',
+        major: '전산학',
+        startDate: '2024.03',
+      },
+    });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('UnivSchool[c1].Grad_YM'), '202802');
+    assert.strictEqual(byName.get('UnivSchool[c1].Grad_Type_Code'), '4');
+  });
+
+  it('does not treat inherited object keys as graduation statuses', () => {
+    const fields = mapSchoolToFormFields({
+      education: {
+        school: '테스트대학교',
+        major: '전산학',
+        startDate: '2014.03',
+        endDate: '2018.02',
+        status: 'constructor',
       },
     });
     const byName = toMap(fields);
@@ -535,6 +581,53 @@ describe('mapSchoolToFormFields', () => {
     });
     assert.strictEqual(toMap(hs).get('UnivSchool[c1].Schl_Type_Code'), '11');
     assert.strictEqual(toMap(grad).get('UnivSchool[c1].Schl_Type_Code'), '12');
+  });
+});
+
+describe('mapHighSchoolToFormFields', () => {
+  it('maps canonical education high-school fields with a supplied index', () => {
+    const fields = mapHighSchoolToFormFields(
+      {
+        education: {
+          highSchool: '용남고등학교',
+          highSchoolGraduation: '2013',
+        },
+      },
+      'c7'
+    );
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('HighSchool.Schl_Name'), '용남고등학교');
+    assert.strictEqual(byName.get('HighSchool.Grad_Year'), '2013');
+    assert.strictEqual(byName.get('HighSchool.Grad_Type_Code'), '10');
+    assert.strictEqual(byName.get('HighSchool.index'), 'c7');
+  });
+
+  it('normalizes a spaced legacy graduation status', () => {
+    const fields = mapHighSchoolToFormFields({
+      highSchool: {
+        school: '용남고등학교',
+        endDate: '2013.02',
+        status: '졸업 예정',
+      },
+    });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('HighSchool.Grad_Year'), '2013');
+    assert.strictEqual(byName.get('HighSchool.Grad_Type_Code'), '5');
+  });
+
+  it('falls back safely for inherited legacy status keys', () => {
+    const fields = mapHighSchoolToFormFields({
+      highSchool: {
+        school: '용남고등학교',
+        endDate: '2013.02',
+        status: 'constructor',
+      },
+    });
+    const byName = toMap(fields);
+
+    assert.strictEqual(byName.get('HighSchool.Grad_Type_Code'), '10');
   });
 });
 

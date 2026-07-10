@@ -21,7 +21,7 @@ const BASE_RESUME_DATA = {
     school: 'Test University',
     major: 'Computer Science',
     startDate: '2016.03',
-    status: '재학중',
+    status: '재학 중',
   },
   skills: {
     security: { items: ['Python', 'Docker'] },
@@ -125,6 +125,20 @@ describe('unifiedResumeSyncTool', () => {
       'Jenkins',
       'Terraform',
     ]);
+  });
+
+  it('keeps the legacy no-space enrollment status compatible', async () => {
+    const data = clone(BASE_RESUME_DATA);
+    data.education.status = '재학중';
+    mockResumeFile(data);
+
+    const result = await unifiedResumeSyncTool.execute({
+      action: 'preview',
+      platforms: ['wanted'],
+    });
+
+    assert.strictEqual(result.preview.wanted.educations[0].end_time, null);
+    assert.ok(result.preview.wanted.educations[0].description.includes('재학중'));
   });
 
   it('handles parseDate edge behavior through preview output', async () => {

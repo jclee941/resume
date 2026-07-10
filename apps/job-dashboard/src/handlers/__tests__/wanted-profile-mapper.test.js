@@ -75,12 +75,12 @@ describe('wanted profile mappers', () => {
     assert.strictEqual(mapped.job_category_id, 672);
   });
 
-  it('mapEducationToWanted handles 재학중 and 졸업 states', () => {
+  it('mapEducationToWanted handles canonical 재학 중 and 졸업 states', () => {
     const enrolled = mapEducationToWanted({
       school: '한양사이버대학교',
       major: '컴퓨터공학과',
       startDate: '2024.03',
-      status: '재학중',
+      status: '재학 중',
     });
     assert.strictEqual(enrolled.start_time, '2024-03-01');
     assert.strictEqual(enrolled.end_time, null);
@@ -95,6 +95,18 @@ describe('wanted profile mappers', () => {
     });
     assert.strictEqual(graduated.end_time, '2018-02-01');
     assert.strictEqual(graduated.description, null);
+  });
+
+  it('mapEducationToWanted keeps the legacy no-space enrollment status compatible', () => {
+    const enrolled = mapEducationToWanted({
+      school: '한양사이버대학교',
+      major: '컴퓨터공학과',
+      startDate: '2024.03',
+      status: '재학중',
+    });
+
+    assert.strictEqual(enrolled.end_time, null);
+    assert.strictEqual(enrolled.description, '재학중 (2024.03 ~ )');
   });
 
   it('mapCertificationToWanted maps certificate activity payload', () => {

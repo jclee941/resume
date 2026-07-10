@@ -1,6 +1,10 @@
 import { resolveJobCategoryId } from '@resume/shared/job-categories';
 import { mapWorkTypeToWantedEmploymentType } from '@resume/shared/employment-types';
-import { normalizeCareerRole, normalizeCompanyName } from '@resume/shared/normalize';
+import {
+  normalizeCareerRole,
+  normalizeCompanyName,
+  normalizeEducationStatus,
+} from '@resume/shared/normalize';
 
 export function parsePeriod(period = '') {
   const parts = String(period)
@@ -27,9 +31,10 @@ export function mapCareerToWanted(career) {
 }
 
 export function mapEducationToWanted(education) {
+  const isAttending = normalizeEducationStatus(education.status) === '재학중';
   const startTime = education.startDate ? `${education.startDate.replace('.', '-')}-01` : null;
   const endTime =
-    education.status === '재학중'
+    isAttending
       ? null
       : education.endDate
         ? `${education.endDate.replace('.', '-')}-01`
@@ -40,7 +45,7 @@ export function mapEducationToWanted(education) {
     start_time: startTime,
     end_time: endTime,
     degree: '학사',
-    description: education.status === '재학중' ? `재학중 (${education.startDate || ''} ~ )` : null,
+    description: isAttending ? `재학중 (${education.startDate || ''} ~ )` : null,
   };
 }
 

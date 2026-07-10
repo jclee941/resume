@@ -148,15 +148,33 @@ describe('Wanted SSoT field mapping correctness', () => {
       await syncWantedEducations(client, realSSoT, { educations: [] }, 'resume-edu');
 
       const payload = client.calls[0].payload;
-      // 4년제 → 학사; 재학중 → end_time null + is_attending true; majorType mapped.
+      // 4년제 → 학사; 재학 중 → end_time null + is_attending true; majorType mapped.
       assert.strictEqual(payload.degree, '학사', 'degree derived from schoolType (4년제)');
       assert.strictEqual(
         payload.major_type,
         realSSoT.education.majorType,
         'majorType mapped to major_type'
       );
-      assert.strictEqual(payload.end_time, null, '재학중 status yields null end_time');
-      assert.strictEqual(payload.is_attending, true, '재학중 status yields is_attending true');
+      assert.strictEqual(payload.end_time, null, '재학 중 status yields null end_time');
+      assert.strictEqual(payload.is_attending, true, '재학 중 status yields is_attending true');
+    });
+  });
+
+  it('syncWantedEducations preserves the non-attending fallback when status is missing', async () => {
+    await withApplyEnabled(async () => {
+      const client = mockClient();
+      const education = { ...realSSoT.education, endDate: '2018.02' };
+      delete education.status;
+
+      await syncWantedEducations(
+        client,
+        { ...realSSoT, education },
+        { educations: [] },
+        'resume-edu'
+      );
+
+      assert.strictEqual(client.calls[0].payload.end_time, '2018-02-01');
+      assert.strictEqual(client.calls[0].payload.is_attending, false);
     });
   });
 
