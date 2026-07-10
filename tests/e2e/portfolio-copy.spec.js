@@ -8,15 +8,15 @@ test.describe('Portfolio hiring copy', () => {
 
     const hero = page.locator('#hero');
     await expect(
-      hero.getByText('보안 자동화 · 보안 인프라 역할의 면접 제안을 환영합니다')
+      hero.getByText('보안 자동화 · 보안 인프라 면접 제안 가능')
     ).toBeVisible();
     await expect(
       hero.getByText(
-        '채용 판단에 필요한 자동화 근거, 연락·PDF, 최근 보안 인프라 이력을 먼저 배치했습니다.'
+        '보안 인프라 이력과 프로젝트를 확인하세요. 연락처와 이력서 PDF도 바로 확인할 수 있습니다.'
       )
     ).toBeVisible();
     await expect(hero.getByText('보안 자동화 · 보안 인프라 · SIEM')).toBeVisible();
-    await expect(hero.getByText('면접 제안 가능')).toBeVisible();
+    await expect(hero.locator('.hiring-review-packet__status')).toHaveText('면접 제안 가능');
     await expect(hero.getByText(/SRE|DevSecOps/)).toHaveCount(0);
     await expect(hero.getByText('검토 가능')).toHaveCount(0);
     await expect(hero.getByRole('link', { name: '면접 문의', exact: true })).toHaveAttribute(

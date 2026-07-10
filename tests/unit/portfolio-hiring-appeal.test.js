@@ -37,9 +37,9 @@ describe('portfolio hiring appeal copy', () => {
   test('Korean hero gives recruiters a direct hiring-decision path', () => {
     const html = buildHeroContent('ko');
 
-    expect(html).toContain('보안 자동화 · 보안 인프라 역할의 면접 제안을 환영합니다');
+    expect(html).toContain('보안 자동화 · 보안 인프라 면접 제안 가능');
     expect(html).toContain(
-      '채용 판단에 필요한 자동화 근거, 연락·PDF, 최근 보안 인프라 이력을 먼저 배치했습니다.'
+      '보안 인프라 이력과 프로젝트를 확인하세요. 연락처와 이력서 PDF도 바로 확인할 수 있습니다.'
     );
     expect(html).toContain('<ul class="hero-proof-list" aria-label="채용 판단 핵심 근거">');
     expect(html).toContain('공개 자동화 근거');
