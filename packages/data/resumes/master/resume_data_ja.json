@@ -97,13 +97,13 @@
       "myRole": "SIEM・ファイアウォールポリシー自動化設計",
       "workType": "正社員（派遣）",
       "description": "ネクストレード売買システムを対象に、Splunk ES Saved Search、webhook relay、Slack/SMS通知、FortiManager JSON-RPC API照会を一つのセキュリティ運用アーキテクチャに組み上げました。FortiGateイベントとポリシー照会をSplunk中心に集約し、Python/Dockerベースのstate trackerとClaude AI補助分析で反復的な手動確認と誤検知レビューへの依存を下げています。検知ルール、通知条件、ポリシー照会結果は変更履歴とともに残る形にしています。",
-      "wantedSummary": "Splunk-FortiNet連携、FortiManager API、Claude AI補助分析によるセキュリティイベント分析・ファイアウォールポリシー照会の自動化経験",
+      "wantedSummary": "Splunk-Fortinet連携、FortiManager API、Claude AI補助分析によるセキュリティイベント分析・ファイアウォールポリシー照会の自動化経験",
       "note": "アイティセンCTS所属、ネクストレード セキュリティ運用アーキテクチャ自動化を担当",
       "projects": [
         {
           "id": "nextrade-security-operations",
           "name": "ネクストレード セキュリティ運用アーキテクチャ自動化",
-          "description": "Splunk ESで検知したセキュリティイベントをwebhook relay経由でSlack/SMS通知へ流し、FortiManager APIから関連ファイアウォールポリシーを照会する流れを設計しました。コンソール中心だった確認手順をSplunk-FortiNetの検知・分類・照会フローに置き換え、Claude AI補助分析で誤検知レビューと手動分析依存の削減を狙っています。",
+          "description": "Splunk ESで検知したセキュリティイベントをwebhook relay経由でSlack/SMS通知へ流し、FortiManager APIから関連ファイアウォールポリシーを照会する流れを設計しました。コンソール中心だった確認手順をSplunk-Fortinetの検知・分類・照会フローに置き換え、Claude AI補助分析で誤検知レビューと手動分析依存の削減を狙っています。",
           "period": "2025.03 ~ 2026.02",
           "techStack": [
             "Splunk ES",
@@ -274,7 +274,7 @@
         {
           "id": "kai-infrastructure-operations",
           "name": "KAI インフラ運用",
-          "description": "閉域網という制約下で可用性をどう保つかが課題でした。\n• システムログの定期分析でハードウェア障害の兆候を、数週間先の段階で拾える体制\n• 内部セキュリティ監査基準に従い、設定が毎回同じ証拠体裁で監査サイクルにのる形を維持",
+          "description": "閉域網という制約下で可用性をどう保つかが課題でした。\n• システムログの定期分析でハードウェア障害の兆候を早期に把握\n• 内部セキュリティ監査基準に従い、監査サイクルごとに一貫した証跡を維持",
           "period": "2018.10 ~ 2019.10",
           "techStack": [
             "Linux",

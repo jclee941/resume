@@ -98,13 +98,13 @@
       "myRole": "SIEM and firewall-policy automation design",
       "workType": "Full-time (Dispatched)",
       "description": "For the Nextrade trading system, joined Splunk ES Saved Searches, webhook relay, Slack/SMS alerting, and FortiManager JSON-RPC API policy lookups into a single security-operations architecture. FortiGate events and policy-review paths now route through Splunk, with Python/Docker state tracking and Claude AI-assisted review cutting repetitive manual checks and false-positive triage. Every detection rule, alert condition, and policy-lookup result ships as reviewable operating evidence.",
-      "wantedSummary": "Splunk-FortiNet integration, FortiManager API, and Claude AI-assisted review for automated security-event analysis and firewall-policy lookup",
+      "wantedSummary": "Splunk-Fortinet integration, FortiManager API, and Claude AI-assisted review for automated security-event analysis and firewall-policy lookup",
       "note": "ITCEN CTS engagement for Nextrade security-event response architecture automation",
       "projects": [
         {
           "id": "nextrade-security-operations",
           "name": "Nextrade Security Event Response Architecture Automation",
-          "description": "Splunk ES detections feed webhook relay and Slack/SMS alerts, and FortiManager API queries retrieve the related firewall policies on demand. Console-heavy checks turn into a Splunk-FortiNet path for detection, classification, and lookup, with Claude AI-assisted review cutting the false-positive triage backlog.",
+          "description": "Splunk ES detections feed webhook relay and Slack/SMS alerts, and FortiManager API queries retrieve the related firewall policies on demand. Console-heavy checks turn into a Splunk-Fortinet path for detection, classification, and lookup, with Claude AI-assisted review cutting the false-positive triage backlog.",
           "period": "2025.03 ~ 2026.02",
           "techStack": [
             "Splunk ES",
@@ -169,7 +169,7 @@
       "teamSize": "Infrastructure operations team (size undisclosed)",
       "myRole": "Infrastructure & Information Security Operations",
       "workType": "Full-time",
-      "description": "Financial Security Data Center (FSDC) operations, with Financial Supervisory Service periodic audits on the calendar every quarter. Python runbooks absorbed the recurring work, DLP policy operations stayed current with audit deliverables, and PostgreSQL access-control queries were tuned until the planners stopped second-guessing them.",
+      "description": "Operated the Financial Security Data Center (FSDC) environment and responded to Financial Supervisory Service periodic audits. Python runbooks automated recurring work, while DLP policy operations and audit deliverables remained current. PostgreSQL access-control queries were tuned for reliable operation.",
       "wantedSummary": "Financial Security Data Center (FSDC) infrastructure operations scripting and audit response experience",
       "note": "Full-time at Quantec Investment Management, AI Trading Platform infrastructure operations",
       "projects": [
@@ -271,13 +271,13 @@
       "teamSize": "On-site IT operations team (size undisclosed)",
       "myRole": "Server Operations",
       "workType": "Full-time (Dispatched)",
-      "description": "On a closed network where replacement parts waited for paperwork, catching a hardware failure early meant catching it in the log. A routine log analysis cadence and the internal security audit guidelines together gave a few weeks of warning before a server went dark.",
+      "description": "On a closed network, periodic system-log analysis identified hardware-failure indicators early. System configurations followed internal security audit standards.",
       "note": "MTData employee, dispatched to Korea Aerospace Industries (KAI) IT infrastructure field operations",
       "projects": [
         {
           "id": "kai-infrastructure-operations",
           "name": "KAI Infrastructure Operations",
-          "description": "Closed-network availability where every hardware failure arrived late.\n• Periodic system log analysis flags hardware-failure indicators weeks before the failure itself.\n• System configuration follows the internal security audit standards, so every audit cycle arrives with the same evidence shape.",
+          "description": "Closed-network infrastructure operations focused on early hardware-failure indicators and audit-ready configurations.\n• Periodic system-log analysis identifies hardware-failure indicators early.\n• System configurations follow internal security audit standards.",
           "period": "2018.10 ~ 2019.10",
           "techStack": [
             "Linux",
@@ -365,7 +365,7 @@
       ],
       "os": "Linux",
       "role": "Systems Operations",
-      "description": "Stable availability for closed-network security infrastructure where replacement parts waited for paperwork.\n• Hardware failure signs surface through periodic system log analysis weeks before the failure itself.\n• System configuration follows the internal security audit standards, so every audit cycle arrives with the same evidence shape."
+      "description": "Closed-network security infrastructure operations centered on early hardware-failure detection and audit-ready configurations.\n• Periodic system-log analysis identifies hardware-failure indicators early.\n• System configurations follow internal security audit standards."
     }
   ],
   "careerGap": {

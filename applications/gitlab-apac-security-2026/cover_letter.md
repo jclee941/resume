@@ -22,7 +22,7 @@ GitLab의 all-remote 문화 또한 저와 잘 맞습니다. 개인 인프라를 
 
 **인프라 보안 자동화 및 IaC**
 
-설정 변경 이력 추적과 일관된 인프라 관리를 위해 코드 기반 관리로 전환하는 것은 IaC-first 보안의 출발점입니다. 넥스트레이드 보안인프라 구축에서 Ansible Role로 방화벽 정책 및 보안 장비 초기 설정을 표준화하여, 장비별 수동 설정의 불일치를 제거하고 구축 산출물이 운영 절차로 일관되게 인계되도록 했습니다. 개인 홈랩에서는 Proxmox VM/LXC, Cloudflare DNS, Workers, WAF, k3s bootstrap 리소스를 Terraform 모듈로 관리하며 반복적인 재구축과 PR 검증을 통해 인프라 변경 이력을 Git 기준으로 추적하도록 전환했습니다. GitLab의 Infrastructure Security 팀에서도 동일한 IaC-first 접근을 적용할 수 있습니다.
+설정 변경 이력 추적과 일관된 인프라 관리를 위해 코드 기반 관리로 전환하는 것은 IaC-first 보안의 출발점입니다. 넥스트레이드 보안 인프라 구축에서 Ansible Role로 방화벽 정책 및 보안 장비 초기 설정을 표준화하여, 장비별 수동 설정의 불일치를 제거하고 구축 산출물이 운영 절차로 일관되게 인계되도록 했습니다. 개인 홈랩에서는 Proxmox VM/LXC, Cloudflare DNS, Workers, WAF, k3s bootstrap 리소스를 Terraform 모듈로 관리하며 반복적인 재구축과 PR 검증을 통해 인프라 변경 이력을 Git 기준으로 추적하도록 전환했습니다. GitLab의 Infrastructure Security 팀에서도 동일한 IaC-first 접근을 적용할 수 있습니다.
 
 **컨테이너 및 쿠버네티스 보안**
 
@@ -30,7 +30,7 @@ GitLab의 all-remote 문화 또한 저와 잘 맞습니다. 개인 인프라를 
 
 **분산 환경 운영 및 비동기 협업**
 
-GitLab의 all-remote 방식은 제게 낯설지 않은 협업 환경입니다. 개인 인프라를 시흥의 홈랩에서 Proxmox, k3s, Grafana, Prometheus, Loki, 알림 워크플로으로 구성하고 Terraform으로 코드화해 원격으로 운영하고 있습니다. Cloudflare Workers 기반 포트폴리오와 AI PR Reviewer도 전적으로 원격으로 운영하고 있으며, GitHub Issues와 PR을 통한 비동기 협업, 문서 중심 커뮤니케이션은 일상입니다. 영어 working proficiency 수준으로 기술 문서를 읽고 쓰며, 벤더 지원 correspondence와 Cloudflare 콘솔 운영을 영어로 수행하고 있습니다. APAC 타임존(Asia/Seoul, UTC+9) 기반에서 비동기 우선으로 업무를 진행할 수 있습니다.
+GitLab의 all-remote 방식은 제게 낯설지 않은 협업 환경입니다. 개인 인프라를 시흥의 홈랩에서 Proxmox, k3s, Grafana, Prometheus, Loki, 알림 워크플로로 구성하고 Terraform으로 코드화해 원격으로 운영하고 있습니다. Cloudflare Workers 기반 포트폴리오와 AI PR Reviewer도 전적으로 원격으로 운영하고 있으며, GitHub Issues와 PR을 통한 비동기 협업, 문서 중심 커뮤니케이션은 일상입니다. 영어 working proficiency 수준으로 기술 문서를 읽고 쓰며, 벤더 지원 correspondence와 Cloudflare 콘솔 운영을 영어로 수행하고 있습니다. APAC 타임존(Asia/Seoul, UTC+9) 기반에서 비동기 우선으로 업무를 진행할 수 있습니다.
 
 ## 협업 및 커뮤니케이션
 
