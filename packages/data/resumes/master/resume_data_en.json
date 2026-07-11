@@ -46,7 +46,7 @@
     "profileStatement": "Security infrastructure and automation engineer who builds reviewable artifacts from license-review and audit evidence: FortiGate HA segmentation, endpoint security controls, Splunk ES detection rules, Slack/SMS alerting, FortiManager API lookups, Claude AI-assisted review, and IaC-backed runbooks. Prioritizing Security Automation, Security Infrastructure, and SIEM engineering roles now.",
     "coreCompetencies": [
       "In regulated financial environments, security changes stay reviewable on demand for license reviews and audits.",
-      "SIEM detection rules feed directly into alert classification and notification workflows, so an event never sits unexplained between Splunk and the operator.",
+      "SIEM detection rules feed directly into alert classification and notification workflows, keeping each event traceable from Splunk to the operator.",
       "Pulled infrastructure operations into IaC so change history, drift, and reconstruction all live in Git rather than in tribal memory.",
       "An observability platform that joins scattered metrics and logs under a single query surface, so cross-service root-cause analysis stops being a tab-switching exercise.",
       "Static analysis runs inside CI pipelines, so vulnerabilities and secret leaks fail the build instead of reaching code review.",
@@ -97,7 +97,7 @@
       "teamSize": "Information Security Automation Cell",
       "myRole": "SIEM and firewall-policy automation design",
       "workType": "Full-time (Dispatched)",
-      "description": "For the Nextrade trading system, joined Splunk ES Saved Searches, webhook relay, Slack/SMS alerting, and FortiManager JSON-RPC API policy lookups into a single security-operations architecture. FortiGate events and policy-review paths now route through Splunk, with Python/Docker state tracking and Claude AI-assisted review cutting repetitive manual checks and false-positive triage. Every detection rule, alert condition, and policy-lookup result ships as reviewable operating evidence.",
+      "description": "For the Nextrade trading system, joined Splunk ES Saved Searches, webhook relay, Slack/SMS alerting, and FortiManager JSON-RPC API policy lookups into a single security-operations architecture. FortiGate events and policy-review paths now route through Splunk, with Python/Docker state tracking and Claude AI-assisted review reducing repetitive manual checks and false-positive triage. Detection rules, alert conditions, and policy-lookup results remain available as reviewable operating evidence.",
       "wantedSummary": "Splunk-Fortinet integration, FortiManager API, and Claude AI-assisted review for automated security-event analysis and firewall-policy lookup",
       "note": "ITCEN CTS engagement for Nextrade security-event response architecture automation",
       "projects": [
@@ -114,8 +114,8 @@
             "Claude AI"
           ],
           "achievements": [
-            "Mapped security-event classification and alert criteria by joining Splunk ES Saved Searches with FortiGate event context, so the same event surface drives both detection and operator notification.",
-            "Webhook relay plus Slack/SMS notifications form the single post-detection handoff path, so hand-offs never depend on who is at the console.",
+            "Unified event classification and alert criteria across Splunk ES and FortiGate.",
+            "Webhook relay plus Slack/SMS notifications standardize the post-detection handoff path and reduce dependence on manual console checks.",
             "FortiManager JSON-RPC policy lookup and Claude AI-assisted analysis replace the manual false-positive triage that used to sit on a single engineer's screen."
           ]
         }
@@ -152,7 +152,7 @@
           "achievements": [
             "FortiGate FGCP active-passive HA so service continuity no longer depends on a single node's uptime.",
             "Network segmentation and endpoint security controls, documented to satisfy the Korean Financial Services Commission main-license review.",
-            "Ansible Role-based policy deployment so every new appliance inherits the same configuration, and per-device drift fails the next review instead of hiding until the audit."
+            "Ansible Role-based policy deployment gives new appliances a shared configuration baseline and makes per-device drift visible during review."
           ]
         }
       ],
@@ -220,7 +220,7 @@
             "Wazuh"
           ],
           "achievements": [
-            "East-west visibility was the gap; NSX-T microsegmentation was the answer for server-to-server traffic that perimeter firewalls never saw.",
+            "East-west visibility was the gap; NSX-T microsegmentation exposed server-to-server traffic that perimeter firewalls could not surface.",
             "DFW policies enforce at the workload level, so server-to-server flows become reviewable rather than inferred from logs.",
             "NSX-T Manager becomes the single source of truth, and rule governance attaches to the same workflow that approves the change."
           ]
@@ -238,12 +238,12 @@
       "teamSize": "Infrastructure operations team (size undisclosed)",
       "myRole": "Infrastructure Operations",
       "workType": "SI+SM",
-      "description": "The contact-center remote-work environment was drifting in two places at once: server configurations that disagreed per node, and remote-access activity that no one could see in real time. Python and Ansible runbooks closed the configuration gap, and FortiGate VPN infrastructure supported each new contact-center site with the same baseline.",
+      "description": "The contact-center remote-work environment was drifting in two places at once: server configurations differed by node, and remote-access activity lacked a centralized view. Python and Ansible runbooks reduced configuration drift, and FortiGate VPN infrastructure gave new contact-center sites a shared baseline.",
       "projects": [
         {
           "id": "contact-center-remote-work",
           "name": "Contact Center Remote-Work Infrastructure",
-          "description": "VPN infrastructure design and runbooks for contact-center remote access at scale.\n• Python scripts and Ansible keep every remote-access server on the same configuration baseline, so new sites onboard without inheriting drift.\n• VPN session monitoring plus abnormal-access detection dashboards expose the connection surface that used to be a black box.",
+          "description": "VPN infrastructure design and runbooks for contact-center remote access.\n• Python scripts and Ansible apply a shared configuration baseline to remote-access servers, reducing drift during site onboarding.\n• VPN session monitoring plus abnormal-access detection dashboards expose the connection surface that used to be a black box.",
           "period": "2020.08 ~ 2021.08",
           "techStack": [
             "Ansible",
@@ -253,7 +253,7 @@
             "FortiGate"
           ],
           "achievements": [
-            "Ansible playbooks absorb the configuration work that used to differ by engineer, so a new site ships with the same baseline as the last one.",
+            "Standardized recurring configuration work with Ansible.",
             "NAC policy runbooks turn new-terminal registration into a one-step process instead of a queue of tickets.",
             "FortiGate-log-based detection dashboard makes VPN session anomalies visible to operators, not just to the post-incident report."
           ]
@@ -286,7 +286,7 @@
             "WSUS"
           ],
           "achievements": [
-            "Linux servers stayed up under closed-network constraints, with the routine log cadence catching the hardware failures that would otherwise have arrived mid-shift.",
+            "Maintained Linux server availability in a closed-network environment.",
             "Unused firewall rules removed after parsing the firewall-cmd policy set, so the rule base stopped accumulating historical risk.",
             "WSUS-based regular patch cycle in place, with the timing window chosen to prevent latency from turning into a vulnerability-exposure window."
           ]
@@ -351,7 +351,7 @@
       ],
       "os": "Linux",
       "role": "Remote Work Infrastructure",
-      "description": "VPN infrastructure runbooks for contact-center remote access, with the configuration drift problem taken off the operations queue.\n• Python and Ansible keep remote-access server configurations synchronized across every site.\n• VPN session monitoring and anomaly detection dashboards expose the connection surface that used to be a black box."
+      "description": "VPN infrastructure runbooks for contact-center remote access, with configuration drift managed through a shared baseline.\n• Python and Ansible keep remote-access server configurations synchronized across sites.\n• VPN session monitoring and anomaly detection dashboards expose the connection surface that used to be a black box."
     },
     {
       "id": "kai-infrastructure-operations",
@@ -868,7 +868,7 @@
       "name": "Bug Bounty Recon Toolkit",
       "period": "2025.10 ~ Present",
       "githubUrl": "https://github.com/jclee941/bug",
-      "description": "Bug-bounty reconnaissance (subdomain discovery → notification → vulnerability scan) used to mean running the same three tools by hand for every program. A Go-based recon pipeline plus Python result analysis now chains Subfinder, httpx, and Nuclei, with cron handling the daily schedule. New domain changes surface immediately rather than at the next manual run.",
+      "description": "Bug-bounty reconnaissance (subdomain discovery → notification → vulnerability scan) used to mean running the same three tools by hand for each program. A Go-based recon pipeline plus Python result analysis now chains Subfinder, httpx, and Nuclei, with cron handling the schedule. New domain changes surface through notifications after scheduled runs rather than waiting for manual review.",
       "highlights": [
         "Concurrency design for scheduled reconnaissance scanning",
         "Auto matching + notification for immediate response after vulnerability detection",
@@ -1106,7 +1106,7 @@
       "paragraphs": [
         "My career started inside Korea Aerospace Industries' closed network, tracking patch schedules for the closed-network Linux fleet on an Excel sheet. The repetition drove one conviction: security engineering is not about hoping incidents never happen, it is about lowering risk through repeatable procedures, automation, and evidence. RHCSA, LPIC-1, and Linux Master Level 2 came next, rebuilding the Linux foundation, and that base carried directly into hands-on automation work.",
         "At Metanet M Platform I picked up Ansible and Python, and turned the NAC policy deployment procedure into a single reviewable workflow for contact-center operations. At Jointree, NSX-T microsegmentation on Kookmin University's next-generation information system closed the east-west traffic blind spots, and the NAC and DLP detection policies got the same reviewable treatment. The tools changed, but the principle held: any task that takes repeated manual effort is a candidate for a runbook.",
-        "At Quantec Investment Management's Financial Security Data Center (FSDC), the Financial Supervisory Service audits taught a different lesson: security infrastructure is not a one-time setup, it is the ability to present current state and change evidence with data during audits and incidents. Tuning DB access-control queries and validating the PB platform POC were both acts of explaining system state with data and leaving a trail behind every change.",
+        "At Quantec Investment Management's Financial Security Data Center (FSDC), the Financial Supervisory Service audits taught a different lesson: security infrastructure is not a one-time setup, it is the ability to present current state and change evidence with data during audits and incidents. Tuning DB access-control queries and validating the PB platform POC were both acts of explaining system state with data and leaving an auditable trail for changes.",
         "Most recently, in the Nextrade exchange security track, the engagement ran continuously from the build phase at Gaonnuri through the automation phase at ITCEN CTS. Network segmentation and endpoint security controls went up first, with the Korean Financial Services Commission main-license review on the critical path. Splunk ES detection rules, alert workflow notifications, FortiManager API policy lookups, and Claude AI-assisted review joined the recognition, classification, and alerting flow so security events had a single operating story.",
         "Next, I am widening the scope of automation tooling from security appliances and scripts toward MCP and Edge runtimes. The homelab (Cloudflare Workers, MCP, Grafana, 1Password) runs on Terraform-managed IaC, where the experiment is letting an MCP tool take the first pass over repetitive security-response items. In the next chapter, I want the security problem to come before the tool, and to take on the role of turning that problem into a repeatable engineering structure."
       ],

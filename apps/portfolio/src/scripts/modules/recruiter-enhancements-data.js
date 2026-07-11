@@ -40,7 +40,7 @@ export const ROLE_PROFILES = [
   },
   {
     id: 'automation',
-    label: 'Automation Workflow',
+    label: 'Automation',
     proof: {
       ko: 'jclee-bot, PR 검토, 시크릿 스캔, Check Run',
       en: 'jclee-bot, PR review, secret scan, and runtime logs',
@@ -55,9 +55,9 @@ export const EVIDENCE_ITEMS = [
     roleId: 'security',
     title: 'Security Alert System',
     proof: {
-      ko: 'Splunk Saved Search, webhook relay, FortiManager API를 연결한 이벤트 처리 흐름',
-      en: 'Event flow connecting Splunk Saved Search, webhook relay, and FortiManager API',
-      ja: 'Splunk Saved Search、webhook relay、FortiManager APIをつなぐイベント処理',
+      ko: 'Splunk·Webhook·FortiManager API 연계',
+      en: 'Splunk, webhook, and FortiManager API integration',
+      ja: 'Splunk・Webhook・FortiManager API連携フロー',
     },
   },
   {
@@ -82,9 +82,9 @@ export const EVIDENCE_ITEMS = [
     roleId: 'automation',
     title: 'jclee-bot GitHub App',
     proof: {
-      ko: 'PR 리뷰, secret scan, actionlint, docs policy를 GitHub App 흐름으로 연결',
-      en: 'GitHub App workflow for PR review, secret scan, actionlint, and docs policy',
-      ja: 'PRレビュー、secret scan、actionlint、docs policyをGitHub App workflowで連携',
+      ko: 'GitHub App 기반 PR·정책 자동화',
+      en: 'GitHub App automation for PR review and policy checks',
+      ja: 'GitHub AppによるPR・ポリシー自動化',
     },
   },
 ];

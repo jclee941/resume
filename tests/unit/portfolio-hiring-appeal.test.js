@@ -82,7 +82,9 @@ describe('portfolio hiring appeal copy', () => {
     expect(html).toContain('Open to interview requests');
     expect(html).toContain('PR review, secrets scan, and check runs explain change risk');
     expect(html).toContain('Metrics and logs provide observability for incidents and signals');
-    expect(html).toContain('Automation Workflow');
+    expect(html).toContain('class="role-chip__label">Sec</span>');
+    expect(html).toContain('class="role-chip__label">Flow</span>');
+    expect(html).not.toContain('Automation Workflow');
     expect(html).toContain('Public automation evidence');
     expect(html).not.toContain('Public proof shortcuts');
     expect(html).not.toContain('Review path');
@@ -143,7 +145,8 @@ describe('portfolio hiring appeal copy', () => {
       ...Object.values(role.proof || {}),
     ]);
 
-    expect(roleCopy).toContain('Automation Workflow');
+    expect(roleCopy).toContain('Automation');
+    expect(roleCopy).not.toContain('Automation Workflow');
     expect(roleCopy).toContain('jclee-bot, PR 검토, 시크릿 스캔, Check Run');
     expect(roleCopy).not.toContain('Ops Workflow');
     expect(roleCopy).not.toContain('jclee-bot, PR 검토, 시크릿 스캔, 운영 로그');
