@@ -219,7 +219,7 @@ describe('generateWebData → resume[].stats (the ACTUAL static-card render path
     );
     assert.equal(
       generateWebData(enSsot, 'en').resume[4].description,
-      'The contact-center remote-work environment was drifting in two places at once: server configurations that disagreed per node, and remote-access activity that no one could see in real time. Python and Ansible runbooks closed the configuration gap, and FortiGate VPN infrastructure supported each new contact-center site with the same baseline.'
+      'The contact-center remote-work environment was drifting in two places at once: server configurations differed by node, and remote-access activity lacked a centralized view. Python and Ansible runbooks reduced configuration drift, and FortiGate VPN infrastructure gave new contact-center sites a shared baseline.'
     );
   });
 
