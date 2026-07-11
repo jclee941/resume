@@ -181,7 +181,7 @@ jobs:
           set -euo pipefail
           mkdir -p dist/release
           cp apps/portfolio/worker.js dist/release/worker.js
-          cp apps/portfolio/wrangler.jsonc dist/release/wrangler.jsonc
+          cp wrangler.jsonc dist/release/wrangler.jsonc
           tar -C dist/release -czf "dist/portfolio-worker-${{ steps.bump.outputs.new_tag }}.tar.gz" .
 
       - name: Upload workflow artifact

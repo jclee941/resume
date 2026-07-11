@@ -207,9 +207,9 @@ func deployCloudflare() {
 
 	// Deploy
 	cmd := exec.Command("npx", "wrangler", "deploy",
-		"--config", filepath.Join(projectRoot, "apps", "portfolio", "wrangler.jsonc"),
-		"--env", "production")
+		"--config", filepath.Join(projectRoot, "wrangler.jsonc"))
 	cmd.Dir = projectRoot
+	cmd.Env = append(os.Environ(), "CLOUDFLARE_ENV=")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 

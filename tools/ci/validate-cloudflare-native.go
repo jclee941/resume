@@ -20,8 +20,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	if !fileExists(filepath.Join(rootDir, "apps/portfolio/wrangler.jsonc")) {
-		fmt.Println("ERROR: missing portfolio wrangler.jsonc")
+	if fileExists(filepath.Join(rootDir, "apps", "portfolio", "wrangler.jsonc")) {
+		fmt.Println("ERROR: duplicate portfolio Wrangler config; root wrangler.jsonc is authoritative")
 		os.Exit(1)
 	}
 
@@ -75,7 +75,7 @@ func main() {
 	jsoncDocMatches := grepLike(jsoncDocTargets, jsoncDocPattern)
 	if jsoncDocMatches != "" {
 		fmt.Println("ERROR: documentation drift found for job worker config path")
-		fmt.Println("Expected active config path: apps/job-dashboard/wrangler.jsonc")
+		fmt.Println("Expected active config path: root wrangler.jsonc")
 		fmt.Print(jsoncDocMatches)
 		os.Exit(1)
 	}
@@ -94,10 +94,7 @@ func runProductionBindingValidation(rootDir string) error {
 }
 
 func validateDeployBuildConfig(rootDir string) error {
-	configs := []string{
-		"wrangler.jsonc",
-		"apps/portfolio/wrangler.jsonc",
-	}
+	configs := []string{"wrangler.jsonc"}
 	buildBlock := regexp.MustCompile(`(?m)^\s*"build"\s*:\s*\{`)
 	buildCommand := regexp.MustCompile(`(?m)^\s*"command"\s*:\s*"npm run build"\s*,?\s*$`)
 	buildCWD := regexp.MustCompile(`(?m)^\s*"cwd"\s*:\s*"\."\s*,?\s*$`)
