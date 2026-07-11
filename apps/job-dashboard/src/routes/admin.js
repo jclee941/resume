@@ -1,7 +1,11 @@
 import { jsonResponse } from '../middleware/cors.js';
 import { getConfig, saveConfig } from '../services/config.js';
 import { enqueueTask } from '../queues/queue-enqueuer.js';
-import { MESSAGE_TYPES, PRIORITY } from '../queues/queue-message-constants.js';
+import {
+  getQueueCapability,
+  parseQueueRequest,
+  QUEUE_NAME,
+} from '../queues/queue-request.js';
 
 export function registerAdminRoutes(router, ctx) {
   const { env, diagnostics, log } = ctx;
@@ -12,30 +16,32 @@ export function registerAdminRoutes(router, ctx) {
   router.put('/api/config', (req) => saveConfig(req, env.JOB_DB));
 
   router.post('/api/queue/enqueue', async (req) => {
-    try {
-      const body = await req.json();
-      const { type, payload, priority, delaySeconds } = body;
+    const parsed = await parseQueueRequest(req);
+    if (!parsed.ok) {
+      return jsonResponse({ error: parsed.error }, 400);
+    }
 
-      if (!type || !payload) {
-        return jsonResponse({ error: 'Missing required fields: type, payload' }, 400);
-      }
-
-      const validTypes = Object.values(MESSAGE_TYPES);
-      if (!validTypes.includes(type)) {
-        return jsonResponse(
-          { error: `Invalid type. Must be one of: ${validTypes.join(', ')}` },
-          400
-        );
-      }
-
-      await enqueueTask(
-        env,
-        { type, payload, priority: priority || PRIORITY.BACKGROUND },
-        { delaySeconds: delaySeconds || 0 }
+    const capability = getQueueCapability(env);
+    if (!capability.available) {
+      return jsonResponse(
+        { error: 'Queue unavailable', status: 'disabled', available: false, queue: QUEUE_NAME },
+        503
       );
+    }
+
+    try {
+      const { type, payload, priority, delaySeconds } = parsed.value;
+      await enqueueTask(env, { type, payload, priority }, { delaySeconds });
 
       return jsonResponse(
-        { success: true, type, priority: priority || PRIORITY.BACKGROUND },
+        {
+          success: true,
+          status: 'accepted',
+          queue: QUEUE_NAME,
+          type,
+          priority,
+          delaySeconds,
+        },
         202
       );
     } catch (err) {
@@ -45,11 +51,7 @@ export function registerAdminRoutes(router, ctx) {
   });
 
   router.get('/api/queue/status', async () => {
-    return jsonResponse({
-      status: 'ok',
-      queue: 'crawl-tasks',
-      types: Object.values(MESSAGE_TYPES),
-      priorities: Object.values(PRIORITY),
-    });
+    const capability = getQueueCapability(env);
+    return jsonResponse(capability, capability.available ? 200 : 503);
   });
 }

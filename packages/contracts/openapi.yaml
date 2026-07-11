@@ -793,34 +793,57 @@ paths:
       operationId: enqueueQueueJob
       security:
         - AdminSessionCookie: []
+          CsrfHeader: []
+          CsrfCookie: []
         - LegacyAdminBearer: []
+          CsrfHeader: []
+          CsrfCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueueEnqueueRequest'
       responses:
         '202':
           description: Job enqueued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueEnqueueAccepted'
         '400':
-          $ref: '#/components/responses/BadRequest'
+          $ref: '#/components/responses/QueueBadRequest'
         '401':
-          $ref: '#/components/responses/Unauthorized'
+          $ref: '#/components/responses/QueueUnauthorized'
         '403':
-          $ref: '#/components/responses/Forbidden'
+          $ref: '#/components/responses/QueueForbidden'
         '503':
-          $ref: '#/components/responses/ServiceMisconfigured'
+          description: Authentication or Queue binding unavailable
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/AuthenticationUnavailable'
+                  - $ref: '#/components/schemas/QueueUnavailable'
 
   /api/queue/status:
     get:
       tags: [Admin]
       summary: Queue status overview
       operationId: getQueueStatus
-      security:
-        - AdminSessionCookie: []
-        - LegacyAdminBearer: []
       responses:
         '200':
-          description: Queue status
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+          description: Queue binding available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueStatusEnabled'
         '503':
-          $ref: '#/components/responses/ServiceMisconfigured'
+          description: Queue binding disabled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueStatusDisabled'
 
 components:
   securitySchemes:
@@ -834,7 +857,14 @@ components:
       scheme: bearer
       bearerFormat: ADMIN_TOKEN
       description: Deprecated compatibility authentication using the configured ADMIN_TOKEN
-
+    CsrfHeader:
+      type: apiKey
+      in: header
+      name: X-CSRF-Token
+    CsrfCookie:
+      type: apiKey
+      in: cookie
+      name: csrf_token
   responses:
     BadRequest:
       description: Bad request
@@ -860,6 +890,24 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
+    QueueBadRequest:
+      description: Invalid Queue request payload
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/QueueErrorResponse'
+    QueueUnauthorized:
+      description: Missing or invalid authentication credentials
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/QueueErrorResponse'
+    QueueForbidden:
+      description: CSRF validation failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/QueueErrorResponse'
     NotFound:
       description: Not found
       content:
@@ -873,6 +921,140 @@ components:
       properties:
         error:
           type: string
+
+    QueueErrorResponse:
+      type: object
+      additionalProperties: false
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    QueueMessageType:
+      type: string
+      enum: [crawl, apply, sync, report, cleanup]
+
+    QueuePriority:
+      type: string
+      enum: [urgent, background]
+
+    QueueEnqueueRequest:
+      type: object
+      required: [type, payload]
+      properties:
+        type:
+          $ref: '#/components/schemas/QueueMessageType'
+        payload:
+          type: object
+        priority:
+          allOf:
+            - $ref: '#/components/schemas/QueuePriority'
+          default: background
+        delaySeconds:
+          type: integer
+          minimum: 0
+          maximum: 43200
+          default: 0
+
+    QueueEnqueueAccepted:
+      type: object
+      additionalProperties: false
+      required: [success, status, queue, type, priority, delaySeconds]
+      properties:
+        success:
+          type: boolean
+          enum: [true]
+        status:
+          type: string
+          enum: [accepted]
+        queue:
+          type: string
+          enum: [crawl-tasks]
+        type:
+          $ref: '#/components/schemas/QueueMessageType'
+        priority:
+          $ref: '#/components/schemas/QueuePriority'
+        delaySeconds:
+          type: integer
+          minimum: 0
+          maximum: 43200
+
+    QueueStatusDisabled:
+      type: object
+      additionalProperties: false
+      required: [status, available, queue]
+      properties:
+        status:
+          type: string
+          enum: [disabled]
+        available:
+          type: boolean
+          enum: [false]
+        queue:
+          type: string
+          enum: [crawl-tasks]
+
+    QueueStatusEnabled:
+      type: object
+      additionalProperties: false
+      required: [status, available, queue, types, priorities]
+      properties:
+        status:
+          type: string
+          enum: [ok]
+        available:
+          type: boolean
+          enum: [true]
+        queue:
+          type: string
+          enum: [crawl-tasks]
+        types:
+          type: array
+          minItems: 5
+          maxItems: 5
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/QueueMessageType'
+        priorities:
+          type: array
+          minItems: 2
+          maxItems: 2
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/QueuePriority'
+
+    AuthenticationUnavailable:
+      type: object
+      additionalProperties: false
+      required: [error, status, available]
+      properties:
+        error:
+          type: string
+          enum: [Authentication unavailable]
+        status:
+          type: string
+          enum: [disabled]
+        available:
+          type: boolean
+          enum: [false]
+
+    QueueUnavailable:
+      type: object
+      additionalProperties: false
+      required: [error, status, available, queue]
+      properties:
+        error:
+          type: string
+          enum: [Queue unavailable]
+        status:
+          type: string
+          enum: [disabled]
+        available:
+          type: boolean
+          enum: [false]
+        queue:
+          type: string
+          enum: [crawl-tasks]
 
     HealthResponse:
       type: object

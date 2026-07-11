@@ -31,7 +31,6 @@ import {
   registerWorkflowRoutes,
   registerAdminRoutes,
 } from './routes/index.js';
-
 import {
   JobCrawlingWorkflow,
   ApplicationWorkflow,
@@ -101,9 +100,11 @@ export default {
     if (requiresAuth(url.pathname)) {
       const authResult = await verifyAdminAuth(request, env);
       if (!authResult.ok) {
-        return respond(
-          addCorsHeaders(jsonResponse({ error: authResult.error }, authResult.status), request, env)
-        );
+        const authBody =
+          url.pathname === '/api/queue/enqueue' && authResult.status === 503
+            ? { error: 'Authentication unavailable', status: 'disabled', available: false }
+            : { error: authResult.error };
+        return respond(addCorsHeaders(jsonResponse(authBody, authResult.status), request, env));
       }
     }
 
