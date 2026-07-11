@@ -12,11 +12,11 @@ const ADMIN_ROUTES = [
   '/api/auth',
   '/api/config',
   '/api/cleanup',
-  '/api/queue',
   '/api/resume',
   '/api/workflows',
   '/api/stats',
   '/api/report',
+  '/api/queue/enqueue',
 ];
 
 const NO_AUTH_ROUTES = [
