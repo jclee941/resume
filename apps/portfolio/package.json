@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build": "node generate-worker.js",
-    "start": "wrangler dev"
+    "start": "CLOUDFLARE_ENV= wrangler dev --config ../../wrangler.jsonc"
   },
   "devDependencies": {
     "esbuild": "^0.28.1",

@@ -7,7 +7,7 @@ name: Provision Cloudflare Queues
 # automatically on every deploy is wasteful. Trigger this workflow once when ready
 # to activate queue-based async task processing (per ADR 0008 § Migration Plan).
 #
-# After provisioning succeeds, manually edit apps/portfolio/wrangler.jsonc to replace
+# After provisioning succeeds, manually edit the root wrangler.jsonc to replace
 # the "Queue bindings INACTIVE" comment block with the active producer/consumer
 # configuration documented in ADR 0008.
 
@@ -83,6 +83,6 @@ jobs:
             echo "- crawl-tasks + crawl-tasks-dlq"
             echo "- notifications + notifications-dlq"
             echo ""
-            echo "Next step: edit apps/portfolio/wrangler.jsonc to activate bindings."
+            echo "Next step: edit the root wrangler.jsonc to activate bindings."
             echo "See ADR 0008 Migration Plan."
           } >> "$GITHUB_STEP_SUMMARY"

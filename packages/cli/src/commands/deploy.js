@@ -1,15 +1,33 @@
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 
-function resolveWranglerConfigPath(baseDir) {
-  const jsoncPath = path.join(baseDir, 'wrangler.jsonc');
-  if (fs.existsSync(jsoncPath)) {
-    return jsoncPath;
+function resolveRepositoryRoot(baseDir) {
+  let current = path.resolve(baseDir);
+  while (true) {
+    if (fs.existsSync(path.join(current, 'wrangler.jsonc'))) {
+      return current;
+    }
+    const parent = path.dirname(current);
+    if (parent === current) break;
+    current = parent;
   }
 
-  throw new Error(`No Wrangler config found in ${baseDir}`);
+  throw new Error(`No root Wrangler config found above ${baseDir}`);
+}
+
+export function createWranglerDeployInvocation({ workerFile, dir, env }) {
+  const targetDirectory = workerFile ? path.dirname(workerFile) : dir;
+  if (!targetDirectory) throw new Error('A worker file or directory is required');
+  if (env !== 'production' && env !== 'preview') {
+    throw new Error(`Unsupported Worker environment: ${env}`);
+  }
+
+  const cwd = resolveRepositoryRoot(targetDirectory);
+  const args = ['wrangler', 'deploy', '--config', 'wrangler.jsonc'];
+  if (env === 'preview') args.push('--env', 'preview');
+  return { command: 'npx', args, cwd, environment: { CLOUDFLARE_ENV: '' } };
 }
 
 export async function deploy(options) {
@@ -22,33 +40,15 @@ export async function deploy(options) {
       throw new Error('Missing Cloudflare credentials in .env');
     }
 
-    if (workerFile) {
-      console.log(chalk.yellow(`📦 Deploying worker file: ${workerFile}`));
-      const workerDir = path.dirname(workerFile);
-      const wranglerConfig = resolveWranglerConfigPath(workerDir);
-
-      const cmd = `npx wrangler deploy --config ${JSON.stringify(wranglerConfig)} --env ${env}`;
-      console.log(chalk.gray(`Running: ${cmd} in ${workerDir}`));
-
-      execSync(cmd, {
-        cwd: workerDir,
-        stdio: 'inherit',
-        env: { ...process.env },
-      });
-    }
-
-    if (dir) {
-      console.log(chalk.yellow(`📦 Deploying directory: ${dir}`));
-      const wranglerConfig = resolveWranglerConfigPath(dir);
-      const cmd = `npx wrangler deploy --config ${JSON.stringify(wranglerConfig)} --env ${env}`;
-      console.log(chalk.gray(`Running: ${cmd} in ${dir}`));
-
-      execSync(cmd, {
-        cwd: dir,
-        stdio: 'inherit',
-        env: { ...process.env },
-      });
-    }
+    const invocation = createWranglerDeployInvocation({ workerFile, dir, env });
+    const target = workerFile || dir;
+    console.log(chalk.yellow(`📦 Deploying: ${target}`));
+    console.log(chalk.gray(`Running: ${invocation.command} ${invocation.args.join(' ')}`));
+    execFileSync(invocation.command, invocation.args, {
+      cwd: invocation.cwd,
+      stdio: 'inherit',
+      env: { ...process.env, ...invocation.environment },
+    });
 
     console.log(chalk.green('✅ Deployment successful!'));
   } catch (error) {
