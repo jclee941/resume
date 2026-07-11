@@ -8,6 +8,7 @@ import fastifySwaggerUi from '@fastify/swagger-ui';
 
 import config from './config/index.js';
 import authPlugin from './plugins/auth.js';
+import servicesPlugin from './plugins/services.js';
 import automationWebhookPlugin from './plugins/automation-webhook.js';
 import errorHandler from './middleware/error-handler.js';
 
@@ -62,6 +63,7 @@ async function buildServer() {
   });
 
   await fastify.register(authPlugin);
+  await fastify.register(servicesPlugin);
   await fastify.register(automationWebhookPlugin);
 
   await fastify.register(fastifySwagger, {
