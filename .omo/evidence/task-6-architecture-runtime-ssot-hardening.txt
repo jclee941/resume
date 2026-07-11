@@ -1,0 +1,93 @@
+Todo 6 evidence: direct runtime dependency ownership
+Base: 89b804787e6086762d1253e6e92d16213286ae95
+Date: 2026-07-12 KST
+
+Scope delivered
+- apps/job-dashboard directly owns @resume/env "*".
+- packages/contracts directly owns @resume/types "*".
+- packages/shared directly owns zod "^4.4.3" and is the only bumped workspace, 1.1.0 -> 1.1.1.
+- apps/job-server directly owns fastify-plugin "^5.0.0".
+- Root retains jsonc-parser "^3.3.1", adds yaml "^2.8.3", and exposes verify:workspace-deps.
+- The validator is deliberately bounded to those four pairs and does not activate global env validation, schema changes, checkJs, or unrelated import ownership.
+
+TDD evidence
+1. Before manifest or lock edits, the characterization test passed against the four existing production imports. It proved their owning manifests lacked direct declarations while resolution succeeded through the temporary installed hoist.
+2. Failing-first policy run: baseline 1 passed; 7 policy contracts failed against the no-op validator for the expected missing-exception/empty-inventory reasons.
+3. Final focused command:
+   node --test tools/scripts/verification/__tests__/validate-workspace-dependencies.test.mjs tools/scripts/verification/__tests__/workspace-dependency-baseline.test.mjs
+   Result: 11 tests passed, 0 failed.
+4. Exact failure-fixture command:
+   node --test --test-name-pattern='reports importer and undeclared package' tools/scripts/verification/__tests__/validate-workspace-dependencies.test.mjs
+   Result: 4 tests passed, 0 failed; each diagnostic named importer workspace and undeclared package.
+5. Fixtures cover every missing exact pair, optional runtime ownership, dev/test/fixture/script/example/dist/config exclusions, node:/cloudflare:/relative runtime schemes, comments/string false positives, symlink escapes, unrelated bare imports, malformed JSON, and malformed dependency shapes.
+
+Automated verification
+- npm install --package-lock-only --ignore-scripts: exactly once, exit 0 in 0.6s, no vulnerabilities.
+- npm ci: fresh task-local install, exit 0 in 8.0s, 787 packages, no vulnerabilities.
+- test ! -e apps/portfolio/worker.js && npm run automate:full: exit 0 in approximately 26.4s. build:worker materialized worker.js before Jest/integration consumers; Jest 116/116 suites and 1562/1562 tests passed; remaining Node/schema/tool/CLI/Cloudflare-native gates exited 0.
+- npm run verify:workspace-deps: exit 0 and emitted exactly four workspace/dependency inventory records with real source importers.
+- npm ls @resume/env @resume/types zod fastify-plugin jsonc-parser yaml --all: exit 0. JSON parse asserted problems=[] and all six names present.
+- Semantic manifest/lock comparison: only the four direct ownership declarations, root yaml/script, @resume/shared 1.1.1 metadata, and required nested shared zod 4.4.3 install topology changed. Existing locked package versions were byte-semantically compared: zero dependency upgrades. Root jsonc-parser remained ^3.3.1.
+- npx eslint <validator and focused test>: PASS.
+- npm run typecheck: PASS.
+- npx prettier --check <all changed source/manifests>: PASS.
+- git diff --check: PASS.
+- Pure LOC: validator 109, policy test 151, baseline test 56; all below project 200-LOC limit.
+- gitleaks detect --source . --config .gitleaks.toml --redact --no-banner: 1909 commits / 395.20 MB scanned; no leaks found.
+
+Manual QA
+- Ran the real validator CLI after fresh npm ci. Observed exactly:
+  apps/job-dashboard -> @resume/env; packages/contracts -> @resume/types; packages/shared -> zod; apps/job-server -> fastify-plugin, with the corresponding production importer paths.
+- Ran a Node createRequire resolution driver from each owning workspace and asserted its own dependencies/optionalDependencies declaration before resolution. Resolved paths were task-local packages/env/src/index.js, packages/types/src/index.js, packages/shared/node_modules/zod/index.cjs, and node_modules/fastify-plugin/plugin.js.
+- Parsed npm ls --json rather than trusting exit/output text: problems=[] and all six dependency names present.
+- No live deploy or external mutation was performed.
+
+Runtime debugging audit (three orthogonal hypotheses)
+1. Validator could silently miss static imports due to parser matching. Refuted by the real CLI inventory, five fastify-plugin importer paths, and four declaration-removal fixtures toggling pass to diagnostic failure.
+2. A stale hoist could make ownership appear correct while a clean install remained broken. Refuted by removing the initial overlay, fresh npm ci, task-local resolution driver, npm ls problems=[], and green automate:full.
+3. Lock convergence could silently upgrade unrelated packages. Refuted by structural before/after lock traversal: every pre-existing package version stayed equal except the required @resume/shared metadata bump; installed versions matched the requested ranges.
+
+UltraQA (all nine)
+1. malformed_input: PASS - malformed package JSON and array-shaped dependencies fixtures fail with workspace/package diagnostics.
+2. stale_state: PASS - initial hoist characterization was followed by overlay removal, fresh npm ci, local resolution, and full automation.
+3. dirty_worktree: PASS - expected diff was isolated; ignored generated/install artifacts were removed; no unrelated tracked files changed.
+4. hung_or_long_commands: PASS - install and automation calls were bounded by the execution harness; all completed in 0.6s, 8.0s, and approximately 26.4s.
+5. flaky_tests: PASS - focused 10-test suite repeated green after formatting; four exact negative fixtures repeated independently.
+6. misleading_success_output: PASS - parsed manifests, structural lock leaves, npm ls JSON problems, resolution paths, exact CLI inventory, worker existence/order, and suite counts rather than trusting exit text alone.
+7. repeated_interruptions: PASS - manifest edits preceded one atomic lock convergence; fresh install and cleanup completed without a second lock rewrite or partial state.
+8. prompt_injection: N/A - only local package metadata and JS import syntax are consumed; no instruction-bearing external content entered the workflow.
+9. cancel_resume: N/A - no product cancellation/resume protocol exists; long commands completed within bounds and were not resumed from partial package state.
+
+Post-implementation review remediation
+- Initial code-quality review found the characterization depended on mutable HEAD, raw import matching could accept comment/string examples, and the exclusion fixture was not discriminating. Fixed by pinning the explicit base SHA in a separate dependency-free baseline test, anchoring audited static import/export syntax, and making excluded exact-pair imports the only candidate.
+- Initial security review reproduced workspace escape through a directory symlink. Fixed by lstat-skipping every symlink before traversal and adding a combined external-symlink/comment/string regression.
+- Final focused 11-test suite and real CLI passed after both remediations; reviewer reruns are recorded in the DoneClaim.
+
+Cleanup and residual risk
+- Removed task-owned node_modules/workspace links, generated portfolio worker/data, generated resume PDF, session/test residue, Python cache, and /tmp npm-ls output.
+- Canonical SHA-256 values were recorded for all changed manifests, lockfile, validator, and test after cleanup.
+- SHA-256: package.json 02f7e89ca7d5; package-lock.json b5efe7d70d0d; dashboard manifest d6185153cc8a; job-server manifest 55f06233108b; contracts manifest c608bae7fe40; shared manifest e6eaa7df4f75; validator 42a7979df0e4; policy test aaffd04b0a24; baseline test a671dd964602.
+- Working tree contains only the expected Todo 6 manifests/lock/script/test plus this evidence file; no debug process or temporary fixture remains.
+- Residual risk: the validator intentionally audits only actual static import/export declarations for the four exact pairs; it does not widen into unrelated dependencies or JSDoc type-only imports.
+
+Independent executable-import remediation
+- Base commit: 8c57295bbf8d97f60be51f43fab4031fc6825965.
+- Exact red command:
+  node --test --test-name-pattern='block comments|multiline templates' tools/scripts/verification/__tests__/validate-workspace-dependencies.test.mjs
+- Pre-fix result: exit 1, tests 2, pass 0, fail 2. A block comment and a multiline template containing a line-start `import '@resume/env'` both falsely satisfied the raw line regex.
+- Replaced raw-text matching with the already direct root TypeScript devDependency. `createSourceFile` parses JS/MJS/CJS and the bounded audit extracts module specifiers only from real AST ImportDeclaration and ExportDeclaration statements.
+- Repository search found no executed require() or dynamic import() form for the four audited owner/package pairs, so those forms were not added speculatively. Existing JSDoc import types remain out of runtime ownership detection.
+- Removed the policy test's unused fileURLToPath import; ESLint runs with max-warnings=0.
+
+Remediation verification
+- Fresh npm ci: exit 0 in 7.3s, 787 packages, zero vulnerabilities.
+- Exact comment/template regressions: 2/2 passed.
+- Cumulative focused baseline/policy suite: 13/13 passed.
+- Exact missing-pair filter: 4/4 passed.
+- Real validator CLI: exact four-pair inventory with real static importers.
+- External symlink/comment/string regression remains green.
+- npm ls JSON parsed problems=[] and all six dependencies; createRequire driver resolved all four dependencies from their owning workspaces.
+- Structural lock check: zero dependency upgrades, jsonc-parser retained, yaml exact. No manifest or lock files changed in this follow-up.
+- ESLint --max-warnings=0, Prettier check, typecheck, node tests, and git diff --check passed.
+- Follow-up SHA-256: validator d6ca714ce9e3; policy test c7f6a426caaf. Gitleaks scanned 1910 commits / 395.23 MB and found no leaks.
+- Prior fresh worker-absent npm ci/automate:full evidence remains applicable because this remediation changes only the validator and its policy tests; automate:full was intentionally not rerun.
