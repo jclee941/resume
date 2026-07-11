@@ -1,6 +1,6 @@
 {
   "name": "@resume/shared",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "type": "module",
   "exports": {
     "./validation": "./src/validation/index.js",
@@ -47,7 +47,8 @@
     "./normalize": "./src/normalize/index.js"
   },
   "dependencies": {
-    "@resume/schemas": "*"
+    "@resume/schemas": "*",
+    "zod": "^4.4.3"
   },
   "optionalDependencies": {
     "@cloudflare/puppeteer": "^1.0.6"

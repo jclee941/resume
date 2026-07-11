@@ -73,6 +73,7 @@
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "verify:workspace-deps": "node tools/scripts/verification/validate-workspace-dependencies.mjs",
     "verify:worker-config": "node tools/scripts/verification/validate-worker-config.mjs",
     "verify:ssot": "node tools/scripts/utils/verify-resume-sync.mjs",
     "dev": "CLOUDFLARE_ENV= wrangler dev --config wrangler.jsonc --port 8787 --local",
@@ -117,7 +118,8 @@
     "prettier": "^3.9.5",
     "sharp": "^0.35.3",
     "typescript": "^6.0.3",
-    "wrangler": "^4.112.0"
+    "wrangler": "^4.112.0",
+    "yaml": "^2.8.3"
   },
   "overrides": {
     "semver": "^7.6.3",
