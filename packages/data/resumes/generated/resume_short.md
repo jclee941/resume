@@ -1,31 +1,32 @@
 <!-- Generated from master resume -->
 <!-- Variant: short -->
-<!-- Generated: 2026-05-29T14:45:08.441Z -->
+<!-- Generated: 2026-07-12T16:30:52.211Z -->
 <!-- Description: Short form resume (1-2 pages) -->
-
 ## 연락처
 
 - 전화: 010-5757-9592
 - 이메일: <qws941@kakao.com>
 - 주소: 경기도 시흥시 장현천로61
 - GitHub: github.com/jclee941
+- LinkedIn: linkedin.com/in/jclee0109
 
 ---
+
 
 ---
 
 ## 경력 요약
 
-총 경력: 2017.02 ~ 2026.02
+총 경력: 2018.10 ~ 2026.02
 
 ### 보유 기술
 
-- **보안**: FortiGate 방화벽, DDoS, IPS, WAF, NAC, DLP, EDR, APT, Splunk SIEM
+- **보안**: FortiGate 방화벽, DDoS, IPS, WAF, NAC·DLP, EDR, APT, Splunk SIEM
 - **클라우드**: Docker, Kubernetes, Cloudflare Workers (Edge Computing)
-- **자동화**: Python, Shell, Ansible, Terraform, automation (워크플로우 오케스트레이션)
-- **모니터링**: Grafana, Prometheus, Loki (통합 관제 플랫폼)
-- **DevOps**: GitLab EE, CI/CD, Container Registry, Docker Compose
-- **AI/ML**: Claude AI 기반 자동화 파이프라인, ML 기반 위협 예측 및 자동 라우팅 시스템
+- **운영 스크립트**: Python·Shell·Ansible·Terraform·워크플로 오케스트레이션
+- **모니터링**: Grafana·Prometheus·Loki (통합 관제 플랫폼)
+- **DevOps**: GitLab EE·CI/CD·Container Registry·Docker Compose
+- **AI/ML**: Claude 기반 운영 보조 도구, ML 기반 위협 예측 및 라우팅 실험
 
 ### 자격증 및 교육
 
@@ -34,81 +35,83 @@
 
 ### 금융 보안 전문성
 
-- **금융감독원 감사 대응**: 정기/수시 감사 대응 및 지적사항 클리어
-- **FSC 본인가**: 금융위원회 다자간매매체결회사 본인가 심사 보안 분야 통과
-- **Zero Trust 구조 경험**: 다층 망분리 및 Air-Gap 환경을 구축
-- **재해복구 업무 경험**: DR 사이트 점검·운영 및 주기적 DR 테스트 수행
-- **증권거래소 보안**: 대규모 거래 데이터 처리 환경의 보안 운영
+- **금융감독원 감사 대응**: 정기/수시 감사 대응 자료와 운영 근거 정리
+- **금융위 본인가 대응**: 금융위원회 다자간매매체결회사 본인가 심사 보안 분야 대응
+- **Zero Trust 구조 경험**: 다층 망분리 및 Air-Gap 환경 구축
+- **재해복구 업무 경험**: DR 사이트 점검·운영 및 주기적 DR 테스트
+- **금융권 보안**: 거래 데이터 처리 환경의 보안 운영
 
 ---
+
 
 ---
 
 ## 경력사항
 
-### ㈜아이티센 CTS | 정보보안 운영 엔지니어
+### ㈜아이티센 CTS | 보안 인프라 엔지니어
 
-2025.03 ~ 2026.02 | Nextrade 대체거래소 운영SM (정보보안팀)
+2025.03 ~ 2026.02 | 넥스트레이드 보안 운영 아키텍처 자동화 (정보보안팀)
 
 **업무 개요**
 
-- 대체거래소 정보보안팀 운영SM(System Maintenance)
-- 정보보안 장비 운영 및 임직원 환경의 보안 이벤트 확인
+- Splunk ES·FortiGate/FortiManager·Slack/SMS 알림을 연결한 보안 이벤트 대응 아키텍처 설계
+- Python·Docker 기반 자동화 도구와 Claude AI 보조 분석으로 반복 수동 확인·오탐 검토 흐름 정리
 
 주요 업무
 
-- SOC 교대 근무에서 보안 이벤트를 확인하고 등급별 대응 절차를 실행
-- 보안 솔루션(시스템/네트워크/엔드포인트) 상태 점검 및 이벤트 확인
-- 보안 이벤트 분석 및 등급별 대응 절차에 따른 인시던트 처리
-- DR 사이트 점검 및 주기적 DR 테스트 수행
+- Splunk ES Saved Search와 FortiGate 이벤트 기준을 연결해 탐지·분류·알림 흐름 설계
+- Webhook relay와 Slack/SMS 알림으로 보안 이벤트 전달 경로 표준화
+- FortiManager JSON-RPC API 기반 방화벽 정책 조회 흐름 구축
+- Claude AI를 활용한 위협 정보 수집·분류 보조와 오탐 흐름 정리
+- DR 사이트 점검 및 주기적 DR 테스트
 - 취약점 스캔 결과 정리 및 심각도 기준의 패치 적용
 - 개발팀·거래팀·운영팀과 보안 요구사항 커뮤니케이션
-- 긴급 인시던트 발생 시 대응 절차에 따라 원인 분석 수행
+- 긴급 인시던트 발생 시 탐지 근거·정책 조회·알림 이력을 연결한 원인 분석
 
 주요 성과
 
-- 근무 기간 동안 보안 침해사고 없이 운영
-- 금융감독원 감사 자료 준비 및 대응 수행
+- 보안 이벤트 탐지 룰, 알림 조건, 방화벽 정책 조회 결과를 감사 대응 가능한 근거로 구조화
+- 금융감독원 감사 자료 준비 및 대응
 - 거래 플랫폼 운영 기준 유지
-- Splunk-FortiNet 연동 환경에서 방화벽 정책 조회·배포 자동화 스크립트 작성
+- Splunk·Fortinet 연동 환경에서 방화벽 정책 조회·배포 자동화 스크립트 작성
 - Grafana 대시보드로 시스템·컨테이너·로그 지표를 한 화면에 정리
 - Claude AI를 활용한 위협 정보 수집·분류 스크립트 작성으로 수동 분석 의존도 낮춤
-- 자동화 워크플로우로 반복 API 호출 자동화
+- 알림 워크플로로 반복 API 호출 자동화 스크립트 정리
 - SIEM 탐지 룰 검토 및 조건 조정으로 오탐 정리
 - 취약점 SLA 기준에 따라 패치 일정을 관리
-- DR 복구 절차를 스크립트화하고 주기적 훈련 수행
+- DR 복구 절차 스크립트화와 주기적 훈련
 
 ---
 
 ### ㈜가온누리정보시스템 | 프리랜서 인프라 엔지니어
 
-2024.03 ~ 2025.02 | Nextrade 대체거래소(다자간매매체결회사) 구축 프로젝트
+2024.03 ~ 2025.02 | 넥스트레이드 매매체결시스템 구축 프로젝트
 
 **프로젝트 규모**
 
 - 신규 구축 인프라: 정보보안 장비
-- 금융시스템: 거래 플랫폼, 청산 시스템, 감시 시스템, 백오피스
+- 금융시스템: 매매체결시스템
 - 사용자 목표: 사내 임직원 전반
 
 주요 업무
 
 - 보안 아키텍처 구축: 다층 망분리(외부/거래/내부/개발/관리) 및 Air-Gap 설정
 - 보안 솔루션(시스템/네트워크/엔드포인트) 설치 및 연동 작업
-- Python 기반 방화벽/NAC/DLP 정책 자동화 스크립트 작성
-- FSC 본인가 심사 대응 자료 준비 및 보안 체크리스트 이행
-- DR 사이트 구성 수행
+- Python 기반 방화벽·NAC·DLP 정책 운영 스크립트 작성
+- 금융위 본인가 심사 대응 자료 준비 및 보안 체크리스트 이행
+- DR 사이트 구성
 
 주요 성과
 
-- 방화벽 정책 자동화 스크립트 작성 (Python)
-- EPP/DLP 설정 조정으로 EPP/DLP 설정 조정으로 단말 보안 에이전트 정책 정비
-- 구축 기간 동안 보안 침해사고 없이 운영
-- FSC 본인가 심사 보안 분야 질의와 증빙 자료에 대응
-- 다층 망분리 구성 수행
-- NAC 정책 배포 자동화 스크립트 작성
+- 방화벽 정책 운영 스크립트 작성 (Python)
+- EPP/DLP 설정 조정으로 단말 보안 에이전트 정책 정비
+- 구축 기간 동안 보안 운영 점검 내역과 심사 자료를 정리
+- 금융위 본인가 심사 보안 분야 질의와 대응 자료를 정리
+- 다층 망분리 구성
+- NAC 정책 배포 스크립트 작성
 - DR 복구 절차 스크립트화
-- DB 접근제어 쿼리 튜닝으로 DB 접근제어 쿼리 튜닝 수행
-- PB 플랫폼 POC 검증 수행
+- DB 접근제어 쿼리 튜닝
+- PB 플랫폼 POC 검증
 
 ---
 
@@ -119,10 +122,10 @@
 주요 업무
 
 - 금융보안데이터센터(FSDC) 서버 인프라 운영
-- Python 기반 인프라 자동화 스크립트 개발
+- Python 기반 인프라 운영 스크립트 개발
 - 금융감독원 정기 감사 대응 및 DLP 정책 운영
-- DB 접근제어 쿼리 튜닝 및 시스템 DB 접근제어 쿼리 튜닝 수행
-- PB 플랫폼 POC 검증 및 시스템 런칭 지원
+- DB 접근제어 쿼리 튜닝
+- PB 플랫폼 POC 검증 및 시스템 런칭
 
 ---
 
@@ -133,12 +136,12 @@
 주요 업무
 
 - UTM, VMware NSX-T 기반 네트워크 세분화
-- NAC, DLP, APT 등 보안 솔루션 통합 운영
-- OSS 기반 보안 모니터링 구성 수행
+- NAC·DLP·APT 등 보안 솔루션 통합 운영
+- OSS 기반 보안 모니터링 구성
 
 주요 성과
 
-- 네트워크 세분화로 네트워크 세분화 및 장애 대응 기준 정비
+- 네트워크 세분화 및 장애 대응 기준 정비
 - APT·NAC·DLP 통합 침입 탐지·모니터링 체계 구축
 - DLP 룰 재설계로 오탐 흐름 정비
 - 이중화 구성으로 서비스 가용성 강화
@@ -147,21 +150,21 @@
 
 ### ㈜메타넷엠플랫폼 | 인프라·시스템 엔지니어
 
-2020.08 ~ 2021.08 | 대규모 콜센터 인프라
+2020.08 ~ 2021.08 | 콜센터 인프라
 
 주요 업무
 
-- 대규모 재택근무 환경을 구축
-- SSL VPN, NAC 솔루션 통합
+- 재택근무 전환을 위한 원격 접속 환경 구축
+- SSL VPN·NAC 솔루션 통합
 - Ansible 기반 정책 자동 배포
 - Python 기반 네트워크 스위치 자동 점검 시스템 개발
 
 주요 성과
 
-- Python으로 네트워크 점검 자동화
-- 백신-VPN 충돌 원인 분석 및 해결로 백신-VPN 충돌 원인 분석 및 대응 절차 정리
-- Ansible로 NAC 정책 배포 자동화
-- 신규 사이트 네트워크 구성 수행
+- Python으로 네트워크 점검 운영 스크립트
+- 백신-VPN 충돌 원인 분석 및 해결, 대응 절차 정리
+- Ansible로 NAC 정책 배포 스크립트
+- 신규 사이트 네트워크 구성
 
 ---
 
@@ -172,7 +175,7 @@
 주요 업무
 
 - Linux 서버 운영 및 보안 패치
-- 방화벽, IDS 정책 관리 및 로그 분석
+- 방화벽·IDS 정책 관리 및 로그 분석
 - DB 접근제어 솔루션 초기 구성
 
 주요 성과
@@ -183,6 +186,7 @@
 
 ---
 
+
 ---
 
 ## 기술 스택
@@ -190,27 +194,27 @@
 ### 보안 솔루션
 
 - 네트워크 보안: 방화벽, DDoS, IPS/IDS, WAF
-- 엔드포인트: NAC, DLP, EDR/EPP, MDM, APT
+- 엔드포인트: NAC·DLP, EDR/EPP, MDM, APT
 - 접근제어: 서버/DB 접근제어, SSL VPN, IPSec, SSL 복호화
 - 모니터링: SIEM, SOAR
 
 ### 클라우드 및 가상화
 
-- 가상화: VMware vSphere, NSX-T, Hyper-V
+- 가상화: VMware vSphere, NSX-T, Proxmox VE, Hyper-V
 - 컨테이너: Docker, Kubernetes, Helm
 
-### 자동화 및 개발
+### 운영 스크립트 및 개발
 
 - Languages: Python, Shell Script, PowerShell, Node.js, TypeScript, JavaScript
 - IaC: Ansible, Terraform, CloudFormation
 - CI/CD: Jenkins, GitLab CI, GitLab CI/CD, Watchtower
 - 모니터링: Prometheus, Grafana, Loki, ELK Stack, Tempo, Splunk
 
-### AI/ML 및 자동화
+### AI/ML 및 운영 도구
 
 - AI 도구: Claude Code, GitHub Copilot, ChatGPT API
-- MCP 프로토콜: 다수 서버 통합 (filesystem, github, brave-search, memory, tmux 등)
-- 자동화 프레임워크: Custom SlashCommand 시스템
+- MCP 프로토콜: 서버 통합 (filesystem, github, brave-search, memory, tmux 등)
+- 운영 스크립트 프레임워크: Custom SlashCommand 시스템
 - 관찰성: Universal Observability 아키텍처 (Grafana 중심)
 
 ### 컨테이너 및 오케스트레이션
@@ -218,7 +222,7 @@
 - 컨테이너 플랫폼: Docker, Portainer API, Docker Compose
 - 레지스트리: Private Docker Registry (registry.jclee.me)
 - 배포 전략: Multi-Port Deployment, Blue-Green, Canary
-- 자동화: Watchtower 기반 자동 업데이트, 무중단 배포
+- 운영 스크립트: Watchtower 기반 업데이트와 재배포 절차
 
 ### 네트워크
 
