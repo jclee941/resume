@@ -146,14 +146,31 @@
           "class_name": "CleanupWorkflow",
         },
       ],
-      // Queue bindings INACTIVE: producer functions (enqueueTask, enqueueBatch, enqueueNotification)
-      // are defined in apps/job-dashboard/src/queues/queue-enqueuer.js and src/services/notifications.js but no current
-      // workflow handler invokes them — workflows trigger via direct Workflow.create() calls instead.
-      // To activate: (1) provision queues via .github/workflows/provision-queues.yml,
-      // (2) repopulate producers/consumers arrays below from infrastructure/cloudflare/queues.json.
+      // Queue resources are provisioned idempotently by .github/workflows/provision-queues.yml.
+      // The merged resume Worker produces and consumes crawl and notification tasks.
       "queues": {
-        "producers": [],
-        "consumers": [],
+        "producers": [
+          { "queue": "crawl-tasks", "binding": "CRAWL_TASKS" },
+          { "queue": "notifications", "binding": "NOTIFICATION_QUEUE" },
+        ],
+        "consumers": [
+          {
+            "queue": "crawl-tasks",
+            "max_batch_size": 10,
+            "max_batch_timeout": 30,
+            "max_retries": 5,
+            "dead_letter_queue": "crawl-tasks-dlq",
+            "max_concurrency": 3,
+          },
+          {
+            "queue": "notifications",
+            "max_batch_size": 30,
+            "max_batch_timeout": 10,
+            "max_retries": 3,
+            "dead_letter_queue": "notifications-dlq",
+            "max_concurrency": 3,
+          },
+        ],
       },
     },
   },
