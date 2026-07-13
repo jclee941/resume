@@ -101,6 +101,27 @@ describe('auth-service mintSessionToken / verifySessionToken (P1-5)', () => {
     expect(result.deprecated).toBeUndefined();
   });
 
+  test('verifyAdminAuth falls back to a valid bearer when the session cookie is stale', async () => {
+    const request = new Request('https://example.com/api/queue/enqueue', {
+      headers: {
+        Cookie: 'adminToken=expired.invalid.session',
+        Authorization: `Bearer ${ENV.ADMIN_TOKEN}`,
+      },
+    });
+    const result = await auth.verifyAdminAuth(request, ENV);
+    expect(result.ok).toBe(true);
+    expect(result.mode).toBe('legacy-admin-token');
+  });
+
+  test('verifyAdminAuth does not accept the raw admin secret from a cookie', async () => {
+    const request = new Request('https://example.com/api/queue/enqueue', {
+      headers: { Cookie: `adminToken=${ENV.ADMIN_TOKEN}` },
+    });
+    const result = await auth.verifyAdminAuth(request, ENV);
+    expect(result.ok).toBe(false);
+    expect(result.status).toBe(401);
+  });
+
   test('verifyAdminAuth rejects when token absent', async () => {
     const request = new Request('https://example.com/api/applications');
     const result = await auth.verifyAdminAuth(request, ENV);
@@ -112,5 +133,10 @@ describe('auth-service mintSessionToken / verifySessionToken (P1-5)', () => {
     expect(auth.requiresAuth('/api/auto-apply/run')).toBe(true);
     expect(auth.requiresAuth('/api/auto-apply/config')).toBe(true);
     expect(auth.requiresAuth('/api/auto-apply/status')).toBe(true);
+  });
+
+  test('requiresAuth protects queue control endpoints', () => {
+    expect(auth.requiresAuth('/api/queue/enqueue')).toBe(true);
+    expect(auth.requiresAuth('/api/queue/status')).toBe(true);
   });
 });

@@ -26,7 +26,13 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
     };
 
     const authStatus = await this.#validatePlatforms(step, platforms);
-    await this.#crawlPlatforms(step, platforms, authStatus, searchCriteria, results);
+    const crawledAny = await this.#crawlPlatforms(
+      step,
+      platforms,
+      authStatus,
+      searchCriteria,
+      results
+    );
 
     const processedJobs = await step.do(
       'process-results',
@@ -39,19 +45,21 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
       async () => matchJobs(this.env, processedJobs)
     );
 
-    if (!dryRun && matchedJobs.length > 0) {
+    if (!dryRun && crawledAny) {
+      if (matchedJobs.length > 0) {
+        await step.do(
+          'save-results',
+          { retries: { limit: 3, delay: '5 seconds' }, timeout: '2 minutes' },
+          async () => saveMatchedJobs(this.env, matchedJobs)
+        );
+      }
+
       await step.do(
-        'save-results',
-        { retries: { limit: 3, delay: '5 seconds' }, timeout: '2 minutes' },
-        async () => saveMatchedJobs(this.env, matchedJobs)
+        'notify',
+        { retries: { limit: 2, delay: '10 seconds' }, timeout: '30 seconds' },
+        async () => notifyJobCrawlingResults(this.env, platforms, results, matchedJobs)
       );
     }
-
-    await step.do(
-      'notify',
-      { retries: { limit: 2, delay: '10 seconds' }, timeout: '30 seconds' },
-      async () => notifyJobCrawlingResults(this.env, platforms, results, matchedJobs)
-    );
 
     return {
       success: true,
@@ -73,6 +81,10 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
       async () => {
         const status = {};
         for (const platform of platforms) {
+          if (platform !== 'wanted') {
+            status[platform] = { authenticated: true, sessionValid: true };
+            continue;
+          }
           const session = await this.env.SESSIONS.get(`auth:${platform}`);
           status[platform] = {
             authenticated: !!session,
@@ -85,27 +97,45 @@ export class JobCrawlingWorkflow extends WorkflowEntrypoint {
   }
 
   async #crawlPlatforms(step, platforms, authStatus, searchCriteria, results) {
+    let crawledAny = false;
     for (const platform of platforms) {
-      if (!authStatus[platform]?.authenticated) {
-        results.errors.push({ platform, error: 'Not authenticated' });
+      const status = authStatus[platform];
+      if (!status?.authenticated || !status.sessionValid) {
+        const reason = status?.authenticated ? 'invalid Wanted session' : 'Wanted session missing';
+        results.errors.push({ platform, error: `Authentication required: ${reason}` });
         continue;
       }
 
-      const platformResult = await step.do(
-        `crawl-${platform}`,
-        {
-          retries: { limit: 3, delay: '10 seconds', backoff: 'exponential' },
-          timeout: '5 minutes',
-        },
-        async () => this.crawlPlatform(platform, searchCriteria)
-      );
-      results.platforms[platform] = platformResult;
-      results.totalJobs += platformResult.jobs?.length || 0;
+      crawledAny = true;
+      try {
+        const platformResult = await step.do(
+          `crawl-${platform}`,
+          {
+            retries: { limit: 3, delay: '10 seconds', backoff: 'exponential' },
+            timeout: '5 minutes',
+          },
+          async () => {
+            const result = await this.crawlPlatform(platform, searchCriteria);
+            if (result.error) {
+              throw new Error(result.error);
+            }
+            return result;
+          }
+        );
+        results.platforms[platform] = platformResult;
+        results.totalJobs += platformResult.jobs?.length || 0;
+      } catch (error) {
+        results.errors.push({
+          platform,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
 
       if (platforms.indexOf(platform) < platforms.length - 1) {
         await step.sleep('rate-limit-pause', '30 seconds');
       }
     }
+    return crawledAny;
   }
 
   async validateSession(_platform, session) {

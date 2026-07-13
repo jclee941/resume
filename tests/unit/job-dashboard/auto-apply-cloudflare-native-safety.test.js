@@ -127,6 +127,35 @@ describe('job-dashboard Cloudflare native auto-apply safety gates', () => {
       }),
     });
   });
+
+  test.each([
+    [
+      'prefers canonical searchCriteria',
+      { searchCriteria: { location: 'Seoul' }, keywords: ['legacy'], filters: { remote: true } },
+      { location: 'Seoul' },
+    ],
+    [
+      'normalizes legacy crawl search fields',
+      { keywords: ['security'], filters: { location: 'Seoul', keywords: ['stale'] } },
+      { location: 'Seoul', keywords: ['security'] },
+    ],
+  ])('QueueWorkflowDispatcher %s', async (_name, payload, searchCriteria) => {
+    const create = jest.fn(async () => ({ id: 'crawl-from-queue' }));
+    const dispatcher = new QueueWorkflowDispatcher(
+      { JOB_CRAWLING_WORKFLOW: { create } },
+      { info: jest.fn(), warn: jest.fn() }
+    );
+
+    await dispatcher.dispatch(MESSAGE_TYPES.CRAWL, {
+      platforms: ['wanted'],
+      dryRun: true,
+      ...payload,
+    });
+
+    expect(create).toHaveBeenCalledWith({
+      params: { platforms: ['wanted'], searchCriteria, dryRun: true, source: 'queue' },
+    });
+  });
 });
 
 function createNativeEnv({ create, autoApplyEnabled = true }) {

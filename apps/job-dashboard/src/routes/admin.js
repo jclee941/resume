@@ -34,7 +34,10 @@ export function registerAdminRoutes(router, ctx) {
         { delaySeconds: delaySeconds || 0 }
       );
 
-      return jsonResponse({ success: true, type, priority: priority || PRIORITY.BACKGROUND });
+      return jsonResponse(
+        { success: true, type, priority: priority || PRIORITY.BACKGROUND },
+        202
+      );
     } catch (err) {
       log.error('Queue enqueue failed', { error: err.message });
       return jsonResponse({ error: 'Failed to enqueue task' }, 500);

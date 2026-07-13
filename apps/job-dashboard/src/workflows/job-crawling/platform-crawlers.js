@@ -1,4 +1,15 @@
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
+import { resolveWantedSession } from './session.js';
+
+function normalizeKeyword(criteria = {}) {
+  for (const candidate of [criteria?.keyword, criteria?.keywords]) {
+    const values = Array.isArray(candidate) ? candidate : [candidate];
+    for (const value of values) {
+      if (typeof value === 'string' && value.trim()) return value.trim();
+    }
+  }
+  return '';
+}
 
 /**
  * Dispatch crawling to the selected platform adapter.
@@ -25,16 +36,34 @@ export async function crawlPlatform(env, platform, criteria) {
 
 /**
  * @param {Object} env
+ * @param {Object} criteria
  * @returns {Promise<{jobs: Object[], error?: string}>}
  */
-export async function crawlWanted(env) {
+export async function crawlWanted(env, criteria = {}) {
   const session = await env.SESSIONS.get('auth:wanted');
-  if (!session) return { jobs: [], error: 'No session' };
+  if (!session) {
+    return { jobs: [], error: 'Authentication required: Wanted session missing' };
+  }
+
+  const { cookies, sessionValid } = await resolveWantedSession(env, session);
+  if (!sessionValid) {
+    return { jobs: [], error: 'Authentication required: invalid Wanted session' };
+  }
 
   try {
-    const response = await fetch('https://www.wanted.co.kr/api/v4/jobs', {
+    const keyword = normalizeKeyword(criteria);
+    const params = new URLSearchParams({
+      country: 'kr',
+      query: keyword,
+      limit: String(criteria?.limit ?? 10),
+      offset: String(criteria?.offset ?? 0),
+      years: '-1',
+      locations: criteria?.location || 'all',
+      job_sort: 'job.latest_order',
+    });
+    const response = await fetch(`https://www.wanted.co.kr/api/v4/jobs?${params}`, {
       headers: {
-        Cookie: session,
+        Cookie: cookies,
         'User-Agent': DEFAULT_USER_AGENT,
       },
     });
@@ -65,7 +94,7 @@ export async function crawlWanted(env) {
  */
 export async function crawlLinkedIn(criteria = {}) {
   try {
-    const keyword = encodeURIComponent(criteria?.keyword || criteria?.keywords || '');
+    const keyword = encodeURIComponent(normalizeKeyword(criteria));
     const location = encodeURIComponent(criteria?.location || '');
     const response = await fetch(
       `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=${keyword}&location=${location}&f_TPR=r604800&position=0&pageNum=0`,
@@ -116,7 +145,7 @@ export async function crawlLinkedIn(criteria = {}) {
  */
 export async function crawlRemember(criteria = {}) {
   try {
-    const keyword = (criteria?.keyword || criteria?.keywords || '').trim();
+    const keyword = normalizeKeyword(criteria);
     const headers = {
       Accept: 'application/json',
       Origin: 'https://career.rememberapp.co.kr',
