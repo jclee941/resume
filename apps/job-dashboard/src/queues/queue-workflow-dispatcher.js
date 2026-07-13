@@ -28,8 +28,10 @@ export class QueueWorkflowDispatcher {
     const instance = await this.env.JOB_CRAWLING_WORKFLOW.create({
       params: {
         platforms: payload.platforms || ['wanted'],
-        keywords: payload.keywords || [],
-        filters: payload.filters || {},
+        searchCriteria: payload.searchCriteria || {
+          ...(payload.filters || {}),
+          keywords: payload.keywords || [],
+        },
         dryRun: payload.dryRun ?? false,
         source: 'queue',
       },

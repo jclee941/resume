@@ -12,6 +12,7 @@ const ADMIN_ROUTES = [
   '/api/auth',
   '/api/config',
   '/api/cleanup',
+  '/api/queue',
   '/api/resume',
   '/api/workflows',
   '/api/stats',
@@ -88,22 +89,25 @@ export async function verifyAdminAuth(request, env) {
     return { ok: false, status: 503, error: 'Service misconfigured' };
   }
 
-  let token = getSessionTokenFromCookie(request);
-
-  if (!token) {
-    token = getLegacyBearerToken(request);
+  const sessionToken = getSessionTokenFromCookie(request);
+  if (sessionToken) {
+    const sessionResult = await verifySessionToken(sessionToken, env);
+    if (sessionResult.ok) {
+      return { ok: true, mode: 'session', exp: sessionResult.exp };
+    }
   }
 
-  if (!token) {
+  const bearerToken = getLegacyBearerToken(request);
+  if (!bearerToken) {
     return { ok: false, status: 401, error: 'Unauthorized' };
   }
 
-  const sessionResult = await verifySessionToken(token, env);
-  if (sessionResult.ok) {
-    return { ok: true, mode: 'session', exp: sessionResult.exp };
+  const bearerSessionResult = await verifySessionToken(bearerToken, env);
+  if (bearerSessionResult.ok) {
+    return { ok: true, mode: 'session', exp: bearerSessionResult.exp };
   }
 
-  if (!verifySecret(token, env.ADMIN_TOKEN)) {
+  if (!verifySecret(bearerToken, env.ADMIN_TOKEN)) {
     return { ok: false, status: 401, error: 'Unauthorized' };
   }
 

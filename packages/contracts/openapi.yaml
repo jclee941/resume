@@ -791,24 +791,50 @@ paths:
       tags: [Admin]
       summary: Enqueue a job to the crawl-tasks queue
       operationId: enqueueQueueJob
+      security:
+        - AdminSessionCookie: []
+        - LegacyAdminBearer: []
       responses:
         '202':
           description: Job enqueued
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '503':
+          $ref: '#/components/responses/ServiceMisconfigured'
 
   /api/queue/status:
     get:
       tags: [Admin]
       summary: Queue status overview
       operationId: getQueueStatus
+      security:
+        - AdminSessionCookie: []
+        - LegacyAdminBearer: []
       responses:
         '200':
           description: Queue status
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '503':
+          $ref: '#/components/responses/ServiceMisconfigured'
 
 components:
+  securitySchemes:
+    AdminSessionCookie:
+      type: apiKey
+      in: cookie
+      name: adminToken
+      description: HttpOnly admin session cookie minted by POST /api/auth/login
+    LegacyAdminBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: ADMIN_TOKEN
+      description: Deprecated compatibility authentication using the configured ADMIN_TOKEN
+
   responses:
     BadRequest:
       description: Bad request
@@ -818,6 +844,18 @@ components:
             $ref: '#/components/schemas/ErrorResponse'
     Unauthorized:
       description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: CSRF validation failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ServiceMisconfigured:
+      description: Admin authentication is not configured
       content:
         application/json:
           schema:

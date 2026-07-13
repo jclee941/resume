@@ -7,7 +7,7 @@ import { escapeHtml, sendTelegramNotification } from '../../services/notificatio
  * @param {string[]} platforms
  * @param {{totalJobs: number}} results
  * @param {Object[]} matchedJobs
- * @returns {Promise<{notified: boolean}>}
+ * @returns {Promise<{notified: boolean, reason?: string}>}
  */
 export async function notifyJobCrawlingResults(env, platforms, results, matchedJobs) {
   const topJobs =
@@ -16,7 +16,7 @@ export async function notifyJobCrawlingResults(env, platforms, results, matchedJ
       .map((j) => `  • ${escapeHtml(j.company)} - ${escapeHtml(j.position)} (${j.matchScore}%)`)
       .join('\n') || 'None';
 
-  await sendTelegramNotification(
+  const delivery = await sendTelegramNotification(
     env,
     '🔍 <b>Job Search Results</b>\n\n' +
       `<b>Platforms</b>: ${escapeHtml(platforms.join(', '))}\n` +
@@ -24,7 +24,10 @@ export async function notifyJobCrawlingResults(env, platforms, results, matchedJ
       `<b>Matched</b>: ${matchedJobs.length} jobs\n\n` +
       `<b>Top Matches</b>:\n${topJobs}`
   );
-  return { notified: true };
+  return {
+    notified: delivery.sent,
+    ...(delivery.reason ? { reason: delivery.reason } : {}),
+  };
 }
 
 /**
