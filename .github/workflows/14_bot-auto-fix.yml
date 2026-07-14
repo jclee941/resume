@@ -120,6 +120,3 @@ jobs:
           git commit -m "bot: auto-fix naming conventions [skip ci]"
           git push origin "HEAD:${BRANCH}"
           echo "Pushed fixes to ${BRANCH}"
-      - name: Notify on failure
-        if: failure()
-        uses: ./.github/actions/notify-on-failure

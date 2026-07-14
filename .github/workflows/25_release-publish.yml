@@ -181,6 +181,3 @@ jobs:
               || { echo "::warning::release create failed"; exit 1; }
             echo "Created release $NEW_TAG with auto-generated notes"
           fi
-      - name: Notify on failure
-        if: failure()
-        uses: ./.github/actions/notify-on-failure

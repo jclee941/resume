@@ -127,8 +127,3 @@ jobs:
             이 변경이 공격 표면에 미치는 영향을 명시하십시오.
         run: |
           .venv/bin/python -m pr_agent.servers.github_action_runner
-      - name: Notify on failure
-        if: failure()
-        uses: ./.github/actions/notify-on-failure
-        with:
-          title: 'Security PR Review failed for PR #${{ github.event.pull_request.number }}'

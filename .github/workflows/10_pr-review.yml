@@ -241,8 +241,3 @@ jobs:
           # Dynamic command selection, execution, and silent-failure detection
           # are handled by pr_review_runner.py (tested in scripts/pr_review_runner_test.py).
           .venv/bin/python scripts/pr_review_runner.py "$PR_URL"
-      - name: Notify on failure
-        if: failure()
-        uses: ./.github/actions/notify-on-failure
-        with:
-          title: 'PR Review failed for PR #${{ github.event.pull_request.number }}'
