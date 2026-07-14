@@ -156,11 +156,3 @@ jobs:
           else
             echo "::notice::PR $PR_URL mergeStateStatus=$state failed=$failed; no self-heal needed"
           fi
-      - name: Checkout (for composite action resolution)
-        if: failure()
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 1
-      - name: Notify on failure
-        if: failure()
-        uses: ./.github/actions/notify-on-failure

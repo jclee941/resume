@@ -188,6 +188,3 @@ jobs:
           else
             echo "::warning::could not resolve PR URL for $BRANCH; auto-merge not enabled"
           fi
-      - name: Notify on failure
-        if: failure()
-        uses: ./.github/actions/notify-on-failure
