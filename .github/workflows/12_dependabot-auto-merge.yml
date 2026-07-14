@@ -245,11 +245,3 @@ jobs:
 
           echo "::error::failed to post unknown-update-type manual-review comment for $PR_URL"
           exit "$status"
-      - name: Checkout (for composite action resolution)
-        if: failure()
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 1
-      - name: Notify on failure
-        if: failure()
-        uses: ./.github/actions/notify-on-failure
