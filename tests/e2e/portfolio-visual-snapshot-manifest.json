@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "snapshotApproval": {
+    "status": "pending-dom-and-dual-visual-review",
+    "compareEnvironment": "PORTFOLIO_COMPARE_APPROVED_SNAPSHOTS=1",
+    "updateCommand": "PORTFOLIO_COMPARE_APPROVED_SNAPSHOTS=1 npx playwright test tests/e2e/visual.spec.js --project=chromium --update-snapshots",
+    "updateExecuted": false
+  },
+  "locales": [
+    { "id": "ko", "path": "/ko/" },
+    { "id": "en", "path": "/en/" },
+    { "id": "ja", "path": "/ja/" }
+  ],
+  "viewports": [
+    { "id": "375", "width": 375, "height": 812 },
+    { "id": "768", "width": 768, "height": 1024 },
+    { "id": "1280", "width": 1280, "height": 900 }
+  ],
+  "motionModes": ["normal", "reduced"],
+  "coreRegions": [
+    { "id": "full-page", "selector": null, "fullPage": true },
+    { "id": "hero", "selector": ".section-hero", "fullPage": false },
+    { "id": "projects", "selector": "#projects", "fullPage": false }
+  ],
+  "interactionStates": [
+    {
+      "id": "cover-expanded",
+      "trigger": "#cover-letter summary",
+      "target": "#cover-letter details",
+      "widths": [375, 768, 1280]
+    },
+    {
+      "id": "mobile-nav-open",
+      "trigger": ".nav-toggle",
+      "target": "header",
+      "widths": [375]
+    },
+    {
+      "id": "focus-visible",
+      "trigger": ".hero-cta a:first-child",
+      "target": ".section-hero",
+      "widths": [375, 768, 1280]
+    },
+    {
+      "id": "capability-selected",
+      "trigger": "[data-capability-control]",
+      "target": "#skills",
+      "widths": [375, 768, 1280]
+    },
+    {
+      "id": "projects-expanded",
+      "trigger": "[data-projects-expand]",
+      "target": "#projects",
+      "widths": [375, 768, 1280]
+    }
+  ]
+}

@@ -95,7 +95,7 @@ export function createTimelineNode(career, index) {
 
       <div class="timeline-content">
         <header class="timeline-header">
-          <div class="timeline-date" aria-label="${labels.period}">
+          <div class="timeline-date">
             <time>${career.period}</time>
           </div>
           <div class="timeline-badges">
@@ -113,7 +113,7 @@ export function createTimelineNode(career, index) {
           <p class="timeline-role">${career.role}</p>
           <p class="timeline-myrole">${career.myRole}</p>
 
-          <div class="timeline-impact" aria-label="${labels.impact}">
+          <div class="timeline-impact">
             <div class="impact-summary">
               <span class="impact-label">${labels.impact}:</span>
               <span class="impact-text">${impactText.split('\n')[0]}</span>
