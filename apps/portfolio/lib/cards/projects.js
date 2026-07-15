@@ -125,7 +125,7 @@ function generateProjectCards(projectsData, dataHash) {
               <div class="project-tech">
                   ${escapeHtml(project.tech)}
               </div>
-              ${metaLine ? `<div class="project-meta" aria-label="Project activity metadata">${metaLine}</div>` : ''}
+              ${metaLine ? `<div class="project-meta">${metaLine}</div>` : ''}
               ${projectLinks}
           </li>`;
     })
