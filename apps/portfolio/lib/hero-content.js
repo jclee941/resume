@@ -1,7 +1,6 @@
 const { HERO_CONTENT } = require('./hero-content-data');
 
-const CONTACT_EMAIL = 'qws941@kakao.com';
-const RESUME_PDF_PATH = '/resume.pdf';
+const JAPANESE_PRIMARY_CTA = '注目プロジェクトを見る';
 
 function escapeHtml(value) {
   return String(value).replace(
@@ -18,116 +17,45 @@ function escapeHtml(value) {
 }
 
 function renderHeroTitle(content) {
-  const srTitle = content.srTitle ? `<span class="sr-only"> ${content.srTitle}</span>` : '';
-  return `<h1 class="hero-title" role="heading" aria-level="1">${content.title}${srTitle}</h1>`;
+  return `<h1 class="hero-title">${escapeHtml(content.name)}</h1>`;
 }
 
-function renderProofList(content) {
-  const items = content.proofItems.map((item) => `<li>${item}</li>`).join('');
-  return `<ul class="hero-proof-list" aria-label="${content.proofLabel}">${items}</ul>`;
+function encodeCtaDisplayLabel(label) {
+  return label === JAPANESE_PRIMARY_CTA ? [...label].join('\u2060') : label;
 }
 
-function renderPublicProofLinks(content) {
-  const links = content.publicProofLinks
-    .map(
-      ([href, label, detail]) =>
-        `<a href="${escapeHtml(href)}"><span>${escapeHtml(label)}</span><strong>${escapeHtml(detail)}</strong></a>`
-    )
-    .join('');
-  return (
-    `<section class="hero-public-proof" aria-label="${content.publicProofLabel}">` +
-    `<p class="hero-public-proof__label">${escapeHtml(content.publicProofLabel)}</p>` +
-    `<nav class="hero-public-proof__links">${links}</nav>` +
-    '</section>'
-  );
-}
-
-function renderReviewPath(content) {
-  const links = content.reviewLinks
-    .map(
-      ([href, eyebrow, label]) =>
-        `<a href="${href}"><span>${eyebrow}</span><strong>${label}</strong></a>`
-    )
-    .join('');
-  return `<nav class="hero-review-path" aria-label="${content.reviewLabel}">${links}</nav>`;
-}
-
-function renderReviewPacket(content) {
-  const items = content.packetItems
-    .map(([term, description], index) => {
-      const step = String(index + 1).padStart(2, '0');
-      return (
-        '<div>' +
-        `<span class="hiring-review-packet__step" aria-hidden="true">${step}</span>` +
-        `<dt>${term}</dt><dd>${description}</dd></div>`
-      );
-    })
-    .join('');
-  return (
-    `<div class="hiring-review-packet" aria-label="${content.packetLabel}">` +
-    '<div class="hiring-review-packet__header">' +
-    `<p class="hiring-review-packet__eyebrow">${content.packetEyebrow}</p>` +
-    `<p class="hiring-review-packet__status"><span aria-hidden="true"></span>${content.packetStatus}</p>` +
-    '</div>' +
-    `<p class="hiring-review-packet__summary">${content.packetSummary}</p>` +
-    `<dl class="hiring-review-packet__list">${items}</dl></div>`
-  );
-}
-
-function renderRoleQuickPaths(content) {
-  const roles = content.quickRoles
-    .map(([id, label, proof]) => {
-      // No aria-label: the accessible name comes from the visible
-      // label/count/proof spans (WCAG 2.5.3 Label in Name).
-      return (
-        `<button type="button" class="role-chip" data-role-filter="${escapeHtml(id)}" aria-pressed="false" disabled>` +
-        `<span class="role-chip__label">${escapeHtml(label)}</span>` +
-        '<span class="role-chip__separator" aria-hidden="true"></span>' +
-        `<span class="role-chip__proof">${escapeHtml(proof)}</span>` +
-        '</button>'
-      );
-    })
-    .join('');
-  return (
-    `<section class="role-quick-paths" aria-label="${content.quickTitle}">` +
-    '<div class="role-quick-paths__header">' +
-    `<h2 class="role-quick-paths__title">${content.quickTitle}</h2>` +
-    `<p class="role-quick-paths__desc">${content.quickDesc}</p>` +
-    '</div>' +
-    `<div class="role-quick-paths__controls" role="group" aria-label="${content.quickTitle}">${roles}</div>` +
-    '</section>'
-  );
-}
-
-function buildMailHref(subject) {
-  return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}`;
+function renderCta({ href, label }, className) {
+  const displayLabel = encodeCtaDisplayLabel(label);
+  const accessibleName = displayLabel === label ? '' : ` aria-label="${escapeHtml(label)}"`;
+  return `<a href="${escapeHtml(href)}" class="${className}"${accessibleName}>${escapeHtml(displayLabel)}</a>`;
 }
 
 function renderActions(content) {
-  const [contact, resume, projects, pdf] = content.actions;
-  return (
-    `<div class="hero-cta" role="group" aria-label="${content.actionsLabel}">` +
-    `<a href="${buildMailHref(content.mailSubject)}" class="link-subtle link-subtle--primary">${contact}</a>` +
-    `<a href="#resume" class="link-subtle">${resume}</a>` +
-    `<a href="#projects" class="link-subtle">${projects}</a>` +
-    `<a href="${RESUME_PDF_PATH}" download="${content.downloadName}" class="link-subtle">${pdf}</a>` +
-    '</div>'
-  );
+  return [
+    '<div class="hero-cta">',
+    renderCta(content.primaryCta, 'link-subtle link-subtle--primary'),
+    renderCta(content.secondaryCta, 'link-subtle'),
+    '</div>',
+  ].join('');
+}
+
+function renderProjectProofs(content) {
+  const links = content.proofLinks
+    .map(({ href, label }) => renderCta({ href, label }, 'hero-project-proof-link'))
+    .join('');
+  return `<div class="hero-public-proof"><div class="hero-public-proof__links">${links}</div></div>`;
 }
 
 function buildHeroContent(locale) {
   const content = HERO_CONTENT[locale] || HERO_CONTENT.ko;
   return [
     renderHeroTitle(content),
-    `<p class="hero-role">${content.role}</p>`,
-    `<p class="hero-availability">${content.availability}</p>`,
-    `<p class="hero-positioning">${content.positioning}</p>`,
+    `<p class="hero-role">${escapeHtml(content.primaryTitle)}</p>`,
+    `<p class="hero-tagline">${escapeHtml(content.supportingLine)}</p>`,
+    `<p class="hero-availability">${escapeHtml(content.availability)}</p>`,
+    `<p class="hero-positioning">${escapeHtml(content.proposition)}</p>`,
     renderActions(content),
-    renderProofList(content),
-    renderPublicProofLinks(content),
-    renderReviewPath(content),
-    renderReviewPacket(content),
-    renderRoleQuickPaths(content),
+    renderProjectProofs(content),
   ].join('');
 }
 
