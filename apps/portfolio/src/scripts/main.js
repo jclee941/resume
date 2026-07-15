@@ -2,7 +2,6 @@ import { initWebVitals } from './modules/web-vitals.js';
 import { initUI } from './modules/ui.js';
 import { initSkillRadar } from './modules/skill-radar.js';
 import { initCareerTimeline } from './modules/timeline.js';
-import { initProjectCards } from './modules/project-cards.js';
 import { initProjectMore } from './modules/project-more.js';
 import { initRecruiterEnhancements } from './modules/recruiter-enhancements.js';
 
@@ -91,7 +90,6 @@ async function bootstrapPortfolio() {
   registerServiceWorker();
   initUI();
   initWebVitals();
-  initProjectCards();
   initProjectMore();
   initRecruiterEnhancements();
   await loadResumeData();

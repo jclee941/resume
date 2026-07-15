@@ -39,6 +39,7 @@ export function initProjectMore() {
     const expanded = list.classList.toggle('is-expanded');
     btn.setAttribute('aria-expanded', String(expanded));
     btn.textContent = expanded ? labels.less : labels.more;
+    btn.focus({ preventScroll: true });
   });
 
   wrap.appendChild(btn);
