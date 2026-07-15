@@ -51,7 +51,6 @@ describe('T3: localized nav toggle copy and deferred metadata', () => {
   const ja = buildJapaneseTemplate(ko);
   const manifest = JSON.parse(read(path.join(PORTFOLIO, 'manifest.json')));
   const manifestEn = JSON.parse(read(path.join(PORTFOLIO, 'manifest_en.json')));
-  const targetRole = 'Security Automation / Infrastructure Engineer';
 
   test('nav toggle accessible names are localized per locale', () => {
     expect(ko).toContain('aria-label="메뉴 열기"');
@@ -62,23 +61,24 @@ describe('T3: localized nav toggle copy and deferred metadata', () => {
     expect(ja).toContain('data-nav-label-close="メニューを閉じる"');
   });
 
-  test('title/meta/manifest strings use the hiring-decision role convention', () => {
-    expect(ko).toContain(`<title>이재철 - ${targetRole}</title>`);
-    expect(ko).toContain(`<meta property="og:title" content="이재철 - ${targetRole}" />`);
-    expect(ko).toContain(`<meta name="twitter:title" content="이재철 - ${targetRole}" />`);
-    expect(en).toContain(`<title>Jaecheol Lee - ${targetRole}</title>`);
-    expect(en).toMatch(
-      new RegExp(`<meta\\s+property="og:title"\\s+content="Jaecheol Lee - ${targetRole}"`)
-    );
-    expect(en).toMatch(
-      new RegExp(`<meta\\s+name="twitter:title"\\s+content="Jaecheol Lee - ${targetRole}"`)
-    );
-    expect(ja).toContain(`<title>イ・ジェチョル - ${targetRole}</title>`);
-    expect(ja).toContain(`<meta property="og:title" content="イ・ジェチョル - ${targetRole}" />`);
-    expect(manifest.name).toBe(`이재철 - ${targetRole}`);
-    expect(manifest.description).toContain(targetRole);
-    expect(manifestEn.name).toBe(`Jaecheol Lee - ${targetRole}`);
-    expect(manifestEn.description).toContain(targetRole);
+  test('title/meta/manifest strings use the approved full-stack identity', () => {
+    const titles = {
+      ko: '이재철 | 풀스택 엔지니어',
+      en: 'Jaecheol Lee | Full-Stack Engineer',
+      ja: '李在哲 | フルスタックエンジニア',
+    };
+    expect(ko).toContain(`<title>${titles.ko}</title>`);
+    expect(ko).toContain(`<meta property="og:title" content="${titles.ko}" />`);
+    expect(ko).toContain(`<meta name="twitter:title" content="${titles.ko}" />`);
+    expect(en).toContain(`<title>${titles.en}</title>`);
+    expect(en).toMatch(new RegExp(`<meta\\s+property="og:title"\\s+content="${titles.en}"`));
+    expect(en).toMatch(new RegExp(`<meta\\s+name="twitter:title"\\s+content="${titles.en}"`));
+    expect(ja).toContain(`<title>${titles.ja}</title>`);
+    expect(ja).toContain(`<meta property="og:title" content="${titles.ja}" />`);
+    expect(manifest.name).toBe(titles.ko);
+    expect(manifestEn.name).toBe(titles.en);
+    expect(manifest.description).toContain('풀스택 포트폴리오');
+    expect(manifestEn.description).toContain('full-stack engineering portfolio');
   });
 });
 

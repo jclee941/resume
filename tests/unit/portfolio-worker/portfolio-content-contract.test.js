@@ -5,7 +5,6 @@ const { buildHeroContent } = require('../../../apps/portfolio/lib/hero-content')
 const { HERO_CONTENT } = require('../../../apps/portfolio/lib/hero-content-data');
 
 const PORTFOLIO_DIR = path.resolve(__dirname, '../../../apps/portfolio');
-const TARGET_ROLE = 'Security Automation / Infrastructure Engineer';
 
 function readPortfolioFile(fileName) {
   return fs.readFileSync(path.join(PORTFOLIO_DIR, fileName), 'utf8');
@@ -36,8 +35,15 @@ function visibleText(html) {
 }
 
 describe('portfolio first-screen hiring decision contract', () => {
-  test('KO and EN metadata names the security automation/infrastructure role', () => {
-    for (const fileName of ['index.html', 'index-en.html']) {
+  test('KO and EN metadata names the locale full-stack role', () => {
+    const expectations = {
+      'index.html': { title: '이재철 | 풀스택 엔지니어', jobTitle: '풀스택 엔지니어' },
+      'index-en.html': {
+        title: 'Jaecheol Lee | Full-Stack Engineer',
+        jobTitle: 'Full-Stack Engineer',
+      },
+    };
+    for (const [fileName, expected] of Object.entries(expectations)) {
       const html = readPortfolioFile(fileName);
       const title = extractTagContent(html, /<title>([^<]+)<\/title>/i);
       const ogTitle = extractMetaContent(html, 'property', 'og:title');
@@ -47,12 +53,9 @@ describe('portfolio first-screen hiring decision contract', () => {
         ([, name]) => name
       );
 
-      for (const metadataValue of [title, ogTitle, twitterTitle, personJobTitle]) {
-        expect(metadataValue).toContain(TARGET_ROLE);
-      }
-      expect(namedStructuredData).toEqual(
-        expect.arrayContaining([expect.stringContaining(TARGET_ROLE)])
-      );
+      expect([title, ogTitle, twitterTitle]).toEqual(Array(3).fill(expected.title));
+      expect(personJobTitle).toBe(expected.jobTitle);
+      expect(namedStructuredData).toContain(expected.title);
     }
   });
 
