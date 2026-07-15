@@ -27,6 +27,20 @@ function expectStableIdsMatch(koItems, localizedItems, label) {
   expect(label).toBeTruthy();
 }
 
+function projectEvidenceShape(resume) {
+  return Object.fromEntries(
+    resume.personalProjects
+      .filter((project) => project.fullStackEvidence)
+      .map((project) => [
+        project.id,
+        {
+          keys: Object.keys(project.fullStackEvidence),
+          architectureStepCount: project.fullStackEvidence.architectureSteps.length,
+        },
+      ])
+  );
+}
+
 describe('resume locale parity', () => {
   const ko = readLocale('resume_data.json');
   const en = readLocale('resume_data_en.json');
@@ -104,5 +118,23 @@ describe('resume locale parity', () => {
       ja.careers.flatMap((career) => career.projects || []),
       'careerProjects/ja'
     );
+  });
+
+  test('featured project evidence keys and architecture counts match across locales', () => {
+    const expectedFeatured = [
+      'safetywallet-cf-workers-pwa',
+      'resume-portfolio',
+      'ip-blacklist-platform',
+    ];
+    for (const locale of [ko, en, ja]) {
+      const sorted = [...locale.personalProjects].sort(
+        (left, right) => left.displayOrder - right.displayOrder
+      );
+      expect(sorted.slice(0, 3).map(({ id }) => id)).toEqual(expectedFeatured);
+      expect(sorted.slice(0, 3).map(({ displayOrder }) => displayOrder)).toEqual([1, 2, 3]);
+    }
+
+    expect(projectEvidenceShape(en)).toEqual(projectEvidenceShape(ko));
+    expect(projectEvidenceShape(ja)).toEqual(projectEvidenceShape(ko));
   });
 });
