@@ -22,6 +22,7 @@
 .hero-availability {
   display: inline-flex;
   width: fit-content;
+  max-inline-size: 100%;
   margin: 0 0 var(--space-4);
   padding: var(--space-2) var(--space-4);
   border: 1px solid rgb(var(--color-accent-rgb) / 0.38);
@@ -141,5 +142,17 @@
 
   .hero-proof-list li:first-child {
     grid-column: auto;
+  }
+}
+
+@media (min-width: 769px) {
+  #hero .hero-content > .hero-tagline {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  #hero .hero-public-proof a {
+    min-height: 44px;
   }
 }
