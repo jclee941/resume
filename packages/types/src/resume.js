@@ -42,6 +42,17 @@
  * @property {string} [period]
  * @property {string[]} [technologies]
  * @property {string} description
+ * @property {ResumeFullStackEvidence} [fullStackEvidence]
+ */
+
+/**
+ * @typedef {Object} ResumeFullStackEvidence
+ * @property {string} [userSurface]
+ * @property {string} [backendApi]
+ * @property {string} [dataAsync]
+ * @property {string} [securityReliability]
+ * @property {string} [deliveryOperations]
+ * @property {string[]} [architectureSteps]
  */
 
 /**
