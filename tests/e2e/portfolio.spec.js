@@ -8,8 +8,8 @@ const SELECTORS = {
   // Projects render server-side as <li.project-item.project-card> inside the
   // clean <ul.project-list>. Sections use scroll-reveal (opacity 0 until in view).
   PROJECT_CARD: '#projects .project-list .project-card',
-  DEEP_DIVE_GRID: '.project-cards-grid',
-  DEEP_DIVE_CARD: '.project-cards-grid .project-card',
+  PROJECT_LIST: '#projects .project-list',
+  PROJECT_MORE_BUTTON: '[data-projects-expand]',
   PROJECT_LINK_PRIMARY: '#projects .project-card a[href]',
 };
 
@@ -99,22 +99,19 @@ test.describe('Portfolio Homepage', () => {
     }
   });
 
-  test('should render and open deep-dive project cards', async ({ page }) => {
-    const deepDiveGrid = page.locator(SELECTORS.DEEP_DIVE_GRID);
-    await deepDiveGrid.scrollIntoViewIfNeeded();
-    await expect(deepDiveGrid).toBeVisible();
+  test('should render and expand the project list', async ({ page }) => {
+    await revealProjects(page);
+    const projectList = page.locator(SELECTORS.PROJECT_LIST);
+    const firstExtraProject = projectList.locator('.project-item--collapsed').first();
+    const expandButton = page.locator(SELECTORS.PROJECT_MORE_BUTTON);
 
-    const deepDiveCards = page.locator(SELECTORS.DEEP_DIVE_CARD);
-    await expect(deepDiveCards.first()).toBeVisible();
-    await expect(deepDiveGrid.locator('.portfolio-icon').first()).toBeVisible();
-    await expect(deepDiveGrid).not.toContainText(/[\u{1F300}-\u{1FAFF}]/u);
-    await deepDiveCards.first().click();
-
-    const dialog = page.getByRole('dialog');
-    await expect(dialog).toBeVisible();
-    await expect(dialog.getByRole('heading').first()).toBeVisible();
-    await expect(dialog.locator('.portfolio-icon').first()).toBeVisible();
-    await expect(dialog).not.toContainText(/[\u{1F300}-\u{1FAFF}]/u);
+    await expect(projectList).toBeVisible();
+    await expect(firstExtraProject).toBeHidden();
+    await expect(expandButton).toHaveAttribute('aria-expanded', 'false');
+    await expandButton.click();
+    await expect(expandButton).toHaveAttribute('aria-expanded', 'true');
+    await expect(projectList).toHaveAttribute('data-projects-expanded', 'true');
+    await expect(firstExtraProject).toBeVisible();
   });
 
   test('should have working scroll to sections', async ({ page }) => {

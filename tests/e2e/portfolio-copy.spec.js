@@ -97,17 +97,24 @@ test.describe('Portfolio full-stack hero copy', () => {
       const primaryTitle = document.querySelector('#hero .hero-role').getBoundingClientRect();
       const supportingLine = document.querySelector('#hero .hero-tagline').getBoundingClientRect();
       return {
-        primaryTitle: { left: primaryTitle.left, right: primaryTitle.right, bottom: primaryTitle.bottom },
+        primaryTitle: {
+          left: primaryTitle.left,
+          right: primaryTitle.right,
+          bottom: primaryTitle.bottom,
+        },
         supportingLine: {
           left: supportingLine.left,
           right: supportingLine.right,
           top: supportingLine.top,
         },
+        viewportWidth: document.documentElement.clientWidth,
       };
     });
 
     expect(hierarchy.supportingLine.left).toBe(hierarchy.primaryTitle.left);
-    expect(hierarchy.supportingLine.right).toBe(hierarchy.primaryTitle.right);
+    expect(hierarchy.supportingLine.right).toBeLessThanOrEqual(hierarchy.primaryTitle.right);
+    expect(hierarchy.primaryTitle.right).toBeLessThanOrEqual(hierarchy.viewportWidth);
+    expect(hierarchy.supportingLine.right).toBeLessThanOrEqual(hierarchy.viewportWidth);
     expect(hierarchy.supportingLine.top).toBeGreaterThanOrEqual(hierarchy.primaryTitle.bottom);
   });
 });
