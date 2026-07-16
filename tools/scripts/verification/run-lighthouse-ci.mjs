@@ -5,13 +5,18 @@ import path from 'node:path';
 import process from 'node:process';
 import lighthouse from 'lighthouse';
 import { launch as launchChrome } from 'chrome-launcher';
-
-function median(values) {
-  if (!values.length) return null;
-  const sorted = [...values].sort((a, b) => a - b);
-  const middle = Math.floor(sorted.length / 2);
-  return sorted.length % 2 === 0 ? (sorted[middle - 1] + sorted[middle]) / 2 : sorted[middle];
-}
+import {
+  assertLhrIdentity,
+  assertReportInventory,
+  expectedReportFiles,
+  installSignalHandlers,
+  prepareOutputDir,
+  profileAuditSettings,
+  summarizeProfile,
+  validateAuditUrls,
+  withTimeout,
+  writeReportPair,
+} from './lighthouse-contract.mjs';
 
 function parseArgs(argv) {
   const args = new Map();
@@ -23,217 +28,152 @@ function parseArgs(argv) {
   return args;
 }
 
-function normalizeAssertion(rawAssertion) {
-  if (Array.isArray(rawAssertion)) {
-    return {
-      level: String(rawAssertion[0] ?? 'warn').toLowerCase(),
-      options: rawAssertion[1] ?? {},
-    };
-  }
+function profileConfig(name, collect, args, allowRemote) {
+  const urlOverride = args.get('url');
+  const runsOverride = args.get('runs');
   return {
-    level: String(rawAssertion ?? 'warn').toLowerCase(),
-    options: {},
+    name,
+    urls: validateAuditUrls(urlOverride ? [urlOverride] : (collect?.url ?? []), allowRemote),
+    runs: runsOverride ? Number(runsOverride) : Number(collect?.numberOfRuns ?? 1),
+    settings: collect?.settings ?? {},
   };
 }
 
-function getResourceSummaryValue(lhr, key) {
-  const [, type, metric] = key.split(':');
-  if (metric !== 'size') return null;
-
-  const summary = lhr.audits?.['resource-summary'];
-  const items = summary?.details?.items;
-  if (!Array.isArray(items)) return null;
-
-  const target = items.find((item) => item.resourceType === type);
-  return typeof target?.transferSize === 'number' ? target.transferSize : null;
-}
-
-function getAssertionValue(lhr, key, options) {
-  if (key.startsWith('categories:')) {
-    const category = key.split(':')[1];
-    const score = lhr.categories?.[category]?.score;
-    return typeof score === 'number' ? score : null;
+async function runProfile(profile, assertions, outputDir, chromePath, timeouts) {
+  if (profile.urls.length !== 1)
+    throw new Error(`Profile ${profile.name} requires exactly one URL`);
+  if (!Number.isInteger(profile.runs) || profile.runs < 1) {
+    throw new Error(`Profile ${profile.name} has invalid numberOfRuns`);
   }
-
-  if (key.startsWith('resource-summary:')) {
-    return getResourceSummaryValue(lhr, key);
-  }
-
-  const audit = lhr.audits?.[key];
-  if (!audit) return null;
-
-  if (typeof options.maxNumericValue === 'number' || typeof options.minNumericValue === 'number') {
-    return typeof audit.numericValue === 'number' ? audit.numericValue : null;
-  }
-
-  return typeof audit.score === 'number' ? audit.score : null;
-}
-
-function evaluateAssertion(key, assertion, value, profileName) {
-  const failures = [];
-  const warnings = [];
-
-  if (value === null) {
-    const msg = `[${profileName}] ${key}: metric not available in current Lighthouse version`;
-    warnings.push(msg);
-    return { failures, warnings };
-  }
-
-  const opts = assertion.options;
-  if (typeof opts.minScore === 'number' && value < opts.minScore) {
-    failures.push(`[${profileName}] ${key}: ${value.toFixed(3)} < minScore ${opts.minScore}`);
-  }
-
-  if (typeof opts.maxNumericValue === 'number' && value > opts.maxNumericValue) {
-    failures.push(
-      `[${profileName}] ${key}: ${value.toFixed(2)} > maxNumericValue ${opts.maxNumericValue}`
-    );
-  }
-
-  if (opts.minScore === undefined && opts.maxNumericValue === undefined) {
-    if (assertion.level === 'error' && value < 1) {
-      failures.push(`[${profileName}] ${key}: score ${value.toFixed(3)} < 1`);
-    }
-    if (assertion.level === 'warn' && value < 1) {
-      warnings.push(`[${profileName}] ${key}: score ${value.toFixed(3)} < 1`);
-    }
-  }
-
-  return { failures, warnings };
-}
-
-async function runProfile(profileName, collectConfig, assertions) {
-  const urls = collectConfig?.url ?? [];
-  const runs = Number(collectConfig?.numberOfRuns ?? 1);
-  const settings = collectConfig?.settings ?? {};
-
-  if (!urls.length) {
-    throw new Error(`Profile ${profileName} has no URL configured`);
-  }
-
-  const results = [];
-  const chrome = await launchChrome({
+  const launchOptions = {
     chromeFlags: ['--headless=new', '--no-sandbox', '--disable-dev-shm-usage'],
-  });
-
+    ...(chromePath ? { chromePath } : {}),
+  };
+  const chrome = await withTimeout(
+    launchChrome(launchOptions),
+    timeouts.run,
+    `${profile.name} Chrome launch`
+  );
+  let closePromise;
+  const closeChrome = () => {
+    closePromise ??= withTimeout(chrome.kill(), timeouts.kill, `${profile.name} Chrome shutdown`);
+    return closePromise;
+  };
+  const controller = new AbortController();
+  const lifecycle = installSignalHandlers(process, controller, closeChrome);
+  void lifecycle.done.catch(() => {});
+  const lhrs = [];
   try {
-    for (const url of urls) {
-      for (let i = 0; i < runs; i += 1) {
-        const runnerResult = await lighthouse(
-          url,
-          {
-            port: chrome.port,
-            logLevel: 'error',
-            output: 'json',
-            onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
-            preset: settings.preset,
-            throttling: settings.throttling,
-            screenEmulation: settings.screenEmulation,
-            formFactor: settings.screenEmulation?.mobile ? 'mobile' : 'desktop',
-          },
-          undefined
+    for (const url of profile.urls) {
+      for (let index = 0; index < profile.runs; index += 1) {
+        controller.signal.throwIfAborted();
+        const result = await withTimeout(
+          lighthouse(
+            url,
+            {
+              port: chrome.port,
+              logLevel: 'error',
+              output: ['json', 'html'],
+              onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
+              ...profileAuditSettings(profile.name, profile.settings),
+            },
+            undefined
+          ),
+          timeouts.run,
+          `${profile.name} run ${index + 1}`
         );
-
-        if (!runnerResult?.lhr) {
-          throw new Error(`Lighthouse returned no report for ${url}`);
-        }
-
-        results.push(runnerResult.lhr);
+        if (!result?.lhr) throw new Error(`Lighthouse returned no LHR for ${url}`);
+        assertLhrIdentity(profile.name, result.lhr);
+        await writeReportPair(outputDir, profile.name, index, result.report);
+        lhrs.push(result.lhr);
       }
     }
   } finally {
-    await chrome.kill();
+    lifecycle.dispose();
+    await closeChrome();
   }
-
-  const failures = [];
-  const warnings = [];
-  const valuesByAssertion = new Map();
-
-  for (const [key, rawAssertion] of Object.entries(assertions)) {
-    const assertion = normalizeAssertion(rawAssertion);
-    if (assertion.level !== 'error' && assertion.level !== 'warn') continue;
-
-    const values = [];
-    for (const lhr of results) {
-      const value = getAssertionValue(lhr, key, assertion.options);
-      if (value !== null) values.push(value);
-    }
-    valuesByAssertion.set(key, values);
-
-    const value = median(values);
-    const outcome = evaluateAssertion(key, assertion, value, profileName);
-    failures.push(...outcome.failures);
-    warnings.push(...outcome.warnings);
-  }
-
-  const representative = results[0];
-  const scores = {
-    performance: representative.categories?.performance?.score ?? null,
-    accessibility: representative.categories?.accessibility?.score ?? null,
-    bestPractices: representative.categories?.['best-practices']?.score ?? null,
-    seo: representative.categories?.seo?.score ?? null,
-  };
-
   return {
-    profileName,
-    urls,
-    runs: results.length,
-    failures,
-    warnings,
-    scores,
+    ...summarizeProfile(profile.name, lhrs, assertions),
+    urls: profile.urls,
+    reportFiles: expectedReportFiles([profile.name], profile.runs),
   };
 }
 
-function printScore(name, value) {
-  if (typeof value !== 'number') return `${name}=n/a`;
-  return `${name}=${(value * 100).toFixed(0)}`;
+function printProfile(result) {
+  const score = (key) => {
+    const value = result.medians[`categories:${key}`];
+    return typeof value === 'number' ? (value * 100).toFixed(0) : 'n/a';
+  };
+  console.log(
+    `[${result.profileName}] runs=${result.runs} median perf=${score('performance')} a11y=${score('accessibility')} bp=${score('best-practices')} seo=${score('seo')} outliers=${result.runOutliers.length}`
+  );
 }
 
 async function main() {
   const args = parseArgs(process.argv);
-  const configRelPath = args.get('config') ?? 'tools/lighthouserc.json';
-  const configPath = path.resolve(process.cwd(), configRelPath);
-  const raw = await fs.readFile(configPath, 'utf8');
-  const config = JSON.parse(raw);
-
+  const allowRemote = args.get('allow-remote') === 'true';
+  const configPath = path.resolve(args.get('config') ?? 'tools/lighthouserc.json');
+  const outputDir = path.resolve(
+    args.get('output-dir') ?? process.env.LIGHTHOUSE_OUTPUT_DIR ?? '.lighthouseci/portfolio-rebrand'
+  );
+  const config = JSON.parse(await fs.readFile(configPath, 'utf8'));
   const assertions = config?.ci?.assert?.assertions;
   if (!assertions || typeof assertions !== 'object') {
     throw new Error('Invalid lighthouserc: ci.assert.assertions is required');
   }
-
   const profiles = [
-    ['desktop', config?.ci?.collect],
-    ['mobile', config?.ci?.collectMobile],
-  ].filter(([, collect]) => Boolean(collect));
-
-  if (!profiles.length) {
-    throw new Error('Invalid lighthouserc: no ci.collect or ci.collectMobile profile found');
-  }
-
-  const allFailures = [];
-  const allWarnings = [];
-
-  for (const [profileName, collectConfig] of profiles) {
-    const result = await runProfile(profileName, collectConfig, assertions);
-    console.log(
-      `[${result.profileName}] runs=${result.runs} ${printScore('perf', result.scores.performance)} ${printScore('a11y', result.scores.accessibility)} ${printScore('bp', result.scores.bestPractices)} ${printScore('seo', result.scores.seo)}`
+    profileConfig('desktop', config?.ci?.collect, args, allowRemote),
+    profileConfig('mobile', config?.ci?.collectMobile, args, allowRemote),
+  ].filter((profile) => profile.urls.length > 0);
+  if (profiles.length !== 2) throw new Error('Desktop and mobile Lighthouse profiles are required');
+  const reportFiles = profiles.flatMap((profile) =>
+    expectedReportFiles([profile.name], profile.runs)
+  );
+  const timeouts = {
+    run: Number(args.get('run-timeout-ms') ?? 120_000),
+    kill: Number(args.get('kill-timeout-ms') ?? 15_000),
+  };
+  await prepareOutputDir(outputDir);
+  const results = [];
+  for (const profile of profiles) {
+    const result = await runProfile(
+      profile,
+      assertions,
+      outputDir,
+      args.get('chrome-path') ?? process.env.CHROME_PATH,
+      timeouts
     );
-    allFailures.push(...result.failures);
-    allWarnings.push(...result.warnings);
+    results.push(result);
+    printProfile(result);
   }
-
-  if (allWarnings.length) {
-    console.log('\nWarnings:');
-    for (const warning of allWarnings) console.log(`- ${warning}`);
+  const failures = results.flatMap((result) => result.failures);
+  const warnings = results.flatMap((result) => result.warnings);
+  const outliers = results.flatMap((result) =>
+    result.runOutliers.map((outlier) => ({ profileName: result.profileName, ...outlier }))
+  );
+  const summary = {
+    schemaVersion: 1,
+    generatedAt: new Date().toISOString(),
+    config: path.relative(process.cwd(), configPath),
+    reports: reportFiles,
+    profiles: results,
+    failures,
+    warnings,
+    outliers,
+  };
+  await fs.writeFile(path.join(outputDir, 'summary.json'), JSON.stringify(summary, null, 2));
+  await assertReportInventory(outputDir, [...reportFiles, 'summary.json']);
+  if (warnings.length > 0) console.log(`Lighthouse warnings: ${warnings.length}`);
+  if (outliers.length > 0) {
+    console.log(`Lighthouse per-run outliers retained for investigation: ${outliers.length}`);
   }
-
-  if (allFailures.length) {
-    console.error('\nLighthouse assertion failures:');
-    for (const failure of allFailures) console.error(`- ${failure}`);
-    process.exit(1);
+  if (failures.length > 0) {
+    for (const failure of failures) console.error(`- ${failure}`);
+    throw new Error(`Lighthouse failed with ${failures.length} assertion failure(s)`);
   }
-
-  console.log('\nLighthouse checks passed');
+  console.log(
+    `Lighthouse median policy passed; retained ${reportFiles.length} reports in ${outputDir}`
+  );
 }
 
 main().catch((error) => {
