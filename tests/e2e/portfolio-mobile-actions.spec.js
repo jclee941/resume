@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-test.describe('Mobile recruiter actions', () => {
+test.describe('Mobile portfolio actions', () => {
   const mobileHeroLocales = [
     { path: '/', label: 'ko' },
     { path: '/en/', label: 'en' },
@@ -57,25 +57,28 @@ test.describe('Mobile recruiter actions', () => {
       }
 
       if (label === 'ja') {
-        const japaneseLabel = await page.locator('.hero-cta a').first().evaluate((element) => {
-          const node = element.firstChild;
-          const characters = [...node.data];
-          const rendered = characters
-            .map((character, index) => {
-              if (character === '\u2060') return null;
-              const range = document.createRange();
-              range.setStart(node, index);
-              range.setEnd(node, index + 1);
-              return { character, top: Math.round(range.getBoundingClientRect().top) };
-            })
-            .filter(Boolean);
-          return {
-            normalized: characters.filter((character) => character !== '\u2060').join(''),
-            wordJoiners: characters.filter((character) => character === '\u2060').length,
-            finalTop: rendered.at(-1).top,
-            previousTop: rendered.at(-2).top,
-          };
-        });
+        const japaneseLabel = await page
+          .locator('.hero-cta a')
+          .first()
+          .evaluate((element) => {
+            const node = element.firstChild;
+            const characters = [...node.data];
+            const rendered = characters
+              .map((character, index) => {
+                if (character === '\u2060') return null;
+                const range = document.createRange();
+                range.setStart(node, index);
+                range.setEnd(node, index + 1);
+                return { character, top: Math.round(range.getBoundingClientRect().top) };
+              })
+              .filter(Boolean);
+            return {
+              normalized: characters.filter((character) => character !== '\u2060').join(''),
+              wordJoiners: characters.filter((character) => character === '\u2060').length,
+              finalTop: rendered.at(-1).top,
+              previousTop: rendered.at(-2).top,
+            };
+          });
 
         expect(japaneseLabel.normalized).toBe('注目プロジェクトを見る');
         expect(japaneseLabel.wordJoiners).toBeGreaterThan(0);
@@ -149,44 +152,30 @@ test.describe('Mobile recruiter actions', () => {
     expect(pdfIndex).toBeLessThan(proofIndex);
   });
 
-  test('mobile recruiter action bar keeps core actions reachable without overflow', async ({
-    page,
-  }) => {
-    await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+  for (const path of ['/ko/', '/en/', '/ja/']) {
+    test(`mobile action set is exactly Projects, Resume PDF, Contact (${path})`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 375, height: 812 });
+      await page.goto(path, { waitUntil: 'domcontentloaded' });
+      const actionBar = page.locator('.mobile-actions');
+      await expect(actionBar).toBeHidden();
 
-    const actionBar = page.locator('.recruiter-action-bar');
-    await expect(actionBar).toBeHidden();
+      await page.evaluate(() => window.scrollTo(0, 240));
+      await page.waitForFunction(() => !document.querySelector('.mobile-actions')?.hidden);
+      await expect(actionBar).toBeVisible();
+      await expect(actionBar.getByRole('link')).toHaveText(['Projects', 'Resume PDF', 'Contact']);
+      await expect(actionBar.getByRole('link')).toHaveCount(3);
+      expect(
+        await actionBar
+          .getByRole('link')
+          .evaluateAll((links) => links.map((link) => link.getAttribute('href')))
+      ).toEqual(['#projects', '/resume.pdf', '#contact']);
+      await expect(actionBar.getByRole('button')).toHaveCount(0);
 
-    await page.evaluate(() => {
-      const hero = document.querySelector('#hero');
-      const heroBottom = hero ? hero.getBoundingClientRect().bottom + window.scrollY : 480;
-      window.scrollTo(0, heroBottom + 24);
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)
+      ).toBe(false);
     });
-    await page.waitForFunction(() =>
-      document.querySelector('.recruiter-action-bar')?.classList.contains('is-visible')
-    );
-
-    await expect(actionBar).toBeVisible();
-    await expect(actionBar.getByRole('link', { name: /문의|Contact/ })).toHaveAttribute(
-      'href',
-      /mailto:/
-    );
-    await expect(actionBar.getByRole('link', { name: /프로젝트|Projects/ })).toHaveAttribute(
-      'href',
-      '#projects'
-    );
-    await expect(actionBar.getByRole('link', { name: /PDF/ })).toHaveAttribute(
-      'href',
-      '/resume.pdf'
-    );
-
-    await actionBar.getByRole('button', { name: /닫기|Dismiss/ }).click();
-    await expect(actionBar).toBeHidden();
-
-    const hasHorizontalOverflow = await page.evaluate(
-      () => document.documentElement.scrollWidth > window.innerWidth
-    );
-    expect(hasHorizontalOverflow).toBe(false);
-  });
+  }
 });

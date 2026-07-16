@@ -3,7 +3,7 @@ import { initUI } from './modules/ui.js';
 import { initSkillRadar } from './modules/skill-radar.js';
 import { initCareerTimeline } from './modules/timeline.js';
 import { initProjectMore } from './modules/project-more.js';
-import { initRecruiterEnhancements } from './modules/recruiter-enhancements.js';
+import { initCapabilityEvidence } from './modules/capability-evidence.js';
 
 const RESUME_DATA_PATHS = {
   ko: '/resume-data.json',
@@ -131,7 +131,7 @@ async function bootstrapPortfolio() {
     initUI();
     initWebVitals();
     initProjectMore();
-    initRecruiterEnhancements();
+    initCapabilityEvidence();
     await loadResumeData();
     initSkillRadar();
     initCareerTimeline();
