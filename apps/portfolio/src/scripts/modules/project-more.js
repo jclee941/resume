@@ -22,6 +22,9 @@ export function initProjectMore() {
   const extras = list.querySelectorAll('.project-item--collapsed');
   if (extras.length === 0) return;
 
+  list.dataset.projectsExpanded = String(list.classList.contains('is-expanded'));
+  if (document.querySelector('[data-projects-expand]')) return;
+
   const labels = moreLang(extras.length);
 
   const wrap = document.createElement('div');
@@ -30,18 +33,36 @@ export function initProjectMore() {
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.className = 'project-more-btn';
+  btn.dataset.projectsExpand = 'true';
   btn.setAttribute('aria-expanded', 'false');
   btn.setAttribute('aria-controls', list.id || 'project-list');
   btn.textContent = labels.more;
 
   btn.addEventListener('click', (e) => {
     e.preventDefault();
-    const expanded = list.classList.toggle('is-expanded');
-    btn.setAttribute('aria-expanded', String(expanded));
-    btn.textContent = expanded ? labels.less : labels.more;
-    btn.focus({ preventScroll: true });
+    setProjectsExpanded(!list.classList.contains('is-expanded'), { focusButton: true });
   });
 
   wrap.appendChild(btn);
   list.insertAdjacentElement('afterend', wrap);
+}
+
+export function setProjectsExpanded(expanded, { focusButton = false } = {}) {
+  const list = document.querySelector('#projects .project-list, #project-list');
+  const button = document.querySelector('[data-projects-expand]');
+  if (!list || !button) return false;
+  const labels = moreLang(list.querySelectorAll('.project-item--collapsed').length);
+  list.classList.toggle('is-expanded', expanded);
+  list.dataset.projectsExpanded = String(expanded);
+  button.setAttribute('aria-expanded', String(expanded));
+  button.textContent = expanded ? labels.less : labels.more;
+  if (focusButton) button.focus({ preventScroll: true });
+  return true;
+}
+
+export function ensureProjectIsExpanded(card) {
+  if (!card?.classList.contains('project-item--collapsed')) return false;
+  const list = card.closest('.project-list');
+  if (list?.classList.contains('is-expanded')) return false;
+  return setProjectsExpanded(true);
 }

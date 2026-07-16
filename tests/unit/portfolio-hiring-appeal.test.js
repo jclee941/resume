@@ -72,27 +72,59 @@ describe('portfolio full-stack hero copy', () => {
     const html = Object.keys(LOCALE_COPY).map(buildHeroContent).join('\n');
 
     expect(html).not.toContain('Security Automation / Infrastructure Engineer');
-    expect(html).not.toMatch(/hero-proof-list|hero-review-path|hiring-review-packet|role-quick-paths/);
+    expect(html).not.toMatch(
+      /hero-proof-list|hero-review-path|hiring-review-packet|role-quick-paths/
+    );
     expect(html).not.toContain('보안 자동화 역할 판단');
   });
 
-  test('client role evidence labels avoid stale operations copy', () => {
+  test('client capability evidence uses explicit project mappings and current labels', () => {
     const moduleUrl = pathToFileURL(
-      path.join(PORTFOLIO_DIR, 'src/scripts/modules/recruiter-enhancements-data.js')
+      path.join(PORTFOLIO_DIR, 'src/scripts/modules/capability-evidence-data.js')
     ).href;
     const script = `
       const module = await import(${JSON.stringify(moduleUrl)});
-      process.stdout.write(JSON.stringify(module.ROLE_PROFILES));
+      process.stdout.write(JSON.stringify({
+        definitions: module.CAPABILITY_DEFINITIONS,
+        labels: module.CAPABILITY_LABELS,
+      }));
     `;
-    const roleProfiles = JSON.parse(
+    const capabilityContract = JSON.parse(
       execFileSync(process.execPath, ['--no-warnings', '--input-type=module', '-e', script], {
         encoding: 'utf8',
       })
     );
-    const roleCopy = roleProfiles.flatMap((role) => [role.label, ...Object.values(role.proof || {})]);
+    const mappings = Object.fromEntries(
+      capabilityContract.definitions.map(({ id, projectIds }) => [id, projectIds])
+    );
+    const labels = Object.values(capabilityContract.labels).flatMap(Object.values);
 
-    expect(roleCopy).toContain('Automation');
-    expect(roleCopy).not.toContain('Automation Workflow');
-    expect(roleCopy.join('\n')).not.toMatch(/Security Ops|Ops Visibility/);
+    expect(mappings).toEqual({
+      'product-ui': ['safetywallet-cf-workers-pwa', 'resume-portfolio'],
+      'backend-api': [
+        'safetywallet-cf-workers-pwa',
+        'ip-blacklist-platform',
+        'jclee-bot-github-app',
+      ],
+      'data-workflows': [
+        'safetywallet-cf-workers-pwa',
+        'ip-blacklist-platform',
+        'content-automation-pipeline',
+      ],
+      'delivery-operations': [
+        'resume-portfolio',
+        'terraform-homelab-iac',
+        'observability-platform',
+      ],
+      'security-reliability': [
+        'safetywallet-cf-workers-pwa',
+        'security-alert-system',
+        'firewall-policy-automation',
+      ],
+    });
+    expect(labels).toEqual(
+      expect.arrayContaining(['배포·운영', 'Delivery & Operations', 'デリバリー・運用'])
+    );
+    expect(labels.join('\n')).not.toMatch(/Security Ops|Ops Visibility|Automation Workflow/);
   });
 });

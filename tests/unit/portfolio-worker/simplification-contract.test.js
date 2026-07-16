@@ -129,7 +129,7 @@ describe('simplification: project cards do not re-present the description as bul
       initSkillRadar: jest.fn(() => calls.push('skill-radar')),
       initCareerTimeline: jest.fn(() => calls.push('career-timeline')),
       initProjectMore: jest.fn(() => calls.push('project-more')),
-      initRecruiterEnhancements: jest.fn(() => calls.push('recruiter-enhancements')),
+      initCapabilityEvidence: jest.fn(() => calls.push('capability-evidence')),
     };
     context.window.window = context.window;
 
@@ -142,6 +142,7 @@ describe('simplification: project cards do not re-present the description as bul
       credentials: 'same-origin',
     });
     expect(calls).toContain('register-service-worker');
+    expect(context.initCapabilityEvidence).toHaveBeenCalledTimes(1);
     expect(calls).not.toContain('skill-radar');
 
     resolveFetch();
