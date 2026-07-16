@@ -161,7 +161,7 @@ test.describe('Mobile portfolio actions', () => {
       const actionBar = page.locator('.mobile-actions');
       await expect(actionBar).toBeHidden();
 
-      await page.evaluate(() => window.scrollTo(0, 240));
+      await page.evaluate(() => window.scrollTo(0, 900));
       await page.waitForFunction(() => !document.querySelector('.mobile-actions')?.hidden);
       await expect(actionBar).toBeVisible();
       await expect(actionBar.getByRole('link')).toHaveText(['Projects', 'Resume PDF', 'Contact']);
@@ -175,6 +175,18 @@ test.describe('Mobile portfolio actions', () => {
 
       expect(
         await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)
+      ).toBe(false);
+
+      const backToTop = page.locator('.back-to-top');
+      await expect(backToTop).toBeVisible();
+      expect(
+        await page.evaluate(() => {
+          const back = document.querySelector('.back-to-top').getBoundingClientRect();
+          const actions = document.querySelector('.mobile-actions').getBoundingClientRect();
+          return (
+            back.bottom > actions.top && back.right > actions.left && back.left < actions.right
+          );
+        })
       ).toBe(false);
     });
   }

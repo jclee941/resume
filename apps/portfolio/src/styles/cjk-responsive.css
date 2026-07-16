@@ -1,0 +1,57 @@
+html:lang(ko) body {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+html:lang(ko) body * {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+html:lang(ja) body {
+  line-break: strict;
+  word-break: auto-phrase;
+  overflow-wrap: anywhere;
+}
+
+html:lang(ja) body * {
+  line-break: strict;
+  word-break: auto-phrase;
+  overflow-wrap: anywhere;
+}
+
+html:lang(ko) :is(h1, h2, h3, button, summary, .hero-role, .hero-tagline, .capability-label) {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+html:lang(ja) :is(h1, h2, h3, button, summary, .hero-role, .hero-tagline, .capability-label) {
+  line-break: strict;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.hero-title,
+.hero-role,
+.hero-tagline,
+.capability-control,
+.project-review-rail__link strong,
+.project-title,
+.timeline-company,
+#cover-letter summary {
+  text-wrap: balance;
+}
+
+.project-description,
+.timeline-myrole,
+.details-description,
+.cover-letter__text {
+  text-wrap: pretty;
+}
+
+@media (max-width: 767px) {
+  html:lang(ko) .capability-control,
+  html:lang(ja) .capability-control {
+    white-space: nowrap;
+  }
+}
