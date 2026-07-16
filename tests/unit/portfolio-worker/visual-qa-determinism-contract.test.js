@@ -31,14 +31,35 @@ describe('multilingual visual QA contract', () => {
     ]);
     expect(manifest.viewports.map(({ width }) => width)).toEqual([375, 768, 1280]);
     expect(manifest.motionModes).toEqual(['normal', 'reduced']);
-    expect(manifest.coreRegions.map(({ id }) => id)).toEqual(['full-page', 'hero', 'projects']);
+    expect(manifest.coreRegions.map(({ id }) => id)).toEqual([
+      'full-page',
+      'hero',
+      'projects',
+      'capabilities',
+    ]);
     expect(manifest.interactionStates.map(({ id }) => id)).toEqual([
       'cover-expanded',
       'mobile-nav-open',
       'focus-visible',
       'capability-selected',
       'projects-expanded',
+      'mobile-actions',
     ]);
+    expect(manifest.snapshotApproval).toMatchObject({
+      status: 'approved-after-localization-and-motion-remediation',
+      updateExecuted: true,
+      approvedSnapshotCount: 156,
+    });
+    expect(manifest.capturePolicy).toEqual({
+      fixedUiSelectors: ['.mobile-actions', '.back-to-top'],
+      dedicatedState: 'mobile-actions',
+    });
+    expect(manifest.snapshotApproval.approvalEvidence).toEqual([
+      '.omo/evidence/portfolio-fullstack-rebrand/working/task-11-visual-blocker-remediation/DoneClaim.json',
+    ]);
+    for (const evidencePath of manifest.snapshotApproval.approvalEvidence) {
+      expect(fs.existsSync(path.join(ROOT, evidencePath))).toBe(true);
+    }
     expect(visual).toContain('PORTFOLIO_COMPARE_APPROVED_SNAPSHOTS');
     expect(harness).toContain("toHaveAttribute('data-portfolio-ready', 'true'");
   });

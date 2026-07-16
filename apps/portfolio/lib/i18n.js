@@ -23,6 +23,8 @@ const TRANSLATIONS = {
     'nav.experience': '경력',
     'nav.resume': '이력서',
     'nav.contact': '연락처',
+    'mobileActions.region': '포트폴리오 작업',
+    'mobileActions.resumePdf': '이력서 PDF',
 
     // Hero section
     'hero.title': '이재철',
@@ -65,6 +67,8 @@ const TRANSLATIONS = {
     'nav.experience': 'Experience',
     'nav.resume': 'Resume',
     'nav.contact': 'Contact',
+    'mobileActions.region': 'Portfolio actions',
+    'mobileActions.resumePdf': 'Resume PDF',
 
     // Hero section
     'hero.title': 'Jaecheol Lee',
@@ -108,6 +112,8 @@ const TRANSLATIONS = {
     'nav.experience': '経歴',
     'nav.resume': '履歴書',
     'nav.contact': '連絡先',
+    'mobileActions.region': 'ポートフォリオ操作',
+    'mobileActions.resumePdf': '履歴書PDF',
 
     // Hero section
     'hero.title': 'イ・ジェチョル',

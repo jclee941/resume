@@ -1,8 +1,12 @@
-const MOBILE_ACTIONS = [
-  { label: 'Projects', href: '#projects' },
-  { label: 'Resume PDF', href: '/resume.pdf' },
-  { label: 'Contact', href: '#contact' },
-];
+import { t } from '../../../lib/i18n.js';
+
+function localizedActions(locale) {
+  return [
+    { label: t('nav.projects', locale), href: '#projects' },
+    { label: t('mobileActions.resumePdf', locale), href: '/resume.pdf' },
+    { label: t('nav.contact', locale), href: '#contact' },
+  ];
+}
 
 function observeContact(setInView) {
   const contact = document.querySelector('#contact');
@@ -19,10 +23,11 @@ export function renderMobileActions() {
   if (existing) return existing;
 
   const bar = document.createElement('aside');
+  const locale = document.documentElement.lang || 'ko';
   bar.className = 'mobile-actions';
-  bar.setAttribute('aria-label', 'Portfolio actions');
+  bar.setAttribute('aria-label', t('mobileActions.region', locale));
   bar.hidden = true;
-  for (const action of MOBILE_ACTIONS) {
+  for (const action of localizedActions(locale)) {
     const link = document.createElement('a');
     link.className = 'mobile-actions__link';
     link.href = action.href;

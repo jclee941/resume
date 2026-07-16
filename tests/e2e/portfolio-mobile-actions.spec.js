@@ -152,10 +152,13 @@ test.describe('Mobile portfolio actions', () => {
     expect(pdfIndex).toBeLessThan(proofIndex);
   });
 
-  for (const path of ['/ko/', '/en/', '/ja/']) {
-    test(`mobile action set is exactly Projects, Resume PDF, Contact (${path})`, async ({
-      page,
-    }) => {
+  const localizedMobileActions = [
+    ['/ko/', '포트폴리오 작업', ['프로젝트', '이력서 PDF', '연락처']],
+    ['/en/', 'Portfolio actions', ['Projects', 'Resume PDF', 'Contact']],
+    ['/ja/', 'ポートフォリオ操作', ['プロジェクト', '履歴書PDF', '連絡先']],
+  ];
+  for (const [path, region, labels] of localizedMobileActions) {
+    test(`mobile action set is localized and accessible (${path})`, async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 812 });
       await page.goto(path, { waitUntil: 'domcontentloaded' });
       const actionBar = page.locator('.mobile-actions');
@@ -164,8 +167,12 @@ test.describe('Mobile portfolio actions', () => {
       await page.evaluate(() => window.scrollTo(0, 900));
       await page.waitForFunction(() => !document.querySelector('.mobile-actions')?.hidden);
       await expect(actionBar).toBeVisible();
-      await expect(actionBar.getByRole('link')).toHaveText(['Projects', 'Resume PDF', 'Contact']);
+      await expect(actionBar).toHaveAccessibleName(region);
+      await expect(actionBar.getByRole('link')).toHaveText(labels);
       await expect(actionBar.getByRole('link')).toHaveCount(3);
+      for (const [index, label] of labels.entries()) {
+        await expect(actionBar.getByRole('link').nth(index)).toHaveAccessibleName(label);
+      }
       expect(
         await actionBar
           .getByRole('link')

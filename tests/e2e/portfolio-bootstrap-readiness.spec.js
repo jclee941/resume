@@ -1,4 +1,5 @@
 const { test, expect } = require('@playwright/test');
+const { manifest, openPortfolio } = require('./fixtures/portfolio-qa');
 
 function isResumeData(url) {
   return new URL(url).pathname.endsWith('/resume-data.json');
@@ -85,4 +86,17 @@ test.describe('portfolio bootstrap readiness', () => {
       expect(bootstrapErrors[0]).toContain('portfolio_bootstrap_failed');
     });
   }
+
+  test('the shared readiness gate rejects a controlled bootstrap failure promptly', async ({
+    page,
+  }) => {
+    await page.route('**/resume-data.json', (route) =>
+      route.fulfill({ status: 503, contentType: 'application/json', body: '{}' })
+    );
+    const startedAt = Date.now();
+
+    await expect(openPortfolio(page, manifest.locales[0], manifest.viewports[0])).rejects.toThrow();
+    expect(Date.now() - startedAt).toBeLessThan(5000);
+    await expect(page.locator('html')).toHaveAttribute('data-portfolio-ready', 'error');
+  });
 });
