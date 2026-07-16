@@ -6,7 +6,18 @@ const FULL_PAGE_DIFF_RATIO = 0.1;
 
 async function waitForPortfolioReady(page) {
   const root = page.locator('html');
-  await expect(root).toHaveAttribute('data-portfolio-ready', 'true', { timeout: 15000 });
+  const bootstrapState = await page
+    .waitForFunction(
+      () => {
+        const state = document.documentElement.getAttribute('data-portfolio-ready');
+        return state === 'true' || state === 'error' ? state : false;
+      },
+      undefined,
+      { timeout: 15000 }
+    )
+    .then((state) => state.jsonValue());
+  expect(bootstrapState, 'portfolio bootstrap state').toBe('true');
+  await expect(root).toHaveAttribute('data-portfolio-ready', 'true');
   await expect(page.locator('[data-portfolio-bootstrap-status="error"]')).toHaveCount(0);
   await page.evaluate(async () => {
     if (document.fonts) await document.fonts.ready;

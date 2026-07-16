@@ -43,10 +43,13 @@ test.describe('multilingual geometry, keyboard, and CJK matrix', () => {
         await focusFromKeyboard(page, '.hero-cta a:first-child');
         const focusStyle = await page.locator('.hero-cta a:first-child').evaluate((element) => {
           const style = getComputedStyle(element);
-          return { outline: style.outlineStyle, shadow: style.boxShadow };
+          return {
+            outline: style.outlineStyle,
+            outlineWidth: Number.parseFloat(style.outlineWidth),
+          };
         });
         expect(
-          focusStyle.outline !== 'none' || focusStyle.shadow !== 'none',
+          focusStyle.outline !== 'none' && focusStyle.outlineWidth >= 2,
           `focus style: ${JSON.stringify(focusStyle)}`
         ).toBe(true);
 

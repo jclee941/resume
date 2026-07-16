@@ -1,10 +1,19 @@
 {
   "version": 1,
   "snapshotApproval": {
-    "status": "pending-dom-and-dual-visual-review",
+    "status": "approved-after-localization-and-motion-remediation",
     "compareEnvironment": "PORTFOLIO_COMPARE_APPROVED_SNAPSHOTS=1",
-    "updateCommand": "PORTFOLIO_COMPARE_APPROVED_SNAPSHOTS=1 npx playwright test tests/e2e/visual.spec.js --project=chromium --update-snapshots",
-    "updateExecuted": false
+    "updateCommand": "PORTFOLIO_UPDATE_APPROVED_SNAPSHOTS=1 PORTFOLIO_COMPARE_APPROVED_SNAPSHOTS=1 npx playwright test tests/e2e/visual.spec.js --project=chromium --update-snapshots=all",
+    "updateExecuted": true,
+    "approvedAt": "2026-07-16T13:34:57+09:00",
+    "approvedSnapshotCount": 156,
+    "approvalEvidence": [
+      ".omo/evidence/portfolio-fullstack-rebrand/working/task-11-visual-blocker-remediation/DoneClaim.json"
+    ]
+  },
+  "capturePolicy": {
+    "fixedUiSelectors": [".mobile-actions", ".back-to-top"],
+    "dedicatedState": "mobile-actions"
   },
   "locales": [
     { "id": "ko", "path": "/ko/" },
@@ -20,7 +29,8 @@
   "coreRegions": [
     { "id": "full-page", "selector": null, "fullPage": true },
     { "id": "hero", "selector": ".section-hero", "fullPage": false },
-    { "id": "projects", "selector": "#projects", "fullPage": false }
+    { "id": "projects", "selector": "#projects", "fullPage": false },
+    { "id": "capabilities", "selector": "#skills", "fullPage": false }
   ],
   "interactionStates": [
     {
@@ -52,6 +62,13 @@
       "trigger": "[data-projects-expand]",
       "target": "#projects",
       "widths": [375, 768, 1280]
+    },
+    {
+      "id": "mobile-actions",
+      "target": ".mobile-actions",
+      "companion": ".back-to-top",
+      "captureViewport": true,
+      "widths": [375]
     }
   ]
 }

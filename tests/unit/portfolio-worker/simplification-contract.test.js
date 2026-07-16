@@ -111,7 +111,11 @@ describe('simplification: project cards do not re-present the description as bul
       },
       document: {
         readyState: 'complete',
-        documentElement: { lang: 'ko' },
+        documentElement: {
+          lang: 'ko',
+          removeAttribute: jest.fn(),
+          setAttribute: jest.fn(),
+        },
         addEventListener: jest.fn(),
         getElementById: jest.fn(),
       },

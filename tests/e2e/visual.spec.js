@@ -7,6 +7,10 @@ const {
   openPortfolio,
   revealTarget,
 } = require('./fixtures/portfolio-qa');
+const {
+  assertApprovedFixedControlGlyphs,
+  prepareFullPageCapture,
+} = require('./fixtures/visual-capture-sanity');
 
 const compareApprovedSnapshots = process.env.PORTFOLIO_COMPARE_APPROVED_SNAPSHOTS === '1';
 
@@ -14,15 +18,40 @@ function captureName(locale, viewport, motion, id) {
   return `${locale.id}-${viewport.id}-${motion}-${id}.png`;
 }
 
-async function capture(page, testInfo, locator, name, fullPage = false) {
+async function capture(
+  page,
+  testInfo,
+  locator,
+  name,
+  fullPage = false,
+  includeFixedUi = false,
+  motion = 'normal'
+) {
+  for (const selector of manifest.capturePolicy.fixedUiSelectors) {
+    const fixedUi = page.locator(selector);
+    await expect(fixedUi).toHaveCount(1);
+    await fixedUi.evaluate((element, visible) => {
+      if (visible) element.style.removeProperty('visibility');
+      else element.style.setProperty('visibility', 'hidden', 'important');
+    }, includeFixedUi);
+    if (includeFixedUi) await expect(fixedUi).toBeVisible();
+    else await expect(fixedUi).toBeHidden();
+  }
+
+  const animations = motion === 'reduced' || includeFixedUi ? 'allow' : 'disabled';
+  if (fullPage) await prepareFullPageCapture(page, animations);
+
   const ratio = fullPage ? FULL_PAGE_DIFF_RATIO : COMPONENT_DIFF_RATIO;
   if (compareApprovedSnapshots) {
     const subject = locator || page;
     await expect(subject).toHaveScreenshot(name, {
-      animations: 'disabled',
+      animations,
       fullPage,
       maxDiffPixelRatio: ratio,
     });
+    if (includeFixedUi) {
+      await assertApprovedFixedControlGlyphs(page, testInfo, name, animations);
+    }
     return;
   }
 
@@ -31,9 +60,9 @@ async function capture(page, testInfo, locator, name, fullPage = false) {
     ? path.join(captureRoot, name)
     : testInfo.outputPath('visual-captures', name);
   if (locator) {
-    await locator.screenshot({ path: capturePath, animations: 'disabled' });
+    await locator.screenshot({ path: capturePath, animations });
   } else {
-    await page.screenshot({ path: capturePath, animations: 'disabled', fullPage });
+    await page.screenshot({ path: capturePath, animations, fullPage });
   }
 }
 
@@ -50,6 +79,31 @@ async function focusWithKeyboard(page, selector) {
 }
 
 async function driveInteraction(page, state) {
+  if (state.captureViewport) {
+    await revealTarget(page, '#skills');
+    const targets = [page.locator(state.target), page.locator(state.companion)];
+    await expect(targets[1]).toHaveClass(/visible/);
+    const actionLinks = targets[0].locator('.mobile-actions__link');
+    await expect(actionLinks).toHaveCount(3);
+    for (const actionLink of await actionLinks.all()) {
+      await expect(actionLink).toBeVisible();
+      await expect(actionLink).toHaveAccessibleName(/\S/);
+    }
+    await expect(targets[1]).toHaveText(/\S/);
+    for (const target of targets) {
+      await expect(target).toBeVisible();
+      const box = await target.boundingBox();
+      const viewport = page.viewportSize();
+      expect(box).not.toBeNull();
+      expect(viewport).not.toBeNull();
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.y).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width).toBeLessThanOrEqual(viewport.width);
+      expect(box.y + box.height).toBeLessThanOrEqual(viewport.height);
+    }
+    return null;
+  }
+
   const trigger = await revealTarget(page, state.trigger);
   if (state.id === 'focus-visible') {
     await page.evaluate(() => {
@@ -83,7 +137,7 @@ test.describe('deterministic multilingual visual evidence', () => {
           for (const region of manifest.coreRegions) {
             const name = captureName(locale, viewport, motion, region.id);
             const target = region.selector ? await revealTarget(page, region.selector) : null;
-            await capture(page, testInfo, target, name, region.fullPage);
+            await capture(page, testInfo, target, name, region.fullPage, false, motion);
           }
 
           for (const state of manifest.interactionStates.filter(({ widths }) =>
@@ -91,7 +145,15 @@ test.describe('deterministic multilingual visual evidence', () => {
           )) {
             await openPortfolio(page, locale, viewport, motion);
             const target = await driveInteraction(page, state);
-            await capture(page, testInfo, target, captureName(locale, viewport, motion, state.id));
+            await capture(
+              page,
+              testInfo,
+              target,
+              captureName(locale, viewport, motion, state.id),
+              false,
+              state.captureViewport === true,
+              motion
+            );
           }
         });
       }
