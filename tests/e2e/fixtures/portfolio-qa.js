@@ -60,12 +60,7 @@ async function collectGeometryViolations(page) {
 
     for (const element of document.querySelectorAll('main *, header *, footer *')) {
       const style = getComputedStyle(element);
-      if (
-        style.display === 'none' ||
-        style.visibility === 'hidden' ||
-        element.closest('details:not([open])')
-      )
-        continue;
+      if (style.display === 'none' || style.visibility === 'hidden') continue;
       const rect = element.getBoundingClientRect();
       if (rect.width <= 0 || rect.height <= 0) continue;
       if (rect.left < -1 || rect.right > root.clientWidth + 1) {
