@@ -103,7 +103,7 @@
     "@redocly/cli": "^2.39.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.9.1",
-    "c8": "^11.0.0",
+    "c8": "^12.0.0",
     "chrome-launcher": "^1.2.1",
     "eslint": "^10.7.0",
     "globals": "^17.7.0",
