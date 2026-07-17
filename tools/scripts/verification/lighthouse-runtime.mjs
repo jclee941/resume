@@ -119,12 +119,11 @@ export async function prepareOutputDir(outputDir, { allowedRoots = DEFAULT_OUTPU
   if (!root || !isDescendant(root.real, projected)) {
     throw new Error(`Lighthouse output must be inside an approved output root: ${resolved}`);
   }
+  await fs.rm(resolved, { recursive: true, force: true });
   await fs.mkdir(resolved, { recursive: true });
   if (!isDescendant(root.real, await fs.realpath(resolved))) {
     throw new Error(`Lighthouse output must be inside an approved output root: ${resolved}`);
   }
-  const entries = await fs.readdir(resolved);
-  await Promise.all(entries.map((entry) => fs.rm(path.join(resolved, entry), { recursive: true })));
 }
 
 export async function assertReportInventory(outputDir, expectedFiles) {

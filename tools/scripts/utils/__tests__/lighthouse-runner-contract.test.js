@@ -160,6 +160,12 @@ describe('Lighthouse fail-closed evidence contract', () => {
       );
       assert.equal(await readFile(sentinel, 'utf8'), 'keep');
 
+      const outputLink = path.join(allowedRoot, 'linked-run');
+      await symlink(outside, outputLink, 'dir');
+      await contract.prepareOutputDir(outputLink, { allowedRoots: [sandbox] });
+      assert.equal(await readFile(sentinel, 'utf8'), 'keep');
+      assert.deepEqual(await readdir(outputLink), []);
+
       const linkedRoot = path.join(sandbox, 'linked-approved');
       const linkedOutput = path.join(linkedRoot, 'run');
       await mkdir(path.join(outside, 'run'));
