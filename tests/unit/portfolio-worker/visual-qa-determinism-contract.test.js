@@ -46,7 +46,7 @@ describe('multilingual visual QA contract', () => {
       'mobile-actions',
     ]);
     expect(manifest.snapshotApproval).toMatchObject({
-      status: 'approved-after-localization-and-motion-remediation',
+      status: 'approved-after-final-review-remediation',
       updateExecuted: true,
       approvedSnapshotCount: 156,
     });
@@ -55,7 +55,7 @@ describe('multilingual visual QA contract', () => {
       dedicatedState: 'mobile-actions',
     });
     expect(manifest.snapshotApproval.approvalEvidence).toEqual([
-      '.omo/evidence/portfolio-fullstack-rebrand/working/task-11-visual-blocker-remediation/DoneClaim.json',
+      '.omo/evidence/portfolio-fullstack-rebrand/working/final-wave-remediation/DoneClaim.json',
     ]);
     for (const evidencePath of manifest.snapshotApproval.approvalEvidence) {
       expect(fs.existsSync(path.join(ROOT, evidencePath))).toBe(true);

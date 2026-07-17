@@ -1,5 +1,5 @@
 const { EventEmitter } = require('node:events');
-const { mkdtemp, readFile, readdir, rm, writeFile } = require('node:fs/promises');
+const { mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } = require('node:fs/promises');
 const assert = require('node:assert/strict');
 const os = require('node:os');
 const path = require('node:path');
@@ -132,27 +132,47 @@ describe('Lighthouse fail-closed evidence contract', () => {
     }
   });
 
-  test('removes every stale artifact before a run and accepts only exact inventory', async () => {
-    const output = await mkdtemp(path.join(os.tmpdir(), 'lighthouse-stale-'));
+  test('cleans only approved output roots and rejects symlink escapes', async () => {
+    const sandbox = await mkdtemp(path.join(os.tmpdir(), 'lighthouse-output-boundary-'));
+    const allowedRoot = path.join(sandbox, 'approved');
+    const output = path.join(allowedRoot, 'run');
+    const outside = path.join(sandbox, 'outside');
     try {
+      await Promise.all([mkdir(output, { recursive: true }), mkdir(outside)]);
       await writeFile(path.join(output, 'desktop-run-4.report.json'), '{}');
       await writeFile(path.join(output, 'unrelated.txt'), 'stale');
-      await contract.prepareOutputDir(output);
+      await contract.prepareOutputDir(output, { allowedRoots: [allowedRoot] });
       assert.deepEqual(await readdir(output), []);
-      for (const file of [
-        'desktop-run-1.report.json',
-        'desktop-run-1.report.html',
-        'summary.json',
-      ]) {
-        await writeFile(path.join(output, file), file.endsWith('.html') ? '<html></html>' : '{}');
-      }
-      await contract.assertReportInventory(output, [
-        'desktop-run-1.report.json',
-        'desktop-run-1.report.html',
-        'summary.json',
-      ]);
+
+      const sentinel = path.join(outside, 'keep.txt');
+      await writeFile(sentinel, 'keep');
+      await assert.rejects(
+        contract.prepareOutputDir(outside, { allowedRoots: [allowedRoot] }),
+        /approved output root/
+      );
+      assert.equal(await readFile(sentinel, 'utf8'), 'keep');
+
+      const escape = path.join(allowedRoot, 'escape');
+      await symlink(outside, escape, 'dir');
+      await assert.rejects(
+        contract.prepareOutputDir(escape, { allowedRoots: [allowedRoot] }),
+        /approved output root/
+      );
+      assert.equal(await readFile(sentinel, 'utf8'), 'keep');
+
+      const linkedRoot = path.join(sandbox, 'linked-approved');
+      const linkedOutput = path.join(linkedRoot, 'run');
+      await mkdir(path.join(outside, 'run'));
+      const linkedSentinel = path.join(outside, 'run', 'keep.txt');
+      await writeFile(linkedSentinel, 'keep');
+      await symlink(outside, linkedRoot, 'dir');
+      await assert.rejects(
+        contract.prepareOutputDir(linkedOutput, { allowedRoots: [linkedRoot] }),
+        /approved output root/
+      );
+      assert.equal(await readFile(linkedSentinel, 'utf8'), 'keep');
     } finally {
-      await rm(output, { recursive: true, force: true });
+      await rm(sandbox, { recursive: true, force: true });
     }
   });
 

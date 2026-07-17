@@ -9,7 +9,7 @@ const PROJECT_LABELS = {
   ko: {
     railEyebrow: '대표 빌드',
     railTitle: '풀스택 프로젝트 근거',
-    railDesc: '사용자 화면부터 API, 데이터, 배포와 운영까지 연결한 세 가지 빌드입니다.',
+    railDesc: '사용자 화면, API, 데이터, 배포와 운영을 잇는 대표 빌드 3개입니다.',
     open: '사례 보기',
     productUi: '제품 UI',
     backendApi: '백엔드·API',

@@ -1,11 +1,11 @@
 html:lang(ko) body {
   word-break: keep-all;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 html:lang(ko) body * {
   word-break: keep-all;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 html:lang(ja) body {
@@ -22,13 +22,19 @@ html:lang(ja) body * {
 
 html:lang(ko) :is(h1, h2, h3, button, summary, .hero-role, .hero-tagline, .capability-label) {
   word-break: keep-all;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 html:lang(ja) :is(h1, h2, h3, button, summary, .hero-role, .hero-tagline, .capability-label) {
   line-break: strict;
   word-break: keep-all;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+}
+
+html:lang(ja) .cover-letter__text {
+  hyphens: none;
+  word-break: auto-phrase;
+  overflow-wrap: break-word;
 }
 
 .hero-title,

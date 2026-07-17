@@ -67,9 +67,13 @@ Edge Infrastructure` is supporting depth, never the headline identity.
 - Body text never goes below `--text-sm`; technical styling must not make prose
   resemble a terminal transcript.
 - Korean headings and labels use `word-break: keep-all` with
-  `overflow-wrap: anywhere` as the emergency fallback.
+  `overflow-wrap: break-word` as the emergency fallback so mixed Korean/Latin
+  tokens stay intact whenever they fit the line.
 - Japanese headings and labels use `line-break: strict` with
   `overflow-wrap: anywhere` as the emergency fallback.
+- Japanese long-form prose uses phrase-aware line breaks and disables
+  hyphenation so lexical units and embedded technical tokens such as `NSX-T`
+  stay intact.
 - Preserve meaningful lexical units in all locale prose. Avoid isolated Korean
   particles/endings, split Japanese compounds, clipped glyphs, and tofu.
 

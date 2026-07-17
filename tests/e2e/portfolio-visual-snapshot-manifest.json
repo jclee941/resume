@@ -1,14 +1,14 @@
 {
   "version": 1,
   "snapshotApproval": {
-    "status": "approved-after-localization-and-motion-remediation",
+    "status": "approved-after-final-review-remediation",
     "compareEnvironment": "PORTFOLIO_COMPARE_APPROVED_SNAPSHOTS=1",
     "updateCommand": "PORTFOLIO_UPDATE_APPROVED_SNAPSHOTS=1 PORTFOLIO_COMPARE_APPROVED_SNAPSHOTS=1 npx playwright test tests/e2e/visual.spec.js --project=chromium --update-snapshots=all",
     "updateExecuted": true,
-    "approvedAt": "2026-07-16T13:34:57+09:00",
+    "approvedAt": "2026-07-16T20:32:42+09:00",
     "approvedSnapshotCount": 156,
     "approvalEvidence": [
-      ".omo/evidence/portfolio-fullstack-rebrand/working/task-11-visual-blocker-remediation/DoneClaim.json"
+      ".omo/evidence/portfolio-fullstack-rebrand/working/final-wave-remediation/DoneClaim.json"
     ]
   },
   "capturePolicy": {
