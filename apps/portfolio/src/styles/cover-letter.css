@@ -45,6 +45,7 @@
 
 .cover-letter__paragraphs {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-5);
   margin: 0;
   padding: 0;
@@ -72,6 +73,11 @@
   text-wrap: pretty;
 }
 
+.cover-letter__term,
+.cover-letter__token {
+  white-space: nowrap;
+}
+
 .cover-letter__closing {
   margin: var(--space-6) 0 0;
   padding-top: var(--space-5);
@@ -91,7 +97,12 @@
   }
 
   .cover-letter__para {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
     gap: var(--space-1);
+  }
+
+  .cover-letter__text {
+    min-width: 0;
   }
 }

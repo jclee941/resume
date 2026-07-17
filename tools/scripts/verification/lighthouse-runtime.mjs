@@ -8,6 +8,29 @@ const USER_AGENTS = {
     'Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Mobile Safari/537.36',
 };
 
+const DEFAULT_OUTPUT_ROOTS = ['.lighthouseci', '.omo/evidence/portfolio-fullstack-rebrand'];
+
+function isDescendant(root, candidate) {
+  const relative = path.relative(root, candidate);
+  return relative !== '' && !relative.startsWith('..') && !path.isAbsolute(relative);
+}
+
+async function projectedRealPath(candidate) {
+  const suffix = [];
+  let cursor = candidate;
+  while (true) {
+    try {
+      return path.resolve(await fs.realpath(cursor), ...suffix);
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+      const parent = path.dirname(cursor);
+      if (parent === cursor) throw error;
+      suffix.unshift(path.basename(cursor));
+      cursor = parent;
+    }
+  }
+}
+
 export function profileAuditSettings(profileName, settings) {
   if (!USER_AGENTS[profileName]) throw new Error(`Unknown Lighthouse profile: ${profileName}`);
   return {
@@ -78,10 +101,28 @@ export async function writeReportPair(outputDir, profileName, index, reports) {
   ]);
 }
 
-export async function prepareOutputDir(outputDir) {
+export async function prepareOutputDir(outputDir, { allowedRoots = DEFAULT_OUTPUT_ROOTS } = {}) {
   const resolved = path.resolve(outputDir);
-  if (resolved === path.parse(resolved).root) throw new Error('Refusing to clean filesystem root');
+  const roots = await Promise.all(
+    allowedRoots.map(async (root) => {
+      const lexical = path.resolve(root);
+      await fs.mkdir(lexical, { recursive: true });
+      const real = await fs.realpath(lexical);
+      if (real !== lexical) {
+        throw new Error(`Lighthouse approved output root must not use symlinks: ${lexical}`);
+      }
+      return { lexical, real };
+    })
+  );
+  const root = roots.find(({ lexical }) => isDescendant(lexical, resolved));
+  const projected = await projectedRealPath(resolved);
+  if (!root || !isDescendant(root.real, projected)) {
+    throw new Error(`Lighthouse output must be inside an approved output root: ${resolved}`);
+  }
   await fs.mkdir(resolved, { recursive: true });
+  if (!isDescendant(root.real, await fs.realpath(resolved))) {
+    throw new Error(`Lighthouse output must be inside an approved output root: ${resolved}`);
+  }
   const entries = await fs.readdir(resolved);
   await Promise.all(entries.map((entry) => fs.rm(path.join(resolved, entry), { recursive: true })));
 }

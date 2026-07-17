@@ -99,6 +99,18 @@
   body:has(.mobile-actions:not([hidden])) .back-to-top {
     bottom: calc(var(--space-3) + 54px + var(--space-2));
   }
+
+  body:has(#cover-letter details[open]):has(.mobile-actions:not([hidden])) {
+    padding-bottom: 0;
+  }
+
+  body:has(#cover-letter details[open]) .mobile-actions:not([hidden]) {
+    display: none;
+  }
+
+  body:has(#cover-letter details[open]) .back-to-top {
+    bottom: var(--space-3);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
