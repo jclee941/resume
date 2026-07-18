@@ -2,7 +2,8 @@
 module.exports = {
   testEnvironment: 'node',
   testMatch: ['**/tests/unit/**/*.test.js', '**/tests/integration/**/*.test.js'],
-  testPathIgnorePatterns: ['/node_modules/'],
+  testPathIgnorePatterns: ['/node_modules/', '<rootDir>/.worktrees/'],
+  modulePathIgnorePatterns: ['<rootDir>/.worktrees/'],
   collectCoverageFrom: [
     'apps/portfolio/lib/**/*.js', // Core testable modules
     'apps/portfolio/logger.js', // Logger utility
