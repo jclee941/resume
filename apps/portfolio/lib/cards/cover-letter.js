@@ -1,5 +1,19 @@
 const { escapeHtml } = require('../template-sanitizer');
 
+const COVER_LETTER_TERM = /[A-Za-z0-9]+(?:-[A-Za-z0-9]+)+|[ァ-ヿー]+/u;
+const COVER_LETTER_TERM_PARTS = /([A-Za-z0-9]+(?:-[A-Za-z0-9]+)+|[ァ-ヿー]+)/gu;
+
+function renderParagraph(paragraph) {
+  return String(paragraph)
+    .split(COVER_LETTER_TERM_PARTS)
+    .map((part) =>
+      COVER_LETTER_TERM.test(part)
+        ? `<span class="cover-letter__term">${escapeHtml(part)}</span>`
+        : escapeHtml(part)
+    )
+    .join('');
+}
+
 /**
  * A cover-letter locale entry is renderable only when it carries the three
  * required SSoT fields with content. Mirrors the validity contract of the
@@ -44,7 +58,7 @@ function generateCoverLetterSection(entry) {
       const index = String(i + 1).padStart(2, '0');
       return `<li class="cover-letter__para">
             <span class="cover-letter__index" aria-hidden="true">${index}</span>
-            <p class="cover-letter__text">${escapeHtml(paragraph)}</p>
+            <p class="cover-letter__text">${renderParagraph(paragraph)}</p>
           </li>`;
     })
     .join('\n          ');

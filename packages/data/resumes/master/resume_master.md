@@ -1,10 +1,10 @@
 # 이재철
 
-보안 엔지니어
+풀스택 엔지니어
 
-폐쇄망 OA 환경에서 출발해 금융권 보안 인프라 구축, SIEM 탐지·알림 자동화, 관측성·IaC 기반 개선을 이어 온 보안 엔지니어입니다. 직전 금융권 정보보안팀에서는 FortiGate HA·망분리 환경에서 Splunk ES, Slack/SMS 알림 워크플로, FortiManager API, Claude AI 보조 분석을 연결해 보안 이벤트 인지·분류·알림 흐름을 설계했습니다. 현재 보안 인프라, Security Automation, SIEM Engineering, Observability 중심의 역할을 찾고 있습니다.
+사용자 화면부터 API, 데이터 흐름, 배포와 관측성까지 직접 설계하고 운영합니다. 개인 프로젝트에서는 TypeScript·Cloudflare Workers·Python·PostgreSQL을 연결해 제품을 엔드투엔드로 구축했고, 실무에서는 금융권 보안 인프라와 \mbox{자동화·관측성}을 담당했습니다. 풀스택·백엔드·플랫폼 엔지니어 포지션을 검토합니다.
 
-**핵심 역량**: 금융권 보안 인프라 설계·구축 · FortiGate 다층 망분리 · Splunk SIEM 탐지·알림 자동화 · IaC 기반 관측성 · 금융감독원 감사 대응
+**핵심 역량**: 제품 UI·PWA · 백엔드·API · PostgreSQL·D1 데이터 모델 · 비동기 워크플로 · 엣지 배포·관측성 · 보안·신뢰성
 
 ## 연락처
 

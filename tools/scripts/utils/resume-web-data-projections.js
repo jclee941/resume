@@ -51,6 +51,7 @@ function projectCardFromSource(project) {
     businessImpact: project.businessImpact,
     displayOrder: typeof project.displayOrder === 'number' ? project.displayOrder : 999,
     featured: project.featured === true,
+    ...(project.fullStackEvidence ? { fullStackEvidence: project.fullStackEvidence } : {}),
   };
 }
 

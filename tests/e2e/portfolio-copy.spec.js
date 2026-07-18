@@ -1,98 +1,120 @@
 const { test, expect } = require('@playwright/test');
 
-test.describe('Portfolio hiring copy', () => {
-  test('should expose recruiter-ready evidence and hiring actions above the fold', async ({
-    page,
-  }) => {
+const LOCALES = [
+  {
+    path: '/',
+    primaryTitle: '풀스택 엔지니어',
+    supportingLine: '보안 자동화 · 엣지 인프라',
+    proposition: '사용자 화면부터 API, 데이터 흐름, 배포와 관측성까지 직접 설계하고 운영합니다.',
+    availability: '풀스택 · 백엔드 · 플랫폼 엔지니어 포지션의 제안과 면접을 검토합니다.',
+    ctas: ['대표 프로젝트 보기', '이력서 PDF'],
+  },
+  {
+    path: '/en/',
+    primaryTitle: 'Full-Stack Engineer',
+    supportingLine: 'Security Automation & Edge Infrastructure',
+    proposition:
+      'I design and operate products end to end, from user interfaces and APIs to data flows, deployment, and observability.',
+    availability: 'Open to full-stack, backend, and platform engineering opportunities.',
+    ctas: ['View featured builds', 'Resume PDF'],
+  },
+  {
+    path: '/ja/',
+    primaryTitle: 'フルスタックエンジニア',
+    supportingLine: 'セキュリティ自動化・エッジインフラ',
+    proposition:
+      'ユーザー画面からAPI、データフロー、デプロイ、可観測性まで、プロダクトを一貫して設計・運用します。',
+    availability:
+      'フルスタック・バックエンド・プラットフォームエンジニアのご提案を検討しています。',
+    ctas: ['注目プロジェクトを見る', '履歴書PDF'],
+  },
+];
+
+const PROOFS = [
+  ['SafetyWallet', '#project-safetywallet-cf-workers-pwa'],
+  ['Resume Portfolio', '#project-resume-portfolio'],
+  ['IP Blacklist', '#project-ip-blacklist-platform'],
+];
+
+test.describe('Portfolio full-stack hero copy', () => {
+  for (const locale of LOCALES) {
+    test(`${locale.path} exposes the exact compact positioning and links`, async ({ page }) => {
+      await page.goto(locale.path, { waitUntil: 'domcontentloaded' });
+      const hero = page.locator('#hero');
+
+      await expect(hero.locator('.hero-role')).toHaveText(locale.primaryTitle);
+      await expect(hero.locator('.hero-tagline')).toHaveText(locale.supportingLine);
+      await expect(hero.locator('.hero-positioning')).toHaveText(locale.proposition);
+      await expect(hero.locator('.hero-availability')).toHaveText(locale.availability);
+      await expect(hero.locator('.hero-cta a')).toHaveCount(2);
+      const primaryCta = hero.locator('.hero-cta a').nth(0);
+      await expect(primaryCta).toHaveAttribute('href', '#projects');
+      await expect(primaryCta).toHaveAccessibleName(locale.ctas[0]);
+      expect((await primaryCta.textContent()).replaceAll('\u2060', '')).toBe(locale.ctas[0]);
+      await expect(hero.locator('.hero-cta a').nth(1)).toHaveAttribute('href', '/resume.pdf');
+      await expect(hero.locator('.hero-cta a').nth(1)).toHaveText(locale.ctas[1]);
+
+      for (const [label, href] of PROOFS) {
+        await expect(hero.getByRole('link', { name: label, exact: true })).toHaveAttribute(
+          'href',
+          href
+        );
+      }
+      await expect(
+        hero.locator(
+          '.hero-proof-list, .hero-review-path, .hiring-review-packet, .role-quick-paths'
+        )
+      ).toHaveCount(0);
+      await expect(hero).not.toContainText('Security Automation / Infrastructure Engineer');
+    });
+  }
+
+  test('375px proof links preserve a 44px touch target', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    const hero = page.locator('#hero');
-    await expect(
-      hero.getByText('보안 자동화 · 보안 인프라 면접 제안 가능')
-    ).toBeVisible();
-    await expect(
-      hero.getByText(
-        '보안 인프라 이력과 프로젝트를 확인하세요. 연락처와 이력서 PDF도 바로 확인할 수 있습니다.'
-      )
-    ).toBeVisible();
-    await expect(hero.getByText('보안 자동화 · 보안 인프라 · SIEM')).toBeVisible();
-    await expect(hero.locator('.hiring-review-packet__status')).toHaveText('면접 제안 가능');
-    await expect(hero.getByText(/SRE|DevSecOps/)).toHaveCount(0);
-    await expect(hero.getByText('검토 가능')).toHaveCount(0);
-    await expect(hero.getByRole('link', { name: '면접 문의', exact: true })).toHaveAttribute(
-      'href',
-      'mailto:qws941@kakao.com?subject=%EC%B1%84%EC%9A%A9%20%EC%A0%9C%EC%95%88%20%EB%98%90%EB%8A%94%20%EB%A9%B4%EC%A0%91%20%EB%AC%B8%EC%9D%98'
+    const proofTargets = await page.locator('#hero .hero-public-proof a').evaluateAll((links) =>
+      links.map((link) => ({
+        height: link.getBoundingClientRect().height,
+        minHeight: Number.parseFloat(getComputedStyle(link).minHeight),
+      }))
     );
-    await expect(hero.getByRole('link', { name: '경력 보기', exact: true })).toHaveAttribute(
-      'href',
-      '#resume'
-    );
-    await expect(hero.getByRole('link', { name: '프로젝트 보기', exact: true })).toHaveAttribute(
-      'href',
-      '#projects'
-    );
-    await expect(
-      hero.getByRole('link', { name: /jclee-bot PR 리뷰 · 시크릿 스캔 · ELK 로그/ })
-    ).toHaveCount(0);
-    await expect(
-      hero.getByRole('link', { name: /jclee-bot PR 리뷰 · 시크릿 스캔 · Check Run/ })
-    ).toBeVisible();
-    await expect(hero.getByText('증빙 프로젝트 보기')).toHaveCount(0);
-    await expect(hero.getByText('공개 운영 근거')).toHaveCount(0);
+
+    expect(proofTargets).toHaveLength(3);
+    for (const target of proofTargets) {
+      expect(target.minHeight).toBeGreaterThanOrEqual(44);
+      expect(target.height).toBeGreaterThanOrEqual(44);
+    }
   });
 
-  test('should keep localized hiring copy aligned across English and Japanese pages', async ({
+  test('1280px supporting line follows the primary title in the main hierarchy', async ({
     page,
   }) => {
-    await page.goto('/en/', { waitUntil: 'domcontentloaded' });
-    const englishHero = page.locator('#hero');
-    await expect(
-      englishHero.getByText(
-        'Open to interview requests for security automation and security infrastructure roles'
-      )
-    ).toBeVisible();
-    await expect(
-      englishHero.getByText('Open to interview requests', { exact: true })
-    ).toBeVisible();
-    await expect(englishHero.locator('.hero-public-proof__label')).toContainText(
-      'Public automation evidence'
-    );
-    await expect(englishHero.getByText('Public proof shortcuts')).toHaveCount(0);
-    await expect(englishHero.getByText(/passed the FSC|passed licensing audits/i)).toHaveCount(0);
-    await expect(
-      englishHero.getByRole('link', { name: 'Interview request', exact: true })
-    ).toHaveAttribute(
-      'href',
-      'mailto:qws941@kakao.com?subject=Hiring%20proposal%20or%20interview%20request'
-    );
-    await expect(
-      englishHero.getByRole('link', { name: 'Career evidence', exact: true })
-    ).toHaveAttribute('href', '#resume');
-    await expect(
-      englishHero.getByRole('link', { name: 'Project evidence', exact: true })
-    ).toHaveAttribute('href', '#projects');
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    await page.goto('/ja/', { waitUntil: 'domcontentloaded' });
-    const japaneseHero = page.locator('#hero');
-    await expect(
-      japaneseHero.getByText('セキュリティ自動化・セキュリティ基盤の面接依頼を歓迎')
-    ).toBeVisible();
-    await expect(
-      japaneseHero.getByText(
-        '採用判断に必要な公開自動化根拠、連絡・履歴書PDF、直近の基盤構築を先に示します。'
-      )
-    ).toBeVisible();
-    await expect(japaneseHero.getByText(/SRE|DevSecOps/)).toHaveCount(0);
-    await expect(japaneseHero.getByText('確認可能')).toHaveCount(0);
-    await expect(japaneseHero.getByText('証跡')).toHaveCount(0);
-    await expect(japaneseHero.getByText(/通過|FSC本認可/)).toHaveCount(0);
-    await expect(japaneseHero.locator('.hero-proof-list')).toHaveAttribute(
-      'aria-label',
-      '採用判断の主要根拠'
-    );
-    await expect(japaneseHero.getByRole('link', { name: '面接依頼', exact: true })).toBeVisible();
-    await expect(
-      japaneseHero.getByRole('link', { name: 'プロジェクト確認', exact: true })
-    ).toHaveAttribute('href', '#projects');
+    const hierarchy = await page.evaluate(() => {
+      const primaryTitle = document.querySelector('#hero .hero-role').getBoundingClientRect();
+      const supportingLine = document.querySelector('#hero .hero-tagline').getBoundingClientRect();
+      return {
+        primaryTitle: {
+          left: primaryTitle.left,
+          right: primaryTitle.right,
+          bottom: primaryTitle.bottom,
+        },
+        supportingLine: {
+          left: supportingLine.left,
+          right: supportingLine.right,
+          top: supportingLine.top,
+        },
+        viewportWidth: document.documentElement.clientWidth,
+      };
+    });
+
+    expect(hierarchy.supportingLine.left).toBe(hierarchy.primaryTitle.left);
+    expect(hierarchy.supportingLine.right).toBeLessThanOrEqual(hierarchy.primaryTitle.right);
+    expect(hierarchy.primaryTitle.right).toBeLessThanOrEqual(hierarchy.viewportWidth);
+    expect(hierarchy.supportingLine.right).toBeLessThanOrEqual(hierarchy.viewportWidth);
+    expect(hierarchy.supportingLine.top).toBeGreaterThanOrEqual(hierarchy.primaryTitle.bottom);
   });
 });

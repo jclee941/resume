@@ -1,114 +1,137 @@
 const { test, expect } = require('@playwright/test');
 
-const KOREAN_ROLE_EVIDENCE_COUNTS = [
-  ['security', '보안 자동화', '4개 근거'],
-  ['infra', '보안 인프라', '2개 근거'],
-  ['observability', '관측성', '2개 근거'],
-  ['automation', '자동화 연계', '5개 근거'],
+const LOCALES = [
+  {
+    path: '/ko/',
+    labels: ['제품 UI', '백엔드·API', '데이터·워크플로', '배포·운영', '보안·신뢰성'],
+  },
+  {
+    path: '/en/',
+    labels: [
+      'Product UI',
+      'Backend & API',
+      'Data & Workflows',
+      'Delivery & Operations',
+      'Security & Reliability',
+    ],
+  },
+  {
+    path: '/ja/',
+    labels: [
+      'プロダクトUI',
+      'バックエンド・API',
+      'データ・ワークフロー',
+      'デリバリー・運用',
+      'セキュリティ・信頼性',
+    ],
+  },
 ];
 
-const SECURITY_PROJECT_TITLES = [
-  'Security Alert System',
-  'IP Blacklist Platform',
-  'Firewall Policy Automation',
-  'Bug Bounty Recon Toolkit',
-];
+const MAPPINGS = {
+  'product-ui': ['safetywallet-cf-workers-pwa', 'resume-portfolio'],
+  'backend-api': ['safetywallet-cf-workers-pwa', 'ip-blacklist-platform', 'jclee-bot-github-app'],
+  'data-workflows': [
+    'safetywallet-cf-workers-pwa',
+    'ip-blacklist-platform',
+    'content-automation-pipeline',
+  ],
+  'delivery-operations': ['resume-portfolio', 'terraform-homelab-iac', 'observability-platform'],
+  'security-reliability': [
+    'safetywallet-cf-workers-pwa',
+    'security-alert-system',
+    'firewall-policy-automation',
+  ],
+};
 
-test.describe('Portfolio role evidence routing', () => {
-  test('Korean role chips show evidence counts and focus all matching projects', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+async function openReady(page, path, width) {
+  await page.setViewportSize({ width, height: width === 375 ? 812 : 900 });
+  await page.goto(path, { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('html')).toHaveAttribute('data-portfolio-ready', 'true');
+}
 
-    for (const [roleId, label, countLabel] of KOREAN_ROLE_EVIDENCE_COUNTS) {
-      const roleChip = page.locator(`.role-chip[data-role-filter="${roleId}"]`);
-      await expect(roleChip).toContainText(label);
-      await expect(roleChip).toContainText(countLabel);
-    }
+test.describe('Portfolio capability evidence routing', () => {
+  for (const locale of LOCALES) {
+    for (const width of [375, 1280]) {
+      test(`${locale.path} exposes exact controls with keyboard parity at ${width}px`, async ({
+        page,
+      }) => {
+        await openReady(page, locale.path, width);
+        const controls = page.locator('[data-capability-control]');
+        await expect(controls).toHaveCount(5);
+        await expect(controls).toHaveText(locale.labels);
 
-    await page.getByRole('button', { name: /보안 자동화/ }).click();
-
-    await expect(page.getByRole('button', { name: /보안 자동화/ })).toHaveAttribute(
-      'aria-pressed',
-      'true'
-    );
-    const roleOrientation = page.locator('[data-role-status]');
-    await expect(roleOrientation).toHaveAttribute('aria-live', 'polite');
-    await expect(roleOrientation).toContainText('보안 자동화');
-    await expect(roleOrientation).toContainText('4개 근거');
-    await expect
-      .poll(() =>
-        page.evaluate(() => ({
-          hash: window.location.hash,
-          state: window.history.state,
-        }))
-      )
-      .toMatchObject({
-        hash: '#projects',
-        state: expect.objectContaining({ selectedRole: 'security' }),
+        const first = controls.first();
+        await first.focus();
+        await page.keyboard.press('Enter');
+        await expect(first).toHaveAttribute('aria-pressed', 'true');
+        await expect(page.locator('[data-capability-status]')).toContainText('2');
+        await expect(page.locator('[data-capability-status]')).toContainText('SafetyWallet');
+        await expect(page.locator('[data-capability-status]')).toContainText('Resume Portfolio');
+        await expect(page.locator('#projects')).toHaveAttribute(
+          'data-capability-selected',
+          'product-ui'
+        );
+        await expect(page.locator('#project-safetywallet-cf-workers-pwa')).toBeFocused();
       });
-
-    for (const title of SECURITY_PROJECT_TITLES) {
-      await expect(
-        page.locator('#projects li.project-item.is-role-match').filter({ hasText: title })
-      ).toHaveCount(1);
     }
-  });
+  }
 
-  test('reinitializing recruiter enhancements keeps role handlers single-bound', async ({
+  test('exact project mappings are ID-driven and unrelated cards stay in DOM and AT', async ({
     page,
   }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await page.evaluate(() => {
-      const originalScrollIntoView = Element.prototype.scrollIntoView;
-      window.__roleScrollTargets = [];
-      Element.prototype.scrollIntoView = function scrollIntoViewSpy(options) {
-        window.__roleScrollTargets.push(this.id || this.className || this.tagName);
-        originalScrollIntoView.call(this, options);
-      };
-    });
+    await openReady(page, '/en/', 1280);
+    const cards = page.locator('#projects li.project-item');
+    const originalCount = await cards.count();
 
-    await page.evaluate(
-      () =>
-        new Promise((resolve, reject) => {
-          const script = document.createElement('script');
-          script.src = `/main.js?second-init=${Date.now()}`;
-          script.onload = resolve;
-          script.onerror = reject;
-          document.body.appendChild(script);
-        })
-    );
-
-    await expect(page.locator('.role-quick-paths')).toHaveCount(1);
-    await expect(page.locator('.project-evidence-matrix')).toHaveCount(1);
-
-    await page.getByRole('button', { name: /보안 자동화/ }).click();
-
-    await expect(page.locator('[data-role-status]')).toContainText('보안 자동화');
-
-    const projectScrollCalls = await page.evaluate(
-      () => window.__roleScrollTargets.filter((target) => target === 'projects').length
-    );
-    expect(projectScrollCalls).toBe(1);
+    for (const [capabilityId, projectIds] of Object.entries(MAPPINGS)) {
+      await page.locator(`[data-capability-control="${capabilityId}"]`).click();
+      const matches = await page
+        .locator('#projects li.project-item[data-capability-match="true"]')
+        .evaluateAll((elements) => elements.map((element) => element.id.replace(/^project-/, '')));
+      expect(new Set(matches)).toEqual(new Set(projectIds));
+      await expect(cards).toHaveCount(originalCount);
+      expect(await cards.evaluateAll((elements) => elements.some((card) => card.ariaHidden))).toBe(
+        false
+      );
+    }
   });
 
-  test('role evidence counts localize on English and Japanese pages', async ({ page }) => {
-    await page.goto('/en/', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('.role-chip[data-role-filter="security"]')).toContainText(
-      '4 evidence items'
-    );
-    await expect(page.locator('.role-chip[data-role-filter="infra"]')).toContainText(
-      '2 evidence items'
-    );
-    await expect(page.locator('.role-chip[data-role-filter="observability"]')).toContainText(
-      '2 evidence items'
+  test('a collapsed first target expands before focus and scroll', async ({ page }) => {
+    await openReady(page, '/ko/', 1280);
+    await page.evaluate(() => {
+      const card = document.querySelector('#project-resume-portfolio');
+      const list = document.querySelector('#project-list');
+      card.classList.add('project-item--collapsed');
+      list.classList.remove('is-expanded');
+      list.dataset.projectsExpanded = 'false';
+    });
+
+    await page.locator('[data-capability-control="delivery-operations"]').click();
+    await expect(page.locator('#project-list')).toHaveAttribute('data-projects-expanded', 'true');
+    await expect(page.locator('[data-projects-expand]')).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('#project-resume-portfolio')).toBeVisible();
+    await expect(page.locator('#project-resume-portfolio')).toBeFocused();
+  });
+
+  test('clear and history restoration do not trap focus', async ({ page }) => {
+    await openReady(page, '/ja/', 1280);
+    const product = page.locator('[data-capability-control="product-ui"]');
+    const delivery = page.locator('[data-capability-control="delivery-operations"]');
+
+    await product.click();
+    await delivery.click();
+    await page.goBack({ waitUntil: 'domcontentloaded' });
+    await expect(product).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('#projects')).toHaveAttribute(
+      'data-capability-selected',
+      'product-ui'
     );
 
-    await page.goto('/ja/', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('.role-chip[data-role-filter="security"]')).toContainText(
-      '4件の根拠'
-    );
-    await expect(page.locator('.role-chip[data-role-filter="infra"]')).toContainText('2件の根拠');
-    await expect(page.locator('.role-chip[data-role-filter="observability"]')).toContainText(
-      '2件の根拠'
-    );
+    await product.click();
+    await expect(product).toHaveAttribute('aria-pressed', 'false');
+    await expect(page.locator('#projects')).not.toHaveAttribute('data-capability-selected', /.+/);
+    await product.focus();
+    await page.keyboard.press('Tab');
+    await expect(page.locator('[data-capability-control="backend-api"]')).toBeFocused();
   });
 });

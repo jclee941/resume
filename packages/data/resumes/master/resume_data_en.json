@@ -678,8 +678,8 @@
           "url": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard"
         }
       ],
-      "featured": true,
-      "displayOrder": 2
+      "featured": false,
+      "displayOrder": 5
     },
     {
       "id": "security-alert-system",
@@ -702,8 +702,8 @@
           "url": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard"
         }
       ],
-      "featured": true,
-      "displayOrder": 1
+      "featured": false,
+      "displayOrder": 4
     },
     {
       "id": "ip-blacklist-platform",
@@ -721,8 +721,20 @@
       "language": "JavaScript",
       "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null,
+      "fullStackEvidence": {
+        "backendApi": "Flask service and source-adapter boundaries",
+        "dataAsync": "PostgreSQL/SQLAlchemy model and Alembic migrations",
+        "securityReliability": "external feeds isolated behind adapters",
+        "architectureSteps": [
+          "threat feeds",
+          "source adapters",
+          "Flask service",
+          "SQLAlchemy/PostgreSQL",
+          "Alembic migrations"
+        ]
+      },
       "featured": true,
-      "displayOrder": 5
+      "displayOrder": 3
     },
     {
       "id": "hycu-fsds-autonomous-driving",
@@ -748,7 +760,7 @@
       "id": "resume-portfolio",
       "name": "Resume Portfolio",
       "period": "2024.01 ~ Present",
-      "description": "Recruiters were getting a fragmented view of the work, so the monorepo now hosts a single-SSoT resume site on Cloudflare Workers Edge alongside MCP tools and an auto-apply pipeline. Resume rendering, cover-letter generation, auto-apply, and observability all live in the same repository. This site runs on Cloudflare Workers (edge runtime).",
+      "description": "Career, project, and operations information was fragmented across the resume, PDF, and GitHub, making the work harder to assess quickly. The resume JSON SSoT projects into locale web data for a responsive KO/EN/JA portfolio and public resume, deployed through a generated Cloudflare Worker with merged edge routing. Metadata and OG remain owned by separate template sources, while Workers Builds, /health SHA, and Workers Logs/Loki provide deployment and observability evidence.",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
@@ -763,8 +775,22 @@
       "highlights": [
         "Public portfolio site running on the Cloudflare Workers Edge runtime."
       ],
+      "fullStackEvidence": {
+        "userSurface": "responsive KO/EN/JA portfolio and public resume",
+        "backendApi": "generated Cloudflare Worker plus merged edge routing",
+        "dataAsync": "JSON SSoT projected to locale build data",
+        "securityReliability": "CSP, security headers, escaped build templates",
+        "deliveryOperations": "Workers Builds, /health SHA, Workers Logs/Loki",
+        "architectureSteps": [
+          "Resume JSON SSoT",
+          "locale web projection",
+          "Worker build",
+          "edge routes",
+          "health/log evidence"
+        ]
+      },
       "featured": true,
-      "displayOrder": 7
+      "displayOrder": 2
     },
     {
       "id": "terraform-homelab-iac",
@@ -785,8 +811,8 @@
         "Helm",
         "k3s"
       ],
-      "featured": true,
-      "displayOrder": 3
+      "featured": false,
+      "displayOrder": 6
     },
     {
       "id": "safetywallet-cf-workers-pwa",
@@ -807,8 +833,22 @@
         "Drizzle ORM",
         "D1"
       ],
-      "featured": false,
-      "displayOrder": 9,
+      "fullStackEvidence": {
+        "userSurface": "Next.js/TypeScript admin surface and offline PWA",
+        "backendApi": "Cloudflare Workers and Hono API",
+        "dataAsync": "Drizzle/D1 model and Workers Queue jobs",
+        "securityReliability": "short-lived JWT access, HttpOnly refresh, RBAC",
+        "deliveryOperations": "Service Worker cache and edge delivery",
+        "architectureSteps": [
+          "Next.js admin + PWA",
+          "Workers + Hono API",
+          "Drizzle + D1",
+          "Workers Queue",
+          "JWT/RBAC + cache"
+        ]
+      },
+      "featured": true,
+      "displayOrder": 1,
       "language": "TypeScript"
     },
     {
@@ -830,8 +870,8 @@
         "ELK",
         "GitHub API"
       ],
-      "featured": true,
-      "displayOrder": 6,
+      "featured": false,
+      "displayOrder": 8,
       "language": "Python"
     },
     {
@@ -855,7 +895,7 @@
         "Video Generation API"
       ],
       "featured": false,
-      "displayOrder": 8,
+      "displayOrder": 9,
       "language": "Python"
     },
     {
@@ -900,7 +940,7 @@
         "Runbook"
       ],
       "featured": false,
-      "displayOrder": 4,
+      "displayOrder": 7,
       "language": "VBA"
     },
     {

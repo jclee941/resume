@@ -1,260 +1,162 @@
-// @ts-check
 const { test, expect } = require('@playwright/test');
+const path = require('node:path');
+const {
+  COMPONENT_DIFF_RATIO,
+  FULL_PAGE_DIFF_RATIO,
+  manifest,
+  openPortfolio,
+  revealTarget,
+} = require('./fixtures/portfolio-qa');
+const {
+  assertApprovedFixedControlGlyphs,
+  prepareFullPageCapture,
+} = require('./fixtures/visual-capture-sanity');
 
-const isCI = !!process.env.CI;
-const getMaxDiffPixelRatio = (localRatio) => (isCI ? Math.max(localRatio, 0.3) : localRatio);
-const getSnapshotName = (name) => (isCI ? name.replace('.png', '-ci.png') : name);
+const compareApprovedSnapshots = process.env.PORTFOLIO_COMPARE_APPROVED_SNAPSHOTS === '1';
 
-const DESKTOP_VIEWPORT = { width: 1280, height: 720 };
-const MOBILE_VIEWPORT = { width: 375, height: 667 };
-const TABLET_VIEWPORT = { width: 768, height: 1024 };
-
-async function resetVisualState(page) {
-  await page.context().clearCookies();
-  await page.addInitScript(() => {
-    localStorage.clear();
-    sessionStorage.clear();
-  });
+function captureName(locale, viewport, motion, id) {
+  return `${locale.id}-${viewport.id}-${motion}-${id}.png`;
 }
 
-async function safeVisualGoto(page, url = '/') {
-  try {
-    const response = await page.goto(url, { waitUntil: 'domcontentloaded' });
-    if (!response || response.status() >= 500) {
-      test.skip(true, 'Server unavailable - skipping visual test');
-    }
-  } catch (error) {
-    if (
-      error.message?.includes('net::ERR_NETWORK_CHANGED') ||
-      error.message?.includes('net::ERR_INTERNET_DISCONNECTED')
-    ) {
-      test.skip(true, 'Network unavailable - skipping visual test');
-    }
-    throw error;
+async function capture(
+  page,
+  testInfo,
+  locator,
+  name,
+  fullPage = false,
+  includeFixedUi = false,
+  motion = 'normal'
+) {
+  for (const selector of manifest.capturePolicy.fixedUiSelectors) {
+    const fixedUi = page.locator(selector);
+    await expect(fixedUi).toHaveCount(1);
+    await fixedUi.evaluate((element, visible) => {
+      if (visible) element.style.removeProperty('visibility');
+      else element.style.setProperty('visibility', 'hidden', 'important');
+    }, includeFixedUi);
+    if (includeFixedUi) await expect(fixedUi).toBeVisible();
+    else await expect(fixedUi).toBeHidden();
   }
-}
 
-async function stabilizeViewport(page, viewport) {
-  await page.setViewportSize(viewport);
-  await page.waitForFunction(
-    ({ width, height }) => window.innerWidth === width && window.innerHeight === height,
-    viewport
-  );
-}
+  const animations = motion === 'reduced' || includeFixedUi ? 'allow' : 'disabled';
+  if (fullPage) await prepareFullPageCapture(page, animations);
 
-async function waitForVisualStability(page, options = {}) {
-  const { targetSelector } = options;
+  const ratio = fullPage ? FULL_PAGE_DIFF_RATIO : COMPONENT_DIFF_RATIO;
+  if (compareApprovedSnapshots) {
+    const subject = locator || page;
+    await expect(subject).toHaveScreenshot(name, {
+      animations,
+      fullPage,
+      maxDiffPixelRatio: ratio,
+    });
+    if (includeFixedUi) {
+      await assertApprovedFixedControlGlyphs(page, testInfo, name, animations);
+    }
+    return;
+  }
 
-  await expect(page.locator('#main-content')).toBeVisible();
-  await expect(page.locator('.section-hero')).toBeVisible();
-  await expect(page.locator('#resume .resume-list > *').first()).toBeVisible();
-  await expect(page.locator('#projects .project-item').first()).toBeVisible();
-
-  if (targetSelector) {
-    const target = page.locator(targetSelector).first();
-    await target.scrollIntoViewIfNeeded();
-
-    await page.waitForFunction(
-      (selector) => {
-        const element = document.querySelector(selector);
-        return (
-          !element ||
-          !element.classList.contains('reveal') ||
-          element.classList.contains('revealed')
-        );
-      },
-      targetSelector,
-      { timeout: 5000 }
-    );
+  const captureRoot = process.env.PORTFOLIO_QA_CAPTURE_DIR;
+  const capturePath = captureRoot
+    ? path.join(captureRoot, name)
+    : testInfo.outputPath('visual-captures', name);
+  if (locator) {
+    await locator.screenshot({ path: capturePath, animations });
   } else {
+    await page.screenshot({ path: capturePath, animations, fullPage });
+  }
+}
+
+async function focusWithKeyboard(page, selector) {
+  for (let index = 0; index < 80; index += 1) {
+    await page.keyboard.press('Tab');
+    const matched = await page.evaluate(
+      (value) => document.activeElement?.matches(value),
+      selector
+    );
+    if (matched) return;
+  }
+  throw new Error(`keyboard focus never reached ${selector}`);
+}
+
+async function driveInteraction(page, state) {
+  if (state.captureViewport) {
+    await revealTarget(page, '#skills');
+    const targets = [page.locator(state.target), page.locator(state.companion)];
+    await expect(targets[1]).toHaveClass(/visible/);
+    const actionLinks = targets[0].locator('.mobile-actions__link');
+    await expect(actionLinks).toHaveCount(3);
+    for (const actionLink of await actionLinks.all()) {
+      await expect(actionLink).toBeVisible();
+      await expect(actionLink).toHaveAccessibleName(/\S/);
+    }
+    await expect(targets[1]).toHaveText(/\S/);
+    for (const target of targets) {
+      await expect(target).toBeVisible();
+      const box = await target.boundingBox();
+      const viewport = page.viewportSize();
+      expect(box).not.toBeNull();
+      expect(viewport).not.toBeNull();
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.y).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width).toBeLessThanOrEqual(viewport.width);
+      expect(box.y + box.height).toBeLessThanOrEqual(viewport.height);
+    }
+    return null;
+  }
+
+  const trigger = await revealTarget(page, state.trigger);
+  if (state.id === 'focus-visible') {
+    await page.evaluate(() => {
+      if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+    });
     await page.evaluate(() => window.scrollTo(0, 0));
+    await focusWithKeyboard(page, state.trigger);
+  } else {
+    await trigger.click();
   }
 
-  await page.waitForFunction(
-    (selector) => {
-      const root = document.documentElement;
-      const body = document.body;
-      const target = selector ? document.querySelector(selector) : null;
-      const metrics = {
-        htmlHeight: root.scrollHeight,
-        bodyHeight: body ? body.scrollHeight : 0,
-        htmlWidth: root.scrollWidth,
-        targetHeight: target ? Math.round(target.getBoundingClientRect().height) : 0,
-      };
-
-      const previous = window['__visualMetrics'];
-      const isStable =
-        previous &&
-        previous.htmlHeight === metrics.htmlHeight &&
-        previous.bodyHeight === metrics.bodyHeight &&
-        previous.htmlWidth === metrics.htmlWidth &&
-        previous.targetHeight === metrics.targetHeight;
-
-      window['__visualMetrics'] = metrics;
-      window['__visualStableCount'] = isStable ? (window['__visualStableCount'] || 0) + 1 : 0;
-
-      return document.readyState !== 'loading' && window['__visualStableCount'] >= 2;
-    },
-    targetSelector,
-    { timeout: 5000 }
-  );
-}
-
-async function prepareVisualPage(page, viewport, options = {}) {
-  const media = { reducedMotion: 'reduce' };
-  if (options.colorScheme) {
-    media.colorScheme = options.colorScheme;
+  const target = await revealTarget(page, state.target);
+  if (state.id === 'cover-expanded') await expect(target).toHaveAttribute('open', '');
+  if (state.id === 'mobile-nav-open')
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  if (state.id === 'capability-selected') {
+    await expect(trigger).toHaveAttribute('aria-pressed', 'true');
   }
-
-  await page.emulateMedia(media);
-  await stabilizeViewport(page, viewport);
-  await safeVisualGoto(page, options.url);
-  await waitForVisualStability(page, options);
+  if (state.id === 'projects-expanded')
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  return target;
 }
 
-test.describe('Visual Regression Tests', () => {
-  test.describe('Desktop Screenshots', () => {
-    test.beforeEach(async ({ page }) => {
-      await resetVisualState(page);
-    });
+test.describe('deterministic multilingual visual evidence', () => {
+  for (const locale of manifest.locales) {
+    for (const viewport of manifest.viewports) {
+      for (const motion of manifest.motionModes) {
+        test(`${locale.id} ${viewport.id} ${motion}`, async ({ page }, testInfo) => {
+          await openPortfolio(page, locale, viewport, motion);
 
-    test('homepage full page screenshot', async ({ page }) => {
-      await prepareVisualPage(page, DESKTOP_VIEWPORT);
+          for (const region of manifest.coreRegions) {
+            const name = captureName(locale, viewport, motion, region.id);
+            const target = region.selector ? await revealTarget(page, region.selector) : null;
+            await capture(page, testInfo, target, name, region.fullPage, false, motion);
+          }
 
-      await expect(page).toHaveScreenshot(getSnapshotName('desktop-homepage.png'), {
-        fullPage: true,
-        maxDiffPixelRatio: getMaxDiffPixelRatio(0.1),
-        animations: 'disabled',
-      });
-    });
-
-    test('hero section screenshot', async ({ page }) => {
-      await prepareVisualPage(page, DESKTOP_VIEWPORT, { targetSelector: '.section-hero' });
-
-      const heroSection = page.locator('.section-hero');
-      await expect(heroSection).toHaveScreenshot(getSnapshotName('desktop-hero.png'), {
-        maxDiffPixelRatio: getMaxDiffPixelRatio(0.05),
-      });
-    });
-
-    test('projects section screenshot', async ({ page }) => {
-      await prepareVisualPage(page, DESKTOP_VIEWPORT, { targetSelector: '#projects' });
-
-      const projectsSection = page.locator('#projects');
-      await expect(projectsSection).toHaveScreenshot(getSnapshotName('desktop-projects.png'), {
-        maxDiffPixelRatio: getMaxDiffPixelRatio(0.05),
-      });
-    });
-
-    test('resume section screenshot', async ({ page }) => {
-      await prepareVisualPage(page, DESKTOP_VIEWPORT, { targetSelector: '#resume' });
-
-      const resumeSection = page.locator('#resume');
-      await expect(resumeSection).toHaveScreenshot(getSnapshotName('desktop-resume.png'), {
-        maxDiffPixelRatio: getMaxDiffPixelRatio(0.05),
-      });
-    });
-  });
-
-  test.describe('Mobile Screenshots', () => {
-    test.beforeEach(async ({ page }) => {
-      await resetVisualState(page);
-    });
-
-    test('mobile homepage screenshot', async ({ page }) => {
-      await prepareVisualPage(page, MOBILE_VIEWPORT);
-
-      await expect(page).toHaveScreenshot(getSnapshotName('mobile-homepage.png'), {
-        fullPage: true,
-        maxDiffPixelRatio: getMaxDiffPixelRatio(0.1),
-        animations: 'disabled',
-      });
-    });
-
-    test('mobile hero section screenshot', async ({ page }) => {
-      await prepareVisualPage(page, MOBILE_VIEWPORT, { targetSelector: '.section-hero' });
-
-      const heroSection = page.locator('.section-hero');
-      await expect(heroSection).toHaveScreenshot(getSnapshotName('mobile-hero.png'), {
-        maxDiffPixelRatio: getMaxDiffPixelRatio(0.05),
-      });
-    });
-
-    test('mobile project card screenshot', async ({ page }) => {
-      await prepareVisualPage(page, MOBILE_VIEWPORT, { targetSelector: '.project-item' });
-
-      const firstProjectCard = page.locator('.project-item').first();
-      await expect(firstProjectCard).toHaveScreenshot(getSnapshotName('mobile-project-card.png'), {
-        maxDiffPixelRatio: getMaxDiffPixelRatio(0.05),
-      });
-    });
-  });
-
-  test.describe('Tablet Screenshots', () => {
-    test.beforeEach(async ({ page }) => {
-      await resetVisualState(page);
-    });
-
-    test('tablet homepage screenshot', async ({ page }) => {
-      await prepareVisualPage(page, TABLET_VIEWPORT);
-
-      await expect(page).toHaveScreenshot(getSnapshotName('tablet-homepage.png'), {
-        fullPage: true,
-        maxDiffPixelRatio: getMaxDiffPixelRatio(0.1),
-        animations: 'disabled',
-      });
-    });
-  });
-
-  test.describe('Dark Mode Screenshots', () => {
-    test('dark mode preference screenshot', async ({ page }) => {
-      await resetVisualState(page);
-      await prepareVisualPage(page, DESKTOP_VIEWPORT, { colorScheme: 'dark' });
-
-      await expect(page).toHaveScreenshot(getSnapshotName('dark-mode-homepage.png'), {
-        fullPage: true,
-        maxDiffPixelRatio: getMaxDiffPixelRatio(0.1),
-        animations: 'disabled',
-      });
-    });
-  });
-
-  test.describe('Component Screenshots', () => {
-    test('footer screenshot', async ({ page }) => {
-      await resetVisualState(page);
-      await prepareVisualPage(page, DESKTOP_VIEWPORT, { targetSelector: 'footer' });
-
-      const footer = page.locator('footer');
-      await expect(footer).toHaveScreenshot(getSnapshotName('footer.png'), {
-        maxDiffPixelRatio: getMaxDiffPixelRatio(0.05),
-      });
-    });
-
-    test('hero download buttons screenshot', async ({ page }) => {
-      await resetVisualState(page);
-      await prepareVisualPage(page, DESKTOP_VIEWPORT, {
-        targetSelector: '.hero-download, .resume-download',
-      });
-
-      const heroDownload = page.locator('.hero-download, .resume-download').first();
-      await expect(heroDownload).toBeVisible();
-
-      await heroDownload.scrollIntoViewIfNeeded();
-      await waitForVisualStability(page, { targetSelector: '.hero-download, .resume-download' });
-
-      await expect(heroDownload).toHaveScreenshot(getSnapshotName('download-buttons.png'), {
-        maxDiffPixelRatio: getMaxDiffPixelRatio(0.05),
-      });
-    });
-
-    test('single project card screenshot', async ({ page }) => {
-      await resetVisualState(page);
-      await prepareVisualPage(page, DESKTOP_VIEWPORT, { targetSelector: '.project-item' });
-
-      const projectCard = page.locator('.project-item').first();
-      await expect(projectCard).toHaveScreenshot(getSnapshotName('project-card.png'), {
-        maxDiffPixelRatio: getMaxDiffPixelRatio(0.05),
-      });
-    });
-  });
+          for (const state of manifest.interactionStates.filter(({ widths }) =>
+            widths.includes(viewport.width)
+          )) {
+            await openPortfolio(page, locale, viewport, motion);
+            const target = await driveInteraction(page, state);
+            await capture(
+              page,
+              testInfo,
+              target,
+              captureName(locale, viewport, motion, state.id),
+              false,
+              state.captureViewport === true,
+              motion
+            );
+          }
+        });
+      }
+    }
+  }
 });
