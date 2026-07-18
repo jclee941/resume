@@ -8,7 +8,7 @@
     "approvedAt": "2026-07-16T20:32:42+09:00",
     "approvedSnapshotCount": 156,
     "approvalEvidence": [
-      ".omo/evidence/portfolio-fullstack-rebrand/working/final-wave-remediation/DoneClaim.json"
+      "tests/e2e/portfolio-visual-approval/DoneClaim.json"
     ]
   },
   "capturePolicy": {
