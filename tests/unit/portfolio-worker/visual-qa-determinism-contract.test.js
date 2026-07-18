@@ -55,7 +55,7 @@ describe('multilingual visual QA contract', () => {
       dedicatedState: 'mobile-actions',
     });
     expect(manifest.snapshotApproval.approvalEvidence).toEqual([
-      '.omo/evidence/portfolio-fullstack-rebrand/working/final-wave-remediation/DoneClaim.json',
+      'tests/e2e/portfolio-visual-approval/DoneClaim.json',
     ]);
     for (const evidencePath of manifest.snapshotApproval.approvalEvidence) {
       expect(fs.existsSync(path.join(ROOT, evidencePath))).toBe(true);

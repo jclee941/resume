@@ -1,0 +1,22 @@
+{
+  "status": "green-pending-independent-review",
+  "baseCommit": "cf515cba7df23f5486a192c5751b10dcbea70c43",
+  "snapshotCount": 156,
+  "snapshotCanonicalSha256": "91ebabbb2d9ee9b4e26cc248186b838ef620ff26280a168fca801b8e9e3b4f6d",
+  "changedSnapshotCount": 48,
+  "redEvidence": [
+    "red/lighthouse-runner-contract.txt",
+    "red/portfolio-visual-accessibility.txt",
+    "red/visual-snapshot-compare.txt"
+  ],
+  "greenEvidence": [
+    "green-43-playwright.txt"
+  ],
+  "verifiedBehaviors": [
+    "Korean mixed-script tokens do not split across lines at the tested viewports",
+    "The fixed mobile action bar is hidden while the cover-letter disclosure is open",
+    "The primary CTA retains at least 4.5:1 text contrast while hovered and keyboard-focused",
+    "Lighthouse output cleanup accepts only strict descendants of approved roots and rejects symlink escapes"
+  ],
+  "independentReview": "pending"
+}
