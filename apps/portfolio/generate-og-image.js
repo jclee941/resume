@@ -1,123 +1,42 @@
-const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
+const sharp = require('sharp');
+
 const logger = require('./logger');
 
-/**
- * Generate Open Graph images for resume site
- * Supports Korean and English variants
- * Size: 1200x630px (recommended for og:image)
- * Design: Minimal with brand colors and language-specific text
- */
-async function generateOGImage(language = 'ko') {
-  const width = 1200;
-  const height = 630;
-  const centerX = width / 2;
-  const centerY = height / 2;
+const WIDTH = 1200;
+const HEIGHT = 630;
+const CONTENT = {
+  ko: {
+    name: '이재철',
+    primaryTitle: '풀스택 엔지니어',
+    supportingLine: '보안 자동화 · 엣지 인프라',
+  },
+  en: {
+    name: 'Jaecheol Lee',
+    primaryTitle: 'Full-Stack Engineer',
+    supportingLine: 'Security Automation & Edge Infrastructure',
+  },
+  ja: {
+    name: '李在哲',
+    primaryTitle: 'フルスタックエンジニア',
+    supportingLine: 'セキュリティ自動化・エッジインフラ',
+  },
+};
 
-  // Language-specific content
-  const content = {
-    ko: {
-      name: '이재철',
-      subtitleLines: ['Security Automation', 'Infrastructure Engineer'],
-      stats: '8년차 | 금융 보안 인프라 · SIEM · IaC',
-      url: 'resume.jclee.me',
-      label: '한국어',
-    },
-    en: {
-      name: 'Jaecheol Lee',
-      subtitleLines: ['Security Automation', 'Infrastructure Engineer'],
-      stats: '8 years | Financial Security Infrastructure · SIEM · IaC',
-      url: 'resume.jclee.me',
-      label: 'English',
-    },
-    ja: {
-      name: 'イ・ジェチョル',
-      subtitleLines: ['Security Automation', 'Infrastructure Engineer'],
-      stats: '8年目 | 金融セキュリティインフラ · SIEM · IaC',
-      url: 'resume.jclee.me',
-      label: '日本語',
-    },
-  };
+const COLORS = {
+  background: '#0f1115',
+  surface: '#15181e',
+  card: '#171a21',
+  text: '#e7e9ee',
+  secondaryText: '#aab1bd',
+  accent: '#5aa9b8',
+  accentStrong: '#9bd8e1',
+  border: '#333845',
+};
 
-  const data = content[language] || content.ko;
-
-  // Build SVG string
-  let svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">`;
-  svg += '<defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">';
-  svg += '<stop offset="0%" style="stop-color:#0c0c12;stop-opacity:1" />';
-  svg += '<stop offset="60%" style="stop-color:#0a1418;stop-opacity:1" />';
-  svg += '<stop offset="100%" style="stop-color:#05181c;stop-opacity:1" />';
-  svg += '</linearGradient></defs>';
-  svg += `<rect width="${width}" height="${height}" fill="url(#grad)"/>`;
-
-  // Language badge (top-right)
-  const badgeX = width - 115;
-  const badgeY = 65;
-  svg += `<rect x="${width - 200}" y="30" width="170" height="50" rx="25" fill="#00d4e0" opacity="0.12" stroke="#00d4e0" stroke-width="2"/>`;
-  svg += `<text x="${badgeX}" y="${badgeY}" font-family="Inter, sans-serif" font-size="20" font-weight="600" fill="#00d4e0" text-anchor="middle">${escapeXml(data.label)}</text>`;
-
-  // Content group
-  svg += `<g transform="translate(${centerX}, ${centerY})">`;
-
-  // Name
-  svg += `<text x="0" y="-80" font-family="Inter, sans-serif" font-size="72" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="-0.02em">${escapeXml(data.name)}</text>`;
-
-  // Subtitle
-  const subtitleLines = data.subtitleLines || ['Security Automation', 'Infrastructure Engineer'];
-  subtitleLines.forEach((line, index) => {
-    const y = index === 0 ? -18 : 34;
-    svg += `<text x="0" y="${y}" font-family="Inter, sans-serif" font-size="46" font-weight="600" fill="#00d4e0" text-anchor="middle">${escapeXml(line)}</text>`;
-  });
-
-  // Stats
-  svg += `<text x="0" y="105" font-family="Inter, sans-serif" font-size="32" font-weight="500" fill="#c8d2d6" text-anchor="middle">${escapeXml(data.stats)}</text>`;
-
-  // URL
-  svg += `<text x="0" y="165" font-family="Inter, sans-serif" font-size="28" font-weight="400" fill="#d946a8" text-anchor="middle">${escapeXml(data.url)}</text>`;
-
-  svg += '</g></svg>';
-
-  // Generate both PNG and WebP for each language
-  const formats = [
-    { ext: 'png', format: 'png' },
-    { ext: 'webp', format: 'webp' },
-  ];
-
-  const results = [];
-
-  for (const fmt of formats) {
-    const fileName =
-      language === 'ko'
-        ? `og-image.${fmt.ext}`
-        : language === 'ja'
-          ? `og-image-ja.${fmt.ext}`
-          : `og-image-en.${fmt.ext}`;
-    const outputPath = path.join(__dirname, fileName);
-
-    try {
-      await sharp(Buffer.from(svg))[fmt.format]().toFile(outputPath);
-
-      const stats = fs.statSync(outputPath);
-      results.push({
-        file: fileName,
-        size: stats.size,
-        language,
-      });
-
-      logger.log(`✅ Generated: ${fileName} (${(stats.size / 1024).toFixed(2)} KB)`);
-    } catch (error) {
-      logger.error(`❌ Error generating ${fileName}:`, error.message);
-      throw error;
-    }
-  }
-
-  return results;
-}
-
-// Helper function to escape XML special characters
-function escapeXml(str) {
-  return str
+function escapeXml(value) {
+  return value
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -125,34 +44,71 @@ function escapeXml(str) {
     .replace(/'/g, '&apos;');
 }
 
-// Run if called directly
+function buildSvg(language) {
+  const copy = CONTENT[language] || CONTENT.ko;
+  const primarySize = language === 'ja' ? 54 : 60;
+  const supportingSize = language === 'en' ? 36 : 38;
+  const fonts = 'Inter, Noto Sans CJK KR, Noto Sans CJK JP, sans-serif';
+
+  return `<svg width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="${COLORS.background}"/>
+        <stop offset="0.62" stop-color="${COLORS.surface}"/>
+        <stop offset="1" stop-color="${COLORS.card}"/>
+      </linearGradient>
+      <radialGradient id="accent" cx="1" cy="0" r="1">
+        <stop offset="0" stop-color="${COLORS.accent}" stop-opacity="0.28"/>
+        <stop offset="0.58" stop-color="${COLORS.accent}" stop-opacity="0.08"/>
+        <stop offset="1" stop-color="${COLORS.accent}" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect width="${WIDTH}" height="${HEIGHT}" fill="url(#background)"/>
+    <rect width="${WIDTH}" height="${HEIGHT}" fill="url(#accent)"/>
+    <path d="M112 118 H1088" stroke="${COLORS.border}" stroke-width="2"/>
+    <path d="M112 118 H360" stroke="${COLORS.accentStrong}" stroke-width="4"/>
+    <circle cx="1036" cy="504" r="118" fill="none" stroke="${COLORS.accent}" stroke-opacity="0.16" stroke-width="2"/>
+    <circle cx="1036" cy="504" r="72" fill="none" stroke="${COLORS.accentStrong}" stroke-opacity="0.12" stroke-width="2"/>
+    <g font-family="${fonts}">
+      <text x="112" y="228" font-size="36" font-weight="600" fill="${COLORS.secondaryText}">${escapeXml(copy.name)}</text>
+      <text x="112" y="340" font-size="${primarySize}" font-weight="700" letter-spacing="-1" fill="${COLORS.text}">${escapeXml(copy.primaryTitle)}</text>
+      <text x="112" y="425" font-size="${supportingSize}" font-weight="500" fill="${COLORS.accentStrong}">${escapeXml(copy.supportingLine)}</text>
+    </g>
+  </svg>`;
+}
+
+async function generateOGImage(language = 'ko') {
+  const formats = [
+    { extension: 'png', encoder: 'png' },
+    { extension: 'webp', encoder: 'webp' },
+  ];
+  const outputs = [];
+
+  for (const format of formats) {
+    const suffix = language === 'ko' ? '' : `-${language === 'ja' ? 'ja' : 'en'}`;
+    const file = `og-image${suffix}.${format.extension}`;
+    const outputPath = path.join(__dirname, file);
+    const image = sharp(Buffer.from(buildSvg(language)));
+    const encoded = format.encoder === 'png' ? image.png() : image.webp();
+    await encoded.toFile(outputPath);
+    const bytes = fs.statSync(outputPath).size;
+    outputs.push({ file, bytes, language });
+    logger.log(`Generated ${file} (${(bytes / 1024).toFixed(2)} KB)`);
+  }
+
+  return outputs;
+}
+
 if (require.main === module) {
   (async () => {
     try {
-      logger.log('📸 Generating Open Graph images...');
-      logger.log('');
-
-      // Generate Korean version
-      logger.log('🇰🇷 Korean version:');
-      await generateOGImage('ko');
-      logger.log('');
-
-      // Generate English version
-      logger.log('🇺🇸 English version:');
-      await generateOGImage('en');
-      logger.log('');
-
-      // Generate Japanese version
-      logger.log('🇯🇵 Japanese version:');
-      await generateOGImage('ja');
-      logger.log('');
-
-      logger.log('✅ All Open Graph images generated successfully!');
+      for (const language of ['ko', 'en', 'ja']) await generateOGImage(language);
+      logger.log('All Open Graph images generated successfully.');
     } catch (error) {
-      logger.error('❌ Generation failed:', error.message);
+      logger.error('Open Graph image generation failed:', error.message);
       process.exit(1);
     }
   })();
 }
 
-module.exports = { generateOGImage };
+module.exports = { buildSvg, generateOGImage };

@@ -681,8 +681,8 @@
           "url": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard"
         }
       ],
-      "featured": true,
-      "displayOrder": 2
+      "featured": false,
+      "displayOrder": 5
     },
     {
       "id": "security-alert-system",
@@ -705,8 +705,8 @@
           "url": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard"
         }
       ],
-      "featured": true,
-      "displayOrder": 1
+      "featured": false,
+      "displayOrder": 4
     },
     {
       "id": "ip-blacklist-platform",
@@ -724,8 +724,20 @@
       "language": "JavaScript",
       "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null,
+      "fullStackEvidence": {
+        "backendApi": "Flaskサービスとソースアダプタ境界",
+        "dataAsync": "PostgreSQL/SQLAlchemyモデルとAlembicマイグレーション",
+        "securityReliability": "外部フィードをアダプタの背後に分離",
+        "architectureSteps": [
+          "脅威フィード",
+          "ソースアダプタ",
+          "Flaskサービス",
+          "SQLAlchemy/PostgreSQL",
+          "Alembicマイグレーション"
+        ]
+      },
       "featured": true,
-      "displayOrder": 5
+      "displayOrder": 3
     },
     {
       "id": "hycu-fsds-autonomous-driving",
@@ -751,7 +763,7 @@
       "id": "resume-portfolio",
       "name": "Resume Portfolio",
       "period": "2024.01 ~ 現在",
-      "description": "経歴・プロジェクト・運用指標が履歴書・PDF・GitHubに散らばり、採用担当者が強みを短時間で把握しづらい状況でした。Cloudflare Workers Edgeに単一SSoTベースの履歴書サイトを載せ、MCP運用ツールと応募支援パイプラインをmonorepoに統合しています。履歴書・志望動機生成・応募支援・可観測性を同じリポジトリで運用する構成です。このサイトはCloudflare Workersで稼働しています（edge runtime、バンドル）。",
+      "description": "経歴・プロジェクト・運用情報が履歴書・PDF・GitHubに散らばり、採用担当者が強みを短時間で把握しづらい状況でした。履歴書JSON SSoTをロケール別Webデータへ投影し、レスポンシブなKO/EN/JAポートフォリオと公開履歴書を、生成されたCloudflare Workerと統合エッジルーティングで配信します。メタデータとOGは別のテンプレートソースで管理し、Workers Builds、/health SHA、Workers Logs/Lokiでデプロイと可観測性の根拠を確認します。",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
@@ -766,8 +778,22 @@
       "highlights": [
         "Cloudflare Workers Edgeランタイムで動作する公開ポートフォリオサイト"
       ],
+      "fullStackEvidence": {
+        "userSurface": "レスポンシブなKO/EN/JAポートフォリオと公開履歴書",
+        "backendApi": "生成されたCloudflare Workerと統合エッジルーティング",
+        "dataAsync": "JSON SSoTをロケール別ビルドデータへ投影",
+        "securityReliability": "CSP、セキュリティヘッダー、エスケープ済みビルドテンプレート",
+        "deliveryOperations": "Workers Builds、/health SHA、Workers Logs/Loki",
+        "architectureSteps": [
+          "履歴書JSON SSoT",
+          "ロケールWeb投影",
+          "Workerビルド",
+          "エッジルート",
+          "ヘルス/ログ根拠"
+        ]
+      },
       "featured": true,
-      "displayOrder": 7
+      "displayOrder": 2
     },
     {
       "id": "terraform-homelab-iac",
@@ -788,8 +814,8 @@
         "Helm",
         "k3s"
       ],
-      "featured": true,
-      "displayOrder": 3
+      "featured": false,
+      "displayOrder": 6
     },
     {
       "id": "safetywallet-cf-workers-pwa",
@@ -810,8 +836,22 @@
         "Drizzle ORM",
         "D1"
       ],
-      "featured": false,
-      "displayOrder": 9,
+      "fullStackEvidence": {
+        "userSurface": "Next.js/TypeScript管理画面とオフラインPWA",
+        "backendApi": "Cloudflare WorkersとHono API",
+        "dataAsync": "Drizzle/D1モデルとWorkers Queueジョブ",
+        "securityReliability": "短期JWTアクセス、HttpOnlyリフレッシュ、RBAC",
+        "deliveryOperations": "Service Workerキャッシュとエッジ配信",
+        "architectureSteps": [
+          "Next.js管理画面 + PWA",
+          "Workers + Hono API",
+          "Drizzle + D1",
+          "Workers Queue",
+          "JWT/RBAC + キャッシュ"
+        ]
+      },
+      "featured": true,
+      "displayOrder": 1,
       "language": "TypeScript"
     },
     {
@@ -833,8 +873,8 @@
         "ELK",
         "GitHub API"
       ],
-      "featured": true,
-      "displayOrder": 6,
+      "featured": false,
+      "displayOrder": 8,
       "language": "Python"
     },
     {
@@ -858,7 +898,7 @@
         "Video Generation API"
       ],
       "featured": false,
-      "displayOrder": 8,
+      "displayOrder": 9,
       "language": "Python"
     },
     {
@@ -903,7 +943,7 @@
         "Runbook"
       ],
       "featured": false,
-      "displayOrder": 4,
+      "displayOrder": 7,
       "language": "VBA"
     },
     {
