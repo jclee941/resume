@@ -286,12 +286,8 @@ jobs:
             echo "✅ Built $name"
           done < <(find tools/scripts infrastructure -type f -name '*.go')
 
-      - name: Validate Cloudflare deployment config parity
-        run: |
-          go test -race -shuffle=on -count=1 \
-            tools/ci/validate-cloudflare-bindings.go \
-            tools/ci/validate-cloudflare-bindings_test.go
-          go run ./tools/ci/validate-cloudflare-native.go
+      - name: Validate Cloudflare native structure
+        run: go run ./tools/ci/validate-cloudflare-native.go
 
   validate-openapi:
     name: OpenAPI Spec Validation

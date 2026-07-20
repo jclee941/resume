@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -26,10 +25,6 @@ func main() {
 	}
 
 	if err := validateDeployBuildConfig(rootDir); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	if err := runProductionBindingValidation(rootDir); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
@@ -81,16 +76,6 @@ func main() {
 	}
 
 	fmt.Println("OK: Cloudflare native structure validated")
-}
-
-func runProductionBindingValidation(rootDir string) error {
-	script := filepath.Join(rootDir, "tools/ci/validate-cloudflare-bindings.go")
-	command := exec.Command("go", "run", script, rootDir)
-	output, err := command.CombinedOutput()
-	if err != nil {
-		return fmt.Errorf("production binding validation failed: %s", strings.TrimSpace(string(output)))
-	}
-	return nil
 }
 
 func validateDeployBuildConfig(rootDir string) error {

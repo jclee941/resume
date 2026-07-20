@@ -86,7 +86,7 @@ describe('strict post-deploy workflow contracts', () => {
   });
 
   it('rejects a schedule baseline that accepts a short SHA', () => {
-    mutate('post-deploy-verify.yml', "[[ \"$EXPECTED_SHA\" =~ ^[0-9a-f]{40}$ ]]", '[[ -n "$EXPECTED_SHA" ]]');
+    mutate('post-deploy-verify.yml', '[[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]]', '[[ -n "$EXPECTED_SHA" ]]');
     rejects(/schedule.*full SHA|40-character/u);
   });
 
@@ -96,7 +96,7 @@ describe('strict post-deploy workflow contracts', () => {
   });
 
   it('rejects superseded handling that can mutate issues', () => {
-    mutate("post-deploy-verify.yml", "if: steps.final.outputs.superseded != 'true'", 'if: always()');
+    mutate('post-deploy-verify.yml', "if: steps.final.outputs.superseded != 'true'", 'if: always()');
     rejects(/superseded.*issue/u);
   });
 });
