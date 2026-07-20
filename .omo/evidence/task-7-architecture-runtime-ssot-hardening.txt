@@ -1,0 +1,49 @@
+Todo 7 evidence: turn CI and post-deploy verification into strict real-surface gates
+Base: 939f64d96194682b16bbb5f689083b4c5bf8833a
+Worktree: /home/jclee/dev/resume/.worktrees/resume-arch-task7 (detached)
+
+TDD
+- Failing-first fixtures live in tools/scripts/verification/__tests__/validate-ci-workflows.test.mjs:
+  node --test tools/scripts/verification/__tests__/validate-ci-workflows.test.mjs
+  PASS 17/17. Fixtures prove summary.needs and the failure expression reject
+  omission, failure, and cancellation of each stable job ID
+  (architecture-hardening, wrangler-dry-run, merged-worker-e2e), and prove the
+  post-deploy workflow keeps no push path filter, requires a 40-hex dispatch
+  expected_sha, keeps serialized non-cancelling concurrency, and ends an older
+  push only as explicit superseded success.
+- Go waiter contract:
+  cd tools/scripts && go test ./verification/wait-for-deployment
+  PASS (ok). Covers exact-SHA success, unknown SHA, prefix match rejection,
+  403/HTTP failures, timeout, and mid-poll supersession via the current-tip
+  callback returning typed superseded.
+
+Automated verification
+- npm run verify:architecture-hardening:core: PASS. Chain runs
+  verify:worker-config, verify:ssot, verify:release-workflows,
+  verify:workspace-deps, verify:architecture-governance, verify:ci-workflows;
+  governance JSON status=ok, CI workflow validation passed with all three
+  stable job IDs.
+- npx playwright test tests/e2e/merged-worker-contract.spec.js --list
+  --project=chromium: lists 8 tests — merged health non-5xx, Queue disabled
+  503 contract, exact full-SHA health, job database connected, and four
+  @portfolio-render KO/EN checks at 375px/1280px.
+- node tools/scripts/verification/validate-ci-workflows.mjs: PASS.
+
+Structural changes
+- .github/workflows/ci.yml: adds stable jobs architecture-hardening
+  (npm run verify:architecture-hardening:core), wrangler-dry-run (production
+  and preview inventories via root wrangler.jsonc), merged-worker-e2e
+  (root-Wrangler merged worker contract spec); all three added to
+  summary.needs and its explicit failure/cancelled expression.
+- .github/workflows/post-deploy-verify.yml: push trigger drops paths filter,
+  strict gate pins immutable github.sha, first/finally queries
+  refs/heads/master and ends superseded pushes as success with a
+  machine-readable superseded=true receipt, dispatch requires 40-hex
+  expected_sha, schedule reads one full current /health git_sha baseline,
+  fixed sleeps and prefix/freshness fallback and synthetic provider-named
+  check creation removed.
+- tools/scripts/verification/wait-for-deployment/{main.go,wait.go,wait_test.go}:
+  10s poll up to 5m for exact SHA with typed superseded via current-tip callback.
+- tests/e2e/merged-worker-contract.spec.js: no skip paths; STRICT_PRODUCTION=1
+  additionally enforces exact 40-char EXPECTED_GIT_SHA, database connected,
+  and zero page/console errors with documentElement.scrollWidth <= clientWidth.

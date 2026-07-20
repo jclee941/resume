@@ -78,6 +78,8 @@
     "verify:release-workflows": "node tools/scripts/verification/validate-release-workflows.mjs",
     "verify:ssot": "node tools/scripts/utils/verify-resume-sync.mjs",
     "verify:architecture-governance": "node tools/scripts/verification/validate-architecture-docs.mjs --governance-only",
+    "verify:ci-workflows": "node tools/scripts/verification/validate-ci-workflows.mjs",
+    "verify:architecture-hardening:core": "npm run verify:worker-config && npm run verify:ssot && npm run verify:release-workflows && npm run verify:workspace-deps && npm run verify:architecture-governance && npm run verify:ci-workflows",
     "dev": "CLOUDFLARE_ENV= wrangler dev --config wrangler.jsonc --port 8787 --local",
     "foreign-apply:dry-run": "node apps/job-dashboard/scripts/dev/foreign-apply-dry-run.mjs",
     "dev:wrangler": "npm run dev",
