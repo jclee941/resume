@@ -10,8 +10,3 @@
   font-family: var(--font-sans);
   position: relative;
 }
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--border-hover);
-}

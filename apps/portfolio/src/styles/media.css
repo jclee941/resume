@@ -46,10 +46,6 @@
     gap: var(--space-2);
   }
 
-  .project-header {
-    height: 140px;
-    font-size: 3rem;
-  }
 }
 
 @container card (min-width: 350px) {
@@ -145,7 +141,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .container-narrow {
     width: 100%;
     max-width: 100%;
@@ -223,11 +219,6 @@
   .projects-grid {
     grid-template-columns: 1fr;
     gap: var(--space-6);
-  }
-
-  .project-header {
-    height: 140px;
-    font-size: 2.5rem;
   }
 
   .project-body {

@@ -11,12 +11,30 @@ const configuredBaseUrl =
   process.env.PLAYWRIGHT_BASE_URL || (process.env.CI ? 'http://localhost:8787' : '');
 const isLocalhost = /127\.0\.0\.1|localhost/.test(configuredBaseUrl);
 
+/**
+ * @param {import('@playwright/test').Response | null} response
+ * @param {import('@playwright/test').TestInfo} testInfo
+ */
 function skipIfLocalRateLimited(response, testInfo) {
   if (isLocalhost && response && response.status() === 429) {
-    testInfo.skip('Rate-limited by local wrangler dev server');
+    testInfo.skip(true, 'Rate-limited by local wrangler dev server');
     return true;
   }
   return false;
+}
+
+function inspectJsonLdBlocks() {
+  const scripts = document.querySelectorAll('script[type="application/ld+json"]');
+  const errors = [...scripts].flatMap((script, index) => {
+    try {
+      JSON.parse(script.textContent || '');
+      return [];
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return [`block ${index}: ${message}`];
+    }
+  });
+  return { count: scripts.length, errors };
 }
 
 test.describe('SEO Meta Tags', () => {
@@ -234,7 +252,7 @@ test.describe('JSON-LD Structured Data', () => {
     expect(personSchema.name).toMatch(NAME_PATTERN);
     expect(personSchema.alternateName).toMatch(NAME_PATTERN);
     expect(personSchema.email).toBeTruthy();
-    expect(personSchema.telephone).toBeTruthy();
+    expect(personSchema.telephone).toBeUndefined();
     expect(personSchema.jobTitle).toBe('풀스택 엔지니어');
     if (personSchema.worksFor) {
       expect(personSchema.worksFor).toBeTruthy();
@@ -333,54 +351,21 @@ test.describe('JSON-LD Structured Data', () => {
 
   test('should have valid JSON-LD on KO root', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    const result = await page.evaluate(() => {
-      const scripts = document.querySelectorAll('script[type="application/ld+json"]');
-      const errors = [];
-      scripts.forEach((s, i) => {
-        try {
-          JSON.parse(s.textContent || '');
-        } catch (e) {
-          errors.push(`block ${i}: ${e.message}`);
-        }
-      });
-      return { count: scripts.length, errors };
-    });
+    const result = await page.evaluate(inspectJsonLdBlocks);
     expect(result.errors).toEqual([]);
     expect(result.count).toBeGreaterThanOrEqual(1);
   });
 
   test('should have valid JSON-LD on EN page', async ({ page }) => {
     await page.goto('/en/', { waitUntil: 'domcontentloaded' });
-    const result = await page.evaluate(() => {
-      const scripts = document.querySelectorAll('script[type="application/ld+json"]');
-      const errors = [];
-      scripts.forEach((s, i) => {
-        try {
-          JSON.parse(s.textContent || '');
-        } catch (e) {
-          errors.push(`block ${i}: ${e.message}`);
-        }
-      });
-      return { count: scripts.length, errors };
-    });
+    const result = await page.evaluate(inspectJsonLdBlocks);
     expect(result.errors).toEqual([]);
     expect(result.count).toBeGreaterThanOrEqual(1);
   });
 
   test('should have valid JSON-LD on JA page', async ({ page }) => {
     await page.goto('/ja/', { waitUntil: 'domcontentloaded' });
-    const result = await page.evaluate(() => {
-      const scripts = document.querySelectorAll('script[type="application/ld+json"]');
-      const errors = [];
-      scripts.forEach((s, i) => {
-        try {
-          JSON.parse(s.textContent || '');
-        } catch (e) {
-          errors.push(`block ${i}: ${e.message}`);
-        }
-      });
-      return { count: scripts.length, errors };
-    });
+    const result = await page.evaluate(inspectJsonLdBlocks);
     expect(result.errors).toEqual([]);
     expect(result.count).toBeGreaterThanOrEqual(1);
   });

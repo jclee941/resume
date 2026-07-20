@@ -87,7 +87,6 @@ function createDomainCard(domainKey, domain) {
 
   const levelInfo = getLevelInfo(domain.skills[0].level);
   const tierLabel = getTierLabel(domain.skills[0].level);
-  card.setAttribute('aria-label', `${domain.title}: ${tierLabel}, ${skillCountText(domain.skills.length)}`);
 
   const header = createElement('div', 'skill-domain-card__header');
   const icon = createElement('div', 'skill-domain-card__icon');

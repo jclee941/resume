@@ -8,8 +8,8 @@ function applyJapaneseSecurity(html) {
     .replace(/관측성 스택/g, '可観測性スタック')
     .replace(/자동화·IaC/g, '自動化・IaC')
     .replace(
-      /aria-label="ELK Kibana 데모 대시보드 열기 \(새 탭\)"/g,
-      'aria-label="ELK Kibanaデモダッシュボードを開く（新しいタブ）"'
+      /aria-label="ELK 데모 보기 \(새 탭\)"/g,
+      'aria-label="ELKデモを見る（新しいタブ）"'
     )
     .replace(/ELK 데모 보기/g, 'ELKデモを見る')
     .replace(/aria-label="사이트 운영 방식"/g, 'aria-label="サイト運用方法"')

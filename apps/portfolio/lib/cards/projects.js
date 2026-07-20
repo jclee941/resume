@@ -10,10 +10,10 @@ const {
 } = require('./project-review');
 
 function buildProjectTitle(project, link, hasLink) {
-  const titleContent = `${escapeHtml(project.title)}<span class="arrow">↗</span>`;
+  const title = escapeHtml(project.title);
   return hasLink
-    ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer" class="project-link-title" aria-label="View ${escapeHtml(project.title)} project (opens in new tab)">${titleContent}</a>`
-    : `<div class="project-link-title">${titleContent}</div>`;
+    ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer" class="project-link-title" aria-label="View ${title} project (opens in new tab)">${title}<span class="arrow">↗</span></a>`
+    : `<span class="project-title-text">${title}</span>`;
 }
 
 function projectDashboards(project) {
@@ -84,7 +84,7 @@ function generateProjectCards(projectsData, dataHash) {
     return TEMPLATE_CACHE.projectCardsHtml;
   }
 
-  const FEATURED_VISIBLE = 5;
+  const FEATURED_VISIBLE = 3;
   if (projectsData.some((project) => project.fullStackEvidence)) {
     assertFeaturedProjectContract(projectsData);
   }

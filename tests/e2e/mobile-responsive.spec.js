@@ -4,6 +4,7 @@ const { test, expect } = require('@playwright/test');
 const MOBILE_VIEWPORT = { width: 390, height: 844 };
 const HERO_NAME_PATTERN = /Jaecheol Lee|이재철/;
 
+/** @param {import('@playwright/test').Page} page */
 async function gotoMobilePage(page) {
   await page.setViewportSize(MOBILE_VIEWPORT);
   await page.goto('/', { waitUntil: 'domcontentloaded' });
@@ -12,12 +13,13 @@ async function gotoMobilePage(page) {
 function createMainJsDelay() {
   let release = () => {};
   const hold = new Promise((resolve) => {
-    release = resolve;
+    release = () => resolve(undefined);
   });
 
   return { hold, release };
 }
 
+/** @param {import('@playwright/test').Page} page */
 async function delayMainJsUntilReleased(page) {
   const delay = createMainJsDelay();
 
@@ -116,8 +118,8 @@ test.describe('Mobile - Navigation', () => {
       return url.pathname === '/main.js';
     });
 
+    const navigation = page.goto('/', { waitUntil: 'domcontentloaded' });
     try {
-      await page.goto('/', { waitUntil: 'domcontentloaded' });
       await mainJsRequested;
 
       await page.locator('.nav-toggle').click();
@@ -126,6 +128,7 @@ test.describe('Mobile - Navigation', () => {
       await expect(page.locator('.nav-toggle')).toHaveAttribute('aria-expanded', 'true');
     } finally {
       releaseMainJs();
+      await navigation;
     }
   });
 
@@ -139,8 +142,8 @@ test.describe('Mobile - Navigation', () => {
       return url.pathname === '/main.js';
     });
 
+    const navigation = page.goto('/', { waitUntil: 'domcontentloaded' });
     try {
-      await page.goto('/', { waitUntil: 'domcontentloaded' });
       await mainJsRequested;
 
       await page.locator('.nav-toggle').click();
@@ -152,6 +155,7 @@ test.describe('Mobile - Navigation', () => {
       await expect(page.locator('.nav-toggle')).toHaveAttribute('aria-expanded', 'false');
     } finally {
       releaseMainJs();
+      await navigation;
     }
   });
 

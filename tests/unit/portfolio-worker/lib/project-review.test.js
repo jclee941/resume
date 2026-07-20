@@ -30,13 +30,13 @@ describe('project review cards', () => {
   ];
 
   test('detects exact localized capability labels from project copy', () => {
-    expect(projectLabelsFor(projects).railTitle).toBe('풀스택 프로젝트 근거');
+    expect(projectLabelsFor(projects).railTitle).toBe('풀스택 구현 사례');
     expect(
       projectLabelsFor([{ description: 'Product evidence across the complete stack.' }])
         .railTitle
-    ).toBe('Full-stack project evidence');
+    ).toBe('End-to-end project work');
     expect(projectLabelsFor([{ description: '運用根拠が明確な事例です。' }]).railTitle).toBe(
-      'フルスタックプロジェクトの根拠'
+      'フルスタック開発事例'
     );
   });
 

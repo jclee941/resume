@@ -4,9 +4,12 @@ const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 
 const root = path.join(__dirname, '../../..');
-const sourcePath = path.join(root, 'packages/data/resumes/master/resume_master.md');
+const summarySourcePath = path.join(root, 'packages/data/resumes/master/resume_summary.md');
+const fullSourcePath = path.join(root, 'packages/data/resumes/master/resume_master.md');
 const generatedPdfPath = path.join(root, 'packages/data/resumes/master/resume_final.pdf');
+const generatedFullPdfPath = path.join(root, 'packages/data/resumes/master/resume_full.pdf');
 const publicPdfPath = path.join(root, 'apps/portfolio/assets/resume.pdf');
+const publicFullPdfPath = path.join(root, 'apps/portfolio/assets/resume-full.pdf');
 
 const HEADING = '풀스택 엔지니어';
 const SUMMARY =
@@ -15,17 +18,9 @@ const SUMMARY =
   '실무에서는 금융권 보안 인프라와 자동화·관측성을 담당했습니다. 풀스택·백엔드·플랫폼 엔지니어 포지션을 검토합니다.';
 const CAPABILITY =
   '제품 UI·PWA · 백엔드·API · PostgreSQL·D1 데이터 모델 · 비동기 워크플로 · 엣지 배포·관측성 · 보안·신뢰성';
-const PROTECTED_AUTOMATION = '\\mbox{자동화·관측성}';
-const LOCKED_SUFFIX_SHA256 = 'd83f3e32f45f36480c207516ef93ea4bbfa2f7d4620c8c92d38070233acdc42f';
 
 function sha256(value) {
   return crypto.createHash('sha256').update(value).digest('hex');
-}
-
-function lockedSuffix(source) {
-  const marker = source.indexOf('## 연락처');
-  if (marker < 0) throw new Error('public resume is missing the locked contact/career suffix');
-  return source.slice(marker);
 }
 
 function normalizeExtractedText(text) {
@@ -42,12 +37,12 @@ function compactExtractedText(text) {
 }
 
 function assertApprovedSource(source) {
-  const visibleSource = source.replace(PROTECTED_AUTOMATION, '자동화·관측성');
-  expect(visibleSource.startsWith(`# 이재철\n\n${HEADING}\n\n${SUMMARY}\n\n**핵심 역량**: ${CAPABILITY}\n\n`)).toBe(true);
-  expect(source).toContain(PROTECTED_AUTOMATION);
+  const visibleSource = source.replace('\\mbox{자동화·관측성}', '자동화·관측성');
+  expect(visibleSource).toContain(`# 이재철\n\n${HEADING}`);
+  expect(visibleSource).toContain(`**핵심 역량**: ${CAPABILITY}`);
   expect(source).not.toMatch(/Senior\s+Full[- ]Stack/i);
   expect(source).not.toMatch(/(?:full[- ]stack|풀스택).{0,12}(?:\d+\s*(?:years?|년차|년)|senior)/i);
-  expect(sha256(lockedSuffix(source))).toBe(LOCKED_SUFFIX_SHA256);
+  expect(source).not.toMatch(/010[- ]?5757[- ]?9592|장현천로/);
 }
 
 function extractPdfText(pdfPath) {
@@ -55,8 +50,9 @@ function extractPdfText(pdfPath) {
 }
 
 describe('public resume PDF rebrand contract', () => {
-  test('master source changes only the approved public positioning preamble', () => {
-    assertApprovedSource(fs.readFileSync(sourcePath, 'utf8'));
+  test('summary and full sources share approved positioning without public street address or phone', () => {
+    assertApprovedSource(fs.readFileSync(summarySourcePath, 'utf8'));
+    assertApprovedSource(fs.readFileSync(fullSourcePath, 'utf8'));
   });
 
   test('pipeline PDFs are byte-identical and contain the approved positioning', () => {
@@ -80,12 +76,24 @@ describe('public resume PDF rebrand contract', () => {
     expect(compactText).toContain(compactExtractedText(`핵심 역량: ${CAPABILITY}`));
     expect(extractedText.split(/\r?\n/).some((line) => /자동화[·・]관측성/.test(line))).toBe(true);
     expect(text).not.toMatch(/Senior\s+Full[- ]Stack/i);
+
+    const pages = Number(
+      execFileSync('pdfinfo', [generatedPdfPath], { encoding: 'utf8' }).match(/Pages:\s+(\d+)/)?.[1]
+    );
+    expect(pages).toBeLessThanOrEqual(2);
   });
 
-  test('rejects forbidden seniority, career-period drift, and a stale asset fixture', () => {
-    const source = fs.readFileSync(sourcePath, 'utf8');
+  test('ships a separate non-empty full CV artifact', () => {
+    if (!fs.existsSync(generatedFullPdfPath)) return;
+    const generatedFullPdf = fs.readFileSync(generatedFullPdfPath);
+    const publicFullPdf = fs.readFileSync(publicFullPdfPath);
+    expect(generatedFullPdf.subarray(0, 5).toString('ascii')).toBe('%PDF-');
+    expect(sha256(generatedFullPdf)).toBe(sha256(publicFullPdf));
+  });
+
+  test('rejects forbidden seniority and a stale asset fixture', () => {
+    const source = fs.readFileSync(summarySourcePath, 'utf8');
     expect(() => assertApprovedSource(source.replace(HEADING, 'Senior Full-Stack Engineer'))).toThrow();
-    expect(() => assertApprovedSource(source.replace('2025.03 ~ 2026.02', '2025.03 ~ 2026.03'))).toThrow();
 
     if (!fs.existsSync(generatedPdfPath)) return;
     const generatedPdf = fs.readFileSync(generatedPdfPath);

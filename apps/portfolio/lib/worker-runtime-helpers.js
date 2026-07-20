@@ -59,7 +59,7 @@ function getRateLimitPolicy(pathname) {
     pathname === '/og-image.webp' ||
     pathname === '/og-image-en.webp' ||
     pathname === '/og-image-ja.webp' ||
-    pathname === '/resume.pdf' ||
+    pathname.endsWith('.pdf') ||
     pathname.endsWith('.css') ||
     pathname.endsWith('.js') ||
     pathname.endsWith('.png') ||

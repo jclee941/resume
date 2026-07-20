@@ -66,7 +66,7 @@ function safeReadFile(filePath, encoding = 'utf-8') {
  *   File descriptors. If `optional: true` is set on a file and the read fails
  *   because the path does not exist, the value resolves to `null` (binary) or
  *   `''` (utf-8) instead of raising. This lets the build proceed when generated
- *   artefacts (e.g. `resume_final.pdf` produced by tools/scripts/build/pdf-generator.go)
+ *   artefacts (e.g. `resume_final.pdf` produced by tools/scripts/build/pdf-generator/)
  *   are not present in the working tree — the worker still serves an empty
  *   buffer until the next CI build that produces them.
  * @returns {Object} An object with file contents, keyed by their `name`.

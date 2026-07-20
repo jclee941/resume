@@ -855,7 +855,6 @@
       "id": "jclee-bot-github-app",
       "name": "jclee-bot GitHub App",
       "period": "2026.04 ~ Present",
-      "githubUrl": "https://github.com/jclee941/jclee-bot",
       "description": "PR review, secret scanning, GitHub Actions policy checks, and repository documentation checks each had their own workflow for jclee941 repositories, and the gap between them was where context fell. The GitHub App now publishes PR metadata, secret scan, actionlint, and docs-policy results as Check Runs, with Korean-first review comments and run logs observable in ELK.",
       "highlights": [
         "GitHub App event flow for PR automation",
@@ -1099,7 +1098,6 @@
     "email": "qws941@kakao.com",
     "phone": "010-5757-9592",
     "github": "https://github.com/jclee941",
-    "githubBot": "https://github.com/jclee941/jclee-bot",
     "linkedin": "https://linkedin.com/in/jclee0109",
     "velog": "https://velog.io/@qws941",
     "website": "https://resume.jclee.me",

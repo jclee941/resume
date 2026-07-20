@@ -16,15 +16,12 @@
   scroll-margin-top: var(--space-16);
   transition:
     border-color var(--transition-base),
-    box-shadow var(--transition-base),
-    transform var(--transition-base);
+    box-shadow var(--transition-base);
 }
 
-.project-item:hover,
 .project-item:focus-within {
   border-color: rgb(var(--color-accent-rgb) / 0.42);
   box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
 }
 
 .project-header,
@@ -47,7 +44,7 @@
   text-decoration: none;
 }
 
-.project-link-title:hover {
+a.project-link-title:hover {
   color: var(--color-accent-strong);
 }
 
@@ -56,7 +53,7 @@
   transition: transform var(--transition-fast);
 }
 
-.project-link-title:hover .arrow {
+a.project-link-title:hover .arrow {
   transform: translate(2px, -2px);
 }
 

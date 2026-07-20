@@ -254,7 +254,7 @@ describe('Cards Module', () => {
       expect(html).toContain('project-link-title');
     });
 
-    test('should render as div when no link exists', () => {
+    test('should render as plain text when no link exists', () => {
       const noLinkProject = [
         {
           title: 'No Link Project',
@@ -265,7 +265,8 @@ describe('Cards Module', () => {
 
       const html = generateProjectCards(noLinkProject, 'no-link-hash');
 
-      expect(html).toContain('<div class="project-link-title">');
+      expect(html).toContain('<span class="project-title-text">');
+      expect(html).not.toContain('<span class="arrow">');
       expect(html).not.toContain('<a ');
     });
 

@@ -7,7 +7,7 @@ const DESCRIPTION =
 const KEYWORDS =
   '李在哲, Jaecheol Lee, フルスタックエンジニア, Full-Stack Engineering, TypeScript, JavaScript, Next.js, Cloudflare Workers, Backend APIs, PostgreSQL, Data Workflows, Security Automation, Edge Infrastructure, Observability, DevOps';
 const AVAILABILITY =
-  'フルスタック・バックエンド・プラットフォームエンジニアのご提案を検討しています。';
+  'フルスタック・バックエンド・プラットフォーム領域のご提案と面談依頼を検討しています。';
 
 function applyJapaneseMeta(html) {
   return html
@@ -65,7 +65,7 @@ function applyJapaneseMeta(html) {
     .replace(/"name": "이재철"/g, '"name": "李在哲"')
     .replace(/"jobTitle": "풀스택 엔지니어"/g, '"jobTitle": "フルスタックエンジニア"')
     .replace(
-      /"name": "풀스택 · 백엔드 · 플랫폼 엔지니어 포지션의 제안과 면접을 검토합니다\."/g,
+      /"name": "풀스택·백엔드·플랫폼 엔지니어 기회를 검토합니다\."/g,
       `"name": "${AVAILABILITY}"`
     )
     .replace(/"name": "이재철 \| 풀스택 엔지니어"/g, `"name": "${TITLE}"`)

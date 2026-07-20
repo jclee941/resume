@@ -91,14 +91,12 @@ function generateSeoRoutes() {
         });
       }
 
-      if (url.pathname === '/resume.pdf') {
-        // resume.pdf is shipped as a static asset (assets/resume.pdf) and is
-        // normally served by the assets binding before this worker route runs.
-        // This handler is a fallback that reads the same asset via env.ASSETS so
-        // the PDF is never inlined as base64 in the worker bundle. We re-assert
-        // the Content-Type and a download-friendly Content-Disposition here.
+      if (url.pathname === '/resume.pdf' || url.pathname === '/resume-full.pdf') {
+        const isFullCv = url.pathname === '/resume-full.pdf';
+        const assetPath = isFullCv ? '/resume-full.pdf' : '/resume.pdf';
+        const downloadName = isFullCv ? 'resume_jclee_full.pdf' : 'resume_jclee.pdf';
         const assetResponse = env.ASSETS
-          ? await env.ASSETS.fetch(new Request(new URL('/resume.pdf', request.url), request))
+          ? await env.ASSETS.fetch(new Request(new URL(assetPath, request.url), request))
           : null;
         if (assetResponse && assetResponse.ok) {
           metrics.requests_success++;
@@ -109,7 +107,7 @@ function generateSeoRoutes() {
             ...rateLimitHeaders,
           }).forEach(([k, v]) => headers.set(k, v));
           headers.set('Content-Type', 'application/pdf');
-          headers.set('Content-Disposition', 'inline; filename="resume_jclee.pdf"');
+          headers.set('Content-Disposition', 'inline; filename="' + downloadName + '"');
           return new Response(assetResponse.body, { status: 200, headers });
         }
         metrics.requests_error++;

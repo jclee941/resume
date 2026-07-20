@@ -102,6 +102,11 @@ function publicPortfolioItems(items) {
   return (items || []).filter((item) => !PUBLIC_PORTFOLIO_EXCLUDED_IDS.has(item.id));
 }
 
+function publicContact(contact) {
+  const { email, github, linkedin, velog, website, monitoring } = contact || {};
+  return { email, github, linkedin, velog, website, monitoring };
+}
+
 function generateWebData(source, language = 'ko') {
   const statsByIndex = RESUME_STATS_BY_INDEX[language] || RESUME_STATS_BY_INDEX.ko;
 
@@ -152,7 +157,7 @@ function generateWebData(source, language = 'ko') {
     sectionDescriptions: source.sectionDescriptions,
     achievements: source.achievements,
     infrastructure: publicPortfolioItems(source.infrastructure),
-    contact: source.contact,
+    contact: publicContact(source.contact),
     aboutSection:
       source.summary && source.summary.aboutSection ? source.summary.aboutSection : null,
     expertise: source.summary && source.summary.expertise ? source.summary.expertise : null,

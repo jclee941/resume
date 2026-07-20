@@ -9,7 +9,7 @@ const HERO_CONTENT = {
     name: '이재철',
     primaryTitle: '풀스택 엔지니어',
     supportingLine: '보안 자동화 · 엣지 인프라',
-    availability: '풀스택 · 백엔드 · 플랫폼 엔지니어 포지션의 제안과 면접을 검토합니다.',
+    availability: '풀스택·백엔드·플랫폼 엔지니어 기회를 검토합니다.',
     proposition: '사용자 화면부터 API, 데이터 흐름, 배포와 관측성까지 직접 설계하고 운영합니다.',
     primaryCta: { href: '#projects', label: '대표 프로젝트 보기' },
     secondaryCta: { href: '/resume.pdf', label: '이력서 PDF' },
@@ -31,9 +31,9 @@ const HERO_CONTENT = {
     primaryTitle: 'フルスタックエンジニア',
     supportingLine: 'セキュリティ自動化・エッジインフラ',
     availability:
-      'フルスタック・バックエンド・プラットフォームエンジニアのご提案を検討しています。',
+      'フルスタック・バックエンド・プラットフォーム領域のご提案と面談依頼を検討しています。',
     proposition:
-      'ユーザー画面からAPI、データフロー、デプロイ、可観測性まで、プロダクトを一貫して設計・運用します。',
+      'ユーザー画面、API、データ、デプロイ、可観測性を一貫して設計・運用します。',
     primaryCta: { href: '#projects', label: '注目プロジェクトを見る' },
     secondaryCta: { href: '/resume.pdf', label: '履歴書PDF' },
     proofLinks: FEATURED_PROJECT_PROOFS,
