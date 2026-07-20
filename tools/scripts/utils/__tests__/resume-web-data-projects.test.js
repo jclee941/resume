@@ -59,7 +59,10 @@ describe('generateWebData → public jclee941 repository showcase', () => {
       'firewall automation must be showcased'
     );
     assert.ok(projectIds.includes('tmux-productivity-suite'), 'tmux suite must be showcased');
-    assert.ok(repoUrls.includes('https://github.com/jclee941/jclee-bot'));
+    assert.ok(
+      !repoUrls.includes('https://github.com/jclee941/jclee-bot'),
+      'unavailable jclee-bot repository must stay unlinked'
+    );
     assert.ok(repoUrls.includes('https://github.com/jclee941/firewall'));
     assert.ok(repoUrls.includes('https://github.com/jclee941/tmux'));
 
