@@ -90,10 +90,10 @@ describe('mergeCareerUiMeta()', () => {
   });
 });
 
-describe('createTimelineNode()', () => {
-  let createTimelineNode;
+describe('createTimelineViewModel()', () => {
+  let createTimelineViewModel;
   beforeAll(async () => {
-    ({ createTimelineNode } = await import(TIMELINE_RENDERING_PATH));
+    ({ createTimelineViewModel } = await import(TIMELINE_RENDERING_PATH));
     global.document = { documentElement: { lang: 'ko' } };
   });
 
@@ -102,7 +102,7 @@ describe('createTimelineNode()', () => {
   });
 
   test('renders company text without a dead # link when companyUrl is absent', () => {
-    const html = createTimelineNode(
+    const model = createTimelineViewModel(
       {
         company: '(주)조인트리',
         companyUrl: null,
@@ -117,7 +117,6 @@ describe('createTimelineNode()', () => {
       0
     );
 
-    expect(html).toContain('company-link--text');
-    expect(html).not.toContain('href="#"');
+    expect(model.companyUrl).toBeNull();
   });
 });

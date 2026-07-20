@@ -22,8 +22,21 @@ function localizeHtmlDocument(html, language, requestPath = null) {
         `<link rel="canonical" href="${canonicalUrl}" />`
       )
     : htmlWithLang;
+  const htmlWithSocialUrl = canonicalUrl
+    ? htmlWithCanonical
+        .replace(
+          /<meta\s+property=["']og:url["'][^>]*>/i,
+          `<meta property="og:url" content="${canonicalUrl}" />`
+        )
+        .replace(
+          /<meta\s+name=["']twitter:url["'][^>]*>/i,
+          `<meta name="twitter:url" content="${canonicalUrl}" />`
+        )
+        .replace(/"url": "https:\/\/resume\.jclee\.me\/"/g, `"url": "${canonicalUrl}"`)
+        .replace(/"item": "https:\/\/resume\.jclee\.me\/"/g, `"item": "${canonicalUrl}"`)
+    : htmlWithCanonical;
 
-  const htmlWithoutAlternates = htmlWithCanonical.replace(
+  const htmlWithoutAlternates = htmlWithSocialUrl.replace(
     /\s*<link\s+rel=["']alternate["'][^>]*>/gi,
     ''
   );

@@ -18,7 +18,6 @@
 
     <link rel="canonical" href="https://resume.jclee.me/en/" />
 
-    <link rel="preconnect" href="https://www.googletagmanager.com" />
     <link rel="preconnect" href="https://static.cloudflareinsights.com" crossorigin />
 
     <link rel="alternate" hreflang="ko-KR" href="https://resume.jclee.me/ko/" />
@@ -72,10 +71,8 @@
         "jobTitle": "Full-Stack Engineer",
         "url": "https://resume.jclee.me/en/",
         "email": "qws941@kakao.com",
-        "telephone": "+82-10-5757-9592",
         "sameAs": [
           "https://github.com/jclee941",
-          "https://github.com/jclee941/jclee-bot",
           "https://linkedin.com/in/jclee0109",
           "https://velog.io/@qws941"
         ],
@@ -399,8 +396,15 @@
                 href="/resume.pdf"
                 download="Jaecheol-Lee-Resume.pdf"
                 class="link-subtle"
-                aria-label="Download resume PDF"
-                >Download Resume PDF</a
+                aria-label="Download two-page resume PDF"
+                >Two-page Resume PDF</a
+              >
+              <a
+                href="/resume-full.pdf"
+                download="Jaecheol-Lee-Full-CV.pdf"
+                class="link-subtle"
+                aria-label="Download full CV PDF"
+                >Full CV PDF</a
               >
               <a href="#contact" class="link-subtle" aria-label="Contact for interview or hiring"
                 >Contact for Interview / Hiring</a
@@ -434,7 +438,7 @@
                   target="_blank"
                   rel="noopener noreferrer"
                   class="link-subtle operated-card__link"
-                  aria-label="Open ELK Kibana demo dashboard (opens in a new tab)"
+                  aria-label="Open ELK demo (opens in a new tab)"
                 >
                   Open ELK demo
                 </a>
@@ -571,49 +575,12 @@
           });
         }
 
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', bindMobileNav, { once: true });
-        } else {
-          bindMobileNav();
-        }
+        bindMobileNav();
       })();
     </script>
+    <script src="/main.js?v=<!-- BUILD_CACHE_KEY_PLACEHOLDER -->" defer></script>
     <script>
-      (function () {
-        var s = document.createElement('script');
-        s.src = '/main.js?v=<!-- BUILD_CACHE_KEY_PLACEHOLDER -->';
-        s.defer = true;
-        document.body.appendChild(s);
-      })();
-    </script>
-    <script>
-      // Scroll reveal is owned by src/scripts/modules/ui.js (initScrollReveal)
-
       window.__RESUME_CHAT_DATA__ = {};
-    </script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag('js', new Date());
-      gtag('config', 'G-P9E8XY5K2L', {
-        page_path: window.location.pathname,
-        language: 'en',
-      });
-      function loadAnalyticsScript() {
-        var _gs = document.createElement('script');
-        _gs.src = 'https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L';
-        _gs.async = true;
-        document.head.appendChild(_gs);
-      }
-      window.setTimeout(function () {
-        if ('requestIdleCallback' in window) {
-          window.requestIdleCallback(loadAnalyticsScript, { timeout: 2000 });
-          return;
-        }
-        loadAnalyticsScript();
-      }, 3500);
     </script>
   </body>
 </html>

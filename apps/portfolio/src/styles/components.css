@@ -330,6 +330,7 @@
   font-family: var(--font-sans);
   font-size: var(--text-base);
   line-height: var(--leading-relaxed);
+  overflow-wrap: anywhere;
 }
 .about-list li::before {
   content: '';

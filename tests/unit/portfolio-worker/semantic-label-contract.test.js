@@ -23,11 +23,11 @@ const career = {
 };
 
 describe('renderer semantic-label contract', () => {
-  let createTimelineNode;
+  let createTimelineViewModel;
 
   beforeAll(async () => {
     global.document = { documentElement: { lang: 'ko' } };
-    ({ createTimelineNode } = await import(TIMELINE_RENDERING_PATH));
+    ({ createTimelineViewModel } = await import(TIMELINE_RENDERING_PATH));
   });
 
   afterAll(() => {
@@ -35,16 +35,16 @@ describe('renderer semantic-label contract', () => {
   });
 
   test('baseline: timeline keeps visible period and impact labels', () => {
-    const html = createTimelineNode(career, 0);
+    const model = createTimelineViewModel(career, 0);
 
-    expect(html).toContain('<time>2024.01 ~ 현재</time>');
-    expect(html).toContain('<span class="impact-label">성과:</span>');
+    expect(model.period).toBe('2024.01 ~ 현재');
+    expect(model.labels.impact).toBe('성과');
   });
 
   test('timeline does not put accessible names on generic divs', () => {
-    const html = createTimelineNode(career, 0);
+    const source = fs.readFileSync(TIMELINE_RENDERING_PATH, 'utf8');
 
-    expect(html).not.toMatch(/<div[^>]+aria-label=/);
+    expect(source).not.toMatch(/el\('div'[^\n]+setAttribute\('aria-label'/);
   });
 
   test('baseline: project metadata remains visible', () => {

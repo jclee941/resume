@@ -31,6 +31,20 @@ function focusProjectCard(card) {
   card.focus({ preventScroll: true });
 }
 
+function renderCapabilityStatus(status, { locale, label, projectNames }) {
+  const announcement = buildCapabilityAnnouncement({ locale, label, projectNames });
+  const namesText = projectNames.join(', ');
+  const prefix = announcement.slice(0, -namesText.length);
+  status.replaceChildren(prefix);
+  projectNames.forEach((projectName, index) => {
+    if (index > 0) status.append(', ');
+    const name = document.createElement('span');
+    name.className = 'capability-evidence__project-name';
+    name.textContent = projectName;
+    status.appendChild(name);
+  });
+}
+
 export function bindCapabilityEvidence({ capabilities, cards, locale, region }) {
   const controls = Array.from(region.querySelectorAll('[data-capability-control]'));
   const status = region.querySelector('[data-capability-status]');
@@ -63,7 +77,7 @@ export function bindCapabilityEvidence({ capabilities, cards, locale, region }) 
     }
     applyCapabilityProjectState(cards, matchingCards);
     projects?.setAttribute('data-capability-selected', nextSelection.id);
-    status.textContent = buildCapabilityAnnouncement({
+    renderCapabilityStatus(status, {
       locale,
       label: nextSelection.label,
       projectNames: matchingCards.map(capabilityProjectName),

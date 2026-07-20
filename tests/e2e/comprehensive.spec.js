@@ -162,7 +162,7 @@ test.describe('Projects Section', () => {
 
       await expect(card).toBeVisible();
 
-      const title = card.locator('.project-link-title');
+      const title = card.locator('.project-link-title, .project-title-text');
       const text = await title.textContent();
       const pattern = new RegExp(escapeRegExp(project.title), 'i');
       expect(text || '').toMatch(pattern);
@@ -302,7 +302,7 @@ test.describe('Data Consistency', () => {
       const actual = page
         .locator('#projects li.project-item')
         .nth(i)
-        .locator('.project-link-title');
+        .locator('.project-link-title, .project-title-text');
       await expect(actual).toContainText(expected);
     }
   });

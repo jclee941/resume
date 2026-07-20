@@ -102,7 +102,7 @@ function injectTimeline() {
       ? '経歴タイムライン'
       : '경력 타임라인';
   timeline.setAttribute('aria-label', timelineLabel);
-  timeline.innerHTML = careers.map((career, index) => createTimelineNode(career, index)).join('');
+  careers.forEach((career, index) => timeline.appendChild(createTimelineNode(career, index)));
 
   // Swap the <ul> placeholder for the semantic timeline container.
   existingList.replaceWith(timeline);

@@ -13,7 +13,11 @@ dist/
 !packages/schemas/dist/
 !packages/schemas/dist/**
 build/
+!tools/scripts/build/
+tools/scripts/build/*
 !tools/scripts/build/AGENTS.md
+!tools/scripts/build/pdf-generator/
+!tools/scripts/build/pdf-generator/**
 *.tsbuildinfo
 
 # Generated files — portfolio worker bundle and propagated SSoT snapshots

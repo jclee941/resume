@@ -72,11 +72,10 @@ describe('visual revamp: restrained hero typography', () => {
   });
 });
 
-describe('visual revamp: card hover stays subtle', () => {
+describe('visual revamp: non-interactive cards stay still', () => {
   const cards = read('cards.css');
-  test('card hover may lift but does not use neon glow tokens', () => {
-    expect(cards).toMatch(/\.card:hover/);
-    expect(cards).not.toMatch(/\.card:hover[\s\S]{0,200}(--glow-|--cyber-)/);
+  test('generic cards do not imply an interaction on hover', () => {
+    expect(cards).not.toMatch(/\.card:hover/);
   });
 });
 
@@ -181,8 +180,8 @@ describe('portfolio documentation: approved full-stack systems-studio contract',
       '`npm run sync:data`',
       '`apps/portfolio/data*.json`',
       '`packages/data/resumes/master/resume_master.md`',
-      '`tools/scripts/build/pdf-generator.go master`',
-      '`packages/data/resumes/master/resume_final.pdf`',
+      '`packages/data/resumes/master/resume_summary.md`',
+      '`npm run sync:pdf`',
       '`apps/portfolio/generate-og-image.js`',
     ]) {
       expect(agents).toContain(phrase);

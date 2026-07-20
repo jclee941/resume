@@ -7,9 +7,9 @@ const {
 
 const PROJECT_LABELS = {
   ko: {
-    railEyebrow: '대표 빌드',
-    railTitle: '풀스택 프로젝트 근거',
-    railDesc: '사용자 화면, API, 데이터, 배포와 운영을 잇는 대표 빌드 3개입니다.',
+    railEyebrow: '핵심 프로젝트',
+    railTitle: '풀스택 구현 사례',
+    railDesc: ['제품 UI·API·데이터부터', '배포·운영까지 연결했습니다.'],
     open: '사례 보기',
     productUi: '제품 UI',
     backendApi: '백엔드·API',
@@ -20,8 +20,8 @@ const PROJECT_LABELS = {
     architecture: '아키텍처 흐름',
   },
   en: {
-    railEyebrow: 'Featured builds',
-    railTitle: 'Full-stack project evidence',
+    railEyebrow: 'Selected work',
+    railTitle: 'End-to-end project work',
     railDesc: 'Three builds connecting product surfaces, APIs, data, delivery, and operations.',
     open: 'Open case',
     productUi: 'Product UI',
@@ -33,9 +33,12 @@ const PROJECT_LABELS = {
     architecture: 'Architecture flow',
   },
   ja: {
-    railEyebrow: '注目ビルド',
-    railTitle: 'フルスタックプロジェクトの根拠',
-    railDesc: 'プロダクトUI、API、データ、配信、運用をつなぐ3つのビルドです。',
+    railEyebrow: '注目プロジェクト',
+    railTitle: 'フルスタック開発事例',
+    railDesc: [
+      'プロダクトUI・API・データから',
+      '配信・運用まで一貫して実装しました。',
+    ],
     open: '事例を見る',
     productUi: 'プロダクトUI',
     backendApi: 'バックエンド・API',
@@ -87,11 +90,17 @@ function buildProjectReviewRail(projects, labels) {
             </a>`;
   });
 
+  const railDescription = Array.isArray(labels.railDesc)
+    ? labels.railDesc
+        .map((part) => `<span>${escapeHtml(part)}</span>`)
+        .join(' ')
+    : escapeHtml(labels.railDesc);
+
   return `<li class="project-review-rail" aria-labelledby="project-review-rail-title">
             <p class="project-review-rail__eyebrow">${labels.railEyebrow}</p>
             <div class="project-review-rail__header">
               <h3 id="project-review-rail-title">${labels.railTitle}</h3>
-              <p>${labels.railDesc}</p>
+              <p>${railDescription}</p>
             </div>
             <div class="project-review-rail__grid">${cards.join('')}</div>
           </li>`;

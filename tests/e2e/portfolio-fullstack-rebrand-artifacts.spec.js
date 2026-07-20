@@ -23,7 +23,7 @@ const KO = {
     '사용자 화면부터 API, 데이터 흐름, 배포와 관측성까지 설계·운영하는 이재철의 풀스택 포트폴리오. 보안 자동화와 엣지 인프라 경험을 제품 전반의 신뢰성으로 연결합니다.',
   keywords:
     '이재철, Jaecheol Lee, 풀스택 엔지니어, Full-Stack Engineering, TypeScript, JavaScript, Next.js, Cloudflare Workers, Backend APIs, PostgreSQL, Data Workflows, Security Automation, Edge Infrastructure, Observability, DevOps',
-  availability: '풀스택 · 백엔드 · 플랫폼 엔지니어 포지션의 제안과 면접을 검토합니다.',
+  availability: '풀스택·백엔드·플랫폼 엔지니어 기회를 검토합니다.',
   publicUrl: 'https://resume.jclee.me/',
   language: 'ko-KR',
   manifest: '/manifest.json',
@@ -31,7 +31,7 @@ const KO = {
 };
 const LOCALES = [
   ['root', '/', KO],
-  ['ko', '/ko/', KO],
+  ['ko', '/ko/', { ...KO, publicUrl: 'https://resume.jclee.me/ko/' }],
   [
     'en',
     '/en/',
@@ -60,7 +60,7 @@ const LOCALES = [
       keywords:
         '李在哲, Jaecheol Lee, フルスタックエンジニア, Full-Stack Engineering, TypeScript, JavaScript, Next.js, Cloudflare Workers, Backend APIs, PostgreSQL, Data Workflows, Security Automation, Edge Infrastructure, Observability, DevOps',
       availability:
-        'フルスタック・バックエンド・プラットフォームエンジニアのご提案を検討しています。',
+        'フルスタック・バックエンド・プラットフォーム領域のご提案と面談依頼を検討しています。',
       publicUrl: 'https://resume.jclee.me/ja/',
       language: 'ja-JP',
       manifest: '/manifest.json',

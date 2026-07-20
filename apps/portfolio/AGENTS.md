@@ -62,10 +62,12 @@ edge router.
 
 ### Public PDF
 
-1. `packages/data/resumes/master/resume_master.md` is the Markdown source.
-2. `tools/scripts/build/pdf-generator.go master` creates
-   `packages/data/resumes/master/resume_final.pdf`.
-3. The portfolio build copies it to `apps/portfolio/assets/resume.pdf`.
+1. `packages/data/resumes/master/resume_summary.md` owns the two-page recruiter
+   summary and `packages/data/resumes/master/resume_master.md` owns the sanitized
+   full CV.
+2. `npm run sync:pdf` creates `resume_final.pdf` and `resume_full.pdf`.
+3. The portfolio build copies them to `assets/resume.pdf` and
+   `assets/resume-full.pdf`.
 
 ### OG artwork
 
@@ -111,10 +113,8 @@ Source ownership is explicit:
 - `index.html`, `index-en.html`, Japanese template transforms, manifests, and
   router helpers own locale metadata and structured-data projection. They must
   agree with the public identity and SSoT facts.
-- `packages/data/resumes/master/resume_master.md` is the public PDF source.
-  `tools/scripts/build/pdf-generator.go master` produces
-  `packages/data/resumes/master/resume_final.pdf`; the portfolio build copies it
-  to the generated static asset.
+- `packages/data/resumes/master/resume_summary.md` and `resume_master.md` are the
+  public summary/full CV sources. `npm run sync:pdf` produces their PDF assets.
 - `apps/portfolio/generate-og-image.js` owns OG composition and localized copy;
   generated PNG/WebP files are outputs, never editing surfaces.
 - After source edits, run the matching generator, then `npm run build`. Never

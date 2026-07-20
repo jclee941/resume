@@ -32,7 +32,6 @@ function buildScriptSrc(nonce) {
     "'self'",
     `'nonce-${nonce}'`,
     "'strict-dynamic'",
-    'https://www.googletagmanager.com',
     CLOUDFLARE_ANALYTICS.script,
     'https://accounts.google.com',
   ].join(' ');
@@ -53,7 +52,7 @@ function generateSecurityHeaders(styleHashes, options = {}) {
     `script-src-elem ${scriptSrc}`,
     `style-src ${styleSrc}`,
     `style-src-elem ${styleSrc}`,
-    `connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.google.com https://oauth2.googleapis.com ${CLOUDFLARE_ANALYTICS.connect}`,
+    `connect-src 'self' https://www.google.com https://oauth2.googleapis.com ${CLOUDFLARE_ANALYTICS.connect}`,
     "img-src 'self' https: data:",
     'report-to csp',
     'report-uri /api/csp-violation',
@@ -68,12 +67,9 @@ function generateSecurityHeaders(styleHashes, options = {}) {
     'upgrade-insecure-requests',
   ];
 
-  // Trusted Types in REPORT-ONLY: demonstrates DOM-XSS hardening intent without
-  // breaking the existing innerHTML-based client rendering. Enforce only after the
-  // runtime is migrated to Trusted Types-safe sinks.
   const cspReportOnly = [
     "require-trusted-types-for 'script'",
-    'trusted-types default',
+    'trusted-types resume-script-url',
     'report-to csp',
   ].join('; ');
 

@@ -58,6 +58,10 @@
   font-size: var(--text-sm);
 }
 
+.capability-evidence__project-name {
+  white-space: nowrap;
+}
+
 .mobile-actions:not([hidden]) {
   display: grid;
   position: fixed;

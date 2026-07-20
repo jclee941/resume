@@ -10,30 +10,36 @@ const { buildPortfolioPages, escapePortfolioPages } = require('./localized-page-
 const { buildAndWriteWorker } = require('./worker-writer');
 const { escapeForTemplateLiteral } = require('./html-transformer');
 
-function copyResumePdf(logger) {
-  const pdfSource = path.resolve(
-    __dirname,
-    '../../../packages/data/resumes/master/resume_final.pdf'
-  );
-  const pdfDest = path.resolve(__dirname, '../assets/resume.pdf');
-  if (fs.existsSync(pdfSource)) {
-    fs.copyFileSync(pdfSource, pdfDest);
-    logger.log('✓ Copied resume.pdf to assets\n');
-    return;
+const RESUME_PDFS = [
+  { source: 'resume_final.pdf', asset: 'resume.pdf', buffer: 'resumePdfBuffer' },
+  { source: 'resume_full.pdf', asset: 'resume-full.pdf', buffer: 'resumeFullPdfBuffer' },
+];
+
+function copyResumePdfs(logger) {
+  for (const pdf of RESUME_PDFS) {
+    const source = path.resolve(__dirname, '../../../packages/data/resumes/master', pdf.source);
+    const destination = path.resolve(__dirname, '../assets', pdf.asset);
+    if (fs.existsSync(source)) {
+      fs.copyFileSync(source, destination);
+      logger.log(`✓ Copied ${pdf.asset} to assets\n`);
+      continue;
+    }
+    logger.warn(`⚠ ${pdf.source} not found at SSoT, skipping copy\n`);
   }
-  logger.warn('⚠ resume_final.pdf not found at SSoT, skipping copy\n');
 }
 
-function assertResumePdfAvailable(resumePdfBuffer, logger) {
-  if (resumePdfBuffer && resumePdfBuffer.length > 0) return;
-  const message =
-    'resume_final.pdf is missing or empty — /resume.pdf (served from the ' +
-    'static assets binding) will be unavailable. ' +
-    'Run `go run ./tools/scripts/build/pdf-generator.go master` to regenerate it.';
-  if (process.env.RESUME_PDF_STRICT === '1') {
-    throw new Error(message);
+function assertResumePdfsAvailable(inputs, logger) {
+  for (const pdf of RESUME_PDFS) {
+    const buffer = inputs[pdf.buffer];
+    if (buffer && buffer.length > 0) continue;
+    const message =
+      `${pdf.source} is missing or empty — /${pdf.asset} will be unavailable. ` +
+      'Run `npm run sync:pdf` to regenerate public resume PDFs.';
+    if (process.env.RESUME_PDF_STRICT === '1') {
+      throw new Error(message);
+    }
+    logger.warn(`⚠️  ${message}`);
   }
-  logger.warn(`⚠️  ${message}`);
 }
 
 function buildInitialMetrics({ version, deployedAt }) {
@@ -98,7 +104,7 @@ function logBuildStats({
 async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEmails, logger }) {
   const buildStartTime = Date.now();
   const inputs = await readBuildInputs({ baseDir, logger });
-  assertResumePdfAvailable(inputs.resumePdfBuffer, logger);
+  assertResumePdfsAvailable(inputs, logger);
 
   const { projectData, templates } = processProjectData({
     projectDataRaw: inputs.projectDataRaw,
@@ -113,7 +119,7 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
   });
 
   logInputSummary({ logger, projectData, ...inputs });
-  copyResumePdf(logger);
+  copyResumePdfs(logger);
 
   const buildDeployedAt = process.env.DEPLOYED_AT || new Date().toISOString();
   const buildDeployedDate = `${buildDeployedAt.slice(0, 10)} ${buildDeployedAt.slice(11, 16)}Z`;

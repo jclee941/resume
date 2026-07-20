@@ -28,13 +28,54 @@ for (const route of ROUTES) {
 
     const visibleCount = () =>
       cards.evaluateAll((items) => items.filter((item) => getComputedStyle(item).display !== 'none').length);
-    expect(await visibleCount()).toBe(5);
+    expect(await visibleCount()).toBe(3);
     const more = page.locator('.project-more-btn');
     await more.click();
     expect(await visibleCount()).toBe(12);
     await expect(more).toBeFocused();
     await more.click();
-    expect(await visibleCount()).toBe(5);
+    expect(await visibleCount()).toBe(3);
     await expect(more).toBeFocused();
+  });
+}
+
+for (const route of ROUTES) {
+  test(`${route} keeps project headings compact and tablet project intro readable`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 768, height: 1024 });
+    const response = await page.goto(route, { waitUntil: 'domcontentloaded' });
+    expect(response?.status()).toBe(200);
+
+    const layout = await page.evaluate(() => {
+      const header = document.querySelector('#project-list > .project-item .project-header');
+      const title = header?.querySelector('.project-title');
+      const intro = document.querySelector('.project-review-rail__header');
+      const introTitle = intro?.querySelector('h3');
+      const introCopy = intro?.querySelector('p');
+      const cta = document.querySelector('.hero-cta');
+      const headerRect = header?.getBoundingClientRect();
+      const titleRect = title?.getBoundingClientRect();
+      const introTitleRect = introTitle?.getBoundingClientRect();
+      const introCopyRect = introCopy?.getBoundingClientRect();
+      return {
+        headerHeight: headerRect?.height,
+        titleHeight: titleRect?.height,
+        introOverlaps:
+          introTitleRect && introCopyRect
+            ? !(
+                introTitleRect.right <= introCopyRect.left ||
+                introCopyRect.right <= introTitleRect.left ||
+                introTitleRect.bottom <= introCopyRect.top ||
+                introCopyRect.bottom <= introTitleRect.top
+              )
+            : true,
+        ctaDirection: cta ? getComputedStyle(cta).flexDirection : null,
+      };
+    });
+
+    expect(layout.headerHeight).toBeLessThanOrEqual(layout.titleHeight + 8);
+    expect(layout.introOverlaps).toBe(false);
+    expect(layout.ctaDirection).toBe('row');
   });
 }

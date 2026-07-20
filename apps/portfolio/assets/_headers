@@ -5,3 +5,8 @@
   Content-Type: application/pdf
   Content-Disposition: inline; filename="resume_jclee.pdf"
   Cache-Control: public, max-age=3600
+
+/resume-full.pdf
+  Content-Type: application/pdf
+  Content-Disposition: inline; filename="resume_jclee_full.pdf"
+  Cache-Control: public, max-age=3600

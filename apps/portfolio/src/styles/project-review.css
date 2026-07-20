@@ -37,6 +37,10 @@
   line-height: var(--leading-relaxed);
 }
 
+.project-review-rail__header p > span {
+  display: inline-block;
+}
+
 .project-review-rail__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -97,6 +101,12 @@
 
   .project-review-rail__link:nth-child(3) {
     grid-column: 1 / -1;
+    min-height: 0;
+  }
+
+  html:lang(ja) .project-review-rail__header {
+    grid-template-columns: 1fr;
+    align-items: start;
   }
 }
 

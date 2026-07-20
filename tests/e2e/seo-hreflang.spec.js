@@ -2,9 +2,9 @@ const { test, expect } = require('@playwright/test');
 const resumeData = require('../../packages/data/resumes/master/resume_data.json');
 
 const KOREAN_CANONICAL = 'https://resume.jclee.me/ko/';
-const PREVIOUS_SITEMAP_ETAG = 'W/"resume-sitemap-20260605"';
-const CURRENT_SITEMAP_ETAG = 'W/"resume-sitemap-20260630"';
-const CURRENT_LAST_MODIFIED = 'Tue, 30 Jun 2026 00:00:00 GMT';
+const PREVIOUS_SITEMAP_ETAG = 'W/"resume-sitemap-20260630"';
+const CURRENT_SITEMAP_ETAG = 'W/"resume-sitemap-20260720"';
+const CURRENT_LAST_MODIFIED = 'Mon, 20 Jul 2026 00:00:00 GMT';
 
 test.describe('SEO hreflang canonical alignment', () => {
   test('locale pages advertise /ko/ as the Korean alternate', async ({ page }) => {

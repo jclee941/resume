@@ -89,9 +89,20 @@ function restoreHashScrollTarget() {
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
 
+  const scriptUrl = window.trustedTypes
+    ? window.trustedTypes
+        .createPolicy('resume-script-url', {
+          createScriptURL: (value) => {
+            if (value !== '/sw.js') throw new TypeError('Unsupported service worker URL');
+            return value;
+          },
+        })
+        .createScriptURL('/sw.js')
+    : '/sw.js';
+
   const register = () => {
     navigator.serviceWorker
-      .register('/sw.js')
+      .register(scriptUrl)
       .then((registration) => {
         console.log('[ServiceWorker] registered:', registration.scope);
 
@@ -119,12 +130,6 @@ function registerServiceWorker() {
   });
 }
 
-// Initialize all modules. main.js is injected dynamically (a nonce'd loader
-// does document.body.appendChild(script src=/main.js, defer)). A dynamically
-// appended script can finish executing AFTER DOMContentLoaded has already
-// fired, in which case a fresh addEventListener('DOMContentLoaded') callback
-// would NEVER run. Guard on readyState: run immediately if the DOM is ready,
-// otherwise wait for the event.
 async function bootstrapPortfolio() {
   try {
     registerServiceWorker();

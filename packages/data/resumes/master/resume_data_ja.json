@@ -822,7 +822,7 @@
       "name": "SafetyWallet (CF Workers PWA)",
       "period": "2026.01 ~ 2026.04",
       "githubUrl": "https://github.com/jclee941/safetywallet",
-      "description": "現場では安全マニュアル、教育修了証憑、緊急連絡網が紙で管理されており、参照するたびにバインダーまで歩く運用でした。Cloudflare Workers基盤のPWAとNext.js管理画面で同じ記録をホストする構成にしました。D1に作業者プロフィール、KVキャッシュとR2にはマニュアル本体を置き、ネットワークが出ない現場でもオフラインでマニュアル参照できる体制を運用しています。",
+      "description": "現場では安全マニュアル、教育修了証憑、緊急連絡網が紙で管理され、確認にはバインダーが必要でした。Cloudflare Workers基盤のPWAとNext.js管理画面で同じ記録をホストする構成にしました。D1に作業者プロフィール、KVキャッシュとR2にはマニュアル本体を置き、ネットワークが出ない現場でもオフラインでマニュアル参照できる体制を運用しています。",
       "highlights": [
         "現場参照フローのためのEdgeデプロイ",
         "オフライン動作のための階層別ストレージ統合アーキテクチャ",
@@ -858,7 +858,6 @@
       "id": "jclee-bot-github-app",
       "name": "jclee-bot GitHub App",
       "period": "2026.04 ~ 現在",
-      "githubUrl": "https://github.com/jclee941/jclee-bot",
       "description": "jclee941配下リポジトリでは、PRレビュー、シークレットスキャン、GitHub Actionsポリシーチェック、ドキュメント確認がそれぞれ別のワークフローで動き、隙間からコンテキストが落ちる構造でした。GitHub Appでこれらを一つに束ね、PRメタデータ、secret scan、actionlint、docs policyの結果をCheck Runとして公開しています。韓国語優先のレビューコメントと実行ログはELKで観測できる形にしました。",
       "highlights": [
         "GitHub AppベースのPRイベント処理",
@@ -1102,7 +1101,6 @@
     "email": "qws941@kakao.com",
     "phone": "010-5757-9592",
     "github": "https://github.com/jclee941",
-    "githubBot": "https://github.com/jclee941/jclee-bot",
     "linkedin": "https://linkedin.com/in/jclee0109",
     "velog": "https://velog.io/@qws941",
     "website": "https://resume.jclee.me",

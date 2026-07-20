@@ -178,12 +178,14 @@ function initBackToTop() {
   const btn = document.createElement('button');
   btn.className = 'back-to-top';
   btn.setAttribute('aria-label', backToTopLabel);
-  btn.setAttribute('aria-hidden', 'true');
-  btn.innerHTML = '↑';
+  btn.textContent = '↑';
   document.body.appendChild(btn);
 
   function toggleVisibility() {
-    btn.classList.toggle('visible', window.scrollY > 400);
+    const visible = window.scrollY > 400;
+    btn.classList.toggle('visible', visible);
+    btn.setAttribute('aria-hidden', String(!visible));
+    btn.tabIndex = visible ? 0 : -1;
   }
 
   btn.addEventListener('click', () => {

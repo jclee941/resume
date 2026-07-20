@@ -136,7 +136,7 @@ describe('고도화: PDF source polish', () => {
   });
 
   test('PDF generator uses a non-default accessible accent link colour, not literal blue', () => {
-    const gen = read(path.join(TOOLS, 'pdf-generator.go'));
+    const gen = read(path.join(TOOLS, 'pdf-generator', 'renderer.go'));
     expect(gen).not.toMatch(/linkcolor:blue/);
     expect(gen).toMatch(
       /linkcolor:(?!(?:blue|black|gray|grey|white)\b)(?:[a-z]+|\[HTML\]\{[0-9A-Fa-f]{6}\}|[0-9A-Fa-f]{6})/

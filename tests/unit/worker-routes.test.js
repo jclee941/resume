@@ -280,8 +280,9 @@ describe('Worker Routes', () => {
       expect(code).toContain('image/webp');
     });
 
-    it('should serve /resume.pdf from the assets binding (no inline base64)', () => {
+    it('should serve summary and full CV PDFs from the assets binding (no inline base64)', () => {
       expect(code).toContain('/resume.pdf');
+      expect(code).toContain('/resume-full.pdf');
       expect(code).toContain('application/pdf');
       expect(code).toContain('Content-Disposition');
       // PDF is no longer inlined: route must read from env.ASSETS, not atob a const.

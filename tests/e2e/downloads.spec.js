@@ -63,7 +63,7 @@ test.describe('Download Functionality', () => {
         /^https:\/\/raw\.githubusercontent\.com\/jclee941\/resume\/master\/.+\.(pdf|docx|md)$/;
       // Worker PDF pattern - handles both production (resume.jclee.me) and staging (*.workers.dev)
       const workerPdfPattern =
-        /^(https:\/\/(resume\.jclee\.me|resume-staging\.jclee\.workers\.dev))?\/resume\.pdf$/;
+        /^(https:\/\/(resume\.jclee\.me|resume-staging\.jclee\.workers\.dev))?\/resume(?:-full)?\.pdf$/;
 
       for (let i = 0; i < count; i++) {
         const link = allDownloadLinks.nth(i);
@@ -97,9 +97,11 @@ test.describe('Download Functionality', () => {
       }
 
       const hrefs = await downloadLinks.evaluateAll((links) =>
-        links.map((link) => link.getAttribute('href')).filter(Boolean)
+        links.map((link) => link.getAttribute('href')).filter((href) => href !== null)
       );
-      const localHref = hrefs.find((href) => href.startsWith('/') || href.startsWith(baseURL));
+      const localHref = hrefs.find(
+        (href) => href.startsWith('/') || (baseURL ? href.startsWith(baseURL) : false)
+      );
 
       if (!localHref) {
         test.skip(true, 'No local Worker download links found on page');

@@ -1,4 +1,4 @@
-import { renderIcon } from './project-card-formatting.js';
+import { createIconElement } from './project-card-formatting.js';
 
 const TIMELINE_LABELS = {
   ko: {
@@ -68,80 +68,122 @@ function impactTextFor(career) {
   return description ? `${description.substring(0, 80)}...` : '';
 }
 
-export function createTimelineNode(career, index) {
+export function createTimelineViewModel(career, index) {
   const phaseInfo = PHASE_STAGES[career.phase] || PHASE_STAGES['기초'];
   const labels = getTimelineLabels();
   const isActive = career.status === 'active';
-  const statusClass = isActive ? 'status--active' : 'status--completed';
-  const nodeClass = isActive ? 'timeline-node--active' : '';
-  const achievements = career.achievements || [];
-  const description = career.description || '';
   const phaseLabel = (labels.phases && labels.phases[career.phase]) || career.phase;
-  const impactText = impactTextFor(career);
+  return {
+    ...career,
+    index,
+    labels,
+    phaseIcon: phaseInfo.icon,
+    phaseLabel,
+    isActive,
+    achievements: career.achievements || [],
+    description: career.description || '',
+    impactText: impactTextFor(career).split('\n')[0],
+  };
+}
 
-  const companyName = career.companyUrl
-    ? `<a href="${career.companyUrl}" target="_blank" rel="noopener noreferrer"
-               class="company-link">${career.company}</a>`
-    : `<span class="company-link company-link--text">${career.company}</span>`;
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
 
-  return `
-    <li class="timeline-node ${nodeClass}" role="listitem" tabindex="0"
-             data-phase="${career.phase}"
-             data-status="${career.status}"
-             aria-label="${career.company} - ${career.period}">
-      <div class="timeline-marker" aria-hidden="true">
-        <div class="timeline-dot ${statusClass}"></div>
-      </div>
+function companyElement(model) {
+  if (!model.companyUrl) return el('span', 'company-link company-link--text', model.company);
+  const link = el('a', 'company-link', model.company);
+  link.href = model.companyUrl;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  return link;
+}
 
-      <div class="timeline-content">
-        <header class="timeline-header">
-          <div class="timeline-date">
-            <time>${career.period}</time>
-          </div>
-          <div class="timeline-badges">
-            <span class="phase-badge phase-badge--${career.phase}" aria-label="${labels.phase}: ${phaseLabel}">
-              ${renderIcon(phaseInfo.icon, 'phase-badge__icon')} ${phaseLabel}
-            </span>
-            ${isActive ? `<span class="status-badge status-badge--active" aria-label="${labels.inProgressAria}">${labels.inProgress}</span>` : ''}
-          </div>
-        </header>
+function createExpandIcon() {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  for (const [name, value] of Object.entries({
+    class: 'expand-icon',
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: 'currentColor',
+    'stroke-width': '2',
+  })) {
+    svg.setAttribute(name, value);
+  }
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', 'M6 9l6 6 6-6');
+  svg.appendChild(path);
+  return svg;
+}
 
-        <div class="timeline-card" tabindex="-1">
-          <h3 class="timeline-company">
-            ${companyName}
-          </h3>
-          <p class="timeline-role">${career.role}</p>
-          <p class="timeline-myrole">${career.myRole}</p>
+export function createTimelineNode(career, index) {
+  const model = createTimelineViewModel(career, index);
+  const node = el('li', `timeline-node${model.isActive ? ' timeline-node--active' : ''}`);
+  node.setAttribute('role', 'listitem');
+  node.tabIndex = 0;
+  node.dataset.phase = model.phase;
+  node.dataset.status = model.status;
+  node.setAttribute('aria-label', `${model.company} - ${model.period}`);
 
-          <div class="timeline-impact">
-            <div class="impact-summary">
-              <span class="impact-label">${labels.impact}:</span>
-              <span class="impact-text">${impactText.split('\n')[0]}</span>
-            </div>
-          </div>
+  const marker = el('div', 'timeline-marker');
+  marker.setAttribute('aria-hidden', 'true');
+  marker.appendChild(
+    el('div', `timeline-dot ${model.isActive ? 'status--active' : 'status--completed'}`)
+  );
 
-          <div id="details-${index}" class="timeline-details" aria-hidden="true">
-            <p class="details-description">${description}</p>
-            ${
-              achievements.length > 0
-                ? `
-              <ul class="details-achievements">
-                ${achievements.map((item) => `<li>${item}</li>`).join('')}
-              </ul>
-            `
-                : ''
-            }
-          </div>
+  const content = el('div', 'timeline-content');
+  const header = el('header', 'timeline-header');
+  const date = el('div', 'timeline-date');
+  date.appendChild(el('time', '', model.period));
+  const badges = el('div', 'timeline-badges');
+  const phase = el('span', `phase-badge phase-badge--${model.phase}`);
+  phase.setAttribute('aria-label', `${model.labels.phase}: ${model.phaseLabel}`);
+  phase.append(createIconElement(model.phaseIcon, 'phase-badge__icon'), ` ${model.phaseLabel}`);
+  badges.appendChild(phase);
+  if (model.isActive) {
+    const status = el('span', 'status-badge status-badge--active', model.labels.inProgress);
+    status.setAttribute('aria-label', model.labels.inProgressAria);
+    badges.appendChild(status);
+  }
+  header.append(date, badges);
 
-          <button class="timeline-expand-btn" aria-expanded="false" aria-controls="details-${index}"
-                  aria-label="${labels.expand} ${labels.detail} ${career.company}">
-            <span class="expand-text">${labels.expand}</span>
-            <svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M6 9l6 6 6-6"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-    </li>
-  `;
+  const card = el('div', 'timeline-card');
+  card.tabIndex = -1;
+  const company = el('h3', 'timeline-company');
+  company.appendChild(companyElement(model));
+  card.append(company, el('p', 'timeline-role', model.role), el('p', 'timeline-myrole', model.myRole));
+
+  const impact = el('div', 'timeline-impact');
+  const summary = el('div', 'impact-summary');
+  summary.append(
+    el('span', 'impact-label', `${model.labels.impact}:`),
+    el('span', 'impact-text', model.impactText)
+  );
+  impact.appendChild(summary);
+  card.appendChild(impact);
+
+  const details = el('div', 'timeline-details');
+  details.id = `details-${model.index}`;
+  details.setAttribute('aria-hidden', 'true');
+  details.appendChild(el('p', 'details-description', model.description));
+  if (model.achievements.length > 0) {
+    const list = el('ul', 'details-achievements');
+    model.achievements.forEach((item) => list.appendChild(el('li', '', item)));
+    details.appendChild(list);
+  }
+  card.appendChild(details);
+
+  const button = el('button', 'timeline-expand-btn');
+  button.setAttribute('aria-expanded', 'false');
+  button.setAttribute('aria-controls', details.id);
+  button.setAttribute('aria-label', `${model.labels.expand} ${model.labels.detail} ${model.company}`);
+  button.append(el('span', 'expand-text', model.labels.expand), createExpandIcon());
+  card.appendChild(button);
+
+  content.append(header, card);
+  node.append(marker, content);
+  return node;
 }

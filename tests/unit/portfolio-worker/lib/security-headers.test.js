@@ -120,7 +120,7 @@ describe('Security Headers Module', () => {
       const headers = generateSecurityHeaders([]);
       const ro = headers['Content-Security-Policy-Report-Only'];
       expect(ro).toContain("require-trusted-types-for 'script'");
-      expect(ro).toContain('trusted-types');
+      expect(ro).toContain('trusted-types resume-script-url');
       // Must NOT be enforced in the main CSP (would break the terminal DOM).
       expect(headers['Content-Security-Policy']).not.toContain('require-trusted-types-for');
     });
