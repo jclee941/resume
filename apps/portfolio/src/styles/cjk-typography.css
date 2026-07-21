@@ -18,5 +18,6 @@ html:lang(ja) body :where(.page-shell, .page-shell *) {
 
   html:lang(ja) body .company-link {
     word-break: keep-all;
+    white-space: nowrap;
   }
 }
