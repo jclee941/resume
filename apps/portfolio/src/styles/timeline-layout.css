@@ -1,0 +1,45 @@
+/* ============================================
+   CAREER INCIDENT TIMELINE
+   Clean dark-neutral theme - career timeline visualization
+   ============================================ */
+
+/* ----------------------------------------
+   TIMELINE CONTAINER
+   ---------------------------------------- */
+.incident-timeline {
+  --timeline-offset: 120px;
+  position: relative;
+  padding: var(--space-6) 0;
+  max-width: 800px;
+  margin: 0 auto;
+  list-style: none;
+}
+
+/* Vertical connecting line */
+.incident-timeline::before {
+  content: '';
+  position: absolute;
+  left: 24px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    var(--color-accent) 0%,
+    var(--color-accent-strong) 50%,
+    var(--color-accent) 100%
+  );
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  .incident-timeline {
+    --timeline-offset: 180px;
+  }
+
+  .incident-timeline::before {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

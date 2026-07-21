@@ -1,0 +1,55 @@
+/* Responsive: collapse the rail to compact inline markers on small screens */
+@media (max-width: 600px) {
+  .cover-letter__chrome {
+    padding: var(--space-3) var(--space-4);
+  }
+  .cover-letter__headline {
+    max-width: none;
+    font-size: var(--text-xl);
+    padding: var(--space-6) var(--space-4) var(--space-3);
+  }
+  .cover-letter__headline::before {
+    left: var(--space-3);
+  }
+  .cover-letter__paragraphs {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: var(--space-2) var(--space-4) var(--space-3);
+  }
+  .cover-letter__para {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: var(--space-4) 0;
+  }
+  .cover-letter__para::before {
+    display: none;
+  }
+  .cover-letter__index {
+    display: inline-flex;
+    width: auto;
+    min-height: auto;
+    margin: 0 0 var(--space-2);
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-full);
+  }
+  .cover-letter__text {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .cover-letter__closing {
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+    padding: var(--space-4) var(--space-4) var(--space-5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cover-letter-card {
+    transition: none;
+  }
+}

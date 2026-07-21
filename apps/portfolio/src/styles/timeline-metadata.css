@@ -1,0 +1,98 @@
+/* ----------------------------------------
+   TIMELINE HEADER
+   ---------------------------------------- */
+.timeline-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+@media (min-width: 768px) {
+  .timeline-node:nth-child(odd) .timeline-header {
+    justify-content: flex-end;
+  }
+}
+
+.timeline-date {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.timeline-badges {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* ----------------------------------------
+   PHASE BADGES
+   ---------------------------------------- */
+.phase-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  padding: 3px 10px;
+  border-radius: 3px;
+  border: 1px solid;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.phase-badge__icon {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+.phase-badge--운영 {
+  background: rgba(121, 184, 138, 0.14);
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.phase-badge--구축 {
+  background: rgb(var(--color-accent-rgb) / 0.14);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.phase-badge--자동화 {
+  background: rgb(var(--color-accent-rgb) / 0.1);
+  border-color: var(--color-accent);
+  color: var(--color-accent-strong);
+}
+
+.phase-badge--안정화 {
+  background: rgba(216, 181, 104, 0.15);
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+.phase-badge--기초 {
+  background: rgba(161, 161, 170, 0.15);
+  border-color: var(--text-secondary);
+  color: var(--text-secondary);
+}
+
+/* ----------------------------------------
+   STATUS BADGE
+   ---------------------------------------- */
+.status-badge--active {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: var(--color-success);
+  color: var(--bg-primary);
+  animation: blink 1.5s ease-in-out infinite;
+}
+
+/* ----------------------------------------
+   TIMELINE CARD
+   ---------------------------------------- */

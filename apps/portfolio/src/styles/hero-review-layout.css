@@ -1,0 +1,41 @@
+.hero-cta {
+  margin-top: 0;
+}
+
+.hero-link:active,
+.link-subtle:active {
+  transform: translateY(0);
+}
+
+@media (min-width: 769px) {
+  .hero-content {
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(276px, 0.68fr);
+    column-gap: var(--space-8);
+    max-width: 100%;
+    align-items: start;
+  }
+
+  .hero-title,
+  .hero-role,
+  .hero-availability,
+  .hero-positioning,
+  .hero-proof-list,
+  .hero-public-proof {
+    grid-column: 1;
+  }
+
+  .hero-review-path {
+    grid-column: 1;
+  }
+
+  .hiring-review-packet {
+    grid-column: 2;
+    grid-row: 1 / span 5;
+    align-self: stretch;
+  }
+
+  .hero-cta {
+    grid-column: 1 / -1;
+  }
+}

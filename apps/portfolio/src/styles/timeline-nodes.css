@@ -1,0 +1,91 @@
+/* ----------------------------------------
+   TIMELINE NODE
+   ---------------------------------------- */
+.timeline-node {
+  position: relative;
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.timeline-node--animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.timeline-node:focus {
+  outline: none;
+}
+
+.timeline-node:focus-visible .timeline-card {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ----------------------------------------
+   TIMELINE MARKER (dot on line)
+   ---------------------------------------- */
+.timeline-marker {
+  position: relative;
+  flex-shrink: 0;
+  width: 48px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: var(--space-2);
+}
+
+.timeline-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid var(--bg-primary);
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+/* Active status - blinking success */
+.timeline-dot.status--active {
+  background: var(--color-success);
+  box-shadow:
+    0 0 0 3px rgb(var(--bg-primary-rgb) / 0.92),
+    0 0 0 6px rgba(121, 184, 138, 0.26);
+  animation: pulse-soft 2s ease-in-out infinite;
+}
+
+/* Completed status - solid accent */
+.timeline-dot.status--completed {
+  background: var(--color-accent-strong);
+  box-shadow:
+    0 0 0 3px rgb(var(--bg-primary-rgb) / 0.92),
+    0 0 0 6px rgb(var(--color-accent-rgb) / 0.24);
+}
+
+/* ----------------------------------------
+   TIMELINE CONTENT
+   ---------------------------------------- */
+.timeline-content {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .timeline-node {
+    align-items: flex-start;
+  }
+
+  .timeline-node:nth-child(odd) .timeline-content {
+    text-align: right;
+    padding-right: calc(50% + var(--space-8));
+  }
+
+  .timeline-node:nth-child(even) .timeline-content {
+    text-align: left;
+    padding-left: calc(50% + var(--space-8));
+  }
+}

@@ -1,0 +1,94 @@
+/* ----------------------------------------
+   EXPANDABLE DETAILS
+   ---------------------------------------- */
+.timeline-details {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.timeline-node.is-expanded .timeline-details {
+  max-height: 500px;
+  opacity: 1;
+  margin-top: var(--space-3);
+}
+
+.details-description {
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin: 0 0 var(--space-3) 0;
+}
+
+.details-achievements {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.details-achievements li {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: color-mix(in srgb, var(--color-success) 86%, white 14%);
+  padding-left: var(--space-4);
+  margin-bottom: var(--space-1);
+}
+
+.details-achievements li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.25em;
+  width: 6px;
+  height: 10px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  color: var(--color-accent);
+  transform: rotate(40deg);
+}
+
+/* ----------------------------------------
+   EXPAND BUTTON
+   ---------------------------------------- */
+.timeline-expand-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: rgb(var(--bg-primary-rgb) / 0.42);
+  border: 1px solid color-mix(in srgb, var(--border-secondary) 50%, var(--text-secondary) 50%);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.timeline-expand-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.timeline-expand-btn:focus {
+  outline: none;
+}
+
+.timeline-expand-btn:focus-visible {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-sm);
+}
+
+.expand-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease;
+}
+
+/* ----------------------------------------
+   ANIMATIONS
+   ---------------------------------------- */

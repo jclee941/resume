@@ -1,0 +1,77 @@
+/* Paragraph rail: a continuous progress spine with circular nodes */
+.cover-letter__paragraphs {
+  display: grid;
+  justify-content: center;
+  list-style: none;
+  margin: 0;
+  padding: var(--space-3) var(--space-8) var(--space-5);
+}
+
+.cover-letter__para {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--space-8) minmax(0, 62ch);
+  gap: var(--space-4);
+  width: min(100%, 72ch);
+  padding: var(--space-5) 0;
+  align-items: start;
+}
+/* Continuous spine behind the numbered nodes */
+.cover-letter__para::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--space-4) - 1px);
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(
+    180deg,
+    rgb(var(--color-accent-rgb) / 0.08),
+    rgb(var(--color-accent-rgb) / 0.32),
+    rgb(var(--color-accent-rgb) / 0.1)
+  );
+}
+.cover-letter__para:first-child::before {
+  top: var(--space-5);
+}
+.cover-letter__para:last-child::before {
+  bottom: var(--space-5);
+}
+
+.cover-letter__index {
+  position: relative;
+  z-index: 1;
+  display: inline-grid;
+  place-items: center;
+  width: var(--space-8);
+  min-height: var(--space-8);
+  margin-top: var(--space-1);
+  border: 1px solid rgb(var(--color-accent-rgb) / 0.35);
+  border-radius: var(--radius-full);
+  background: rgb(var(--bg-primary-rgb) / 0.88);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  line-height: var(--leading-tight);
+  color: var(--color-accent-strong);
+  user-select: none;
+}
+
+.cover-letter__text {
+  margin: 0;
+  max-width: 62ch;
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-loose);
+  color: var(--text-secondary);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  text-wrap: pretty;
+}
+
+.cover-letter__atomic-phrase {
+  white-space: nowrap;
+}
+
+/* Closing: signature prompt + output as a two-column row */

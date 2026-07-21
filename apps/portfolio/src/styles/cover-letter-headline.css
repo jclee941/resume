@@ -1,0 +1,50 @@
+/* Headline as an editorial pull quote — the emotional anchor */
+.cover-letter__headline {
+  position: relative;
+  margin: 0;
+  padding: var(--space-8) var(--space-8) var(--space-5);
+  max-width: 26ch;
+  font-family: var(--font-sans);
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-primary);
+  text-wrap: balance;
+}
+
+:lang(ko) .cover-letter__headline {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+@supports (word-break: auto-phrase) {
+  :where(:lang(ko), :lang(ja)) .cover-letter__headline {
+    word-break: auto-phrase;
+  }
+}
+
+.cover-letter__headline::before {
+  content: '“';
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-5);
+  font-family: var(--font-mono);
+  font-size: var(--text-6xl);
+  line-height: var(--leading-tight);
+  color: rgb(var(--color-accent-rgb) / 0.28);
+  pointer-events: none;
+}
+.cover-letter__headline::after {
+  content: '';
+  display: block;
+  width: var(--space-12);
+  height: 2px;
+  margin-top: var(--space-4);
+  background: linear-gradient(
+    90deg,
+    var(--color-accent),
+    rgb(var(--color-accent-rgb) / 0.4),
+    transparent
+  );
+}
