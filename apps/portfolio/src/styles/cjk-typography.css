@@ -1,0 +1,18 @@
+html:lang(ko) body :where(.page-shell, .page-shell *) {
+  line-break: strict;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+html:lang(ja) body :where(.page-shell, .page-shell *) {
+  line-break: strict;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+@supports (word-break: auto-phrase) {
+  html:lang(ko) body :where(.page-shell, .page-shell *),
+  html:lang(ja) body :where(.page-shell, .page-shell *) {
+    word-break: auto-phrase;
+  }
+}
