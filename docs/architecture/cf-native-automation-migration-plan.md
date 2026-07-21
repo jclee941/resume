@@ -6,6 +6,19 @@
 
 The surface is already ~80% CF-native: deploy runs on Workers Builds (GitHub does only dry-runs), the daily job is a real Cron Trigger, 8 Workflows + Queues (with DLQs) + BrowserSessionDO + Browser Rendering + KV/D1 are all bound and deployed. The remaining work is NOT lift-and-shift; it is (1) wiring gaps where CF machinery exists but has no caller (ResumeSyncWorkflow has no cron, BrowserSessionDO has zero callers, session store is still a file), (2) moving pure-fetch auth (Wanted OneID token mint) server-side into scheduled()->KV, which is the root unblocker for everything downstream, and (3) porting a handful of Node-puppeteer browser crawlers onto the MYBROWSER binding. A hard tail of work is genuinely blocked by platform limits (non-headless/VNC captcha login, CDP scrape of a local human Chrome, JA3 TLS fingerprinting) and by design should stay off-CF, alongside all GitHub-native PR automation and the GitHub PR status-check matrix. The deploy/CI foundation is done, so waves are ordered by leverage: cheap additive wiring first, then activating dormant CF infra, then the browser ports that depend on it.
 
+## Execution Status (2026-07-21)
+
+Executed autonomously (config-only, CI-verified, reversible):
+
+- **Wave 0 — retired `auto-sync-data.yml`**: nightly `verify:ssot` was a redundant re-run of the `ci.yml` `validate-data` SSoT drift gate (already runs every push/PR). Removed the schedule; drift is still gated by CI.
+- **Bug fix — `13_pr-auto-merge.yml`**: hardcoded `runs-on: self-hosted` on a public repo (jobs could go unpicked) → changed to the house `github.repository_visibility == 'private' && 'self-hosted' || 'ubuntu-latest'` pattern used by the other PR workflows.
+
+Deferred — **owner-gated by necessity, not preference** (Waves 1–5):
+
+- These change **live job-application runtime behavior** (scheduled resume-sync, browser crawlers, auto-apply), depend on **Worker Secrets** not confirmable from here (TELEGRAM_BOT_TOKEN/CHAT_ID, WANTED/JOBKOREA creds), and **cannot be runtime-tested locally** (CF `scheduled()`/Workflow/Browser-Rendering paths).
+- Wave 1 first slice (wire `RESUME_SYNC_WORKFLOW` to a cron in `apps/job-dashboard/src/index.js` `scheduled()` + a second `crons` entry in `wrangler.jsonc`) is **ready to execute on a one-word go-ahead once secrets are confirmed** — the workflow is already invocable via HTTP route and queue dispatcher; only the cron→create trigger is missing.
+- Waves 3–5 additionally need the **captcha strategy**, **Browser-Rendering anti-bot risk**, and **`@cloudflare/puppeteer` CDP `Network.setCookie`** decisions resolved (see Open Questions).
+
 ## Migration Waves
 
 ### Wave 0 — Foundation (already done) — confirm and de-duplicate
