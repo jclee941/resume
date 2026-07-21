@@ -1,4 +1,4 @@
-import { LAST_MODIFIED } from './constants.js';
+import { BUILD_ETAG_VERSION, LAST_MODIFIED } from './constants.js';
 
 function mergeVaryHeader(existingValue, valuesToAdd) {
   const merged = new Set(
@@ -62,6 +62,77 @@ function acceptedEncodings(headerValue) {
     .filter(Boolean);
 }
 
+function buildWeakEtag(pathname, requestContext) {
+  const slug = pathname.replace(/[^a-z0-9/_-]/gi, '').replace(/\//g, '_') || 'root';
+  const languageScope = requestContext.language ? `-${requestContext.language}` : '';
+  return `W/"${slug}${languageScope}-${BUILD_ETAG_VERSION}"`;
+}
+
+function etagMatches(ifNoneMatch, currentEtag) {
+  const normalize = (tag) => String(tag).trim().replace(/^W\//, '');
+  const candidates = String(ifNoneMatch)
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  if (candidates.includes('*')) {
+    return true;
+  }
+
+  const current = normalize(currentEtag);
+  return candidates.some((candidate) => normalize(candidate) === current);
+}
+
+function isNotModifiedSince(ifModifiedSince) {
+  const requestTimestamp = Date.parse(ifModifiedSince);
+  const lastModifiedTimestamp = Date.parse(LAST_MODIFIED);
+  return (
+    Number.isFinite(requestTimestamp) &&
+    Number.isFinite(lastModifiedTimestamp) &&
+    requestTimestamp >= lastModifiedTimestamp
+  );
+}
+
+// RFC 7232 conditional GET/HEAD: opt-in only, never for unsafe methods or
+// no-store resources. If-None-Match takes precedence over If-Modified-Since —
+// when a client sends both, the date validator is ignored.
+function isConditionalRequestFresh(cacheControl, requestContext, etag) {
+  if (!requestContext.conditionalRequests) {
+    return false;
+  }
+
+  const method = requestContext.method || 'GET';
+  if (method !== 'GET' && method !== 'HEAD') {
+    return false;
+  }
+
+  if (cacheControl.includes('no-store')) {
+    return false;
+  }
+
+  if (requestContext.ifNoneMatch != null) {
+    return etagMatches(requestContext.ifNoneMatch, etag);
+  }
+
+  if (requestContext.ifModifiedSince != null) {
+    return isNotModifiedSince(requestContext.ifModifiedSince);
+  }
+
+  return false;
+}
+
+function buildNotModifiedResponse(headers) {
+  const notModified = new Headers(headers);
+  notModified.delete('Content-Type');
+  notModified.delete('Content-Length');
+  notModified.delete('Content-Encoding');
+  return new Response(null, {
+    status: 304,
+    statusText: 'Not Modified',
+    headers: notModified,
+  });
+}
+
 function canCompressResponse(response, pathname, requestContext) {
   if (response.status === 204 || response.status === 304 || !response.body) {
     return false;
@@ -88,7 +159,8 @@ function canCompressResponse(response, pathname, requestContext) {
 
 function applyResponseHeaders(response, pathname, requestContext = {}) {
   const headers = new Headers(response.headers);
-  headers.set('Cache-Control', getCacheControlForPath(pathname));
+  const cacheControl = getCacheControlForPath(pathname);
+  headers.set('Cache-Control', cacheControl);
   const varyValues = ['Accept-Encoding'];
   if (requestContext.varyAcceptLanguage) {
     varyValues.push('Accept-Language');
@@ -105,8 +177,14 @@ function applyResponseHeaders(response, pathname, requestContext = {}) {
   }
 
   if (!headers.has('ETag')) {
-    const weakTag = pathname.replace(/[^a-z0-9/_-]/gi, '').replace(/\//g, '_') || 'root';
-    headers.set('ETag', `W/"${weakTag}-2026-02-15"`);
+    headers.set('ETag', buildWeakEtag(pathname, requestContext));
+  }
+
+  if (
+    response.status === 200 &&
+    isConditionalRequestFresh(cacheControl, requestContext, headers.get('ETag'))
+  ) {
+    return buildNotModifiedResponse(headers);
   }
 
   if (canCompressResponse(response, pathname, requestContext)) {
