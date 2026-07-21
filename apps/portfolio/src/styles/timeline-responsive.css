@@ -1,0 +1,93 @@
+/* Mobile: full width cards */
+@media (max-width: 767px) {
+  .incident-timeline {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
+  }
+
+  .timeline-node {
+    gap: var(--space-2);
+  }
+
+  .incident-timeline::before {
+    left: var(--space-5);
+  }
+
+  .timeline-marker {
+    width: var(--space-5);
+  }
+
+  .timeline-dot {
+    width: var(--space-3);
+    height: var(--space-3);
+  }
+
+  .timeline-card {
+    padding: var(--space-2);
+  }
+
+  .phase-badge {
+    font-size: var(--text-xs);
+    padding: var(--space-1) var(--space-2);
+  }
+
+  :lang(ja) .timeline-impact,
+  :lang(ja) .timeline-details {
+    line-break: loose;
+    word-break: normal;
+    overflow-wrap: anywhere;
+  }
+
+  :lang(ja) .details-achievements li {
+    padding-left: var(--space-3);
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .incident-timeline {
+    --timeline-offset: 140px;
+  }
+}
+
+/* ----------------------------------------
+   ACCESSIBILITY - REDUCED MOTION
+   ---------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .timeline-node,
+  .timeline-card,
+  .timeline-dot,
+  .status-badge--active,
+  .expand-icon {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .timeline-node--animate {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ----------------------------------------
+   PRINT STYLES
+   ---------------------------------------- */
+@media print {
+  .incident-timeline {
+    max-width: 100%;
+  }
+
+  .incident-timeline::before,
+  .timeline-dot.status--active {
+    animation: none;
+  }
+
+  .timeline-expand-btn {
+    display: none;
+  }
+
+  .timeline-details {
+    max-height: none;
+    opacity: 1;
+  }
+}

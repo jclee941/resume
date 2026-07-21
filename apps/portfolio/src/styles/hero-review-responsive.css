@@ -1,0 +1,43 @@
+@media (max-width: 768px) {
+  .section-hero {
+    padding: var(--space-6) 0 var(--space-10);
+  }
+
+  .hero-cta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+
+  .hero-cta .link-subtle {
+    min-width: 0;
+    justify-content: center;
+    padding-inline: var(--space-3);
+    text-align: center;
+    white-space: normal;
+  }
+
+  .hero-public-proof__links {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-public-proof {
+    padding: var(--space-3);
+  }
+
+  .hero-public-proof a {
+    min-height: 0;
+    padding: var(--space-2) var(--space-3);
+  }
+}
+
+@media (max-width: 640px) {
+  .hiring-review-packet {
+    padding: var(--space-3);
+  }
+
+  .hiring-review-packet__header {
+    align-items: center;
+    flex-flow: row wrap;
+  }
+}

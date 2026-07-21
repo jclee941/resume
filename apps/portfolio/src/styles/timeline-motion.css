@@ -1,0 +1,43 @@
+/* Active node pulse animation */
+@keyframes pulse-soft {
+  0%,
+  100% {
+    box-shadow: var(--shadow-sm);
+  }
+  50% {
+    box-shadow: var(--shadow-md);
+  }
+}
+
+/* Status blink animation */
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Node entrance animation */
+@keyframes timeline-entrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.timeline-node--animate {
+  animation: none;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ----------------------------------------
+   RESPONSIVE ADJUSTMENTS
+   ---------------------------------------- */
