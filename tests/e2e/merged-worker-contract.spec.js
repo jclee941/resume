@@ -17,14 +17,23 @@ test('merged portfolio and job health routes are non-5xx', async ({ request }) =
   }
 });
 
-test('Queue reports the explicit disabled contract', async ({ request }) => {
+test('Queue reports a coherent capability contract', async ({ request }) => {
+  // The endpoint mirrors the runtime binding: when the crawl-tasks producer is
+  // bound (local miniflare and provisioned production) it reports available/200;
+  // when unbound it degrades to the disabled/503 contract. Assert the invariant
+  // that the HTTP status, `available`, and `status` string stay consistent —
+  // never a hardcoded availability the environment may legitimately flip.
   const response = await request.get('/job/api/queue/status', { failOnStatusCode: false });
-  expect(response.status()).toBe(503);
-  await expect(response.json()).resolves.toMatchObject({
-    status: 'disabled',
-    available: false,
-    queue: 'crawl-tasks',
-  });
+  const body = await response.json();
+  expect(body.queue).toBe('crawl-tasks');
+
+  if (body.available) {
+    expect(response.status()).toBe(200);
+    expect(body.status).toBe('ok');
+  } else {
+    expect(response.status()).toBe(503);
+    expect(body.status).toBe('disabled');
+  }
 });
 
 test('health exposes a full exact SHA contract', async ({ request }) => {
