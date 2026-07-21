@@ -142,6 +142,10 @@ export default {
           language: effectiveLanguage,
           source: effectiveSource,
           varyAcceptLanguage: false,
+          conditionalRequests: true,
+          method: request.method,
+          ifNoneMatch: request.headers.get('if-none-match'),
+          ifModifiedSince: request.headers.get('if-modified-since'),
         });
       } else {
         const portfolioResponse = await portfolioWorker.fetch(request, env, ctx);
@@ -149,6 +153,10 @@ export default {
           acceptEncoding: request.headers.get('Accept-Encoding'),
           language: languageContext.language || DEFAULT_LANGUAGE,
           source: languageContext.source,
+          conditionalRequests: true,
+          method: request.method,
+          ifNoneMatch: request.headers.get('if-none-match'),
+          ifModifiedSince: request.headers.get('if-modified-since'),
         });
       }
     } catch (error) {

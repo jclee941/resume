@@ -21,6 +21,7 @@ function loadResponseHeaders() {
     'DecompressionStream',
     `${source}
 const LAST_MODIFIED = 'Mon, 01 Jan 2024 00:00:00 GMT';
+const BUILD_ETAG_VERSION = '20240101';
 module.exports = { applyResponseHeaders };`
   );
 
