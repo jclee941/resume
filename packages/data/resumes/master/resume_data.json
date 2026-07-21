@@ -47,7 +47,7 @@
     "coreCompetencies": [
       "FortiGate HA·망분리·엔드포인트 보안 운영 내역을 본인가 심사 자료로 제출해 심사 질의에 직접 답변한 경험",
       "Splunk ES Saved Search, Webhook, Slack/SMS 알림을 하나로 이어 보안 이벤트를 인지·분류·알림까지 한 번에 처리하는 운영 체계",
-      "FortiManager API 조회 스크립트로 방화벽 정책 변경 이력과 조회 내용을 추적 가능하게 만든 자동화",
+      "FortiManager API 스크립트로 방화벽 정책 변경 이력과 조회 결과를 추적 가능하게 만든 자동화",
       "FSDC 금감원 정기 감사를 DLP 정책 운영 체계와 감사 산출물 템플릿으로 대응해 자료 재사용성을 확보한 운영 방식",
       "Grafana·Prometheus·Loki로 메트릭과 로그를 한 화면에서 나란히 확인하도록 구성해 장애 원인 파악 절차를 단축한 관측성 스택",
       "Terraform·Ansible로 장비·Edge·홈랩 구성을 PR 리뷰 가능한 코드로 관리해 GUI 변경 의존도를 낮춘 IaC 운영"
@@ -70,7 +70,7 @@
         "Splunk ES·Slack/SMS 알림·FortiManager API를 연결한 보안 이벤트 자동화 구성",
         "Cloudflare Workers 기반 포트폴리오 구축, 정책 적용, 로그 확인",
         "MCP 도구로 반복 보안 대응 항목을 분류하는 실험",
-        "GitOps와 정책 관리 실험을 통한 대응 절차 코드화"
+        "GitOps로 정책 관리와 대응 절차를 코드화하는 실험"
       ]
     },
     "totalExperience": "재직 합계"
@@ -801,7 +801,7 @@
       "description": "NVMe 스토리지 기반 Proxmox VE, Cloudflare DNS/Workers, k3s 홈랩 인프라를 GUI로 관리하다 보니 변경 이력 추적과 재구축이 어려웠습니다. Proxmox VM/LXC, Cloudflare DNS·Workers·WAF, k3s bootstrap 리소스를 Terraform module로 옮기고 PR마다 plan 검증을 거치게 했습니다. GUI 변경을 줄이고, 인프라 변경 이력을 Git 기준으로 추적하도록 전환했습니다.",
       "highlights": [
         "NVMe 기반 Proxmox 마이그레이션 이후 변경 추적을 위한 IaC 전환",
-        "DNS·Edge 설정의 일관성 확보를 위한 코드화 관리",
+        "DNS·Edge 설정을 코드로 관리해 일관성 유지",
         "클러스터 재구축 절차를 줄이기 위한 프로비저닝",
         "IaC 품질 관리를 위한 CI 검증 파이프라인"
       ],
@@ -866,7 +866,7 @@
       "name": "AI 콘텐츠 자동화 파이프라인",
       "period": "2026.06 ~ 현재",
       "githubUrl": null,
-      "description": "여러 채널용 콘텐츠 제작이 스크립트 작성, 음성 합성, 영상 생성, 업로드 작업으로 분리되어 있어 실행 경로와 로그가 흩어지는 문제가 있었습니다. Python worker, n8n workflow, Supabase PostgreSQL/Storage를 기준으로 작업 큐와 산출물 메타데이터를 분리하고, TTS·영상 생성 API를 단계별 서비스로 연결한 MSA형 파이프라인을 세웠습니다. 실패 재시도, 상태 추적, 채널별 후처리를 워크플로 단위로 관리해 API 연동과 오케스트레이션 역량을 보여주는 프로젝트입니다.",
+      "description": "여러 채널용 콘텐츠 제작이 스크립트 작성, 음성 합성, 영상 생성, 업로드 작업으로 분리되어 있어 실행 경로와 로그가 흩어지는 문제가 있었습니다. Python worker, n8n workflow, Supabase PostgreSQL/Storage를 기준으로 작업 큐와 산출물 메타데이터를 분리하고, TTS·영상 생성 API를 단계별 서비스로 연결한 MSA형 파이프라인을 세웠습니다. 실패 재시도, 상태 추적, 채널별 후처리를 워크플로 단위로 관리해 외부 API 연동과 오케스트레이션을 한 흐름으로 운영했습니다.",
       "highlights": [
         "Python worker와 n8n workflow로 스크립트 생성, TTS, 영상 생성, 업로드 단계를 분리",
         "Supabase PostgreSQL/Storage에 작업 상태와 산출물 메타데이터를 저장",
@@ -892,7 +892,7 @@
       "githubUrl": "https://github.com/jclee941/bug",
       "description": "버그바운티 정찰(서브도메인 발견 → 알림 → 취약점 스캔)이 매번 손으로 반복되는 작업이었습니다. Go 기반 정찰 파이프라인과 Python 결과 분석을 통합하고, Subfinder, httpx, Nuclei 단계를 Makefile CLI 하나로 정리해 cron으로 주기 실행되게 했습니다. 신규 서브도메인이 발견되면 Slack으로 알리고, Nuclei 결과는 severity 기준으로 쌓여 후속 분석의 출발점이 됩니다.",
       "highlights": [
-        "동시 스캔 작업을 위한 동시성 설계",
+        "여러 대상을 병렬로 스캔하는 동시성 설계",
         "취약점 발견 후 즉시 대응하기 위한 매칭과 알림",
         "정기 정찰과 담당자 알림 연동을 위한 워크플로",
         "탐지 결과를 MITRE ATT&CK 기준으로 정렬해 위험도 판단 지원"

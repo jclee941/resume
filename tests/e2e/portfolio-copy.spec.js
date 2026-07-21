@@ -12,7 +12,7 @@ test.describe('Portfolio hiring copy', () => {
     ).toBeVisible();
     await expect(
       hero.getByText(
-        '보안 인프라 이력과 프로젝트를 확인하세요. 연락처와 이력서 PDF도 바로 확인할 수 있습니다.'
+        '넥스트레이드 보안 인프라 구축·자동화와 공개 자동화 프로젝트, 연락처·이력서 PDF를 한 화면에 정리했습니다.'
       )
     ).toBeVisible();
     await expect(hero.getByText('보안 자동화 · 보안 인프라 · SIEM')).toBeVisible();

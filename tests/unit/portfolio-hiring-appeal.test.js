@@ -39,7 +39,7 @@ describe('portfolio hiring appeal copy', () => {
 
     expect(html).toContain('보안 자동화 · 보안 인프라 면접 제안 가능');
     expect(html).toContain(
-      '보안 인프라 이력과 프로젝트를 확인하세요. 연락처와 이력서 PDF도 바로 확인할 수 있습니다.'
+      '넥스트레이드 보안 인프라 구축·자동화와 공개 자동화 프로젝트, 연락처·이력서 PDF를 한 화면에 정리했습니다.'
     );
     expect(html).toContain('<ul class="hero-proof-list" aria-label="핵심 이력 요약">');
     expect(html).toContain('공개 자동화 프로젝트');
@@ -78,7 +78,9 @@ describe('portfolio hiring appeal copy', () => {
       'Security-appliance builds, SIEM work, public automation projects, contact, and resume PDF — gathered on one page.'
     );
     expect(html).toContain('Target role: Security Automation / Infrastructure Engineer');
-    expect(html).toContain('Recent role: exchange security infrastructure build and automation');
+    expect(html).toContain(
+      'Recent role: exchange security infrastructure build/automation and audit response'
+    );
     expect(html).toContain('Open to interview requests');
     expect(html).toContain('PR review, secrets scan, and check runs explain change risk');
     expect(html).toContain('Metrics and logs provide observability for incidents and signals');
