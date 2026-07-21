@@ -54,6 +54,7 @@ module.exports = [
   {
     ignores: [
       'node_modules/**',
+      '.worktrees/**',
       'apps/portfolio/worker.js',
       'packages/data/resumes/archive/docs/worker.js',
       '*.min.js',
