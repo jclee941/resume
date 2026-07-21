@@ -52,7 +52,7 @@ function generateSecurityHeaders(styleHashes, options = {}) {
     `script-src-elem ${scriptSrc}`,
     `style-src ${styleSrc}`,
     `style-src-elem ${styleSrc}`,
-    `connect-src 'self' https://www.google.com https://oauth2.googleapis.com ${CLOUDFLARE_ANALYTICS.connect}`,
+    `connect-src 'self' https://www.google-analytics.com https://www.google.com https://oauth2.googleapis.com ${CLOUDFLARE_ANALYTICS.connect}`,
     "img-src 'self' https: data:",
     'report-to csp',
     'report-uri /api/csp-violation',
