@@ -61,8 +61,8 @@ test.describe('Portfolio recruiter enhancements', () => {
   }) => {
     const matrix = page.locator('.project-evidence-matrix');
     await expect(matrix).toBeVisible();
-    await expect(page.getByRole('heading', { name: '직무별 판단 경로' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: '프로젝트 근거 매트릭스' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '역할별 프로젝트 보기' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '프로젝트 한눈에 보기' })).toBeVisible();
     await expect(matrix.locator('.project-evidence-card')).toHaveCount(4);
     await expect(matrix.locator('.project-evidence-card').first()).toContainText(/역할|Role/);
     await expect(matrix.locator('.project-evidence-card').first()).toContainText(/근거|Evidence/);

@@ -43,19 +43,19 @@
       "Fortinet",
       "Observability"
     ],
-    "profileStatement": "Security infrastructure and automation engineer who builds reviewable evidence around the question of why each decision was made, gathered from license-review and audit-defense engagements. The same principle has carried the trajectory forward: starting from KAI closed-network OA operations, then FSDC and Financial Supervisory Service audits, then Nextrade construction with the Korean Financial Services Commission main-license review, into the automation phase. FortiGate HA and network segmentation, Splunk ES detection rules, Slack/SMS notifications, FortiManager API lookups, and Claude AI-assisted review form the response architecture that shortens the device-console steps an operator used to take. Currently prioritizing proposal and interview opportunities in Security Automation, Security Infrastructure, and SIEM Engineering roles.",
+    "profileStatement": "I'm a security infrastructure and automation engineer who documents why each decision was made, a habit built through license reviews and audit-defense work. The same principle carried me from KAI's closed-network OA operations through FSDC and Financial Supervisory Service audits, then Nextrade's build phase and the Korean Financial Services Commission main-license review, into the current automation phase. FortiGate HA and network segmentation, Splunk ES detection rules, Slack/SMS notifications, FortiManager API lookups, and Claude AI-assisted review now form one response architecture that shortens the console-hopping an operator used to do. Currently prioritizing proposal and interview opportunities in Security Automation, Security Infrastructure, and SIEM Engineering roles.",
     "coreCompetencies": [
-      "Submitted FortiGate HA, network segmentation, and endpoint security operating evidence as license-review material, answering examiner questions directly from it.",
-      "An operating flow that chains Splunk ES Saved Search, Webhook, and Slack/SMS notifications so each security event moves from recognition to classification and alerting in one consistent path.",
-      "FortiManager API lookup scripts that turn firewall policy change history and lookup results into traceable operating evidence.",
+      "Submitted FortiGate HA, network segmentation, and endpoint security operating records as license-review material, then answered examiner questions directly from them.",
+      "Chained Splunk ES Saved Search, Webhook, and Slack/SMS notifications so each security event moves from recognition to classification and alerting in one consistent path.",
+      "FortiManager API lookup scripts that turn firewall policy change history and lookup results into a traceable operating record.",
       "Responded to FSDC Financial Supervisory Service periodic audits with a DLP policy operating framework and audit deliverable templates, keeping the material reusable.",
-      "An observability stack that binds Grafana, Prometheus, and Loki so metrics and logs are traced on one screen, shortening root-cause confirmation.",
-      "IaC operations that manage appliance, Edge, and homelab configuration as PR-reviewable code with Terraform and Ansible, reducing dependence on GUI changes."
+      "Bound Grafana, Prometheus, and Loki into one observability stack so metrics and logs stay on the same screen, shortening root-cause confirmation.",
+      "Manage appliance, Edge, and homelab configuration as PR-reviewable code with Terraform and Ansible, cutting dependence on GUI changes."
     ],
     "aboutSection": {
       "careerHighlights": [
         "Started on the operations floor and kept one consistent habit: repetitive responses become scripts and IaC.",
-        "Built evidence frameworks in financial license reviews and audits that present security controls and change rationale as data.",
+        "Built recordkeeping frameworks for financial license reviews and audits that present security controls and change rationale as data.",
         "Turned NAC and firewall policies, Splunk detection rules, and Slack/SMS alert conditions into procedures an operator can follow as written.",
         "Combines Linux, Python, Ansible, Terraform, Splunk SPL, and Cloudflare Workers inside one problem-solving flow.",
         "Proxmox, Grafana, k3s, 1Password, and MCP: operate first in the homelab, then verify real-world applicability."
@@ -97,7 +97,7 @@
       "teamSize": "Information Security Automation Cell",
       "myRole": "SIEM and firewall-policy automation design",
       "workType": "Freelance",
-      "description": "For the Nextrade trading system, joined Splunk ES Saved Searches, webhook relay, Slack/SMS alerting, and FortiManager JSON-RPC API policy lookups into a single security-operations architecture. FortiGate events and policy-review paths now route through Splunk, with Python/Docker state tracking and Claude AI-assisted review reducing repetitive manual checks and false-positive triage. Detection rules, alert conditions, and policy-lookup results remain available as reviewable operating evidence.",
+      "description": "For the Nextrade trading system, joined Splunk ES Saved Searches, webhook relay, Slack/SMS alerting, and FortiManager JSON-RPC API policy lookups into a single security-operations architecture. FortiGate events and policy-review paths now route through Splunk, with Python/Docker state tracking and Claude AI-assisted review reducing repetitive manual checks and false-positive triage. Detection rules, alert conditions, and policy-lookup results stay available as a reviewable operating record.",
       "wantedSummary": "Splunk-Fortinet integration, FortiManager API, and Claude AI-assisted review for automated security-event analysis and firewall-policy lookup",
       "note": "ITCEN CTS engagement for Nextrade security-event response architecture automation",
       "projects": [
@@ -134,7 +134,7 @@
       "myRole": "Security Infrastructure Build",
       "workType": "Freelance",
       "description": "Took ownership of FortiGate HA configuration and Ansible Role patterns for the Nextrade trading system, with the explicit goal of making the build-to-operations handoff painless for the next team.",
-      "wantedSummary": "Nextrade security infrastructure build: FortiGate HA and network-segmentation configuration across Ansible Role and FortiManager policy standards, with review-ready evidence for security review and HA configuration.",
+      "wantedSummary": "Nextrade security infrastructure build: FortiGate HA and network-segmentation configuration across Ansible Role and FortiManager policy standards, with review-ready documentation for security review and HA configuration.",
       "note": "Gaonnuri Information System employee, dispatched to Nextrade Trading System construction",
       "projects": [
         {
@@ -186,7 +186,7 @@
             "FSDC"
           ],
           "achievements": [
-            "DLP policy operations and audit deliverables now follow the FSS regular-audit template, so each cycle arrives with the same evidence shape as the last.",
+            "DLP policy operations and audit deliverables now follow the FSS regular-audit template, so each cycle arrives with the same documentation shape as the last.",
             "PostgreSQL access-control queries tuned until the planner stopped treating the audit workload as exceptional.",
             "PB platform POC validated and supported through system launch, with the query-tuning changes carried forward into production access-control policy."
           ]
@@ -821,7 +821,7 @@
         "GitHub App event flow for PR automation",
         "Check Runs for secret scan, actionlint, and docs policy",
         "Korean-first review comments and PR descriptions",
-        "ELK observability connected to GitHub Actions evidence"
+        "ELK observability connected to GitHub Actions run logs"
       ],
       "technologies": [
         "Python",
@@ -886,7 +886,7 @@
       "name": "Firewall Policy Automation",
       "period": "2026.06 ~ Present",
       "githubUrl": "https://github.com/jclee941/firewall",
-      "description": "Firewall policy request forms and firewall range tables lived in separate Excel sheets, and the join between them was where review evidence went missing. A VBA workflow now validates request rows, firewall inventories, and range criteria inside a single workbook, so the target-firewall decision and the review evidence share the same file.",
+      "description": "Firewall policy request forms and firewall range tables lived in separate Excel sheets, and the join between them was where review notes went missing. A VBA workflow now validates request rows, firewall inventories, and range criteria inside a single workbook, so the target-firewall decision and the review trail share the same file.",
       "highlights": [
         "Common input contract for request forms and firewall ranges",
         "Row-level traceability for target-firewall decisions",
@@ -1088,24 +1088,24 @@
   "platformVariants": {
     "wanted": {
       "headline": "Information Security Engineer",
-      "about": "In financial security infrastructure and SIEM engineering, I handled build and automation work across FortiGate HA and network segmentation, Splunk ES detection rules, Slack/SMS alerts, FortiManager API lookups, Claude AI-assisted review, and audit evidence documentation.\n\n[Target Roles]\nI am prioritizing Security Automation, Security Infrastructure, and SIEM Engineering opportunities. I fit teams that reduce repeated response work through runbooks, scripts, and API integrations while keeping audit records and incident handling explainable.\n\n[Evidence]\n- Nextrade: Splunk ES Saved Searches, webhook relay, Slack/SMS alerts, FortiManager API lookup, and Claude AI-assisted review flow design\n- Security infrastructure build: FortiGate HA and network segmentation, endpoint security, and Ansible Role-based configuration management\n- FSDC: financial regulator audit response, DB access-control query tuning, and DLP policy artifact management\n- Network/systems: NSX-T, Wazuh, NAC, VPN, Linux, and Python/Ansible automation scripts\n\n[Skills/Cert]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP\n\nPortfolio: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "about": "In financial security infrastructure and SIEM engineering, I handled build and automation work across FortiGate HA and network segmentation, Splunk ES detection rules, Slack/SMS alerts, FortiManager API lookups, Claude AI-assisted review, and audit documentation.\n\n[Target Roles]\nI am prioritizing Security Automation, Security Infrastructure, and SIEM Engineering opportunities. I fit teams that reduce repeated response work through runbooks, scripts, and API integrations while keeping audit records and incident handling explainable.\n\n[Key Experience]\n- Nextrade: Splunk ES Saved Searches, webhook relay, Slack/SMS alerts, FortiManager API lookup, and Claude AI-assisted review flow design\n- Security infrastructure build: FortiGate HA and network segmentation, endpoint security, and Ansible Role-based configuration management\n- FSDC: financial regulator audit response, DB access-control query tuning, and DLP policy artifact management\n- Network/systems: NSX-T, Wazuh, NAC, VPN, Linux, and Python/Ansible automation scripts\n\n[Skills/Cert]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP\n\nPortfolio: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
       "headline": "Information Security Engineer",
-      "about": "[Target Roles]\nI am prioritizing Security Infrastructure, SIEM Engineering, and financial information security opportunities. I connect FortiGate, Splunk ES, FortiManager API, Claude AI-assisted review, and Python/Ansible work into response architecture that reduces repeated work and leaves explainable evidence for audits and incidents.\n\n[Career Summary]\n- ITCEN CTS: Nextrade exchange security-event response architecture with Splunk ES Saved Searches, webhook relay, Slack/SMS alerts, FortiManager API lookup, and Claude AI-assisted review\n- Gaonnuri Information Systems: Nextrade security infrastructure build with FortiGate HA and network segmentation, endpoint security, and Ansible Role-based configuration management\n- Quantec Investment Management: Financial Security Data Center (FSDC) infrastructure standardization, financial regulator audit response, DB access-control query tuning, and DLP policy artifact management\n- Jointree / Metanet M Platform: NSX-T, Wazuh, NAC, VPN, and Python/Ansible scripts\n- MT Data: KAI closed-network Linux/OA environment, patching, and firewall policy change-history management\n\n[Skills/Cert]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, NSX-T, Wazuh, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP\n\nPortfolio: https://resume.jclee.me"
+      "about": "[Target Roles]\nI am prioritizing Security Infrastructure, SIEM Engineering, and financial information security opportunities. I connect FortiGate, Splunk ES, FortiManager API, Claude AI-assisted review, and Python/Ansible work into response architecture that reduces repeated work and leaves an explainable record for audits and incidents.\n\n[Career Summary]\n- ITCEN CTS: Nextrade exchange security-event response architecture with Splunk ES Saved Searches, webhook relay, Slack/SMS alerts, FortiManager API lookup, and Claude AI-assisted review\n- Gaonnuri Information Systems: Nextrade security infrastructure build with FortiGate HA and network segmentation, endpoint security, and Ansible Role-based configuration management\n- Quantec Investment Management: Financial Security Data Center (FSDC) infrastructure standardization, financial regulator audit response, DB access-control query tuning, and DLP policy artifact management\n- Jointree / Metanet M Platform: NSX-T, Wazuh, NAC, VPN, and Python/Ansible scripts\n- MT Data: KAI closed-network Linux/OA environment, patching, and firewall policy change-history management\n\n[Skills/Cert]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, NSX-T, Wazuh, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP\n\nPortfolio: https://resume.jclee.me"
     }
   },
   "coverLetter": {
     "en": {
       "headline": "An engineer who designs explainable security automation",
       "paragraphs": [
-        "My career started inside Korea Aerospace Industries' closed network, tracking patch schedules for the closed-network Linux fleet on an Excel sheet. The repetition drove one conviction: security engineering is not about hoping incidents never happen, it is about lowering risk through repeatable procedures, automation, and evidence. RHCSA, LPIC-1, and Linux Master Level 2 came next, rebuilding the Linux foundation, and that base carried directly into hands-on automation work.",
+        "My career started inside Korea Aerospace Industries' closed network, tracking patch schedules for the closed-network Linux fleet on an Excel sheet. The repetition drove one conviction: security engineering is not about hoping incidents never happen, it is about lowering risk through repeatable procedures, automation, and documentation. RHCSA, LPIC-1, and Linux Master Level 2 came next, rebuilding the Linux foundation, and that base carried directly into hands-on automation work.",
         "At Metanet M Platform I picked up Ansible and Python, and turned the NAC policy deployment procedure into a single reviewable workflow for contact-center operations. At Jointree, NSX-T microsegmentation on Kookmin University's next-generation information system closed the east-west traffic blind spots, and the NAC and DLP detection policies got the same reviewable treatment. The tools changed, but the principle held: any task that takes repeated manual effort is a candidate for a runbook.",
-        "At Quantec Investment Management's Financial Security Data Center (FSDC), the Financial Supervisory Service audits taught a different lesson: security infrastructure is not a one-time setup, it is the ability to present current state and change evidence with data during audits and incidents. Tuning DB access-control queries and validating the PB platform POC were both acts of explaining system state with data and leaving an auditable trail for changes.",
+        "At Quantec Investment Management's Financial Security Data Center (FSDC), the Financial Supervisory Service audits taught a different lesson: security infrastructure is not a one-time setup, it is the ability to present current state and change history with data during audits and incidents. Tuning DB access-control queries and validating the PB platform POC were both acts of explaining system state with data and leaving an auditable trail for changes.",
         "Most recently, in the Nextrade exchange security track, the engagement ran continuously from the build phase at Gaonnuri through the automation phase at ITCEN CTS. Network segmentation and endpoint security controls went up first, with the Korean Financial Services Commission main-license review on the critical path. Splunk ES detection rules, alert workflow notifications, FortiManager API policy lookups, and Claude AI-assisted review joined the recognition, classification, and alerting flow so security events had a single operating story.",
         "Next, I am widening the scope of automation tooling from security appliances and scripts toward MCP and Edge runtimes. The homelab (Cloudflare Workers, MCP, Grafana, 1Password) runs on Terraform-managed IaC, where the experiment is letting an MCP tool take the first pass over repetitive security-response items. In the next chapter, I want the security problem to come before the tool, and to take on the role of turning that problem into a repeatable engineering structure."
       ],
-      "closing": "I will work with you to organize the next problem your security infrastructure needs to solve, in the way of reducing repeated work and leaving operating evidence behind."
+      "closing": "I will work with you to organize the next problem your security infrastructure needs to solve, in the way of reducing repeated work and leaving an operating record behind."
     }
   },
   "careerSummary": {
@@ -1119,7 +1119,7 @@
         "Metanet M Platform (2020.08 ~ 2021.08): Supported remote-work infrastructure for a contact center, including SSL-VPN and NAC operations, endpoint registration runbooks, Python/Ansible operational scripts, and FortiGate VPN session monitoring.",
         "MT Data (2018.10 ~ 2019.10): Operated KAI closed-network Linux/OA environments, patch schedules, firewall policy change history, and site IT support."
       ],
-      "closing": "Across security infrastructure build, SIEM detection and alerting, audits, and repeated-response automation, I leave operating evidence in documents and systems that teams can review."
+      "closing": "Across security infrastructure build, SIEM detection and alerting, audits, and repeated-response automation, I leave an operating record in documents and systems that teams can review."
     }
   }
 }

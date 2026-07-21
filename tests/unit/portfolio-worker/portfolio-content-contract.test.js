@@ -68,14 +68,14 @@ describe('portfolio first-screen hiring decision contract', () => {
     });
 
     const expectations = {
-      ko: ['채용 판단', '공개 자동화 근거', '연락·PDF', '면접 제안'],
+      ko: ['채용 담당자', '공개 자동화 프로젝트', '연락·PDF', '면접 제안'],
       en: [
-        'hiring decision',
-        'public automation evidence',
-        'contact and resume PDF',
+        'Recruiter summary',
+        'Public automation projects',
+        'Contact and resume PDF',
         'interview request',
       ],
-      ja: ['採用判断', '公開自動化根拠', '連絡・履歴書PDF', '面接依頼'],
+      ja: ['採用担当者', '公開自動化プロジェクト', '連絡・履歴書PDF', '面接依頼'],
     };
 
     for (const [locale, requiredTerms] of Object.entries(expectations)) {
