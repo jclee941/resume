@@ -21,6 +21,18 @@ function projectDashboards(project) {
     : [];
 }
 
+function projectActivityBadge(period) {
+  if (typeof period !== 'string') return null;
+  const [, end] = period.split('~').map((part) => part.trim());
+  if (['현재', 'Present', '現在'].includes(end)) {
+    return '<span class="project-meta-badge project-meta-badge--active">ACTIVE</span>';
+  }
+  if (/^\d{4}\.\d{2}$/.test(end)) {
+    return '<span class="project-meta-badge project-meta-badge--completed">COMPLETED</span>';
+  }
+  return null;
+}
+
 function buildProjectMeta(project, githubUrl, demoUrl) {
   const language = project.language ? escapeHtml(String(project.language)) : null;
   const metaBadges = [];
@@ -32,7 +44,8 @@ function buildProjectMeta(project, githubUrl, demoUrl) {
     );
   }
 
-  metaBadges.push('<span class="project-meta-badge project-meta-badge--active">ACTIVE</span>');
+  const activityBadge = projectActivityBadge(project.period);
+  if (activityBadge) metaBadges.push(activityBadge);
 
   if (demoUrl || dashboards.length > 0) {
     metaBadges.push('<span class="project-meta-badge project-meta-badge--live">LIVE</span>');

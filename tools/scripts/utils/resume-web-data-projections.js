@@ -41,6 +41,7 @@ function projectCardFromSource(project) {
     tech: technologiesText(project),
     description: project.description,
     tagline: project.tagline || project.description,
+    period: project.period,
     language: project.language,
     githubUrl: project.githubUrl,
     demoUrl: project.demoUrl,

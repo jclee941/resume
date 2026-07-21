@@ -47,6 +47,16 @@ describe('generateWebData → projects[] live demo dashboards', () => {
   });
 });
 
+describe('generateWebData → projects[] activity period', () => {
+  it('preserves the SSoT period used by project activity metadata', () => {
+    const out = generateWebData(ssot, 'ko');
+    const project = out.projects.find((item) => item.id === 'safetywallet-cf-workers-pwa');
+
+    assert.ok(project, 'SafetyWallet must be projected');
+    assert.equal(project.period, '2026.01 ~ 2026.04');
+  });
+});
+
 describe('generateWebData → public jclee941 repository showcase', () => {
   it('includes selected public repos and excludes user-rejected repos', () => {
     const out = generateWebData(ssot, 'ko');

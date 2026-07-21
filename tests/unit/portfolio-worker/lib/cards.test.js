@@ -882,6 +882,26 @@ describe('Cards Module', () => {
   });
 
   describe('generateProjectCards - activity metadata branches', () => {
+    test('should render completed metadata for a project with a closed period', () => {
+      TEMPLATE_CACHE.dataHash = null;
+      TEMPLATE_CACHE.projectCardsHtml = null;
+      const projectData = [
+        {
+          title: 'Completed Project',
+          tech: 'TypeScript',
+          description: 'A completed project',
+          period: '2026.01 ~ 2026.04',
+        },
+      ];
+
+      const html = generateProjectCards(projectData, 'completed-period-hash');
+
+      expect(html).toContain('project-meta-badge--completed');
+      expect(html).toContain('COMPLETED');
+      expect(html).not.toContain('project-meta-badge--active');
+      expect(html).not.toContain('ACTIVE');
+    });
+
     test('should render language, active, and live badges in meta line', () => {
       TEMPLATE_CACHE.dataHash = null;
       TEMPLATE_CACHE.projectCardsHtml = null;
@@ -890,6 +910,7 @@ describe('Cards Module', () => {
           title: 'Popular Project',
           tech: 'TypeScript',
           description: 'A popular project',
+          period: '2025.01 ~ Present',
           liveUrl: 'https://example.com',
           stars: 42,
           forks: 7,
@@ -916,6 +937,7 @@ describe('Cards Module', () => {
           title: 'Stars Only',
           tech: 'Go',
           description: 'Stars only project',
+          period: '2025.01 ~ Present',
           stars: 100,
         },
       ];
@@ -933,6 +955,7 @@ describe('Cards Module', () => {
           title: 'Bad Numbers',
           tech: 'Rust',
           description: 'Invalid numbers',
+          period: '2025.01 ~ Present',
           stars: NaN,
           forks: Infinity,
         },
@@ -952,6 +975,7 @@ describe('Cards Module', () => {
           title: 'Lang Only',
           tech: 'Python',
           description: 'Language only project',
+          period: '2025.01 ~ Present',
           language: 'Python',
         },
       ];
