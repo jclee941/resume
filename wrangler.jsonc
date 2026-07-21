@@ -36,6 +36,10 @@
   "vars": {
     "ENVIRONMENT": "production",
     "ELASTICSEARCH_INDEX": "resume-logs-worker",
+    // OpenAI-compatible LLM/vision proxy (AI job matching + JobKorea CAPTCHA solve).
+    // Non-secret base URL only; CLIPROXY_API_KEY stays a Worker Secret, and the
+    // cliproxy client stays inert (isConfigured() === false) until that key is set.
+    "CLIPROXY_BASE": "https://cliproxy.jclee.me/v1",
   },
   "routes": [{ "pattern": "resume.jclee.me", "custom_domain": true }],
   "triggers": {
