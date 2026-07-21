@@ -220,6 +220,10 @@
   text-wrap: pretty;
 }
 
+.cover-letter__atomic-phrase {
+  white-space: nowrap;
+}
+
 /* Closing: signature prompt + output as a two-column row */
 .cover-letter__closing {
   display: grid;
@@ -255,11 +259,17 @@
     left: var(--space-3);
   }
   .cover-letter__paragraphs {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
     padding: var(--space-2) var(--space-4) var(--space-3);
   }
   .cover-letter__para {
     display: block;
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
     padding: var(--space-4) 0;
   }
   .cover-letter__para::before {
@@ -272,6 +282,11 @@
     margin: 0 0 var(--space-2);
     padding: var(--space-1) var(--space-2);
     border-radius: var(--radius-full);
+  }
+  .cover-letter__text {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
   }
   .cover-letter__closing {
     grid-template-columns: 1fr;
