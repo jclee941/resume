@@ -137,15 +137,16 @@ export default {
           );
         }
 
+        // HTML pages must never 304 on the coarse day-granular Last-Modified /
+        // deploy-day ETag: content can change within a single build day (e.g. a
+        // same-day brand rollback) while those validators stay constant, and
+        // Cloudflare strips the weak HTML ETag so no content-accurate validator
+        // round-trips. Always serve a fresh 200 so redeploys are visible.
         response = applyResponseHeaders(portfolioResponse, url.pathname, {
           acceptEncoding: request.headers.get('Accept-Encoding'),
           language: effectiveLanguage,
           source: effectiveSource,
           varyAcceptLanguage: false,
-          conditionalRequests: true,
-          method: request.method,
-          ifNoneMatch: request.headers.get('if-none-match'),
-          ifModifiedSince: request.headers.get('if-modified-since'),
         });
       } else {
         const portfolioResponse = await portfolioWorker.fetch(request, env, ctx);
@@ -153,10 +154,6 @@ export default {
           acceptEncoding: request.headers.get('Accept-Encoding'),
           language: languageContext.language || DEFAULT_LANGUAGE,
           source: languageContext.source,
-          conditionalRequests: true,
-          method: request.method,
-          ifNoneMatch: request.headers.get('if-none-match'),
-          ifModifiedSince: request.headers.get('if-modified-since'),
         });
       }
     } catch (error) {
