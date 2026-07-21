@@ -1,0 +1,80 @@
+Task 4 evidence: Restore the Fastify server boot contract and gate it by default
+Worktree: /home/jclee/dev/resume-arch-task4
+Base SHA: 4aa7db2f93608aa544228243732692aeccaa7a4a
+
+TDD characterization and red phase
+
+1. Unchanged-code characterization:
+   Command: timeout 30s node --test apps/job-server/src/server/routes/__tests__/auth-route-registration.test.js
+   Result: PASS, 2 tests. It observed Fastify FST_ERR_DUPLICATED_ROUTE for the then-current production auth route and confirmed generateCsrfToken returned a 64-character string.
+2. Unchanged server boot:
+   Command: timeout 45s node --test apps/job-server/src/server/__tests__/server.test.js
+   Result: FAIL as expected. buildServer rejected with FST_ERR_DUPLICATED_ROUTE, "Method 'POST' already declared for route '/api/auth/logout'"; 9 child tests were cancelled by the failed before hook.
+3. Failing-first behavior gate before the production fix:
+   Command: timeout 60s node --test apps/job-server/src/server/__tests__/server.test.js apps/job-server/src/server/routes/__tests__/auth-route-registration.test.js apps/job-server/src/shared/services/auth/__tests__/auth-service.test.js
+   Result: expected failure. Production unique-logout assertion rejected with FST_ERR_DUPLICATED_ROUTE. The auth-service assertion showed the stored CSRF value was a string instead of the required {token,createdAt} object. Server boot cancellation prevented the shared-state assertions from producing false success.
+
+Hypothesis-driven runtime findings and toggle proof
+
+1. Duplicate logout route: CONFIRMED. Runtime value was FST_ERR_DUPLICATED_ROUTE for POST /api/auth/logout in both buildServer and an isolated fixture. Removing only the second registration removed that error; the isolated malformed fixture still deterministically proves Fastify rejects the duplicate.
+2. Missing services registration: CONFIRMED by source/runtime sequence. index.js had no servicesPlugin registration, so authRoutes captured no authService. Registering the existing services plugin immediately after auth advanced boot to the next concrete failure rather than a route-definition failure.
+3. Split/duplicate auth stores: CONFIRMED. With services registered unchanged, Fastify rejected boot with FST_ERR_DEC_ALREADY_PRESENT: "The decorator 'csrfTokens' has already been added!". Replacing private authSessions/csrfTokens Maps with fastify.sessions/fastify.csrfTokens and removing duplicate decorations eliminated the error. A service-created session and CSRF entry then appeared in the exact auth-plugin Maps and passed the auth preHandler.
+4. CSRF representation mismatch: CONFIRMED. Before the fix, auth-service.test observed a raw token string in store.csrfTokens while middleware reads stored.token. After generateCsrfToken stored {token,createdAt}, the returned result.csrfToken remained a string and a service-issued POST reached the probe handler with HTTP 200.
+
+Automated verification
+
+1. Focused acceptance gate:
+   Command: node --test apps/job-server/src/server/__tests__/server.test.js apps/job-server/src/server/routes/__tests__/auth-route-registration.test.js apps/job-server/src/shared/services/auth/__tests__/auth-service.test.js
+   Result: PASS; tests 24, suites 8, pass 24, fail 0, cancelled 0.
+2. Isolated adversarial duplicate fixture:
+   Command: node --test --test-name-pattern='rejects duplicate logout registration' apps/job-server/src/server/routes/__tests__/auth-route-registration.test.js
+   Result: PASS; tests 1, pass 1, fail 0.
+3. Default package gate (script explicitly includes the two server test paths and retains the shared glob):
+   Command: timeout 3m npm test --workspace=@resume/job-automation
+   Result after native dependency bootstrap: PASS; tests 1213, suites 267, pass 1213, fail 0, cancelled 0, skipped 0, duration_ms 71151.442416.
+   Setup note: the first diagnostic run had 5 failures solely because npm ci --ignore-scripts had not built better-sqlite3. npm rebuild better-sqlite3 succeeded, and the unchanged command above then passed fully.
+4. Relevant lint:
+   Command: npx eslint <the eight changed JavaScript test/source files>
+   Result: PASS, exit 0, no diagnostics.
+5. Typecheck:
+   Command: timeout 5m npm run typecheck
+   Result: PASS, exit 0 (tsc --project tsconfig.json --noEmit).
+6. Flake probe:
+   Command: focused boot/registration suite repeated in three fresh Node processes.
+   Result: PASS 14/14 each; durations 653.805708 ms, 673.38936 ms, and 646.01091 ms.
+7. Diagnostic all-server glob, deliberately not made the default:
+   Command: timeout 90s node --test 'apps/job-server/src/server/**/*.test.js'
+   Result: expected pre-existing failure; tests 38, pass 35, fail 3. All failures are unchanged apps/job-server/src/server/middleware/__tests__/error-handler.test.js cases: AppError mapping, plain Error mapping, and WantedAPIError mapping. No file in that middleware suite was edited.
+
+Managed live-server QA
+
+- Managed PTY session id: 4815; shell PID 2605029; Node server PID 2605753.
+- Local-only prerequisite: exported a deterministic, non-production 64-hex SESSION_ENCRYPTION_KEY fixture without printing its value, because the existing session broker requires the secret. The exact server invocation was:
+  DASHBOARD_PORT=3457 npm run server --workspace=@resume/job-automation
+- Startup observed: Server listening at http://127.0.0.1:3457. The pre-existing missing static-root warning remained and was not edited.
+- Health command: curl -fsS --max-time 5 http://127.0.0.1:3457/health
+  Body: {"status":"ok","timestamp":"2026-07-11T19:11:28.529Z","version":"1.4.0","uptime":11.50523176}
+- Protected route command: curl -sS --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:3457/api/applications
+  Code: 401 (exact assertion passed).
+- Teardown: two consecutive kill -TERM 2605753 calls both returned 0. Logs showed one guarded shutdown sequence, "Received shutdown signal, closing server..." then "Server closed gracefully". npm server command exit was 0; managed shell exit was 0.
+- Cleanup receipt: lsof found no listener on TCP 3457; process scan found no remaining server process. No temporary logs were created.
+
+ULTRAQA adversarial matrix (all nine)
+
+1. malformed_input: PASS. The isolated fixture registers duplicate POST /api/auth/logout routes; Fastify rejection is asserted by error code, independent of production route text.
+2. stale_state: PASS. A service-created session/CSRF entry was visible through the auth plugin's exact shared Maps and accepted by middleware. The live gate used a fresh Node process and exited cleanly; no singleton state crossed the process boundary.
+3. dirty_worktree: PASS. Initial task worktree was clean at base SHA. Final scope contains only Todo 4 source/tests/package gate plus this evidence; the temporary debug journal is removed before commit.
+4. hung_or_long_commands: PASS. Focused tests used 30-90 second bounds, default tests used a 3-minute bound, and live curls used 5-second request limits. No command exceeded its bound.
+5. flaky_tests: PASS. The focused boot suite passed three consecutive fresh-process runs, 14/14 every run.
+6. misleading_success_output: PASS. QA asserted the health JSON body, exact protected-route HTTP 401, graceful-shutdown logs, and process exit 0 rather than trusting startup text alone.
+7. repeated_interruptions: PASS. Two consecutive SIGTERM sends both returned 0; the shutdown guard produced one clean close and exit 0.
+8. prompt_injection: N/A. No external/untrusted instruction content was consumed during this local code/runtime task.
+9. cancel_resume: N/A. No user cancellation or resume trigger occurred. Bounded command yields were resumed through their managed sessions without restarting or losing cleanup ownership.
+
+Cleanup and residual risks
+
+- Server/timers terminated through Fastify close hooks; port 3457 is free; no temp logs or debug processes remain.
+- Static root warning is pre-existing and was explicitly out of scope because no named static-route assertion failed.
+- The three all-server error-handler failures are pre-existing and intentionally excluded from the default command as required.
+- Real deployments/local operators still must provide a valid SESSION_ENCRYPTION_KEY for the existing session-broker routes; the QA fixture was local-only and no key was committed or logged.
+- Auth plugin module Maps live for the lifetime of a Node process; services cleanup uses those exact Maps and its existing hourly expiry policy. Fresh-process startup was verified, but no architecture change to module lifetime was in scope.

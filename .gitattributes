@@ -39,3 +39,4 @@ package-lock.json -diff linguist-generated=true
 MODULE.bazel text eol=lf
 WORKSPACE text eol=lf
 BUILD.bazel text eol=lf
+apps/portfolio/.dev.vars export-ignore

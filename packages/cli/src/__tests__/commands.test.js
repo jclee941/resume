@@ -23,6 +23,45 @@ describe('@resume/cli command modules', () => {
     const mod = await import('../commands/deploy.js');
     assert.ok(mod, 'module should load');
   });
+
+  it('deploy command resolves the root config and omits the production environment flag', async () => {
+    // Given: a worker path nested below the repository root.
+    const path = await import('node:path');
+    const url = await import('node:url');
+    const here = url.fileURLToPath(import.meta.url);
+    const workerPath = path.resolve(path.dirname(here), '../../../../apps/portfolio/entry.js');
+    const { createWranglerDeployInvocation } = await import('../commands/deploy.js');
+
+    // When: the public command builder constructs a production invocation.
+    const invocation = createWranglerDeployInvocation({
+      workerFile: workerPath,
+      env: 'production',
+    });
+
+    // Then: it selects the root SSoT and has no named production environment.
+    assert.equal(invocation.cwd, path.resolve(path.dirname(here), '../../../..'));
+    assert.deepEqual(invocation.args, ['wrangler', 'deploy', '--config', 'wrangler.jsonc']);
+    assert.deepEqual(invocation.environment, { CLOUDFLARE_ENV: '' });
+  });
+
+  it('deploy command adds the preview environment only for preview', async () => {
+    const path = await import('node:path');
+    const url = await import('node:url');
+    const here = url.fileURLToPath(import.meta.url);
+    const root = path.resolve(path.dirname(here), '../../../..');
+    const { createWranglerDeployInvocation } = await import('../commands/deploy.js');
+
+    const invocation = createWranglerDeployInvocation({ dir: root, env: 'preview' });
+
+    assert.deepEqual(invocation.args, [
+      'wrangler',
+      'deploy',
+      '--config',
+      'wrangler.jsonc',
+      '--env',
+      'preview',
+    ]);
+  });
 });
 
 describe('@resume/cli bin/run.js', () => {

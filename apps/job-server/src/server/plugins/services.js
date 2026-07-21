@@ -35,16 +35,14 @@ async function servicesPlugin(fastify) {
   });
   const applicationAnalytics = new ApplicationAnalytics({ applicationService });
 
-  const authSessions = new Map();
-  const csrfTokens = new Map();
   const authService = createAuthService({
     googleClientId: config.googleClientId,
     adminEmail: config.adminEmail,
     sessionTTL: config.sessionTTL,
     logger: fastify.log,
     store: {
-      sessions: authSessions,
-      csrfTokens,
+      sessions: fastify.sessions,
+      csrfTokens: fastify.csrfTokens,
     },
     sessionStore,
   });
@@ -59,19 +57,17 @@ async function servicesPlugin(fastify) {
   fastify.decorate('profileAggregator', profileAggregator);
   fastify.decorate('d1Client', d1Client);
   fastify.decorate('googleClient', googleClient);
-  fastify.decorate('authSessions', authSessions);
-  fastify.decorate('csrfTokens', csrfTokens);
   fastify.decorate('authService', authService);
   fastify.decorate('cloudflareAnalytics', cloudflareAnalytics);
   fastify.decorate('applicationAnalytics', applicationAnalytics);
 
   const cleanupTimer = setInterval(() => {
     const now = Date.now();
-    for (const [id, session] of authSessions) {
-      if (now > session.expiresAt) authSessions.delete(id);
+    for (const [id, session] of fastify.sessions) {
+      if (now > session.expiresAt) fastify.sessions.delete(id);
     }
-    for (const [id, data] of csrfTokens) {
-      if (now - data.createdAt > SESSION_TTL) csrfTokens.delete(id);
+    for (const [id, data] of fastify.csrfTokens) {
+      if (now - data.createdAt > SESSION_TTL) fastify.csrfTokens.delete(id);
     }
   }, CLEANUP_INTERVAL);
 

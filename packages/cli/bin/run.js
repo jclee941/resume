@@ -17,8 +17,8 @@ program
   .command('deploy')
   .description('Deploy services')
   .option('--worker-file <path>', 'Path to worker file')
-  .option('--dir <path>', 'Directory containing wrangler.toml')
-  .option('--env <env>', 'Environment (production/dev)', 'production')
+  .option('--dir <path>', 'Directory within the Worker repository')
+  .option('--env <env>', 'Environment (production/preview)', 'production')
   .action(deploy);
 
 program.command('verify').description('Verify service health').action(verify);

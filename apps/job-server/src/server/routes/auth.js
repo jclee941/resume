@@ -53,12 +53,6 @@ export default async function authRoutes(fastify) {
     reply.clearCookie('session_id', { path: '/' });
     return result;
   });
-  fastify.post('/logout', async (request, reply) => {
-    const sessionId = request.cookies?.session_id;
-    const result = authService.logout(sessionId);
-    reply.clearCookie('session_id', { path: '/' });
-    return result;
-  });
 
   // Session renewal endpoint for automation
   fastify.post('/renew', {

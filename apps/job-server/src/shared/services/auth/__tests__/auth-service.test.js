@@ -108,7 +108,12 @@ describe('AuthService', () => {
     assert.equal(result.sessionId.length, 64);
     assert.equal(result.csrfToken.length, 64);
     assert.equal(store.sessions.has(result.sessionId), true);
-    assert.equal(store.csrfTokens.get(result.sessionId), result.csrfToken);
+    const csrfEntry = store.csrfTokens.get(result.sessionId);
+    assert.equal(typeof csrfEntry.createdAt, 'number');
+    assert.deepEqual(csrfEntry, {
+      token: result.csrfToken,
+      createdAt: csrfEntry.createdAt,
+    });
     assert.equal(service.getSessionTTLSeconds(), 2);
   });
 

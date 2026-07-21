@@ -1,0 +1,157 @@
+Task 1 evidence: Consolidate the merged Worker onto the root Wrangler SSoT
+Captured: 2026-07-12 Asia/Seoul
+Base SHA: 4aa7db2f93608aa544228243732692aeccaa7a4a
+Worktree: /home/jclee/dev/resume-arch-task1 (detached)
+
+SCOPE AND DIRTY-WORKTREE RECEIPT
+- Initial `git status --short --branch`: `## HEAD (no branch)`; no changed paths.
+- Final scoped status before commit contains only Todo 1 root/app config, manifest/lock,
+  Playwright, CLI, named Go helpers/validator, two workflows, tests, and this evidence.
+- No generated worker/data snapshot, Queue activation, external ID, secret, Terraform,
+  plan checkbox, or other worktree was edited.
+
+CURRENT WRANGLER DOCUMENTATION CHECK
+- Context7 resolved `/cloudflare/cloudflare-docs` (high-reputation official docs).
+- Current docs confirm named environments are separate Workers, bindings/vars are
+  non-inheritable, dry-run is `wrangler deploy --dry-run`, and environment-specific
+  cron configuration belongs below `env.<name>.triggers`.
+- The implementation keeps the v1 migration at the global metadata level and tests
+  it as the only preview exception required by this plan.
+
+TDD RECEIPT
+1. Baseline characterization added before production edits:
+   `timeout 240s node --test --test-name-pattern='uses the configured deploy target' tools/scripts/verification/__tests__/validate-worker-config.test.mjs`
+   The detached worktree initially lacked node_modules, so the first attempt stopped
+   at missing `esbuild`. After unchanged-manifest `npm ci`, the same command passed:
+   tests=1, pass=1, fail=0, duration=2.58s. It drove the configured Wrangler target
+   through a preview dry-run and observed no production capability binding.
+2. Failing-first regression run before the fix:
+   `node --test --test-name-pattern='<Todo 1 policy and CLI patterns>' tools/scripts/verification/__tests__/validate-worker-config.test.mjs packages/cli/src/__tests__/commands.test.js`
+   exit=1, tests=10, pass=0, fail=10. Failures named unimplemented JOB_DB,
+   route/cron override, migration exception, preview isolation, malformed JSONC,
+   three stale consumers, and two CLI root-resolution behaviors.
+3. Green focused acceptance after a fresh install:
+   `timeout 300s node --test tools/scripts/verification/__tests__/validate-worker-config.test.mjs packages/cli/src/__tests__/**/*.test.js`
+   exit=0, tests=15, pass=15, fail=0, duration=96.87s.
+4. Required failure scenario:
+   `node --test --test-name-pattern='rejects missing JOB_DB|rejects production bindings in preview' tools/scripts/verification/__tests__/validate-worker-config.test.mjs`
+   exit=0, tests=2, pass=2, fail=0.
+
+DEPENDENCY AND VALIDATOR RECEIPT
+- `npm install --package-lock-only --ignore-scripts --no-audit --no-fund`: exit=0.
+- Semantic lock diff: only root `jsonc-parser: ^3.3.1` and
+  `node_modules/jsonc-parser@3.3.1` were added; no package was upgraded.
+- Fresh `timeout 600s npm ci --no-audit --no-fund`: exit=0, 786 packages, 4m.
+- `npm run verify:worker-config`: exit=0. Parsed inventory:
+  production D1=[DB,JOB_DB], KV=[SESSIONS,RATE_LIMIT_KV,NONCE_KV], seven
+  Workflows, route=resume.jclee.me, cron=`0 23 * * *`, queue arrays empty;
+  preview name=resume-preview, routes=[], crons=[].
+- Diagnostic `rg` over active code/config consumers, excluding tests and AGENTS:
+  zero child-config or production `--env` matches. `rg --files -g wrangler.jsonc`
+  returned exactly `wrangler.jsonc`.
+
+WRANGLER DRY-RUN AND PARSED INVENTORY RECEIPT
+- `timeout 300s npx wrangler deploy --config wrangler.jsonc --dry-run --outdir /tmp/resume-production-dry-run`: exit=0.
+- `timeout 300s npx wrangler deploy --config wrangler.jsonc --env preview --dry-run --outdir /tmp/resume-preview-dry-run`: exit=0.
+- A Node inventory assertion parsed stdout, not only exit codes. Production exposed
+  DB, JOB_DB, three KV, AI, Browser, BrowserSessionDO, seven Workflows, ASSETS,
+  and production vars. Preview exposed only ASSETS plus preview vars and none of
+  DB/JOB_DB/KV/AI/Browser/DO/Workflow bindings. Both outdirs contained Wrangler's
+  README.md, entry.js, and entry.js.map.
+- Wrangler's preview warnings explicitly say omitted capability bindings are
+  non-inheritable; this is the intended preview isolation. The default-environment
+  warning is expected because the plan requires production commands to omit `--env`.
+
+MANUAL CLI/CONFIG QA ARTIFACT
+- `node packages/cli/bin/run.js deploy --help`: exit=0. Observed options include
+  `--dir <path> Directory within the Worker repository` and
+  `--env <env> Environment (production/preview)` with production default.
+- Non-mutating command-construction driver observed:
+  production cwd=`/home/jclee/dev/resume-arch-task1`, args=
+  `[wrangler,deploy,--config,wrangler.jsonc]`; preview uses the same root cwd/config
+  plus `[--env,preview]`.
+- Parsed root config inventory driver (`npm run verify:worker-config`) passed the
+  production required-capability inventory and preview empty route/cron/no-capability
+  assertions. No live deploy was performed.
+
+STATIC AND HELPER GATES
+- Touched-file ESLint: exit=0.
+- Touched-file Prettier check: exit=0.
+- `npm run typecheck`: exit=0.
+- `go run ./tools/ci/validate-cloudflare-native.go`: exit=0,
+  `OK: Cloudflare native structure validated`.
+- `go test tools/scripts/deployment/deploy-helper.go`: exit=0, no test files.
+- `go test tools/scripts/deployment/deploy-with-monitoring.go`: exit=0, no test files.
+- `go test tools/scripts/run-ci-local.go`: exit=0, no test files.
+- `git diff --check`: exit=0.
+
+ULTRAQA NINE-CLASS RECEIPT
+1. malformed_input: PASS. Invalid JSONC and missing JOB_DB fixtures reject with
+   boundary-specific errors.
+2. stale_state: PASS. Both removed child paths are scanner fixtures; filesystem has
+   one root config; fresh npm ci passed.
+3. dirty_worktree: PASS. Initial clean detached state and final scoped path list were
+   inspected; unrelated work was absent.
+4. hung_or_long_commands: PASS. npm, Node, Wrangler, TypeScript, and Go gates used
+   explicit 120-600s bounds. Fresh npm ci completed inside its 600s bound.
+5. flaky_tests: PASS. Eight focused validator cases were repeated twice; both runs
+   passed 8/8 in about 50ms.
+6. misleading_success_output: PASS. Dry-run stdout and parsed config fields were
+   asserted for exact production/preview inventories rather than trusting exit=0.
+7. repeated_interruptions: PASS. Manifest and lock were updated together; tests use
+   `finally` cleanup; final temp/generated-output cleanup completed.
+8. prompt_injection: N/A. No untrusted instruction-bearing input appeared.
+9. cancel_resume: N/A. No cancellation or resume trigger appeared.
+
+POST-WRITE REVIEW AND RISKS
+- New validator owns one responsibility: root Worker configuration/consumer policy.
+  New CLI helper owns one responsibility: immutable Wrangler invocation construction.
+- Inputs are parsed at the JSONC boundary; tests revert the change behaviorally.
+- No type suppression, unchecked cast, enum discrimination, logging change, or
+  one-off defensive layer was introduced.
+- New/modified focused JS and validator files are below 200 pure LOC. The existing
+  deploy-helper.go is in the 200-250 warning band (217 pure LOC); run-ci-local.go is
+  a pre-existing 491-pure-LOC command registry. Todo 1 changed one command entry and
+  did not broaden scope into a risky legacy-file split.
+- Residual risk: Wrangler prints advisory warnings for deliberately absent preview
+  bindings and for default production selection; parsed inventories prove the
+  resulting packages match the required policy.
+
+CLEANUP RECEIPT
+- Removed `/tmp/resume-{production,preview}-dry-run`, captured stdout files, and
+  generated ignored `apps/portfolio/{data*.json,worker.js}`.
+- No task-owned process remains. A Wrangler process under `/home/jclee/dev/resume`
+  belongs to another worktree and was intentionally left untouched.
+- Final intended tree contains only product/test changes and this evidence file.
+
+POST-IMPLEMENTATION REVIEW REMEDIATION
+- Five independent review lanes ran: goal/constraint, hands-on QA, code quality,
+  security, and repository context.
+- Initial review found a real corpus gap: non-CLI workspace manifests, shell/TS
+  consumers, and arbitrary additional Wrangler configs were not durably discovered.
+  The validator now scans every `apps/*/package.json` and `packages/*/package.json`,
+  active `.sh/.ts/.tsx` forms, and recursively requires exactly one root
+  `wrangler.jsonc`. Repository-level fixtures lock both stale-consumer and extra-config
+  rejection.
+- The stale production environment matcher now rejects both `--env production` and
+  `--env=production`; an explicit equals-form fixture locks the latter.
+- Production commands continue to contain no `--env`, as required, while clearing
+  inherited `CLOUDFLARE_ENV`. Empirical regression command:
+  `CLOUDFLARE_ENV=preview timeout 300s npm run deploy:wrangler:root:dry-run`.
+  It exited 0 and parsed DB, JOB_DB, AI, Browser, DO, seven Workflows, and
+  `ENVIRONMENT ("production")`, proving preview did not redirect the command.
+- Final focused acceptance after remediation: tests=18, pass=18, fail=0.
+- Final review verdicts: goal PASS; QA PASS; code quality PASS; security PASS
+  (npm audit also reported zero vulnerabilities); context mining PASS. CI aggregate
+  wiring and active Markdown/env migration were explicitly confirmed as Todo 7 and
+  Todo 8 ownership, respectively.
+
+Supersession note (rebase onto 517610aa, 2026-07-20)
+- External commit 60819740 feat(cloudflare): activate job automation queues
+  activated crawl-tasks/notifications producers+consumers on the root config
+  and promoted production bindings to root in parallel.
+- Resolution: root wrangler.jsonc keeps the active queue topology plus the
+  preview environment isolation added by this todo; apps/portfolio/wrangler.jsonc
+  removal stands. validate-worker-config.mjs now asserts the exact active queue
+  producer/consumer inventory instead of empty arrays; fixture tests updated and
+  a dropped-producer rejection fixture added.

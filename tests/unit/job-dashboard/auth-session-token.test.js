@@ -67,14 +67,33 @@ describe('auth-service mintSessionToken / verifySessionToken (P1-5)', () => {
   });
 
   test('verifyAdminAuth accepts session token and reports mode=session', async () => {
+    // Given: an environment with ADMIN_TOKEN but no SESSIONS binding
+    expect(ENV.SESSIONS).toBeUndefined();
     const token = await auth.mintSessionToken(ENV);
     const request = new Request('https://example.com/api/applications', {
       headers: { Authorization: `Bearer ${token}` },
     });
+
+    // When: the HMAC session token is verified
     const result = await auth.verifyAdminAuth(request, ENV);
+
+    // Then: authentication succeeds without consulting SESSIONS
     expect(result.ok).toBe(true);
     expect(result.mode).toBe('session');
     expect(typeof result.exp).toBe('number');
+  });
+
+  test('verifyAdminAuth preserves unavailable and unauthorized status precedence', async () => {
+    // Given: equivalent unauthenticated requests with and without ADMIN_TOKEN
+    const request = new Request('https://example.com/api/applications');
+
+    // When: authentication is attempted in each environment
+    const unavailable = await auth.verifyAdminAuth(request, {});
+    const unauthorized = await auth.verifyAdminAuth(request, ENV);
+
+    // Then: missing configuration is 503, while missing credentials is 401
+    expect(unavailable).toEqual({ ok: false, status: 503, error: 'Service misconfigured' });
+    expect(unauthorized).toEqual({ ok: false, status: 401, error: 'Unauthorized' });
   });
 
   test('verifyAdminAuth still accepts deprecated legacy raw ADMIN_TOKEN bearer', async () => {
@@ -135,8 +154,17 @@ describe('auth-service mintSessionToken / verifySessionToken (P1-5)', () => {
     expect(auth.requiresAuth('/api/auto-apply/status')).toBe(true);
   });
 
-  test('requiresAuth protects queue control endpoints', () => {
-    expect(auth.requiresAuth('/api/queue/enqueue')).toBe(true);
-    expect(auth.requiresAuth('/api/queue/status')).toBe(true);
+  test('requiresAuth protects Queue enqueue but keeps Queue status public', () => {
+    // Given: the two Queue capability routes
+    const enqueuePath = '/api/queue/enqueue';
+    const statusPath = '/api/queue/status';
+
+    // When: route authentication policy is evaluated
+    const enqueueRequiresAuth = auth.requiresAuth(enqueuePath);
+    const statusRequiresAuth = auth.requiresAuth(statusPath);
+
+    // Then: only the state-changing route is protected
+    expect(enqueueRequiresAuth).toBe(true);
+    expect(statusRequiresAuth).toBe(false);
   });
 });

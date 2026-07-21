@@ -1,0 +1,89 @@
+Task 2: single-owner deterministic release publication
+Base: 516dee35dbb856614b844b3b8c91f27bbc3660ee
+Final commit: the commit containing this evidence; exact SHA is reported in the DoneClaim.
+External mutation policy: no GitHub tag, release, draft, deploy, or other external write was executed.
+
+TDD chronology
+- Baseline characterization passed before production edits: current release workflow_run plus moving ref=master, tag-trigger notes publisher, push publisher, and 3 contents-write mutation owners.
+- Failing-first Go: undefined CommitMessage/Bump/Decide policy symbols (exit 1).
+- Failing-first Node: missing validate-release-workflows.mjs module (exit 1).
+- Independent needs-fix red (after 0ee33898): `go test ./release/publish` exited 1 on missing `ReleaseSnapshot`, `PublishRequest`, and `NewPublisher`; the comment-only YAML boundary fixture exited 1 because no executable tested boundary existed.
+- Final validator red (after cc1b4576): split-argument `gh api POST .../git/refs ... ref=refs/tags/...`, a standalone contents-write tag-writer workflow, and `gh release delete` all produced `Missing expected exception` (exit 1).
+- Method-inference red (after 6388ec51): field-bearing tag and release `gh api` commands without explicit methods both produced `Missing expected exception` (exit 1).
+- No baseline test was weakened; the characterization remains as an embedded pre-fix observable.
+
+Implementation contract
+- Sole publisher: .github/workflows/release.yml; serialized group release-production, cancel-in-progress=false.
+- Trusted automated input: successful CI workflow_run from master and this repository; target is workflow_run.head_sha.
+- Manual input: required lowercase 40-hex target and exact current remote master tip.
+- Policy: breaking/! major, feat minor, fix/perf/refactor patch, everything else none.
+- Highest reachable strict SemVer tag must equal global highest strict SemVer tag; duplicate same-commit tags resolve by SemVer; next version is monotonic.
+- Decision artifact: publish, no-release, or superseded, including target, previous tag, optional next tag, reason, and immutable range.
+- Source asset: git archive at target under resume-${TAG}/ piped to gzip -n -9, built twice, byte-compared, member-scanned, secret-scanned, extracted, installed, built, and Wrangler dry-run verified.
+- Draft transaction: `release/publish` is a typed Go operational boundary over injected release/ref interfaces. All discovery happens before the first current-tip guard; the immediately following external operation is draft POST (or asset upload on resume). The second tip guard immediately precedes publish.
+- Cleanup re-fetches both draft and tag, then requires draft status, exact target, run marker, persisted tag-ownership flag, and exact tag target before either DELETE. Any mismatch returns an error with zero deletion.
+- Pre-existing/published tags are never cleanup candidates; interrupted same-run draft resumes; exact published target/name/digest/size reruns are idempotent and mismatches fail closed.
+- The structurally parsed workflow invokes only `go -C tools/scripts run ./release/publish`; comment-only tokens and direct `gh` publication bypasses fail validation. Workflow and every new source file are at most 200 physical LOC.
+- Parsed command classification combines mutation method, endpoint, and separate tag-ref arguments. It rejects release API POST/PATCH/DELETE, tag API POST/PATCH/DELETE, `git push --tags`/`refs/tags`, and `gh release create/edit/delete/upload` in every workflow, including standalone contents-write writers and variable repository paths.
+- Effective GitHub API method inference follows the official `gh api` manual: `-f`/`--raw-field` and `-F`/`--field` (separate, equals, and compact forms) imply POST only when no explicit method is present; explicit `--method GET`/`-XGET` remains GET.
+- Cloudflare Workers Builds remains the sole production deploy authority.
+
+Focused automated evidence
+- cumulative Node release validator suites: PASS, 42 tests including 10 method-inference cases plus comment-only boundary, split-argument/variable-path tag writes, standalone/action publishers, `git push --tags`, release/tag API mutations, and all `gh release` mutation verbs.
+- npm run verify:release-workflows: PASS, publisher=release.yml, workflowCount=17.
+- cd tools/scripts && go test -race -shuffle=on -count=2 ./release/publish ./release/next-version: PASS.
+- npm ci --prefer-offline --no-audit --no-fund: PASS (787 packages in extracted reproduction; local dependency tree also installed for gates).
+- npm run lint: PASS.
+- npm run typecheck: PASS.
+- focused prettier check on every touched YAML/JSON/MJS file: PASS.
+- actionlint v1.7.12 .github/workflows/release.yml: PASS.
+- gitleaks v8.30.0 dir --config .gitleaks.toml --redact --no-banner .: PASS, about 9.75 MB scanned, no leaks.
+- git diff --check: PASS.
+
+Repository-wide pre-existing gates
+- go test ./... under tools/scripts: FAILS before reaching this package because existing script directories contain multiple independent package-main files and redeclared symbols. Focused release package passes with race/repeat.
+- npm run format:check: FAILS on 118 pre-existing files. Every touched Prettier-supported file passes focused check.
+
+CLI/manual QA (synthetic local Git repositories)
+- fix(core) after v1.2.3: parsed decision=publish, previous=v1.2.3, next=v1.2.4, range=v1.2.3..<target>.
+- docs-only after v2.0.0: parsed decision=no-release, next absent; highest tag remained v2.0.0.
+- stale automated target: parsed decision=superseded; tag inventory remained empty.
+- stale manual target and target=HEAD: nonzero exit, no decision file, no mutation.
+- Validator CLI against real workflows: sole release.yml publisher.
+- Real publish CLI with temporary fake `gh`/`git`: parsed outcome=published and observed exact external event order `snapshot,tag,tip,create,upload,release,tip,publish`.
+- The same real CLI with a stale guard tip parsed outcome=superseded and observed only `snapshot,tag,tip`; external writes=0.
+- Malicious notes containing command substitution and workflow-expression metacharacters arrived byte-for-byte only in draft JSON stdin; no note content appeared in command argv.
+
+Archive/artifact QA (clean temporary committed snapshot)
+- Target: 023bb75e8fb3a2d2cca19e593c730d9d8eb021cc (candidate snapshot; final tree-only rerun is in DoneClaim).
+- Two clean archives: byte-identical.
+- SHA-256: aeff5d9e3db0fb942f68967fcaff1dc6bbedb7d4655a8ce595337325f5270b1b.
+- Size: 49,715,758 bytes; members: 2,569.
+- Member policy: allowed *.example files; rejected non-example .env material and .dev.vars.
+- Fresh extracted npm ci, GIT_SHA/RESUME_AS_OF build, root Wrangler production dry-run: PASS.
+- Generated apps/portfolio/worker.js contained the exact target SHA after exporting variables across Wrangler custom build.
+- First reproduction attempt caught an over-strict example-file rule; second caught lost inline GIT_SHA during Wrangler custom build. Both root causes were fixed and the third full reproduction passed.
+- Independent needs-fix changed only publish orchestration and the corrected Go module invocation; archive/reproduction/manifest commands remain byte-identical, so the approved independent archive/reproduction evidence above was reused rather than rerun.
+
+ULTRAQA
+1. malformed_input: malformed SHA and malformed SemVer tag tests; malformed YAML fixture; manual invalid SHA failed closed.
+2. prompt_injection: commit text containing shell/workflow metacharacters classified only as data; executable Go adapter tests and real fake-command CLI QA prove notes are JSON stdin, absent from argv, and byte-preserved.
+3. cancel_resume: executable transaction fixture resumes the same-run draft without a new POST, then uploads, verifies, guards, and publishes.
+4. stale_state: executable fixtures cover tip advancement immediately before first write and immediately before publish; stale-first-write has zero mutation, stale-prepublish performs only ownership-verified cleanup.
+5. dirty_worktree: policy test proves untracked feature-like text cannot affect target-only decision.
+6. hung_long_commands: jobs use 10/30 minute bounds; focused policy/validator and archive/install/build commands completed without polling sleeps.
+7. flaky_tests: policy race suite repeated twice with shuffle; validator fixtures repeated during red/green/refactor.
+8. misleading_success_output: CLI JSON parsed with jq; manifest target/name/digest/size and archive bytes were asserted, not inferred from exit text.
+9. repeated_interruptions: fake-driven ordering proves both current-tip guards immediately precede their writes; duplicate run-owned drafts fail, interrupted same-run drafts resume, and cleanup re-fetches both ownership surfaces.
+
+Cleanup
+- All synthetic repositories, archives, extraction roots, temporary Go binaries/toolchains, dry-run directories, and QA JSON files were created under /tmp with traps and removed.
+- Temporary fake `gh`/`git` executables and command-adapter state were trap-removed after CLI QA.
+- Local node_modules installed only for lint/typecheck is removed before handoff.
+- No external drafts, tags, releases, deployments, or API writes were created.
+- Final git status and changed-file inventory are recorded in the DoneClaim.
+
+Residual risks
+- Live GitHub release polling and live draft transaction execution are intentionally delegated to F3; this task performed no external write.
+- GitHub's release asset digest field is fail-closed: absence or mismatch prevents publication/idempotent success.
+- The full-repository Go and Prettier failures are pre-existing and out of Todo 2 scope.

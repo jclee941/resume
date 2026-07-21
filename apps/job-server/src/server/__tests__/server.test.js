@@ -1,16 +1,27 @@
 import { describe, it, before, after } from 'node:test';
 import assert from 'node:assert';
+import { OAuth2Client } from 'google-auth-library';
+import config from '../config/index.js';
 import { buildServer } from '../index.js';
 
 describe('Server Integration Tests', () => {
   let server;
+  let originalEncryptionKey;
 
   before(async () => {
+    originalEncryptionKey = process.env.SESSION_ENCRYPTION_KEY;
+    process.env.SESSION_ENCRYPTION_KEY = '0'.repeat(64);
     server = await buildServer();
+    server.post('/api/auth-state-probe', async () => ({ accepted: true }));
   });
 
   after(async () => {
     await server.close();
+    if (originalEncryptionKey === undefined) {
+      delete process.env.SESSION_ENCRYPTION_KEY;
+    } else {
+      process.env.SESSION_ENCRYPTION_KEY = originalEncryptionKey;
+    }
   });
 
   describe('Health Endpoints', () => {
@@ -75,6 +86,42 @@ describe('Server Integration Tests', () => {
         payload: { credential: forgedToken },
       });
       assert.strictEqual(response.statusCode, 401);
+    });
+  });
+
+  describe('Shared Auth State', () => {
+    it('exposes auth service without duplicate auth-store decorators', () => {
+      assert.equal(server.hasDecorator('authService'), true);
+      assert.equal(server.hasDecorator('sessions'), true);
+      assert.equal(server.hasDecorator('csrfTokens'), true);
+      assert.equal(server.hasDecorator('authSessions'), false);
+    });
+
+    it('accepts a service-created session and CSRF token in middleware', async (t) => {
+      // Given
+      t.mock.method(OAuth2Client.prototype, 'verifyIdToken', async () => ({
+        getPayload: () => ({ email: config.adminEmail }),
+      }));
+      const auth = await server.authService.verifyGoogleCredential('valid-test-token');
+
+      // When
+      const response = await server.inject({
+        method: 'POST',
+        url: '/api/auth-state-probe',
+        cookies: { session_id: auth.sessionId },
+        headers: { 'x-csrf-token': auth.csrfToken },
+      });
+
+      // Then
+      const csrfEntry = server.csrfTokens.get(auth.sessionId);
+      assert.strictEqual(server.sessions.has(auth.sessionId), true);
+      assert.strictEqual(typeof csrfEntry.createdAt, 'number');
+      assert.deepStrictEqual(csrfEntry, {
+        token: auth.csrfToken,
+        createdAt: csrfEntry.createdAt,
+      });
+      assert.strictEqual(response.statusCode, 200);
+      assert.deepStrictEqual(JSON.parse(response.body), { accepted: true });
     });
   });
 
