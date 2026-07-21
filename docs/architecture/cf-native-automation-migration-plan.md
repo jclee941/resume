@@ -16,7 +16,8 @@ Executed autonomously (config-only, CI-verified, reversible):
 Deferred — **owner-gated by necessity, not preference** (Waves 1–5):
 
 - These change **live job-application runtime behavior** (scheduled resume-sync, browser crawlers, auto-apply), depend on **Worker Secrets** not confirmable from here (TELEGRAM_BOT_TOKEN/CHAT_ID, WANTED/JOBKOREA creds), and **cannot be runtime-tested locally** (CF `scheduled()`/Workflow/Browser-Rendering paths).
-- Wave 1 first slice (wire `RESUME_SYNC_WORKFLOW` to a cron in `apps/job-dashboard/src/index.js` `scheduled()` + a second `crons` entry in `wrangler.jsonc`) is **ready to execute on a one-word go-ahead once secrets are confirmed** — the workflow is already invocable via HTTP route and queue dispatcher; only the cron→create trigger is missing.
+- **Wave 1 — EXECUTED** (commits `5387475c` + `08807bdd`, CI green): second `crons` entry `0 21 * * *` + a `handlers/scheduled/cron-router.js` module that branches `scheduled()` to `RESUME_SYNC_WORKFLOW.create(...)`. Ships **`dryRun`-by-default** (`RESUME_SYNC_CRON_DRY_RUN=false` to opt in), so no platform pushes happen until the owner confirms Worker Secrets and flips the flag. Reversible (delete the branch + cron).
+- **Wave 2 — technically gated**: `BrowserSessionDO` currently `puppeteer.launch()`es an in-memory browser and returns a non-connectable UUID. A correct rewrite to CF's `puppeteer.sessions()` / `connect(binding, id)` model can only be validated against **live Browser Rendering** (session-connect across worker boundaries, per-account concurrency cap, ~60s idle close). Not safe to push blind.
 - Waves 3–5 additionally need the **captcha strategy**, **Browser-Rendering anti-bot risk**, and **`@cloudflare/puppeteer` CDP `Network.setCookie`** decisions resolved (see Open Questions).
 
 ## Migration Waves
