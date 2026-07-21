@@ -32,7 +32,7 @@ const PREVIEW_FORBIDDEN_KEYS = [
   'workflows',
 ];
 const SCANNED_EXTENSIONS = new Set('.cjs .go .js .json .mjs .sh .ts .tsx .yaml .yml'.split(' '));
-const IGNORED_DIRECTORIES = new Set(['.git', '.tmp', 'node_modules', 'third_party']);
+const IGNORED_DIRECTORIES = new Set(['.git', '.tmp', 'node_modules', 'third_party', '.worktrees']);
 
 function parseConfiguration(input) {
   if (typeof input !== 'string') return input;
@@ -80,7 +80,11 @@ export function validateWorkerConfiguration(input) {
     [{ pattern: 'resume.jclee.me', custom_domain: true }],
     'production routes mismatch'
   );
-  assert.deepEqual(config.triggers?.crons, ['0 23 * * *'], 'production cron mismatch');
+  assert.deepEqual(
+    config.triggers?.crons,
+    ['0 23 * * *', '0 21 * * *'],
+    'production cron mismatch'
+  );
   assert.equal(config.ai?.binding, 'AI', 'AI binding missing');
   assert.equal(config.browser?.binding, 'MYBROWSER', 'Browser binding missing');
   requireBindings(config, 'd1_databases', ['DB', 'JOB_DB']);

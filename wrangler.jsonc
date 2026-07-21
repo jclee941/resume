@@ -39,7 +39,7 @@
   },
   "routes": [{ "pattern": "resume.jclee.me", "custom_domain": true }],
   "triggers": {
-    "crons": ["0 23 * * *"],
+    "crons": ["0 23 * * *", "0 21 * * *"],
   },
   "ai": {
     "binding": "AI",
