@@ -204,3 +204,7 @@ packages/data/resumes/technical/**/convert-all-projects
 
 # Personal job-search run outputs (candidate lists, cover-letter drafts) — local only
 applications/_auto-apply-runs/
+.briefing/
+
+# Local agent/orchestration runtime state — never tracked
+.omc/
