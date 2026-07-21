@@ -1,5 +1,6 @@
 import { jsonResponse } from '../middleware/cors.js';
 import { getConfig, saveConfig } from '../services/config.js';
+import { runBrowserSmoke } from '../handlers/browser/smoke.js';
 import { enqueueTask } from '../queues/queue-enqueuer.js';
 import {
   getQueueCapability,
@@ -11,6 +12,12 @@ export function registerAdminRoutes(router, ctx) {
   const { env, diagnostics, log } = ctx;
 
   router.get('/api/diagnostics/bindings', (req) => diagnostics.checkBindings(req));
+
+  // CF-native: live validation harness for the Wave 2 Browser Rendering broker.
+  router.get('/api/browser/smoke', async () => {
+    const result = await runBrowserSmoke(env);
+    return jsonResponse(result, result.ok ? 200 : 502);
+  });
 
   router.get('/api/config', () => getConfig(env.JOB_DB));
   router.put('/api/config', (req) => saveConfig(req, env.JOB_DB));
