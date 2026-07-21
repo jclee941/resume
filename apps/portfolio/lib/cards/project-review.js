@@ -1,52 +1,47 @@
 const { escapeHtml } = require('../template-sanitizer');
-const {
-  FEATURED_PROJECT_IDS,
-  assertFeaturedProjectContract,
-  buildProjectEvidence,
-} = require('./project-evidence');
 
 const PROJECT_LABELS = {
   ko: {
-    railEyebrow: '핵심 프로젝트',
-    railTitle: '풀스택 구현 사례',
-    railDesc: ['제품 UI·API·데이터부터', '배포·운영까지 연결했습니다.'],
+    railEyebrow: '검토 경로',
+    railTitle: '채용 검토용 프로젝트 빠른 경로',
+    railDesc: '긴 목록을 훑기 전에 운영 근거가 가장 분명한 사례로 바로 이동할 수 있습니다.',
+    problem: '문제',
+    role: '역할',
+    proof: '근거',
+    review: '검토',
     open: '사례 보기',
-    productUi: '제품 UI',
-    backendApi: '백엔드·API',
-    dataWorkflows: '데이터·워크플로',
-    deliveryOperations: '배포·운영',
-    securityReliability: '보안·신뢰성',
-    evidence: '풀스택 역량 근거',
-    architecture: '아키텍처 흐름',
+    live: '운영 화면',
+    repo: '저장소 근거',
+    noLink: '상세 문맥',
+    caseSummary: '프로젝트 사례 요약',
   },
   en: {
-    railEyebrow: 'Selected work',
-    railTitle: 'End-to-end project work',
-    railDesc: 'Three builds connecting product surfaces, APIs, data, delivery, and operations.',
+    railEyebrow: 'evidence route',
+    railTitle: 'Fast paths for recruiter review',
+    railDesc: 'Jump to the clearest operating evidence before scanning the full project list.',
+    problem: 'Problem',
+    role: 'Role',
+    proof: 'Evidence',
+    review: 'Review',
     open: 'Open case',
-    productUi: 'Product UI',
-    backendApi: 'Backend & API',
-    dataWorkflows: 'Data & Workflows',
-    deliveryOperations: 'Delivery & Operations',
-    securityReliability: 'Security & Reliability',
-    evidence: 'Full-stack capability evidence',
-    architecture: 'Architecture flow',
+    live: 'Live view',
+    repo: 'Code evidence',
+    noLink: 'Context',
+    caseSummary: 'Project case summary',
   },
   ja: {
-    railEyebrow: '注目プロジェクト',
-    railTitle: 'フルスタック開発事例',
-    railDesc: [
-      'プロダクトUI・API・データから',
-      '配信・運用まで一貫して実装しました。',
-    ],
+    railEyebrow: 'レビュー経路',
+    railTitle: '採用レビュー向けプロジェクト導線',
+    railDesc: '長い一覧を読む前に、運用根拠が明確な事例へすぐ移動できます。',
+    problem: '課題',
+    role: '役割',
+    proof: '根拠',
+    review: '確認',
     open: '事例を見る',
-    productUi: 'プロダクトUI',
-    backendApi: 'バックエンド・API',
-    dataWorkflows: 'データ・ワークフロー',
-    deliveryOperations: 'デリバリー・運用',
-    securityReliability: 'セキュリティ・信頼性',
-    evidence: 'フルスタック領域の根拠',
-    architecture: 'アーキテクチャフロー',
+    live: '運用画面',
+    repo: 'コード根拠',
+    noLink: '文脈',
+    caseSummary: 'プロジェクト事例の要約',
   },
 };
 
@@ -71,44 +66,62 @@ function projectAnchor(project, index) {
   return `project-${slug || index + 1}`;
 }
 
+function splitProjectSentences(description) {
+  return String(description || '')
+    .replace(/\s+/g, ' ')
+    .split(/(?<=[.!?。！？])\s+/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function projectReviewTarget(labels, githubUrl, demoUrl, dashboards) {
+  if (dashboards.length > 0 || demoUrl) return labels.live;
+  if (githubUrl) return labels.repo;
+  return labels.noLink;
+}
+
+function buildProjectCaseNotes(project, labels, githubUrl, demoUrl, dashboards) {
+  const sentences = splitProjectSentences(project.description);
+  const problem = sentences[0] || project.tagline || project.title;
+  const role = sentences[1] || project.tagline || project.tech;
+  const proof = sentences[2] || project.tech || project.tagline || project.title;
+  const review = projectReviewTarget(labels, githubUrl, demoUrl, dashboards);
+
+  return `<dl class="project-case-notes" aria-label="${escapeHtml(project.title)} ${labels.caseSummary}">
+              <div><dt>${labels.problem}</dt><dd>${escapeHtml(problem)}</dd></div>
+              <div><dt>${labels.role}</dt><dd>${escapeHtml(role)}</dd></div>
+              <div><dt>${labels.proof}</dt><dd>${escapeHtml(proof)}</dd></div>
+              <div><dt>${labels.review}</dt><dd>${escapeHtml(review)}</dd></div>
+          </dl>`;
+}
+
 function buildProjectReviewRail(projects, labels) {
   if (projects.length < 3) {
     return '';
   }
 
-  const featured = FEATURED_PROJECT_IDS.map((id) =>
-    projects.find((candidate) => candidate.id === id)
-  );
-  const selected = featured.every(Boolean) ? featured : projects.slice(0, 3);
-  const cards = selected.map((project, index) => {
+  const cards = projects.slice(0, 3).map((project, index) => {
     const anchor = projectAnchor(project, index);
-    const summary = project.tagline || project.description || project.tech;
-    return `<a class="project-review-rail__link" href="#${escapeHtml(anchor)}">
+    const summary = splitProjectSentences(project.description)[0] || project.tagline || project.tech;
+    return `<a href="#${escapeHtml(anchor)}" class="project-review-rail__link">
               <span>${escapeHtml(project.tagline || labels.open)}</span>
               <strong>${escapeHtml(project.title)}</strong>
               <small>${escapeHtml(summary)}</small>
             </a>`;
   });
 
-  const railDescription = Array.isArray(labels.railDesc)
-    ? labels.railDesc
-        .map((part) => `<span>${escapeHtml(part)}</span>`)
-        .join(' ')
-    : escapeHtml(labels.railDesc);
-
   return `<li class="project-review-rail" aria-labelledby="project-review-rail-title">
             <p class="project-review-rail__eyebrow">${labels.railEyebrow}</p>
             <div class="project-review-rail__header">
               <h3 id="project-review-rail-title">${labels.railTitle}</h3>
-              <p>${railDescription}</p>
+              <p>${labels.railDesc}</p>
             </div>
             <div class="project-review-rail__grid">${cards.join('')}</div>
           </li>`;
 }
 
 module.exports = {
-  assertFeaturedProjectContract,
-  buildProjectEvidence,
+  buildProjectCaseNotes,
   buildProjectReviewRail,
   projectAnchor,
   projectLabelsFor,

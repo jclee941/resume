@@ -55,7 +55,7 @@
     "aboutSection": {
       "careerHighlights": [
         "운영 현장에서 출발해 반복 대응을 스크립트와 IaC로 남기는 방식을 일관되게 유지해 왔습니다.",
-        "금융권 본인가와 감사 대응용 보안 통제·변경 근거 자료 체계를 만들었습니다.",
+        "금융권 본인가와 감사 대응에서 보안 통제와 변경 근거를 데이터로 제시할 수 있는 자료 체계를 만들었습니다.",
         "NAC·방화벽 정책, Splunk 탐지 룰, Slack/SMS 알림 조건을 운영자가 그대로 따라 실행할 수 있는 절차로 만들었습니다.",
         "Linux·Python·Ansible·Terraform·Splunk SPL·Cloudflare Workers를 문제 해결 흐름 안에서 조합해 사용합니다.",
         "Proxmox·Grafana·k3s·1Password·MCP를 홈랩에서 먼저 운영해 보고 실제 적용 가능성을 검증합니다."
@@ -705,8 +705,8 @@
           "url": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard"
         }
       ],
-      "featured": false,
-      "displayOrder": 5
+      "featured": true,
+      "displayOrder": 2
     },
     {
       "id": "security-alert-system",
@@ -729,8 +729,8 @@
           "url": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard"
         }
       ],
-      "featured": false,
-      "displayOrder": 4
+      "featured": true,
+      "displayOrder": 1
     },
     {
       "id": "ip-blacklist-platform",
@@ -748,20 +748,8 @@
       "language": "JavaScript",
       "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null,
-      "fullStackEvidence": {
-        "backendApi": "Flask 서비스와 소스 어댑터 경계",
-        "dataAsync": "PostgreSQL/SQLAlchemy 모델과 Alembic 마이그레이션",
-        "securityReliability": "외부 피드를 어댑터 뒤에 격리",
-        "architectureSteps": [
-          "위협 피드",
-          "소스 어댑터",
-          "Flask 서비스",
-          "SQLAlchemy/PostgreSQL",
-          "Alembic 마이그레이션"
-        ]
-      },
       "featured": true,
-      "displayOrder": 3
+      "displayOrder": 5
     },
     {
       "id": "hycu-fsds-autonomous-driving",
@@ -787,7 +775,7 @@
       "id": "resume-portfolio",
       "name": "Resume Portfolio",
       "period": "2024.01 ~ 현재",
-      "description": "경력·프로젝트·운영 정보가 이력서·PDF·GitHub에 흩어져 있어 채용 담당자가 강점을 빠르게 파악하기 어려웠습니다. 이력서 JSON SSoT를 로케일별 웹 데이터로 투영해 반응형 KO/EN/JA 포트폴리오와 공개 이력서를 제공하고, 생성된 Cloudflare Worker와 병합 엣지 라우팅으로 배포합니다. 메타데이터와 OG는 별도 템플릿 소스에서 관리하며, Workers Builds, /health SHA, Workers Logs/Loki로 배포와 관측 근거를 확인합니다.",
+      "description": "경력·프로젝트·운영 정보가 이력서·PDF·GitHub에 흩어져 있어 채용 담당자가 강점을 빠르게 파악하기 어려웠습니다. Cloudflare Workers에서 이력서 데이터를 SSoT로 렌더링하고, JSON-LD와 OpenGraph metadata를 함께 관리해 PDF/GitHub/site 간 내용 불일치를 줄였습니다. 배포와 관측성은 GitHub Actions, Cloudflare Workers Logs, Loki 기반으로 연결해 변경 근거를 확인할 수 있게 했습니다.",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
@@ -802,22 +790,8 @@
       "highlights": [
         "Cloudflare Workers Edge 런타임에서 동작하는 공개 포트폴리오 사이트"
       ],
-      "fullStackEvidence": {
-        "userSurface": "반응형 KO/EN/JA 포트폴리오와 공개 이력서",
-        "backendApi": "생성된 Cloudflare Worker와 병합 엣지 라우팅",
-        "dataAsync": "JSON SSoT를 로케일 빌드 데이터로 투영",
-        "securityReliability": "CSP, 보안 헤더, 이스케이프된 빌드 템플릿",
-        "deliveryOperations": "Workers Builds, /health SHA, Workers Logs/Loki",
-        "architectureSteps": [
-          "이력서 JSON SSoT",
-          "로케일 웹 투영",
-          "Worker 빌드",
-          "엣지 라우트",
-          "상태/로그 증거"
-        ]
-      },
       "featured": true,
-      "displayOrder": 2
+      "displayOrder": 7
     },
     {
       "id": "terraform-homelab-iac",
@@ -838,15 +812,15 @@
         "Helm",
         "k3s"
       ],
-      "featured": false,
-      "displayOrder": 6
+      "featured": true,
+      "displayOrder": 3
     },
     {
       "id": "safetywallet-cf-workers-pwa",
       "name": "SafetyWallet (CF Workers PWA)",
       "period": "2026.01 ~ 2026.04",
       "githubUrl": "https://github.com/jclee941/safetywallet",
-      "description": "현장 작업자가 안전 매뉴얼·교육 이수 내역·비상 연락망을 종이로 관리해 현장에서 바로 조회하기 어려웠고, 서류 검토까지 수작업이었습니다. 이를 Cloudflare Workers 기반 PWA와 Next.js 관리 화면으로 통합했습니다. D1(SQLite)에 작업자 프로필·교육 이수 상태·비상 연락처를 저장하고, Workers Queue로 교육 만료 알림 같은 비동기 작업을 분리해 요청 지연을 줄였습니다. Workers KV에 매뉴얼 PDF 원본을 저장해 Edge 캐시를 활용하고, Service Worker Cache API로 네트워크가 제한된 현장 단말의 오프라인 조회를 지원했습니다. 관리 화면은 Next.js와 TypeScript로 구축했으며, JWT(Short-lived access token + HttpOnly refresh token) 세션 인증과 역할 기반 접근 제어(RBAC)로 현장 작업자와 관리자 권한을 분리했습니다.",
+      "description": "현장 작업자가 안전 매뉴얼·교육 이수 내역·비상 연락망을 종이로 관리해 현장에서 바로 조회하기 어려웠고, 관리자는 서류 근거를 수기로 확인해야 했습니다. 이를 Cloudflare Workers 기반 PWA와 Next.js 관리 화면으로 통합했습니다. D1(SQLite)에 작업자 프로필·교육 이수 상태·비상 연락처를 저장하고, Workers Queue로 교육 만료 알림 같은 비동기 작업을 분리해 요청 지연을 줄였습니다. Workers KV에 매뉴얼 PDF 원본을 저장해 Edge 캐시를 활용하고, Service Worker Cache API로 네트워크가 제한된 현장 단말의 오프라인 조회를 지원했습니다. 관리 화면은 Next.js와 TypeScript로 구축했으며, JWT(Short-lived access token + HttpOnly refresh token) 세션 인증과 역할 기반 접근 제어(RBAC)로 현장 작업자와 관리자 권한을 분리했습니다.",
       "highlights": [
         "현장 조회 흐름을 위한 Edge 배포",
         "오프라인 동작을 위한 계층별 스토리지 통합 아키텍처",
@@ -860,28 +834,15 @@
         "Drizzle ORM",
         "D1"
       ],
-      "fullStackEvidence": {
-        "userSurface": "Next.js/TypeScript 관리 화면과 오프라인 PWA",
-        "backendApi": "Cloudflare Workers와 Hono API",
-        "dataAsync": "Drizzle/D1 모델과 Workers Queue 작업",
-        "securityReliability": "단기 JWT 액세스, HttpOnly 리프레시, RBAC",
-        "deliveryOperations": "Service Worker 캐시와 엣지 배포",
-        "architectureSteps": [
-          "Next.js 관리 화면 + PWA",
-          "Workers + Hono API",
-          "Drizzle + D1",
-          "Workers Queue",
-          "JWT/RBAC + 캐시"
-        ]
-      },
-      "featured": true,
-      "displayOrder": 1,
+      "featured": false,
+      "displayOrder": 9,
       "language": "TypeScript"
     },
     {
       "id": "jclee-bot-github-app",
       "name": "jclee-bot GitHub App",
       "period": "2026.04 ~ 현재",
+      "githubUrl": "https://github.com/jclee941/jclee-bot",
       "description": "jclee941 계정의 저장소에서 PR 검토, 시크릿 스캔, GitHub Actions 정책 점검을 한 흐름으로 처리하는 GitHub App 운영 자동화입니다. PR 메타데이터와 시크릿 스캔·actionlint·문서 정책 결과를 Check Run으로 게시하고, 한국어 우선 리뷰 코멘트와 운영 로그를 저장소마다 같은 기준으로 남깁니다.",
       "highlights": [
         "GitHub App 기반 PR 이벤트 처리 흐름",
@@ -896,8 +857,8 @@
         "ELK",
         "GitHub API"
       ],
-      "featured": false,
-      "displayOrder": 8,
+      "featured": true,
+      "displayOrder": 6,
       "language": "Python"
     },
     {
@@ -921,7 +882,7 @@
         "Video Generation API"
       ],
       "featured": false,
-      "displayOrder": 9,
+      "displayOrder": 8,
       "language": "Python"
     },
     {
@@ -966,7 +927,7 @@
         "Runbook"
       ],
       "featured": false,
-      "displayOrder": 7,
+      "displayOrder": 4,
       "language": "VBA"
     },
     {
@@ -1133,6 +1094,7 @@
     "email": "qws941@kakao.com",
     "phone": "010-5757-9592",
     "github": "https://github.com/jclee941",
+    "githubBot": "https://github.com/jclee941/jclee-bot",
     "linkedin": "https://linkedin.com/in/jclee0109",
     "velog": "https://velog.io/@qws941",
     "website": "https://resume.jclee.me",

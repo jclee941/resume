@@ -19,32 +19,32 @@ describe('public portfolio hardening', () => {
     TEMPLATE_CACHE.projectCardsHtml = null;
   });
 
-  test.each(LOCALE_FILES)('%s exposes three featured project cards by default', (file) => {
+  test.each(LOCALE_FILES)('%s exposes five featured project cards by default', (file) => {
     const data = JSON.parse(read(`packages/data/resumes/master/${file}`));
     const html = generateProjectCards(data.projects, `public-surface:${file}`);
 
     expect((html.match(/data-project-extra="true"/g) || []).length).toBe(
-      data.projects.length - 3
+      data.projects.length - 5
     );
   });
 
-  test.each(LOCALE_FILES)('%s publishes only working contact evidence', (file) => {
+  test.each(LOCALE_FILES)('%s keeps restored contact evidence out of web-data phone projection', (file) => {
     const data = JSON.parse(read(`packages/data/resumes/master/${file}`));
     const html = generateContactGrid(data.contact);
 
-    expect(data.contact.githubBot).toBeUndefined();
-    expect(html).not.toContain('jclee-bot');
+    expect(data.contact.githubBot).toBe('https://github.com/jclee941/jclee-bot');
+    expect(html).toContain('jclee-bot');
     const publicData = generateWebData(data);
     expect(publicData.contact.phone).toBeUndefined();
   });
 
   test.each(['apps/portfolio/index.html', 'apps/portfolio/index-en.html'])(
-    '%s omits public telephone and the unavailable repository',
+    '%s retains the restored contact schema',
     (file) => {
       const html = read(file);
 
-      expect(html).not.toContain('"telephone"');
-      expect(html).not.toContain('github.com/jclee941/jclee-bot');
+      expect(html).toContain('"telephone"');
+      expect(html).toContain('github.com/jclee941/jclee-bot');
     }
   );
 

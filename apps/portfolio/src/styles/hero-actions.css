@@ -51,7 +51,7 @@
   color: var(--text-inverse);
 }
 
-.hero-cta .link-subtle--primary:hover {
+.link-subtle--primary:hover {
   color: var(--text-inverse);
   border-color: var(--color-accent-light);
   background: var(--color-accent-light);

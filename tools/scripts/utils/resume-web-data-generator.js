@@ -97,6 +97,7 @@ const PUBLIC_PORTFOLIO_EXCLUDED_IDS = new Set([
   'meetup-coordinator-mcp',
   'nunchi-translator-mcp',
 ]);
+const PUBLIC_PORTFOLIO_UNLINKED_IDS = new Set(['jclee-bot-github-app']);
 
 function publicPortfolioItems(items) {
   return (items || []).filter((item) => !PUBLIC_PORTFOLIO_EXCLUDED_IDS.has(item.id));
@@ -123,7 +124,11 @@ function generateWebData(source, language = 'ko') {
   const resumeEn = source.careers.map((career, idx) =>
     englishCareerCardFromSource(career, idx, RESUME_STATS_BY_INDEX.en, CAREER_EN_OVERRIDES)
   );
-  const publicProjects = publicPortfolioItems(source.personalProjects);
+  const publicProjects = publicPortfolioItems(source.personalProjects).map((project) =>
+    PUBLIC_PORTFOLIO_UNLINKED_IDS.has(project.id)
+      ? { ...project, githubUrl: null, repoUrl: null }
+      : project
+  );
   const projects = publicProjects.map(projectCardFromSource);
   const projectsEn = publicProjects.map((project) =>
     englishProjectCardFromSource(project, PROJECT_EN_OVERRIDES)

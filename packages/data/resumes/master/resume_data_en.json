@@ -678,8 +678,8 @@
           "url": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard"
         }
       ],
-      "featured": false,
-      "displayOrder": 5
+      "featured": true,
+      "displayOrder": 2
     },
     {
       "id": "security-alert-system",
@@ -702,8 +702,8 @@
           "url": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard"
         }
       ],
-      "featured": false,
-      "displayOrder": 4
+      "featured": true,
+      "displayOrder": 1
     },
     {
       "id": "ip-blacklist-platform",
@@ -721,20 +721,8 @@
       "language": "JavaScript",
       "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null,
-      "fullStackEvidence": {
-        "backendApi": "Flask service and source-adapter boundaries",
-        "dataAsync": "PostgreSQL/SQLAlchemy model and Alembic migrations",
-        "securityReliability": "external feeds isolated behind adapters",
-        "architectureSteps": [
-          "threat feeds",
-          "source adapters",
-          "Flask service",
-          "SQLAlchemy/PostgreSQL",
-          "Alembic migrations"
-        ]
-      },
       "featured": true,
-      "displayOrder": 3
+      "displayOrder": 5
     },
     {
       "id": "hycu-fsds-autonomous-driving",
@@ -760,7 +748,7 @@
       "id": "resume-portfolio",
       "name": "Resume Portfolio",
       "period": "2024.01 ~ Present",
-      "description": "Career, project, and operations information was fragmented across the resume, PDF, and GitHub, making the work harder to assess quickly. The resume JSON SSoT projects into locale web data for a responsive KO/EN/JA portfolio and public resume, deployed through a generated Cloudflare Worker with merged edge routing. Metadata and OG remain owned by separate template sources, while Workers Builds, /health SHA, and Workers Logs/Loki provide deployment and observability evidence.",
+      "description": "Recruiters were getting a fragmented view of the work, so the monorepo now hosts a single-SSoT resume site on Cloudflare Workers Edge alongside MCP tools and an auto-apply pipeline. Resume rendering, cover-letter generation, auto-apply, and observability all live in the same repository. This site runs on Cloudflare Workers (edge runtime).",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
@@ -775,22 +763,8 @@
       "highlights": [
         "Public portfolio site running on the Cloudflare Workers Edge runtime."
       ],
-      "fullStackEvidence": {
-        "userSurface": "responsive KO/EN/JA portfolio and public resume",
-        "backendApi": "generated Cloudflare Worker plus merged edge routing",
-        "dataAsync": "JSON SSoT projected to locale build data",
-        "securityReliability": "CSP, security headers, escaped build templates",
-        "deliveryOperations": "Workers Builds, /health SHA, Workers Logs/Loki",
-        "architectureSteps": [
-          "Resume JSON SSoT",
-          "locale web projection",
-          "Worker build",
-          "edge routes",
-          "health/log evidence"
-        ]
-      },
       "featured": true,
-      "displayOrder": 2
+      "displayOrder": 7
     },
     {
       "id": "terraform-homelab-iac",
@@ -811,8 +785,8 @@
         "Helm",
         "k3s"
       ],
-      "featured": false,
-      "displayOrder": 6
+      "featured": true,
+      "displayOrder": 3
     },
     {
       "id": "safetywallet-cf-workers-pwa",
@@ -833,28 +807,15 @@
         "Drizzle ORM",
         "D1"
       ],
-      "fullStackEvidence": {
-        "userSurface": "Next.js/TypeScript admin surface and offline PWA",
-        "backendApi": "Cloudflare Workers and Hono API",
-        "dataAsync": "Drizzle/D1 model and Workers Queue jobs",
-        "securityReliability": "short-lived JWT access, HttpOnly refresh, RBAC",
-        "deliveryOperations": "Service Worker cache and edge delivery",
-        "architectureSteps": [
-          "Next.js admin + PWA",
-          "Workers + Hono API",
-          "Drizzle + D1",
-          "Workers Queue",
-          "JWT/RBAC + cache"
-        ]
-      },
-      "featured": true,
-      "displayOrder": 1,
+      "featured": false,
+      "displayOrder": 9,
       "language": "TypeScript"
     },
     {
       "id": "jclee-bot-github-app",
       "name": "jclee-bot GitHub App",
       "period": "2026.04 ~ Present",
+      "githubUrl": "https://github.com/jclee941/jclee-bot",
       "description": "PR review, secret scanning, GitHub Actions policy checks, and repository documentation checks each had their own workflow for jclee941 repositories, and the gap between them was where context fell. The GitHub App now publishes PR metadata, secret scan, actionlint, and docs-policy results as Check Runs, with Korean-first review comments and run logs observable in ELK.",
       "highlights": [
         "GitHub App event flow for PR automation",
@@ -869,8 +830,8 @@
         "ELK",
         "GitHub API"
       ],
-      "featured": false,
-      "displayOrder": 8,
+      "featured": true,
+      "displayOrder": 6,
       "language": "Python"
     },
     {
@@ -894,7 +855,7 @@
         "Video Generation API"
       ],
       "featured": false,
-      "displayOrder": 9,
+      "displayOrder": 8,
       "language": "Python"
     },
     {
@@ -939,7 +900,7 @@
         "Runbook"
       ],
       "featured": false,
-      "displayOrder": 7,
+      "displayOrder": 4,
       "language": "VBA"
     },
     {
@@ -1098,6 +1059,7 @@
     "email": "qws941@kakao.com",
     "phone": "010-5757-9592",
     "github": "https://github.com/jclee941",
+    "githubBot": "https://github.com/jclee941/jclee-bot",
     "linkedin": "https://linkedin.com/in/jclee0109",
     "velog": "https://velog.io/@qws941",
     "website": "https://resume.jclee.me",

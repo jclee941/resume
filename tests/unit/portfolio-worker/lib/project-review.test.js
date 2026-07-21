@@ -1,4 +1,5 @@
 const {
+  buildProjectCaseNotes,
   buildProjectReviewRail,
   projectAnchor,
   projectLabelsFor,
@@ -7,37 +8,44 @@ const {
 describe('project review cards', () => {
   const projects = [
     {
-      id: 'safetywallet-cf-workers-pwa',
-      title: 'SafetyWallet',
-      tagline: '제품 근거',
-      tech: 'Next.js, Workers',
-      description: '사용자 화면과 API를 연결했습니다.',
+      id: 'elk-demo',
+      title: 'ELK Live Demo',
+      tagline: '운영 근거',
+      tech: 'Elasticsearch, Kibana',
+      description: '로그 탐색 경로를 만들었습니다. 대시보드와 알림 흐름을 연결했습니다. 운영 확인 근거를 남겼습니다.',
     },
     {
-      id: 'resume-portfolio',
-      title: 'Resume Portfolio',
-      tagline: '엣지 배포',
-      tech: 'Cloudflare Workers',
-      description: '다국어 콘텐츠를 빌드합니다.',
+      title: 'Job Automation',
+      tagline: '지원 자동화',
+      tech: 'Node.js, Cloudflare',
+      description: '채용 지원 흐름을 정리했습니다. 플랫폼별 입력을 검증했습니다.',
     },
     {
-      id: 'ip-blacklist-platform',
-      title: 'IP Blacklist',
-      tagline: '백엔드 근거',
-      tech: 'Flask, PostgreSQL',
-      description: '소스 어댑터와 데이터 모델을 연결했습니다.',
+      title: 'jclee-bot',
+      tagline: '자동화 계정',
+      tech: 'GitHub Actions',
+      description: '반복 운영 작업을 분리했습니다. 감사 가능한 커밋 흐름을 유지했습니다.',
     },
   ];
 
-  test('detects exact localized capability labels from project copy', () => {
-    expect(projectLabelsFor(projects).railTitle).toBe('풀스택 구현 사례');
+  test('detects localized labels from project copy', () => {
+    expect(projectLabelsFor(projects).railTitle).toBe('채용 검토용 프로젝트 빠른 경로');
     expect(
-      projectLabelsFor([{ description: 'Product evidence across the complete stack.' }])
-        .railTitle
-    ).toBe('End-to-end project work');
-    expect(projectLabelsFor([{ description: '運用根拠が明確な事例です。' }]).railTitle).toBe(
-      'フルスタック開発事例'
-    );
+      projectLabelsFor([
+        {
+          title: 'Ops',
+          description: 'Jump to production evidence before reading the full list.',
+        },
+      ]).railTitle
+    ).toBe('Fast paths for recruiter review');
+    expect(
+      projectLabelsFor([
+        {
+          title: '運用',
+          description: '運用根拠が明確な事例です。',
+        },
+      ]).railTitle
+    ).toBe('採用レビュー向けプロジェクト導線');
   });
 
   test('creates stable anchors from ids, titles, and fallback indexes', () => {
@@ -46,17 +54,37 @@ describe('project review cards', () => {
     expect(projectAnchor({ id: '!!!' }, 2)).toBe('project-3');
   });
 
-  test('renders the exact three featured links without sentence inference', () => {
+  test('builds escaped case notes with review target context', () => {
+    const labels = projectLabelsFor(projects);
+    const html = buildProjectCaseNotes(
+      {
+        title: '<script>alert(1)</script>',
+        tagline: 'fallback',
+        tech: '<b>ELK</b>',
+        description:
+          '<img src=x onerror=alert(1)> 문제를 정리했습니다. 역할을 나눴습니다. 근거를 남겼습니다.',
+      },
+      labels,
+      '',
+      'https://demo.example.com',
+      []
+    );
+
+    expect(html).toContain('aria-label="&lt;script&gt;alert(1)&lt;/script&gt; 프로젝트 사례 요약"');
+    expect(html).toContain('<dt>문제</dt>');
+    expect(html).toContain('&lt;img src=x onerror=alert(1)&gt; 문제를 정리했습니다.');
+    expect(html).toContain('<dt>검토</dt><dd>운영 화면</dd>');
+    expect(html).not.toContain('<script>');
+    expect(html).not.toContain('<img src=x');
+  });
+
+  test('renders a three-project review rail with escaped anchors and summaries', () => {
     const html = buildProjectReviewRail(projects, projectLabelsFor(projects));
 
     expect(html).toContain('class="project-review-rail"');
-    expect(
-      [...html.matchAll(/class="project-review-rail__link" href="#([^"]+)"/g)].map(
-        (match) => match[1]
-      )
-    ).toEqual(projects.map(({ id }) => `project-${id}`));
-    expect(html).toContain('SafetyWallet');
-    expect(html).toContain('제품 근거');
+    expect(html).toContain('href="#project-elk-demo"');
+    expect(html).toContain('ELK Live Demo');
+    expect(html).toContain('로그 탐색 경로를 만들었습니다.');
     expect((html.match(/project-review-rail__link/g) || []).length).toBe(3);
   });
 

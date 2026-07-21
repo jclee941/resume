@@ -49,8 +49,7 @@ describe('project dashboard links', () => {
       'href="https://grafana.jclee.me/public-dashboards/d179bed28cb64b87877464527550396e"'
     );
     expect(html).toContain(`href="${KIBANA_DEMO_URL.replace(/&/g, '&amp;')}"`);
-    expect(html).not.toContain('project-meta-badge--live');
-    expect(html).not.toContain('ACTIVE');
+    expect(html).toContain('project-meta-badge--live');
     expect(html).not.toContain('[Demo]');
   });
 

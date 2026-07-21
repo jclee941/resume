@@ -1,7 +1,7 @@
 {
-  "name": "이재철 | 풀스택 엔지니어",
+  "name": "이재철 - Security Automation / Infrastructure Engineer",
   "short_name": "JC Lee Resume",
-  "description": "사용자 화면부터 API, 데이터 흐름, 배포와 관측성까지 설계·운영하는 이재철의 풀스택 포트폴리오. 보안 자동화와 엣지 인프라 경험을 제품 전반의 신뢰성으로 연결합니다.",
+  "description": "Security Automation / Infrastructure Engineer 포트폴리오 - 금융 보안 인프라, SIEM, 관측성",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f0f23",

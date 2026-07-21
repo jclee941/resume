@@ -111,11 +111,7 @@ describe('simplification: project cards do not re-present the description as bul
       },
       document: {
         readyState: 'complete',
-        documentElement: {
-          lang: 'ko',
-          removeAttribute: jest.fn(),
-          setAttribute: jest.fn(),
-        },
+        documentElement: { lang: 'ko' },
         addEventListener: jest.fn(),
         getElementById: jest.fn(),
       },
@@ -132,8 +128,9 @@ describe('simplification: project cards do not re-present the description as bul
       initUI: jest.fn(() => calls.push('ui')),
       initSkillRadar: jest.fn(() => calls.push('skill-radar')),
       initCareerTimeline: jest.fn(() => calls.push('career-timeline')),
+      initProjectCards: jest.fn(() => calls.push('project-cards')),
       initProjectMore: jest.fn(() => calls.push('project-more')),
-      initCapabilityEvidence: jest.fn(() => calls.push('capability-evidence')),
+      initRecruiterEnhancements: jest.fn(() => calls.push('recruiter-enhancements')),
     };
     context.window.window = context.window;
 
@@ -146,7 +143,6 @@ describe('simplification: project cards do not re-present the description as bul
       credentials: 'same-origin',
     });
     expect(calls).toContain('register-service-worker');
-    expect(context.initCapabilityEvidence).toHaveBeenCalledTimes(1);
     expect(calls).not.toContain('skill-radar');
 
     resolveFetch();

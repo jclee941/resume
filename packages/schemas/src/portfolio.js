@@ -20,22 +20,10 @@ const resumeItemSchema = z.object({
   docxUrl: z.string().optional(),
 });
 
-const fullStackEvidenceSchema = z
-  .object({
-    userSurface: z.string().min(1).optional(),
-    backendApi: z.string().min(1).optional(),
-    dataAsync: z.string().min(1).optional(),
-    securityReliability: z.string().min(1).optional(),
-    deliveryOperations: z.string().min(1).optional(),
-    architectureSteps: z.array(z.string().min(1)).min(2).max(6).optional(),
-  })
-  .strict();
-
 const projectItemSchema = z.object({
   title: z.string().min(1),
   tech: z.string().min(1),
   description: z.string().min(1),
-  fullStackEvidence: fullStackEvidenceSchema.optional(),
 });
 
 const certificationItemSchema = z

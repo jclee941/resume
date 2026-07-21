@@ -12,53 +12,53 @@ edge router.
 
 ## STRUCTURE
 
-### Hand-authored entries and templates
-
-- `index.html` and `index-en.html`: KO and EN source templates.
-- `entry.js`: merged edge router and the sanctioned job-dashboard import.
-- `generate-worker.js`: build compiler.
-- `lib/`: build and runtime modules; see `lib/AGENTS.md`.
-- `src/`: source styles and scripts; see `src/AGENTS.md`.
-- `dashboard.html`: admin dashboard source.
-
-### Generated portfolio artifacts
-
-- `worker.js`: generated Worker bundle; never edit.
-- `data.json`, `data_en.json`, and `data_ja.json`: generated locale snapshots.
-- `og-image.png`, `og-image-en.png`, and locale WebP counterparts: generated
-  share artwork.
-
-### Configuration and generators
-
-- `generate-og-image.js`: OG image generator.
-- `generate-project-schemas.js`: JSON-LD schema generator.
-- `sitemap.xml`, `robots.txt`, and `wrangler.jsonc`: public routing and Worker
-  configuration.
-- `validate-seo.go`: SEO validator.
-- `assets/`: static files, including the generated resume copy.
+```text
+portfolio/
+├── index.html              # source HTML (hand-edited)
+├── index-en.html           # English portfolio source
+├── generate-worker.js      # build compiler
+├── worker.js               # GENERATED — never edit
+├── entry.js                # merged edge router; imports job-dashboard in-process
+├── data.json               # Generated resume snapshot (KO), built from packages/data SSoT
+├── data_en.json            # English resume data
+├── data_ja.json            # Japanese resume data
+├── dashboard.html          # admin dashboard (1290 lines)
+├── lib/                    # 25 build/runtime modules (see lib/AGENTS.md)
+├── src/                    # source styles/scripts (see src/AGENTS.md)
+├── assets/                 # static files (fonts, favicons)
+├── generate-og-image.js    # OG image generator
+├── og-image.png/webp       # Generated OG image (KO)
+├── og-image-en.png/webp    # Generated OG image (EN)
+├── generate-project-schemas.js # Schema generator
+├── sitemap.xml             # SEO sitemap
+├── robots.txt              # SEO robots config
+├── wrangler.jsonc          # worker config (name: resume)
+└── validate-seo.go         # SEO validation script
+```
 
 ## WHERE TO LOOK
 
-- Build pipeline: `generate-worker.js` compiles HTML, CSP, inline assets, and
-  `worker.js`.
-- Source markup: `index.html` and `index-en.html` own KO/EN templates.
-- Runtime modules: `lib/` contains the stateless build/runtime modules.
-- Multi-language: `i18n.js` consumes generated `data_*.json` snapshots.
-- OG images: `generate-og-image.js` owns Canvas-based generation.
-- Project schemas: `*project-schemas.js` files own JSON-LD generation.
-- SEO and metadata: templates, router helpers, sitemap, and live source override
-  historical `SEO_IMPLEMENTATION.md` guidance.
-- Edge routing: `entry.js` routes `/job/*` without a Service Binding.
+| Task            | Location                      | Notes                                                      |
+| --------------- | ----------------------------- | ---------------------------------------------------------- |
+| Build pipeline  | `generate-worker.js`          | HTML→CSP→inline→worker.js                                  |
+| Source markup   | `index.html`, `index-en.html` | KO/EN portfolio templates                                  |
+| Runtime modules | `lib/`                        | 25 stateless JS modules                                    |
+| Multi-language  | `i18n.js`, `data_*.json`      | KO/EN/JA support                                           |
+| OG Image Gen    | `generate-og-image.js`        | Canvas-based social image generation                       |
+| Project Schemas | `*project-schemas.js`         | JSON-LD generation and injection                           |
+| SEO/Metadata    | `SEO_IMPLEMENTATION.md`       | sitemap, robots, meta tags                                 |
+| Edge routing    | `entry.js`                    | routes `/job/*` into job-dashboard without Service Binding |
 
 ## BUILD PIPELINE
 
-### Web data and Worker
-
-1. Canonical locale JSON lives under `packages/data/resumes/master/`.
-2. `npm run sync:data` creates `apps/portfolio/data*.json`.
-3. `generate-worker.js` creates `worker.js`.
-4. `entry.js` merges the generated Worker with edge routing.
-5. Cloudflare Workers Builds owns normal production deployment.
+```text
+resume_data.json → sync → data.json
+index.html → generate-worker.js → worker.js → entry.js → Workers Builds
+                 ↓
+         escape backticks
+         compute CSP hashes
+         inline CSS + data
+```
 
 ### Public PDF
 
@@ -68,11 +68,6 @@ edge router.
 2. `npm run sync:pdf` creates `resume_final.pdf` and `resume_full.pdf`.
 3. The portfolio build copies them to `assets/resume.pdf` and
    `assets/resume-full.pdf`.
-
-### OG artwork
-
-`apps/portfolio/generate-og-image.js` creates the generated locale PNG/WebP
-assets.
 
 ## CONVENTIONS
 
@@ -87,46 +82,33 @@ assets.
 ## ANTI-PATTERNS
 
 - Never edit `worker.js` directly — it is generated.
-- Never hand-edit generated `apps/portfolio/data*.json`, PDF, or OG image
-  artifacts; update their named source owner and run its generator.
 - Never `trim()` inline scripts before CSP hash generation.
-- Never add runtime fetch for assets — inline at build (EXCEPTION: `/resume.pdf` reads `env.ASSETS`).
+- Never add runtime fetch for assets — inline at build (EXCEPTION: the two resume
+  PDF routes read `env.ASSETS`).
 - Never hardcode colors — use CSS variables.
 - Never add light-mode without updating root docs.
 - Never reintroduce a Service Binding for `/job/*` unless ADR 0009 is reversed.
 
 ## CONTENT UPDATE PATTERN
 
-The public identity contract is primary `Full-Stack Engineer` with supporting
-`Security Automation & Edge Infrastructure`, localized exactly through
-[`DESIGN.md`](./DESIGN.md) and the
-[visual masterplan](../../docs/architecture/portfolio-visual-masterplan.md).
+Hardcoded content in `index.html`/`index-en.html` must match SSoT
+(`resume_data.json`):
 
-Source ownership is explicit:
-
-- `packages/data/resumes/master/resume_data.json` owns canonical resume and
-  project facts. `resume_data_en.json` and `resume_data_ja.json` own aligned
-  locale translations. Run `npm run sync:data`; never edit generated
-  `apps/portfolio/data*.json` snapshots.
-- `apps/portfolio/lib/hero-content-data.js` owns localized hero copy;
-  `apps/portfolio/lib/hero-content.js` owns its generated structure.
-- `index.html`, `index-en.html`, Japanese template transforms, manifests, and
-  router helpers own locale metadata and structured-data projection. They must
-  agree with the public identity and SSoT facts.
-- `packages/data/resumes/master/resume_summary.md` and `resume_master.md` are the
-  public summary/full CV sources. `npm run sync:pdf` produces their PDF assets.
-- `apps/portfolio/generate-og-image.js` owns OG composition and localized copy;
-  generated PNG/WebP files are outputs, never editing surfaces.
-- After source edits, run the matching generator, then `npm run build`. Never
-  patch `apps/portfolio/worker.js` or generated binary/text artifacts directly.
+- Title/meta/OG/Twitter tags: `Security Automation / Infrastructure Engineer` across KO/EN/JA, with localized name prefixes where needed
+- JSON-LD Person schema: `knowsAbout` (12 domains), `jobTitle`, `description`
+- About section: career highlights (quantified achievements), current focus
+- Hero name, role line, and positioning sentence; section copy
+- `resume_summary.md` and `resume_master.md` own the public summary/full CV
+  sources; `npm run sync:pdf` produces both downloadable PDF assets.
+- After edits: `npm run sync:data && npm run build` to regenerate `worker.js`
 
 ## EXCEPTIONS
 
-- `/resume.pdf` is served from the static `assets` binding (`assets/resume.pdf`).
-  The build copies the generated master PDF into `assets/` and the worker route in
+- `/resume.pdf` and `/resume-full.pdf` are served from the static `assets`
+  binding. The build copies the SSoT PDFs into `assets/` and the worker route in
   `lib/worker-routes/seo-routes.js` reads it via `env.ASSETS.fetch()` (with a
-  404 fallback) instead of inlining ~210KB of base64. This is the ONLY runtime
-  asset fetch; everything else stays inlined at build.
+  404 fallback) instead of inlining binary data. These are the ONLY runtime
+  asset fetches; everything else stays inlined at build.
 
 ---
 

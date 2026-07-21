@@ -51,9 +51,9 @@ test.describe('Navigation', () => {
     const navLinks = page.locator('.nav-links a');
     await expect(navLinks).toHaveCount(EXPECTED.NAV_LINKS);
 
-    await expect(navLinks.nth(0)).toHaveAttribute('href', '#projects');
-    await expect(navLinks.nth(1)).toHaveAttribute('href', '#skills');
-    await expect(navLinks.nth(2)).toHaveAttribute('href', '#resume');
+    await expect(navLinks.nth(0)).toHaveAttribute('href', '#about');
+    await expect(navLinks.nth(1)).toHaveAttribute('href', '#resume');
+    await expect(navLinks.nth(2)).toHaveAttribute('href', '#projects');
     await expect(navLinks.nth(3)).toHaveAttribute('href', '#contact');
   });
 

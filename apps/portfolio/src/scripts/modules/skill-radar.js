@@ -104,6 +104,7 @@ function createDomainCard(domainKey, domain) {
 
   const indicator = createElement('div', 'skill-domain-card__level-indicator');
   indicator.dataset.levelColor = levelInfo.color;
+  indicator.setAttribute('aria-label', tierLabel);
   indicator.append(
     createElement('span', 'skill-domain-card__level-dot'),
     createElement('span', 'skill-domain-card__level-label', tierLabel)

@@ -681,8 +681,8 @@
           "url": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard"
         }
       ],
-      "featured": false,
-      "displayOrder": 5
+      "featured": true,
+      "displayOrder": 2
     },
     {
       "id": "security-alert-system",
@@ -705,8 +705,8 @@
           "url": "https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard"
         }
       ],
-      "featured": false,
-      "displayOrder": 4
+      "featured": true,
+      "displayOrder": 1
     },
     {
       "id": "ip-blacklist-platform",
@@ -724,20 +724,8 @@
       "language": "JavaScript",
       "githubUrl": "https://github.com/jclee941/blacklist",
       "demoUrl": null,
-      "fullStackEvidence": {
-        "backendApi": "Flaskサービスとソースアダプタ境界",
-        "dataAsync": "PostgreSQL/SQLAlchemyモデルとAlembicマイグレーション",
-        "securityReliability": "外部フィードをアダプタの背後に分離",
-        "architectureSteps": [
-          "脅威フィード",
-          "ソースアダプタ",
-          "Flaskサービス",
-          "SQLAlchemy/PostgreSQL",
-          "Alembicマイグレーション"
-        ]
-      },
       "featured": true,
-      "displayOrder": 3
+      "displayOrder": 5
     },
     {
       "id": "hycu-fsds-autonomous-driving",
@@ -763,7 +751,7 @@
       "id": "resume-portfolio",
       "name": "Resume Portfolio",
       "period": "2024.01 ~ 現在",
-      "description": "経歴・プロジェクト・運用情報が履歴書・PDF・GitHubに散らばり、採用担当者が強みを短時間で把握しづらい状況でした。履歴書JSON SSoTをロケール別Webデータへ投影し、レスポンシブなKO/EN/JAポートフォリオと公開履歴書を、生成されたCloudflare Workerと統合エッジルーティングで配信します。メタデータとOGは別のテンプレートソースで管理し、Workers Builds、/health SHA、Workers Logs/Lokiでデプロイと可観測性の根拠を確認します。",
+      "description": "経歴・プロジェクト・運用指標が履歴書・PDF・GitHubに散らばり、採用担当者が強みを短時間で把握しづらい状況でした。Cloudflare Workers Edgeに単一SSoTベースの履歴書サイトを載せ、MCP運用ツールと応募支援パイプラインをmonorepoに統合しています。履歴書・志望動機生成・応募支援・可観測性を同じリポジトリで運用する構成です。このサイトはCloudflare Workersで稼働しています（edge runtime、バンドル）。",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
@@ -778,22 +766,8 @@
       "highlights": [
         "Cloudflare Workers Edgeランタイムで動作する公開ポートフォリオサイト"
       ],
-      "fullStackEvidence": {
-        "userSurface": "レスポンシブなKO/EN/JAポートフォリオと公開履歴書",
-        "backendApi": "生成されたCloudflare Workerと統合エッジルーティング",
-        "dataAsync": "JSON SSoTをロケール別ビルドデータへ投影",
-        "securityReliability": "CSP、セキュリティヘッダー、エスケープ済みビルドテンプレート",
-        "deliveryOperations": "Workers Builds、/health SHA、Workers Logs/Loki",
-        "architectureSteps": [
-          "履歴書JSON SSoT",
-          "ロケールWeb投影",
-          "Workerビルド",
-          "エッジルート",
-          "ヘルス/ログ根拠"
-        ]
-      },
       "featured": true,
-      "displayOrder": 2
+      "displayOrder": 7
     },
     {
       "id": "terraform-homelab-iac",
@@ -814,15 +788,15 @@
         "Helm",
         "k3s"
       ],
-      "featured": false,
-      "displayOrder": 6
+      "featured": true,
+      "displayOrder": 3
     },
     {
       "id": "safetywallet-cf-workers-pwa",
       "name": "SafetyWallet (CF Workers PWA)",
       "period": "2026.01 ~ 2026.04",
       "githubUrl": "https://github.com/jclee941/safetywallet",
-      "description": "現場では安全マニュアル、教育修了証憑、緊急連絡網が紙で管理され、確認にはバインダーが必要でした。Cloudflare Workers基盤のPWAとNext.js管理画面で同じ記録をホストする構成にしました。D1に作業者プロフィール、KVキャッシュとR2にはマニュアル本体を置き、ネットワークが出ない現場でもオフラインでマニュアル参照できる体制を運用しています。",
+      "description": "現場では安全マニュアル、教育修了証憑、緊急連絡網が紙で管理されており、参照するたびにバインダーまで歩く運用でした。Cloudflare Workers基盤のPWAとNext.js管理画面で同じ記録をホストする構成にしました。D1に作業者プロフィール、KVキャッシュとR2にはマニュアル本体を置き、ネットワークが出ない現場でもオフラインでマニュアル参照できる体制を運用しています。",
       "highlights": [
         "現場参照フローのためのEdgeデプロイ",
         "オフライン動作のための階層別ストレージ統合アーキテクチャ",
@@ -836,28 +810,15 @@
         "Drizzle ORM",
         "D1"
       ],
-      "fullStackEvidence": {
-        "userSurface": "Next.js/TypeScript管理画面とオフラインPWA",
-        "backendApi": "Cloudflare WorkersとHono API",
-        "dataAsync": "Drizzle/D1モデルとWorkers Queueジョブ",
-        "securityReliability": "短期JWTアクセス、HttpOnlyリフレッシュ、RBAC",
-        "deliveryOperations": "Service Workerキャッシュとエッジ配信",
-        "architectureSteps": [
-          "Next.js管理画面 + PWA",
-          "Workers + Hono API",
-          "Drizzle + D1",
-          "Workers Queue",
-          "JWT/RBAC + キャッシュ"
-        ]
-      },
-      "featured": true,
-      "displayOrder": 1,
+      "featured": false,
+      "displayOrder": 9,
       "language": "TypeScript"
     },
     {
       "id": "jclee-bot-github-app",
       "name": "jclee-bot GitHub App",
       "period": "2026.04 ~ 現在",
+      "githubUrl": "https://github.com/jclee941/jclee-bot",
       "description": "jclee941配下リポジトリでは、PRレビュー、シークレットスキャン、GitHub Actionsポリシーチェック、ドキュメント確認がそれぞれ別のワークフローで動き、隙間からコンテキストが落ちる構造でした。GitHub Appでこれらを一つに束ね、PRメタデータ、secret scan、actionlint、docs policyの結果をCheck Runとして公開しています。韓国語優先のレビューコメントと実行ログはELKで観測できる形にしました。",
       "highlights": [
         "GitHub AppベースのPRイベント処理",
@@ -872,8 +833,8 @@
         "ELK",
         "GitHub API"
       ],
-      "featured": false,
-      "displayOrder": 8,
+      "featured": true,
+      "displayOrder": 6,
       "language": "Python"
     },
     {
@@ -897,7 +858,7 @@
         "Video Generation API"
       ],
       "featured": false,
-      "displayOrder": 9,
+      "displayOrder": 8,
       "language": "Python"
     },
     {
@@ -942,7 +903,7 @@
         "Runbook"
       ],
       "featured": false,
-      "displayOrder": 7,
+      "displayOrder": 4,
       "language": "VBA"
     },
     {
@@ -1101,6 +1062,7 @@
     "email": "qws941@kakao.com",
     "phone": "010-5757-9592",
     "github": "https://github.com/jclee941",
+    "githubBot": "https://github.com/jclee941/jclee-bot",
     "linkedin": "https://linkedin.com/in/jclee0109",
     "velog": "https://velog.io/@qws941",
     "website": "https://resume.jclee.me",

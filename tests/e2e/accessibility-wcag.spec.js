@@ -71,7 +71,7 @@ test.describe('Accessibility WCAG AA', () => {
 
   test('keyboard navigation should tab through all major section links', async ({ page }) => {
     const visitedHashes = new Set();
-    const expected = ['#projects', '#skills', '#resume', '#contact'];
+    const expected = ['#about', '#resume', '#projects', '#contact'];
 
     for (let i = 0; i < 60; i++) {
       await page.keyboard.press('Tab');
@@ -164,19 +164,5 @@ test.describe('Accessibility WCAG AA', () => {
     });
 
     expect(failures).toEqual([]);
-  });
-
-  test('capability controls expose pressed state and a non-empty live announcement', async ({
-    page,
-  }) => {
-    for (const path of ['/ko/', '/en/', '/ja/']) {
-      await page.goto(path, { waitUntil: 'domcontentloaded' });
-      const control = page.locator('[data-capability-control="security-reliability"]');
-      await control.focus();
-      await page.keyboard.press('Space');
-      await expect(control).toHaveAttribute('aria-pressed', 'true');
-      await expect(page.locator('[data-capability-status]')).toHaveAttribute('aria-live', 'polite');
-      await expect(page.locator('[data-capability-status]')).not.toHaveText('');
-    }
   });
 });

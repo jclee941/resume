@@ -881,71 +881,139 @@ describe('Cards Module', () => {
     });
   });
 
-  describe('generateProjectCards - explicit project metadata', () => {
-    beforeEach(() => {
+  describe('generateProjectCards - activity metadata branches', () => {
+    test('should render language, active, and live badges in meta line', () => {
       TEMPLATE_CACHE.dataHash = null;
       TEMPLATE_CACHE.projectCardsHtml = null;
-    });
-
-    test('renders language and an explicit source status only', () => {
       const projectData = [
         {
-          title: 'Released Project',
+          title: 'Popular Project',
           tech: 'TypeScript',
-          description: 'A released project',
+          description: 'A popular project',
           liveUrl: 'https://example.com',
           stars: 42,
           forks: 7,
           language: 'JavaScript',
-          status: 'Released',
         },
       ];
-      const html = generateProjectCards(projectData, 'explicit-status-hash');
+      const html = generateProjectCards(projectData, 'stars-forks-lang-hash');
       expect(html).toContain('project-meta-badge--language');
       expect(html).toContain('JavaScript');
-      expect(html).toContain('project-meta-badge--status');
-      expect(html).toContain('Released');
-      expect(html).not.toContain('ACTIVE');
-      expect(html).not.toContain('LIVE');
-      expect(html).not.toContain('REPO');
-      expect(html).not.toContain('42');
+      expect(html).toContain('project-meta-badge--active');
+      expect(html).toContain('ACTIVE');
+      expect(html).toContain('project-meta-badge--live');
+      expect(html).toContain('LIVE');
+      expect(html).toContain('project-meta');
+      expect(html).not.toContain('★');
+      expect(html).not.toContain('⑂');
     });
 
-    test('does not infer status from stars, repository, or demo links', () => {
+    test('should ignore star counts and keep active badge when language is absent', () => {
+      TEMPLATE_CACHE.dataHash = null;
+      TEMPLATE_CACHE.projectCardsHtml = null;
       const projectData = [
         {
-          title: 'Linked Project',
+          title: 'Stars Only',
           tech: 'Go',
-          description: 'A linked project',
-          githubUrl: 'https://github.com/test/repo',
-          demoUrl: 'https://demo.example.com',
+          description: 'Stars only project',
           stars: 100,
         },
       ];
-      const html = generateProjectCards(projectData, 'no-inferred-status-hash');
-      expect(html).toContain('GitHub');
-      expect(html).toContain('Demo');
-      expect(html).not.toContain('project-meta-badge--status');
-      expect(html).not.toContain('ACTIVE');
-      expect(html).not.toContain('LIVE');
-      expect(html).not.toContain('REPO');
+      const html = generateProjectCards(projectData, 'stars-only-hash');
+      expect(html).toContain('ACTIVE');
+      expect(html).toContain('project-meta');
       expect(html).not.toContain('100');
     });
 
-    test('escapes an explicit source status', () => {
-      const html = generateProjectCards(
-        [
-          {
-            title: 'Status Project',
-            tech: 'Rust',
-            description: 'Status escaping',
-            status: '<script>alert(1)</script>',
-          },
-        ],
-        'escaped-status-hash'
-      );
-      expect(html).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');
-      expect(html).not.toContain('<script>alert(1)</script>');
+    test('should avoid rendering invalid star and fork numbers', () => {
+      TEMPLATE_CACHE.dataHash = null;
+      TEMPLATE_CACHE.projectCardsHtml = null;
+      const projectData = [
+        {
+          title: 'Bad Numbers',
+          tech: 'Rust',
+          description: 'Invalid numbers',
+          stars: NaN,
+          forks: Infinity,
+        },
+      ];
+      const html = generateProjectCards(projectData, 'nan-infinity-hash');
+      expect(html).toContain('project-meta');
+      expect(html).toContain('ACTIVE');
+      expect(html).not.toContain('NaN');
+      expect(html).not.toContain('Infinity');
+    });
+
+    test('should render language and active badges when language is present', () => {
+      TEMPLATE_CACHE.dataHash = null;
+      TEMPLATE_CACHE.projectCardsHtml = null;
+      const projectData = [
+        {
+          title: 'Lang Only',
+          tech: 'Python',
+          description: 'Language only project',
+          language: 'Python',
+        },
+      ];
+      const html = generateProjectCards(projectData, 'lang-only-hash');
+      expect(html).toContain('Python');
+      expect(html).toContain('ACTIVE');
+      expect(html).toContain('project-meta');
+    });
+
+    test('should render repo badge when only githubUrl exists', () => {
+      TEMPLATE_CACHE.dataHash = null;
+      TEMPLATE_CACHE.projectCardsHtml = null;
+      const projectData = [
+        {
+          title: 'GitHub Only',
+          tech: 'Node.js',
+          description: 'Only GitHub link',
+          githubUrl: 'https://github.com/test/repo',
+        },
+      ];
+      const html = generateProjectCards(projectData, 'github-only-hash');
+      expect(html).toContain('href="https://github.com/test/repo"');
+      expect(html).toContain('GitHub');
+      expect(html).toContain('project-meta-badge--repo');
+      expect(html).toContain('REPO');
+    });
+
+    test('should render live badge when only demoUrl exists', () => {
+      TEMPLATE_CACHE.dataHash = null;
+      TEMPLATE_CACHE.projectCardsHtml = null;
+      const projectData = [
+        {
+          title: 'Demo Only',
+          tech: 'React',
+          description: 'Only demo link',
+          demoUrl: 'https://demo.example.com',
+        },
+      ];
+      const html = generateProjectCards(projectData, 'demo-only-hash');
+      expect(html).toContain('href="https://demo.example.com"');
+      expect(html).toContain('Demo');
+      expect(html).toContain('project-meta-badge--live');
+      expect(html).toContain('LIVE');
+    });
+
+    test('should prefer live badge when both githubUrl and demoUrl exist', () => {
+      TEMPLATE_CACHE.dataHash = null;
+      TEMPLATE_CACHE.projectCardsHtml = null;
+      const projectData = [
+        {
+          title: 'Both Links',
+          tech: 'Vue',
+          description: 'Both links project',
+          githubUrl: 'https://github.com/test/both',
+          demoUrl: 'https://demo.example.com/both',
+        },
+      ];
+      const html = generateProjectCards(projectData, 'both-links-hash');
+      expect(html).toContain('GitHub');
+      expect(html).toContain('Demo');
+      expect(html).toContain('project-meta-badge--live');
+      expect(html).not.toContain('project-meta-badge--repo');
     });
   });
 

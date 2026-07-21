@@ -167,16 +167,20 @@ test.describe('Mobile - Navigation', () => {
 
   test('should be able to navigate to sections on mobile', async ({ page }) => {
     await gotoMobilePage(page);
-    await expect(page.locator('html')).toHaveAttribute('data-portfolio-ready', 'true');
     // Mobile nav links live behind the hamburger toggle; open it first.
     await page.locator('.nav-toggle').click();
     await expect(page.locator('.nav-links')).toHaveClass(/open/);
-    const projectsLink = page.locator('.nav-links a[href="#projects"]');
-    await expect(projectsLink).toBeVisible();
-    await projectsLink.click();
+    const aboutLink = page.locator('.nav-links a[href="#about"]');
+    await expect(aboutLink).toBeVisible();
+    await aboutLink.click();
 
     // Nav uses smooth-scroll (no hash push); assert the section is brought into view.
-    await expect(page.locator('#projects')).toBeInViewport();
+    await page.waitForTimeout(600);
+    const aboutInView = await page.evaluate(() => {
+      const r = document.getElementById('about').getBoundingClientRect();
+      return r.top < window.innerHeight && r.bottom > 0;
+    });
+    expect(aboutInView).toBe(true);
   });
 });
 
@@ -223,14 +227,18 @@ test.describe('Mobile - Touch Interactions', () => {
   });
 
   test('should support clicking navigation links', async ({ page }) => {
-    await expect(page.locator('html')).toHaveAttribute('data-portfolio-ready', 'true');
     await page.locator('.nav-toggle').click();
     await expect(page.locator('.nav-links')).toHaveClass(/open/);
-    const projectsLink = page.locator('.nav-links a[href="#projects"]');
-    await expect(projectsLink).toBeVisible();
-    await projectsLink.click();
+    const aboutLink = page.locator('.nav-links a[href="#about"]');
+    await expect(aboutLink).toBeVisible();
+    await aboutLink.click();
 
-    await expect(page.locator('#projects')).toBeInViewport();
+    await page.waitForTimeout(600);
+    const aboutInView = await page.evaluate(() => {
+      const r = document.getElementById('about').getBoundingClientRect();
+      return r.top < window.innerHeight && r.bottom > 0;
+    });
+    expect(aboutInView).toBe(true);
   });
 });
 

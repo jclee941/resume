@@ -1,5 +1,6 @@
 function applyJapaneseSections(html) {
   return html
+    .replace(/aria-label="exp — 경력"/g, 'aria-label="exp — 経歴"')
     .replace(/aria-label="채용 문의 옵션"/g, 'aria-label="採用お問い合わせオプション"')
     .replace(/aria-label="採用相談 옵션"/g, 'aria-label="採用相談オプション"')
     .replace(/download="이재철_이력서\.pdf"/g, 'download="Lee-Jaecheol-Resume-JA.pdf"')
@@ -15,22 +16,14 @@ function applyJapaneseSections(html) {
     .replace(/aria-label="채용(?: 또는 |·)면접 문의하기"/g, 'aria-label="採用・面接お問い合わせ"')
     .replace(/>채용·면접 문의하기</g, '>採用・面接お問い合わせ<')
     .replace(/>바로 본문으로 이동</g, '>メインコンテンツへスキップ<')
-    .replace(/(<h2[^>]*class="section-title"[^>]*>)대표 프로젝트(<\/h2>)/g, '$1注目プロジェクト$2')
-    .replace(/(<h2[^>]*class="section-title"[^>]*>)풀스택 역량(<\/h2>)/g, '$1フルスタックの領域$2')
-    .replace(/(<h2[^>]*class="section-title"[^>]*>)경력(<\/h2>)/g, '$1職歴$2')
-    .replace(
-      /(<h2[^>]*class="section-title"[^>]*>)보안·인프라 전문성(<\/h2>)/g,
-      '$1セキュリティ・インフラの専門性$2'
-    )
-    .replace(/(<h2[^>]*class="section-title"[^>]*>)소개(<\/h2>)/g, '$1紹介$2')
-    .replace(/(<h2[^>]*class="section-title"[^>]*>)업무 방식(<\/h2>)/g, '$1仕事の進め方$2')
-    .replace(/(<h2[^>]*class="section-title"[^>]*>)자격·학습(<\/h2>)/g, '$1資格・学習$2')
+    .replace(/(<h2[^>]*class="section-title"[^>]*>)소개(<\/h2>)/g, '$1概要$2')
+    .replace(/(<h2[^>]*class="section-title"[^>]*>)커버레터(<\/h2>)/g, '$1カバーレター$2')
+    .replace(/(<h2[^>]*class="section-title"[^>]*>)경력(<\/h2>)/g, '$1経歴$2')
+    .replace(/(<h2[^>]*class="section-title"[^>]*>)자격증(<\/h2>)/g, '$1資格$2')
+    .replace(/(<h2[^>]*class="section-title"[^>]*>)프로젝트(<\/h2>)/g, '$1プロジェクト$2')
+    .replace(/(<h2[^>]*class="section-title"[^>]*>)기술(<\/h2>)/g, '$1スキル$2')
+    .replace(/(<h2[^>]*class="section-title"[^>]*>)운영(<\/h2>)/g, '$1運用$2')
     .replace(/(<h2[^>]*class="section-title"[^>]*>)연락처(<\/h2>)/g, '$1連絡先$2')
-    .replace(/<summary>업무 방식 자세히 보기<\/summary>/g, '<summary>仕事の進め方を読む</summary>')
-    .replace(
-      /aria-label="보안 및 인프라 운영 근거"/g,
-      'aria-label="セキュリティ・インフラの運用根拠"'
-    )
     .replace(
       /"jobTitle": "Security Automation \/ Infrastructure Engineer"/g,
       '"jobTitle": "Security Automation / Infrastructure Engineer"'
