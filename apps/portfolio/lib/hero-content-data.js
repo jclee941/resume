@@ -5,7 +5,7 @@ const HERO_CONTENT = {
     role: 'Security Automation / Infrastructure Engineer',
     availability: '보안 자동화 · 보안 인프라 면접 제안 가능',
     positioning:
-      '보안 인프라 이력과 프로젝트를 확인하세요. 연락처와 이력서 PDF도 바로 확인할 수 있습니다.',
+      '넥스트레이드 보안 인프라 구축·자동화와 공개 자동화 프로젝트, 연락처·이력서 PDF를 한 화면에 정리했습니다.',
     proofLabel: '핵심 이력 요약',
     proofItems: [
       '대상 역할: Security Automation / Infrastructure Engineer',
@@ -30,7 +30,7 @@ const HERO_CONTENT = {
     packetSummary: '경력, 공개 자동화 프로젝트, 연락처와 이력서 PDF를 한 화면에 모았습니다.',
     packetItems: [
       ['대상 역할', '보안 자동화 · 보안 인프라 · SIEM'],
-      ['공개 프로젝트', '넥스트레이드 구축·자동화 · FSDC 감사 대응 · 프로젝트 로그'],
+      ['주요 경력', '넥스트레이드 구축·자동화 · FSDC 감사 대응 · 프로젝트 로그'],
       ['다음 액션', '메일로 면접 제안 또는 일정 확인'],
     ],
     quickTitle: '관심 직무별로 보기',
@@ -56,7 +56,7 @@ const HERO_CONTENT = {
     proofLabel: 'Résumé at a glance',
     proofItems: [
       'Target role: Security Automation / Infrastructure Engineer',
-      'Recent role: exchange security infrastructure build and automation',
+      'Recent role: exchange security infrastructure build/automation and audit response',
       'Contact: email for interview requests and resume PDF',
     ],
     publicProofLabel: 'Public automation projects',

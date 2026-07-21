@@ -43,8 +43,8 @@ export const ROLE_PROFILES = [
     label: 'Automation',
     proof: {
       ko: 'jclee-bot, PR 검토, 시크릿 스캔, Check Run',
-      en: 'jclee-bot, PR review, secret scan, and runtime logs',
-      ja: 'jclee-bot、PRレビュー、シークレットスキャン、自動化ログ',
+      en: 'jclee-bot, PR review, secret scan, and check runs',
+      ja: 'jclee-bot、PRレビュー、シークレットスキャン、チェックラン',
     },
     keywords: ['Security Alert', 'Bug Bounty', 'jclee-bot', 'SafetyWallet', 'tmux'],
   },
@@ -55,9 +55,9 @@ export const EVIDENCE_ITEMS = [
     roleId: 'security',
     title: 'Security Alert System',
     proof: {
-      ko: 'Splunk·Webhook·FortiManager API 연계',
-      en: 'Splunk, webhook, and FortiManager API integration',
-      ja: 'Splunk・Webhook・FortiManager API連携フロー',
+      ko: 'Splunk Saved Search·Webhook·Slack 알림 연계',
+      en: 'Splunk Saved Search, webhook, and Slack alerting',
+      ja: 'Splunk Saved Search・Webhook・Slack通知連携',
     },
   },
   {
