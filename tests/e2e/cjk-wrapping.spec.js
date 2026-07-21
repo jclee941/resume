@@ -83,7 +83,21 @@ async function inspectWrapping(page, tokens) {
           }))
       : [];
 
-    return { tokenLines, kinsokuViolations, clippedCoverLetterElements };
+    const clippedCompanyLinks = [...document.querySelectorAll('.company-link')]
+      .filter((element) => {
+        const container = element.closest('.timeline-card');
+        if (!container) return false;
+        const rect = element.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        return rect.left < containerRect.left - 0.5 || rect.right > containerRect.right + 0.5;
+      })
+      .map((element) => ({
+        text: element.textContent?.trim(),
+        left: element.getBoundingClientRect().left,
+        right: element.getBoundingClientRect().right,
+      }));
+
+    return { tokenLines, kinsokuViolations, clippedCoverLetterElements, clippedCompanyLinks };
   }, tokens);
 }
 
@@ -106,6 +120,7 @@ for (const viewport of VIEWPORTS) {
         expect(result.kinsokuViolations, 'Japanese closing punctuation or small kana at line start').toEqual([]);
       }
       expect(result.clippedCoverLetterElements, 'cover-letter content must stay inside its card').toEqual([]);
+      expect(result.clippedCompanyLinks, 'company names must stay inside their timeline cards').toEqual([]);
     });
   }
 }
