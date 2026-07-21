@@ -1,29 +1,33 @@
 /**
- * @fileoverview Durable Object for browser session pooling.
- * Manages @cloudflare/puppeteer browser lifecycle with keep-alive,
- * idle timeout, and concurrent session limits.
+ * @fileoverview Durable Object for Cloudflare Browser Rendering session
+ * pooling (CF-native migration, Wave 2). Hands out REAL connectable
+ * @cloudflare/puppeteer session ids via the pure broker in
+ * ./browser-session-broker.js — reusing a free upstream session when one
+ * exists, otherwise launching a new one within account limits.
+ *
+ * This Durable Object has ZERO callers as of Wave 2 (additive only). Live
+ * Browser Rendering behaviour — cross-worker session-connect, keep_alive
+ * reuse, and concurrency accounting — is NOT yet verified against the real
+ * Cloudflare runtime, only unit-tested with a fake puppeteer. Wave 3 wires a
+ * real crawler through handlers/browser/browser-service.js after that
+ * validation happens.
  *
  * Binding: BROWSER_SESSION in wrangler.jsonc
  * @module durable-objects/browser-session-do
  */
 
 import puppeteer from '@cloudflare/puppeteer';
+import { acquireSession, staleLocks, DEFAULT_KEEP_ALIVE_MS } from './browser-session-broker.js';
 
-/** @typedef {import('@resume/types').SessionState} SessionState */
-
-const MAX_CONCURRENT = 2;
-const IDLE_TIMEOUT_MS = 60_000;
-const KEEP_ALIVE_MS = 10_000;
+const LOCKED_KEY = 'locked';
 
 export class BrowserSessionDO {
   /** @type {DurableObjectState} */
   #state;
-  /** @type {import('@cloudflare/puppeteer').Browser|null} */
-  #browser = null;
-  /** @type {Map<string, SessionState>} */
-  #sessions = new Map();
-  /** @type {number} */
-  #activeCount = 0;
+  /** @type {Map<string, {requestId:string, lockedAt:number}>} */
+  #locked = new Map();
+  /** @type {Promise<void>} */
+  #ready;
 
   /**
    * @param {DurableObjectState} state
@@ -32,6 +36,10 @@ export class BrowserSessionDO {
   constructor(state, env) {
     this.#state = state;
     this.env = env;
+    this.#ready = state.blockConcurrencyWhile(async () => {
+      const stored = await state.storage.get(LOCKED_KEY);
+      if (stored) this.#locked = new Map(stored);
+    });
   }
 
   /**
@@ -39,6 +47,7 @@ export class BrowserSessionDO {
    * @returns {Promise<Response>}
    */
   async fetch(request) {
+    await this.#ready;
     const url = new URL(request.url);
     const action = url.pathname.split('/').pop();
 
@@ -49,164 +58,113 @@ export class BrowserSessionDO {
         case 'release':
           return await this.#handleRelease(request);
         case 'status':
-          return this.#handleStatus();
+          return await this.#handleStatus();
         case 'destroy':
           return await this.#handleDestroy();
         default:
-          return new Response(JSON.stringify({ error: 'Unknown action' }), {
-            status: 400,
-            headers: { 'content-type': 'application/json' },
-          });
+          return Response.json({ error: 'Unknown action' }, { status: 400 });
       }
     } catch (err) {
-      return new Response(JSON.stringify({ error: err.message }), {
-        status: 500,
-        headers: { 'content-type': 'application/json' },
-      });
+      const status = err.code === 'NO_CAPACITY' ? 429 : 500;
+      return Response.json(
+        { error: err.message, ...(err.code ? { code: err.code } : {}) },
+        { status }
+      );
     }
   }
 
   /**
-   * Acquire a browser session. Returns websocket endpoint if available.
+   * Acquire a connectable sessionId — reused or freshly launched via the broker.
    * @param {Request} request
    * @returns {Promise<Response>}
    */
   async #handleAcquire(request) {
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
     const requestId = body.requestId || crypto.randomUUID();
+    const keepAlive = body.keepAlive ?? DEFAULT_KEEP_ALIVE_MS;
 
-    if (this.#activeCount >= MAX_CONCURRENT) {
-      return Response.json(
-        { error: 'Max concurrent sessions reached', limit: MAX_CONCURRENT },
-        { status: 429 }
-      );
-    }
-
-    if (!this.#browser) {
-      this.#browser = await puppeteer.launch(this.env.MYBROWSER);
-    }
-
-    const sessionId = crypto.randomUUID();
-    const now = Date.now();
-
-    /** @type {SessionState} */
-    const session = {
-      id: sessionId,
-      status: 'active',
-      createdAt: now,
-      lastUsedAt: now,
-      lockedBy: requestId,
-    };
-
-    this.#sessions.set(sessionId, session);
-    this.#activeCount++;
-
-    await this.#state.storage.put('sessions', [...this.#sessions.entries()]);
-    this.#scheduleIdleCheck();
-
-    return Response.json({
-      sessionId,
-      browserConnected: !!this.#browser,
-      activeCount: this.#activeCount,
+    const lockedIds = new Set(this.#locked.keys());
+    const { sessionId, reused } = await acquireSession(puppeteer, this.env.MYBROWSER, lockedIds, {
+      keepAlive,
     });
+
+    this.#locked.set(sessionId, { requestId, lockedAt: Date.now() });
+    await this.#persist();
+    await this.#state.storage.setAlarm(Date.now() + keepAlive);
+
+    return Response.json({ sessionId, reused, activeLocks: this.#locked.size });
   }
 
   /**
-   * Release a session back to pool.
+   * Release a locked session. Does NOT close the browser — keep_alive governs
+   * its lifetime upstream and other callers may reuse the same session.
    * @param {Request} request
    * @returns {Promise<Response>}
    */
   async #handleRelease(request) {
     const { sessionId } = await request.json();
-    const session = this.#sessions.get(sessionId);
-
-    if (!session) {
-      return Response.json({ error: 'Session not found' }, { status: 404 });
-    }
-
-    session.status = 'idle';
-    session.lockedBy = null;
-    session.lastUsedAt = Date.now();
-    this.#activeCount = Math.max(0, this.#activeCount - 1);
-
-    await this.#state.storage.put('sessions', [...this.#sessions.entries()]);
-    this.#scheduleIdleCheck();
-
-    return Response.json({ released: true, activeCount: this.#activeCount });
-  }
-
-  /** @returns {Response} */
-  #handleStatus() {
-    const sessions = [...this.#sessions.values()].map(({ id, status, createdAt, lastUsedAt }) => ({
-      id,
-      status,
-      createdAt,
-      lastUsedAt,
-      age: Date.now() - createdAt,
-    }));
-
-    return Response.json({
-      browserConnected: !!this.#browser,
-      activeCount: this.#activeCount,
-      totalSessions: this.#sessions.size,
-      sessions,
-    });
+    this.#locked.delete(sessionId);
+    await this.#persist();
+    return Response.json({ released: true });
   }
 
   /**
-   * Force-close all sessions and disconnect browser.
+   * Report locked ids plus upstream sessions/limits. Never throws — each
+   * upstream call is individually guarded.
+   * @returns {Promise<Response>}
+   */
+  async #handleStatus() {
+    let sessions = null;
+    let limits = null;
+
+    try {
+      sessions = await puppeteer.sessions(this.env.MYBROWSER);
+    } catch {
+      sessions = null;
+    }
+
+    try {
+      limits = await puppeteer.limits(this.env.MYBROWSER);
+    } catch {
+      limits = null;
+    }
+
+    return Response.json({ locked: [...this.#locked.keys()], sessions, limits });
+  }
+
+  /**
+   * Force-clear all locks and storage for this Durable Object instance.
    * @returns {Promise<Response>}
    */
   async #handleDestroy() {
-    if (this.#browser) {
-      try {
-        await this.#browser.close();
-      } catch {
-        // noop — browser may already be disconnected
-      }
-      this.#browser = null;
-    }
-
-    this.#sessions.clear();
-    this.#activeCount = 0;
+    this.#locked.clear();
     await this.#state.storage.deleteAll();
-
     return Response.json({ destroyed: true });
   }
 
-  /** Schedule alarm for idle session cleanup. */
-  #scheduleIdleCheck() {
-    const nextCheck = Date.now() + KEEP_ALIVE_MS;
-    this.#state.storage.setAlarm(nextCheck);
+  /** Persist the current locked map to durable storage. */
+  async #persist() {
+    await this.#state.storage.put(LOCKED_KEY, [...this.#locked.entries()]);
   }
 
-  /** Durable Object alarm handler — evicts idle sessions. */
+  /**
+   * Reconcile locked ids against upstream sessions, dropping locks whose
+   * session has gone away. Reschedules itself only while locks remain.
+   */
   async alarm() {
-    const now = Date.now();
-    let changed = false;
-
-    for (const [id, session] of this.#sessions) {
-      if (session.status === 'idle' && now - session.lastUsedAt > IDLE_TIMEOUT_MS) {
-        this.#sessions.delete(id);
-        changed = true;
-      }
+    let sessions = [];
+    try {
+      sessions = await puppeteer.sessions(this.env.MYBROWSER);
+    } catch {
+      sessions = [];
     }
 
-    if (changed) {
-      await this.#state.storage.put('sessions', [...this.#sessions.entries()]);
-    }
+    const stale = staleLocks(this.#locked.keys(), sessions);
+    for (const id of stale) this.#locked.delete(id);
+    if (stale.length) await this.#persist();
 
-    if (this.#sessions.size === 0 && this.#browser) {
-      try {
-        await this.#browser.close();
-      } catch {
-        // noop
-      }
-      this.#browser = null;
-    }
-
-    if (this.#sessions.size > 0) {
-      this.#scheduleIdleCheck();
+    if (this.#locked.size > 0) {
+      await this.#state.storage.setAlarm(Date.now() + DEFAULT_KEEP_ALIVE_MS);
     }
   }
 }
