@@ -123,6 +123,11 @@ a.project-link-title:hover .arrow {
     var(--shadow-sm),
     inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
+.project-meta-badge--completed {
+  border-color: var(--border-primary);
+  color: var(--text-muted);
+  background: rgb(var(--bg-secondary-rgb) / 0.55);
+}
 .project-meta-badge--live,
 .project-meta-badge--repo {
   border-color: rgba(121, 184, 138, 0.18);
