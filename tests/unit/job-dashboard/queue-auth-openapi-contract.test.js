@@ -29,33 +29,40 @@ describe('queue admin auth OpenAPI contract', () => {
     });
   });
 
-  test.each([
-    ['/api/queue/enqueue', 'post'],
-    ['/api/queue/status', 'get'],
-  ])('requires either supported admin credential for %s', (route, method) => {
-    expect(openApi.paths[route][method].security).toEqual([
-      { AdminSessionCookie: [] },
-      { LegacyAdminBearer: [] },
+  test('requires either supported admin credential plus CSRF for queue enqueue', () => {
+    expect(openApi.paths['/api/queue/enqueue'].post.security).toEqual([
+      { AdminSessionCookie: [], CsrfHeader: [], CsrfCookie: [] },
+      { LegacyAdminBearer: [], CsrfHeader: [], CsrfCookie: [] },
     ]);
+  });
+
+  test('keeps queue status public as the capability probe', () => {
+    expect(openApi.paths['/api/queue/status'].get.security).toBeUndefined();
   });
 
   test('documents queue enqueue authentication failures', () => {
     const responses = openApi.paths['/api/queue/enqueue'].post.responses;
 
     expect(responses['403']).toEqual({
-      $ref: '#/components/responses/Forbidden',
+      $ref: '#/components/responses/QueueForbidden',
     });
     expect(responses['401']).toEqual({
-      $ref: '#/components/responses/Unauthorized',
+      $ref: '#/components/responses/QueueUnauthorized',
     });
-    expect(responses['503']).toEqual({
-      $ref: '#/components/responses/ServiceMisconfigured',
-    });
+    expect(responses['503'].content['application/json'].schema.oneOf).toEqual([
+      { $ref: '#/components/schemas/AuthenticationUnavailable' },
+      { $ref: '#/components/schemas/QueueUnavailable' },
+    ]);
   });
 
-  test('documents queue status authentication configuration failure', () => {
-    expect(openApi.paths['/api/queue/status'].get.responses['503']).toEqual({
-      $ref: '#/components/responses/ServiceMisconfigured',
+  test('documents queue status capability truth for both availability states', () => {
+    const responses = openApi.paths['/api/queue/status'].get.responses;
+
+    expect(responses['200'].content['application/json'].schema).toEqual({
+      $ref: '#/components/schemas/QueueStatusEnabled',
+    });
+    expect(responses['503'].content['application/json'].schema).toEqual({
+      $ref: '#/components/schemas/QueueStatusDisabled',
     });
   });
 

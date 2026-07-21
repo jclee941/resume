@@ -1,0 +1,97 @@
+Todo 9 evidence: normalize architecture status index
+Base: 827572bbc45f2a9c7278432ca2ae73d9c0a156ab
+Worktree: /home/jclee/dev/resume-arch-task9 (detached)
+
+TDD
+- Characterization before production edits:
+  node --test tools/scripts/verification/__tests__/validate-architecture-docs.test.mjs
+  PASS 1/1. Locked numbered filenames 0001-0009, dash/bold metadata counts 7/2,
+  template existence, and the pre-normalization README gaps for 0008/0009.
+- Failing-first fixture run after the validator interface stub:
+  FAIL 7 semantic assertions as intended: empty ADR inventory, missing index,
+  invalid/missing supersession target, broken link, duplicate ID, and stale
+  full-mode claim. The characterization and template-exclusion controls passed.
+- Green:
+  timeout 30s node --test tools/scripts/verification/__tests__/validate-architecture-docs.test.mjs
+  PASS 14/14, including both metadata styles, ADR 0001 partial note,
+  0006->0007->0009 direction/targets, free-text supersession, template exclusion,
+  index coverage/status placement, ID/link failures, three stale-claim classes,
+  and real CLI failure output.
+- Named failure-pattern contract:
+  node --test --test-name-pattern='rejects invalid supersession|rejects missing index|rejects broken link|excludes ADR template' tools/scripts/verification/__tests__/validate-architecture-docs.test.mjs
+  PASS 4/4.
+
+Automated verification
+- npm run verify:architecture-governance: PASS; JSON status=ok, mode=governance-only.
+- npx prettier --check docs/README.md docs/adr/*.md plus touched MJS/package.json: PASS.
+- npm run lint: PASS using a temporary symlink to the sibling worktree's existing
+  node_modules; the first dependency-free attempt reported eslint missing.
+- npm run typecheck: PASS using the same temporary symlink; the first
+  dependency-free attempt reported missing type definitions/tool version drift.
+- gitleaks detect --source . --config .gitleaks.toml --redact: PASS, no leaks.
+- git diff --check: PASS.
+- LOC: current-state module 31, index module 49, validator 159, CLI 9,
+  fixture 59, test 164.
+- Full actual corpus: intentional exit 1. Parsed diagnostics contain only
+  stale-current-state-claim for docs/ARCHITECTURE.md and
+  docs/architecture/DEPLOYMENT_PIPELINE.md, both owned by deferred Todo 8.
+
+CLI manual QA
+- Happy actual corpus: parsed JSON requires IDs 0001-0009 exactly once;
+  0001-0005/0008/0009 Accepted; 0006/0007 Superseded; template absent from
+  checked files; diagnostics empty, proving indexed relative links resolve.
+- Failure actual CLI against .tmp/task9-malformed: exit 1; parsed stderr has
+  status=error and exact missing-index diagnostic "0008 is absent from the
+  documentation index". Fixture was removed immediately.
+
+UltraQA (all nine)
+1. malformed_input: fixtures reject lowercase status metadata, broken/malformed
+   links, duplicate/missing IDs, wrong direction, and missing chain targets.
+2. stale_state: missing README coverage fails; the actual full corpus fails only
+   on the two Todo 8-owned stale current-state files.
+3. dirty_worktree: status/diff reviewed; only Todo 9 README, package script,
+   validator/tests, and this evidence file are present. No unrelated edits.
+4. hung/long: tests, CLI, lint, and typecheck used timeout bounds; no process hung.
+5. flaky_repeat: the complete suite passed three consecutive bounded runs before
+   final status-placement coverage; the final 14-test suite also passed.
+6. misleading-success: JSON inventory/statuses/checked files and failure
+   diagnostics were parsed and asserted; exit code alone was not accepted.
+7. repeated_interruptions: every test fixture uses t.after recursive cleanup;
+   manual and legacy /tmp fixture directories/logs were removed.
+8. prompt_injection: N/A. Markdown is parsed only as data; no content is executed
+   or treated as instructions.
+9. cancel_resume: N/A. The validator is synchronous and one-shot with no durable
+   partial state to cancel or resume.
+
+Cleanup and scope
+- Removed temporary node_modules symlink, .tmp fixture, /tmp test/JSON logs, and
+  architecture-docs-* fixture directories. No generated outputs or processes.
+- ADR/template content and every docs path are unmoved; only docs/README.md is
+  modified under docs. No AGENTS, ADR rationale, plan checkbox, or history move.
+
+Independent review remediation
+- Cumulative base: eeaa5e71112209afe201c8a7c2948fb9e41ca4dd.
+- Red first, exact named pattern: all 3 fixtures failed before production edits.
+  A Superseded label 0009 with href 0007, a Supersedes label 0006 with href 0007,
+  and `Proposed arbitrary garbage` were all incorrectly accepted with status=ok.
+- Fix: ADR references now decode and resolve the href, require an existing
+  numbered file inside the real ADR directory, derive the target ID from that
+  filename, require the label ID to match, and apply existence/direction rules
+  to the href-derived ID. Non-ADR free text remains allowed for Supersedes.
+  Status parsing now accepts only exact normalized forms, the linked Superseded
+  form, and ADR 0001's one intentional partial-supersession note.
+- Green: exact remediation pattern PASS 3/3; cumulative suite PASS 17/17 and
+  PASS on three consecutive bounded repeats.
+- Fail-closed QA: malformed-percent, missing-file, and outside-ADR hrefs each
+  produced status=error with missing-supersession-target. The real malformed
+  label/href CLI exited 1 with exact adr-link-label-mismatch (0009 vs 0007).
+- Actual corpus: governance JSON inventory remained exactly 0001-0009 with the
+  expected statuses and no template/diagnostics. Full mode remained intentionally
+  red only for Todo 8's docs/ARCHITECTURE.md and
+  docs/architecture/DEPLOYMENT_PIPELINE.md stale-current-state-claim diagnostics.
+- Static gates: Prettier, lint, typecheck, git diff --check, and redacted gitleaks
+  all PASS. LOC: ADR-link helper 89, validator 115, test 193; every touched
+  source stays <=200 lines.
+- Cleanup: temporary fixture tree, test/JSON/TAP logs, node_modules symlink,
+  skill-read logs, and architecture-docs-* directories removed; no process or
+  generated output remains. No document, ADR rationale, AGENTS, or plan changed.

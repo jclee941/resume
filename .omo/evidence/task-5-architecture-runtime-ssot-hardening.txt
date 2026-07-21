@@ -1,0 +1,88 @@
+Task 5 - Make disabled Queue capabilities truthful across runtime and OpenAPI
+Captured: 2026-07-12 Asia/Seoul
+Base SHA: 4aa7db2f93608aa544228243732692aeccaa7a4a
+
+Scope
+- Public GET /api/queue/status reports Queue binding capability without authentication.
+- Protected POST /api/queue/enqueue enforces authentication -> CSRF -> payload -> Queue ordering.
+- Queue binding remains disabled in Wrangler configuration; no resource was provisioned or enabled.
+
+TDD evidence
+1. Passing pre-edit characterization on unchanged production code:
+   npm run test:jest -- --runInBand tests/unit/job-dashboard/queue-routes.test.js tests/unit/job-dashboard/auth-session-token.test.js
+   Result: PASS, 2 suites, 14 tests. It pinned public Queue status policy, missing-token 503 vs configured/no-credential 401, and HMAC session-token authentication without SESSIONS.
+2. Failing-first behavior suite before production edits, same exact command:
+   Result: expected FAIL, 2 suites, 21 failed and 16 passed. Failures were contract-specific: enqueue was unprotected, status advertised 200/ok while unbound, auth precedence reached CSRF, malformed/non-object/schema inputs returned old 500/400 shapes, missing binding returned 500, and successful enqueue returned 200 without normalized response fields.
+3. After minimal implementation, same exact command:
+   Result: PASS, 2 suites, 37 tests.
+
+Automated verification
+- npm run test:jest -- --runInBand tests/unit/job-dashboard/queue-routes.test.js tests/unit/job-dashboard/auth-session-token.test.js
+  PASS twice after implementation: 2 suites, 37 tests each run.
+- npm run test:jest -- --runInBand tests/unit/job-dashboard/queue-routes.test.js tests/unit/job-dashboard/auth-session-token.test.js tests/unit/job-dashboard/route-index-orchestrator.test.js
+  PASS after review remediation: 3 suites, 44 tests. Queue tests import the actual Worker default export and call fetch; only cloudflare:workers base classes are virtualized.
+- npm run test:jest -- --runInBand tests/unit/job-dashboard
+  PASS: 21 suites, 122 tests.
+- npm run test:jest -- --runInBand tests/unit/job-dashboard/queue-routes.test.js tests/unit/job-dashboard/auth-session-token.test.js tests/unit/job-dashboard/route-modules.test.js
+  PASS: 3 suites, 61 tests.
+- npm run test:jest -- --runInBand tests/unit/job-dashboard/queue-routes.test.js --testNamePattern='returns unauthorized before CSRF|returns authentication unavailable before CSRF|enqueues one normalized message with defaults'
+  PASS: 3 selected tests. Observable: ADMIN_TOKEN present + SESSIONS absent/no credentials = exact 401; missing ADMIN_TOKEN = exact 503 before CSRF/payload; fake binding = exact 202 and one normalized send.
+- npm run validate:openapi
+  PASS (exit 0). Enqueue declares (bearer + CSRF header + CSRF cookie) OR (session cookie + CSRF header + CSRF cookie). The only emitted warning is the Redocly operation-4xx-response policy applied to the intentionally public Queue status operation, whose truthful statuses are 200 and 503.
+- Structural YAML parse assertion:
+  Queue enqueue responses = 202,400,401,403,503; Queue status responses = 200,503; delaySeconds = integer 0..43200.
+- npx eslint apps/job-dashboard/src/index.js apps/job-dashboard/src/routes/admin.js apps/job-dashboard/src/queues/queue-request.js tests/unit/job-dashboard/queue-routes.test.js tests/unit/job-dashboard/auth-session-token.test.js
+  PASS.
+- npm run typecheck
+  PASS.
+- git diff --check
+  PASS.
+- JSON5 configuration assertion:
+  PASS: apps/portfolio/wrangler.jsonc production producers=0, consumers=0; root wrangler.jsonc has no Queue binding.
+- Post-write size: queue-routes.test.js=158 pure LOC, auth-session-token.test.js=108, queue-request.js=50, admin.js=49, index.js=174 pure LOC and 199 physical lines. All touched JS files remain within enforced limits.
+
+Real HTTP QA
+- Build: npm run build
+  PASS; generated ignored Worker from source at base SHA. No generated file was staged.
+- Managed server:
+  timeout --signal=TERM 120s bash -c 'npx wrangler dev --config wrangler.jsonc --port 8787 --local ...'
+  The child PID had an EXIT trap and the outer command had a 120-second TERM bound.
+- Required public status command executed:
+  STATUS=$(curl -sS -o /tmp/queue-status.json -w '%{http_code}' http://127.0.0.1:8787/job/api/queue/status)
+  Local workerd emitted gzip framing, so the captured body was decoded before jq; the HTTP command itself was unchanged.
+  Observed: status_http=503 body={"status":"disabled","available":false,"queue":"crawl-tasks"}
+  jq assertion: PASS for .status=="disabled", .available==false, .queue=="crawl-tasks".
+- Auth-unavailable POST on the same real merged Worker, ADMIN_TOKEN absent, malformed body, no CSRF:
+  curl -X POST --data-binary '{' http://127.0.0.1:8787/job/api/queue/enqueue
+  Observed: post_no_admin_http=503 body={"error":"Authentication unavailable","status":"disabled","available":false}.
+  This proves authentication availability is evaluated before CSRF and JSON parsing on the real route.
+- Configured-auth 401 and fake-binding 202 used the actual Worker fetch surface with only Cloudflare Workflow/Durable Object base classes virtualized, because the committed Wrangler config deliberately provides neither an injectable Queue binding nor a SESSIONS-free environment. Exact invocation is the focused Jest command above; binary observables were 401 exact JSON, 202 exact normalized JSON, and send call count exactly one.
+
+Post-implementation five-lane review
+- Goal/constraint verification: PASS, high confidence.
+- Hands-on QA execution: PASS after reproducing and remediating an index line-limit regression and initial virtual-module resolver failure.
+- Code quality: PASS after adding OpenAPI auth/CSRF request security and switching tests from a duplicated policy harness to actual Worker fetch.
+- Security: PASS; fail-closed auth/CSRF/input/Queue ordering, generic errors, no credential/payload logging, no Queue activation.
+- Context mining: PASS; constants/default/range/config/history cross-check found no missed Todo 5 requirement. Integration watch item: Todo 1 must preserve explicit empty root queue arrays when it replaces the child config.
+
+ULTRAQA adversarial probes (all nine)
+1. malformed_input: PASS. Malformed JSON, null, array, string, missing/unknown type, missing/null/array payload, invalid priority, fractional/negative/over-max delay, and 0/43200 boundaries covered.
+2. stale_state: PASS. Fresh env permutations cover ADMIN_TOKEN missing/present, SESSIONS absent, Queue binding missing/present, and public status missing/present binding.
+3. dirty_worktree: PASS. Dedicated detached worktree started clean; final diff contains only Todo 5 runtime, contract, tests, and this evidence file. Ignored generated Worker/data remain unstaged.
+4. hung_or_long_commands: PASS. Jest is runInBand; Wrangler was bounded by timeout and PID EXIT trap. Earlier short exploratory server bounds expired safely; final 120-second harness completed both HTTP assertions.
+5. flaky_tests: PASS. Exact focused 37-test suite passed repeatedly; expanded 61-test route suite also passed.
+6. misleading_success_output: PASS. Assertions check exact HTTP status/body, exact OpenAPI status sets/ranges, Queue array counts, and fake send count/arguments rather than relying only on exit code.
+7. repeated_interruptions: PASS. Every bounded Wrangler attempt terminated; final process/port/temp cleanup receipt is below.
+8. prompt_injection: N/A. Boundary accepts only a structured JSON object with fixed message/priority enums; no prompt or free-form instruction execution exists.
+9. cancel_resume: N/A. Enqueue is a one-shot Queue send with no resumable state; send count is asserted exactly once.
+
+Cleanup receipt
+- task5 Wrangler processes: 0
+- TCP port 8787: free
+- /tmp/queue-status.json: absent
+- /tmp/queue-post-no-auth.json: absent
+- /tmp/queue-wrangler.log and decoded intermediates: absent
+
+Residual risks
+- Actual Cloudflare Queue delivery is intentionally untested/unavailable because Queue bindings remain disabled by scope. The in-memory fake proves normalized send arguments and cardinality only.
+- Redocly emits a non-failing 4XX-policy warning for the public status operation because its explicit contract has 200/503 and no fabricated client error.

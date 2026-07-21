@@ -17,9 +17,15 @@
  */
 
 /**
+ * @typedef {Object} CsrfTokenEntry
+ * @property {string} token
+ * @property {number} createdAt
+ */
+
+/**
  * @typedef {Object} SessionStore
  * @property {Map<string, {email: string, expiresAt: number}>} sessions
- * @property {Map<string, string>} csrfTokens
+ * @property {Map<string, CsrfTokenEntry>} csrfTokens
  */
 
 /**

@@ -91,7 +91,7 @@ module.exports = defineConfig({
           // edge router (locale routing, /sw.js cache headers, applyResponseHeaders).
           // Run from repo root so wrangler.jsonc's build command
           // (`npm run build`, cwd ".") resolves the root-only sync/build chain.
-          command: 'npx wrangler dev --config apps/portfolio/wrangler.jsonc --port 8787 --local',
+          command: 'CLOUDFLARE_ENV= npx wrangler dev --config wrangler.jsonc --port 8787 --local',
           port: 8787,
           reuseExistingServer: !process.env.CI,
           // wrangler.jsonc's build command runs the root build on startup;

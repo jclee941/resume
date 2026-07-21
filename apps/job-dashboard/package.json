@@ -5,6 +5,7 @@
   "type": "module",
   "description": "Job automation dashboard Cloudflare Worker",
   "dependencies": {
+    "@resume/env": "*",
     "@resume/schemas": "*",
     "@resume/shared": "*",
     "@resume/types": "*"

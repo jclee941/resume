@@ -286,12 +286,8 @@ jobs:
             echo "✅ Built $name"
           done < <(find tools/scripts infrastructure -type f -name '*.go')
 
-      - name: Validate Cloudflare deployment config parity
-        run: |
-          go test -race -shuffle=on -count=1 \
-            tools/ci/validate-cloudflare-bindings.go \
-            tools/ci/validate-cloudflare-bindings_test.go
-          go run ./tools/ci/validate-cloudflare-native.go
+      - name: Validate Cloudflare native structure
+        run: go run ./tools/ci/validate-cloudflare-native.go
 
   validate-openapi:
     name: OpenAPI Spec Validation
@@ -335,6 +331,57 @@ jobs:
         # is missing from .dev.vars.example.
         run: go run ./tools/ci/check-env-schema-drift.go
 
+  architecture-hardening:
+    name: Architecture Hardening Core
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci --prefer-offline --no-audit --no-fund
+      - name: Run the exact architecture hardening aggregate
+        run: npm run verify:architecture-hardening:core
+
+  wrangler-dry-run:
+    name: Wrangler Production and Preview Dry Runs
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci --prefer-offline --no-audit --no-fund
+      - name: Validate parsed binding inventories
+        run: npm run verify:worker-config
+      - name: Package production and preview from the root config
+        env:
+          GIT_SHA: ${{ github.sha }}
+        run: |
+          npx wrangler deploy --config wrangler.jsonc --dry-run --outdir /tmp/resume-production-dry-run
+          npx wrangler deploy --config wrangler.jsonc --env preview --dry-run --outdir /tmp/resume-preview-dry-run
+
+  merged-worker-e2e:
+    name: Merged Worker Contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci --prefer-offline --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: Exercise the root Wrangler merged Worker
+        env:
+          GIT_SHA: ${{ github.sha }}
+        run: CI=1 RUN_EXTERNAL_E2E=1 npx playwright test tests/e2e/merged-worker-contract.spec.js --project=chromium
+
   summary:
     name: CI Summary
     runs-on: ubuntu-latest
@@ -350,6 +397,9 @@ jobs:
         validate-go,
         validate-openapi,
         validate-env-drift,
+        architecture-hardening,
+        wrangler-dry-run,
+        merged-worker-e2e,
       ]
     if: always()
     permissions:
@@ -368,6 +418,9 @@ jobs:
           echo "validate-go: ${{ needs.validate-go.result }}"
           echo "validate-openapi: ${{ needs.validate-openapi.result }}"
           echo "validate-env-drift: ${{ needs.validate-env-drift.result }}"
+          echo "architecture-hardening: ${{ needs.architecture-hardening.result }}"
+          echo "wrangler-dry-run: ${{ needs.wrangler-dry-run.result }}"
+          echo "merged-worker-e2e: ${{ needs.merged-worker-e2e.result }}"
           if [[ "${{ needs.secret-scan.result }}" != "success" || \
                 "${{ needs.lint.result }}" != "success" || \
                 "${{ needs.typecheck.result }}" != "success" || \
@@ -377,35 +430,12 @@ jobs:
                 "${{ needs.validate-data.result }}" != "success" || \
                 "${{ needs.validate-go.result }}" != "success" || \
                 "${{ needs.validate-openapi.result }}" != "success" || \
-                "${{ needs.validate-env-drift.result }}" != "success" ]]; then
+                "${{ needs.validate-env-drift.result }}" != "success" || \
+                "${{ needs.architecture-hardening.result }}" != "success" || \
+                "${{ needs.wrangler-dry-run.result }}" != "success" || \
+                "${{ needs.merged-worker-e2e.result }}" != "success" || \
+                "${{ needs.merged-worker-e2e.result }}" == "cancelled" ]]; then
             echo "❌ One or more CI jobs failed"
             exit 1
           fi
           echo "✅ All CI jobs passed"
-
-      # Override the spurious 'Workers Builds: resume' check posted by the
-      # Cloudflare Workers and Pages GitHub App on every push. The App's
-      # dashboard is mis-configured (production deploys are handled by
-      # Cloudflare Workers Builds), and the App posts a 1-second
-      # 'failure' check_run that cannot be removed via API (requires UI).
-      # Posting a same-name check_run as github-actions[bot] makes the GitHub
-      # UI render the success alongside the spurious failure, reducing red-X
-      # noise on commit lists and PR pages. Non-fatal on error.
-      # Documented in .sisyphus/evidence/workers-builds-infra.md.
-      - name: "Override spurious 'Workers Builds: resume' check with success"
-        if: needs.secret-scan.result == 'success' && needs.lint.result == 'success' && needs.typecheck.result == 'success' && needs.test-jest.result == 'success' && needs.test-node.result == 'success' && needs.test-workspace.result == 'success' && needs.validate-data.result == 'success' && needs.validate-go.result == 'success' && needs.validate-openapi.result == 'success' && needs.validate-env-drift.result == 'success'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh api \
-            --method POST \
-            -H 'Accept: application/vnd.github+json' \
-            -H 'X-GitHub-Api-Version: 2022-11-28' \
-            "/repos/${{ github.repository }}/check-runs" \
-            -f name='Workers Builds: resume' \
-            -f head_sha='${{ github.event.pull_request.head.sha || github.sha }}' \
-            -f status='completed' \
-            -f conclusion='success' \
-            -f 'output[title]=CI passed (override)' \
-            -f 'output[summary]=Spurious Workers Builds check overridden by ci.yml after all required CI jobs succeeded. Production deploy is handled by Cloudflare Workers Builds. See .sisyphus/evidence/workers-builds-infra.md.' \
-            || echo 'Override step failed (non-fatal)'

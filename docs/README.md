@@ -2,93 +2,68 @@
 
 > Parent: [AGENTS.md](AGENTS.md)
 
-This is the main entry point for the docs tree. Start with the maintained
-sections below, then use the archived sections for historical context only.
+This index separates current guidance from superseded decisions and historical
+context. ADR files stay in place so their decision history remains intact.
 
-## Active Documentation (maintained, accurate)
+## Accepted
 
-### Architecture Decision Records (`docs/adr/`)
+- [ADR 0001: Monorepo Structure](adr/0001-monorepo-structure.md) — accepted;
+  its former Bazel facade portion is superseded by ADR 0008.
+- [ADR 0002: Zero-Runtime I/O](adr/0002-zero-runtime-io.md)
+- [ADR 0003: Resume Data Single Source of Truth](adr/0003-single-source-of-truth.md)
+- [ADR 0004: Stealth-First Crawling](adr/0004-stealth-crawling.md)
+- [ADR 0005: Cloudflare Workers](adr/0005-cloudflare-workers.md)
+- [ADR 0008: Drop the Bazel Facade](adr/0008-drop-bazel-facade.md)
+- [ADR 0009: Single-Worker Consolidation](adr/0009-single-worker-consolidation.md)
 
-- [0001-monorepo-structure.md](adr/0001-monorepo-structure.md), monorepo layout
-  and ownership boundaries.
-- [0002-zero-runtime-io.md](adr/0002-zero-runtime-io.md), runtime code should
-  avoid unexpected I/O.
-- [0003-single-source-of-truth.md](adr/0003-single-source-of-truth.md),
-  canonical resume data lives in one place.
-- [0004-stealth-crawling.md](adr/0004-stealth-crawling.md), crawler behavior and
-  anti-detection constraints.
-- [0005-cloudflare-workers.md](adr/0005-cloudflare-workers.md), Cloudflare
-  Workers as the primary runtime.
-- [0006-single-worker-architecture.md](adr/0006-single-worker-architecture.md),
-  worker boundary and deployment shape.
-- [0007-msa-service-split.md](adr/0007-msa-service-split.md), service split
-  guidance for the job automation stack.
+## Superseded
 
-### Architecture (`docs/architecture/`)
+- [ADR 0006: Single-Worker Architecture](adr/0006-single-worker-architecture.md) —
+  superseded by ADR 0007.
+- [ADR 0007: MSA Service Split](adr/0007-msa-service-split.md) — superseded by
+  ADR 0009.
 
-- [ARCHITECTURE.md](ARCHITECTURE.md), top-level architecture overview.
-- [system-overview.md](architecture/system-overview.md), current system map and
-  major components.
-- [DEPLOYMENT_PIPELINE.md](architecture/DEPLOYMENT_PIPELINE.md), build and
-  deployment flow.
-- [component-inventory.md](architecture/component-inventory.md), inventory of
-  major runtime pieces.
-- [JOB_JCLEE_ME_IMPLEMENTATION.md](architecture/JOB_JCLEE_ME_IMPLEMENTATION.md),
-  job platform sync implementation notes.
-- [project-context.md](architecture/project-context.md), repo and runtime
-  context for the current system.
+## Current Architecture
 
-### Guides (`docs/guides/`)
+- [Architecture](ARCHITECTURE.md) — canonical current-state overview.
+- [System Overview](architecture/system-overview.md)
+- [Component Inventory](architecture/component-inventory.md)
+- [Deployment Pipeline](architecture/DEPLOYMENT_PIPELINE.md)
+- [KV Ownership](architecture/kv-ownership.md)
+- [Job Platform Implementation](architecture/JOB_JCLEE_ME_IMPLEMENTATION.md)
+- [Project Context](architecture/project-context.md)
 
-#### Getting Started
+## Guides/Runbooks
 
-- [QUICK_START.md](guides/QUICK_START.md)
-- [LOCAL_DEBUGGING.md](guides/LOCAL_DEBUGGING.md)
-- [PROJECT_STRUCTURE_MAP.md](guides/PROJECT_STRUCTURE_MAP.md)
+- [Quick Start](guides/QUICK_START.md)
+- [Local Debugging](guides/LOCAL_DEBUGGING.md)
+- [Project Structure Map](guides/PROJECT_STRUCTURE_MAP.md)
+- [Manual Deployment](guides/MANUAL_DEPLOYMENT_GUIDE.md)
+- [Production Deployment](guides/PRODUCTION_DEPLOYMENT_GUIDE.md)
+- [Cloudflare GitHub Auto Deploy](guides/CLOUDFLARE_GITHUB_AUTO_DEPLOY.md)
+- [CI/CD Automation](guides/CI_CD_AUTOMATION.md)
+- [Final Deployment Checklist](guides/FINAL_DEPLOYMENT_CHECKLIST.md)
+- [Monitoring Setup](guides/MONITORING_SETUP.md)
+- [Monitoring](guides/MONITORING_GUIDE.md)
+- [Dashboard Endpoints](guides/DASHBOARD_ENDPOINTS.md)
+- [Infrastructure](guides/INFRASTRUCTURE.md)
+- [Cloudflare API Token Setup](guides/CF_API_TOKEN_SETUP.md)
+- [Cloudflare Authentication](guides/CLOUDFLARE_AUTH_METHODS.md)
+- [Slack Integration](guides/SLACK_INTEGRATION.md)
+- [Troubleshooting](guides/TROUBLESHOOTING.md)
+- [Fetch Error Guide](guides/FETCH_ERROR_GUIDE.md)
+- [TypeScript Session Troubleshooting](guides/TS_SESSION_TROUBLESHOOTING.md)
+- [API Reference](api/README.md)
 
-#### Deployment
+## Historical/Planning
 
-- [MANUAL_DEPLOYMENT_GUIDE.md](guides/MANUAL_DEPLOYMENT_GUIDE.md)
-- [PRODUCTION_DEPLOYMENT_GUIDE.md](guides/PRODUCTION_DEPLOYMENT_GUIDE.md)
-- [CLOUDFLARE_GITHUB_AUTO_DEPLOY.md](guides/CLOUDFLARE_GITHUB_AUTO_DEPLOY.md)
-- [CI_CD_AUTOMATION.md](guides/CI_CD_AUTOMATION.md)
-- [FINAL_DEPLOYMENT_CHECKLIST.md](guides/FINAL_DEPLOYMENT_CHECKLIST.md)
-
-#### Monitoring
-
-- [MONITORING_SETUP.md](guides/MONITORING_SETUP.md)
-- [MONITORING_GUIDE.md](guides/MONITORING_GUIDE.md)
-- [DASHBOARD_ENDPOINTS.md](guides/DASHBOARD_ENDPOINTS.md)
-
-#### Platform-Specific
-
-- [INFRASTRUCTURE.md](guides/INFRASTRUCTURE.md)
-- [CF_API_TOKEN_SETUP.md](guides/CF_API_TOKEN_SETUP.md)
-- [CLOUDFLARE_AUTH_METHODS.md](guides/CLOUDFLARE_AUTH_METHODS.md)
-- [SLACK_INTEGRATION.md](guides/SLACK_INTEGRATION.md)
-
-#### Troubleshooting
-
-- [TROUBLESHOOTING.md](guides/TROUBLESHOOTING.md)
-- [FETCH_ERROR_GUIDE.md](guides/FETCH_ERROR_GUIDE.md)
-  PQ|- [TS_SESSION_TROUBLESHOOTING.md](guides/TS_SESSION_TROUBLESHOOTING.md)
-
-### API (`docs/api/`)
-
-- [API README](api/README.md)
-
-## Deleted Directories (removed 2026-04-14)
-
-The following directories were purged as historical-only content with no active
-references:
-
-- `docs/reports/` - 36 session reports
-- `docs/analysis/` - 8 codebase analyses
-- `docs/planning/` - 9 archived roadmaps
-- `docs/testing/` - 2 ULW test artifacts
-- `docs/thoughts/ledgers/` - 3 continuity ledgers
-
-All content remains recoverable via `git log --diff-filter=D -- docs/reports/`.
+Time-bound audits, session reviews, implementation plans, and retired guidance
+remain in their existing paths where tracked. Treat them as context rather than
+current architecture. The previously removed `docs/reports/` (36 session
+reports), `docs/analysis/` (8 analyses), `docs/planning/` (9 roadmaps),
+`docs/testing/` (2 ULW artifacts), and `docs/thoughts/ledgers/` (3 continuity
+ledgers) remain recoverable through Git history. No history is relocated by this
+index.
 
 ## Document Standards
 

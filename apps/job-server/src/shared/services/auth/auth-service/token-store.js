@@ -24,7 +24,7 @@ export function createSession(store, email, sessionTTL) {
  */
 export function generateCsrfToken(store, sessionId) {
   const token = randomBytes(32).toString('hex');
-  store.csrfTokens.set(sessionId, token);
+  store.csrfTokens.set(sessionId, { token, createdAt: Date.now() });
   return token;
 }
 
