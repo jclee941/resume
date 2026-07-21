@@ -7,7 +7,10 @@ const path = require('path');
 // diverge, the scheduled() branch silently never matches and resume-sync never runs.
 const root = path.join(__dirname, '../..');
 const wranglerRaw = fs.readFileSync(path.join(root, 'wrangler.jsonc'), 'utf8');
-const indexRaw = fs.readFileSync(path.join(root, 'apps/job-dashboard/src/index.js'), 'utf8');
+const cronRouterRaw = fs.readFileSync(
+  path.join(root, 'apps/job-dashboard/src/handlers/scheduled/cron-router.js'),
+  'utf8'
+);
 
 const AUTO_APPLY_CRON = '0 23 * * *';
 
@@ -21,7 +24,7 @@ function cronArrays(src) {
 }
 
 describe('resume-sync cron wiring (CF-native Wave 1)', () => {
-  const resumeSyncCron = extractResumeSyncCron(indexRaw);
+  const resumeSyncCron = extractResumeSyncCron(cronRouterRaw);
   const crons = cronArrays(wranglerRaw).join(' | ');
 
   test('index.js declares a RESUME_SYNC_CRON constant', () => {
@@ -38,8 +41,8 @@ describe('resume-sync cron wiring (CF-native Wave 1)', () => {
   });
 
   test('the resume-sync branch is guarded and defaults to dryRun', () => {
-    expect(indexRaw).toContain('controller?.cron === RESUME_SYNC_CRON');
-    expect(indexRaw).toContain('RESUME_SYNC_WORKFLOW');
-    expect(indexRaw).toContain('RESUME_SYNC_CRON_DRY_RUN');
+    expect(cronRouterRaw).toContain('controller?.cron === RESUME_SYNC_CRON');
+    expect(cronRouterRaw).toContain('RESUME_SYNC_WORKFLOW');
+    expect(cronRouterRaw).toContain('RESUME_SYNC_CRON_DRY_RUN');
   });
 });
