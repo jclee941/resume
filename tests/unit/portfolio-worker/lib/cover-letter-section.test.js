@@ -63,6 +63,20 @@ describe('generateCoverLetterSection', () => {
     expect(html).not.toContain(coverLetter.ko.headline);
   });
 
+  test('S3 (locale): keeps Japanese katakana phrases atomic without changing their text', () => {
+    const entry = {
+      headline: '見出し',
+      paragraphs: ['(株)ガオンヌリでセキュリティ基盤を担当'],
+      closing: '以上',
+    };
+
+    const html = generateCoverLetterSection(entry);
+
+    expect(html).toContain('<span class="cover-letter__atomic-phrase">(株)ガオンヌリ</span>');
+    expect(html).toContain('<span class="cover-letter__atomic-phrase">セキュリティ</span>');
+    expect(html.replace(/<[^>]+>/g, '')).toContain(entry.paragraphs[0]);
+  });
+
   test('S2 (edge): null/empty/malformed entry returns empty string, never throws', () => {
     expect(() => generateCoverLetterSection(null)).not.toThrow();
     expect(generateCoverLetterSection(null)).toBe('');

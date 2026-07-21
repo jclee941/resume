@@ -35,7 +35,13 @@ async function inspectWrapping(page, tokens) {
               const top = lineTop(node, index);
               if (top !== null) tops.add(top);
             }
-            if (tops.size) counts.push(tops.size);
+            if (tops.size) {
+              counts.push({
+                lineCount: tops.size,
+                parentClass: node.parentElement?.className || '',
+                text: node.data.trim().slice(0, 80),
+              });
+            }
             start = node.data.indexOf(token, start + token.length);
           }
         }
@@ -60,7 +66,24 @@ async function inspectWrapping(page, tokens) {
       }
     }
 
-    return { tokenLines, kinsokuViolations };
+    const card = document.querySelector('.cover-letter-card')?.getBoundingClientRect();
+    const clippedCoverLetterElements = card
+      ? [...document.querySelectorAll('.cover-letter__para, .cover-letter__index, .cover-letter__text')]
+          .filter((element) => {
+            const rect = element.getBoundingClientRect();
+            return rect.width > 0 && (rect.left < card.left - 0.5 || rect.right > card.right + 0.5);
+          })
+          .map((element) => ({
+            className: element.className,
+            text: element.textContent?.trim().slice(0, 48),
+            cardLeft: card.left,
+            cardRight: card.right,
+            left: element.getBoundingClientRect().left,
+            right: element.getBoundingClientRect().right,
+          }))
+      : [];
+
+    return { tokenLines, kinsokuViolations, clippedCoverLetterElements };
   }, tokens);
 }
 
@@ -72,13 +95,17 @@ for (const viewport of VIEWPORTS) {
       await page.evaluate(() => document.fonts.ready);
 
       const result = await inspectWrapping(page, scenario.tokens);
-      for (const [token, lineCounts] of Object.entries(result.tokenLines)) {
-        expect(lineCounts.length, `${token} must be rendered`).toBeGreaterThan(0);
-        expect(Math.max(...lineCounts), `${token} must not split across visual lines`).toBe(1);
+      for (const [token, occurrences] of Object.entries(result.tokenLines)) {
+        expect(occurrences.length, `${token} must be rendered`).toBeGreaterThan(0);
+        expect(
+          Math.max(...occurrences.map(({ lineCount }) => lineCount)),
+          `${token} must not split across visual lines: ${JSON.stringify(occurrences)}`
+        ).toBe(1);
       }
       if (scenario.locale === 'ja') {
         expect(result.kinsokuViolations, 'Japanese closing punctuation or small kana at line start').toEqual([]);
       }
+      expect(result.clippedCoverLetterElements, 'cover-letter content must stay inside its card').toEqual([]);
     });
   }
 }

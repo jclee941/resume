@@ -1,5 +1,14 @@
 const { escapeHtml } = require('../template-sanitizer');
 
+const JAPANESE_ATOMIC_PHRASE = /(?:\(株\))?[\p{Script=Katakana}ー]{2,}/gu;
+
+function renderParagraphText(value) {
+  return escapeHtml(value).replace(
+    JAPANESE_ATOMIC_PHRASE,
+    '<span class="cover-letter__atomic-phrase">$&</span>'
+  );
+}
+
 /**
  * A cover-letter locale entry is renderable only when it carries the three
  * required SSoT fields with content. Mirrors the validity contract of the
@@ -44,7 +53,7 @@ function generateCoverLetterSection(entry) {
       const index = String(i + 1).padStart(2, '0');
       return `<li class="cover-letter__para">
             <span class="cover-letter__index" aria-hidden="true">${index}</span>
-            <p class="cover-letter__text">${escapeHtml(paragraph)}</p>
+            <p class="cover-letter__text">${renderParagraphText(paragraph)}</p>
           </li>`;
     })
     .join('\n          ');
