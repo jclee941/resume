@@ -915,42 +915,6 @@
               "type": "string"
             }
           },
-          "fullStackEvidence": {
-            "type": "object",
-            "description": "Structured full-stack capability evidence for portfolio rendering",
-            "properties": {
-              "userSurface": {
-                "type": "string",
-                "minLength": 1
-              },
-              "backendApi": {
-                "type": "string",
-                "minLength": 1
-              },
-              "dataAsync": {
-                "type": "string",
-                "minLength": 1
-              },
-              "securityReliability": {
-                "type": "string",
-                "minLength": 1
-              },
-              "deliveryOperations": {
-                "type": "string",
-                "minLength": 1
-              },
-              "architectureSteps": {
-                "type": "array",
-                "minItems": 2,
-                "maxItems": 6,
-                "items": {
-                  "type": "string",
-                  "minLength": 1
-                }
-              }
-            },
-            "additionalProperties": false
-          },
           "featured": {
             "type": "boolean",
             "description": "Whether to feature the project"

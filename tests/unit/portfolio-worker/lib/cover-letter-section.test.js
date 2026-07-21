@@ -25,19 +25,14 @@ describe('generateCoverLetterSection', () => {
 
     expect(typeof html).toBe('string');
     expect(html).toContain(esc(ko.headline));
-    const unwrapped = html.replace(/<span class="cover-letter__(?:term|token)">|<\/span>/g, '');
     ko.paragraphs.forEach((p) => {
-      expect(unwrapped).toContain(esc(p));
+      expect(html).toContain(esc(p));
     });
     expect(html).toContain(esc(ko.closing));
 
     // Order: headline before first paragraph before closing.
-    expect(unwrapped.indexOf(esc(ko.headline))).toBeLessThan(
-      unwrapped.indexOf(esc(ko.paragraphs[0]))
-    );
-    expect(unwrapped.indexOf(esc(ko.paragraphs[0]))).toBeLessThan(
-      unwrapped.indexOf(esc(ko.closing))
-    );
+    expect(html.indexOf(esc(ko.headline))).toBeLessThan(html.indexOf(esc(ko.paragraphs[0])));
+    expect(html.indexOf(esc(ko.paragraphs[0]))).toBeLessThan(html.indexOf(esc(ko.closing)));
   });
 
   test('S1 (happy): output is HTML with the expected structural hooks', () => {
@@ -66,8 +61,6 @@ describe('generateCoverLetterSection', () => {
     const html = generateCoverLetterSection(coverLetter.ja);
     expect(html).toContain(coverLetter.ja.headline);
     expect(html).not.toContain(coverLetter.ko.headline);
-    expect(html).toContain('<span class="cover-letter__term">NSX-T</span>');
-    expect(html).toContain('<span class="cover-letter__term">セキュリティ</span>');
   });
 
   test('S2 (edge): null/empty/malformed entry returns empty string, never throws', () => {

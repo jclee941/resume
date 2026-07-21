@@ -188,6 +188,17 @@
   border-radius: 50%;
   background: var(--level-color, var(--color-success));
   box-shadow: var(--shadow-sm);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .skill-domain-card__level-label {

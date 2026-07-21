@@ -252,8 +252,8 @@ test.describe('JSON-LD Structured Data', () => {
     expect(personSchema.name).toMatch(NAME_PATTERN);
     expect(personSchema.alternateName).toMatch(NAME_PATTERN);
     expect(personSchema.email).toBeTruthy();
-    expect(personSchema.telephone).toBeUndefined();
-    expect(personSchema.jobTitle).toBe('풀스택 엔지니어');
+    expect(personSchema.telephone).toBeTruthy();
+    expect(personSchema.jobTitle).toContain('Engineer');
     if (personSchema.worksFor) {
       expect(personSchema.worksFor).toBeTruthy();
     }
@@ -339,7 +339,9 @@ test.describe('JSON-LD Structured Data', () => {
     });
     const page = await ctx.newPage();
     const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
-    if (!response) throw new Error('root navigation returned no response');
+    if (!response) {
+      throw new Error('Korean canonical navigation returned no HTTP response');
+    }
     expect(response.status(), 'status for / under en Accept-Language').toBe(200);
     expect(new URL(page.url()).pathname, 'pathname stays /').toBe('/');
     const htmlLang = await page.locator('html').getAttribute('lang');

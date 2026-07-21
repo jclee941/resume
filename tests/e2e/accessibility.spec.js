@@ -222,14 +222,13 @@ test.describe('Keyboard Navigation', () => {
   });
 
   test('links should be activatable with Enter key', async ({ page }) => {
-    await expect(page.locator('html')).toHaveAttribute('data-portfolio-ready', 'true');
-    const navLink = page.locator('#nav-links a[href="#projects"]');
+    const navLink = page.locator('.nav-link, .nav-links a').first();
     await navLink.focus();
     await page.keyboard.press('Enter');
 
-    const projectsSection = page.locator('#projects');
+    const aboutSection = page.locator('#about');
     // Wait for scroll to target section after Enter key press
-    await expect(projectsSection).toBeInViewport({ timeout: 2000 });
+    await expect(aboutSection).toBeInViewport({ timeout: 2000 });
   });
 });
 

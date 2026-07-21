@@ -153,6 +153,17 @@
   word-break: break-word;
 }
 
+:lang(ko) .competency-item {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+@supports (word-break: auto-phrase) {
+  :where(:lang(ko), :lang(ja)) .competency-item {
+    word-break: auto-phrase;
+  }
+}
+
 .competency-item__marker {
   color: var(--color-accent);
   flex-shrink: 0;

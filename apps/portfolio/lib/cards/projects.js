@@ -2,8 +2,7 @@ const { TEMPLATE_CACHE } = require('../config');
 const { escapeHtml } = require('../template-sanitizer');
 const logger = require('../../logger');
 const {
-  assertFeaturedProjectContract,
-  buildProjectEvidence,
+  buildProjectCaseNotes,
   buildProjectReviewRail,
   projectAnchor,
   projectLabelsFor,
@@ -22,9 +21,10 @@ function projectDashboards(project) {
     : [];
 }
 
-function buildProjectMeta(project) {
+function buildProjectMeta(project, githubUrl, demoUrl) {
   const language = project.language ? escapeHtml(String(project.language)) : null;
   const metaBadges = [];
+  const dashboards = projectDashboards(project);
 
   if (language) {
     metaBadges.push(
@@ -32,10 +32,12 @@ function buildProjectMeta(project) {
     );
   }
 
-  if (project.status) {
-    metaBadges.push(
-      `<span class="project-meta-badge project-meta-badge--status">${escapeHtml(String(project.status))}</span>`
-    );
+  metaBadges.push('<span class="project-meta-badge project-meta-badge--active">ACTIVE</span>');
+
+  if (demoUrl || dashboards.length > 0) {
+    metaBadges.push('<span class="project-meta-badge project-meta-badge--live">LIVE</span>');
+  } else if (githubUrl) {
+    metaBadges.push('<span class="project-meta-badge project-meta-badge--repo">REPO</span>');
   }
 
   return metaBadges.join('');
@@ -84,10 +86,7 @@ function generateProjectCards(projectsData, dataHash) {
     return TEMPLATE_CACHE.projectCardsHtml;
   }
 
-  const FEATURED_VISIBLE = 3;
-  if (projectsData.some((project) => project.fullStackEvidence)) {
-    assertFeaturedProjectContract(projectsData);
-  }
+  const FEATURED_VISIBLE = 5;
   const labels = projectLabelsFor(projectsData);
   const sortedProjects = [...projectsData].sort(
     (a, b) => (a.displayOrder ?? 999) - (b.displayOrder ?? 999)
@@ -102,9 +101,9 @@ function generateProjectCards(projectsData, dataHash) {
       const hasLink = demoUrl || dashboardUrl || githubUrl;
       const link = demoUrl || dashboardUrl || githubUrl;
       const titleElement = buildProjectTitle(project, link, hasLink);
-      const metaLine = buildProjectMeta(project);
+      const metaLine = buildProjectMeta(project, githubUrl, demoUrl);
       const projectLinks = buildProjectLinks(project, githubUrl, demoUrl);
-      const evidence = buildProjectEvidence(project, labels);
+      const caseNotes = buildProjectCaseNotes(project, labels, githubUrl, demoUrl, dashboards);
       // Progressive disclosure: show the top FEATURED_VISIBLE projects (by
       // displayOrder) by default; collapse the rest behind a "\uB354\uBCF4\uAE30" toggle so
       // the section is curated without removing any project from the DOM.
@@ -120,12 +119,12 @@ function generateProjectCards(projectsData, dataHash) {
                      ${titleElement}
                  </h3>
              </div>
-              ${evidence}
+              ${caseNotes}
               <p class="project-description">${escapeHtml(project.description).replace(/\n/g, '<br>')}</p>
               <div class="project-tech">
                   ${escapeHtml(project.tech)}
               </div>
-              ${metaLine ? `<div class="project-meta">${metaLine}</div>` : ''}
+              ${metaLine ? `<div class="project-meta" aria-label="Project activity metadata">${metaLine}</div>` : ''}
               ${projectLinks}
           </li>`;
     })

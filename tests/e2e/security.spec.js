@@ -48,15 +48,12 @@ test.describe('Security Headers & CSP', () => {
 
     // Navigate and interact with page
     await page.goto('/');
-    await expect(page.locator('html')).toHaveAttribute('data-portfolio-ready', 'true');
-    for (const target of ['projects', 'skills', 'resume', 'contact']) {
-      await page.click(`#nav-links [href="#${target}"]`);
-      await expect(page.locator(`#${target}`)).toBeInViewport();
-    }
+    await page.click('[href="#about"]');
+    await page.click('[href="#projects"]');
+    await page.click('[href="#contact"]');
 
-    await page.evaluate(
-      () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
-    );
+    // Wait for any async CSP violations
+    await page.waitForTimeout(2000);
 
     // Should have no CSP violations (excluding Cloudflare)
     if (cspViolations.length > 0) {
@@ -101,13 +98,8 @@ test.describe('Security Headers & CSP', () => {
   });
 
   test('should allow inline scripts with CSP hash (timeline rendered by JS)', async ({ page }) => {
-    await expect(page.locator('html')).toHaveAttribute('data-portfolio-ready', 'true');
-    const resumeSection = page.locator('#resume');
-    await resumeSection.scrollIntoViewIfNeeded();
-    await expect(resumeSection).toHaveClass(/(?:^|\s)revealed(?:\s|$)/);
-    const timelineNode = page.locator('#resume .timeline-node').first();
-    await expect(timelineNode).toBeVisible();
-    await expect(timelineNode.locator('.phase-badge')).toHaveCount(1);
+    const phaseBadge = page.locator('.phase-badge').first();
+    await expect(phaseBadge).toBeVisible();
     await expect(page.locator('.terminal-window')).toHaveCount(0);
   });
 

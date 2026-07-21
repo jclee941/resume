@@ -51,6 +51,7 @@ describe('T3: localized nav toggle copy and deferred metadata', () => {
   const ja = buildJapaneseTemplate(ko);
   const manifest = JSON.parse(read(path.join(PORTFOLIO, 'manifest.json')));
   const manifestEn = JSON.parse(read(path.join(PORTFOLIO, 'manifest_en.json')));
+  const targetRole = 'Security Automation / Infrastructure Engineer';
 
   test('nav toggle accessible names are localized per locale', () => {
     expect(ko).toContain('aria-label="메뉴 열기"');
@@ -61,24 +62,23 @@ describe('T3: localized nav toggle copy and deferred metadata', () => {
     expect(ja).toContain('data-nav-label-close="メニューを閉じる"');
   });
 
-  test('title/meta/manifest strings use the approved full-stack identity', () => {
-    const titles = {
-      ko: '이재철 | 풀스택 엔지니어',
-      en: 'Jaecheol Lee | Full-Stack Engineer',
-      ja: '李在哲 | フルスタックエンジニア',
-    };
-    expect(ko).toContain(`<title>${titles.ko}</title>`);
-    expect(ko).toContain(`<meta property="og:title" content="${titles.ko}" />`);
-    expect(ko).toContain(`<meta name="twitter:title" content="${titles.ko}" />`);
-    expect(en).toContain(`<title>${titles.en}</title>`);
-    expect(en).toMatch(new RegExp(`<meta\\s+property="og:title"\\s+content="${titles.en}"`));
-    expect(en).toMatch(new RegExp(`<meta\\s+name="twitter:title"\\s+content="${titles.en}"`));
-    expect(ja).toContain(`<title>${titles.ja}</title>`);
-    expect(ja).toContain(`<meta property="og:title" content="${titles.ja}" />`);
-    expect(manifest.name).toBe(titles.ko);
-    expect(manifestEn.name).toBe(titles.en);
-    expect(manifest.description).toContain('풀스택 포트폴리오');
-    expect(manifestEn.description).toContain('full-stack engineering portfolio');
+  test('title/meta/manifest strings use the hiring-decision role convention', () => {
+    expect(ko).toContain(`<title>이재철 - ${targetRole}</title>`);
+    expect(ko).toContain(`<meta property="og:title" content="이재철 - ${targetRole}" />`);
+    expect(ko).toContain(`<meta name="twitter:title" content="이재철 - ${targetRole}" />`);
+    expect(en).toContain(`<title>Jaecheol Lee - ${targetRole}</title>`);
+    expect(en).toMatch(
+      new RegExp(`<meta\\s+property="og:title"\\s+content="Jaecheol Lee - ${targetRole}"`)
+    );
+    expect(en).toMatch(
+      new RegExp(`<meta\\s+name="twitter:title"\\s+content="Jaecheol Lee - ${targetRole}"`)
+    );
+    expect(ja).toContain(`<title>イ・ジェチョル - ${targetRole}</title>`);
+    expect(ja).toContain(`<meta property="og:title" content="イ・ジェチョル - ${targetRole}" />`);
+    expect(manifest.name).toBe(`이재철 - ${targetRole}`);
+    expect(manifest.description).toContain(targetRole);
+    expect(manifestEn.name).toBe(`Jaecheol Lee - ${targetRole}`);
+    expect(manifestEn.description).toContain(targetRole);
   });
 });
 
@@ -144,28 +144,63 @@ describe('고도화: PDF source polish', () => {
   });
 });
 
-describe('Structured project evidence replaces the duplicate KO-only deep dive', () => {
-  const modules = path.join(PORTFOLIO, 'src', 'scripts', 'modules');
-  const evidence = read(path.join(PORTFOLIO, 'lib', 'cards', 'project-evidence.js'));
-  const main = read(path.join(PORTFOLIO, 'src', 'scripts', 'main.js'));
+describe('FAANG framing: case-study senior narrative', () => {
+  const src = read(path.join(PORTFOLIO, 'src', 'scripts', 'modules', 'project-cards-data.js'));
 
-  test('hardcoded deep-dive data and rendering modules are removed', () => {
-    for (const file of [
-      'project-cards-data.js',
-      'project-cards-automation-data.js',
-      'project-cards.js',
-      'project-deep-dive-overlay.js',
-      'project-architecture-renderer.js',
-    ]) {
-      expect(fs.existsSync(path.join(modules, file))).toBe(false);
-    }
-    expect(main).not.toMatch(/initProjectCards|project-cards\.js/);
+  test('Nextrade case studies frame a design decision / trade-off', () => {
+    // The two Nextrade cards should read like senior engineering: an explicit
+    // constraint or trade-off, not just a task list.
+    expect(src).toMatch(/제약|트레이드오프|설계 결정|trade-off|constraint/);
   });
 
-  test('server rendering uses structured evidence and semantic ordered architecture steps', () => {
-    expect(evidence).toMatch(/project\.fullStackEvidence/);
-    expect(evidence).toMatch(/<ol class="project-architecture-steps"/);
-    expect(evidence).not.toMatch(/architecture\.split|<pre|\u250c|\u2510|\u2502/);
+  test('does not introduce fabricated percentage/ratio metrics', () => {
+    // Guard the no-metrics rule on the case-study source.
+    expect(src).not.toMatch(/\b\d{1,3}\s?%/);
+  });
+
+  test('architecture diagrams stay compact enough for mobile deep-dive panels', () => {
+    const matches = [...src.matchAll(/architecture:\s*`([\s\S]*?)`/g)];
+    expect(matches.length).toBeGreaterThan(0);
+    for (const [, diagram] of matches) {
+      const lineLengths = diagram.split('\n').map((line) => [...line].length);
+      expect(Math.max(...lineLengths)).toBeLessThanOrEqual(32);
+    }
+  });
+});
+
+describe('Project deep-dive architecture diagram accessibility', () => {
+  const overlay = read(
+    path.join(PORTFOLIO, 'src', 'scripts', 'modules', 'project-deep-dive-overlay.js')
+  );
+  const renderer = read(
+    path.join(PORTFOLIO, 'src', 'scripts', 'modules', 'project-architecture-renderer.js')
+  );
+
+  test('architecture diagram is keyboard focusable and exposed as an image-like flow', () => {
+    expect(renderer).toMatch(/createElement\('div', 'architecture-diagram'\)/);
+    expect(renderer).toMatch(/diagram\.tabIndex = 0/);
+    expect(renderer).toMatch(/diagram\.setAttribute\('role', 'img'\)/);
+    expect(renderer).toMatch(
+      /diagram\.setAttribute\('aria-label', `\$\{project\.title\} architecture flow`\)/
+    );
+    expect(overlay).toMatch(/createArchitectureElement\(project\)/);
+  });
+
+  test('architecture flow includes a mobile-readable step list before the ascii diagram', () => {
+    expect(renderer).toMatch(/function createArchitectureSteps/);
+    expect(renderer).toMatch(/function architectureSteps/);
+    expect(renderer).toMatch(/createElement\('ol', 'architecture-steps'\)/);
+    expect(renderer).toMatch(/createElement\('span', 'architecture-step__index'/);
+    expect(renderer).toMatch(/createElement\('span', 'architecture-step__label'/);
+  });
+
+  test('mobile hides the ascii diagram and shows only the step list (no clipped box art)', () => {
+    const css = read(path.join(PORTFOLIO, 'src', 'styles', 'project-architecture-flow.css'));
+    const mobileBlock = css.slice(css.indexOf('@media (max-width: 768px)'));
+    expect(mobileBlock).toContain('.architecture-steps');
+    expect(mobileBlock).toMatch(/\.architecture-diagram\s*\{[^}]*display:\s*none/);
+    // The clipped-scroll presentation that rendered as broken box art is gone.
+    expect(mobileBlock).not.toContain('max-block-size');
   });
 });
 
