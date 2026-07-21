@@ -100,6 +100,13 @@ describe('Security Headers Module', () => {
       expect(headers['Content-Security-Policy']).toContain('https://accounts.google.com');
     });
 
+    test('allows the configured Google Analytics collection origin', () => {
+      const csp = generateSecurityHeaders([])['Content-Security-Policy'];
+      const connectSrc = csp.split('; ').find((directive) => directive.startsWith('connect-src '));
+
+      expect(connectSrc).toContain('https://www.google-analytics.com');
+    });
+
     test('allows data: URIs in img-src for inline noise SVG', () => {
       const headers = generateSecurityHeaders([]);
       expect(headers['Content-Security-Policy']).toContain("img-src 'self' https: data:");
