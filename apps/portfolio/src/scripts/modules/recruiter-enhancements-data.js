@@ -111,12 +111,12 @@ export function getRecruiterLabels() {
   const lang = (document.documentElement.lang || 'ko').toLowerCase();
   if (lang.startsWith('en')) {
     return {
-      quickTitle: 'Role-fit decision paths',
+      quickTitle: 'Browse projects by role',
       quickDesc:
-        'Start with the role you are hiring for, then inspect the evidence that supports fit.',
-      matrixTitle: 'Project evidence map',
+        'Pick the role you are hiring for and jump straight to the matching work.',
+      matrixTitle: 'Projects at a glance',
       matrixDesc:
-        'Each card connects a hiring claim to the evidence a requesting team can inspect.',
+        'Each card links a role to the career and project work behind it.',
       role: 'Role',
       evidence: 'Evidence',
       contact: 'Contact',
@@ -127,10 +127,10 @@ export function getRecruiterLabels() {
   }
   if (lang.startsWith('ja')) {
     return {
-      quickTitle: '職務別判断ルート',
-      quickDesc: '採用トラックを選ぶと関連プロジェクト根拠を確認できます。',
-      matrixTitle: 'プロジェクト根拠マップ',
-      matrixDesc: 'ロール、根拠、リンクを判断しやすく整理しました。',
+      quickTitle: '役割別プロジェクト',
+      quickDesc: '役割を選ぶと関連する経歴とプロジェクトを確認できます。',
+      matrixTitle: 'プロジェクト一覧',
+      matrixDesc: '役割ごとの経歴とプロジェクトを見やすく整理しました。',
       role: 'ロール',
       evidence: '根拠',
       contact: '連絡',
@@ -140,10 +140,10 @@ export function getRecruiterLabels() {
     };
   }
   return {
-    quickTitle: '직무별 판단 경로',
-    quickDesc: '채용하려는 역할을 먼저 고르면 판단할 근거로 바로 이동합니다.',
-    matrixTitle: '프로젝트 근거 매트릭스',
-    matrixDesc: '각 카드는 채용 판단 포인트와 확인 가능한 운영 근거를 연결합니다.',
+    quickTitle: '역할별 프로젝트 보기',
+    quickDesc: '역할을 고르면 관련 경력과 프로젝트를 바로 확인할 수 있습니다.',
+    matrixTitle: '프로젝트 한눈에 보기',
+    matrixDesc: '각 카드에서 역할별 경력과 프로젝트를 바로 확인할 수 있습니다.',
     role: '역할',
     evidence: '근거',
     contact: '문의',

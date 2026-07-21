@@ -55,7 +55,7 @@ test.describe('Portfolio hiring copy', () => {
       englishHero.getByText('Open to interview requests', { exact: true })
     ).toBeVisible();
     await expect(englishHero.locator('.hero-public-proof__label')).toContainText(
-      'Public automation evidence'
+      'Public automation projects'
     );
     await expect(englishHero.getByText('Public proof shortcuts')).toHaveCount(0);
     await expect(englishHero.getByText(/passed the FSC|passed licensing audits/i)).toHaveCount(0);
@@ -66,10 +66,10 @@ test.describe('Portfolio hiring copy', () => {
       'mailto:qws941@kakao.com?subject=Hiring%20proposal%20or%20interview%20request'
     );
     await expect(
-      englishHero.getByRole('link', { name: 'Career evidence', exact: true })
+      englishHero.getByRole('link', { name: 'Career detail', exact: true })
     ).toHaveAttribute('href', '#resume');
     await expect(
-      englishHero.getByRole('link', { name: 'Project evidence', exact: true })
+      englishHero.getByRole('link', { name: 'Project detail', exact: true })
     ).toHaveAttribute('href', '#projects');
 
     await page.goto('/ja/', { waitUntil: 'domcontentloaded' });
@@ -79,7 +79,7 @@ test.describe('Portfolio hiring copy', () => {
     ).toBeVisible();
     await expect(
       japaneseHero.getByText(
-        '採用判断に必要な公開自動化根拠、連絡・履歴書PDF、直近の基盤構築を先に示します。'
+        '直近のセキュリティ基盤構築、公開プロジェクト、連絡先・履歴書PDFを1ページにまとめました。'
       )
     ).toBeVisible();
     await expect(japaneseHero.getByText(/SRE|DevSecOps/)).toHaveCount(0);
@@ -88,7 +88,7 @@ test.describe('Portfolio hiring copy', () => {
     await expect(japaneseHero.getByText(/通過|FSC本認可/)).toHaveCount(0);
     await expect(japaneseHero.locator('.hero-proof-list')).toHaveAttribute(
       'aria-label',
-      '採用判断の主要根拠'
+      '経歴サマリー'
     );
     await expect(japaneseHero.getByRole('link', { name: '面接依頼', exact: true })).toBeVisible();
     await expect(

@@ -44,9 +44,9 @@
     ],
     "profileStatement": "本認可審査と監査対応で「なぜそのように決定したか」をデータとして残すことに集中してきたセキュリティインフラ・自動化エンジニアです。KAI閉鎖網OA運用から出発し、FSDC金融監督院監査、ネクストレード構築と金融委員会本認可、自動化段階まで同じ原則を継続してきました。FortiGate HA・ネットワーク分離、Splunk ES検知ルール、Slack/SMS通知、FortiManager API照会、Claude AI補助分析を対応アーキテクチャとして束ね、担当者が装置コンソールを往復しながら確認していた手順を短縮しました。現在はセキュリティ自動化・セキュリティインフラ・SIEMエンジニアリングの役割の提案と面接を優先的に検討しています。",
     "coreCompetencies": [
-      "金融業界の規制環境でセキュリティインフラを設計・運用し、本認可審査の根拠資料を運用面から支えてきました。",
+      "金融業界の規制環境でセキュリティインフラを設計・運用し、本認可審査の資料整備を運用面から支えてきました。",
       "SIEM検知ルールを通知フローへ直結させ、検知から担当者認知までの空白時間を縮める構成を取ってきました。",
-      "FortiManager API照会スクリプトでファイアウォールポリシーの変更履歴と照会根拠を追跡可能にした自動化",
+      "FortiManager API照会スクリプトでファイアウォールポリシーの変更履歴と照会内容を追跡可能にした自動化",
       "FSDC金監院定期監査に対応するDLPポリシー運営体系と監査成果物テンプレート",
       "Grafana・Prometheus・Lokiでメトリクスとログを同一画面で追跡するオブザーバビリティ基盤",
       "Terraform・Ansibleで機器・Edge・ホームラボ構成をPR可能なコードで管理するIaC"
@@ -54,7 +54,7 @@
     "aboutSection": {
       "careerHighlights": [
         "運用現場から出発し、反復対応をスクリプトとIaCとして残す方式を一貫して維持してきました。",
-        "金融業界の本認可と監査対応でセキュリティ統制と変更根拠をデータで提示できる資料体系を構築しました。",
+        "金融業界の本認可と監査対応でセキュリティ統制と変更内容をデータで提示できる資料体系を構築しました。",
         "NAC・ファイアウォールポリシー、Splunk検知ルール、Slack/SMS通知条件を運用者がそのまま実行できる手順にしました。",
         "Linux・Python・Ansible・Terraform・Splunk SPL・Cloudflare Workersを問題解決の流れの中で組み合わせて使用します。",
         "Proxmox・Grafana・k3s・1Password・MCPをホームラボでまず運用し、実適用の可能性を検証します。"
@@ -131,7 +131,7 @@
       "teamSize": "セキュリティ構築セル",
       "myRole": "セキュリティインフラ構築担当",
       "workType": "フリーランス",
-      "description": "ネクストレード売買決済システムの構築段階として、金融委員会本認可審査の根拠整備、ネットワーク分離、アクセス制御ポリシー設計、FortiGate HA構成と障害復旧プロセスまで一連のオーナーシップで担当しました。",
+      "description": "ネクストレード売買決済システムの構築段階として、金融委員会本認可審査の資料整備、ネットワーク分離、アクセス制御ポリシー設計、FortiGate HA構成と障害復旧プロセスまで一連のオーナーシップで担当しました。",
       "wantedSummary": "ネクストレード セキュリティインフラ構築 | FortiGate HA · FortiManager · Ansible\n→ 金融委員会本認可審査対応、HAセキュリティ構成",
       "note": "ガオンヌリ情報システム所属、ネクストレード売買決済システム構築へ派遣",
       "projects": [
@@ -185,7 +185,7 @@
             "FSDC"
           ],
           "achievements": [
-            "DLPポリシー運用と監査成果物は金融監督院定期監査のテンプレートに合わせ、毎回同じ根拠資料体裁で提出できる形にしています。",
+            "DLPポリシー運用と監査成果物は金融監督院定期監査のテンプレートに合わせ、毎回同じ資料体裁で提出できる形にしています。",
             "PostgreSQLアクセス制御クエリは監査のワークロードでも例外扱いにならない水準まで調整しました。",
             "PBプラットフォームPOCは性能検証からシステムローンチまで支援し、調整したクエリ内容は本番のアクセス制御ポリシーに反映しました。"
           ]
@@ -889,7 +889,7 @@
       "name": "Firewall Policy Automation",
       "period": "2026.06 ~ 現在",
       "githubUrl": "https://github.com/jclee941/firewall",
-      "description": "ファイアウォールポリシー申請書とレンジ表が別々のExcelシートで管理され、結合点がレビュー根拠の抜け落ちる箇所になっていました。Excel VBAのワークフローで申請行、ファイアウォール一覧、レンジ条件を同じブック内で検証する形にし、対象ファイアウォールの判断とレビュー根拠を同じファイルで追跡できる構成にしました。",
+      "description": "ファイアウォールポリシー申請書とレンジ表が別々のExcelシートで管理され、結合点がレビュー記録の抜け落ちる箇所になっていました。Excel VBAのワークフローで申請行、ファイアウォール一覧、レンジ条件を同じブック内で検証する形にし、対象ファイアウォールの判断とレビュー記録を同じファイルで追跡できる構成にしました。",
       "highlights": [
         "申請書とファイアウォールレンジ表を同じ入力契約で整理",
         "対象ファイアウォール判断の行単位トレーサビリティ",
@@ -1091,24 +1091,24 @@
   "platformVariants": {
     "wanted": {
       "headline": "情報セキュリティエンジニア",
-      "about": "金融セキュリティ基盤とSIEMエンジニアリングで、FortiGate HA・ネットワーク分離、Splunk ES検知ルール、Slack/SMS通知、FortiManager API照会、Claude AI補助分析、監査対応文書化まで、構築と自動化の観点で担当しました。\n\n[検討ポジション]\nセキュリティ自動化、セキュリティ基盤、SIEMエンジニアリングの役割を優先して検討しています。繰り返し対応を文書・スクリプト・API連携で減らし、監査や障害対応で説明できる運用根拠を残すチームに合います。\n\n[主要根拠]\n- Nextrade: Splunk ES Saved Search、webhook relay、Slack/SMS通知、FortiManager API照会、Claude AI補助分析フロー設計\n- セキュリティ基盤構築: FortiGate HA・ネットワーク分離、エンドポイントセキュリティ、Ansible Roleベースの設定管理\n- FSDC: 金融監督機関の監査対応、DBアクセス制御クエリチューニング、DLPポリシー成果物管理\n- ネットワーク/システム: NSX-T、Wazuh、NAC、VPN、Linux、Python・Ansible自動化スクリプト\n\n[技術/資格]\nSplunk ES、FortiGate/FortiManager、FortiAnalyzer、Ansible、Python、Terraform、Docker、Linux、Grafana/Prometheus/Loki、Elasticsearch/Kibana、CCNP\n\nポートフォリオ: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "about": "金融セキュリティ基盤とSIEMエンジニアリングで、FortiGate HA・ネットワーク分離、Splunk ES検知ルール、Slack/SMS通知、FortiManager API照会、Claude AI補助分析、監査対応文書化まで、構築と自動化の観点で担当しました。\n\n[検討ポジション]\nセキュリティ自動化、セキュリティ基盤、SIEMエンジニアリングの役割を優先して検討しています。繰り返し対応を文書・スクリプト・API連携で減らし、監査や障害対応で説明できる運用記録を残すチームに合います。\n\n[主な経験]\n- Nextrade: Splunk ES Saved Search、webhook relay、Slack/SMS通知、FortiManager API照会、Claude AI補助分析フロー設計\n- セキュリティ基盤構築: FortiGate HA・ネットワーク分離、エンドポイントセキュリティ、Ansible Roleベースの設定管理\n- FSDC: 金融監督機関の監査対応、DBアクセス制御クエリチューニング、DLPポリシー成果物管理\n- ネットワーク/システム: NSX-T、Wazuh、NAC、VPN、Linux、Python・Ansible自動化スクリプト\n\n[技術/資格]\nSplunk ES、FortiGate/FortiManager、FortiAnalyzer、Ansible、Python、Terraform、Docker、Linux、Grafana/Prometheus/Loki、Elasticsearch/Kibana、CCNP\n\nポートフォリオ: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
       "headline": "情報セキュリティエンジニア",
-      "about": "[希望ポジション]\nセキュリティ基盤、SIEMエンジニアリング、金融情報セキュリティの役割を優先して検討しています。FortiGate、Splunk ES、FortiManager API、Claude AI補助分析、Python・Ansibleを対応アーキテクチャにつなげ、繰り返し対応を減らし、監査・障害対応時に説明できる根拠を残してきました。\n\n[経歴要約]\n- ITCEN CTS: Nextradeセキュリティイベント対応アーキテクチャ設計。Splunk ES Saved Search、webhook relay、Slack/SMS通知、FortiManager API照会、Claude AI補助分析フロー設計\n- Gaonnuri Information Systems: Nextradeセキュリティ基盤構築。FortiGate HA・ネットワーク分離、エンドポイントセキュリティ、Ansible Roleベースの設定管理\n- Quantec Investment Management: 金融セキュリティデータセンタ(FSDC)インフラ標準化。金融監督機関の監査対応、DBアクセス制御クエリチューニング、DLPポリシー成果物管理\n- Jointree / Metanet M Platform: NSX-T、Wazuh、NAC、VPN、Python・Ansibleスクリプト\n- MT Data: KAI閉鎖網Linux/OA環境、パッチ、ファイアウォールポリシー変更履歴管理\n\n[技術/資格]\nSplunk ES、FortiGate/FortiManager、FortiAnalyzer、Ansible、Python、Terraform、Docker、Linux、NSX-T、Wazuh、Grafana/Prometheus/Loki、Elasticsearch/Kibana、CCNP\n\nポートフォリオ: https://resume.jclee.me"
+      "about": "[希望ポジション]\nセキュリティ基盤、SIEMエンジニアリング、金融情報セキュリティの役割を優先して検討しています。FortiGate、Splunk ES、FortiManager API、Claude AI補助分析、Python・Ansibleを対応アーキテクチャにつなげ、繰り返し対応を減らし、監査・障害対応時に説明できる記録を残してきました。\n\n[経歴要約]\n- ITCEN CTS: Nextradeセキュリティイベント対応アーキテクチャ設計。Splunk ES Saved Search、webhook relay、Slack/SMS通知、FortiManager API照会、Claude AI補助分析フロー設計\n- Gaonnuri Information Systems: Nextradeセキュリティ基盤構築。FortiGate HA・ネットワーク分離、エンドポイントセキュリティ、Ansible Roleベースの設定管理\n- Quantec Investment Management: 金融セキュリティデータセンタ(FSDC)インフラ標準化。金融監督機関の監査対応、DBアクセス制御クエリチューニング、DLPポリシー成果物管理\n- Jointree / Metanet M Platform: NSX-T、Wazuh、NAC、VPN、Python・Ansibleスクリプト\n- MT Data: KAI閉鎖網Linux/OA環境、パッチ、ファイアウォールポリシー変更履歴管理\n\n[技術/資格]\nSplunk ES、FortiGate/FortiManager、FortiAnalyzer、Ansible、Python、Terraform、Docker、Linux、NSX-T、Wazuh、Grafana/Prometheus/Loki、Elasticsearch/Kibana、CCNP\n\nポートフォリオ: https://resume.jclee.me"
     }
   },
   "coverLetter": {
     "ja": {
       "headline": "説明可能なセキュリティ自動化を設計するエンジニア",
       "paragraphs": [
-        "キャリアの出発点は、韓国航空宇宙産業(KAI)の閉鎖網IT環境で、LinuxサーバのパッチスケジュールをExcelに手書きしていた現場でした。毎週同じ作業を繰り返す中で確信したのは、セキュリティエンジニアリングの価値は事故を願わないことではなく、反復可能な手順と自動化と根拠でリスクを下げることにある、という点です。RHCSA、LPIC-1、Linuxマスター2級を連続取得してLinux基盤を再構築し、その土台を現場の自動化経験へつなげました。",
+        "キャリアの出発点は、韓国航空宇宙産業(KAI)の閉鎖網IT環境で、LinuxサーバのパッチスケジュールをExcelに手書きしていた現場でした。毎週同じ作業を繰り返す中で確信したのは、セキュリティエンジニアリングの価値は事故を願わないことではなく、反復可能な手順と自動化と記録でリスクを下げることにある、という点です。RHCSA、LPIC-1、Linuxマスター2級を連続取得してLinux基盤を再構築し、その土台を現場の自動化経験へつなげました。",
         "メタネットMプラットフォームでAnsibleとPythonを引き合いに、コンタクトセンタのNACポリシー展開手順を一つのレビュー可能なワークフローに整理しました。ジョイントリーでは国民大学校の次世代情報システムにNSX-Tマイクロセグメンテーションを適用し、東西トラフィックの盲点を塞ぎ、NACとDLPの検知ポリシーを同じ基準で再整備しています。ツールは入れ替わっても、手が繰り返しかかる作業は標準化の対象という視点は変わっていません。",
-        "クォンテック投資一任の金融セキュリティデータセンタ(FSDC)で金融監督院の定期監査に対応する中で学んだのは、セキュリティ基盤は一度整えれば終わるものではなく、監査や障害の場面で現状と変更根拠をデータで示せるかどうかが重要だ、という点です。DBアクセス制御クエリチューニングもPBプラットフォームPOC検証も、結局はシステム状態をデータで説明し、変更ごとに根拠を残す営みでした。",
+        "クォンテック投資一任の金融セキュリティデータセンタ(FSDC)で金融監督院の定期監査に対応する中で学んだのは、セキュリティ基盤は一度整えれば終わるものではなく、監査や障害の場面で現状と変更内容をデータで示せるかどうかが重要だ、という点です。DBアクセス制御クエリチューニングもPBプラットフォームPOC検証も、結局はシステム状態をデータで説明し、変更ごとに記録を残す営みでした。",
         "直前の経歴では、ガオンヌリで構築段階を担当し、ITCEN CTSの自動化段階まで連続して担当したネクストレード取引所セキュリティトラックに携わりました。ネットワーク分離とエンドポイントセキュリティを構築し、韓国金融委員会本認可審査の技術対応を行い、Ansible Roleでセキュリティ機器設定を揃えました。Splunk ES検知ルール、通知ワークフロー、FortiManager APIポリシー照会、Claude AI補助分析をつなぎ、セキュリティイベントの認知・分類・通知フローを設計しています。",
         "次のステップでは、標準化の対象をセキュリティ機器や自動化スクリプトから、MCPツールとEdgeランタイムまで広げています。個人のホームラボではCloudflare Workers、MCP、Grafana、1PasswordをTerraformでIaC化し、反復的なセキュリティ対応項目をMCPツールが先に整理するパターンを試しています。次のキャリアでも、ツールより先に解くべきセキュリティ課題を据え、その問題を標準化可能な構造に変える役割を担いたいと考えています。"
       ],
-      "closing": "繰り返し作業を減らし、運用根拠を残すやり方で、貴社のセキュリティインフラが解くべき次の問題を一緒に整理していきます。"
+      "closing": "繰り返し作業を減らし、運用記録を残すやり方で、貴社のセキュリティインフラが解くべき次の問題を一緒に整理していきます。"
     }
   },
   "careerSummary": {
@@ -1122,7 +1122,7 @@
         "Metanet M Platform (2020.08 ~ 2021.08): コンタクトセンターのリモートワーク基盤で、SSL-VPN・NAC運用、端末登録手順、Python/Ansible運用スクリプト、FortiGate VPNセッション監視を担当しました。",
         "MT Data (2018.10 ~ 2019.10): KAI閉域網のLinux/OA環境で、パッチ運用、ファイアウォールポリシー変更履歴、現場IT支援を担当しました。"
       ],
-      "closing": "セキュリティ基盤構築、SIEM検知・通知、監査対応、反復対応の自動化をつなぎ、チームが確認できる運用根拠を文書とシステムに残してきました。"
+      "closing": "セキュリティ基盤構築、SIEM検知・通知、監査対応、反復対応の自動化をつなぎ、チームが確認できる運用記録を文書とシステムに残してきました。"
     }
   }
 }

@@ -41,17 +41,17 @@ describe('portfolio hiring appeal copy', () => {
     expect(html).toContain(
       '보안 인프라 이력과 프로젝트를 확인하세요. 연락처와 이력서 PDF도 바로 확인할 수 있습니다.'
     );
-    expect(html).toContain('<ul class="hero-proof-list" aria-label="채용 판단 핵심 근거">');
-    expect(html).toContain('공개 자동화 근거');
+    expect(html).toContain('<ul class="hero-proof-list" aria-label="핵심 이력 요약">');
+    expect(html).toContain('공개 자동화 프로젝트');
     expect(html).toContain('대상 역할: Security Automation / Infrastructure Engineer');
-    expect(html).toContain('최근 근거: 넥스트레이드 보안 인프라 구축·자동화와 FSDC 감사 대응');
+    expect(html).toContain('최근 이력: 넥스트레이드 보안 인프라 구축·자동화, FSDC 감사 대응');
     expect(html).toContain('면접 제안 가능');
     expect(html).toContain('PR 리뷰 · 시크릿 스캔 · Check Run으로 코드 변경 위험을 설명');
     expect(html).toContain('메트릭·로그 관측성으로 장애와 보안 신호를 함께 확인');
     expect(html).toContain('자동화 연계');
     expect(html).toContain('연락·PDF');
     expect(html).toContain(
-      '보안 자동화 역할 판단에 필요한 경력, 공개 자동화 근거, 연락·PDF를 연결했습니다.'
+      '경력, 공개 자동화 프로젝트, 연락처와 이력서 PDF를 한 화면에 모았습니다.'
     );
     expect(html).not.toContain('공개 증거 바로가기');
     expect(html).not.toContain('검토할 핵심 증거');
@@ -75,7 +75,7 @@ describe('portfolio hiring appeal copy', () => {
       'Open to interview requests for security automation and security infrastructure roles'
     );
     expect(html).toContain(
-      'Hiring decision signals are grouped first: public automation evidence, contact and resume PDF, and recent security infrastructure work.'
+      'Security-appliance builds, SIEM work, public automation projects, contact, and resume PDF — gathered on one page.'
     );
     expect(html).toContain('Target role: Security Automation / Infrastructure Engineer');
     expect(html).toContain('Recent role: exchange security infrastructure build and automation');
@@ -85,7 +85,7 @@ describe('portfolio hiring appeal copy', () => {
     expect(html).toContain('class="role-chip__label">Sec</span>');
     expect(html).toContain('class="role-chip__label">Flow</span>');
     expect(html).not.toContain('Automation Workflow');
-    expect(html).toContain('Public automation evidence');
+    expect(html).toContain('Public automation projects');
     expect(html).not.toContain('Public proof shortcuts');
     expect(html).not.toContain('Review path');
     expect(html).not.toContain('Security Infrastructure, and SRE');
@@ -98,8 +98,8 @@ describe('portfolio hiring appeal copy', () => {
         href: expect.stringMatching(/^mailto:/),
         label: 'Interview request',
       }),
-      { href: '#resume', label: 'Career evidence' },
-      { href: '#projects', label: 'Project evidence' },
+      { href: '#resume', label: 'Career detail' },
+      { href: '#projects', label: 'Project detail' },
       expect.objectContaining({ href: '/resume.pdf', label: 'Resume PDF' }),
     ]);
     expect(readPortfolioFile('index-en.html')).toContain('<!-- HERO_CONTENT_PLACEHOLDER -->');
@@ -110,9 +110,9 @@ describe('portfolio hiring appeal copy', () => {
 
     expect(html).toContain('セキュリティ自動化・セキュリティ基盤の面接依頼を歓迎');
     expect(html).toContain(
-      '採用判断に必要な公開自動化根拠、連絡・履歴書PDF、直近の基盤構築を先に示します。'
+      '直近のセキュリティ基盤構築、公開プロジェクト、連絡先・履歴書PDFを1ページにまとめました。'
     );
-    expect(html).toContain('<ul class="hero-proof-list" aria-label="採用判断の主要根拠">');
+    expect(html).toContain('<ul class="hero-proof-list" aria-label="経歴サマリー">');
     expect(html).toContain('希望職種: Security Automation / Infrastructure Engineer');
     expect(html).toContain('直近役割: 取引所セキュリティ基盤の構築・自動化');
     expect(html).toContain('面接依頼を受付中');
