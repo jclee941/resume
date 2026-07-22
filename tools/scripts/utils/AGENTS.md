@@ -35,4 +35,4 @@ resume data sync/validation, and supporting review/generation tasks.
 
 ---
 
-Parent: [../../../AGENTS.md](../../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

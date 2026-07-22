@@ -1,42 +1,33 @@
 # AUTO-APPLY KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
-**Commit:** `882b837`
+**Generated:** 2026-07-22
+**Commit:** `164e83ac`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Puppeteer-based stealth auto-submission system with rate limiting and tracking.
-
-## STRUCTURE
-
-```text
-auto-apply/
-├── auto-applier.js         # UnifiedApplySystem (form fill + stealth)
-├── application-manager.js  # tracking, retry, rate limiting
-├── cli.js                  # CLI interface
-└── index.js                # barrel export
-```
-
-## DEPENDENCIES
-
-- `rebrowser-puppeteer` + custom stealth patches (required).
-- `SessionManager` for cookie injection.
-- `JobMatcher` scoring data for application decisions.
+`AutoApplier` facade plus dependency construction, filtering, approval,
+tracking, browser helpers, runner/pipeline, and platform strategy routing.
 
 ## CONVENTIONS
 
-- Stealth-first: UA rotation, mouse jitter, human-like delays.
-- Rate limiting enforced per platform per time window.
-- Application tracking with retry logic (3 max).
+- Inject application storage, sessions, browser factories, clocks, and platform
+  strategies through `auto-applier-dependencies.js`.
+- Keep filtering/approval decisions separate from browser submission transport.
+- Route platform actions through `auto-applier-strategy-router.js` and
+  `strategies/`; preserve platform rate limits and retry bounds.
+- Dry-run and approval paths must stop before irreversible submission.
+- Close browser resources on success and failure; never persist raw cookies in
+  logs or reports.
 
 ## ANTI-PATTERNS
 
-- Never use naked Puppeteer — always stealth patches + UA rotation.
-- Never skip rate limiting.
-- Never bypass matching score gates.
-- Never submit without valid session cookies.
+- Never bypass match, opt-in, approval, or existing-application gates.
+- Never perform real submission from tests, smoke checks, or dry runs.
+- Never use naked browser automation without the repository stealth/session path.
+- Never hide CAPTCHA, auth expiry, or unsupported platform results as success.
+- Never hardcode account identifiers, selectors, credentials, or resume IDs.
 
 ---
 
-Parent: [../../../../AGENTS.md](../../../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

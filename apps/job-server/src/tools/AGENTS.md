@@ -1,47 +1,39 @@
 # MCP TOOLS KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
-**Commit:** `882b837`
+**Generated:** 2026-07-22
+**Commit:** `164e83ac`
 **Branch:** `master`
 
 ## OVERVIEW
 
-9 MCP tool definitions exposing 32 actions for job automation.
+MCP-facing adapters registered by `handlers/tools.js`. Tool files define public
+name/description/input schema and an `execute()` entry; domain logic stays below.
 
-## TOOLS
+## WHERE TO LOOK
 
-| Tool                | Actions | Notes                     |
-| ------------------- | ------- | ------------------------- |
-| `resume.js`         | 20+     | Chaos v2 except Skills v1 |
-| `resume-sync.js`    | 12      | state machine sync        |
-| `auth.js`           | varies  | session management        |
-| `profile.js`        | varies  | SNS read-only             |
-| `search-jobs.js`    | varies  | job search                |
-| `search-keyword.js` | varies  | keyword search            |
-| `get-*.js`          | varies  | data retrieval tools      |
-
-## EXPORT PATTERN
-
-```javascript
-export const {name}Tool = {
-  name: '...',
-  description: '...',
-  inputSchema: { ... },
-  handler: async (params) => { ... }
-};
-```
+| Task              | Location                                           | Notes                                              |
+| ----------------- | -------------------------------------------------- | -------------------------------------------------- |
+| Registry/dispatch | `../handlers/tools.js`                             | imports default tool objects and calls `execute()` |
+| Resume operations | `resume/`, `resume-sync.js`, `resume-generator.js` | multi-action adapters                              |
+| Auth/session      | `auth/`, `auth.js`, `auth-integrated.js`           | security-sensitive adapters                        |
+| Platform sync     | `platforms/`                                       | preview/mutation platform operations               |
+| Search/apply      | `search-*.js`, `job-matcher.js`, `auto-apply.js`   | delegates to services                              |
 
 ## CONVENTIONS
 
-- Tools are thin wrappers around `shared/services/`.
-- Skills v1 only (v2 broken). Links API broken (500).
-- Each tool in its own file with `__tests__/` alongside.
+- Default-export a tool object with `name`, `description`, `inputSchema`, and
+  `execute` matching the registry contract.
+- Parse and validate tool arguments before invoking a service.
+- Return serializable result objects; registry code owns MCP text wrapping.
+- Keep compatibility actions explicit and preserve published tool names.
 
 ## ANTI-PATTERNS
 
-- Never put business logic in tool handlers — delegate to services.
-- Never call clients directly from tools — use services.
+- Do not instantiate external clients or embed business rules in tools.
+- Do not return credentials, cookies, auth headers, or raw session data.
+- Do not change a tool schema without updating its implementation and tests.
+- Do not call another tool as an internal service boundary.
 
 ---
 
-Parent: [../../../../AGENTS.md](../../../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

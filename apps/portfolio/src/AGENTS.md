@@ -1,49 +1,47 @@
 # PORTFOLIO SOURCE KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
-**Commit:** `882b837`
+**Generated:** 2026-07-22
+**Commit:** `164e83ac`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Source files for portfolio markup, modular styles, and theme behavior. Edit
-here, not in generated `worker.js`.
+Editable browser CSS and JavaScript. `main.css` and `scripts/main.js` are the
+composition roots consumed by the Worker build.
 
 ## STRUCTURE
 
 ```text
 src/
 ├── styles/
-│   ├── variables.css       # design tokens (colors, spacing, fonts)
-│   ├── base.css            # dark-only defaults, resets
-│   ├── components.css      # cards, hero, skill-bars
-│   ├── layout.css          # grid, flex containers
-│   ├── media.css           # responsive breakpoints
-│   └── utilities.css       # glow, gradient, animations
+│   ├── main.css       # ordered CSS import graph
+│   └── variables.css  # design-token source
 └── scripts/
-    └── modules/
-        └── theme.js        # dark-only theme enforcement
+    ├── main.js        # browser bootstrap and service-worker registration
+    └── modules/       # project, timeline, recruiter, skills, UI, Web Vitals
 ```
-
-## KEY CSS SELECTORS
-
-`.page-shell`, `.hero-title`, `.section-title`, `.card`, `.project-list`,
-`.skill-radar__grid`, `.timeline`.
 
 ## CONVENTIONS
 
-- Dark-only theme — no light-mode toggle.
-- Reuse CSS variables from `variables.css`.
-- Mobile-safe animations (reduce-motion media query).
-- `.section-title` and `.card` used across generated markup.
+- Preserve `main.css` import order; cascade order is part of component behavior.
+- Reuse tokens from `variables.css`; keep responsive, CJK, print, forced-color,
+  and reduced-motion rules aligned with component changes.
+- Keep browser modules focused and compose them in `scripts/main.js`.
+- Escape dynamic text before DOM insertion and use CSP-compatible CSS custom
+  properties for dynamic visual values.
+- Preserve keyboard operation, focus restoration/trapping, ARIA state, and
+  reduced-motion behavior for interactive features.
+- Keep locale data paths and labels consistent across KO, EN, and JA surfaces.
 
 ## ANTI-PATTERNS
 
-- Never add light-mode without root doc update.
-- Never use localStorage theme toggling.
-- Never duplicate design tokens outside `variables.css`.
-- Never edit generated `worker.js` for style changes.
+- Do not edit generated `worker.js` for source behavior or styling.
+- Do not add one-off colors, spacing, or typography outside the token system.
+- Do not add global browser functions unless the bootstrap deliberately exposes
+  a stable action.
+- Do not cache HTML in `sw.js`; response CSP nonces are request-specific.
+- Do not restore the removed light-mode/localStorage theme path.
 
 ---
 
-Parent: [../../../AGENTS.md](../../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

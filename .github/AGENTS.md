@@ -1,51 +1,47 @@
 # GITHUB CONTROL PLANE KNOWLEDGE BASE
 
-**Generated:** 2026-06-12
-**Commit:** `011dd571`
+**Generated:** 2026-07-22 (verified 164e83ac)
+**Commit:** `164e83ac`
 **Branch:** `master`
 
 ## OVERVIEW
 
-GitHub Actions, reusable workflows, repository metadata, issue/PR automation,
-and branch-protection-facing checks.
+GitHub Actions workflows, branch protection checks, PR automation, and CI/CD
+orchestration. Production deployment authority remains Cloudflare Workers Builds.
 
 ## STRUCTURE
 
 ```text
 .github/
 ├── workflows/        # CI, security, release, PR, docs, issue automation
-├── actions/          # local composite actions used by workflows
+├── actions/          # local composite actions
 ├── ISSUE_TEMPLATE/   # issue forms
 ├── scripts/          # workflow helper scripts
 ├── CODEOWNERS        # review ownership
 └── dependabot.yml    # dependency update policy
 ```
 
-## WHERE TO LOOK
+## LIVE WORKFLOWS
 
-| Task                    | Location                              | Notes                           |
-| ----------------------- | ------------------------------------- | ------------------------------- |
-| Main CI gate            | `workflows/ci.yml`                    | validation-first pipeline       |
-| Secret scan check       | `workflows/05_gitleaks.yml`           | branch-protection check name    |
-| Gitleaks implementation | `workflows/45_reusable-gitleaks.yml`  | reusable workflow body          |
-| PR checks               | `workflows/03_pr-checks.yml`          | branch/name/title caller        |
-| PR check implementation | `workflows/44_reusable-pr-checks.yml` | reusable workflow body          |
-| Production verification | `workflows/post-deploy-verify.yml`    | after Workers Builds deploy     |
-| Release metadata        | `workflows/release.yml`               | not production deploy authority |
-| Queue provisioning      | `workflows/provision-queues.yml`      | manual paid-resource setup      |
-| Local actions           | `actions/`                            | composite action inputs/outputs |
+| Workflow                           | Purpose                                    | Branch Protection |
+| ---------------------------------- | ------------------------------------------ | ----------------- |
+| `ci.yml`                           | Validation gate (lint, test, build)        | Yes               |
+| `release.yml`                      | Release metadata and changelog             | No                |
+| `post-deploy-verify.yml`           | Verification after Workers Builds deploy   | No                |
+| `provision-queues.yml`             | Manual Cloudflare queue setup              | No                |
+| `delete-standalone-job-worker.yml` | Manual cleanup of retired dashboard Worker | No                |
+| `10_pr-review.yml`                 | PR review automation                       | No                |
+| `11_security-pr-review.yml`        | Security PR review                         | No                |
+| `12_dependabot-auto-merge.yml`     | Dependabot auto-merge                      | No                |
+| `13_pr-auto-merge.yml`             | PR auto-merge                              | No                |
+| `14_bot-auto-fix.yml`              | Bot auto-fix                               | No                |
 
 ## CONVENTIONS
 
-- Preserve branch-protection-facing workflow and job names unless branch
-  protection is updated in the same change.
-- Keep caller workflows and reusable workflow bodies separate where that pattern
-  already exists; branch protection depends on stable caller names.
-- Production deployment remains Cloudflare Workers Builds owned. GitHub
-  workflows may validate, release, or verify but must not become a shadow deploy
-  authority.
-- External reusable workflow calls to `jclee941/.github` are intentional control
-  plane dependencies; pin or update them deliberately.
+- Preserve branch-protection-facing workflow and job names unless protection is
+  updated in the same change.
+- Production deployment remains Cloudflare Workers Builds owned. GitHub workflows
+  may validate, release, or verify but must not become a shadow deploy authority.
 - Prefer repository or environment secrets for credentials. Workflow files must
   contain only secret names, not values.
 - Use local composite actions only for repeated setup behavior with stable
@@ -56,19 +52,10 @@ and branch-protection-facing checks.
 - Never weaken or rename required checks just to make branch protection pass.
 - Never inline live tokens, webhook secrets, Cloudflare IDs, or service
   credentials in YAML.
-- Never bypass `05_gitleaks.yml` / `45_reusable-gitleaks.yml` when changing
-  secret scanning.
 - Never treat `release.yml` or local Wrangler commands as the production deploy
   source of truth.
-- Never add workflow writes to generated artifacts unless the generator and
-  artifact ownership are documented in the owning subtree.
-
-## NOTES
-
-- Issue auto-labeling and stale-label removal are App-owned by jclee-bot;
-  keep that ownership visible in PR descriptions when touched.
-- `provision-queues.yml` can affect paid Cloudflare resources. Treat it as an
-  operator action, not routine CI.
+- Never add workflow writes to generated artifacts unless ownership is documented
+  in the owning subtree.
 
 ---
 

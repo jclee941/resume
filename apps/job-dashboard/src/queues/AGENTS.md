@@ -1,7 +1,7 @@
-# DASHBOARD QUEUES KNOWLEDGE BASE
+# QUEUES KNOWLEDGE BASE
 
-**Generated:** 2026-06-10
-**Commit:** `b74e95d1`
+**Generated:** 2026-07-22
+**Commit:** `164e83ac`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -34,6 +34,8 @@ queues/
   first.
 - Dead-letter records in KV must include TTL and enough context for diagnosis
   without storing secrets.
+- Queue payloads with `candidates`, `platforms`, `searchCriteria`, or `triggerType`
+  pass through to `APPLICATION_WORKFLOW` unchanged.
 
 ## ANTI-PATTERNS
 
@@ -44,4 +46,4 @@ queues/
 
 ---
 
-Parent: [../../AGENTS.md](../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

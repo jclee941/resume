@@ -44,4 +44,4 @@ a dedicated child AGENTS for scoring/AI details.
 
 ---
 
-Parent: [../../../../../AGENTS.md](../../../../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

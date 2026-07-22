@@ -1,73 +1,78 @@
 # SHARED PACKAGE KNOWLEDGE BASE
 
-**Generated:** 2026-05-06
-**Commit:** `HEAD`
+**Generated:** 2026-07-22
+**Commit:** `164e83ac`
 **Branch:** `master`
 
-**Package:** `@resume/shared`  
-**Type:** Cross-package utilities  
-**Scope:** Shared clients, services, and utilities used across apps
+**Package:** `@resume/shared`
+**Type:** Cross-package utilities
+**Scope:** Validation, errors, cookies, logging, clients, browser, retry, crypto, rate-limit, session, auth, normalize
 
 ## OVERVIEW
 
-Internal shared utilities package providing cross-cutting concerns: logging,
-error handling, API clients (GitLab, Wanted, Elasticsearch), browser automation,
-and data transformers. Consumed by `apps/job-server/` and other packages.
+Shared runtime utilities consumed by `apps/job-server`, `apps/job-dashboard`, and other packages. Provides validation, error handling, logging, HTTP clients (Wanted, Elasticsearch), browser automation, retry/circuit-breaker, crypto, rate-limiting, session management, and auth helpers.
 
 ## STRUCTURE
 
 ```text
-packages/shared/
-├── src/
-│   ├── errors/           # Custom error classes
-│   ├── logger/           # Structured logging (pino-based)
-│   ├── clients/
-│   │   ├── gitlab/       # GitLab API client
-│   │   └── elasticsearch/# ES client wrapper
-│   ├── browser/          # Playwright browser service + stealth patches
-│   ├── wanted-client.js  # Wanted.kr API client
-│   ├── wanted-*.js       # Wanted profile/resume/skill APIs
-│   ├── phone.js          # Phone number utilities
-│   ├── ua.js             # User-Agent utilities
-│   └── job-categories.js # Job category mappings
-└── package.json          # Subpath exports configuration
+packages/shared/src/
+├── validation/          # Input validation helpers
+├── errors/              # Custom error classes
+├── cookies/             # Cookie utilities
+├── logger/              # Structured logging and transport adapters
+├── clients/
+│   └── wanted/          # Wanted.kr API client (HTTP, jobs, profile, resume)
+├── browser/             # Cloudflare Puppeteer browser adapter + stealth patches
+├── retry/               # HTTP retry + circuit breaker
+├── crypto/              # Webcrypto + Node crypto adapters
+├── rate-limit/          # Token bucket, sliding window, KV-backed limiters
+├── session/             # Session store, cookies, constants
+├── auth/                # Cookie auth, HMAC signing
+├── normalize/           # Data normalization
+├── ua.js                # User-Agent utilities
+├── phone.js             # Phone number utilities
+├── employment-types.js  # Employment type constants
+└── job-categories.js    # Job category mappings
 ```
 
-## EXPORTS
+## EXPORTS (via package.json)
 
-| Import Path                                      | Source                                   | Purpose                |
-| ------------------------------------------------ | ---------------------------------------- | ---------------------- |
-| `@resume/shared/errors`                          | `src/errors/index.js`                    | Custom error classes   |
-| `@resume/shared/logger`                          | `src/logger/index.js`                    | Structured logging     |
-| `@resume/shared/logger/transports/elasticsearch` | `src/logger/transports/elasticsearch.js` | ES transport (default) |
-| `@resume/shared/logger/transports/loki`          | `src/logger/transports/loki.js`          | Loki transport         |
-| `@resume/shared/es-client`                       | `src/clients/elasticsearch/index.js`     | Elasticsearch client   |
-| `@resume/shared/browser`                         | `src/browser/index.js`                   | Browser automation     |
-| `@resume/shared/browser/stealth`                 | `src/browser/stealth-patches.js`         | Puppeteer stealth      |
-| `@resume/shared/wanted-client`                   | `src/wanted-client.js`                   | Wanted API base client |
-| `@resume/shared/clients/gitlab`                  | `src/clients/gitlab/index.js`            | GitLab API client      |
+| Import Path                       | Purpose                                   |
+| --------------------------------- | ----------------------------------------- |
+| `@resume/shared/validation`       | Input validation                          |
+| `@resume/shared/errors`           | Custom error classes                      |
+| `@resume/shared/cookies`          | Cookie utilities                          |
+| `@resume/shared/logger`           | Structured logging                        |
+| `@resume/shared/es-client`        | Elasticsearch client                      |
+| `@resume/shared/browser`          | Cloudflare Browser Rendering adapter      |
+| `@resume/shared/browser/stealth`  | Stealth patches                           |
+| `@resume/shared/wanted-client`    | Wanted API base client                    |
+| `@resume/shared/clients/wanted/*` | Wanted endpoints (jobs, profile, resume)  |
+| `@resume/shared/retry`            | HTTP retry + circuit breaker              |
+| `@resume/shared/crypto`           | Webcrypto + Node adapters                 |
+| `@resume/shared/rate-limit`       | Token bucket, sliding window, KV limiters |
+| `@resume/shared/session`          | Session store, cookies, constants         |
+| `@resume/shared/auth`             | Cookie auth, HMAC signing                 |
+| `@resume/shared/normalize`        | Data normalization                        |
+| `@resume/shared/ua`               | User-Agent utilities                      |
+| `@resume/shared/phone`            | Phone number utilities                    |
+| `@resume/shared/employment-types` | Employment type constants                 |
+| `@resume/shared/job-categories`   | Job category mappings                     |
 
 ## CONVENTIONS
 
-- **Subpath exports** defined in `package.json` exports field
-- **Pure functions** preferred; minimal side effects
-- **Error handling** via custom error classes in `errors/`
-- **Logging** via the `Logger` class with pluggable transports
-  (Elasticsearch by default, Loki optional)
-- **Browser automation** uses Playwright with stealth patches
+- Subpath exports defined in `package.json` exports field
+- Pure functions preferred; minimal side effects
+- Error handling via custom error classes in `errors/`
+- Logging via Logger class with pluggable transports (Elasticsearch default, Loki optional)
+- Browser automation uses `@cloudflare/puppeteer` with stealth patches
 
 ## ANTI-PATTERNS
 
 - Never add app-specific logic here (belongs in `apps/`)
-- Never import from `apps/` packages (creates circular dependency)
+- Never import from `apps/` packages (circular dependency)
 - Never use `console.log` directly (use logger)
-
-## NOTES
-
-- This package has no `AGENTS.md` child files; all guidance lives here
-- Changes require version bump and workspace reinstall
-- Test coverage enforced at 90% threshold
 
 ---
 
-Parent: [../../AGENTS.md](../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

@@ -1,13 +1,16 @@
-# PROJECT KNOWLEDGE BASE
+# E2E TESTS KNOWLEDGE BASE
 
-**Generated:** 2026-06-30
-**Commit:** `766d220c`
+**Generated:** 2026-07-22
+**Commit:** `164e83ac`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Playwright end-to-end test suite for portfolio, dashboard, security,
-accessibility, and deployment verification paths.
+Playwright end-to-end suite for portfolio, dashboard, security, accessibility,
+and deployment verification. It discovers 39 specs across desktop Chromium and
+four Chromium-backed mobile profiles (iPhone SE, iPhone 12 Pro, Pixel 5, iPad).
+Local runs default to `http://localhost:8787`; production verification sets
+`SKIP_WEBSERVER=1` and `PLAYWRIGHT_BASE_URL=https://resume.jclee.me`.
 
 ## WHERE TO LOOK
 
@@ -25,28 +28,28 @@ accessibility, and deployment verification paths.
 ## CONVENTIONS
 
 - Use `*.spec.js` naming for Playwright tests in this directory.
-- Prefer resilient locators and deterministic waits.
-- Use `domcontentloaded` for page load state in this project.
+- Prefer resilient locators (data-testid, role-based) and deterministic waits.
+- Use `domcontentloaded` for page load state; avoid `networkidle` on portfolio pages.
 - Keep test flows independent; avoid cross-test state coupling.
 - Co-locate visual snapshots under `visual.spec.js-snapshots/` only.
-- Production verification sets `SKIP_WEBSERVER=1` and
-  `PLAYWRIGHT_BASE_URL=https://resume.jclee.me`; local specs should not bake
-  that host into assertions.
+- Mobile specs match `mobile.spec.js` pattern; desktop specs run on Chromium.
+- Production verification sets `SKIP_WEBSERVER=1` and `PLAYWRIGHT_BASE_URL=https://resume.jclee.me`; local specs should not bake that host into assertions.
 
 ## ANTI-PATTERNS
 
-- Never use `networkidle` as a required load state for terminal-animation pages.
+- Never use `networkidle` as a required load state for portfolio pages (async widgets and animations cause timeouts).
 - Never rely on arbitrary sleep-heavy timing in place of explicit conditions.
 - Never hardcode environment-specific host assumptions inside test bodies.
 - Never commit broad `.skip`/`.only` patterns in shared E2E specs.
 - Never bypass security/accessibility suites to force green pipelines.
+- Never use `describe.skip` — use runtime `test.skip` for conditional skips.
 
 ## NOTES
 
-- E2E runtime behavior is sensitive to animations and async widget loading; keep
-  assertions phase-aware.
+- E2E runtime behavior is sensitive to animations and async widget loading; keep assertions phase-aware.
 - Update snapshots intentionally with review when UI semantics change.
+- Retries: 2 in CI, 0 locally; use `test.skip()` for known flaky tests pending fixes.
 
 ---
 
-Parent: [../../AGENTS.md](../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

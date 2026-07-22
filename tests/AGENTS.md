@@ -1,20 +1,22 @@
 # TESTS KNOWLEDGE BASE
 
-**Generated:** 2026-06-28
-**Commit:** `4bd11dd2`
+**Generated:** 2026-07-22
+**Commit:** `164e83ac`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Centralized test hub for Jest, Node `--test`, Go checks, and Playwright E2E.
+Root `npm test` chains the Jest, package Node-test, and Go verification suites.
+Playwright discovers 39 E2E specs across one desktop and four mobile projects.
 
 ## STRUCTURE
 
 ```text
 tests/
-├── unit/                   # Jest unit suites for apps/packages
-├── integration/            # Jest cross-module contract suites
-├── e2e/                    # Playwright browser/API flows
+├── unit/                   # Jest + Node --test for apps/packages
+├── integration/            # Jest cross-module contract suites (10 files)
+├── e2e/                    # Playwright browser/API flows (39 specs)
 │   ├── fixtures/           # shared helpers and mock sites
 │   └── visual.spec.js-snapshots/
 └── automation-webhook-test.go
@@ -22,11 +24,12 @@ tests/
 
 ## E2E CONFIGURATION
 
-- Defaults to `http://localhost:8787`; production verification sets
-  `PLAYWRIGHT_BASE_URL=https://resume.jclee.me`.
-- 5 device projects: chromium + 4 mobile.
-- `maxDiffPixelRatio: 0.05` for visual snapshots.
-- Screenshots are `only-on-failure`; traces are `on-first-retry`.
+- Defaults to `http://localhost:8787`; production verification sets `SKIP_WEBSERVER=1` and `PLAYWRIGHT_BASE_URL=https://resume.jclee.me`.
+- Five projects: desktop Chromium plus iPhone SE, iPhone 12 Pro, Pixel 5, and
+  iPad profiles running on Chromium.
+- Mobile specs match `mobile.spec.js` pattern; desktop specs run on Chromium.
+- `maxDiffPixelRatio: 0.05` for visual snapshots; screenshots on failure; traces on first retry.
+- Retries: 2 in CI, 0 locally.
 
 ## CHILD GUIDES
 
@@ -42,18 +45,16 @@ tests/
 - `*.test.js` = unit/integration tests (Jest).
 - `*.spec.js` = E2E tests (Playwright).
 
-## CRITICAL: E2E GOTCHA
+## CRITICAL: E2E LOAD STATE
 
-**Use `domcontentloaded` for portfolio pages — `networkidle` timeouts due to
-terminal animations.**
+**Use `domcontentloaded` for portfolio pages — `networkidle` times out due to async widget loading and animations.**
 
 ## CONVENTIONS
 
-- `node:test` at depth 5+ for isolated module tests.
-- Root `npm test` fans out across Jest, job-server node tests, schema/env
-  tests, tools tests, and CLI tests.
-- Handle flaky tests via `retries` in `playwright.config.js` (2 in CI, 0
-  locally).
+- `*.test.js` = Jest/Node unit/integration tests.
+- `*.spec.js` = Playwright E2E tests.
+- Node `--test` at depth 5+ for isolated module tests (job-server, schemas, env, shared, tools, CLI).
+- Root `npm test` runs its Jest, Node-test, and Go command chain sequentially.
 
 ## ANTI-PATTERNS
 
