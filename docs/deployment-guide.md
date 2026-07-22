@@ -101,8 +101,10 @@ The deployment process follows a strict unidirectional data flow:
    - Escapes backticks for injection into a template literal.
 4. **Artifact Creation**: `worker.js` is created as a single self-contained
    script.
-5. **Deployment**: `npx wrangler deploy --config apps/portfolio/wrangler.jsonc
---env production` uploads the artifact to the Cloudflare network.
+5. **Deployment**: Push to `master`; Cloudflare Workers Builds runs `npx
+wrangler deploy --config wrangler.jsonc --env production` uploads the
+artifact to the Cloudflare network. Manual `npm run deploy` is intentionally
+disabled (see Section 6).
 
 ### 2.4 Architecture Diagram
 
@@ -179,11 +181,12 @@ Your `.env` file contains 6 primary sections:
 
 ### 3.3 Wrangler Configuration
 
-The monorepo uses a single active Wrangler configuration file
-(`apps/portfolio/wrangler.jsonc`) — the previously separate
-`apps/job-dashboard/wrangler.jsonc` was removed when the dashboard was
-merged in-process into the portfolio Worker (see
-[ADR 0009](adr/0009-single-worker-consolidation.md)).
+The monorepo uses a single active Wrangler configuration file: the root
+`wrangler.jsonc`. The previously separate `apps/job-dashboard/wrangler.jsonc`
+was removed when the dashboard was merged in-process into the portfolio
+Worker (see [ADR 0009](adr/0009-single-worker-consolidation.md)), and
+`apps/portfolio/wrangler.jsonc` was later folded into the root config as part
+of a worker-configuration SSOT consolidation.
 
 ### 3.4 Managing Production Secrets
 
@@ -193,7 +196,7 @@ CLI:
 ```bash
 # Example: Setting the admin token for the dashboard
 # (dashboard bindings live in the merged portfolio worker per ADR 0009)
-npx wrangler secret put ADMIN_TOKEN --config apps/portfolio/wrangler.jsonc
+npx wrangler secret put ADMIN_TOKEN --config wrangler.jsonc
 ```
 
 **Detailed Secret Descriptions:**
@@ -310,61 +313,40 @@ When you open a Pull Request, GitHub Actions triggers a `deploy-preview` job.
 
 ### 6.1 Standard Deployment Process
 
-Production deployment is orchestrated by the `npm run deploy` command. This is a
-high-level script that performs a safe deployment:
+Manual deployment is **intentionally disabled**. The root `npm run deploy`
+script exits with an error telling you to `git push` to `master` instead. The
+real release path is:
 
-1. Increments the patch version (`1.0.x`).
-2. Builds all assets and generates the final `worker.js`.
-3. Invokes the custom Deployment CLI to push to Cloudflare.
+1. Push (or merge) to `master`.
+2. Cloudflare Workers Builds' Git integration picks up the push, runs the
+   configured build command (`npm run build`), and deploys via `wrangler
+   deploy --config wrangler.jsonc --env production`.
+3. `post-deploy-verify.yml` runs health checks against the live deployment.
+
+GitHub Actions (`ci.yml`) never deploys — it only lints, type-checks, tests,
+and performs a `wrangler deploy --dry-run`. If you need to deploy manually in
+an emergency (e.g. Cloudflare Builds is down), use the root-safe escape hatch:
+`npm run deploy:wrangler:root`.
 
 ### 6.2 CI/CD Pipeline Breakdown
 
-Our GitHub Actions pipeline (`ci.yml`) is a 13-job dependency chain ensuring
-zero-downtime and high reliability. Every push to the `master` branch or Pull
-Request triggers this flow:
+`ci.yml` is **validation-only** — it never deploys. It runs on every push to
+`master` and on pull requests, and includes (among others): `secret-scan`
+(gitleaks), `lint` (ESLint), `dependency-audit` (`npm audit`), `typecheck`
+(`tsc`), `test-jest`, `test-node`, `test-workspace` (unit tests across
+workspaces), `validate-data` (SSoT drift gate), `validate-go`,
+`validate-openapi`, `validate-env-drift`, `architecture-hardening`,
+`wrangler-dry-run` (`wrangler deploy --dry-run` for production and preview —
+packaging only, never publishes), and `merged-worker-e2e` (Playwright against
+the merged worker contract).
 
-1. **Analyze**:
-   - Uses `tools/ci/affected.go` to compare the current branch against `master`.
-   - Determines which workspaces (Portfolio, Job Automation, Infra) need to be
-     tested or built.
-   - Saves time by skipping unaffected targets.
-2. **Lint**:
-   - Runs `eslint .` using the project's flat configuration.
-   - Enforces a zero-error policy and a warning baseline ratchet.
-3. **Typecheck**:
-   - Executes `tsc` to validate TypeScript types across the monorepo.
-   - Ensures consistency between shared logic and worker implementations.
-4. **Test-Unit**:
-   - Runs Jest unit tests for the `job-automation` core services.
-   - Generates coverage reports (Artifact: `coverage-report`).
-5. **Test-E2E**:
-   - Initializes a local environment, syncs data, and builds the worker.
-   - Runs Playwright tests against the generated `worker.js`.
-   - Uploads a graphical report on failure (Artifact: `playwright-report`).
-6. **Security-Scan**:
-   - Runs `gitleaks` to detect accidentally committed secrets or API keys.
-   - Executes `npm audit` to identify vulnerable dependencies.
-7. **Build**:
-   - The primary artifact generation job. Runs `node generate-worker.js`.
-   - Produces the production-ready `worker.js` (Artifact: `portfolio-worker`).
-8. **Deploy**:
-   - Uses `cloudflare/wrangler-action` to push the worker to the `production`
-     environment.
-   - Creates a GitHub Deployment entry for tracking.
-9. **Verify**:
-   - Primary: Checks the Cloudflare API for the deployment age.
-   - Secondary: Pings `https://resume.jclee.me/health` for a 200 OK status.
-   - Checks for the presence of mandatory security headers (CSP, HSTS).
-10. **Rollback**:
-    - A critical safety job that only runs if the **Verify** job fails.
-    - Executes `npx wrangler rollback` to restore the previous stable version.
-11. **Notify**:
-    - Dispatches a webhook to AUTOMATION and Slack with the deployment outcome.
-    - Includes commit messages, actor names, and environment URLs.
-12. **Deploy-Preview**:
-    - (PR Only) Deploys an ephemeral worker for manual review.
-13. **Cleanup-Preview**:
-    - (PR Only) Deletes the ephemeral worker once the PR is closed or merged.
+Deploying is a separate, out-of-band step: **Cloudflare Workers Builds**
+watches `master` directly (its own Git integration, not a GitHub Actions job)
+and runs the real `wrangler deploy` on every push that reaches `master`.
+`.github/workflows/post-deploy-verify.yml` then verifies the live deployment
+(health checks, on push and on a schedule). There is no Deploy, Rollback, or
+Notify job inside `ci.yml`; see
+[Deployment Pipeline](architecture/DEPLOYMENT_PIPELINE.md) for the full split.
 
 ### 6.3 Automated Maintenance (Schedules)
 
@@ -403,7 +385,7 @@ login`.
   - _Symptom_: `npx wrangler deploy` fails from repo root with entry-point
     error.
   - _Fix_: Use explicit config path: `npx wrangler deploy --config
-apps/portfolio/wrangler.jsonc --env production`.
+wrangler.jsonc --env production`.
 
 ---
 
@@ -413,7 +395,7 @@ apps/portfolio/wrangler.jsonc --env production`.
 | ------------------------------ | --------- | --------------------------------------------------------- |
 | `npm run sync:data`            | Root      | Propagates SSoT to data snapshots                         |
 | `npm run build:all`            | Root      | Full build (Data Sync + Generation)                       |
-| `npm run deploy`               | Root      | Full production release cycle                             |
+| `npm run deploy`               | Root      | **Disabled** — errors and tells you to `git push` master   |
 | `npm run test:unit`            | Root      | Run all Jest unit tests                                   |
 | `npm run test:e2e`             | Root      | Run Playwright browser tests                              |
 | `npm run lint`                 | Root      | Lint entire codebase                                      |

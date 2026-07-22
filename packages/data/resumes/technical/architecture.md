@@ -1,5 +1,13 @@
 # Resume Project Architecture
 
+> **Note (2026):** This document describes a legacy, pre-monorepo layout kept
+> for historical context. The resume data single source of truth is
+> `packages/data/resumes/master/resume_data.json` (see
+> [ADR 0003](../../../../docs/adr/0003-single-source-of-truth.md));
+> `resume_master.md` below is a generated/derived markdown export, not the
+> SSOT. For the current architecture, see `docs/ARCHITECTURE.md` and
+> `docs/guides/ARCHITECTURE.md` at the repo root.
+
 ## System Overview
 
 This is a static site resume management system with multi-format output
@@ -12,7 +20,7 @@ capabilities, deployed on Cloudflare Workers edge network.
 │                  Content Layer                       │
 │  ┌──────────────────────────────────────────────┐  │
 │  │        master/resume_master.md               │  │
-│  │        (Single Source of Truth)              │  │
+│  │        (legacy content source — see note)    │  │
 │  └──────────────────┬───────────────────────────┘  │
 └─────────────────────┼──────────────────────────────┘
                       │
@@ -84,8 +92,10 @@ capabilities, deployed on Cloudflare Workers edge network.
 
 ### 1. Single Source of Truth
 
-All resume content originates from `master/resume_master.md`, ensuring
-consistency across all derived versions.
+The canonical SSOT is `packages/data/resumes/master/resume_data.json` (see
+[ADR 0003](../../../../docs/adr/0003-single-source-of-truth.md)). This legacy
+diagram predates that decision; `master/resume_master.md` is a generated
+markdown export, not the origin of resume content.
 
 ### 2. Template Literal Injection
 

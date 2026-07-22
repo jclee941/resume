@@ -231,7 +231,7 @@ cd /home/jclee/dev/resume
 npm run build
 
 # Deploy to Cloudflare Workers (root-safe)
-npx wrangler deploy --config apps/portfolio/wrangler.jsonc --env production
+npx wrangler deploy --config wrangler.jsonc --env production
 
 # Expected output:
 # ⛅️ wrangler 4.43.0

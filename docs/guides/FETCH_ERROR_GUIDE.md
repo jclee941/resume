@@ -163,7 +163,7 @@ nano ~/.env  # 공백 제거
 
 ```bash
 # wrangler.jsonc의 account_id 확인
-cat apps/portfolio/wrangler.jsonc | grep account_id
+cat wrangler.jsonc | grep account_id
 # 출력: account_id = "a8d9c67f586acdd15eebcc65ca3aa5bb"
 
 # .env에 동일한 ID 설정
@@ -251,7 +251,7 @@ echo 'CLOUDFLARE_ACCOUNT_ID=...' >> ~/.env
 - [ ] `~/.env`에 `CLOUDFLARE_API_TOKEN` 설정
 - [ ] `~/.env`에 `CLOUDFLARE_ACCOUNT_ID` 설정
 - [ ] `grep CLOUDFLARE ~/.env` 확인
-- [ ] `apps/portfolio/wrangler.jsonc`에 `account_id` 존재
+- [ ] `wrangler.jsonc`(root)에 `account_id` 존재
 - [ ] `npm run build` 성공
 - [ ] `npm test` 통과
 

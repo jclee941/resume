@@ -83,7 +83,7 @@ npm test && npm run test:e2e
 git add .
 git commit -m "feat: add new project"
 git push origin master
-# GitHub Actions will auto-deploy to https://resume.jclee.me
+# Cloudflare Workers Builds auto-deploys to https://resume.jclee.me
 ```
 
 ## Essential Commands Cheat Sheet
@@ -99,8 +99,8 @@ npm run test:e2e       # E2E tests (requires build)
 npm run lint           # Lint check
 
 # Deployment
-npm run deploy         # Build + deploy via REST API
-git push origin master # Auto-deploy via GitHub Actions
+git push origin master # Cloudflare Workers Builds deploys automatically
+# (manual `npm run deploy` is intentionally disabled)
 
 # Health check
 curl https://resume.jclee.me/health
@@ -203,7 +203,7 @@ git push origin master --force
 ```bash
 npm run build      # Recalculates CSP hashes
 npm test           # Verify hashes
-npm run deploy     # Deploy with new hashes
+git push origin master # Deploy with new hashes (Cloudflare Workers Builds)
 ```
 
 ## Next Steps

@@ -109,7 +109,7 @@ GET  /og-image.png        Social media preview
 **Worker Configuration**:
 
 ```toml
-# apps/portfolio/wrangler.jsonc
+# wrangler.jsonc (root)
 name = "resume"
 main = "worker.js"
 compatibility_date = "2024-01-01"
@@ -397,8 +397,8 @@ curl -X GET "https://automation.example.com/api/v1/workflows" \
 **Worker Deployment**:
 
 ```bash
-# Standard deployment
-npm run deploy
+# Standard deployment: git push to master, Cloudflare Workers Builds deploys
+# (manual `npm run deploy` is intentionally disabled)
 
 # Build only
 npm run build

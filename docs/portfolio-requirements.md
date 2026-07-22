@@ -308,7 +308,7 @@ npm run build
 npm run dev
 
 # Production 배포 (root-safe)
-npx wrangler deploy --config apps/portfolio/wrangler.jsonc --env production
+npx wrangler deploy --config wrangler.jsonc --env production
 
 # 헬스체크 확인
 curl -s https://resume.jclee.me/health | jq

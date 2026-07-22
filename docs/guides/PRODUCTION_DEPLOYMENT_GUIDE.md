@@ -156,8 +156,9 @@ node src/auto-apply/cli/index.js search "DevSecOps" 5
 ### Cloudflare Workers 배포
 
 ```bash
-# 메인 애플리케이션 배포
-npm run deploy
+# master로 push하면 Cloudflare Workers Builds가 자동 배포
+# (수동 npm run deploy는 의도적으로 비활성화됨)
+git push origin master
 
 # 상태 확인
 npm run verify:cli
@@ -342,8 +343,8 @@ watch -n 300 'go run ./apps/job-server/scripts/ops/auto-monitor/main.go'
 #### Q: 배포 실패
 
 ```bash
-# 로그 확인
-npm run deploy 2>&1 | tee deploy.log
+# 로그 확인 (수동 배포가 필요한 비상 상황에서만)
+npm run deploy:wrangler:root 2>&1 | tee deploy.log
 
 # Cloudflare 토큰 확인
 curl -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \

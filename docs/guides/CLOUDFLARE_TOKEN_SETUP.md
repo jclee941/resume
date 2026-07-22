@@ -68,7 +68,9 @@ npx wrangler whoami
 
 ```bash
 cd /home/jclee/dev/resume
-npm run deploy
+# Manual `npm run deploy` is intentionally disabled; push to master and let
+# Cloudflare Workers Builds deploy, or use the root-safe escape hatch:
+npm run deploy:wrangler:root
 ```
 
 ## Verification

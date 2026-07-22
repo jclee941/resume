@@ -44,9 +44,11 @@ Source files (HTML/CSS/JSON) are transformed into a single deployable
    `apps/portfolio/index.html` (structure) OR `apps/portfolio/styles.css`
    (styling)
 2. **Generate Worker**: Run `npm run build` (performs 6 transformations)
-3. **Deploy**: Push to `master` branch (GitHub Actions auto-deploys) OR run `npx
-wrangler deploy --config apps/portfolio/wrangler.jsonc --env production`
-   manually
+3. **Deploy**: Push to `master` branch (Cloudflare Workers Builds Git
+   integration deploys automatically; manual `npm run deploy` is intentionally
+   disabled). A manual escape hatch exists via `npx
+wrangler deploy --config wrangler.jsonc --env production`
+   (or `npm run deploy:wrangler:root`).
 
 ### 6 Critical Transformations
 
@@ -99,7 +101,10 @@ escaping**
 
 ### Source Files
 
-- **master/resume_master.md**: Single source of truth (complete career history)
+- **packages/data/resumes/master/resume_data.json**: Single source of truth
+  (see [ADR 0003](../adr/0003-single-source-of-truth.md)); `resume_master.md`
+  is a generated/derived markdown export (complete career history), not the
+  canonical source
 - **master/resume_final.md**: Compressed submission version (downloadable from
   portfolio)
 - **company-specific/**: Tailored resumes derived from master
@@ -283,7 +288,9 @@ Content-Security-Policy:
 - `jest.config.cjs`: Jest 30 CommonJS configuration
 - `eslint.config.cjs`: ESLint 9 flat config (modern syntax)
 - `playwright.config.js`: Playwright E2E test configuration
-- `apps/portfolio/wrangler.jsonc`: Cloudflare Workers deployment config
+- `wrangler.jsonc` (root): Cloudflare Workers deployment config for the merged
+  worker (the previous `apps/portfolio/wrangler.jsonc` was consolidated into
+  this root config)
 
 ## Git Repository
 
