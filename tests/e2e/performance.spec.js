@@ -155,7 +155,7 @@ test.describe('Performance & Core Web Vitals', () => {
     expect(ttfb).toBeLessThan(800);
   });
 
-  test('should track and send Web Vitals to /api/vitals', async ({ page, request }) => {
+  test('should track and send Web Vitals to /api/vitals', async ({ page }) => {
     // NOTE: this skip guard must stay INSIDE the test body. Calling the
     // conditional skip modifier at the describe-body top level (outside any
     // `test(...)` call) applies it as a static annotation to every test in
@@ -163,11 +163,6 @@ test.describe('Performance & Core Web Vitals', () => {
     // runner), silently skipping the entire "Performance & Core Web Vitals"
     // suite in CI instead of only this one test.
     test.skip(!!process.env.CI, 'Web Vitals tracking requires /api/vitals endpoint not available in CI');
-    // Skip if /api/vitals endpoint is not available
-    const healthResponse = await request.get('/api/vitals');
-    if (healthResponse.status() === 404) {
-      test.skip(true, '/api/vitals endpoint not available');
-    }
 
     const vitalsRequests = [];
 
