@@ -14,8 +14,11 @@ export function registerAdminRoutes(router, ctx) {
   router.get('/api/diagnostics/bindings', (req) => diagnostics.checkBindings(req));
 
   // CF-native: live validation harness for the Wave 2 Browser Rendering broker.
-  router.get('/api/browser/smoke', async () => {
-    const result = await runBrowserSmoke(env);
+  // Optional ?url= lets an admin probe a real target (e.g. JobKorea/Wanted) to
+  // observe live page state (content / login / captcha / blocked) before Wave 3.
+  router.get('/api/browser/smoke', async (req) => {
+    const target = new URL(req.url).searchParams.get('url');
+    const result = await runBrowserSmoke(env, target ? { url: target } : {});
     return jsonResponse(result, result.ok ? 200 : 502);
   });
 

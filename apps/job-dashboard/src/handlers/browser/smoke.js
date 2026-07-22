@@ -1,11 +1,15 @@
 /**
- * @fileoverview Admin-only live smoke test for the Cloudflare Browser Rendering
- * session broker (CF-native migration). Exercises the full Wave 2 path —
- * BrowserSessionDO acquire -> puppeteer.connect(sessionId) -> newPage -> goto ->
- * title -> release — against REAL Browser Rendering, so the owner can validate
- * the broker with a single request before Wave 3 wires a crawler through it.
+ * @fileoverview Admin-only live browser probe over the Cloudflare Browser
+ * Rendering session broker (CF-native migration). Exercises the full Wave 2
+ * path — BrowserSessionDO acquire -> puppeteer.connect(sessionId) -> newPage ->
+ * goto -> inspect -> release — against REAL Browser Rendering.
  *
- * Route: GET /api/browser/smoke (admin-gated via ADMIN_ROUTES '/api/browser').
+ * Doubles as the Wave 3 development harness: an admin can point it at any URL
+ * (e.g. a JobKorea search/detail page) to observe live behaviour — final URL
+ * after redirects, title, and a heuristic pageKind (content / login / captcha /
+ * blocked) — before a crawler is wired through the broker.
+ *
+ * Route: GET /api/browser/smoke[?url=...] (admin-gated via ADMIN_ROUTES '/api/browser').
  * @module handlers/browser/smoke
  */
 
@@ -13,11 +17,30 @@ import { withBrowserSession as defaultWithBrowserSession } from './browser-servi
 
 const DEFAULT_URL = 'https://example.com';
 
+const LOGIN_MARKERS = ['login', 'signin', 'sign-in', '로그인', 'ログイン', 'auth'];
+const CAPTCHA_MARKERS = ['captcha', '캡차', '자동입력 방지', '자동등록방지', 'recaptcha', 'hcaptcha', '보안문자'];
+const BLOCKED_MARKERS = ['access denied', 'forbidden', '차단', 'blocked', 'unusual traffic', 'bot detected'];
+
 /**
- * Run the browser smoke test and return a plain result object (never throws).
+ * Classify a page from its final URL + title + a text sample.
+ * @param {string} finalUrl
+ * @param {string} title
+ * @param {string} text
+ * @returns {'content'|'login'|'captcha'|'blocked'}
+ */
+export function classifyPage(finalUrl, title, text) {
+  const hay = `${finalUrl}\n${title}\n${text}`.toLowerCase();
+  if (CAPTCHA_MARKERS.some((m) => hay.includes(m))) return 'captcha';
+  if (BLOCKED_MARKERS.some((m) => hay.includes(m))) return 'blocked';
+  if (LOGIN_MARKERS.some((m) => hay.includes(m))) return 'login';
+  return 'content';
+}
+
+/**
+ * Run the browser probe and return a plain result object (never throws).
  * @param {{BROWSER_SESSION: unknown, MYBROWSER: unknown}} env
  * @param {{withBrowserSession?: Function, url?: string, now?: () => number}} [opts]
- * @returns {Promise<{ok:boolean, title?:string, reused?:boolean, url?:string, error?:string, code?:string, elapsedMs:number}>}
+ * @returns {Promise<object>}
  */
 export async function runBrowserSmoke(env, opts = {}) {
   const {
@@ -32,7 +55,20 @@ export async function runBrowserSmoke(env, opts = {}) {
       const page = await browser.newPage();
       try {
         await page.goto(url, { waitUntil: 'domcontentloaded' });
-        return { title: await page.title() };
+        const finalUrl = typeof page.url === 'function' ? page.url() : url;
+        const title = await page.title();
+        let text = '';
+        try {
+          text = await page.evaluate(() => (document.body?.innerText || '').slice(0, 1500));
+        } catch {
+          text = '';
+        }
+        return {
+          finalUrl,
+          title,
+          pageKind: classifyPage(finalUrl, title, text),
+          textSample: text.slice(0, 240),
+        };
       } finally {
         try {
           await page.close();
