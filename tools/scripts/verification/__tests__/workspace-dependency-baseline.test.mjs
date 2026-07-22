@@ -6,7 +6,7 @@ import { it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../..');
-const baselineSha = '89b804787e6086762d1253e6e92d16213286ae95';
+const baselineSha = '3f8add1f3fb2c52d93f880f69c569aff4698dbc9';
 const baselineImports = [
   ['apps/job-dashboard', 'src/utils/env.js', '@resume/env', 'packages/env'],
   ['packages/contracts', 'src/env.js', '@resume/types', 'packages/types'],

@@ -25,7 +25,7 @@ function validConfiguration() {
       ELASTICSEARCH_INDEX: 'resume-logs-worker',
     },
     routes: [{ pattern: 'resume.jclee.me', custom_domain: true }],
-    triggers: { crons: ['0 23 * * *'] },
+    triggers: { crons: ['0 23 * * *', '0 21 * * *'] },
     migrations: [{ tag: 'v1', new_classes: ['BrowserSessionDO'] }],
     ai: { binding: 'AI' },
     browser: { binding: 'MYBROWSER' },
@@ -87,7 +87,9 @@ describe('Worker configuration characterization', () => {
 
     try {
       // When: Wrangler resolves that same config for the preview environment.
-      const output = execFileSync(
+      const commandEnv = { ...process.env, NO_COLOR: '1' };
+      delete commandEnv.FORCE_COLOR;
+      const rawOutput = execFileSync(
         'npx',
         [
           'wrangler',
@@ -103,10 +105,14 @@ describe('Worker configuration characterization', () => {
         {
           cwd: repositoryRoot,
           encoding: 'utf8',
-          env: { ...process.env, NO_COLOR: '1' },
+          env: commandEnv,
           timeout: 180_000,
         }
       );
+      // Strip any ANSI escapes Wrangler emits regardless of NO_COLOR so the
+      // characterization is resilient to the invoking shell's color settings.
+      const ansiEscape = String.fromCharCode(27);
+      const output = rawOutput.replace(new RegExp(`${ansiEscape}\\[[0-9;]*m`, 'gu'), '');
 
       // Then: the resolved preview inventory is visible and production-only
       // capabilities are absent from Wrangler's deploy surface.
