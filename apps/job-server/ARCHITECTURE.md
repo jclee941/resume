@@ -163,7 +163,7 @@ action: 'pipeline_schedule' → Schedule via automation
 | `dashboard.js`         | `/dashboard`      | Dashboard data aggregation  |
 | `resume.js`            | `/resume`         | Resume operations           |
 | `auth.js`              | `/auth`           | Authentication endpoints    |
-| `webhooks.js`          | `/webhooks`       | automation webhook receiver        |
+| `webhooks.js`          | `/webhooks`       | automation webhook receiver |
 | `export.js`            | `/export`         | Data export (JSON, CSV)     |
 | `sync.js`              | `/sync`           | Manual sync trigger         |
 

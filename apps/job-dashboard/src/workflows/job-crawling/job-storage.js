@@ -37,11 +37,9 @@ export async function saveMatchedJobs(env, matchedJobs) {
         job.company,
         job.location || null,
         job.description || null,
-        Array.isArray(job.techStack)
-          ? JSON.stringify(job.techStack)
-          : job.techStack || null,
+        Array.isArray(job.techStack) ? JSON.stringify(job.techStack) : job.techStack || null,
         job.experienceLevel || job.experience || null,
-        job.matchScore ?? 0,
+        job.matchScore ?? 0
       )
     );
 

@@ -2,7 +2,8 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { buildTemplateFallback } from '../cover-letter-generator/template-selection.js';
 
-const bannedMetricPattern = /\b\d+(?:[.,]\d+)?\s*(?:%|percent)\b|\b\d+\s*\+\b|\b\d+\s+(?:detection rules|server|servers)\b|가용성\s*\d|서버\s*\d+/i;
+const bannedMetricPattern =
+  /\b\d+(?:[.,]\d+)?\s*(?:%|percent)\b|\b\d+\s*\+\b|\b\d+\s+(?:detection rules|server|servers)\b|가용성\s*\d|서버\s*\d+/i;
 
 const cases = [
   {

@@ -301,7 +301,12 @@ describe('Wanted SSoT field mapping correctness', () => {
         }),
       };
 
-      const result = await syncWantedCareers(client, { careers: [ssotCareer] }, {}, 'resume-careers');
+      const result = await syncWantedCareers(
+        client,
+        { careers: [ssotCareer] },
+        {},
+        'resume-careers'
+      );
 
       assert.strictEqual(result.changes, 0);
       assert.strictEqual(result.dryRun, true);
@@ -328,7 +333,8 @@ describe('Wanted SSoT field mapping correctness', () => {
             { id: 'right-exact', ...mapped },
           ],
         }),
-        updateCareer: async (resumeId, id, data) => client.calls.push({ method: 'update', id, data }),
+        updateCareer: async (resumeId, id, data) =>
+          client.calls.push({ method: 'update', id, data }),
         addCareer: async (resumeId, data) => {
           client.calls.push({ method: 'add', data });
           return { id: 'added' };

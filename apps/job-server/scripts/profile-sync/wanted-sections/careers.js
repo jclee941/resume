@@ -23,7 +23,10 @@ function projectsMatch(ssotCareer, wantedCareer) {
 
 function careerMatches(mapped, wantedCareer, ssotCareer) {
   return (
-    sameValue(normalizeCompanyName(wantedCareer.company?.name), normalizeCompanyName(mapped.company.name)) &&
+    sameValue(
+      normalizeCompanyName(wantedCareer.company?.name),
+      normalizeCompanyName(mapped.company.name)
+    ) &&
     sameValue(wantedCareer.company?.type, mapped.company.type) &&
     sameValue(wantedCareer.job_role, mapped.job_role) &&
     sameValue(wantedCareer.start_time, mapped.start_time) &&

@@ -106,13 +106,7 @@
           "name": "Nextrade Security Event Response Architecture Automation",
           "description": "Splunk ES detections feed webhook relay and Slack/SMS alerts, and FortiManager JSON-RPC API queries retrieve the related firewall policies on demand. Console-heavy checks turn into a Splunk-Fortinet path for detection, classification, and lookup, with Claude AI-assisted review cutting the false-positive triage backlog.",
           "period": "2025.03 ~ 2026.02",
-          "techStack": [
-            "Splunk ES",
-            "FortiGate",
-            "FortiManager API",
-            "Python",
-            "Claude AI"
-          ],
+          "techStack": ["Splunk ES", "FortiGate", "FortiManager API", "Python", "Claude AI"],
           "achievements": [
             "Unified event classification and alert criteria across Splunk ES and FortiGate.",
             "Webhook relay plus Slack/SMS notifications standardize the post-detection handoff path and reduce dependence on manual console checks.",
@@ -142,13 +136,7 @@
           "name": "Nextrade Security Infrastructure Build",
           "description": "Securities trading platform security configuration, designed for handover from build to operations.\n• Active-Passive HA via FGCP (FortiGate Clustering Protocol) for service continuity.\n• Reusable Ansible roles for initial device setup and policy deployment, so per-device drift does not survive a handover.",
           "period": "2024.03 ~ 2025.02",
-          "techStack": [
-            "FortiGate",
-            "FortiManager",
-            "Ansible",
-            "Python",
-            "VMware"
-          ],
+          "techStack": ["FortiGate", "FortiManager", "Ansible", "Python", "VMware"],
           "achievements": [
             "FortiGate FGCP active-passive HA so service continuity no longer depends on a single node's uptime.",
             "Network segmentation and endpoint security controls, documented to satisfy the Korean Financial Services Commission main-license review.",
@@ -178,13 +166,7 @@
           "name": "Quantec Investment Management AI Trading Platform Infrastructure Operations",
           "description": "Python runbooks took over the operational and audit-response work that used to live in scattered shell scripts, and tuned PostgreSQL access-control queries carried the PB platform POC through launch.",
           "period": "2022.08 ~ 2024.03",
-          "techStack": [
-            "Python",
-            "Linux",
-            "DLP",
-            "PostgreSQL",
-            "FSDC"
-          ],
+          "techStack": ["Python", "Linux", "DLP", "PostgreSQL", "FSDC"],
           "achievements": [
             "DLP policy operations and audit deliverables now follow the FSS regular-audit template, so each cycle arrives with the same documentation shape as the last.",
             "Tuned PostgreSQL access-control queries while running audits and operations in parallel.",
@@ -212,13 +194,7 @@
           "name": "Kookmin University Next-Generation Information System",
           "description": "On the Kookmin University campus network, east-west traffic was the blind spot under perimeter-based security.\n• NSX-T microsegmentation and DFW distributed firewall policy broke the policy unit down to the workload level, with NSX-T Manager as the single source of truth for change flow.\n• NAC, DLP, and Wazuh integration delivered host-level security-event visibility.",
           "period": "2021.09 ~ 2022.04",
-          "techStack": [
-            "VMware NSX-T",
-            "vSphere",
-            "NAC",
-            "DLP",
-            "Wazuh"
-          ],
+          "techStack": ["VMware NSX-T", "vSphere", "NAC", "DLP", "Wazuh"],
           "achievements": [
             "East-west visibility was the gap; NSX-T microsegmentation exposed server-to-server traffic that perimeter firewalls could not surface.",
             "DFW policies enforce at the workload level, so server-to-server flows become reviewable rather than inferred from logs.",
@@ -245,13 +221,7 @@
           "name": "Contact Center Remote-Work Infrastructure",
           "description": "VPN infrastructure design and runbooks for contact-center remote access.\n• Python scripts and Ansible apply a shared configuration baseline to remote-access servers, reducing drift during site onboarding.\n• VPN session monitoring plus abnormal-access detection dashboards expose the connection surface that used to be a black box.",
           "period": "2020.08 ~ 2021.08",
-          "techStack": [
-            "Ansible",
-            "Python",
-            "VPN",
-            "NAC",
-            "FortiGate"
-          ],
+          "techStack": ["Ansible", "Python", "VPN", "NAC", "FortiGate"],
           "achievements": [
             "Standardized recurring configuration work with Ansible.",
             "NAC policy runbooks turn new-terminal registration into a one-step process instead of a queue of tickets.",
@@ -279,12 +249,7 @@
           "name": "KAI Infrastructure Operations",
           "description": "Closed-network infrastructure operations focused on early hardware-failure indicators and audit-ready configurations.\n• Periodic system-log analysis identifies hardware-failure indicators early.\n• System configurations follow internal security audit standards.",
           "period": "2018.10 ~ 2019.10",
-          "techStack": [
-            "Linux",
-            "Bash",
-            "Firewall",
-            "WSUS"
-          ],
+          "techStack": ["Linux", "Bash", "Firewall", "WSUS"],
           "achievements": [
             "Maintained Linux server availability in a closed-network environment.",
             "Unused firewall rules removed after parsing the firewall-cmd policy set, so the rule base stopped accumulating historical risk.",
@@ -300,12 +265,7 @@
       "period": "2025.03 ~ 2026.02",
       "name": "Nextrade Security Operations Architecture Automation",
       "client": "Nextrade",
-      "technologies": [
-        "Python",
-        "Splunk ES",
-        "FortiManager API",
-        "Fortinet"
-      ],
+      "technologies": ["Python", "Splunk ES", "FortiManager API", "Fortinet"],
       "os": "Linux, Docker",
       "role": "Security Automation Engineer",
       "description": "Security-event automation that joins Splunk ES, FortiManager APIs, and Claude AI-assisted review under one architecture.\n• Splunk ES Saved Searches drive Slack/SMS notifications as soon as a security event fires.\n• Firewall policy lookup runs through FortiManager API, so the response path no longer waits on a console operator."
@@ -315,11 +275,7 @@
       "period": "2024.03 ~ 2025.02",
       "name": "Nextrade Security Infrastructure Build",
       "client": "Nextrade",
-      "technologies": [
-        "Python",
-        "FortiManager API",
-        "Ansible"
-      ],
+      "technologies": ["Python", "FortiManager API", "Ansible"],
       "os": "Linux, VMware",
       "role": "Security Infrastructure Design",
       "description": "Securities trading platform security configuration, designed for build-to-operations handover.\n• Active-Passive HA via FGCP (FortiGate Clustering Protocol) keeps service continuity off a single node.\n• Reusable Ansible roles drive initial device setup and policy deployment so per-device drift fails the next review."
@@ -329,11 +285,7 @@
       "period": "2021.09 ~ 2022.04",
       "name": "Kookmin University Next-Generation Information System",
       "client": "Kookmin University",
-      "technologies": [
-        "VMware NSX-T",
-        "Firewall",
-        "NAC"
-      ],
+      "technologies": ["VMware NSX-T", "Firewall", "NAC"],
       "os": "Linux, vSphere",
       "role": "Network Virtualization",
       "description": "SDN-based network virtualization with microsegmentation built around workload visibility.\n• East-west traffic becomes enforceable through VMware NSX-T Distributed Firewall (DFW), not just visible in logs.\n• NSX-T Manager central policy management gives the team one surface to review, audit, and roll back."
@@ -343,12 +295,7 @@
       "period": "2020.08 ~ 2021.08",
       "name": "Contact Center Remote Work Infrastructure",
       "client": "Metanet M Platform",
-      "technologies": [
-        "Ansible",
-        "Python",
-        "VPN",
-        "NAC"
-      ],
+      "technologies": ["Ansible", "Python", "VPN", "NAC"],
       "os": "Linux",
       "role": "Remote Work Infrastructure",
       "description": "VPN infrastructure runbooks for contact-center remote access, with configuration drift managed through a shared baseline.\n• Python and Ansible keep remote-access server configurations synchronized across sites.\n• VPN session monitoring and anomaly detection dashboards expose the connection surface that used to be a black box."
@@ -358,11 +305,7 @@
       "period": "2018.10 ~ 2019.10",
       "name": "KAI Infrastructure Operations",
       "client": "Korea Aerospace Industries (KAI)",
-      "technologies": [
-        "Linux",
-        "Bash",
-        "Firewall"
-      ],
+      "technologies": ["Linux", "Bash", "Firewall"],
       "os": "Linux",
       "role": "Systems Operations",
       "description": "Closed-network security infrastructure operations centered on early hardware-failure detection and audit-ready configurations.\n• Periodic system-log analysis identifies hardware-failure indicators early.\n• System configurations follow internal security audit standards."
@@ -656,13 +599,7 @@
       "name": "Observability Platform",
       "period": "2024.06 ~ Present",
       "description": "After the homelab moved to NVMe-backed Proxmox VE, metrics and logs were still scattered per service, so root-cause analysis meant switching tabs during incidents. Prometheus node_exporter scrapes Proxmox VM/CT metrics, Loki Promtail ingests logs, and Grafana dashboard definitions live as code for IaC-reproducible deployment. PromQL and LogQL cross-queries in Grafana Explore put metrics and logs on a single analysis surface.",
-      "technologies": [
-        "Grafana",
-        "Prometheus",
-        "Loki",
-        "Blackbox Exporter",
-        "Docker"
-      ],
+      "technologies": ["Grafana", "Prometheus", "Loki", "Blackbox Exporter", "Docker"],
       "icon": "📊",
       "tagline": "Monitoring Platform",
       "language": "PromQL",
@@ -686,11 +623,7 @@
       "name": "Security Alert System",
       "period": "2025.01 ~ Present",
       "description": "FortiGate security events were scattered across device syslog and Splunk, making operator awareness and response handoff hard to keep consistent. Splunk Saved Search webhooks now send matching detections to Slack, and the security-event notification plus operator-response flow lives in one place.",
-      "technologies": [
-        "Splunk",
-        "Python",
-        "Slack"
-      ],
+      "technologies": ["Splunk", "Python", "Slack"],
       "icon": "🔔",
       "tagline": "Security Alert Automation",
       "language": "Python",
@@ -710,12 +643,7 @@
       "name": "IP Blacklist Platform",
       "period": "2024.12 ~ Present",
       "description": "Threat intelligence feeds were scattered across AbuseIPDB, Emerging Threats, AlienVault OTX, and others, so analyzing a single malicious IP meant querying each source by hand. Per-source adapters live in Flask Blueprints, schema versions flow through SQLAlchemy + Alembic migrations, and a Next.js frontend cross-compares reputation, frequency, and distribution. Multiple threat feeds now sit behind a single reproducible pipeline.",
-      "technologies": [
-        "JavaScript",
-        "Flask",
-        "PostgreSQL",
-        "Python"
-      ],
+      "technologies": ["JavaScript", "Flask", "PostgreSQL", "Python"],
       "icon": "🚫",
       "tagline": "Threat Intelligence",
       "language": "JavaScript",
@@ -729,12 +657,7 @@
       "name": "HYCU FSDS Autonomous Driving",
       "period": "2025.11 ~ 2026.02",
       "description": "Formula Student Driverless Simulator required cone perception and driving control on the same node graph, with Docker as the unit of reproducibility. ROS-based perception and control nodes run inside containers and validate against the AirSim simulation environment. Competed in the Hanyang Cyber University Autonomous Driving Competition.",
-      "technologies": [
-        "Python",
-        "ROS",
-        "Docker",
-        "AirSim"
-      ],
+      "technologies": ["Python", "ROS", "Docker", "AirSim"],
       "icon": "🏎️",
       "tagline": "Autonomous Driving Simulation",
       "url": "https://github.com/jclee941/hycu_fsds",
@@ -749,20 +672,13 @@
       "name": "Resume Portfolio",
       "period": "2024.01 ~ Present",
       "description": "Recruiters were getting a fragmented view of the work, so the monorepo now hosts an SSoT resume site on the Cloudflare Workers Edge runtime, alongside MCP tools and an auto-apply pipeline. Resume rendering, cover-letter generation, auto-apply, and observability all live in the same repository.",
-      "technologies": [
-        "Cloudflare Workers",
-        "HTML/CSS",
-        "JSON-LD SEO",
-        "Grafana Loki"
-      ],
+      "technologies": ["Cloudflare Workers", "HTML/CSS", "JSON-LD SEO", "Grafana Loki"],
       "icon": "⚡",
       "tagline": "Portfolio Platform",
       "language": "JavaScript",
       "githubUrl": "https://github.com/jclee941/resume",
       "demoUrl": "https://resume.jclee.me",
-      "highlights": [
-        "Public portfolio site running on the Cloudflare Workers Edge runtime."
-      ],
+      "highlights": ["Public portfolio site running on the Cloudflare Workers Edge runtime."],
       "featured": true,
       "displayOrder": 7
     },
@@ -778,13 +694,7 @@
         "Codified k3s cluster rebuilds as repeatable provisioning",
         "CI pipeline that runs plan validation on every PR"
       ],
-      "technologies": [
-        "Terraform",
-        "Proxmox VE",
-        "Cloudflare",
-        "Helm",
-        "k3s"
-      ],
+      "technologies": ["Terraform", "Proxmox VE", "Cloudflare", "Helm", "k3s"],
       "featured": true,
       "displayOrder": 3
     },
@@ -800,13 +710,7 @@
         "Offline support enabling manual access in constrained-network environments",
         "RBAC + JWT that separates field-worker and admin access"
       ],
-      "technologies": [
-        "Cloudflare Workers",
-        "TypeScript",
-        "Hono",
-        "Drizzle ORM",
-        "D1"
-      ],
+      "technologies": ["Cloudflare Workers", "TypeScript", "Hono", "Drizzle ORM", "D1"],
       "featured": false,
       "displayOrder": 9,
       "language": "TypeScript"
@@ -823,13 +727,7 @@
         "Korean-first review comments and PR descriptions",
         "ELK observability connected to GitHub Actions run logs"
       ],
-      "technologies": [
-        "Python",
-        "GitHub App",
-        "GitHub Actions",
-        "ELK",
-        "GitHub API"
-      ],
+      "technologies": ["Python", "GitHub App", "GitHub Actions", "ELK", "GitHub API"],
       "featured": true,
       "displayOrder": 6,
       "language": "Python"
@@ -870,13 +768,7 @@
         "Cron-scheduled workflow linking recon to operator notifications",
         "Aligns detection results to MITRE ATT&CK for risk assessment"
       ],
-      "technologies": [
-        "JavaScript",
-        "Subfinder",
-        "httpx",
-        "Nuclei",
-        "Go"
-      ],
+      "technologies": ["JavaScript", "Subfinder", "httpx", "Nuclei", "Go"],
       "featured": false,
       "displayOrder": 10,
       "language": "JavaScript"
@@ -893,12 +785,7 @@
         "VBA workflow that stays inside the operator's existing Excel format",
         "Reduced repetitive work in firewall-policy review"
       ],
-      "technologies": [
-        "Excel VBA",
-        "Firewall Policy",
-        "Network Operations",
-        "Runbook"
-      ],
+      "technologies": ["Excel VBA", "Firewall Policy", "Network Operations", "Runbook"],
       "featured": false,
       "displayOrder": 4,
       "language": "VBA"
@@ -915,13 +802,7 @@
         "Scripts and key bindings for repeated entry points",
         "Personal operations tooling managed as versioned infrastructure"
       ],
-      "technologies": [
-        "TypeScript",
-        "Bun",
-        "tmux",
-        "Bash",
-        "YAML"
-      ],
+      "technologies": ["TypeScript", "Bun", "tmux", "Bash", "YAML"],
       "featured": false,
       "displayOrder": 12,
       "language": "TypeScript"
@@ -1075,15 +956,8 @@
     }
   ],
   "hope": {
-    "locations": [
-      "Seoul"
-    ],
-    "roles": [
-      "Security Automation",
-      "Security Infrastructure",
-      "SIEM Engineering",
-      "Observability"
-    ]
+    "locations": ["Seoul"],
+    "roles": ["Security Automation", "Security Infrastructure", "SIEM Engineering", "Observability"]
   },
   "platformVariants": {
     "wanted": {

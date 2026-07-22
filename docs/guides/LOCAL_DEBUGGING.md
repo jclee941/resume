@@ -144,10 +144,10 @@ go run tools/scripts/local-dev-up.go --portfolio --job-server
 
 #### Service details
 
-| Service    | URL                      | Health Endpoint | Health Timeout | Command                                                       |
-| ---------- | ------------------------ | --------------- | -------------- | ------------------------------------------------------------- |
-| portfolio  | `http://localhost:8787`  | `/`             | 40s            | `npm start` (in `apps/portfolio/`)                            |
-| job-server | `http://localhost:3456`  | `/health`       | 90s            | `docker-compose up` (in `apps/job-server/`)                   |
+| Service    | URL                     | Health Endpoint | Health Timeout | Command                                     |
+| ---------- | ----------------------- | --------------- | -------------- | ------------------------------------------- |
+| portfolio  | `http://localhost:8787` | `/`             | 40s            | `npm start` (in `apps/portfolio/`)          |
+| job-server | `http://localhost:3456` | `/health`       | 90s            | `docker-compose up` (in `apps/job-server/`) |
 
 #### Features
 
@@ -266,24 +266,24 @@ infrastructure/mocks/data/
 
 How local stages map to the real CI pipeline in `.github/workflows/ci.yml`:
 
-| Local Stage  | CI Job(s)                | Local Commands                                                                                                | CI Conditions                                      |
-| ------------ | ------------------------ | ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `analyze`    | `analyze`                | `go run ./tools/ci/affected.go`                                                                               | Always runs                                        |
-| `validate`   | `validate-cloudflare`    | `go run ./tools/ci/validate-cloudflare-native.go`                                                             | portfolio affected (ADR 0009)                      |
-|              |                          | `npx wrangler types /tmp/portfolio-worker-types.d.ts --config wrangler.jsonc --env production` |                                                    |
-| `lint`       | `lint`                   | `npm run lint`                                                                                                | Always runs                                        |
-| `typecheck`  | `typecheck`              | `npm run typecheck`                                                                                           | Always runs                                        |
-| `data-drift` | `data-drift`             | `npm run sync:data`                                                                                           | data or portfolio affected                         |
-|              |                          | `git diff --exit-code apps/portfolio/data.json apps/portfolio/data_en.json apps/portfolio/data_ja.json`       |                                                    |
-| `test`       | `test-unit` + `test-e2e` | `npm test`                                                                                                    | Always (unit); portfolio affected (e2e)            |
-|              |                          | `npm run test:coverage`                                                                                       |                                                    |
-|              |                          | `npm run sync:data`                                                                                           |                                                    |
-|              |                          | `npm --prefix apps/portfolio run build`                                                                       |                                                    |
-|              |                          | `npm run test:e2e:smoke`                                                                                      |                                                    |
-| `security`   | `security-scan`          | `gitleaks detect --source . --config .gitleaks.toml --verbose --no-git`                                       | Always runs                                        |
-|              |                          | `npm audit --audit-level=high`                                                                                |                                                    |
-| `build`      | `build`                  | `npm run sync:data`                                                                                           | portfolio affected; after lint+typecheck+test pass |
-|              |                          | `npm --prefix apps/portfolio run build`                                                                       |                                                    |
+| Local Stage  | CI Job(s)                | Local Commands                                                                                          | CI Conditions                                      |
+| ------------ | ------------------------ | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| `analyze`    | `analyze`                | `go run ./tools/ci/affected.go`                                                                         | Always runs                                        |
+| `validate`   | `validate-cloudflare`    | `go run ./tools/ci/validate-cloudflare-native.go`                                                       | portfolio affected (ADR 0009)                      |
+|              |                          | `npx wrangler types /tmp/portfolio-worker-types.d.ts --config wrangler.jsonc --env production`          |                                                    |
+| `lint`       | `lint`                   | `npm run lint`                                                                                          | Always runs                                        |
+| `typecheck`  | `typecheck`              | `npm run typecheck`                                                                                     | Always runs                                        |
+| `data-drift` | `data-drift`             | `npm run sync:data`                                                                                     | data or portfolio affected                         |
+|              |                          | `git diff --exit-code apps/portfolio/data.json apps/portfolio/data_en.json apps/portfolio/data_ja.json` |                                                    |
+| `test`       | `test-unit` + `test-e2e` | `npm test`                                                                                              | Always (unit); portfolio affected (e2e)            |
+|              |                          | `npm run test:coverage`                                                                                 |                                                    |
+|              |                          | `npm run sync:data`                                                                                     |                                                    |
+|              |                          | `npm --prefix apps/portfolio run build`                                                                 |                                                    |
+|              |                          | `npm run test:e2e:smoke`                                                                                |                                                    |
+| `security`   | `security-scan`          | `gitleaks detect --source . --config .gitleaks.toml --verbose --no-git`                                 | Always runs                                        |
+|              |                          | `npm audit --audit-level=high`                                                                          |                                                    |
+| `build`      | `build`                  | `npm run sync:data`                                                                                     | portfolio affected; after lint+typecheck+test pass |
+|              |                          | `npm --prefix apps/portfolio run build`                                                                 |                                                    |
 
 ### CI dependency graph
 

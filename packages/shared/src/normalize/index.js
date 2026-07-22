@@ -48,7 +48,9 @@ export function normalizeEducationStatus(status) {
 
 /** @param {string|null|undefined} workType */
 export function normalizeWorkTypeForProfile(workType) {
-  const normalized = String(workType || '').replace(/\s+/g, ' ').trim();
+  const normalized = String(workType || '')
+    .replace(/\s+/g, ' ')
+    .trim();
   if (/^정규직\s*\([^)]*파견[^)]*\)$/.test(normalized)) return '정규직';
   return normalized;
 }

@@ -63,12 +63,18 @@ function validateCI(ci) {
       `${job} failure and cancellation must fail the summary`
     );
   }
-  requireContract(!ci.source.includes('/check-runs'), 'synthetic provider check creation is forbidden');
+  requireContract(
+    !ci.source.includes('/check-runs'),
+    'synthetic provider check creation is forbidden'
+  );
 }
 
 function validatePostDeploy(workflow) {
   const trigger = workflow.definition.on ?? {};
-  requireContract(trigger.push && !Object.hasOwn(trigger.push, 'paths'), 'push path filter is forbidden');
+  requireContract(
+    trigger.push && !Object.hasOwn(trigger.push, 'paths'),
+    'push path filter is forbidden'
+  );
   requireContract(
     workflow.definition.concurrency?.['cancel-in-progress'] === false,
     'post-deploy runs must be serialized without cancellation'
@@ -79,7 +85,7 @@ function validatePostDeploy(workflow) {
     'workflow_dispatch expected_sha must be a required string'
   );
   requireContract(
-    workflow.source.includes('github.event_name == \'schedule\'') &&
+    workflow.source.includes("github.event_name == 'schedule'") &&
       workflow.source.includes('[[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]]'),
     'schedule baseline must require a full 40-character SHA'
   );

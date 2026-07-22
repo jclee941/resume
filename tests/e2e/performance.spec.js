@@ -162,7 +162,10 @@ test.describe('Performance & Core Web Vitals', () => {
     // the enclosing suite (see bindFileSuiteToProject in the Playwright
     // runner), silently skipping the entire "Performance & Core Web Vitals"
     // suite in CI instead of only this one test.
-    test.skip(!!process.env.CI, 'Web Vitals tracking requires /api/vitals endpoint not available in CI');
+    test.skip(
+      !!process.env.CI,
+      'Web Vitals tracking requires /api/vitals endpoint not available in CI'
+    );
 
     const vitalsRequests = [];
 

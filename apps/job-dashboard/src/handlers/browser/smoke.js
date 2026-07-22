@@ -18,8 +18,23 @@ import { withBrowserSession as defaultWithBrowserSession } from './browser-servi
 const DEFAULT_URL = 'https://example.com';
 
 const LOGIN_MARKERS = ['login', 'signin', 'sign-in', '로그인', 'ログイン', 'auth'];
-const CAPTCHA_MARKERS = ['captcha', '캡차', '자동입력 방지', '자동등록방지', 'recaptcha', 'hcaptcha', '보안문자'];
-const BLOCKED_MARKERS = ['access denied', 'forbidden', '차단', 'blocked', 'unusual traffic', 'bot detected'];
+const CAPTCHA_MARKERS = [
+  'captcha',
+  '캡차',
+  '자동입력 방지',
+  '자동등록방지',
+  'recaptcha',
+  'hcaptcha',
+  '보안문자',
+];
+const BLOCKED_MARKERS = [
+  'access denied',
+  'forbidden',
+  '차단',
+  'blocked',
+  'unusual traffic',
+  'bot detected',
+];
 
 /**
  * Classify a page from its final URL + title + a text sample.
@@ -66,11 +81,13 @@ export async function runBrowserSmoke(env, opts = {}) {
         let inputs = [];
         try {
           inputs = await page.evaluate(() =>
-            Array.from(document.querySelectorAll('input')).slice(0, 25).map((el) => ({
-              name: el.getAttribute('name') || '',
-              type: el.getAttribute('type') || '',
-              id: el.getAttribute('id') || '',
-            }))
+            Array.from(document.querySelectorAll('input'))
+              .slice(0, 25)
+              .map((el) => ({
+                name: el.getAttribute('name') || '',
+                type: el.getAttribute('type') || '',
+                id: el.getAttribute('id') || '',
+              }))
           );
         } catch {
           inputs = [];

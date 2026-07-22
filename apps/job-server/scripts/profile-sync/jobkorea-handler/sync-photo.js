@@ -203,7 +203,11 @@ export async function appendPhotoUpload(page, options = {}) {
     path.join(CONFIG.SESSION_DIR, 'ProfileView.jpg');
 
   if (!fs.existsSync(photoPath)) {
-    logger(`JobKorea profile photo skipped — file not found (path=${photoPath})`, 'warn', 'jobkorea');
+    logger(
+      `JobKorea profile photo skipped — file not found (path=${photoPath})`,
+      'warn',
+      'jobkorea'
+    );
     return;
   }
 

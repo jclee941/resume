@@ -102,7 +102,8 @@ function buildProjectReviewRail(projects, labels) {
 
   const cards = projects.slice(0, 3).map((project, index) => {
     const anchor = projectAnchor(project, index);
-    const summary = splitProjectSentences(project.description)[0] || project.tagline || project.tech;
+    const summary =
+      splitProjectSentences(project.description)[0] || project.tagline || project.tech;
     return `<a href="#${escapeHtml(anchor)}" class="project-review-rail__link">
               <span>${escapeHtml(project.tagline || labels.open)}</span>
               <strong>${escapeHtml(project.title)}</strong>

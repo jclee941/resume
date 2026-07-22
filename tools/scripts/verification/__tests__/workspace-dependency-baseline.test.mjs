@@ -39,43 +39,46 @@ const baselineAvailable = (() => {
 
 const baselineIt = baselineAvailable ? it : it.skip;
 
-baselineIt('pins direct production imports that resolved through the baseline install topology', () => {
-  // Given: the pre-fix manifests and lock topology plus unchanged production import sites.
-  const baselineLock = JSON.parse(
-    execFileSync('git', ['show', `${baselineSha}:package-lock.json`], {
-      cwd: repositoryRoot,
-      encoding: 'utf8',
-    })
-  );
-  const observed = baselineImports.map(([workspace, source, dependency, lockLocation]) => {
-    const manifest = JSON.parse(
-      execFileSync('git', ['show', `${baselineSha}:${workspace}/package.json`], {
+baselineIt(
+  'pins direct production imports that resolved through the baseline install topology',
+  () => {
+    // Given: the pre-fix manifests and lock topology plus unchanged production import sites.
+    const baselineLock = JSON.parse(
+      execFileSync('git', ['show', `${baselineSha}:package-lock.json`], {
         cwd: repositoryRoot,
         encoding: 'utf8',
       })
     );
-    return {
-      workspace,
-      dependency,
-      imported: readFileSync(path.join(repositoryRoot, workspace, source), 'utf8').includes(
-        `'${dependency}`
-      ),
-      declared: Boolean(
-        manifest.dependencies?.[dependency] ?? manifest.optionalDependencies?.[dependency]
-      ),
-      locked: Object.hasOwn(baselineLock.packages, lockLocation),
-    };
-  });
+    const observed = baselineImports.map(([workspace, source, dependency, lockLocation]) => {
+      const manifest = JSON.parse(
+        execFileSync('git', ['show', `${baselineSha}:${workspace}/package.json`], {
+          cwd: repositoryRoot,
+          encoding: 'utf8',
+        })
+      );
+      return {
+        workspace,
+        dependency,
+        imported: readFileSync(path.join(repositoryRoot, workspace, source), 'utf8').includes(
+          `'${dependency}`
+        ),
+        declared: Boolean(
+          manifest.dependencies?.[dependency] ?? manifest.optionalDependencies?.[dependency]
+        ),
+        locked: Object.hasOwn(baselineLock.packages, lockLocation),
+      };
+    });
 
-  // When/Then: every import was present and install-resolvable without direct ownership.
-  assert.deepEqual(
-    observed,
-    baselineImports.map(([workspace, , dependency]) => ({
-      workspace,
-      dependency,
-      imported: true,
-      declared: false,
-      locked: true,
-    }))
-  );
-});
+    // When/Then: every import was present and install-resolvable without direct ownership.
+    assert.deepEqual(
+      observed,
+      baselineImports.map(([workspace, , dependency]) => ({
+        workspace,
+        dependency,
+        imported: true,
+        declared: false,
+        locked: true,
+      }))
+    );
+  }
+);

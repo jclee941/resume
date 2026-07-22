@@ -33,7 +33,10 @@ export async function notify(service, eventType, data, options = {}) {
     results.telegram = await sendTelegramNotification(service, data, options.telegram);
   }
 
-  if (channels.includes(NotificationChannel.WEBHOOK) || channels.includes(NotificationChannel.BOTH)) {
+  if (
+    channels.includes(NotificationChannel.WEBHOOK) ||
+    channels.includes(NotificationChannel.BOTH)
+  ) {
     results.webhook = await triggerAutomationWebhook(service, eventType, data);
   }
 

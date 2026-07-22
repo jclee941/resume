@@ -135,12 +135,12 @@ These **MUST** be configured in GitHub before deployment can proceed.
 
 ### OPTIONAL - Can Add Later
 
-| Secret             | Purpose                  | Used By         | Status      |
-| ------------------ | ------------------------ | --------------- | ----------- |
-| `AUTOMATION_WEBHOOK_URL`  | Deployment notifications | notify job      | ⏸️ Optional |
-| `AUTH_SYNC_SECRET` | Job platform auth sync   | maintenance.yml | ⏸️ Optional |
-| `ENCRYPTION_KEY`   | Session encryption       | deployment      | ⏸️ Optional |
-| `TF_STATE_URL`     | Terraform state backend  | terraform.yml   | ⏸️ Optional |
+| Secret                   | Purpose                  | Used By         | Status      |
+| ------------------------ | ------------------------ | --------------- | ----------- |
+| `AUTOMATION_WEBHOOK_URL` | Deployment notifications | notify job      | ⏸️ Optional |
+| `AUTH_SYNC_SECRET`       | Job platform auth sync   | maintenance.yml | ⏸️ Optional |
+| `ENCRYPTION_KEY`         | Session encryption       | deployment      | ⏸️ Optional |
+| `TF_STATE_URL`           | Terraform state backend  | terraform.yml   | ⏸️ Optional |
 
 **Auto-Provided by GitHub**
 

@@ -34,7 +34,6 @@ XN|application.
 - Portfolio Worker (Portfolio) -> D1 Database (D1)
 - Portfolio Worker (Portfolio) -> KV Namespaces (KV)
 
-
 **Infrastructure Stack**
 
 - **Application**: Cloudflare Workers (serverless, global CDN)
@@ -98,7 +97,7 @@ infrastructure/
 | **Grafana**    | <https://grafana.jclee.me>           | ✅ Public   | Dashboard visualization |
 | **Prometheus** | 192.168.50.100:9090                  | 🔒 Internal | Metrics storage         |
 | **Loki**       | grafana.jclee.me/loki/...            | 🔒 Proxy    | Log aggregation         |
-| **automation**        | 192.168.50.100:5678                  | 🔒 Internal | Workflow automation     |
+| **automation** | 192.168.50.100:5678                  | 🔒 Internal | Workflow automation     |
 | **GitHub**     | <https://github.com/jclee941/resume> | ✅ Public   | Source repository       |
 
 > ⚠️ **Internal Services**: Prometheus, Loki, automation are internal-only (no public
@@ -283,7 +282,7 @@ curl -H "Authorization: Bearer $GRAFANA_API_KEY" \
 | **Grafana**    | ✅ grafana.jclee.me | 192.168.50.100:3000       | All dashboards      |
 | **Prometheus** | 🔒 Internal Only    | 192.168.50.100:9090       | Use Grafana Explore |
 | **Loki**       | 🔒 Grafana Proxy    | grafana.jclee.me/loki/... | Grafana proxy       |
-| **automation**        | 🔒 Internal Only    | 192.168.50.100:5678       | Workflow editor     |
+| **automation** | 🔒 Internal Only    | 192.168.50.100:5678       | Workflow editor     |
 
 **Access Methods**
 

@@ -154,7 +154,11 @@ export function createTimelineNode(career, index) {
   card.tabIndex = -1;
   const company = el('h3', 'timeline-company');
   company.appendChild(companyElement(model));
-  card.append(company, el('p', 'timeline-role', model.role), el('p', 'timeline-myrole', model.myRole));
+  card.append(
+    company,
+    el('p', 'timeline-role', model.role),
+    el('p', 'timeline-myrole', model.myRole)
+  );
 
   const impact = el('div', 'timeline-impact');
   const summary = el('div', 'impact-summary');
@@ -179,7 +183,10 @@ export function createTimelineNode(career, index) {
   const button = el('button', 'timeline-expand-btn');
   button.setAttribute('aria-expanded', 'false');
   button.setAttribute('aria-controls', details.id);
-  button.setAttribute('aria-label', `${model.labels.expand} ${model.labels.detail} ${model.company}`);
+  button.setAttribute(
+    'aria-label',
+    `${model.labels.expand} ${model.labels.detail} ${model.company}`
+  );
   button.append(el('span', 'expand-text', model.labels.expand), createExpandIcon());
   card.appendChild(button);
 

@@ -26,16 +26,14 @@ function caseStudyCopy(lang) {
   if (lang.startsWith('ja')) {
     return {
       title: '運用事例の詳細',
-      description:
-        '選定したプロジェクトの運用背景と構成を詳しくまとめました。',
+      description: '選定したプロジェクトの運用背景と構成を詳しくまとめました。',
       gridLabel: 'ケーススタディ',
       cta: '詳細を見る',
     };
   }
   return {
     title: '운영 사례 심층 검토',
-    description:
-      '선별한 프로젝트의 운영 배경과 구성을 자세히 정리했습니다.',
+    description: '선별한 프로젝트의 운영 배경과 구성을 자세히 정리했습니다.',
     gridLabel: '케이스 스터디',
     cta: '상세 검토',
   };
@@ -63,7 +61,10 @@ export function initProjectCards() {
   const header = createElement('div', 'case-study-deep-dives__header');
   const heading = createElement('h2', 'case-study-deep-dives__title', copy.title);
   heading.id = 'case-study-heading';
-  header.append(heading, createElement('p', 'case-study-deep-dives__description', copy.description));
+  header.append(
+    heading,
+    createElement('p', 'case-study-deep-dives__description', copy.description)
+  );
   section.appendChild(header);
 
   const grid = document.createElement('div');
@@ -125,7 +126,10 @@ function createProjectCard(project, index, openDeepDive, copy) {
   });
 
   const cta = createElement('div', 'project-card__cta');
-  cta.append(createElement('span', '', copy.cta), createElement('span', 'project-card__cta-icon', '→'));
+  cta.append(
+    createElement('span', '', copy.cta),
+    createElement('span', 'project-card__cta-icon', '→')
+  );
   card.append(header, stack, metrics, cta);
 
   card.addEventListener('click', () => openDeepDive(project));

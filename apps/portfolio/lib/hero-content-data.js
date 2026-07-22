@@ -62,11 +62,7 @@ const HERO_CONTENT = {
     publicProofLabel: 'Public automation projects',
     publicProofLinks: [
       ['#projects', 'jclee-bot', 'PR review, secrets scan, and check runs explain change risk'],
-      [
-        '#projects',
-        'Grafana',
-        'Metrics and logs provide observability for incidents and signals',
-      ],
+      ['#projects', 'Grafana', 'Metrics and logs provide observability for incidents and signals'],
       [
         '#projects',
         'ELK',
@@ -107,7 +103,8 @@ const HERO_CONTENT = {
     srTitle: 'イ・ジェチョル',
     role: 'Security Automation / Infrastructure Engineer',
     availability: 'セキュリティ自動化・セキュリティ基盤の面接依頼を歓迎',
-    positioning: '直近のセキュリティ基盤構築、公開プロジェクト、連絡先・履歴書PDFを1ページにまとめました。',
+    positioning:
+      '直近のセキュリティ基盤構築、公開プロジェクト、連絡先・履歴書PDFを1ページにまとめました。',
     proofLabel: '経歴サマリー',
     proofItems: [
       '希望職種: Security Automation / Infrastructure Engineer',

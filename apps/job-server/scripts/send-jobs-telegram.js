@@ -98,7 +98,13 @@ async function main() {
     ? await loadFromQueue(args.queuePath)
     : await crawlJobs(args.keywords, args.minScore);
   const collected = args.atsOnly
-    ? discovered.filter((job) => ATS_SOURCES.has(String(job.source || '').trim().toLowerCase()))
+    ? discovered.filter((job) =>
+        ATS_SOURCES.has(
+          String(job.source || '')
+            .trim()
+            .toLowerCase()
+        )
+      )
     : discovered;
 
   // Keep only 지원할만한 (worthy) postings, best-first. Crawl results are gated by

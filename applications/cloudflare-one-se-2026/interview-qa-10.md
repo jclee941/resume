@@ -67,7 +67,7 @@
 >
 > 1. **한국 PoP 밀도**: Cloudflare는 서울 + 부산 PoP. Zscaler는 서울만. Netskope는 한국 PoP 제한적. 한국 origin → 한국 PoP는 Cloudflare가 latency 우위.
 > 2. **개발자 친화도**: Cloudflare는 Workers + R2 + D1로 *플랫폼*까지 제공. Zscaler/Netskope는 보안 게이트웨이만. 한국 핀테크는 _Edge에서 보안 + 비즈니스 로직 동시_ 처리를 원하는 경우가 많아서 Cloudflare가 유리합니다.
-> 3. **가격 모델**: Cloudflare One은 user-based + add-on. Zscaler는 user + bandwidth. 한국 대기업 IT 예산 구조에서는 *예측 가능한 user-based* 모델을 설명하기 쉽습니다.
+> 3. **가격 모델**: Cloudflare One은 user-based + add-on. Zscaler는 user + bandwidth. 한국 대기업 IT 예산 구조에서는 _예측 가능한 user-based_ 모델을 설명하기 쉽습니다.
 >
 > 다만 정직한 단점: Zscaler는 한국 시장 진입 더 빨라서 *brand recognition*에서 우위. 큰 금융사는 "이미 옆 회사도 Zscaler 씁니다"가 강력한 buyer signal입니다. 이 부분은 Cloudflare가 한국 reference customer 사례를 더 많이 만드는 게 답이고, SE로서 제가 reference를 만드는 데 직접 기여하고 싶습니다.
 

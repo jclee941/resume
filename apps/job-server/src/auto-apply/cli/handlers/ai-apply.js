@@ -100,7 +100,8 @@ export async function showAICareerAdvice(args) {
       url: jobUrl,
       title: 'Security Operations Engineer',
       company: '테크 회사',
-      description: '보안 운영 엔지니어 포지션입니다. SIEM 운영과 보안 인프라 경험을 보유한 분을 찾습니다.',
+      description:
+        '보안 운영 엔지니어 포지션입니다. SIEM 운영과 보안 인프라 경험을 보유한 분을 찾습니다.',
       requirements: '3년 이상 보안 운영 경험, SIEM 또는 방화벽 운영 경험 보유',
     };
 

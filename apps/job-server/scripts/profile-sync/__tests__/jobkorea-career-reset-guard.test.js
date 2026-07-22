@@ -16,11 +16,7 @@ afterEach(() => {
 describe('JobKorea career reset guard', () => {
   it('throws before save when apply mode has fewer Career slots than SSoT careers', () => {
     const ssot = {
-      careers: [
-        { company: 'A' },
-        { company: 'B' },
-        { company: 'C' },
-      ],
+      careers: [{ company: 'A' }, { company: 'B' }, { company: 'C' }],
     };
     const sectionIndices = { career: ['c7'] };
 
@@ -38,9 +34,13 @@ describe('JobKorea career reset guard', () => {
 
   it('allows dry-run comparison when Career slots are incomplete', () => {
     assert.doesNotThrow(() =>
-      assertJobKoreaCareerSlotCoverage({ careers: [{ company: 'A' }] }, { career: [] }, {
-        dryRun: true,
-      })
+      assertJobKoreaCareerSlotCoverage(
+        { careers: [{ company: 'A' }] },
+        { career: [] },
+        {
+          dryRun: true,
+        }
+      )
     );
   });
 
@@ -67,9 +67,7 @@ describe('JobKorea career reset guard', () => {
       { name: 'Career[c2].C_Name', value: 'B' },
     ];
 
-    assert.doesNotThrow(() =>
-      assertJobKoreaCareerPayloadCoverage(ssot, fields, { dryRun: false })
-    );
+    assert.doesNotThrow(() => assertJobKoreaCareerPayloadCoverage(ssot, fields, { dryRun: false }));
   });
 
   it('trims surplus live Career slots for apply saves', () => {

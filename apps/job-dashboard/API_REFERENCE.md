@@ -860,9 +860,7 @@ All successful responses follow this format:
 ```json
 {
   "success": true,
-  "data": {
-    /* endpoint-specific data */
-  },
+  "data": {/* endpoint-specific data */},
   "metadata": {
     "timestamp": "2026-02-11T06:00:00.000Z",
     "requestId": "abc-123-def-456"

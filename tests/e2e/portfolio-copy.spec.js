@@ -7,9 +7,7 @@ test.describe('Portfolio hiring copy', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const hero = page.locator('#hero');
-    await expect(
-      hero.getByText('보안 자동화 · 보안 인프라 면접 제안 가능')
-    ).toBeVisible();
+    await expect(hero.getByText('보안 자동화 · 보안 인프라 면접 제안 가능')).toBeVisible();
     await expect(
       hero.getByText(
         '넥스트레이드 보안 인프라 구축·자동화와 공개 자동화 프로젝트, 연락처·이력서 PDF를 한 화면에 정리했습니다.'

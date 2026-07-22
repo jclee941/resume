@@ -80,10 +80,7 @@ describe('withBrowserSession', () => {
       throw new Error('boom');
     });
 
-    await assert.rejects(
-      () => withBrowserSession(env, fn, { puppeteer: { connect } }),
-      /boom/
-    );
+    await assert.rejects(() => withBrowserSession(env, fn, { puppeteer: { connect } }), /boom/);
 
     assert.equal(disconnect.mock.calls.length, 1);
     assert.equal(stub.calls.length, 2);
@@ -91,7 +88,9 @@ describe('withBrowserSession', () => {
   });
 
   it('propagates the error (and code) when acquire fails to return a sessionId', async () => {
-    const stub = createFakeStub({ acquireBody: { error: 'Browser Rendering capacity reached', code: 'NO_CAPACITY' } });
+    const stub = createFakeStub({
+      acquireBody: { error: 'Browser Rendering capacity reached', code: 'NO_CAPACITY' },
+    });
     const env = createFakeEnv(stub);
 
     const connect = mock.fn(async () => ({ disconnect: async () => {} }));
@@ -116,7 +115,11 @@ describe('withBrowserSession', () => {
     const stub = createFakeStub({ acquireBody: { sessionId: 'session-3' } });
     stub.fetch = mock.fn(async (url) => {
       if (String(url).endsWith('/acquire')) {
-        return { async json() { return { sessionId: 'session-3' }; } };
+        return {
+          async json() {
+            return { sessionId: 'session-3' };
+          },
+        };
       }
       throw new Error('release network failure');
     });

@@ -23,20 +23,21 @@ describe('public portfolio hardening', () => {
     const data = JSON.parse(read(`packages/data/resumes/master/${file}`));
     const html = generateProjectCards(data.projects, `public-surface:${file}`);
 
-    expect((html.match(/data-project-extra="true"/g) || []).length).toBe(
-      data.projects.length - 5
-    );
+    expect((html.match(/data-project-extra="true"/g) || []).length).toBe(data.projects.length - 5);
   });
 
-  test.each(LOCALE_FILES)('%s keeps restored contact evidence out of web-data phone projection', (file) => {
-    const data = JSON.parse(read(`packages/data/resumes/master/${file}`));
-    const html = generateContactGrid(data.contact);
+  test.each(LOCALE_FILES)(
+    '%s keeps restored contact evidence out of web-data phone projection',
+    (file) => {
+      const data = JSON.parse(read(`packages/data/resumes/master/${file}`));
+      const html = generateContactGrid(data.contact);
 
-    expect(data.contact.githubBot).toBe('https://github.com/jclee941/jclee-bot');
-    expect(html).toContain('jclee-bot');
-    const publicData = generateWebData(data);
-    expect(publicData.contact.phone).toBeUndefined();
-  });
+      expect(data.contact.githubBot).toBe('https://github.com/jclee941/jclee-bot');
+      expect(html).toContain('jclee-bot');
+      const publicData = generateWebData(data);
+      expect(publicData.contact.phone).toBeUndefined();
+    }
+  );
 
   test.each(['apps/portfolio/index.html', 'apps/portfolio/index-en.html'])(
     '%s retains the restored contact schema',

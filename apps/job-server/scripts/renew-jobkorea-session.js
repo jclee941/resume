@@ -32,7 +32,9 @@ function log(...args) {
 
 async function main() {
   if (!loginId || !password) {
-    console.error('[jobkorea-session] JOBKOREA_USERNAME/JOBKOREA_EMAIL and JOBKOREA_PASSWORD required');
+    console.error(
+      '[jobkorea-session] JOBKOREA_USERNAME/JOBKOREA_EMAIL and JOBKOREA_PASSWORD required'
+    );
     process.exit(1);
   }
 

@@ -4,7 +4,11 @@ import { runBrowserSmoke, classifyPage } from '../smoke.js';
 
 const env = { BROWSER_SESSION: {}, MYBROWSER: {} };
 
-function fakePage({ title = 'Example Domain', finalUrl = 'https://example.com', text = 'hello' } = {}) {
+function fakePage({
+  title = 'Example Domain',
+  finalUrl = 'https://example.com',
+  text = 'hello',
+} = {}) {
   const calls = { closed: false, gotoUrl: null };
   return {
     calls,
@@ -24,7 +28,10 @@ function fakePage({ title = 'Example Domain', finalUrl = 'https://example.com', 
 
 describe('classifyPage', () => {
   it('detects captcha, blocked, login, content', () => {
-    assert.equal(classifyPage('https://jobkorea.co.kr', 'JobKorea', '보안문자를 입력하세요'), 'captcha');
+    assert.equal(
+      classifyPage('https://jobkorea.co.kr', 'JobKorea', '보안문자를 입력하세요'),
+      'captcha'
+    );
     assert.equal(classifyPage('https://x', 'Access Denied', 'unusual traffic detected'), 'blocked');
     assert.equal(classifyPage('https://x/login', 'Sign in', 'please log in'), 'login');
     assert.equal(classifyPage('https://x', 'Jobs', 'a list of postings'), 'content');
@@ -33,7 +40,11 @@ describe('classifyPage', () => {
 
 describe('runBrowserSmoke', () => {
   it('reports ok with title, finalUrl, pageKind on success and closes the page', async () => {
-    const { page, calls } = fakePage({ title: 'Example Domain', finalUrl: 'https://example.com', text: 'ok' });
+    const { page, calls } = fakePage({
+      title: 'Example Domain',
+      finalUrl: 'https://example.com',
+      text: 'ok',
+    });
     let clock = 100;
     const withBrowserSession = async (_env, fn) => fn({ newPage: async () => page });
 
@@ -53,10 +64,17 @@ describe('runBrowserSmoke', () => {
   });
 
   it('classifies a captcha page from its text', async () => {
-    const { page } = fakePage({ title: 'JobKorea', finalUrl: 'https://www.jobkorea.co.kr/login', text: '자동입력 방지 문자' });
+    const { page } = fakePage({
+      title: 'JobKorea',
+      finalUrl: 'https://www.jobkorea.co.kr/login',
+      text: '자동입력 방지 문자',
+    });
     const withBrowserSession = async (_env, fn) => fn({ newPage: async () => page });
 
-    const result = await runBrowserSmoke(env, { withBrowserSession, url: 'https://www.jobkorea.co.kr' });
+    const result = await runBrowserSmoke(env, {
+      withBrowserSession,
+      url: 'https://www.jobkorea.co.kr',
+    });
 
     assert.equal(result.ok, true);
     assert.equal(result.pageKind, 'captcha');

@@ -9,9 +9,7 @@
     "red/portfolio-visual-accessibility.txt",
     "red/visual-snapshot-compare.txt"
   ],
-  "greenEvidence": [
-    "green-43-playwright.txt"
-  ],
+  "greenEvidence": ["green-43-playwright.txt"],
   "verifiedBehaviors": [
     "Korean mixed-script tokens do not split across lines at the tested viewports",
     "The fixed mobile action bar is hidden while the cover-letter disclosure is open",

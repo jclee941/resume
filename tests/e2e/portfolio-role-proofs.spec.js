@@ -15,7 +15,9 @@ const SECURITY_PROJECT_TITLES = [
 ];
 
 test.describe('Portfolio role evidence routing', () => {
-  test('Korean role chips show evidence counts and focus all matching projects', async ({ page }) => {
+  test('Korean role chips show evidence counts and focus all matching projects', async ({
+    page,
+  }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     for (const [roleId, label, countLabel] of KOREAN_ROLE_EVIDENCE_COUNTS) {

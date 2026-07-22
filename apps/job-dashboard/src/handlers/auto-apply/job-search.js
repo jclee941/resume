@@ -62,10 +62,7 @@ export async function searchPlatformJobs({
           keyword,
         });
         const sanitizedMessage = sanitizeSearchError(normalized.message);
-        console.error(
-          `[AutoApply] ${platform} search failed for "${keyword}":`,
-          sanitizedMessage
-        );
+        console.error(`[AutoApply] ${platform} search failed for "${keyword}":`, sanitizedMessage);
         searchResults.errors++;
         searchResults.searchFailures++;
         searchResults.errorDetails.push({

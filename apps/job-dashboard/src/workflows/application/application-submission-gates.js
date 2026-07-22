@@ -75,8 +75,8 @@ function hasSubmitCapability(job) {
   const capability = getWorkflowApproval(job)?.metadata?.adapterCapability;
   return Boolean(
     capability?.canSubmit === true ||
-      capability?.supportsSubmit === true ||
-      capability?.submitSupported === true
+    capability?.supportsSubmit === true ||
+    capability?.submitSupported === true
   );
 }
 
@@ -101,8 +101,8 @@ function hasExplicitHumanApproval(job) {
   const marker = approval?.metadata?.humanApproval;
   return Boolean(
     approval?.id &&
-      (approval.status === 'human-approved' || marker?.status === 'approved') &&
-      marker?.destination === job?.source
+    (approval.status === 'human-approved' || marker?.status === 'approved') &&
+    marker?.destination === job?.source
   );
 }
 

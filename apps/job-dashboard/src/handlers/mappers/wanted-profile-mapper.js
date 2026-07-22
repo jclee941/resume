@@ -33,12 +33,11 @@ export function mapCareerToWanted(career) {
 export function mapEducationToWanted(education) {
   const isAttending = normalizeEducationStatus(education.status) === '재학중';
   const startTime = education.startDate ? `${education.startDate.replace('.', '-')}-01` : null;
-  const endTime =
-    isAttending
-      ? null
-      : education.endDate
-        ? `${education.endDate.replace('.', '-')}-01`
-        : null;
+  const endTime = isAttending
+    ? null
+    : education.endDate
+      ? `${education.endDate.replace('.', '-')}-01`
+      : null;
   return {
     school_name: education.school,
     major: education.major,

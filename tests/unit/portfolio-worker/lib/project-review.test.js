@@ -12,7 +12,8 @@ describe('project review cards', () => {
       title: 'ELK Live Demo',
       tagline: '운영 근거',
       tech: 'Elasticsearch, Kibana',
-      description: '로그 탐색 경로를 만들었습니다. 대시보드와 알림 흐름을 연결했습니다. 운영 확인 근거를 남겼습니다.',
+      description:
+        '로그 탐색 경로를 만들었습니다. 대시보드와 알림 흐름을 연결했습니다. 운영 확인 근거를 남겼습니다.',
     },
     {
       title: 'Job Automation',

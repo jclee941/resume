@@ -24,14 +24,14 @@ packages/
 
 ## WHERE TO LOOK
 
-| Task | Location | Notes |
-| --- | --- | --- |
-| Domain constants/typedefs | `types/` | no runtime validation dependency |
-| Runtime validation | `schemas/` | Zod schemas mirror canonical types |
-| Environment contracts | `env/`, `contracts/` | parse env values; publish API/env surface |
-| Resume/content SSoT | `data/` | authoritative data and platform mappings |
-| Shared runtime helpers | `shared/` | errors, logging, rate-limit, clients, crypto |
-| Operator commands | `cli/` | Node CLI entry and verification helpers |
+| Task                      | Location             | Notes                                        |
+| ------------------------- | -------------------- | -------------------------------------------- |
+| Domain constants/typedefs | `types/`             | no runtime validation dependency             |
+| Runtime validation        | `schemas/`           | Zod schemas mirror canonical types           |
+| Environment contracts     | `env/`, `contracts/` | parse env values; publish API/env surface    |
+| Resume/content SSoT       | `data/`              | authoritative data and platform mappings     |
+| Shared runtime helpers    | `shared/`            | errors, logging, rate-limit, clients, crypto |
+| Operator commands         | `cli/`               | Node CLI entry and verification helpers      |
 
 ## CONVENTIONS
 

@@ -96,7 +96,10 @@ if (JSON.stringify(oldExp) !== JSON.stringify(newExp)) {
 
 // 9. hero.subtitle — "효율화" 단어 다듬기
 if (data.hero?.subtitle?.includes('자동화 효율화')) {
-  data.hero.subtitle = data.hero.subtitle.replace('automation 자동화 효율화', 'automation 운영 자동화');
+  data.hero.subtitle = data.hero.subtitle.replace(
+    'automation 자동화 효율화',
+    'automation 운영 자동화'
+  );
   log('hero.subtitle: "자동화 효율화" → "운영 자동화"');
 }
 

@@ -112,11 +112,9 @@ export function getRecruiterLabels() {
   if (lang.startsWith('en')) {
     return {
       quickTitle: 'Browse projects by role',
-      quickDesc:
-        'Pick the role you are hiring for and jump straight to the matching work.',
+      quickDesc: 'Pick the role you are hiring for and jump straight to the matching work.',
       matrixTitle: 'Projects at a glance',
-      matrixDesc:
-        'Each card links a role to the career and project work behind it.',
+      matrixDesc: 'Each card links a role to the career and project work behind it.',
       role: 'Role',
       evidence: 'Evidence',
       contact: 'Contact',

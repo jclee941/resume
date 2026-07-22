@@ -1,8 +1,4 @@
-const {
-  createMockDb,
-  createRequest,
-  parseJson,
-} = require('./auto-apply-run-handler-fixtures.js');
+const { createMockDb, createRequest, parseJson } = require('./auto-apply-run-handler-fixtures.js');
 
 let runAutoApply, QueueWorkflowDispatcher, MESSAGE_TYPES;
 
@@ -21,9 +17,12 @@ function makeNativeCandidate(overrides = {}) {
 
 describe('job-dashboard Cloudflare native auto-apply safety gates', () => {
   beforeAll(async () => {
-    ({ runAutoApply } = await import('../../../apps/job-dashboard/src/handlers/auto-apply/run-handler.js'));
-    ({ QueueWorkflowDispatcher } = await import('../../../apps/job-dashboard/src/queues/queue-workflow-dispatcher.js'));
-    ({ MESSAGE_TYPES } = await import('../../../apps/job-dashboard/src/queues/queue-message-constants.js'));
+    ({ runAutoApply } =
+      await import('../../../apps/job-dashboard/src/handlers/auto-apply/run-handler.js'));
+    ({ QueueWorkflowDispatcher } =
+      await import('../../../apps/job-dashboard/src/queues/queue-workflow-dispatcher.js'));
+    ({ MESSAGE_TYPES } =
+      await import('../../../apps/job-dashboard/src/queues/queue-message-constants.js'));
   });
 
   test('runAutoApply rejects native real submits when auto-apply is disabled', async () => {

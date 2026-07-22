@@ -310,7 +310,6 @@
 - ☁️ Cloudflare Workers Builds / (authoritative) (CF) -> 🐳 job-server / (Docker + MCP) (Docker)
 - 📦 portfolio worker.js (Worker) -> 🌐 resume.jclee.me (Live)
 
-
 ## 🔍 검증 체크리스트 (Verification Checklist)
 
 ### 7단계 자동 검증

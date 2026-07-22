@@ -16,9 +16,7 @@ describe('auth route registration characterization', () => {
     };
 
     // When
-    const registration = fastify
-      .register(duplicateLogoutFixture, { prefix: '/api/auth' })
-      .ready();
+    const registration = fastify.register(duplicateLogoutFixture, { prefix: '/api/auth' }).ready();
 
     // Then
     await assert.rejects(registration, {

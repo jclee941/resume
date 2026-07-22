@@ -94,8 +94,9 @@ test.describe('Mobile Responsiveness', () => {
     await safeMobileGoto(page);
     await page.waitForSelector('#resume .timeline-company .company-link', { timeout: 15000 });
 
-    const companyTargets = await page.locator('#resume .timeline-company .company-link').evaluateAll(
-      (links) =>
+    const companyTargets = await page
+      .locator('#resume .timeline-company .company-link')
+      .evaluateAll((links) =>
         links
           .filter((link) => {
             const style = window.getComputedStyle(link);
@@ -110,7 +111,7 @@ test.describe('Mobile Responsiveness', () => {
               wrapperHeight: wrapperRect ? Math.round(wrapperRect.height) : 0,
             };
           })
-    );
+      );
 
     expect(companyTargets.length).toBeGreaterThan(0);
 

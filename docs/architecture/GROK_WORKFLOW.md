@@ -260,9 +260,7 @@ await mcp__sequential_thinking__sequentialthinking({
 
 // Then use Grok for final decision
 await mcp__grok__chat_completion({
-  messages: [
-    /* analysis results */
-  ],
+  messages: [/* analysis results */],
 });
 ```
 

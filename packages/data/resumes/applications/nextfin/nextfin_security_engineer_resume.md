@@ -174,7 +174,7 @@ Security Engineer (Cloud) — 넥스트증권 지원
 | CI/CD 보안 점검(SAST/DAST/Dependency) 통합       | 펀엔씨 GitLab CI/CD 보안 검수 자동화            |
 | CloudTrail/GuardDuty/SIEM 로그 수집·분석         | CloudTrail·GuardDuty 통합 분석, Splunk 모니터링 |
 | 전자금융감독규정/ISMS 컴플라이언스               | 금융위 본인가, 금감원 감사 대응                 |
-| Python/Bash 자동화 (우대)                        | automation+Python 보안 자동화 다수                     |
+| Python/Bash 자동화 (우대)                        | automation+Python 보안 자동화 다수              |
 | K8s/Docker 컨테이너 보안 (우대)                  | RBAC/Pod Security, CKS 준비 중                  |
 
 ---

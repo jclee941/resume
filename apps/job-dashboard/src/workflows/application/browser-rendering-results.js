@@ -1,6 +1,7 @@
 const APPLY_TEXT_PATTERN = /(즉시지원|입사지원|지원하기|apply|easy apply)/i;
 const ALREADY_APPLIED_PATTERN = /(지원완료|이미\s*지원|입사지원\s*완료|already\s+applied)/i;
-const COMPLETE_TEXT_PATTERN = /(지원이\s*완료|입사지원이\s*완료|제출.*완료|submitted|application\s+sent)/i;
+const COMPLETE_TEXT_PATTERN =
+  /(지원이\s*완료|입사지원이\s*완료|제출.*완료|submitted|application\s+sent)/i;
 const CONFIRM_TEXT_PATTERN = /(제출|최종지원|입사지원|지원하기|확인|submit|confirm)/i;
 const CANCEL_TEXT_PATTERN = /(취소|닫기|close|cancel)/i;
 const LOGIN_TEXT_PATTERN = /(로그인|sign\s*in|log\s*in)/i;
@@ -44,7 +45,15 @@ export function completedResult(status, details) {
   };
 }
 
-export function renderedReviewResult(platform, targetUrl, finalUrl, title, response, cookieCount, pageState) {
+export function renderedReviewResult(
+  platform,
+  targetUrl,
+  finalUrl,
+  title,
+  response,
+  cookieCount,
+  pageState
+) {
   const applyControl = findApplyControl(pageState);
   const loginControl = pageState.controls.find((control) => LOGIN_TEXT_PATTERN.test(control.text));
   return {

@@ -2,7 +2,10 @@ const path = require('path');
 const { pathToFileURL } = require('url');
 
 async function loadRenewSession() {
-  const scriptPath = path.resolve(__dirname, '../../../apps/job-server/scripts/renew-wanted-session.js');
+  const scriptPath = path.resolve(
+    __dirname,
+    '../../../apps/job-server/scripts/renew-wanted-session.js'
+  );
   return import(pathToFileURL(scriptPath).href);
 }
 
@@ -26,10 +29,7 @@ describe('renew-wanted-session', () => {
     const emailButton = { textContent: '이메일로 시작하기' };
     const previousDocument = global.document;
     global.document = {
-      querySelectorAll: jest.fn(() => [
-        { textContent: 'Kakao 계정으로 계속하기' },
-        emailButton,
-      ]),
+      querySelectorAll: jest.fn(() => [{ textContent: 'Kakao 계정으로 계속하기' }, emailButton]),
     };
 
     try {

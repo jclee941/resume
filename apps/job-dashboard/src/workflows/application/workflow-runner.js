@@ -136,7 +136,8 @@ function normalizeWorkflowCandidates(candidates) {
       const source = normalizeApplicationPlatform(
         candidate.source || candidate.platform || candidate.loginPlatform
       );
-      const id = candidate.id || candidate.sourceId || `${source}-${candidate.url || candidate.title}`;
+      const id =
+        candidate.id || candidate.sourceId || `${source}-${candidate.url || candidate.title}`;
       return {
         ...candidate,
         id,

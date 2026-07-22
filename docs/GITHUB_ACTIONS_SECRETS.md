@@ -352,18 +352,18 @@ wrangler deployments list --name resume-portfolio
 
 ## Reference: Which Workflows Use Which Secrets
 
-| Secret                | ci.yml | maintenance.yml | terraform.yml | verify.yml |
-| --------------------- | ------ | --------------- | ------------- | ---------- |
-| CLOUDFLARE_API_TOKEN  | ✅     | ✅              | ✅            |            |
-| CLOUDFLARE_ACCOUNT_ID | ✅     | ✅              | ✅            |            |
-| GITHUB_TOKEN          | ✅     |                 | ✅            |            |
-| AUTOMATION_WEBHOOK_URL       | ✅     | ✅              |               |            |
-| AUTH_SYNC_SECRET      |        | ✅              |               |            |
-| ENCRYPTION_KEY        |        | ✅              |               |            |
-| TF_STATE_URL          |        | ✅              | ✅            |            |
-| TF_STATE_USERNAME     |        | ✅              | ✅            |            |
-| TF_STATE_PASSWORD     |        | ✅              | ✅            |            |
-| ADMIN_TOKEN           |        | ✅              |               |            |
+| Secret                 | ci.yml | maintenance.yml | terraform.yml | verify.yml |
+| ---------------------- | ------ | --------------- | ------------- | ---------- |
+| CLOUDFLARE_API_TOKEN   | ✅     | ✅              | ✅            |            |
+| CLOUDFLARE_ACCOUNT_ID  | ✅     | ✅              | ✅            |            |
+| GITHUB_TOKEN           | ✅     |                 | ✅            |            |
+| AUTOMATION_WEBHOOK_URL | ✅     | ✅              |               |            |
+| AUTH_SYNC_SECRET       |        | ✅              |               |            |
+| ENCRYPTION_KEY         |        | ✅              |               |            |
+| TF_STATE_URL           |        | ✅              | ✅            |            |
+| TF_STATE_USERNAME      |        | ✅              | ✅            |            |
+| TF_STATE_PASSWORD      |        | ✅              | ✅            |            |
+| ADMIN_TOKEN            |        | ✅              |               |            |
 
 ---
 

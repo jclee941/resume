@@ -15,11 +15,13 @@ export function createDryRunOnlyResult(job) {
 
 export function countApplyResults(results, preSkippedCount) {
   return {
-    applied: results.filter((result) => result.success && !result.skipped && result.applied !== false)
-      .length,
+    applied: results.filter(
+      (result) => result.success && !result.skipped && result.applied !== false
+    ).length,
     failed: results.filter((result) => !result.success && !result.skipped).length,
     skipped:
       preSkippedCount +
-      results.filter((result) => result.skipped || (result.success && result.applied === false)).length,
+      results.filter((result) => result.skipped || (result.success && result.applied === false))
+        .length,
   };
 }

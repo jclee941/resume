@@ -9,19 +9,17 @@ export function mapSchoolToFormFields(ssot, schoolIndex) {
   const key = schoolIndex || 'c1';
   const startRaw = toYYYYMM(education.startDate || '');
   const normalizedStatus = normalizeEducationStatus(education.status);
-  const effectiveStatus =
-    Object.hasOwn(GRAD_TYPE, normalizedStatus)
-      ? normalizedStatus
-      : education.endDate
-        ? '졸업'
-        : '재학중';
+  const effectiveStatus = Object.hasOwn(GRAD_TYPE, normalizedStatus)
+    ? normalizedStatus
+    : education.endDate
+      ? '졸업'
+      : '재학중';
   const isAttending = effectiveStatus === '재학중';
-  const gradYM =
-    isAttending
-      ? startRaw.length >= 4
-        ? `${parseInt(startRaw.slice(0, 4), 10) + 4}02`
-        : ''
-      : toYYYYMM(education.endDate || '');
+  const gradYM = isAttending
+    ? startRaw.length >= 4
+      ? `${parseInt(startRaw.slice(0, 4), 10) + 4}02`
+      : ''
+    : toYYYYMM(education.endDate || '');
   const schoolTypeCode = SCHOOL_TYPE[education.schoolType] ?? SCHOOL_TYPE['4년제'];
   const majorTypeCode = MAJOR_TYPE[education.majorType] ?? 1;
 

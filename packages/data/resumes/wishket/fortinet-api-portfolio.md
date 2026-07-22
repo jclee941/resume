@@ -93,7 +93,6 @@ FortiManager와 FortiAnalyzer는 역할이 다르고 운영자가 얻고 싶은 
 - FortiAnalyzer REST API / · 로그 통계 수집 (FAZ) -> FortiManager / FortiAnalyzer / 공통 자동화 라이브러리 (Lib)
 - FortiManager / FortiAnalyzer / 공통 자동화 라이브러리 (Lib) -> オペレータ / SOC 运用 스크립트 (Op)
 
-
 ### 아키텍처 개요
 
 - Python이 자동화 라이브러리 레이어 역할 수행

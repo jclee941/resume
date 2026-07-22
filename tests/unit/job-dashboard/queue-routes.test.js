@@ -138,14 +138,29 @@ describe('job-dashboard Queue routes', () => {
 
   test.each([
     [{ payload: {} }, 'Invalid type. Must be one of: crawl, apply, sync, report, cleanup'],
-    [{ type: 'unknown', payload: {} }, 'Invalid type. Must be one of: crawl, apply, sync, report, cleanup'],
+    [
+      { type: 'unknown', payload: {} },
+      'Invalid type. Must be one of: crawl, apply, sync, report, cleanup',
+    ],
     [{ type: 'crawl' }, 'Payload must be a non-null object'],
     [{ type: 'crawl', payload: null }, 'Payload must be a non-null object'],
     [{ type: 'crawl', payload: [] }, 'Payload must be a non-null object'],
-    [{ type: 'crawl', payload: {}, priority: 'normal' }, 'Invalid priority. Must be one of: urgent, background'],
-    [{ type: 'crawl', payload: {}, delaySeconds: -1 }, 'delaySeconds must be an integer between 0 and 43200'],
-    [{ type: 'crawl', payload: {}, delaySeconds: 43201 }, 'delaySeconds must be an integer between 0 and 43200'],
-    [{ type: 'crawl', payload: {}, delaySeconds: 1.5 }, 'delaySeconds must be an integer between 0 and 43200'],
+    [
+      { type: 'crawl', payload: {}, priority: 'normal' },
+      'Invalid priority. Must be one of: urgent, background',
+    ],
+    [
+      { type: 'crawl', payload: {}, delaySeconds: -1 },
+      'delaySeconds must be an integer between 0 and 43200',
+    ],
+    [
+      { type: 'crawl', payload: {}, delaySeconds: 43201 },
+      'delaySeconds must be an integer between 0 and 43200',
+    ],
+    [
+      { type: 'crawl', payload: {}, delaySeconds: 1.5 },
+      'delaySeconds must be an integer between 0 and 43200',
+    ],
   ])('rejects invalid schema %#', async (input, error) => {
     // Given: an authenticated object outside the Queue schema
     const env = { ADMIN_TOKEN };

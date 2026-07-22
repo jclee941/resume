@@ -37,7 +37,10 @@ export async function renewWantedSession(email, password) {
       });
       await new Promise((r) => setTimeout(r, 3000));
 
-      const emailBtn = await page.evaluateHandle(findWantedEmailLoginButton, WANTED_EMAIL_LOGIN_MATCHER);
+      const emailBtn = await page.evaluateHandle(
+        findWantedEmailLoginButton,
+        WANTED_EMAIL_LOGIN_MATCHER
+      );
       if (emailBtn) {
         const btn = await emailBtn.asElement();
         if (btn) {

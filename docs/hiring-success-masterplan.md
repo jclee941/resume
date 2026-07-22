@@ -17,18 +17,21 @@
 ## 타깃 역할
 
 우선순위 1:
+
 - Security Operations / SOC Automation
 - 보안 인프라 엔지니어
 - DevSecOps 엔지니어
 - Observability / SRE 엔지니어
 
 우선순위 2:
+
 - 클라우드 보안 엔지니어
 - 플랫폼 엔지니어
 - 네트워크/클라우드 엔지니어
 - 보안 비중이 높은 Solutions Engineer
 
 지원 제외:
+
 - 보안·인프라 접점이 약한 순수 CRUD 백엔드
 - 순수 프론트엔드
 - 국적, 근무허가, 법적 동의, 민감 정보를 자동 답변해야 하는 ATS
@@ -37,12 +40,14 @@
 ## 공개 포트폴리오 Proof Path
 
 채용 담당자가 보게 할 첫 경로:
+
 - Security Ops: Security Alert System, Splunk, FortiManager API, 감사 대응
 - SRE / Observability: Observability Platform, Grafana, Prometheus, Loki, ELK
 - DevSecOps / IaC: Terraform Homelab IaC, Cloudflare Workers, GitHub Actions
 - Response Workflow: jclee-bot GitHub App, secret scan, actionlint, 한국어 우선 리뷰 흐름
 
 운영 원칙:
+
 - 프로젝트는 문제, 조치, 검토 가능한 근거 순서로 설명한다.
 - 성과 수치가 검증되지 않으면 쓰지 않는다.
 - `jclee-bot`은 공개 proof path에 포함한다.
@@ -53,6 +58,7 @@
 Wanted와 JobKorea의 첫 문단은 같은 포지셔닝을 공유한다. JobKorea에는 CCNP를 누락하지 않는다.
 
 필수 키워드:
+
 - FortiGate, FortiManager, FortiAnalyzer
 - Splunk ES, SIEM, Webhook, Slack/SMS 알림
 - Python, Ansible, Terraform, Linux
@@ -62,6 +68,7 @@ Wanted와 JobKorea의 첫 문단은 같은 포지셔닝을 공유한다. JobKore
 ## 지원 운영 루프
 
 매주 반복:
+
 1. `npm run sync:data`로 SSoT와 포트폴리오 데이터를 맞춘다.
 2. Wanted/JobKorea 프로필 문구를 `applications/job-search-2026-07/profile-copy.md` 기준으로 비교한다.
 3. `application-scorecard.md`에서 8점 이상만 맞춤 지원한다.
@@ -73,6 +80,7 @@ Wanted와 JobKorea의 첫 문단은 같은 포지셔닝을 공유한다. JobKore
 ## 검증 게이트
 
 커밋 전:
+
 - `node --test tools/scripts/utils/__tests__/resume-web-data-projects.test.js`
 - `npm run sync:data`
 - `npm run build`
@@ -80,6 +88,7 @@ Wanted와 JobKorea의 첫 문단은 같은 포지셔닝을 공유한다. JobKore
 - `npm run typecheck`
 
 배포 전:
+
 - 공개 데이터와 JSON-LD에 제외 프로젝트 ID가 없는지 확인한다.
 - `foreign-apply:dry-run`은 제출 없이 검토 큐만 만드는지 확인한다.
 - Cloudflare 배포는 Workers Builds 경로를 우선한다. 로컬 Wrangler는 dry-run 검증에만 사용한다.

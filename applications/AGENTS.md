@@ -21,13 +21,13 @@ applications/
 
 ## WHERE TO LOOK
 
-| Task | Location | Notes |
-| --- | --- | --- |
-| PDF/application visual rules | `DESIGN.md` | extend design tokens before adding raw colors/styles |
-| Generated run output | `_auto-apply-runs/` | automation artifacts; do not hand-edit for source truth |
-| Role packet source | `<company-role-year>/cover_letter.md` | tailored copy source when present |
-| Role resume preview | `<company-role-year>/*.html` | generated or hand-authored preview depending on packet |
-| Role PDF | `<company-role-year>/*.pdf` | output artifact; regenerate from source where possible |
+| Task                         | Location                              | Notes                                                   |
+| ---------------------------- | ------------------------------------- | ------------------------------------------------------- |
+| PDF/application visual rules | `DESIGN.md`                           | extend design tokens before adding raw colors/styles    |
+| Generated run output         | `_auto-apply-runs/`                   | automation artifacts; do not hand-edit for source truth |
+| Role packet source           | `<company-role-year>/cover_letter.md` | tailored copy source when present                       |
+| Role resume preview          | `<company-role-year>/*.html`          | generated or hand-authored preview depending on packet  |
+| Role PDF                     | `<company-role-year>/*.pdf`           | output artifact; regenerate from source where possible  |
 
 ## CONVENTIONS
 

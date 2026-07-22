@@ -16,7 +16,8 @@ export function isCloudflareNativeRequest(body) {
 export function shouldDispatchCloudflareNative({ body, env, explicitCandidates, dryRun }) {
   if (isCloudflareNativeRequest(body)) return true;
   if (dryRun !== false || !hasCloudflareNativeBinding(env)) return false;
-  if (!explicitCandidates?.hasExplicitCandidates || explicitCandidates.jobs.length === 0) return false;
+  if (!explicitCandidates?.hasExplicitCandidates || explicitCandidates.jobs.length === 0)
+    return false;
   return explicitCandidates.jobs.every((job) =>
     AUTO_NATIVE_PLATFORMS.has(getCandidatePlatform(job))
   );

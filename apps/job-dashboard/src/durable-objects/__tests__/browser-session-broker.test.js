@@ -51,7 +51,11 @@ describe('canLaunch', () => {
   });
 
   it('returns true when under maxConcurrentSessions and acquisitions are allowed', () => {
-    const limits = { activeSessions: [{ id: '1' }], maxConcurrentSessions: 5, allowedBrowserAcquisitions: 3 };
+    const limits = {
+      activeSessions: [{ id: '1' }],
+      maxConcurrentSessions: 5,
+      allowedBrowserAcquisitions: 3,
+    };
     assert.equal(canLaunch(limits, 1), true);
   });
 
@@ -70,7 +74,11 @@ describe('canLaunch', () => {
   });
 
   it('takes the max of active session count and locked size', () => {
-    const limits = { activeSessions: [{ id: '1' }], maxConcurrentSessions: 3, allowedBrowserAcquisitions: 1 };
+    const limits = {
+      activeSessions: [{ id: '1' }],
+      maxConcurrentSessions: 3,
+      allowedBrowserAcquisitions: 1,
+    };
     assert.equal(canLaunch(limits, 2), true);
     assert.equal(canLaunch(limits, 3), false);
   });
@@ -80,7 +88,11 @@ describe('acquireSession', () => {
   it('reuses a free session without calling acquire()', async () => {
     const puppeteer = {
       sessions: mock.fn(async () => [{ sessionId: 'free-1' }]),
-      limits: mock.fn(async () => ({ activeSessions: [], maxConcurrentSessions: 5, allowedBrowserAcquisitions: 5 })),
+      limits: mock.fn(async () => ({
+        activeSessions: [],
+        maxConcurrentSessions: 5,
+        allowedBrowserAcquisitions: 5,
+      })),
       acquire: mock.fn(async () => ({ sessionId: 'should-not-be-used' })),
     };
 
@@ -93,7 +105,11 @@ describe('acquireSession', () => {
   it('launches a new session via acquire() when none are free', async () => {
     const puppeteer = {
       sessions: mock.fn(async () => []),
-      limits: mock.fn(async () => ({ activeSessions: [], maxConcurrentSessions: 5, allowedBrowserAcquisitions: 5 })),
+      limits: mock.fn(async () => ({
+        activeSessions: [],
+        maxConcurrentSessions: 5,
+        allowedBrowserAcquisitions: 5,
+      })),
       acquire: mock.fn(async (_endpoint, opts) => {
         assert.equal(opts.keep_alive, DEFAULT_KEEP_ALIVE_MS);
         return { sessionId: 'new-1' };
@@ -109,8 +125,15 @@ describe('acquireSession', () => {
   it('passes a custom keepAlive through to acquire()', async () => {
     const puppeteer = {
       sessions: mock.fn(async () => []),
-      limits: mock.fn(async () => ({ activeSessions: [], maxConcurrentSessions: 5, allowedBrowserAcquisitions: 5 })),
-      acquire: mock.fn(async (_endpoint, opts) => ({ sessionId: 'new-2', keepAliveSeen: opts.keep_alive })),
+      limits: mock.fn(async () => ({
+        activeSessions: [],
+        maxConcurrentSessions: 5,
+        allowedBrowserAcquisitions: 5,
+      })),
+      acquire: mock.fn(async (_endpoint, opts) => ({
+        sessionId: 'new-2',
+        keepAliveSeen: opts.keep_alive,
+      })),
     };
 
     await acquireSession(puppeteer, 'endpoint', new Set(), { keepAlive: 30_000 });
@@ -121,7 +144,11 @@ describe('acquireSession', () => {
   it('throws NO_CAPACITY when at the concurrency cap', async () => {
     const puppeteer = {
       sessions: mock.fn(async () => []),
-      limits: mock.fn(async () => ({ activeSessions: [{ id: '1' }], maxConcurrentSessions: 1, allowedBrowserAcquisitions: 5 })),
+      limits: mock.fn(async () => ({
+        activeSessions: [{ id: '1' }],
+        maxConcurrentSessions: 1,
+        allowedBrowserAcquisitions: 5,
+      })),
       acquire: mock.fn(async () => ({ sessionId: 'unused' })),
     };
 
@@ -138,7 +165,11 @@ describe('acquireSession', () => {
   it('treats locked sessions as unavailable for reuse even if the endpoint reports them free', async () => {
     const puppeteer = {
       sessions: mock.fn(async () => [{ sessionId: 'a' }]),
-      limits: mock.fn(async () => ({ activeSessions: [{ id: 'a' }], maxConcurrentSessions: 1, allowedBrowserAcquisitions: 5 })),
+      limits: mock.fn(async () => ({
+        activeSessions: [{ id: 'a' }],
+        maxConcurrentSessions: 1,
+        allowedBrowserAcquisitions: 5,
+      })),
       acquire: mock.fn(async () => ({ sessionId: 'unused' })),
     };
 

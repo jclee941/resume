@@ -133,9 +133,9 @@ async function submitApprovedApplication(ctx, workflow, job, resumeId) {
 function requiresDeferredBrowserAction(result) {
   return Boolean(
     result?.requiresJobServer === true ||
-      result?.requiresBrowserAutomation === true ||
-      result?.browserRequired === true ||
-      result?.requiresBrowserRendering === true
+    result?.requiresBrowserAutomation === true ||
+    result?.browserRequired === true ||
+    result?.requiresBrowserRendering === true
   );
 }
 

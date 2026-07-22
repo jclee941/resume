@@ -103,8 +103,8 @@ The deployment process follows a strict unidirectional data flow:
    script.
 5. **Deployment**: Push to `master`; Cloudflare Workers Builds runs `npx
 wrangler deploy --config wrangler.jsonc --env production` uploads the
-artifact to the Cloudflare network. Manual `npm run deploy` is intentionally
-disabled (see Section 6).
+   artifact to the Cloudflare network. Manual `npm run deploy` is intentionally
+   disabled (see Section 6).
 
 ### 2.4 Architecture Diagram
 
@@ -320,7 +320,7 @@ real release path is:
 1. Push (or merge) to `master`.
 2. Cloudflare Workers Builds' Git integration picks up the push, runs the
    configured build command (`npm run build`), and deploys via `wrangler
-   deploy --config wrangler.jsonc --env production`.
+deploy --config wrangler.jsonc --env production`.
 3. `post-deploy-verify.yml` runs health checks against the live deployment.
 
 GitHub Actions (`ci.yml`) never deploys — it only lints, type-checks, tests,
@@ -395,7 +395,7 @@ wrangler.jsonc --env production`.
 | ------------------------------ | --------- | --------------------------------------------------------- |
 | `npm run sync:data`            | Root      | Propagates SSoT to data snapshots                         |
 | `npm run build:all`            | Root      | Full build (Data Sync + Generation)                       |
-| `npm run deploy`               | Root      | **Disabled** — errors and tells you to `git push` master   |
+| `npm run deploy`               | Root      | **Disabled** — errors and tells you to `git push` master  |
 | `npm run test:unit`            | Root      | Run all Jest unit tests                                   |
 | `npm run test:e2e`             | Root      | Run Playwright browser tests                              |
 | `npm run lint`                 | Root      | Lint entire codebase                                      |

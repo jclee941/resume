@@ -72,11 +72,7 @@ export async function executeHybridSave(
     ]);
     baseFields = mergeBaseFields(rawBaseFields, browserBaseFields);
   } catch (error) {
-    logger(
-      `Failed to load JobKorea preservation base: ${error.message}`,
-      'error',
-      'jobkorea'
-    );
+    logger(`Failed to load JobKorea preservation base: ${error.message}`, 'error', 'jobkorea');
     return { success: false, error: error.message, usedApi: false };
   }
 

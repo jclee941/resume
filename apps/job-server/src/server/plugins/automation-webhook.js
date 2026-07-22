@@ -7,7 +7,10 @@ async function automationWebhookPlugin(fastify) {
 
   if (!webhookUrl) {
     fastify.decorate('triggerAutomationWebhook', async (event, _data) => {
-      fastify.log.debug({ event }, 'automation webhook skipped (AUTOMATION_WEBHOOK_URL not configured)');
+      fastify.log.debug(
+        { event },
+        'automation webhook skipped (AUTOMATION_WEBHOOK_URL not configured)'
+      );
       return { sent: false, event, reason: 'not-configured' };
     });
     fastify.log.info('automation webhook plugin loaded (disabled)');

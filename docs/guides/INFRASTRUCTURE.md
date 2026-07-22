@@ -65,12 +65,12 @@
 
 일부 서비스는 **내부망 전용**이며 외부 DNS가 등록되어 있지 않습니다.
 
-| Service    | External DNS           | Internal Access     | Recommended               |
-| ---------- | ---------------------- | ------------------- | ------------------------- |
-| Grafana    | ✅ grafana.jclee.me    | 192.168.50.100:3000 | External DNS 사용         |
-| Prometheus | ❌ prometheus.jclee.me | 192.168.50.100:9090 | Grafana Explore 패널 사용 |
-| Loki       | ❌ loki.jclee.me       | 192.168.50.100:3100 | Grafana Explore 패널 사용 |
-| automation        | ✅ automation.example.com        | 192.168.50.100:5678 | External DNS 사용         |
+| Service    | External DNS              | Internal Access     | Recommended               |
+| ---------- | ------------------------- | ------------------- | ------------------------- |
+| Grafana    | ✅ grafana.jclee.me       | 192.168.50.100:3000 | External DNS 사용         |
+| Prometheus | ❌ prometheus.jclee.me    | 192.168.50.100:9090 | Grafana Explore 패널 사용 |
+| Loki       | ❌ loki.jclee.me          | 192.168.50.100:3100 | Grafana Explore 패널 사용 |
+| automation | ✅ automation.example.com | 192.168.50.100:5678 | External DNS 사용         |
 
 **접근 방법**:
 
@@ -510,7 +510,7 @@ go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 | **Grafana**    | ✅ <https://grafana.jclee.me> | 192.168.50.100:3000       | Primary dashboard                   |
 | **Prometheus** | 🔒 Internal Only              | 192.168.50.100:9090       | Metrics only via Grafana datasource |
 | **Loki**       | 🔒 Grafana Proxy              | grafana.jclee.me/loki/... | Log queries via Grafana proxy       |
-| **automation**        | 🔒 Internal Only              | 192.168.50.100:5678       | Workflow automation (internal only) |
+| **automation** | 🔒 Internal Only              | 192.168.50.100:5678       | Workflow automation (internal only) |
 
 **Access Methods**:
 
