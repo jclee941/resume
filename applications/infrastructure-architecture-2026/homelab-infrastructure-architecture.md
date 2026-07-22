@@ -49,7 +49,7 @@ contact: 'qws941@kakao.com | https://resume.jclee.me'
 | Observability | Grafana + Prometheus               | 메트릭 수집 · 시각화               | grafana.jclee.me / :9090 |
 | Observability | Loki                               | 로그 수집 (Grafana Explore)        | 내부 :3100               |
 | Observability | ELK Stack (Kibana)                 | 로그 분석 · 시각화                 | elk.jclee.me (auth)      |
-| Automation    | 알림 워크플로                                | 워크플로 자동화 · 알림 파이프라인  | 내부 :5678               |
+| Automation    | 알림 워크플로                      | 워크플로 자동화 · 알림 파이프라인  | 내부 :5678               |
 | Automation    | MCP Server Hub (CLIProxy)          | AI 에이전트 도구 서버              | API (내부)               |
 | Platform      | Supabase                           | 내부 BaaS (PostgreSQL + Auth)      | 내부 전용                |
 | Platform      | MinIO                              | 오브젝트 스토리지 / 캐시           | 내부 전용                |

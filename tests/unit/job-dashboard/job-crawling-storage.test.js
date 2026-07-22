@@ -6,10 +6,7 @@ const test = globalThis.test || require('node:test');
 
 const schemaPath = path.join(__dirname, '../../../apps/job-dashboard/schema.sql');
 const storageModulePromise = import(
-  path.join(
-    __dirname,
-    '../../../apps/job-dashboard/src/workflows/job-crawling/job-storage.js'
-  )
+  path.join(__dirname, '../../../apps/job-dashboard/src/workflows/job-crawling/job-storage.js')
 );
 
 function createD1Adapter(database) {
@@ -73,32 +70,37 @@ test('saveMatchedJobs upserts a stable job while preserving workflow-owned field
     assert.deepEqual(await saveMatchedJobs(env, [refreshedJob]), { saved: 1 });
 
     const rows = database
-      .prepare(`
+      .prepare(
+        `
       SELECT id, source, source_url, position, company, location,
              description, tech_stack, experience_level, match_score, status,
              crawled_at, created_at, updated_at
       FROM job_search_results
       WHERE id = ?
-    `)
+    `
+      )
       .all('wanted-101');
 
     assert.equal(rows.length, 1);
-    assert.deepEqual({ ...rows[0] }, {
-      id: 'wanted-101',
-      source: 'wanted',
-      source_url: 'https://www.wanted.co.kr/wd/101',
-      position: 'Senior Platform Engineer',
-      company: 'Refreshed Company',
-      location: 'Seoul',
-      description: 'Refreshed description',
-      tech_stack: JSON.stringify(['Node.js', 'Cloudflare']),
-      experience_level: 'senior',
-      match_score: 94,
-      status: 'reviewing',
-      crawled_at: rows[0].crawled_at,
-      created_at: inserted.created_at,
-      updated_at: rows[0].updated_at,
-    });
+    assert.deepEqual(
+      { ...rows[0] },
+      {
+        id: 'wanted-101',
+        source: 'wanted',
+        source_url: 'https://www.wanted.co.kr/wd/101',
+        position: 'Senior Platform Engineer',
+        company: 'Refreshed Company',
+        location: 'Seoul',
+        description: 'Refreshed description',
+        tech_stack: JSON.stringify(['Node.js', 'Cloudflare']),
+        experience_level: 'senior',
+        match_score: 94,
+        status: 'reviewing',
+        crawled_at: rows[0].crawled_at,
+        created_at: inserted.created_at,
+        updated_at: rows[0].updated_at,
+      }
+    );
     assert.ok(rows[0].crawled_at);
     assert.ok(rows[0].updated_at);
   } finally {
@@ -124,21 +126,26 @@ test('saveMatchedJobs stores omitted crawler fields as SQL NULL with a zero scor
     assert.deepEqual(await saveMatchedJobs(env, [crawlerJob]), { saved: 1 });
 
     const row = database
-      .prepare(`
+      .prepare(
+        `
       SELECT id, location, description, tech_stack, experience_level, match_score
       FROM job_search_results
       WHERE id = ?
-    `)
+    `
+      )
       .get('wanted-102');
 
-    assert.deepEqual({ ...row }, {
-      id: 'wanted-102',
-      location: null,
-      description: null,
-      tech_stack: null,
-      experience_level: null,
-      match_score: 0,
-    });
+    assert.deepEqual(
+      { ...row },
+      {
+        id: 'wanted-102',
+        location: null,
+        description: null,
+        tech_stack: null,
+        experience_level: null,
+        match_score: 0,
+      }
+    );
   } finally {
     database.close();
   }

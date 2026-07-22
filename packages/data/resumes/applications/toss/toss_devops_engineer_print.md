@@ -198,16 +198,16 @@ AI 자산운용 플랫폼 클라우드 인프라 운영
 
 \accentrule
 
-| 영역              | 기술                                                                       |
-| :---------------- | :------------------------------------------------------------------------- |
-| **Observability** | Prometheus, Grafana, Loki, ELK Stack (Elasticsearch/Kibana), Splunk        |
-| **Container**     | Docker, Kubernetes (EKS), Helm, Docker Compose                             |
-| **Cloud**         | AWS (EC2, VPC, EKS, IAM, S3, CloudTrail), Cloudflare Workers, Proxmox VE   |
+| 영역              | 기술                                                                              |
+| :---------------- | :-------------------------------------------------------------------------------- |
+| **Observability** | Prometheus, Grafana, Loki, ELK Stack (Elasticsearch/Kibana), Splunk               |
+| **Container**     | Docker, Kubernetes (EKS), Helm, Docker Compose                                    |
+| **Cloud**         | AWS (EC2, VPC, EKS, IAM, S3, CloudTrail), Cloudflare Workers, Proxmox VE          |
 | **CI/CD**         | GitHub Actions (Self-hosted Runner), GitLab CI/CD, Ansible, Terraform, automation |
-| **Network**       | FortiGate, NSX-T, VPN, NAC, Traefik/Nginx                                  |
-| **Language**      | Python, Shell, Node.js/TypeScript                                          |
-| **Secret/IaC**    | HashiCorp Vault, Terraform                                                 |
-| **Database**      | PostgreSQL, MySQL, Redis                                                   |
+| **Network**       | FortiGate, NSX-T, VPN, NAC, Traefik/Nginx                                         |
+| **Language**      | Python, Shell, Node.js/TypeScript                                                 |
+| **Secret/IaC**    | HashiCorp Vault, Terraform                                                        |
+| **Database**      | PostgreSQL, MySQL, Redis                                                          |
 
 ## 자격증
 

@@ -67,7 +67,10 @@ describe('mintWantedSession', () => {
     await assert.rejects(
       () =>
         mintWantedSession(
-          { WANTED_PASSWORD: CREDS.WANTED_PASSWORD, WANTED_ONEID_CLIENT_ID: CREDS.WANTED_ONEID_CLIENT_ID },
+          {
+            WANTED_PASSWORD: CREDS.WANTED_PASSWORD,
+            WANTED_ONEID_CLIENT_ID: CREDS.WANTED_ONEID_CLIENT_ID,
+          },
           { fetchImpl }
         ),
       /WANTED_EMAIL/
@@ -80,7 +83,10 @@ describe('mintWantedSession', () => {
     await assert.rejects(
       () =>
         mintWantedSession(
-          { WANTED_EMAIL: CREDS.WANTED_EMAIL, WANTED_ONEID_CLIENT_ID: CREDS.WANTED_ONEID_CLIENT_ID },
+          {
+            WANTED_EMAIL: CREDS.WANTED_EMAIL,
+            WANTED_ONEID_CLIENT_ID: CREDS.WANTED_ONEID_CLIENT_ID,
+          },
           { fetchImpl }
         ),
       /WANTED_PASSWORD/
@@ -97,12 +103,18 @@ describe('mintWantedSession', () => {
       },
     }));
 
-    await assert.rejects(() => mintWantedSession(CREDS, { fetchImpl }), /OneID token request failed \(401\)/);
+    await assert.rejects(
+      () => mintWantedSession(CREDS, { fetchImpl }),
+      /OneID token request failed \(401\)/
+    );
   });
 
   it('throws when the OneID response has no usable token', async () => {
     const fetchImpl = mock.fn(async () => okResponse(''));
-    await assert.rejects(() => mintWantedSession(CREDS, { fetchImpl }), /did not include a usable token/);
+    await assert.rejects(
+      () => mintWantedSession(CREDS, { fetchImpl }),
+      /did not include a usable token/
+    );
   });
 });
 

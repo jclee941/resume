@@ -15,28 +15,28 @@ follows a layered architecture where `apps/` contains deployables and
 
 ## Tech Stack
 
-| Layer          | Technology         | Version/Notes                    |
-| -------------- | ------------------ | -------------------------------- |
-| Runtime        | Node.js            | >=22 required (`.nvmrc`)         |
-| Runtime        | Cloudflare Workers | Edge-deployed                    |
-| Build          | npm workspaces     | Monorepo management              |
-| Languages      | JavaScript         | Primary (.js)                    |
-| Languages      | TypeScript         | Types only (.ts)                 |
-| Frameworks     | Fastify            | ESM, job-server                  |
-| Frameworks     | Commander.js       | CLI tooling                      |
-| Frameworks     | Playwright         | E2E testing                      |
-| Frameworks     | Jest               | Unit testing                     |
-| Infrastructure | Cloudflare D1      | SQLite databases                 |
-| Infrastructure | Cloudflare KV      | Key-value storage                |
-| Infrastructure | Cloudflare Queues  | Job queue                        |
-| Infrastructure | Cloudflare Workers | Edge compute                     |
-| Infrastructure | Terraform          | IaC for Cloudflare               |
-| Infrastructure | Docker             | Job server container             |
-| CI/CD          | GitHub Actions     | Validation pipeline              |
-| CI/CD          | CF Workers Builds  | Deploy authority                 |
-| Monitoring     | Grafana            | Metrics visualization            |
-| Monitoring     | Loki               | Log aggregation                  |
-| Monitoring     | Prometheus         | Metrics collection               |
+| Layer          | Technology         | Version/Notes            |
+| -------------- | ------------------ | ------------------------ |
+| Runtime        | Node.js            | >=22 required (`.nvmrc`) |
+| Runtime        | Cloudflare Workers | Edge-deployed            |
+| Build          | npm workspaces     | Monorepo management      |
+| Languages      | JavaScript         | Primary (.js)            |
+| Languages      | TypeScript         | Types only (.ts)         |
+| Frameworks     | Fastify            | ESM, job-server          |
+| Frameworks     | Commander.js       | CLI tooling              |
+| Frameworks     | Playwright         | E2E testing              |
+| Frameworks     | Jest               | Unit testing             |
+| Infrastructure | Cloudflare D1      | SQLite databases         |
+| Infrastructure | Cloudflare KV      | Key-value storage        |
+| Infrastructure | Cloudflare Queues  | Job queue                |
+| Infrastructure | Cloudflare Workers | Edge compute             |
+| Infrastructure | Terraform          | IaC for Cloudflare       |
+| Infrastructure | Docker             | Job server container     |
+| CI/CD          | GitHub Actions     | Validation pipeline      |
+| CI/CD          | CF Workers Builds  | Deploy authority         |
+| Monitoring     | Grafana            | Metrics visualization    |
+| Monitoring     | Loki               | Log aggregation          |
+| Monitoring     | Prometheus         | Metrics collection       |
 
 ## System Architecture
 
@@ -232,14 +232,14 @@ See [ADR 0009](adr/0009-single-worker-consolidation.md) (supersedes ADR 0007).
 
 ## Workspaces
 
-| Package                    | Path               | Type                           | Description                    |
+| Package | Path | Type | Description |
 | -------------------------- | ------------------ | ------------------------------ | ------------------------------ | ------ | ----------------------------------------------------- |
-| `@resume/portfolio-worker` | `apps/portfolio/`  | App                            | CF Worker: cyberpunk portfolio |
-| `@resume/job-automation`   | `apps/job-server/` | App                            | MCP Server + Fastify (ESM)     |
-| ST                         |                    | `@resume/job-dashboard-worker` | `apps/job-dashboard/`          | Module | Dashboard API module (imported into portfolio worker) |
-| `@resume/shared`           | `packages/shared/` | Package                        | Cross-worker shared kernel     |
-| `@resume/cli`              | `packages/cli/`    | Package                        | Commander.js CLI (ESM)         |
-| `@resume/data`             | `packages/data/`   | Package                        | Resume data SSoT               |
+| `@resume/portfolio-worker` | `apps/portfolio/` | App | CF Worker: cyberpunk portfolio |
+| `@resume/job-automation` | `apps/job-server/` | App | MCP Server + Fastify (ESM) |
+| ST | | `@resume/job-dashboard-worker` | `apps/job-dashboard/` | Module | Dashboard API module (imported into portfolio worker) |
+| `@resume/shared` | `packages/shared/` | Package | Cross-worker shared kernel |
+| `@resume/cli` | `packages/cli/` | Package | Commander.js CLI (ESM) |
+| `@resume/data` | `packages/data/` | Package | Resume data SSoT |
 
 ## Key Design Decisions
 

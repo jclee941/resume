@@ -35,7 +35,8 @@ describe('Resume schema live-field contract', () => {
   });
 
   test('defines JobKorea platform default job code used by resume data', () => {
-    const jobkoreaProperties = readJson(SCHEMA_PATH).properties.platformVariants.properties.jobkorea.properties;
+    const jobkoreaProperties =
+      readJson(SCHEMA_PATH).properties.platformVariants.properties.jobkorea.properties;
 
     expect(jobkoreaProperties.defaultJobCode).toMatchObject({ type: 'string' });
   });

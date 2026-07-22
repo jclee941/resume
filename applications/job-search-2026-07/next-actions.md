@@ -9,6 +9,7 @@ npm run sync:data
 ```
 
 확인할 항목:
+
 - Wanted와 JobKorea 헤드라인이 `profile-copy.md`와 같은가
 - JobKorea 소개에 CCNP가 포함되어 있는가
 - 공개 포트폴리오에 jclee-bot proof path가 보이는가
@@ -21,6 +22,7 @@ npm run sync:data
 기존 문서: `applications/_auto-apply-runs/HOW-TO-SUBMIT.md`
 
 원칙:
+
 - 먼저 dry-run
 - 세션 유효성 확인
 - `--apply --max=N`으로 제한 제출

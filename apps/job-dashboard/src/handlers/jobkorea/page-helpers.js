@@ -10,11 +10,17 @@
  * @module handlers/jobkorea/page-helpers
  */
 
-export const EMAIL_SELECTORS = ['input[name="M_ID"]', 'input[type="email"]', 'input[type="text"][id*="id" i]'];
+export const EMAIL_SELECTORS = [
+  'input[name="M_ID"]',
+  'input[type="email"]',
+  'input[type="text"][id*="id" i]',
+];
 export const PASSWORD_SELECTORS = ['input[name="M_PWD"]', 'input[type="password"]'];
 export const SUBMIT_SELECTOR = 'button[type="submit"], input[type="submit"]';
-export const CAPTCHA_SUBMIT_SELECTOR = 'button[type="submit"], input[type="submit"], button, input[type="button"]';
-export const CAPTCHA_INPUT_SELECTOR = '#gtxt, input[name="gtxt"], input[id*="captcha" i], input[name*="captcha" i]';
+export const CAPTCHA_SUBMIT_SELECTOR =
+  'button[type="submit"], input[type="submit"], button, input[type="button"]';
+export const CAPTCHA_INPUT_SELECTOR =
+  '#gtxt, input[name="gtxt"], input[id*="captcha" i], input[name*="captcha" i]';
 
 async function resolveInput(page, selectors) {
   for (const selector of selectors) {
@@ -102,20 +108,24 @@ export async function isLoggedIn(page) {
 }
 
 export async function detectCaptcha(page) {
-  return safeEvaluate(page, () => {
-    const text = document.body?.innerText || '';
-    const hasText =
-      text.includes('보안인증') ||
-      text.includes('reCAPTCHA') ||
-      text.includes('자동가입 방지') ||
-      text.includes('비정상적인 접근');
-    const hasIframe = Array.from(document.querySelectorAll('iframe')).some((iframe) =>
-      /captcha/i.test(iframe.getAttribute('src') || '')
-    );
-    const hasCaptchaInput = !!document.querySelector('#gtxt, input[name="gtxt"]');
-    const hasCaptchaImage = !!document.querySelector('img[src*="captcha" i]');
-    return hasText || hasIframe || hasCaptchaInput || hasCaptchaImage;
-  }, false);
+  return safeEvaluate(
+    page,
+    () => {
+      const text = document.body?.innerText || '';
+      const hasText =
+        text.includes('보안인증') ||
+        text.includes('reCAPTCHA') ||
+        text.includes('자동가입 방지') ||
+        text.includes('비정상적인 접근');
+      const hasIframe = Array.from(document.querySelectorAll('iframe')).some((iframe) =>
+        /captcha/i.test(iframe.getAttribute('src') || '')
+      );
+      const hasCaptchaInput = !!document.querySelector('#gtxt, input[name="gtxt"]');
+      const hasCaptchaImage = !!document.querySelector('img[src*="captcha" i]');
+      return hasText || hasIframe || hasCaptchaInput || hasCaptchaImage;
+    },
+    false
+  );
 }
 
 export async function findCaptchaImageUrl(page) {

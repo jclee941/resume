@@ -121,7 +121,10 @@ export async function searchRemember(_ctx, criteria) {
       location: job.location?.name || '',
     }));
 }
-export async function submitApplication(ctx, { platform, jobId, sourceUrl, resume, coverLetter, job }) {
+export async function submitApplication(
+  ctx,
+  { platform, jobId, sourceUrl, resume, coverLetter, job }
+) {
   const submitters = {
     wanted: () => submitToWanted(ctx, jobId, resume, coverLetter),
     linkedin: () => submitToLinkedIn(ctx, jobId, resume, coverLetter),

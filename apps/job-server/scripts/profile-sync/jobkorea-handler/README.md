@@ -17,11 +17,11 @@ risk.
 
 ### Three Execution Modes
 
-| Mode                   | Description                                                                      |
-| ---------------------- | -------------------------------------------------------------------------------- |
+| Mode                           | Description                                                                      |
+| ------------------------------ | -------------------------------------------------------------------------------- |
 | `hybrid-api` (default command) | Playwright for auth and CAPTCHA, direct API for save and portfolio registration. |
-| `playwright`           | Full Playwright form fill. Slowest but most browser-dependent.                  |
-| `api-dry-run`          | Diff detection only. No writes. Useful for verifying what would change.          |
+| `playwright`                   | Full Playwright form fill. Slowest but most browser-dependent.                   |
+| `api-dry-run`                  | Diff detection only. No writes. Useful for verifying what would change.          |
 
 ## Architecture
 

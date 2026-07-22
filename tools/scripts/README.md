@@ -132,7 +132,6 @@ npx wrangler login
 - All Checks Pass? (I) -> Show Failures (K)
 - Show Failures (K) -> See Troubleshooting (L)
 
-
 ## Troubleshooting
 
 ### Error: "CLOUDFLARE_API_TOKEN not set"

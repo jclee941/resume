@@ -14,13 +14,13 @@
 
 ## 기술스택
 
-| 레이어         | 기술                    |
-| -------------- | ----------------------- |
-| **Firewall**   | FortiGate, FortiManager |
-| **SIEM**       | Splunk                  |
-| **Automation** | Python, Ansible, automation    |
-| **OS**         | Linux, VMware           |
-| **Protocol**   | FortiManager API        |
+| 레이어         | 기술                        |
+| -------------- | --------------------------- |
+| **Firewall**   | FortiGate, FortiManager     |
+| **SIEM**       | Splunk                      |
+| **Automation** | Python, Ansible, automation |
+| **OS**         | Linux, VMware               |
+| **Protocol**   | FortiManager API            |
 
 ## 프로젝트 배경
 
@@ -105,7 +105,6 @@ FortiManager API를 이용한 방화벽 정책 자동 조회 툴을 개발해 �
 - automation / 자동 대응 (AUTOMATION) -> FortiManager API / 정책 조정 (FMG)
 - automation / 자동 대응 (AUTOMATION) -> Slack/Telegram / 알림 (Slack)
 - 1단계 · 구축 · 2024.03-2025.02 (Phase1) -> 2단계 · 운용 · 2025.03- (Phase2)
-
 
 ### 1단계. 보안 인프라 구축, 2024.03 ~ 2025.02
 

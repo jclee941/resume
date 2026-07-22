@@ -1,11 +1,5 @@
-import {
-  getEvidenceItems,
-  getRoleProfiles,
-} from './recruiter-enhancements-data.js';
-import {
-  applyRoleProofCounts,
-  roleProofCountText,
-} from './recruiter-role-proofs.js';
+import { getEvidenceItems, getRoleProfiles } from './recruiter-enhancements-data.js';
+import { applyRoleProofCounts, roleProofCountText } from './recruiter-role-proofs.js';
 
 function createElement(tagName, className, text = '') {
   const element = document.createElement(tagName);
@@ -38,7 +32,6 @@ function evidenceLinkText(locale, title) {
   if (locale === 'ja') return `${title}の根拠を見る`;
   return `${title} 근거 보기`;
 }
-
 
 function ensureRoleStatus(section) {
   const status = section.querySelector('[data-role-status]');

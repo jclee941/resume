@@ -206,7 +206,7 @@ urgent security action.
 | Normalize tests (NEW)         | ✅ 14/14                                                |
 | JSON Schema CI                | ✅ 3/3 SSoT files                                       |
 | App variants validator        | ✅ 3/3                                                  |
-| automation                 | ✅ 36 active pass                                       |
+| automation                    | ✅ 36 active pass                                       |
 | Build                         | ✅ 0.17s, 408 KB                                        |
 | YAML lint                     | ✅ ci.yml + release.yml + dependabot.yml + openapi.yaml |
 | Module-level state (post-fix) | ✅ 0 bare `let X = null`                                |

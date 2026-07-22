@@ -1,8 +1,4 @@
-const {
-  createMockDb,
-  createRequest,
-  parseJson,
-} = require('./auto-apply-run-handler-fixtures.js');
+const { createMockDb, createRequest, parseJson } = require('./auto-apply-run-handler-fixtures.js');
 
 let runAutoApply;
 
@@ -21,7 +17,8 @@ function makeNativeCandidate(overrides = {}) {
 
 describe('job-dashboard Cloudflare native auto-apply', () => {
   beforeAll(async () => {
-    ({ runAutoApply } = await import('../../../apps/job-dashboard/src/handlers/auto-apply/run-handler.js'));
+    ({ runAutoApply } =
+      await import('../../../apps/job-dashboard/src/handlers/auto-apply/run-handler.js'));
   });
 
   test('runAutoApply dispatches Cloudflare native requests to Application Workflow', async () => {
@@ -42,7 +39,12 @@ describe('job-dashboard Cloudflare native auto-apply', () => {
     const body = await parseJson(response);
 
     expect(response.status).toBe(202);
-    expect(body).toMatchObject({ success: true, accepted: true, dispatch: 'workflow', instanceId: 'wf-native-1' });
+    expect(body).toMatchObject({
+      success: true,
+      accepted: true,
+      dispatch: 'workflow',
+      instanceId: 'wf-native-1',
+    });
     expect(create).toHaveBeenCalledWith({
       params: expect.objectContaining({
         triggerType: 'cf-native-auto-apply',
@@ -71,7 +73,12 @@ describe('job-dashboard Cloudflare native auto-apply', () => {
     const body = await parseJson(response);
 
     expect(response.status).toBe(202);
-    expect(body).toMatchObject({ success: true, accepted: true, dispatch: 'workflow', instanceId: 'wf-auto-native-1' });
+    expect(body).toMatchObject({
+      success: true,
+      accepted: true,
+      dispatch: 'workflow',
+      instanceId: 'wf-auto-native-1',
+    });
     expect(create).toHaveBeenCalledWith({
       params: expect.objectContaining({
         dryRun: false,
@@ -98,7 +105,12 @@ describe('job-dashboard Cloudflare native auto-apply', () => {
     const body = await parseJson(response);
 
     expect(response.status).toBe(202);
-    expect(body).toMatchObject({ success: true, accepted: true, dispatch: 'workflow', instanceId: 'wf-auto-native-mixed-case' });
+    expect(body).toMatchObject({
+      success: true,
+      accepted: true,
+      dispatch: 'workflow',
+      instanceId: 'wf-auto-native-mixed-case',
+    });
     expect(create).toHaveBeenCalledWith({
       params: expect.objectContaining({
         platforms: ['jobkorea'],
@@ -123,7 +135,12 @@ describe('job-dashboard Cloudflare native auto-apply', () => {
     const body = await parseJson(response);
 
     expect(response.status).toBe(202);
-    expect(body).toMatchObject({ success: true, accepted: true, dispatch: 'workflow', instanceId: 'wf-auto-native-platform-only' });
+    expect(body).toMatchObject({
+      success: true,
+      accepted: true,
+      dispatch: 'workflow',
+      instanceId: 'wf-auto-native-platform-only',
+    });
     expect(create).toHaveBeenCalledWith({
       params: expect.objectContaining({
         platforms: ['jobkorea'],
@@ -148,7 +165,12 @@ describe('job-dashboard Cloudflare native auto-apply', () => {
     const body = await parseJson(response);
 
     expect(response.status).toBe(202);
-    expect(body).toMatchObject({ success: true, accepted: true, dispatch: 'workflow', instanceId: 'wf-auto-native-explicit-alias' });
+    expect(body).toMatchObject({
+      success: true,
+      accepted: true,
+      dispatch: 'workflow',
+      instanceId: 'wf-auto-native-explicit-alias',
+    });
     expect(create).toHaveBeenCalledWith({
       params: expect.objectContaining({
         platforms: ['jobkorea'],
@@ -156,7 +178,6 @@ describe('job-dashboard Cloudflare native auto-apply', () => {
       }),
     });
   });
-
 });
 
 function createNativeEnv({ create, autoApplyEnabled = true }) {

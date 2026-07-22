@@ -56,7 +56,6 @@ High-level overview of all major components and their relationships:
 - WorkflowService (Workflows) -> ☁️ Cloudflare API (CF)
 - 🌐 Browser (Browser) -> 🪝 Webhooks (Webhooks)
 
-
 ### Component Descriptions
 
 **Client Layer**:
@@ -139,7 +138,6 @@ Detailed sequence diagram showing how a request flows through the entire system:
 - Response -> Client: HTTP 200 OK / Content-Type: application/json / Access-Control-Allow-Origin:
 - Client -> Client: Parse JSON / Render UI
 
-
 ### Key Points
 
 1. **Request Transformation**: `/job/api/applications` → `/api/applications`
@@ -178,7 +176,6 @@ Sequence of events during a scheduled or triggered workflow:
 - 09: 02:000ms : Catch error handler
 - 09: 02:100ms : Send error notification
 - 09: 02:500ms : Workflow failed
-
 
 ### Timeline Breakdown
 
@@ -250,7 +247,6 @@ Complete authentication and session lifecycle:
 - ✅ Authenticated (Authenticated) -> ✅ Access API / Send Authorization header (AccessAPI)
 - ❌ Unauthorized / 401 (ErrorAuth) -> Clear invalid / session (ClearSession)
 
-
 ### Authentication Details
 
 **Session Storage** (KV):
@@ -306,7 +302,6 @@ Token bucket algorithm for rate limiting (60 requests/minute per IP):
 - Update KV entry / Store new state (Update) -> ✅ Allow request / X-RateLimit-Remaining: X-1 (AllowRequest)
 - tokens > 0? (HasTokens) -> ❌ Reject request / HTTP 429 / Retry-After: 60 (Deny)
 - ❌ Reject request / HTTP 429 / Retry-After: 60 (Deny) -> Clear from KV / when TTL expires / or manually (ClearAfterTTL)
-
 
 ### Rate Limiting Details
 

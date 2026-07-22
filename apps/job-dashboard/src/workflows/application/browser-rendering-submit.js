@@ -18,7 +18,10 @@ const PLATFORM_URL_HOSTS = {
 
 export async function submitWithBrowserRendering(ctx, params, dependencies = {}) {
   const platform = params.platform;
-  const targetUrl = createApplicationUrl(platform, params.sourceUrl || params.job?.sourceUrl || params.jobId);
+  const targetUrl = createApplicationUrl(
+    platform,
+    params.sourceUrl || params.job?.sourceUrl || params.jobId
+  );
 
   if (!ctx?.env?.MYBROWSER) {
     return browserRenderingRequired(platform, targetUrl, 'MYBROWSER binding is not available');
@@ -40,7 +43,14 @@ export async function submitWithBrowserRendering(ctx, params, dependencies = {})
     await settlePage(page);
 
     const pageState = await inspectApplicationPage(page);
-    return await submitFromRenderedPage(platform, targetUrl, page, response, cookieCount, pageState);
+    return await submitFromRenderedPage(
+      platform,
+      targetUrl,
+      page,
+      response,
+      cookieCount,
+      pageState
+    );
   } finally {
     await page.close?.().catch?.(() => {});
     await browserService.close?.();
@@ -150,12 +160,28 @@ async function submitFromRenderedPage(platform, targetUrl, page, response, cooki
 
   const applyControl = findApplyControl(pageState);
   if (!applyControl) {
-    return renderedReviewResult(platform, targetUrl, finalUrl, title, response, cookieCount, pageState);
+    return renderedReviewResult(
+      platform,
+      targetUrl,
+      finalUrl,
+      title,
+      response,
+      cookieCount,
+      pageState
+    );
   }
 
   const applyClicked = await clickControl(page, applyControl);
   if (!applyClicked) {
-    return renderedReviewResult(platform, targetUrl, finalUrl, title, response, cookieCount, pageState);
+    return renderedReviewResult(
+      platform,
+      targetUrl,
+      finalUrl,
+      title,
+      response,
+      cookieCount,
+      pageState
+    );
   }
 
   const afterApply = await inspectApplicationPage(page);
@@ -173,11 +199,19 @@ async function submitFromRenderedPage(platform, targetUrl, page, response, cooki
 
   const confirmControl = findConfirmControl(afterApply);
   if (!confirmControl || !(await clickControl(page, confirmControl))) {
-    return renderedReviewResult(platform, targetUrl, page.url?.() || finalUrl, title, response, cookieCount, {
-      ...afterApply,
-      visibleAction: applyControl.text,
-      networkWrite: true,
-    });
+    return renderedReviewResult(
+      platform,
+      targetUrl,
+      page.url?.() || finalUrl,
+      title,
+      response,
+      cookieCount,
+      {
+        ...afterApply,
+        visibleAction: applyControl.text,
+        networkWrite: true,
+      }
+    );
   }
 
   const finalState = await inspectApplicationPage(page);
@@ -193,11 +227,19 @@ async function submitFromRenderedPage(platform, targetUrl, page, response, cooki
     });
   }
 
-  return renderedReviewResult(platform, targetUrl, page.url?.() || finalUrl, title, response, cookieCount, {
-    ...finalState,
-    visibleAction: confirmControl.text,
-    networkWrite: true,
-  });
+  return renderedReviewResult(
+    platform,
+    targetUrl,
+    page.url?.() || finalUrl,
+    title,
+    response,
+    cookieCount,
+    {
+      ...finalState,
+      visibleAction: confirmControl.text,
+      networkWrite: true,
+    }
+  );
 }
 
 function browserRenderingRequired(platform, targetUrl, reason) {

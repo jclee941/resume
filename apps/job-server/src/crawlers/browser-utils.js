@@ -22,9 +22,7 @@ function resolveProtocolTimeout(options = {}) {
   }
 
   const rawTimeout = Number(process.env.PUPPETEER_PROTOCOL_TIMEOUT_MS);
-  return Number.isFinite(rawTimeout) && rawTimeout > 0
-    ? rawTimeout
-    : DEFAULT_PROTOCOL_TIMEOUT_MS;
+  return Number.isFinite(rawTimeout) && rawTimeout > 0 ? rawTimeout : DEFAULT_PROTOCOL_TIMEOUT_MS;
 }
 
 async function safeBrowserClose(browser, timeoutMs = 10000) {

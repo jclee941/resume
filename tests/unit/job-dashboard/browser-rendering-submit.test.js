@@ -3,9 +3,8 @@ describe('Cloudflare Browser Rendering application submitter', () => {
   let submitWithBrowserRendering;
 
   beforeAll(async () => {
-    ({ createApplicationUrl, submitWithBrowserRendering } = await import(
-      '../../../apps/job-dashboard/src/workflows/application/browser-rendering-submit.js'
-    ));
+    ({ createApplicationUrl, submitWithBrowserRendering } =
+      await import('../../../apps/job-dashboard/src/workflows/application/browser-rendering-submit.js'));
   });
 
   test('resolves platform application URLs from native job IDs', () => {
@@ -72,12 +71,14 @@ describe('Cloudflare Browser Rendering application submitter', () => {
     const result = await submitWithBrowserRendering(
       ctx,
       { platform: 'jobkorea', jobId: 'jobkorea-49043911' },
-      { BrowserService: class {
-        async newPage() {
-          return fakePage;
-        }
-        close = close;
-      } }
+      {
+        BrowserService: class {
+          async newPage() {
+            return fakePage;
+          }
+          close = close;
+        },
+      }
     );
 
     expect(result).toMatchObject({
@@ -102,11 +103,13 @@ describe('Cloudflare Browser Rendering application submitter', () => {
     const result = await submitWithBrowserRendering(
       { env: { MYBROWSER: {}, SESSIONS: { get: jest.fn(async () => '') } } },
       { platform: 'saramin', jobId: 'saramin-51234' },
-      { BrowserService: class {
-        async newPage() {
-          return fakePage;
-        }
-      } }
+      {
+        BrowserService: class {
+          async newPage() {
+            return fakePage;
+          }
+        },
+      }
     );
 
     expect(result).toMatchObject({

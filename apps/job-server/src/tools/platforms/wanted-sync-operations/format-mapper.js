@@ -1,7 +1,5 @@
 import { flattenSkills, flattenSkillsWithLevels } from '../../../../scripts/skill-tag-map.js';
-import {
-  resolveJobCategoryId,
-} from '../../../../scripts/profile-sync/constants.js';
+import { resolveJobCategoryId } from '../../../../scripts/profile-sync/constants.js';
 import { mapWorkTypeToWantedEmploymentType } from '@resume/shared/employment-types';
 import {
   normalizeCareerRole,

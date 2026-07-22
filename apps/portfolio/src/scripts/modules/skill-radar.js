@@ -138,7 +138,11 @@ function createSkillPanel(domainKey, domain) {
   const drawer = createElement('div', 'skill-evidence-drawer');
   const drawerTitle = createElement('h4', 'skill-evidence-drawer__title');
   const lang = (document.documentElement.lang || 'ko').toLowerCase();
-  const evidenceHeading = lang.startsWith('en') ? ' Evidence' : lang.startsWith('ja') ? ' 根拠' : ' 근거';
+  const evidenceHeading = lang.startsWith('en')
+    ? ' Evidence'
+    : lang.startsWith('ja')
+      ? ' 根拠'
+      : ' 근거';
   drawerTitle.append(createIconElement('database'), document.createTextNode(evidenceHeading));
   const evidenceList = createElement('ul', 'skill-evidence-list');
   evidenceList.setAttribute('role', 'list');

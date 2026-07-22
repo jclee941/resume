@@ -36,7 +36,7 @@ process.
 | **Auto Apply**          | Automated form submission via Playwright              | ✅ Active |
 | **Multi-Platform**      | Support for 4+ job platforms                          | ✅ Active |
 | **Real-time Dashboard** | Web-based monitoring and analytics                    | ✅ Active |
-| **Automation**      | Scheduled workflows and notifications                 | ✅ Active |
+| **Automation**          | Scheduled workflows and notifications                 | ✅ Active |
 | **Slack Integration**   | Real-time application notifications                   | ✅ Active |
 
 ### Supported Platforms
@@ -167,14 +167,14 @@ curl -X POST http://localhost:3456/api/auto-apply/run \
 
 ### Environment Variables
 
-| Variable                 | Required | Description                               | Example                            |
-| ------------------------ | -------- | ----------------------------------------- | ---------------------------------- |
-| `WANTED_EMAIL`           | ✅       | Wanted login email                        | <user@example.com>                 |
-| `WANTED_COOKIES`         | ⚠️       | Session cookies (alternative to password) | session=abc123...                  |
-| `WANTED_ONEID_CLIENT_ID` | ⚠️       | OneID OAuth client ID                     | abc123...                          |
-| `SLACK_WEBHOOK_URL`      | ❌       | Slack notifications                       | <https://hooks.slack.com/>...      |
-| `AUTOMATION_WEBHOOK_URL`        | ❌       | automation integration                           | <https://automation.example.com/webhook/>... |
-| `JOB_SERVER_ADMIN_TOKEN` | ❌       | Admin API token                           | eyJhbGciOiJIUzI1NiIs...            |
+| Variable                 | Required | Description                               | Example                                      |
+| ------------------------ | -------- | ----------------------------------------- | -------------------------------------------- |
+| `WANTED_EMAIL`           | ✅       | Wanted login email                        | <user@example.com>                           |
+| `WANTED_COOKIES`         | ⚠️       | Session cookies (alternative to password) | session=abc123...                            |
+| `WANTED_ONEID_CLIENT_ID` | ⚠️       | OneID OAuth client ID                     | abc123...                                    |
+| `SLACK_WEBHOOK_URL`      | ❌       | Slack notifications                       | <https://hooks.slack.com/>...                |
+| `AUTOMATION_WEBHOOK_URL` | ❌       | automation integration                    | <https://automation.example.com/webhook/>... |
+| `JOB_SERVER_ADMIN_TOKEN` | ❌       | Admin API token                           | eyJhbGciOiJIUzI1NiIs...                      |
 
 ### Config File (config.json)
 
@@ -279,7 +279,6 @@ Score Interpretation:
 - ApplicationManager / Tracking + Retry (AM) -> Slack (SL)
 - ApplicationManager / Tracking + Retry (AM) -> automation (AUTOMATION)
 
-
 ### Data Flow
 
 #### Diagram summary 2
@@ -304,7 +303,6 @@ Score Interpretation:
 - Platform -> UAS: Application Result
 - UAS -> API: Track application
 - API -> User: Application Summary
-
 
 ### Component Architecture
 
@@ -338,7 +336,6 @@ Score Interpretation:
 - UnifiedApplySystem / 150+ lines (UAS) -> SessionManager / 80+ lines (SM)
 - UnifiedApplySystem / 150+ lines (UAS) -> SlackService / 60+ lines (SS)
 
-
 ### automation Workflow Architecture
 
 #### Diagram summary 4
@@ -358,7 +355,6 @@ Score Interpretation:
 - Trigger Auto-Apply (TA) -> Wait & Poll (WP)
 - Wait & Poll (WP) -> Format Result (FR)
 - Format Result (FR) -> Telegram Notify (TN)
-
 
 ### Storage Architecture
 
@@ -380,7 +376,6 @@ Score Interpretation:
 - (D1 Database / applications) (D1) -> jobcache / 1h TTL (JC)
 - (KV Namespace / sessions, rate limits) (KV) -> sessioncache / 24h TTL (SC)
 - (KV Namespace / sessions, rate limits) (KV) -> jobcache / 1h TTL (JC)
-
 
 ---
 
@@ -931,7 +926,7 @@ open https://grafana.jclee.me/d/resume-portfolio
 | CLI Interface       | `apps/job-server/src/auto-apply/cli/index.js`           |
 | MCP Tools           | `apps/job-server/src/tools/`                            |
 | Crawlers            | `apps/job-server/src/crawlers/`                         |
-| Automation       | `infrastructure/automation/`                                   |
+| Automation          | `infrastructure/automation/`                            |
 | Config File         | `apps/job-server/config.json`                           |
 | Session Data        | `~/.OpenCode/data/wanted-session.json`                  |
 | Logs                | `~/.OpenCode/data/wanted-logs/`                         |

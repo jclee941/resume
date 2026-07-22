@@ -27,7 +27,11 @@ export function mapIntroToFormFields(ssot, indices) {
   const header = jobkoreaVariant.headline || coverLetter?.headline || '';
   pushField(fields, 'ResumeProfile.Index', key);
   pushField(fields, `ResumeProfile[${key}].Header`, String(header).slice(0, INTRO_HEADER_LIMIT));
-  pushField(fields, `ResumeProfile[${key}].Contents`, buildIntroContent(jobkoreaVariant, coverLetter));
+  pushField(
+    fields,
+    `ResumeProfile[${key}].Contents`,
+    buildIntroContent(jobkoreaVariant, coverLetter)
+  );
   pushField(fields, 'InputStat.UserIntroduceInputStat', 'True');
   return fields;
 }

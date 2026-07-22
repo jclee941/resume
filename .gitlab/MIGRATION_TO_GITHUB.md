@@ -30,20 +30,20 @@ lint, typecheck, test, JSON check                resume.jclee.me updated
 
 ## GitLab CI → GitHub Actions Mapping
 
-| GitLab CI Job               | GitHub Actions         | Notes                    |
-| --------------------------- | ---------------------- | ------------------------ |
-| validate/lint.yml           | ci.yml → lint          | ESLint                   |
-| validate/typecheck.yml      | ci.yml → typecheck     | TypeScript               |
-| validate/data-drift.yml     | ci.yml → validate-data | JSON validation          |
-| test/unit.yml               | ci.yml → test-unit     | Jest + Node tests        |
-| build.yml                   | CF Workers Builds      | Handled externally       |
-| deploy.yml                  | CF Workers Builds      | Handled externally       |
-| verify/health.yml           | Not yet ported         | Manual: curl /health     |
-| verify/security-headers.yml | Not yet ported         | Manual: curl -I          |
-| test/e2e.yml                | Not yet ported         | Manual: npm run test:e2e |
-| release.yml                 | Not yet ported         | Low priority             |
-| automation-notifications.yml       | Not yet ported         | Optional                 |
-| auto-sync.yml (Wanted)      | Not yet ported         | Scheduled task           |
+| GitLab CI Job                | GitHub Actions         | Notes                    |
+| ---------------------------- | ---------------------- | ------------------------ |
+| validate/lint.yml            | ci.yml → lint          | ESLint                   |
+| validate/typecheck.yml       | ci.yml → typecheck     | TypeScript               |
+| validate/data-drift.yml      | ci.yml → validate-data | JSON validation          |
+| test/unit.yml                | ci.yml → test-unit     | Jest + Node tests        |
+| build.yml                    | CF Workers Builds      | Handled externally       |
+| deploy.yml                   | CF Workers Builds      | Handled externally       |
+| verify/health.yml            | Not yet ported         | Manual: curl /health     |
+| verify/security-headers.yml  | Not yet ported         | Manual: curl -I          |
+| test/e2e.yml                 | Not yet ported         | Manual: npm run test:e2e |
+| release.yml                  | Not yet ported         | Low priority             |
+| automation-notifications.yml | Not yet ported         | Optional                 |
+| auto-sync.yml (Wanted)       | Not yet ported         | Scheduled task           |
 
 ## Preserved as Reference
 

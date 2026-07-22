@@ -15,14 +15,18 @@ describe('job-dashboard Cloudflare native application workflow', () => {
   let runApplicationWorkflow;
 
   beforeAll(async () => {
-    ({ runApplicationWorkflow } = await import(
-      '../../../apps/job-dashboard/src/workflows/application/workflow-runner.js'
-    ));
+    ({ runApplicationWorkflow } =
+      await import('../../../apps/job-dashboard/src/workflows/application/workflow-runner.js'));
   });
 
   test('Application Workflow handles explicit JobKorea candidates as native handoff', async () => {
     const { calls, ctx, step } = createWorkflowHarness();
-    const result = await runNativeWorkflow(runApplicationWorkflow, ctx, step, makeNativeCandidate());
+    const result = await runNativeWorkflow(
+      runApplicationWorkflow,
+      ctx,
+      step,
+      makeNativeCandidate()
+    );
 
     expectNativeHandoff(result);
     expect(calls).toEqual({ search: 0, submit: 1, record: 0 });

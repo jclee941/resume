@@ -4,11 +4,7 @@ import { runBrowserSmoke } from '../handlers/browser/smoke.js';
 import { refreshWantedSession } from '../handlers/wanted/mint-session.js';
 import { refreshJobKoreaSession } from '../handlers/jobkorea/mint-session.js';
 import { enqueueTask } from '../queues/queue-enqueuer.js';
-import {
-  getQueueCapability,
-  parseQueueRequest,
-  QUEUE_NAME,
-} from '../queues/queue-request.js';
+import { getQueueCapability, parseQueueRequest, QUEUE_NAME } from '../queues/queue-request.js';
 
 export function registerAdminRoutes(router, ctx) {
   const { env, diagnostics, log } = ctx;

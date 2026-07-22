@@ -1012,21 +1012,23 @@ describe('JobKorea fail-loud guards', () => {
     });
 
     const result = await withApplyConfig(() =>
-      syncJobKoreaProfile(harness.handler, {}, {
-        launchBrowser: async () => harness.browser,
-        renewSession: async () => {
-          renewCalls += 1;
-        },
-        logger: harness.logger,
-      })
+      syncJobKoreaProfile(
+        harness.handler,
+        {},
+        {
+          launchBrowser: async () => harness.browser,
+          renewSession: async () => {
+            renewCalls += 1;
+          },
+          logger: harness.logger,
+        }
+      )
     );
 
     assert.strictEqual(result.success, true, result.error);
     assert.strictEqual(renewCalls, 1);
     assert.equal(loadCalls >= 2, true);
-    assert.ok(
-      harness.logs.some((entry) => entry.message.includes('No fresh JobKorea session'))
-    );
+    assert.ok(harness.logs.some((entry) => entry.message.includes('No fresh JobKorea session')));
   });
 
   it('uses renewed cookies for the hybrid API client after a login redirect', async () => {
@@ -1049,20 +1051,24 @@ describe('JobKorea fail-loud guards', () => {
     });
 
     const result = await withSyncConfig({ mode: 'hybrid-api' }, () =>
-      syncJobKoreaProfile(harness.handler, {}, {
-        launchBrowser: async () => harness.browser,
-        renewSession: async () => {
-          renewCalls += 1;
-          currentUrl = editUrl;
-        },
-        apiClientFactory: ({ cookieString }) => {
-          apiCookieString = cookieString;
-          return {
-            saveResume: async () => ({ success: true }),
-          };
-        },
-        logger: harness.logger,
-      })
+      syncJobKoreaProfile(
+        harness.handler,
+        {},
+        {
+          launchBrowser: async () => harness.browser,
+          renewSession: async () => {
+            renewCalls += 1;
+            currentUrl = editUrl;
+          },
+          apiClientFactory: ({ cookieString }) => {
+            apiCookieString = cookieString;
+            return {
+              saveResume: async () => ({ success: true }),
+            };
+          },
+          logger: harness.logger,
+        }
+      )
     );
 
     assert.strictEqual(result.success, true);
@@ -1080,13 +1086,17 @@ describe('JobKorea fail-loud guards', () => {
     });
 
     const result = await withSyncConfig({ mode: 'api-dry-run', apply: true }, () =>
-      syncJobKoreaProfile(harness.handler, {}, {
-        launchBrowser: async () => harness.browser,
-        renewSession: async () => {
-          renewCalls += 1;
-        },
-        logger: harness.logger,
-      })
+      syncJobKoreaProfile(
+        harness.handler,
+        {},
+        {
+          launchBrowser: async () => harness.browser,
+          renewSession: async () => {
+            renewCalls += 1;
+          },
+          logger: harness.logger,
+        }
+      )
     );
 
     assert.strictEqual(result.success, false);
@@ -1106,10 +1116,14 @@ describe('JobKorea fail-loud guards', () => {
     });
 
     const result = await withSyncConfig({ mode: 'api-dry-run', apply: true }, () =>
-      syncJobKoreaProfile(harness.handler, {}, {
-        launchBrowser: async () => harness.browser,
-        logger: harness.logger,
-      })
+      syncJobKoreaProfile(
+        harness.handler,
+        {},
+        {
+          launchBrowser: async () => harness.browser,
+          logger: harness.logger,
+        }
+      )
     );
 
     assert.strictEqual(result.success, true, result.error);
@@ -1124,13 +1138,17 @@ describe('JobKorea fail-loud guards', () => {
     });
 
     const result = await withSyncConfig({ mode: 'api-dry-run', apply: true }, () =>
-      syncJobKoreaProfile(harness.handler, {}, {
-        launchBrowser: async () => harness.browser,
-        renewSession: async () => {
-          renewCalls += 1;
-        },
-        logger: harness.logger,
-      })
+      syncJobKoreaProfile(
+        harness.handler,
+        {},
+        {
+          launchBrowser: async () => harness.browser,
+          renewSession: async () => {
+            renewCalls += 1;
+          },
+          logger: harness.logger,
+        }
+      )
     );
 
     assert.strictEqual(result.success, false);
@@ -1154,10 +1172,14 @@ describe('JobKorea fail-loud guards', () => {
     });
 
     const result = await withSyncConfig({ mode: 'api-dry-run', apply: true }, () =>
-      syncJobKoreaProfile(harness.handler, {}, {
-        launchBrowser: async () => harness.browser,
-        logger: harness.logger,
-      })
+      syncJobKoreaProfile(
+        harness.handler,
+        {},
+        {
+          launchBrowser: async () => harness.browser,
+          logger: harness.logger,
+        }
+      )
     );
 
     assert.strictEqual(result.success, true, result.error);

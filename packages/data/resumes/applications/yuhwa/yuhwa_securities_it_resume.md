@@ -117,7 +117,7 @@ date: '2026-06'
 | ------------- | ---------------------------------------------- |
 | OS/인프라     | Linux, Windows Server, VMware, Docker          |
 | DB/SQL        | Oracle SQL, PostgreSQL, SQL 검증, DB 연동 확인 |
-| 자동화        | Python, Shell, Ansible, automation, REST API          |
+| 자동화        | Python, Shell, Ansible, automation, REST API   |
 | 로그/모니터링 | Splunk, Grafana, Prometheus, Loki              |
 
 ---

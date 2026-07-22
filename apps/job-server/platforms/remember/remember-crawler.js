@@ -183,14 +183,14 @@ export class RememberCrawler extends BaseCrawler {
   }
 
   async getJobDetailWithBrowser(jobId) {
-      const job = await withStealthBrowser(async (page) => {
-        const url = `${this.baseUrl}/job/posting/${jobId}`;
-        await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
-        await page.waitForSelector('h1, [class*="title"], [class*="company"], main', {
-          timeout: 10000,
-        });
+    const job = await withStealthBrowser(async (page) => {
+      const url = `${this.baseUrl}/job/posting/${jobId}`;
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      await page.waitForSelector('h1, [class*="title"], [class*="company"], main', {
+        timeout: 10000,
+      });
 
-        return page.evaluate((jid) => {
+      return page.evaluate((jid) => {
         const getText = (sel) => document.querySelector(sel)?.textContent?.trim() || '';
         const title = getText('h1') || getText('[class*="title"]');
         const company = getText('[class*="company"]') || getText('[class*="CompanyName"]');

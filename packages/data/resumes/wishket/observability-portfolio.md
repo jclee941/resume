@@ -122,7 +122,6 @@ Prometheus는 수치 기반 상태 확인에 적합하고, Loki는 로그 흐름
 - Blackbox Exporter / HTTP/TCP probe (BB) -> Grafana / PromQL · LogQL · Explore (Graf)
 - Beats/Logstash / → Elasticsearch (Beats) -> Elasticsearch + Kibana / 로그 차원 분석 (Kib)
 
-
 ### 아키텍처 개요
 
 - Prometheus가 다수 메트릭 엔드포인트를 수집

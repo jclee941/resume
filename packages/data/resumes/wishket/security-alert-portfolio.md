@@ -90,7 +90,6 @@ Slack Block Kit를 사용한 이유도 여기에 있습니다. 제목, 이벤트
 - Python 가공춤 / · 컴텍스트 추가 / · 대응 가이드 매핑 (PY) -> Telegram (Tel)
 - Slack 채널 / · 운영자 알림 (Slack) -> 운영 회선 (Op)
 
-
 ### 아키텍처 개요
 
 - FortiGate syslog가 이벤트 원천 역할 수행

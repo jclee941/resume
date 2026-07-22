@@ -72,7 +72,10 @@ export async function solveJobKoreaCaptcha(env, { mime, base64 }, { fetchImpl = 
           role: 'user',
           content: [
             { type: 'text', text: CAPTCHA_VISION_PROMPT },
-            { type: 'image_url', image_url: { url: `data:${mime};base64,${base64}`, detail: 'high' } },
+            {
+              type: 'image_url',
+              image_url: { url: `data:${mime};base64,${base64}`, detail: 'high' },
+            },
           ],
         },
       ],
@@ -107,7 +110,8 @@ export async function mintJobKoreaSession(
 ) {
   const email = env?.JOBKOREA_USERNAME || env?.JOBKOREA_EMAIL;
   const password = env?.JOBKOREA_PASSWORD;
-  if (!email) throw new Error('JOBKOREA_USERNAME (or JOBKOREA_EMAIL) is required to mint a JobKorea session');
+  if (!email)
+    throw new Error('JOBKOREA_USERNAME (or JOBKOREA_EMAIL) is required to mint a JobKorea session');
   if (!password) throw new Error('JOBKOREA_PASSWORD is required to mint a JobKorea session');
 
   return withBrowserSession(env, async (browser) => {
@@ -123,7 +127,8 @@ export async function mintJobKoreaSession(
         attempt++;
         if (await detectCaptcha(page)) {
           const imageUrl = await findCaptchaImageUrl(page);
-          if (!imageUrl) throw new Error('JobKorea CAPTCHA detected but no CAPTCHA image URL was found');
+          if (!imageUrl)
+            throw new Error('JobKorea CAPTCHA detected but no CAPTCHA image URL was found');
           const image = await downloadCaptchaImage(page, imageUrl);
           const answer = await solveJobKoreaCaptcha(env, image, { fetchImpl });
           await fillCaptchaInput(page, answer);
@@ -140,7 +145,8 @@ export async function mintJobKoreaSession(
       }
 
       const cookieString = await collectJobKoreaCookies(page, browser);
-      if (!cookieString) throw new Error('JobKorea login succeeded but no session cookies were found');
+      if (!cookieString)
+        throw new Error('JobKorea login succeeded but no session cookies were found');
       return cookieString;
     } finally {
       await page.close().catch(() => {});
@@ -162,6 +168,10 @@ export async function refreshJobKoreaSession(env, opts = {}) {
     await env.SESSIONS.put(AUTH_JOBKOREA_KEY, cookie, { expirationTtl: JOBKOREA_SESSION_TTL_S });
     return { ok: true, key: AUTH_JOBKOREA_KEY, length: cookie.length };
   } catch (err) {
-    return { ok: false, error: err?.message || String(err), ...(err?.code ? { code: err.code } : {}) };
+    return {
+      ok: false,
+      error: err?.message || String(err),
+      ...(err?.code ? { code: err.code } : {}),
+    };
   }
 }

@@ -36,9 +36,9 @@ Two logging backends operate in parallel with overlapping responsibilities:
 
 ### Role Assignment
 
-| Backend           | Responsibility                                                   | Rationale                                                   |
-| ----------------- | ---------------------------------------------------------------- | ----------------------------------------------------------- |
-| **Elasticsearch** | Application logs: requests, errors, vitals, analytics, tracking  | Already primary; structured search, Kibana dashboards exist |
+| Backend           | Responsibility                                                          | Rationale                                                   |
+| ----------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **Elasticsearch** | Application logs: requests, errors, vitals, analytics, tracking         | Already primary; structured search, Kibana dashboards exist |
 | **Loki**          | Infrastructure logs: Prometheus alerts, Grafana events, automation runs | Native Grafana integration; label-based queries for ops     |
 
 ### Migration Steps

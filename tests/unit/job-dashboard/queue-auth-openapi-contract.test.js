@@ -67,9 +67,7 @@ describe('queue admin auth OpenAPI contract', () => {
   });
 
   test('queue enqueue handler returns the documented accepted status', async () => {
-    const { registerAdminRoutes } = await import(
-      '../../../apps/job-dashboard/src/routes/admin.js'
-    );
+    const { registerAdminRoutes } = await import('../../../apps/job-dashboard/src/routes/admin.js');
     let enqueueHandler;
     const router = {
       get: jest.fn(),

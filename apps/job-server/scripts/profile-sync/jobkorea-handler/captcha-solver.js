@@ -87,7 +87,11 @@ export async function solveJobKoreaCaptcha(page) {
           return { text, model };
         }
         fallbackAnswer ??= { text, model };
-        log(`CAPTCHA solver "${model}" returned low-confidence answer: "${text}"`, 'warn', 'jobkorea');
+        log(
+          `CAPTCHA solver "${model}" returned low-confidence answer: "${text}"`,
+          'warn',
+          'jobkorea'
+        );
         continue;
       }
       log(`CAPTCHA solver "${model}" returned weak answer: "${text}"`, 'warn', 'jobkorea');
@@ -97,11 +101,7 @@ export async function solveJobKoreaCaptcha(page) {
     }
   }
   if (fallbackAnswer) {
-    log(
-      `CAPTCHA solved via ${fallbackAnswer.model}: "${fallbackAnswer.text}"`,
-      'ok',
-      'jobkorea'
-    );
+    log(`CAPTCHA solved via ${fallbackAnswer.model}: "${fallbackAnswer.text}"`, 'ok', 'jobkorea');
     return fallbackAnswer;
   }
   log(`All CAPTCHA solvers failed: ${errors.join(' | ')}`, 'error', 'jobkorea');

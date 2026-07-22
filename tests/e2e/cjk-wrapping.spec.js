@@ -1,7 +1,11 @@
 const { test, expect } = require('@playwright/test');
 
 const CASES = [
-  { locale: 'ko', path: '/ko/', tokens: ['프로파일', '문제를', '엔드포인트', '낮췄습니다', 'Splunk', 'MCP'] },
+  {
+    locale: 'ko',
+    path: '/ko/',
+    tokens: ['프로파일', '문제를', '엔드포인트', '낮췄습니다', 'Splunk', 'MCP'],
+  },
   { locale: 'ja', path: '/ja/', tokens: ['セキュリティ', '整理しました', '(株)ガオンヌリ'] },
 ];
 
@@ -49,7 +53,8 @@ async function inspectWrapping(page, tokens) {
       })
     );
 
-    const forbiddenLineStart = /^[、。，．）」』】〉》〕］｝!！?？ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮ]/u;
+    const forbiddenLineStart =
+      /^[、。，．）」』】〉》〕］｝!！?？ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮ]/u;
     const kinsokuViolations = [];
     for (const node of textNodes) {
       const lines = new Map();
@@ -68,7 +73,11 @@ async function inspectWrapping(page, tokens) {
 
     const card = document.querySelector('.cover-letter-card')?.getBoundingClientRect();
     const clippedCoverLetterElements = card
-      ? [...document.querySelectorAll('.cover-letter__para, .cover-letter__index, .cover-letter__text')]
+      ? [
+          ...document.querySelectorAll(
+            '.cover-letter__para, .cover-letter__index, .cover-letter__text'
+          ),
+        ]
           .filter((element) => {
             const rect = element.getBoundingClientRect();
             return rect.width > 0 && (rect.left < card.left - 0.5 || rect.right > card.right + 0.5);
@@ -103,7 +112,9 @@ async function inspectWrapping(page, tokens) {
 
 for (const viewport of VIEWPORTS) {
   for (const scenario of CASES) {
-    test(`${scenario.locale} ${viewport.width}px keeps CJK phrases and kinsoku intact`, async ({ page }) => {
+    test(`${scenario.locale} ${viewport.width}px keeps CJK phrases and kinsoku intact`, async ({
+      page,
+    }) => {
       await page.setViewportSize(viewport);
       await page.goto(scenario.path, { waitUntil: 'domcontentloaded' });
       await page.evaluate(() => document.fonts.ready);
@@ -117,10 +128,19 @@ for (const viewport of VIEWPORTS) {
         ).toBe(1);
       }
       if (scenario.locale === 'ja') {
-        expect(result.kinsokuViolations, 'Japanese closing punctuation or small kana at line start').toEqual([]);
+        expect(
+          result.kinsokuViolations,
+          'Japanese closing punctuation or small kana at line start'
+        ).toEqual([]);
       }
-      expect(result.clippedCoverLetterElements, 'cover-letter content must stay inside its card').toEqual([]);
-      expect(result.clippedCompanyLinks, 'company names must stay inside their timeline cards').toEqual([]);
+      expect(
+        result.clippedCoverLetterElements,
+        'cover-letter content must stay inside its card'
+      ).toEqual([]);
+      expect(
+        result.clippedCompanyLinks,
+        'company names must stay inside their timeline cards'
+      ).toEqual([]);
     });
   }
 }

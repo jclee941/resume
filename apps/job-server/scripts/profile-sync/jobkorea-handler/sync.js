@@ -148,14 +148,14 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
       const apiCookieString = handler.loadSessionCookieString?.() || buildCookieString(cookies);
       apiClient =
         options.apiClient ??
-        (options.apiClientFactory?.({
+        options.apiClientFactory?.({
           cookieString: apiCookieString,
           logger,
         }) ??
-          new JobKoreaAPIClient({
-            cookieString: apiCookieString,
-            logger,
-          }));
+        new JobKoreaAPIClient({
+          cookieString: apiCookieString,
+          logger,
+        });
       await executeHybridPortfolio(apiClient, ssot?.personal?.portfolio, targetFields, page, ssot, {
         logger,
         dryRun,
@@ -185,19 +185,30 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
     logChangeSummary(changes);
 
     if (hybridMode) {
-      const saveResult = await executeHybridSave(apiClient, targetFields, page, saveSectionIndices, {
-        logger,
-        apply: CONFIG.APPLY,
-        diffOnly: CONFIG.DIFF_ONLY,
-        dryRun: syncMode === 'api-dry-run',
-        fallbackSave: (fallbackPage, fallbackFields, fallbackSectionIndices) =>
-          executePlaywrightSave(fallbackPage, fallbackFields, fallbackSectionIndices, logger),
-      });
+      const saveResult = await executeHybridSave(
+        apiClient,
+        targetFields,
+        page,
+        saveSectionIndices,
+        {
+          logger,
+          apply: CONFIG.APPLY,
+          diffOnly: CONFIG.DIFF_ONLY,
+          dryRun: syncMode === 'api-dry-run',
+          fallbackSave: (fallbackPage, fallbackFields, fallbackSectionIndices) =>
+            executePlaywrightSave(fallbackPage, fallbackFields, fallbackSectionIndices, logger),
+        }
+      );
       if (saveResult.success === false) {
         return { success: false, changes, error: saveResult.error };
       }
     } else if (CONFIG.APPLY && !CONFIG.DIFF_ONLY) {
-      const saveResult = await executePlaywrightSave(page, targetFields, saveSectionIndices, logger);
+      const saveResult = await executePlaywrightSave(
+        page,
+        targetFields,
+        saveSectionIndices,
+        logger
+      );
       if (saveResult.success === false) {
         return { success: false, changes, error: saveResult.error };
       }

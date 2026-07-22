@@ -11,7 +11,10 @@ import {
 } from '../mint-session.js';
 
 const CREDS = { JOBKOREA_USERNAME: 'someone@example.com', JOBKOREA_PASSWORD: 'super-secret' };
-const CLIPROXY_ENV = { CLIPROXY_BASE: 'https://cliproxy.jclee.me', CLIPROXY_API_KEY: 'cliproxy-key' };
+const CLIPROXY_ENV = {
+  CLIPROXY_BASE: 'https://cliproxy.jclee.me',
+  CLIPROXY_API_KEY: 'cliproxy-key',
+};
 
 const JOBKOREA_COOKIES = [
   { name: 'PLAY_SESSION', value: 'sess-abc', domain: '.jobkorea.co.kr' },
@@ -76,12 +79,20 @@ describe('mintJobKoreaSession', () => {
     const inputs = defaultInputs();
     const page = createFakePage({ evaluateQueue: [true], inputs });
 
-    const cookie = await mintJobKoreaSession(CREDS, { withBrowserSession: fakeWithBrowserSession(page) });
+    const cookie = await mintJobKoreaSession(CREDS, {
+      withBrowserSession: fakeWithBrowserSession(page),
+    });
 
     assert.equal(cookie, 'PLAY_SESSION=sess-abc');
     assert.equal(page.goto.mock.calls[0].arguments[0], JOBKOREA_LOGIN_URL);
-    assert.equal(inputs['input[name="M_ID"]'].type.mock.calls[0].arguments[0], CREDS.JOBKOREA_USERNAME);
-    assert.equal(inputs['input[name="M_PWD"]'].type.mock.calls[0].arguments[0], CREDS.JOBKOREA_PASSWORD);
+    assert.equal(
+      inputs['input[name="M_ID"]'].type.mock.calls[0].arguments[0],
+      CREDS.JOBKOREA_USERNAME
+    );
+    assert.equal(
+      inputs['input[name="M_PWD"]'].type.mock.calls[0].arguments[0],
+      CREDS.JOBKOREA_PASSWORD
+    );
     assert.equal(page.close.mock.callCount(), 1);
   });
 
@@ -93,7 +104,10 @@ describe('mintJobKoreaSession', () => {
       () => mintJobKoreaSession({ JOBKOREA_USERNAME: 'a@b.com' }, { withBrowserSession }),
       /JOBKOREA_PASSWORD/
     );
-    await assert.rejects(() => mintJobKoreaSession({}, { withBrowserSession }), /JOBKOREA_USERNAME/);
+    await assert.rejects(
+      () => mintJobKoreaSession({}, { withBrowserSession }),
+      /JOBKOREA_USERNAME/
+    );
     assert.equal(withBrowserSession.mock.callCount(), 0);
   });
 
@@ -151,9 +165,16 @@ describe('mintJobKoreaSession', () => {
 describe('solveJobKoreaCaptcha', () => {
   it('POSTs the image to cliproxy and returns the trimmed answer', async () => {
     const fetchImpl = mock.fn(async () => okVisionResponse('  XY7Z9K  '));
-    const answer = await solveJobKoreaCaptcha(CLIPROXY_ENV, { mime: 'image/png', base64: 'ZmFrZQ==' }, { fetchImpl });
+    const answer = await solveJobKoreaCaptcha(
+      CLIPROXY_ENV,
+      { mime: 'image/png', base64: 'ZmFrZQ==' },
+      { fetchImpl }
+    );
     assert.equal(answer, 'XY7Z9K');
-    assert.equal(fetchImpl.mock.calls[0].arguments[0], `${CLIPROXY_ENV.CLIPROXY_BASE}/chat/completions`);
+    assert.equal(
+      fetchImpl.mock.calls[0].arguments[0],
+      `${CLIPROXY_ENV.CLIPROXY_BASE}/chat/completions`
+    );
   });
 
   it('throws when the cliproxy response is not ok', async () => {
@@ -165,7 +186,12 @@ describe('solveJobKoreaCaptcha', () => {
       },
     }));
     await assert.rejects(
-      () => solveJobKoreaCaptcha(CLIPROXY_ENV, { mime: 'image/png', base64: 'ZmFrZQ==' }, { fetchImpl }),
+      () =>
+        solveJobKoreaCaptcha(
+          CLIPROXY_ENV,
+          { mime: 'image/png', base64: 'ZmFrZQ==' },
+          { fetchImpl }
+        ),
       /cliproxy CAPTCHA solve failed \(500\)/
     );
   });
@@ -194,9 +220,15 @@ describe('refreshJobKoreaSession', () => {
       },
     };
 
-    const result = await refreshJobKoreaSession(env, { withBrowserSession: fakeWithBrowserSession(page) });
+    const result = await refreshJobKoreaSession(env, {
+      withBrowserSession: fakeWithBrowserSession(page),
+    });
 
-    assert.deepEqual(result, { ok: true, key: AUTH_JOBKOREA_KEY, length: 'PLAY_SESSION=sess-abc'.length });
+    assert.deepEqual(result, {
+      ok: true,
+      key: AUTH_JOBKOREA_KEY,
+      length: 'PLAY_SESSION=sess-abc'.length,
+    });
     assert.equal(putCalls.length, 1);
     assert.equal(putCalls[0].key, AUTH_JOBKOREA_KEY);
     assert.equal(putCalls[0].value, 'PLAY_SESSION=sess-abc');

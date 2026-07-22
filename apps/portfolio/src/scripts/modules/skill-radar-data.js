@@ -60,7 +60,11 @@ const SKILL_DATA_FALLBACK = {
   cicdAutomation: {
     title: 'CI/CD & Workflow',
     skills: [
-      { name: 'GitHub Actions', level: 88, evidence: 'CI and repository policy automation evidence' },
+      {
+        name: 'GitHub Actions',
+        level: 88,
+        evidence: 'CI and repository policy automation evidence',
+      },
       { name: 'Workflow Tooling', level: 85, evidence: 'Repeatable operations workflow evidence' },
       { name: 'Python scripting', level: 82, evidence: 'Operational script evidence' },
     ],

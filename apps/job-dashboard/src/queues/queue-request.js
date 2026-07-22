@@ -44,11 +44,7 @@ export async function parseQueueRequest(request) {
   }
 
   const delaySeconds = body.delaySeconds ?? 0;
-  if (
-    !Number.isInteger(delaySeconds) ||
-    delaySeconds < 0 ||
-    delaySeconds > MAX_DELAY_SECONDS
-  ) {
+  if (!Number.isInteger(delaySeconds) || delaySeconds < 0 || delaySeconds > MAX_DELAY_SECONDS) {
     return { ok: false, error: 'delaySeconds must be an integer between 0 and 43200' };
   }
 

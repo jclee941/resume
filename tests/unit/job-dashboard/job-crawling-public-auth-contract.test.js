@@ -123,17 +123,11 @@ test('invalid Wanted auth produces an explicit error with no crawl, save, or not
 test('notification result reports a disabled Telegram delivery without false success', async () => {
   await workflowPromise;
   const { notifyJobCrawlingResults } = await import(
-    path.join(
-      __dirname,
-      '../../../apps/job-dashboard/src/workflows/job-crawling/notifications.js'
-    )
+    path.join(__dirname, '../../../apps/job-dashboard/src/workflows/job-crawling/notifications.js')
   );
-  const result = await notifyJobCrawlingResults(
-    {},
-    ['linkedin'],
-    { totalJobs: 1 },
-    [{ company: 'Fixture', position: 'Engineer', matchScore: 90 }]
-  );
+  const result = await notifyJobCrawlingResults({}, ['linkedin'], { totalJobs: 1 }, [
+    { company: 'Fixture', position: 'Engineer', matchScore: 90 },
+  ]);
 
   assert.deepEqual(result, { notified: false, reason: 'not_configured' });
 });

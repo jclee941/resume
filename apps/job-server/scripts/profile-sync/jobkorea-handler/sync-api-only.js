@@ -35,17 +35,13 @@ function loadBrowserTemplate() {
 
 function isLicenseField(name) {
   return (
-    name === 'License.index' ||
-    name === 'InputStat.LicenseInputStat' ||
-    name.startsWith('License[')
+    name === 'License.index' || name === 'InputStat.LicenseInputStat' || name.startsWith('License[')
   );
 }
 
 function isCareerField(name) {
   return (
-    name === 'Career.index' ||
-    name === 'InputStat.CareerInputStat' ||
-    name.startsWith('Career[')
+    name === 'Career.index' || name === 'InputStat.CareerInputStat' || name.startsWith('Career[')
   );
 }
 

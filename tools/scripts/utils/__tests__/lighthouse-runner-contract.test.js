@@ -54,10 +54,7 @@ describe('Lighthouse runner assertion contract', () => {
       contract.getAssertionValue(lhr, 'largest-contentful-paint', { maxNumericValue: 2500 }),
       1900
     );
-    assert.equal(
-      contract.getAssertionValue(lhr, 'resource-summary:script:size', {}),
-      150000
-    );
+    assert.equal(contract.getAssertionValue(lhr, 'resource-summary:script:size', {}), 150000);
     assert.equal(contract.getAssertionValue(lhr, 'missing-audit', {}), null);
   });
 
@@ -74,9 +71,7 @@ describe('Lighthouse runner assertion contract', () => {
       [report({ performance: 0.8, lcp: 3000 }), report({ performance: 0.9, lcp: 2000 })],
       assertions
     );
-    assert.deepEqual(summary.failures, [
-      '[mobile] categories:performance: 0.850 < minScore 0.9',
-    ]);
+    assert.deepEqual(summary.failures, ['[mobile] categories:performance: 0.850 < minScore 0.9']);
     assert.deepEqual(summary.warnings, [
       '[mobile] missing-audit: metric not available in current Lighthouse version',
     ]);

@@ -60,11 +60,7 @@ describe('strict CI workflow contracts', () => {
   }
 
   it('rejects a CI aggregate other than the exact core script', () => {
-    mutate(
-      'ci.yml',
-      'npm run verify:architecture-hardening:core',
-      'npm run verify:worker-config'
-    );
+    mutate('ci.yml', 'npm run verify:architecture-hardening:core', 'npm run verify:worker-config');
     rejects(/architecture-hardening:core/u);
   });
 
@@ -76,7 +72,11 @@ describe('strict CI workflow contracts', () => {
 
 describe('strict post-deploy workflow contracts', () => {
   it('rejects a push path filter', () => {
-    mutate('post-deploy-verify.yml', '    branches: [master]\n', '    branches: [master]\n    paths: [apps/**]\n');
+    mutate(
+      'post-deploy-verify.yml',
+      '    branches: [master]\n',
+      '    branches: [master]\n    paths: [apps/**]\n'
+    );
     rejects(/path filter/u);
   });
 
@@ -86,17 +86,29 @@ describe('strict post-deploy workflow contracts', () => {
   });
 
   it('rejects a schedule baseline that accepts a short SHA', () => {
-    mutate('post-deploy-verify.yml', '[[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]]', '[[ -n "$EXPECTED_SHA" ]]');
+    mutate(
+      'post-deploy-verify.yml',
+      '[[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]]',
+      '[[ -n "$EXPECTED_SHA" ]]'
+    );
     rejects(/schedule.*full SHA|40-character/u);
   });
 
   it('rejects fixed waits, prefix matching, freshness fallback, or synthetic checks', () => {
-    mutate('post-deploy-verify.yml', '      - name: Resolve immutable expected SHA', '      - run: sleep 180\n      - name: Resolve immutable expected SHA');
+    mutate(
+      'post-deploy-verify.yml',
+      '      - name: Resolve immutable expected SHA',
+      '      - run: sleep 180\n      - name: Resolve immutable expected SHA'
+    );
     rejects(/fixed wait|sleep/u);
   });
 
   it('rejects superseded handling that can mutate issues', () => {
-    mutate('post-deploy-verify.yml', "if: steps.final.outputs.superseded != 'true'", 'if: always()');
+    mutate(
+      'post-deploy-verify.yml',
+      "if: steps.final.outputs.superseded != 'true'",
+      'if: always()'
+    );
     rejects(/superseded.*issue/u);
   });
 });

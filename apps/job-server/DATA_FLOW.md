@@ -30,7 +30,6 @@ External APIs
 - js -> d1: Store application record
 - js -> tg: Send completion notification
 
-
 ## High-Level Architecture
 
 ```text

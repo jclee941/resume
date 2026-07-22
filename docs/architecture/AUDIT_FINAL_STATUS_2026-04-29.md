@@ -58,7 +58,7 @@ Cumulative across 5 rounds of fixes (b51c0f4 → cb37858 → 3ddcfb0):
 | P1-5 Admin token replay                      | RESOLVED       | `mintSessionToken` HMAC-SHA256 4h TTL; `/api/auth/login` mints fresh token (cookie ≠ ADMIN_TOKEN); 13 jest tests |
 | P1-6 `.affected/` cache tracked              | RESOLVED       | Untracked + gitignored                                                                                           |
 | P1-7 JK retry 5 → 3 (AGENTS.md anti-pattern) | RESOLVED       | `maxRetries: 3` per architecture rule                                                                            |
-| P1-8 automation public webhook URL exposure         | RESOLVED       | demoUrl → null; sync:data regenerated                                                                            |
+| P1-8 automation public webhook URL exposure  | RESOLVED       | demoUrl → null; sync:data regenerated                                                                            |
 | P1-9 CHANGELOG semver order                  | RESOLVED       | v1.0.129 stale entry removed                                                                                     |
 | P1-10 13 BUILD.bazel still tracked           | RESOLVED       | All deleted (ADR-0008 implemented)                                                                               |
 | P1-11 gitlab-legacy 5 Go files orphan        | RESOLVED       | Deleted                                                                                                          |
@@ -66,37 +66,37 @@ Cumulative across 5 rounds of fixes (b51c0f4 → cb37858 → 3ddcfb0):
 
 ### P2 (22 items)
 
-| ID                                                    | Status      | Notes                                                                                      |
-| ----------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------ |
-| P2-1..6 (doc drift)                                   | RESOLVED    | SSoT path, worker size, tool count, AGENTS.md commit hash, count, PDF path                 |
-| P2-7 ADR-0001 stale Bazel claim                       | RESOLVED    | Status updated, marked superseded by ADR-0008                                              |
-| P2-8 Validator 4-way duplication                      | DEFERRED    | Large refactor; per-app paths, separate PR                                                 |
-| P2-9 normalizeCompanyName not in shared               | RESOLVED    | `@resume/shared/normalize` + 3 callers updated                                             |
-| P2-10 console.log in worker.js                        | NO-OP       | worker.js is generated artifact (now gitignored); source uses logger correctly             |
-| P2-11 test-helpers/{mocks,setup,fixtures}.js untested | RESOLVED    | 6 smoke tests added; wired into job-server npm test                                        |
-| P2-12 packages/cli no tests                           | RESOLVED    | 4 smoke tests added; new `npm run test:cli`                                                |
-| P2-13 automation no schema validation              | RESOLVED    | `validate-workflow-exports.js` + CI step (36 active pass, 2 known-broken legacy allow-listed) |
-| P2-14 puppeteer aliased to rebrowser-puppeteer        | INTENTIONAL | AGENTS.md explicit anti-pattern requirement (stealth)                                      |
-| P2-15 imap-simple legacy unused                       | RESOLVED    | Removed from job-server deps (zero source references)                                      |
-| P2-16 wrangler compatibility_date outdated            | RESOLVED    | 2026-02-21 → 2026-04-29                                                                    |
-| P2-17 No Dependabot/Renovate                          | RESOLVED    | `.github/dependabot.yml` added (npm + GH Actions, weekly)                                  |
-| P2-18 cf_metrics hardcoded defaults                   | RESOLVED    | 0.85/0.15/5 → NaN (Prometheus 'no data')                                                   |
-| P2-19 ES logger silent failure                        | RESOLVED    | `es_log_failures_total` counter exposed in /metrics                                        |
-| P2-20 Hardcoded terminal Easter egg                   | INTENTIONAL | Console game UI, documented as non-SSoT                                                    |
-| P2-21 OpenAPI gaps (3 routes)                         | RESOLVED    | `/api/health/notifications` + `/api/status` added to openapi.yaml                          |
-| P2-22 No SSoT drift PR-blocking CI gate               | RESOLVED    | CI runs `sync:data` + `git diff --exit-code`                                               |
+| ID                                                    | Status      | Notes                                                                                         |
+| ----------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------- |
+| P2-1..6 (doc drift)                                   | RESOLVED    | SSoT path, worker size, tool count, AGENTS.md commit hash, count, PDF path                    |
+| P2-7 ADR-0001 stale Bazel claim                       | RESOLVED    | Status updated, marked superseded by ADR-0008                                                 |
+| P2-8 Validator 4-way duplication                      | DEFERRED    | Large refactor; per-app paths, separate PR                                                    |
+| P2-9 normalizeCompanyName not in shared               | RESOLVED    | `@resume/shared/normalize` + 3 callers updated                                                |
+| P2-10 console.log in worker.js                        | NO-OP       | worker.js is generated artifact (now gitignored); source uses logger correctly                |
+| P2-11 test-helpers/{mocks,setup,fixtures}.js untested | RESOLVED    | 6 smoke tests added; wired into job-server npm test                                           |
+| P2-12 packages/cli no tests                           | RESOLVED    | 4 smoke tests added; new `npm run test:cli`                                                   |
+| P2-13 automation no schema validation                 | RESOLVED    | `validate-workflow-exports.js` + CI step (36 active pass, 2 known-broken legacy allow-listed) |
+| P2-14 puppeteer aliased to rebrowser-puppeteer        | INTENTIONAL | AGENTS.md explicit anti-pattern requirement (stealth)                                         |
+| P2-15 imap-simple legacy unused                       | RESOLVED    | Removed from job-server deps (zero source references)                                         |
+| P2-16 wrangler compatibility_date outdated            | RESOLVED    | 2026-02-21 → 2026-04-29                                                                       |
+| P2-17 No Dependabot/Renovate                          | RESOLVED    | `.github/dependabot.yml` added (npm + GH Actions, weekly)                                     |
+| P2-18 cf_metrics hardcoded defaults                   | RESOLVED    | 0.85/0.15/5 → NaN (Prometheus 'no data')                                                      |
+| P2-19 ES logger silent failure                        | RESOLVED    | `es_log_failures_total` counter exposed in /metrics                                           |
+| P2-20 Hardcoded terminal Easter egg                   | INTENTIONAL | Console game UI, documented as non-SSoT                                                       |
+| P2-21 OpenAPI gaps (3 routes)                         | RESOLVED    | `/api/health/notifications` + `/api/status` added to openapi.yaml                             |
+| P2-22 No SSoT drift PR-blocking CI gate               | RESOLVED    | CI runs `sync:data` + `git diff --exit-code`                                                  |
 
 ### P3 (7 items)
 
-| ID                                     | Status      | Notes                                                                   |
-| -------------------------------------- | ----------- | ----------------------------------------------------------------------- |
-| P3-1 skill-tag-map TODO                | EXTERNAL    | Live Wanted DOM probe required                                          |
-| P3-2 tools/scripts README stale date   | RESOLVED    | Updated to 2026-04-29                                                   |
-| P3-3 (8th workflow) TBD row            | RESOLVED    | Removed (only 7 actually exist)                                         |
-| P3-4 ADR-0007 vs README endpoint count | RESOLVED    | Both reconciled to 48 actual                                            |
-| P3-5 docs/README.md duplicate entry    | RESOLVED    | Removed                                                                 |
-| P3-6 web-vitals.js no beacon retry     | RESOLVED    | Falls back to fetch when sendBeacon returns false                       |
-| P3-7 automation location                      | INTENTIONAL | Current `infrastructure/automation/` is correct per `infrastructure/AGENTS.md` |
+| ID                                     | Status      | Notes                                                                          |
+| -------------------------------------- | ----------- | ------------------------------------------------------------------------------ |
+| P3-1 skill-tag-map TODO                | EXTERNAL    | Live Wanted DOM probe required                                                 |
+| P3-2 tools/scripts README stale date   | RESOLVED    | Updated to 2026-04-29                                                          |
+| P3-3 (8th workflow) TBD row            | RESOLVED    | Removed (only 7 actually exist)                                                |
+| P3-4 ADR-0007 vs README endpoint count | RESOLVED    | Both reconciled to 48 actual                                                   |
+| P3-5 docs/README.md duplicate entry    | RESOLVED    | Removed                                                                        |
+| P3-6 web-vitals.js no beacon retry     | RESOLVED    | Falls back to fetch when sendBeacon returns false                              |
+| P3-7 automation location               | INTENTIONAL | Current `infrastructure/automation/` is correct per `infrastructure/AGENTS.md` |
 
 ---
 
@@ -124,7 +124,7 @@ Cumulative across 5 rounds of fixes (b51c0f4 → cb37858 → 3ddcfb0):
 | `tests/unit/portfolio-worker` (Jest)                   | All pass                         | metrics, cards, etc.                         |
 | `tools/scripts/utils/validate-resume-data.js` × 3 SSoT | 3/3                              | JSON Schema enforcement                      |
 | `tools/scripts/utils/validate-application-variants.js` | 3/3 shinhan                      | contract validation                          |
-| `tools/scripts/utils/validate-workflow-exports.js`        | 36 active + 2 legacy allowlisted | structural validation                        |
+| `tools/scripts/utils/validate-workflow-exports.js`     | 36 active + 2 legacy allowlisted | structural validation                        |
 
 ---
 

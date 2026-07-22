@@ -29,12 +29,12 @@ Wrappers for external APIs.
 
 Fastify-based REST API for Dashboard & Webhooks.
 
-| Route         | File                  | Purpose                  |
-| :------------ | :-------------------- | :----------------------- |
-| **Dashboard** | `routes/dashboard.js` | Frontend stats & config  |
-| **Profile**   | `routes/profile.js`   | User profile aggregation |
-| **AI**        | `routes/ai.js`        | LLM-based operations     |
-| **Webhooks**  | `routes/automation.js`       | automation triggers  |
+| Route         | File                   | Purpose                  |
+| :------------ | :--------------------- | :----------------------- |
+| **Dashboard** | `routes/dashboard.js`  | Frontend stats & config  |
+| **Profile**   | `routes/profile.js`    | User profile aggregation |
+| **AI**        | `routes/ai.js`         | LLM-based operations     |
+| **Webhooks**  | `routes/automation.js` | automation triggers      |
 
 ### CLI (`src/auto-apply/cli/index.js`)
 

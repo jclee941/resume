@@ -31,9 +31,7 @@ function countMatching(fields, regex) {
 }
 
 function valuesForName(fields, name) {
-  return fields
-    .filter((field) => field.name === name)
-    .map((field) => String(field.value ?? ''));
+  return fields.filter((field) => field.name === name).map((field) => String(field.value ?? ''));
 }
 
 describe('jobkorea-sections helpers', () => {
@@ -141,7 +139,9 @@ describe('mapCareersToFormFields', () => {
 
   it('prefers per-career retire reason override', () => {
     const fields = mapCareersToFormFields({
-      careers: [{ ...baseCareer, jobkoreaRetireReasonCode: '3', jobkoreaRetireReason: '자발적 이직' }],
+      careers: [
+        { ...baseCareer, jobkoreaRetireReasonCode: '3', jobkoreaRetireReason: '자발적 이직' },
+      ],
       platformVariants: {
         jobkorea: { defaultRetireReasonCode: '5', defaultRetireReason: '계약기간 만료' },
       },

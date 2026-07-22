@@ -197,7 +197,7 @@ AGENTS.md `shared/AGENTS.md` 명시: **"No global state or singletons"**. 직접
 | P2-10 | 코드       | console.log/error in worker production code                          | `worker.js:231-2251` (generated, fix source)      |
 | P2-11 | 테스트     | test-helpers/{mocks,setup,fixtures}.js 1637 LOC untested             | `apps/job-server/src/test-helpers/`               |
 | P2-12 | 테스트     | packages/cli no tests                                                | `packages/cli/`                                   |
-| P2-13 | 테스트     | automation no schema validation                                   | 28 JSON files in `infrastructure/automation/`            |
+| P2-13 | 테스트     | automation no schema validation                                      | 28 JSON files in `infrastructure/automation/`     |
 | P2-14 | 보안       | `puppeteer` aliased to `rebrowser-puppeteer`                         | supply chain risk acceptable for stealth          |
 | P2-15 | 보안       | `imap-simple@5.1.0` legacy                                           | 2021 last update                                  |
 | P2-16 | 보안       | `compatibility_date: 2026-02-21` outdated                            | both wrangler.jsonc                               |
@@ -212,14 +212,14 @@ AGENTS.md `shared/AGENTS.md` 명시: **"No global state or singletons"**. 직접
 
 ## 4. P3 — Minor
 
-| #    | Finding                                                                     |
-| ---- | --------------------------------------------------------------------------- |
-| P3-1 | 1 TODO in `skill-tag-map.js:43` (documented Wanted skill probe gap)         |
-| P3-2 | `tools/scripts/README.md` Last Updated 2025-11-11                           |
-| P3-3 | `apps/job-dashboard/README.md:534` "(8th workflow) TBD" 모호                |
-| P3-4 | ADR-0007 "47 endpoints" vs README "30+ endpoints"                           |
-| P3-5 | docs/README.md duplicate `JOB_JCLEE_ME_IMPLEMENTATION.md` entry             |
-| P3-6 | `web-vitals.js:92-107` no retry on beacon failure                           |
+| #    | Finding                                                                                          |
+| ---- | ------------------------------------------------------------------------------------------------ |
+| P3-1 | 1 TODO in `skill-tag-map.js:43` (documented Wanted skill probe gap)                              |
+| P3-2 | `tools/scripts/README.md` Last Updated 2025-11-11                                                |
+| P3-3 | `apps/job-dashboard/README.md:534` "(8th workflow) TBD" 모호                                     |
+| P3-4 | ADR-0007 "47 endpoints" vs README "30+ endpoints"                                                |
+| P3-5 | docs/README.md duplicate `JOB_JCLEE_ME_IMPLEMENTATION.md` entry                                  |
+| P3-6 | `web-vitals.js:92-107` no retry on beacon failure                                                |
 | P3-7 | automation location `infrastructure/automation/` vs theoretical `packages/contracts/automation/` |
 
 ---
@@ -308,7 +308,7 @@ tracked 안 됨. 디스크에는 평문이지만 git history에는 없음. P0 �
 | P1-5 Admin token replay         | TRACKED      | 964901a             | bearer 재활용 위험 코멘트 + JWT migration plan                                                                                                                        |
 | P1-6 .affected/ untrack         | RESOLVED     | b51c0f4             | (prior commit)                                                                                                                                                        |
 | P1-7 JK retry 5→3               | RESOLVED     | 964901a             | AGENTS.md "3 max" 준수                                                                                                                                                |
-| P1-8 automation public webhook         | RESOLVED     | 964901a             | demoUrl → null + sync:data 재생성                                                                                                                                     |
+| P1-8 automation public webhook  | RESOLVED     | 964901a             | demoUrl → null + sync:data 재생성                                                                                                                                     |
 | P1-9 CHANGELOG semver           | RESOLVED     | b51c0f4             | (prior commit)                                                                                                                                                        |
 | P1-10 BUILD.bazel 삭제          | RESOLVED     | b51c0f4             | (prior commit)                                                                                                                                                        |
 | P1-11 gitlab-legacy             | RESOLVED     | b51c0f4             | (prior commit)                                                                                                                                                        |

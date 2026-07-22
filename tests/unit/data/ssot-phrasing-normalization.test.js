@@ -18,7 +18,8 @@ const BANNED_METRIC_PATTERN =
 function proseEntries(data, locale) {
   const entries = [];
   const add = (fieldPath, text) => {
-    if (typeof text === 'string' && text.length > 0) entries.push({ path: `${locale}:${fieldPath}`, text });
+    if (typeof text === 'string' && text.length > 0)
+      entries.push({ path: `${locale}:${fieldPath}`, text });
   };
   add('summary.profileStatement', data.summary.profileStatement);
   (data.summary.coreCompetencies || []).forEach((t, i) => add(`summary.coreCompetencies[${i}]`, t));
@@ -26,17 +27,23 @@ function proseEntries(data, locale) {
   ['careerHighlights', 'techPhilosophy', 'currentFocus'].forEach((key) =>
     (about[key] || []).forEach((t, i) => add(`summary.aboutSection.${key}[${i}]`, t))
   );
-  Object.entries(data.platformVariants || {}).forEach(([name, v]) => add(`platformVariants.${name}.about`, v.about));
+  Object.entries(data.platformVariants || {}).forEach(([name, v]) =>
+    add(`platformVariants.${name}.about`, v.about)
+  );
   (data.careers || []).forEach((career, c) => {
     ['description', 'wantedSummary', 'note', 'myRole', 'continuousEngagement'].forEach((key) =>
       add(`careers[${c}].${key}`, career[key])
     );
     (career.projects || []).forEach((project, p) => {
       add(`careers[${c}].projects[${p}].description`, project.description);
-      (project.achievements || []).forEach((t, a) => add(`careers[${c}].projects[${p}].achievements[${a}]`, t));
+      (project.achievements || []).forEach((t, a) =>
+        add(`careers[${c}].projects[${p}].achievements[${a}]`, t)
+      );
     });
   });
-  (data.projects || []).forEach((project, i) => add(`projects[${i}].description`, project.description));
+  (data.projects || []).forEach((project, i) =>
+    add(`projects[${i}].description`, project.description)
+  );
   if (data.careerGap) {
     add('careerGap.reason', data.careerGap.reason);
     add('careerGap.result', data.careerGap.result);
@@ -46,9 +53,13 @@ function proseEntries(data, locale) {
     add(`personalProjects[${i}].tagline`, project.tagline);
     (project.highlights || []).forEach((t, h) => add(`personalProjects[${i}].highlights[${h}]`, t));
   });
-  (data.ossContributions || []).forEach((item, i) => add(`ossContributions[${i}].description`, item.description));
+  (data.ossContributions || []).forEach((item, i) =>
+    add(`ossContributions[${i}].description`, item.description)
+  );
   (data.achievements || []).forEach((t, i) => add(`achievements[${i}]`, t));
-  (data.infrastructure || []).forEach((item, i) => add(`infrastructure[${i}].description`, item.description));
+  (data.infrastructure || []).forEach((item, i) =>
+    add(`infrastructure[${i}].description`, item.description)
+  );
   Object.entries(data.coverLetter || {}).forEach(([loc, letter]) => {
     add(`coverLetter.${loc}.headline`, letter.headline);
     (letter.paragraphs || []).forEach((t, i) => add(`coverLetter.${loc}.paragraphs[${i}]`, t));
@@ -66,15 +77,25 @@ const SENTENCE_FIELDS_KO = (data) => {
   const out = [];
   const add = (fieldPath, text) => typeof text === 'string' && out.push({ path: fieldPath, text });
   add('summary.profileStatement', data.summary.profileStatement);
-  (data.summary.aboutSection.careerHighlights || []).forEach((t, i) => add(`summary.aboutSection.careerHighlights[${i}]`, t));
+  (data.summary.aboutSection.careerHighlights || []).forEach((t, i) =>
+    add(`summary.aboutSection.careerHighlights[${i}]`, t)
+  );
   (data.careers || []).forEach((career, c) => {
     add(`careers[${c}].description`, career.description);
-    (career.projects || []).forEach((project, p) => add(`careers[${c}].projects[${p}].description`, project.description));
+    (career.projects || []).forEach((project, p) =>
+      add(`careers[${c}].projects[${p}].description`, project.description)
+    );
   });
-  (data.projects || []).forEach((project, i) => add(`projects[${i}].description`, project.description));
+  (data.projects || []).forEach((project, i) =>
+    add(`projects[${i}].description`, project.description)
+  );
   add('careerGap.reason', data.careerGap.reason);
-  (data.personalProjects || []).forEach((project, i) => add(`personalProjects[${i}].description`, project.description));
-  (data.ossContributions || []).forEach((item, i) => add(`ossContributions[${i}].description`, item.description));
+  (data.personalProjects || []).forEach((project, i) =>
+    add(`personalProjects[${i}].description`, project.description)
+  );
+  (data.ossContributions || []).forEach((item, i) =>
+    add(`ossContributions[${i}].description`, item.description)
+  );
   (data.achievements || []).forEach((t, i) => add(`achievements[${i}]`, t));
   return out;
 };
@@ -83,28 +104,43 @@ const NOUN_FIELDS_KO = (data) => {
   const out = [];
   const add = (fieldPath, text) => typeof text === 'string' && out.push({ path: fieldPath, text });
   (data.summary.coreCompetencies || []).forEach((t, i) => add(`summary.coreCompetencies[${i}]`, t));
-  (data.summary.aboutSection.currentFocus || []).forEach((t, i) => add(`summary.aboutSection.currentFocus[${i}]`, t));
+  (data.summary.aboutSection.currentFocus || []).forEach((t, i) =>
+    add(`summary.aboutSection.currentFocus[${i}]`, t)
+  );
   (data.careers || []).forEach((career, c) => {
     add(`careers[${c}].wantedSummary`, career.wantedSummary);
     add(`careers[${c}].myRole`, career.myRole);
     (career.projects || []).forEach((project, p) =>
-      (project.achievements || []).forEach((t, a) => add(`careers[${c}].projects[${p}].achievements[${a}]`, t))
+      (project.achievements || []).forEach((t, a) =>
+        add(`careers[${c}].projects[${p}].achievements[${a}]`, t)
+      )
     );
   });
   add('careerGap.result', data.careerGap.result);
   (data.personalProjects || []).forEach((project, i) =>
     (project.highlights || []).forEach((t, h) => add(`personalProjects[${i}].highlights[${h}]`, t))
   );
-  (data.infrastructure || []).forEach((item, i) => add(`infrastructure[${i}].description`, item.description));
-  Object.entries(data.sectionDescriptions || {}).forEach(([key, t]) => add(`sectionDescriptions.${key}`, t));
+  (data.infrastructure || []).forEach((item, i) =>
+    add(`infrastructure[${i}].description`, item.description)
+  );
+  Object.entries(data.sectionDescriptions || {}).forEach(([key, t]) =>
+    add(`sectionDescriptions.${key}`, t)
+  );
   return out;
 };
 
 describe('SSOT phrasing normalization guard', () => {
   test('prose contains no banned quantified-claim patterns (all locales)', () => {
-    const violations = [ ...proseEntries(ko, 'ko'), ...proseEntries(en, 'en'), ...proseEntries(ja, 'ja') ]
+    const violations = [
+      ...proseEntries(ko, 'ko'),
+      ...proseEntries(en, 'en'),
+      ...proseEntries(ja, 'ja'),
+    ]
       .filter(({ text }) => BANNED_METRIC_PATTERN.test(text))
-      .map(({ path: p, text }) => `${p} :: ${text.match(BANNED_METRIC_PATTERN)[0]} :: ${text.slice(0, 60)}`);
+      .map(
+        ({ path: p, text }) =>
+          `${p} :: ${text.match(BANNED_METRIC_PATTERN)[0]} :: ${text.slice(0, 60)}`
+      );
     expect(violations).toEqual([]);
   });
 
@@ -115,7 +151,9 @@ describe('SSOT phrasing normalization guard', () => {
   });
 
   test('workType has no space before parenthesis', () => {
-    const violations = ko.careers.filter((c) => c.workType && /\s\(/.test(c.workType)).map((c) => `${c.id}: ${c.workType}`);
+    const violations = ko.careers
+      .filter((c) => c.workType && /\s\(/.test(c.workType))
+      .map((c) => `${c.id}: ${c.workType}`);
     expect(violations).toEqual([]);
   });
 
@@ -159,9 +197,9 @@ describe('SSOT phrasing normalization guard', () => {
 
   test('careers[].workType semantic parity across locales', () => {
     const WORK_TYPE_PARITY = {
-      '프리랜서': { en: 'Freelance', ja: 'フリーランス' },
+      프리랜서: { en: 'Freelance', ja: 'フリーランス' },
       '정규직(파견)': { en: 'Full-time (Dispatched)', ja: '正社員(派遣)' },
-      '정규직': { en: 'Full-time', ja: '正社員' },
+      정규직: { en: 'Full-time', ja: '正社員' },
       'SI+SM': { en: 'SI+SM', ja: 'SI+SM' },
     };
     const violations = [];

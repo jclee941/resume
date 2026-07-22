@@ -64,7 +64,5 @@
     "tools/scripts/build/generate-screenshots.js",
     "tools/scripts/build/convert-icons-to-png.js"
   ],
-  "exclude": [
-    "packages/env/src/__tests__/**"
-  ]
+  "exclude": ["packages/env/src/__tests__/**"]
 }

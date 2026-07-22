@@ -57,11 +57,17 @@ function createScheduledRequest(body) {
 }
 
 function isScheduledAutoApplyEnabled(env) {
-  return String(env.CLIPROXY_AUTO_APPLY_ENABLED || '').trim().toLowerCase() !== 'false';
+  return (
+    String(env.CLIPROXY_AUTO_APPLY_ENABLED || '')
+      .trim()
+      .toLowerCase() !== 'false'
+  );
 }
 
 function readDryRun(env) {
-  const value = String(env.CLIPROXY_AUTO_APPLY_DRY_RUN || '').trim().toLowerCase();
+  const value = String(env.CLIPROXY_AUTO_APPLY_DRY_RUN || '')
+    .trim()
+    .toLowerCase();
   if (value === 'false') return false;
   if (value === 'true') return true;
   return true;

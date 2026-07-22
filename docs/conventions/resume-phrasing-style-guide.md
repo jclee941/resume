@@ -28,21 +28,21 @@ are test-enforced; the rest are editorial rules applied during normalization pas
 
 ## 2. Terminology Canon (KO)
 
-| Concept | Canonical | Banned variants |
-| --- | --- | --- |
-| 알림 채널 쌍 | `Slack/SMS 알림` | `Slack·SMS`, `슬랙/SMS` `[guard]` |
-| 개념 나열 구분자 (문장 내) | `·` (가운뎃점) | ` - ` 하이픈 나열, `・` (JA 전용) |
-| FortiManager API (상세 서술) | `FortiManager JSON-RPC API` — `careers[].description`, `careers[].projects[].description` | |
-| FortiManager API (요약 서술) | `FortiManager API` — summary, wantedSummary, platformVariants, careerSummary, achievements | |
-| Splunk 탐지 문맥 | `Splunk ES` (넥스트레이드/아이티센 ES 작업) | `Splunk Enterprise Security` 풀네임 |
-| Splunk 일반 플랫폼 문맥 | `Splunk` (개인 알림 프로젝트의 Saved Search 등) | |
-| 금융위 인가 (요약) | `금융위 본인가` | |
-| 금융위 인가 (자소서 서사) | `금융위원회 본인가` 첫 언급 허용 | |
-| 금감원 감사 (요약) | `금감원 감사` | |
-| 금감원 감사 (서사) | `금융감독원 정기 감사` | |
-| 구직 상태 복합 표기 | `구직 중 · 즉시 투입 가능` | `구직 중 - 즉시 투입 가능` `[guard]` |
-| 매매체결시스템 | 붙여쓰기 `매매체결시스템` | `매매체결 시스템` |
-| 망분리·엔드포인트 보안 | `망분리`, `엔드포인트 보안` | `네트워크 분리` |
+| Concept                      | Canonical                                                                                  | Banned variants                      |
+| ---------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------ |
+| 알림 채널 쌍                 | `Slack/SMS 알림`                                                                           | `Slack·SMS`, `슬랙/SMS` `[guard]`    |
+| 개념 나열 구분자 (문장 내)   | `·` (가운뎃점)                                                                             | `-` 하이픈 나열, `・` (JA 전용)      |
+| FortiManager API (상세 서술) | `FortiManager JSON-RPC API` — `careers[].description`, `careers[].projects[].description`  |                                      |
+| FortiManager API (요약 서술) | `FortiManager API` — summary, wantedSummary, platformVariants, careerSummary, achievements |                                      |
+| Splunk 탐지 문맥             | `Splunk ES` (넥스트레이드/아이티센 ES 작업)                                                | `Splunk Enterprise Security` 풀네임  |
+| Splunk 일반 플랫폼 문맥      | `Splunk` (개인 알림 프로젝트의 Saved Search 등)                                            |                                      |
+| 금융위 인가 (요약)           | `금융위 본인가`                                                                            |                                      |
+| 금융위 인가 (자소서 서사)    | `금융위원회 본인가` 첫 언급 허용                                                           |                                      |
+| 금감원 감사 (요약)           | `금감원 감사`                                                                              |                                      |
+| 금감원 감사 (서사)           | `금융감독원 정기 감사`                                                                     |                                      |
+| 구직 상태 복합 표기          | `구직 중 · 즉시 투입 가능`                                                                 | `구직 중 - 즉시 투입 가능` `[guard]` |
+| 매매체결시스템               | 붙여쓰기 `매매체결시스템`                                                                  | `매매체결 시스템`                    |
+| 망분리·엔드포인트 보안       | `망분리`, `엔드포인트 보안`                                                                | `네트워크 분리`                      |
 
 ## 3. Field-Value Taxonomies
 
@@ -59,6 +59,7 @@ are test-enforced; the rest are editorial rules applied during normalization pas
 ## 4. Sentence-Ending Rules per Field Family (KO)
 
 **습니다체 (complete sentences, end with `다.`)** `[guard]`
+
 - `summary.profileStatement`
 - `summary.aboutSection.careerHighlights[]`
 - `careers[].description`, `careers[].projects[].description`
@@ -69,6 +70,7 @@ are test-enforced; the rest are editorial rules applied during normalization pas
 - `coverLetter.ko.*`, `careerSummary.ko.paragraphs[]/closing`
 
 **명사형 종결 (noun-ending fragments; must not contain `습니다`/`입니다`)** `[guard]`
+
 - `summary.coreCompetencies[]`
 - `summary.aboutSection.currentFocus[]`
 - `careers[].projects[].achievements[]`

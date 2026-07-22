@@ -184,10 +184,7 @@ test('PIN live persistence failure rejects before notification', async () => {
   workflow.crawlPlatform = async () => ({ jobs: [matchedJob] });
 
   await assert.rejects(
-    workflow.run(
-      { payload: { platforms: ['wanted'], searchCriteria: {}, dryRun: false } },
-      step
-    ),
+    workflow.run({ payload: { platforms: ['wanted'], searchCriteria: {}, dryRun: false } }, step),
     /fixture D1 batch rejected/
   );
 

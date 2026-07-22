@@ -16,7 +16,8 @@ export function buildSummaryData(platforms = PLATFORMS) {
 
 export async function sendWebhookNotification({ summaryData, doExtract, doSync, doVerify }) {
   const webhookUrl =
-    process.env.AUTOMATION_WEBHOOK_URL || 'https://automation.example.com/webhook/automation-run-report';
+    process.env.AUTOMATION_WEBHOOK_URL ||
+    'https://automation.example.com/webhook/automation-run-report';
   if (!webhookUrl) return;
 
   try {

@@ -222,7 +222,9 @@ export class BrowserProfileSync extends BaseProfileSync {
   }
 
   async waitForAnyConfiguredSelector(selectors) {
-    const candidates = selectors.filter((selector) => typeof selector === 'string' && selector.length > 0);
+    const candidates = selectors.filter(
+      (selector) => typeof selector === 'string' && selector.length > 0
+    );
     if (candidates.length === 0) return;
     await this.page.waitForFunction(
       (selectorList) => selectorList.some((selector) => document.querySelector(selector)),

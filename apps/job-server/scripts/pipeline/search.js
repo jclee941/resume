@@ -16,7 +16,14 @@ import {
   scoreSaramin,
 } from './scoring.js';
 
-export { fetchWantedJson, getPipelinePlatform, scoreJob, scoreJobKorea, scorePipelineJob, scoreSaramin };
+export {
+  fetchWantedJson,
+  getPipelinePlatform,
+  scoreJob,
+  scoreJobKorea,
+  scorePipelineJob,
+  scoreSaramin,
+};
 
 export async function searchJobs() {
   const jobs = [];

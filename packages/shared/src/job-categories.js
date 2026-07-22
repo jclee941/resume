@@ -47,7 +47,9 @@ export const DEFAULT_JOB_CATEGORY = 674;
 
 /** @param {string|null|undefined} role */
 function getRoleCategoryCandidates(role) {
-  const raw = String(role || '').replace(/\s+/g, ' ').trim();
+  const raw = String(role || '')
+    .replace(/\s+/g, ' ')
+    .trim();
   const normalized = normalizeCareerRole(raw);
   return [...new Set([raw, normalized].filter(Boolean))];
 }
