@@ -122,13 +122,15 @@ test.describe('Download Link Counts', () => {
     await page.goto(baseURL || '/');
     await page.waitForLoadState('domcontentloaded');
 
-    // Count all download links - verify there are some
+    // Count all download links - verify there are some.
+    // Previously this test had no assertion in either branch (it skipped on
+    // zero and did nothing on non-zero), so it was structurally incapable of
+    // failing. The resume download link is static server-rendered markup
+    // (apps/portfolio/index.html .hero-download), so its absence is a real
+    // regression, not an environment condition worth skipping past.
     const allDownloadLinks = page.locator('a[download]');
     const totalCount = await allDownloadLinks.count();
 
-    if (totalCount === 0) {
-      test.skip(true, 'No download links found on page');
-      return;
-    }
+    expect(totalCount).toBeGreaterThan(0);
   });
 });

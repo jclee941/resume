@@ -137,11 +137,9 @@ test.describe('/api/auth/login (issue #32)', () => {
       data: { idToken },
       headers: { 'x-mock-replay-check': 'true' },
     });
-    // Replay protection is a desired property; if not implemented today the
-    // test marks itself fixme rather than failing the build.
-    if (second.status() === 200) {
-      test.fixme(true, 'login replay protection not yet enforced');
-    }
+    // Replay protection is a required security property: reusing the same
+    // idToken must be rejected. This assertion FAILS the test (it no longer
+    // self-disables via fixme) if the second call also succeeds with 200.
     expect([401, 403]).toContain(second.status());
   });
 
@@ -154,14 +152,13 @@ test.describe('/api/auth/login (issue #32)', () => {
     }
     const body = await res.json().catch(() => ({}));
     expect(typeof body).toBe('object');
-    // CSRF token may be in body or as a cookie; either is acceptable.
+    // CSRF token may be in body or as a cookie; either is acceptable. This
+    // assertion FAILS the test (it no longer self-disables via fixme) if no
+    // CSRF token is issued anywhere on the response.
     const hasCsrf =
       typeof body.csrfToken === 'string' ||
       typeof body.csrf === 'string' ||
       /csrf/i.test(res.headers()['set-cookie'] || '');
-    if (!hasCsrf) {
-      test.fixme(true, 'CSRF token not yet issued on /api/auth/login response');
-    }
     expect(hasCsrf).toBe(true);
   });
 });
