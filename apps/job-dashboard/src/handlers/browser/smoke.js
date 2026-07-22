@@ -63,11 +63,24 @@ export async function runBrowserSmoke(env, opts = {}) {
         } catch {
           text = '';
         }
+        let inputs = [];
+        try {
+          inputs = await page.evaluate(() =>
+            Array.from(document.querySelectorAll('input')).slice(0, 25).map((el) => ({
+              name: el.getAttribute('name') || '',
+              type: el.getAttribute('type') || '',
+              id: el.getAttribute('id') || '',
+            }))
+          );
+        } catch {
+          inputs = [];
+        }
         return {
           finalUrl,
           title,
           pageKind: classifyPage(finalUrl, title, text),
           textSample: text.slice(0, 240),
+          inputs,
         };
       } finally {
         try {
