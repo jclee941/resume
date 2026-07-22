@@ -1,30 +1,26 @@
+import { randomUUID } from 'node:crypto';
+import { formatErrorResponse } from '../../shared/errors/error-formatter.js';
+
 export default function errorHandler(error, request, reply) {
-  request.log.error({ err: error, url: request.url, method: request.method });
+  const correlationId = randomUUID();
+  const {
+    error: { code, message, statusCode, details },
+  } = formatErrorResponse(error);
 
-  if (error.validation) {
-    return reply.status(400).send({
-      error: 'Validation Error',
-      message: error.message,
-      details: error.validation,
-    });
-  }
+  request.log.error({
+    err: error,
+    url: request.url,
+    method: request.method,
+    errorCode: code,
+    correlationId,
+  });
 
-  if (error.statusCode === 429) {
-    return reply.status(429).send({
-      error: 'Too Many Requests',
-      message: 'Rate limit exceeded',
-    });
-  }
+  reply.header('X-Correlation-ID', correlationId);
 
-  if (error.statusCode) {
-    return reply.status(error.statusCode).send({
-      error: error.name || 'Error',
-      message: error.message,
-    });
-  }
-
-  return reply.status(500).send({
-    error: 'Internal Server Error',
-    message: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong',
+  return reply.status(statusCode).send({
+    code,
+    message,
+    correlationId,
+    ...(details ? { details } : {}),
   });
 }
