@@ -109,6 +109,13 @@ jobs:
       - name: Run TypeScript check
         run: npm run typecheck
 
+      # The step above CANNOT fail: tsconfig.base.json sets checkJs:false, so the
+      # .js include globs are parsed but never type-checked. This ratcheting gate
+      # is the one that actually enforces types — see tsconfig.strict.json for how
+      # to widen its include list one directory at a time.
+      - name: Run strict TypeScript gate
+        run: npm run typecheck:strict
+
   test-jest:
     name: Unit Tests (Jest)
     runs-on: ubuntu-latest
@@ -313,6 +320,13 @@ jobs:
 
       - name: Validate Cloudflare native structure
         run: go run ./tools/ci/validate-cloudflare-native.go
+
+      # The build loop above deliberately skips *_test.go, so until now no Go test
+      # was ever executed anywhere. test:go runs the packages that actually have
+      # tests; dirs holding several standalone `func main()` files cannot build as
+      # one package and are excluded with a reason in the script itself.
+      - name: Run Go tests
+        run: npm run test:go
 
   validate-openapi:
     name: OpenAPI Spec Validation
