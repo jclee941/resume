@@ -44,4 +44,4 @@ packages/contracts/
 
 ---
 
-Parent: [../../AGENTS.md](../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

@@ -1,47 +1,54 @@
 # INFRASTRUCTURE KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
-**Commit:** `882b837`
+**Generated:** 2026-07-22 (verified 164e83ac)
+**Commit:** `164e83ac`
 **Branch:** `master`
 
 ## OVERVIEW
 
-IaC for Cloudflare resources, monitoring (Grafana/Loki/Prometheus), automation
-automation, and database migrations.
+Cloudflare infrastructure (Terraform), database migrations (D1 and Supabase),
+monitoring dashboards (Grafana), and automation workflows.
 
 ## STRUCTURE
 
 ```text
 infrastructure/
-├── cloudflare/           # Terraform for CF resources (see cloudflare/AGENTS.md)
-├── monitoring/           # Grafana dashboard JSON
-├── automation/           # systemd service files
-├── automation/                  # workflow export JSON
-├── configs/              # alert configurations
-├── database/             # D1 migration SQL files
-└── nginx/                # proxy + CSP config
+├── cloudflare/           # Terraform for DNS, routes, KV/D1 references
+├── database/             # D1 and Supabase migrations, seeds
+├── monitoring/           # Grafana dashboards and alert rules
+├── automation/           # systemd services and workflow exports
+├── configs/              # Grafana alert configurations
+├── docker/               # Docker runtime configs
+├── mocks/                # Test mocks
+└── systemd/              # systemd service definitions
 ```
 
-## RESPONSIBILITY DIVISION
+## AUTHORITY BOUNDARIES
 
-| Scope                   | Authority  |
-| ----------------------- | ---------- |
-| DNS, routes, page rules | Terraform  |
-| Worker code, KV data    | Wrangler   |
-| D1 schema               | Migrations |
-| Monitoring dashboards   | Grafana UI |
+| Scope                            | Owner                     | Changes Via                                                        |
+| -------------------------------- | ------------------------- | ------------------------------------------------------------------ |
+| DNS and Cloudflare declarations  | Terraform files           | Review `cloudflare/*.tf`; no active apply workflow                 |
+| Production Worker code           | Cloudflare Workers Builds | Build from `master`; local Wrangler is verification/emergency only |
+| D1 schema (migrations 0000-0008) | Migrations                | `database/migrations/*.sql`                                        |
+| Supabase schema                  | Supabase CLI              | `database/supabase/migrations/*.sql`                               |
+| Monitoring dashboards            | Grafana UI                | `monitoring/*.json` (reference only)                               |
+| Automation workflows             | Workflow UI               | `automation/*.json` (reference only)                               |
 
 ## CONVENTIONS
 
-- GitOps: all config in git, applied via CI.
-- Import-first for existing resources.
-- KV/D1 are read-only in Terraform — manage via Wrangler.
+- Terraform state is S3-compatible backend (bucket: `terraform-state`).
+- Never run `terraform apply` locally against production.
+- D1 migrations are immutable once deployed; create new migrations for changes.
+- Supabase and D1 migrations are separate lineages; keep them distinct.
+- Monitoring and automation exports are reference snapshots, not deployment sources.
 
 ## ANTI-PATTERNS
 
-- Never apply Terraform locally against production.
-- Never manage worker code via Terraform.
-- Never hardcode resource IDs — use variables.
+- Do not use the legacy Worker script resource in `cloudflare/workers.tf` as the
+  routine production deployment path.
+- Never hardcode Cloudflare resource IDs in prose.
+- Never edit deployed migrations.
+- Never mix D1 and Supabase migrations in the same file.
 
 ---
 

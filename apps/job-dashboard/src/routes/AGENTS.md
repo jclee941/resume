@@ -1,7 +1,7 @@
-# DASHBOARD ROUTES KNOWLEDGE BASE
+# ROUTES KNOWLEDGE BASE
 
-**Generated:** 2026-06-10
-**Commit:** `b74e95d1`
+**Generated:** 2026-07-22
+**Commit:** `164e83ac`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -39,4 +39,4 @@ routes/
 
 ---
 
-Parent: [../../AGENTS.md](../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

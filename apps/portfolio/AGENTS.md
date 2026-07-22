@@ -1,114 +1,71 @@
 # PORTFOLIO WORKER KNOWLEDGE BASE
 
-**Generated:** 2026-06-28
-**Commit:** `4bd11dd2`
+**Generated:** 2026-07-22
+**Commit:** `164e83ac`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Cloudflare Worker serving the public portfolio and the in-process `/job/*`
-dashboard API. `worker.js` is generated; `entry.js` is the hand-authored merged
-edge router.
+Public Cloudflare Worker and the merged edge entry for the in-process dashboard.
+`worker.js` and locale data snapshots are generated; `entry.js`, HTML, `src/`,
+and `lib/` are editable sources.
 
 ## STRUCTURE
 
 ```text
 portfolio/
-├── index.html              # source HTML (hand-edited)
-├── index-en.html           # English portfolio source
-├── generate-worker.js      # build compiler
-├── worker.js               # GENERATED — never edit
-├── entry.js                # merged edge router; imports job-dashboard in-process
-├── data.json               # Generated resume snapshot (KO), built from packages/data SSoT
-├── data_en.json            # English resume data
-├── data_ja.json            # Japanese resume data
-├── dashboard.html          # admin dashboard (1290 lines)
-├── lib/                    # 25 build/runtime modules (see lib/AGENTS.md)
-├── src/                    # source styles/scripts (see src/AGENTS.md)
-├── assets/                 # static files (fonts, favicons)
-├── generate-og-image.js    # OG image generator
-├── og-image.png/webp       # Generated OG image (KO)
-├── og-image-en.png/webp    # Generated OG image (EN)
-├── generate-project-schemas.js # Schema generator
-├── sitemap.xml             # SEO sitemap
-├── robots.txt              # SEO robots config
-├── wrangler.jsonc          # worker config (name: resume)
-└── validate-seo.go         # SEO validation script
+├── entry.js             # merged fetch/queue/scheduled router
+├── generate-worker.js   # build entry; delegates to lib/build-orchestrator.js
+├── worker.js            # generated bundle; never edit
+├── index*.html          # localized source shells
+├── data*.json           # generated snapshots from packages/data
+├── lib/                 # build pipeline and Worker runtime modules
+├── src/styles/          # design tokens and modular CSS
+├── src/scripts/         # browser bootstrap and feature modules
+├── sw.js                # asset service worker; never caches HTML
+└── assets/              # static binding, including copied resume PDFs
 ```
 
 ## WHERE TO LOOK
 
-| Task            | Location                      | Notes                                                      |
-| --------------- | ----------------------------- | ---------------------------------------------------------- |
-| Build pipeline  | `generate-worker.js`          | HTML→CSP→inline→worker.js                                  |
-| Source markup   | `index.html`, `index-en.html` | KO/EN portfolio templates                                  |
-| Runtime modules | `lib/`                        | 25 stateless JS modules                                    |
-| Multi-language  | `i18n.js`, `data_*.json`      | KO/EN/JA support                                           |
-| OG Image Gen    | `generate-og-image.js`        | Canvas-based social image generation                       |
-| Project Schemas | `*project-schemas.js`         | JSON-LD generation and injection                           |
-| SEO/Metadata    | `SEO_IMPLEMENTATION.md`       | sitemap, robots, meta tags                                 |
-| Edge routing    | `entry.js`                    | routes `/job/*` into job-dashboard without Service Binding |
-
-## BUILD PIPELINE
-
-```text
-resume_data.json → sync → data.json
-index.html → generate-worker.js → worker.js → entry.js → Workers Builds
-                 ↓
-         escape backticks
-         compute CSP hashes
-         inline CSS + data
-```
-
-### Public PDF
-
-1. `packages/data/resumes/master/resume_summary.md` owns the two-page recruiter
-   summary and `packages/data/resumes/master/resume_master.md` owns the sanitized
-   full CV.
-2. `npm run sync:pdf` creates `resume_final.pdf` and `resume_full.pdf`.
-3. The portfolio build copies them to `assets/resume.pdf` and
-   `assets/resume-full.pdf`.
+| Task                    | Location                                          | Notes                                     |
+| ----------------------- | ------------------------------------------------- | ----------------------------------------- |
+| Merged edge routing     | `entry.js`                                        | sanctioned ADR 0009 dashboard import      |
+| Worker generation       | `generate-worker.js`, `lib/build-orchestrator.js` | writes `worker.js`                        |
+| Source markup           | `index.html`, `index-en.html`                     | metadata, landmarks, placeholders         |
+| Build/runtime modules   | `lib/`                                            | child guide separates phases              |
+| Browser behavior/styles | `src/`                                            | child guide owns accessibility and tokens |
+| Design rules            | `DESIGN.md`                                       | current visual system                     |
 
 ## CONVENTIONS
 
-- Inline assets at build time; the sole exception is `resume.pdf` (served via `env.ASSETS`).
-- CSS vars for theming (see `src/styles/variables.css`).
-- Pure functions in `lib/` — receive env, no side effects.
-- Fire-and-forget telemetry (ES logger, metrics).
-- Multi-language: `data.json` (ko), `data_en.json`, `data_ja.json`.
-- `entry.js` is the sanctioned ADR 0009 cross-app import point for
-  `../job-dashboard/src/index.js`.
+- Run `npm run build` from the repository root; it synchronizes data before
+  generating the Worker.
+- Preserve inline script bytes until CSP hashes are computed; do not trim or
+  reorder the hash pipeline casually.
+- Keep `/job/*`, queue, scheduled, Workflow, and Durable Object exports compatible
+  with `apps/job-dashboard/src/index.js`.
+- Inline normal assets at build time. Only `/resume.pdf` and `/resume-full.pdf`
+  use `env.ASSETS` at runtime.
+- Keep locale intent aligned across source shells and canonical resume data.
+- `sw.js` may cache static assets but must not cache nonce-bearing HTML.
 
 ## ANTI-PATTERNS
 
-- Never edit `worker.js` directly — it is generated.
-- Never `trim()` inline scripts before CSP hash generation.
-- Never add runtime fetch for assets — inline at build (EXCEPTION: the two resume
-  PDF routes read `env.ASSETS`).
-- Never hardcode colors — use CSS variables.
-- Never add light-mode without updating root docs.
-- Never reintroduce a Service Binding for `/job/*` unless ADR 0009 is reversed.
+- Never edit `worker.js` or generated `data*.json` directly.
+- Never reintroduce a dashboard Service Binding unless ADR 0009 is reversed.
+- Never hardcode design tokens outside `src/styles/variables.css`.
+- Never add light-mode or animation behavior without updating design,
+  reduced-motion, and accessibility contracts together.
+- Never add runtime asset fetches outside the documented PDF exception.
 
-## CONTENT UPDATE PATTERN
+## COMMANDS
 
-Hardcoded content in `index.html`/`index-en.html` must match SSoT
-(`resume_data.json`):
-
-- Title/meta/OG/Twitter tags: `Security Automation / Infrastructure Engineer` across KO/EN/JA, with localized name prefixes where needed
-- JSON-LD Person schema: `knowsAbout` (12 domains), `jobTitle`, `description`
-- About section: career highlights (quantified achievements), current focus
-- Hero name, role line, and positioning sentence; section copy
-- `resume_summary.md` and `resume_master.md` own the public summary/full CV
-  sources; `npm run sync:pdf` produces both downloadable PDF assets.
-- After edits: `npm run sync:data && npm run build` to regenerate `worker.js`
-
-## EXCEPTIONS
-
-- `/resume.pdf` and `/resume-full.pdf` are served from the static `assets`
-  binding. The build copies the SSoT PDFs into `assets/` and the worker route in
-  `lib/worker-routes/seo-routes.js` reads it via `env.ASSETS.fetch()` (with a
-  404 fallback) instead of inlining binary data. These are the ONLY runtime
-  asset fetches; everything else stays inlined at build.
+```bash
+npm run build
+npm run test:e2e:worker
+npm run deploy:wrangler:root:dry-run
+```
 
 ---
 

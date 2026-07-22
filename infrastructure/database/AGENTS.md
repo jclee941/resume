@@ -1,64 +1,68 @@
 # DATABASE INFRASTRUCTURE KNOWLEDGE BASE
 
-**Generated:** 2026-05-06
-**Commit:** `HEAD`
+**Generated:** 2026-07-22 (verified 164e83ac)
+**Commit:** `164e83ac`
 **Branch:** `master`
-
-**Scope:** Supabase database migrations, seeds, and configuration  
-**Purpose:** Database schema versioning and seed data
 
 ## OVERVIEW
 
-PostgreSQL database managed via Supabase. Schema changes tracked as numbered
-migrations with up/down scripts. Seed data for local development and testing.
+D1 and Supabase database migrations, seeds, and configuration. Two separate
+migration lineages: D1 (Cloudflare Workers) and Supabase (PostgreSQL).
 
 ## STRUCTURE
 
 ```text
 infrastructure/database/
-├── migrations/           # SQL migration files (numbered)
-│   ├── 0000_baseline_schema.sql
-│   ├── 0001_create_job_applications.sql
-│   ├── 0002_add_automation_tables.sql
-│   ├── 0003_add_monitoring_tables.sql
-│   ├── 0004_add_sync_logs_table.sql
-│   └── 0005_add_resume_sync_tables.sql
-├── seeds/                # Seed data SQL
-│   └── config.sql
-└── supabase/
-    └── README.md         # Supabase-specific docs
+├── migrations/             # D1 migrations (0000-0008)
+├── seeds/                  # D1 seed data
+├── supabase/
+│   ├── migrations/         # Supabase PostgreSQL migrations
+│   └── seed/               # Supabase seed data
+└── README.md
 ```
 
-## MIGRATIONS
+## D1 MIGRATIONS
 
-| Migration                      | Purpose                         |
-| ------------------------------ | ------------------------------- |
-| `0000_baseline_schema`         | Initial schema foundation       |
-| `0001_create_job_applications` | Job application tracking tables |
-| `0002_add_automation_tables`   | Automation/workflow tables      |
-| `0003_add_monitoring_tables`   | Monitoring and metrics tables   |
-| `0004_add_sync_logs_table`     | Resume sync audit logging       |
-| `0005_add_resume_sync_tables`  | Resume sync state tables        |
+Immutable numbered migrations (0000-0008) for Cloudflare D1 SQLite database.
+
+| Migration | Purpose                    |
+| --------- | -------------------------- |
+| 0000      | Baseline schema            |
+| 0001      | Job applications table     |
+| 0002      | Automation tables          |
+| 0003      | Monitoring tables          |
+| 0004      | Sync logs table            |
+| 0005      | Resume sync tables         |
+| 0006      | Vault table                |
+| 0007      | Wanted application history |
+| 0008      | Auto-apply metadata        |
+
+## SUPABASE MIGRATIONS
+
+Separate PostgreSQL migration lineage for Supabase (0001-0004).
+
+| Migration | Purpose              |
+| --------- | -------------------- |
+| 0001      | Resume tables        |
+| 0002      | RLS policies         |
+| 0003      | Indexes and triggers |
+| 0004      | Tighten grants       |
 
 ## CONVENTIONS
 
-- **Numbered migrations** with zero-padding (0001, 0002...)
-- **Up/down pairs** for every migration (`.sql` and `.down.sql`)
-- **Idempotent scripts** (safe to run multiple times)
-- **No destructive changes** in existing migrations (create new migration)
+- Numbered migrations with zero-padding (0000, 0001, ...).
+- D1 migrations use checked-in up/down pairs (`.sql` and `.down.sql`).
+- Do not assume migrations are rerunnable; later D1 migrations include plain
+  `ALTER TABLE` statements and rely on ordered, one-time application.
+- Never edit existing migrations after deployment.
+- D1 and Supabase migrations are separate; keep them distinct.
 
 ## ANTI-PATTERNS
 
-- Never edit existing migration files after they've been applied
-- Never skip migration numbers (maintain sequence)
-- Never commit production credentials in seed files
-
-## NOTES
-
-- Supabase CLI manages migrations: `supabase db push`
-- Local development uses `supabase start`
-- Production migrations run via CI/CD pipeline
+- Never edit deployed migration files.
+- Never skip migration numbers.
+- Never commit production credentials in seed files.
 
 ---
 
-Parent: [../../AGENTS.md](../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

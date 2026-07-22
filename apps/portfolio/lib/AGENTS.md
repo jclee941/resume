@@ -1,42 +1,49 @@
 # PORTFOLIO LIB KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
-**Commit:** `882b837`
+**Generated:** 2026-07-22
+**Commit:** `164e83ac`
 **Branch:** `master`
 
 ## OVERVIEW
 
-25 stateless JavaScript modules for build pipeline and worker runtime.
+Build-time compilers plus runtime modules embedded in or called by the portfolio
+Worker. Phase ownership matters more than a blanket purity rule.
 
-## KEY MODULES
+## STRUCTURE
 
-| Module                   | Role                           |
-| ------------------------ | ------------------------------ |
-| `security-headers.js`    | CSP policy + nonce generation  |
-| `csp-hash-generator.js`  | SHA-256 hashes for inline JS   |
-| `es-logger.js`           | Elasticsearch via CF Access    |
-| `metrics.js`             | Prometheus-format metrics      |
-| `performance-metrics.js` | Core Web Vitals collection     |
-| `ab-testing.js`          | experiment assignment          |
-| `cards.js`               | HTML card generation           |
-| `templates.js`           | HTML template rendering        |
-| `compression.js`         | response compression           |
-| `env.js`                 | environment config             |
-| `routes/`                | route handlers (barrel export) |
+```text
+lib/
+├── build-orchestrator.js, file-reader.js, worker-writer.js  # build I/O
+├── cards/, cards.js, templates.js                           # HTML generation
+├── csp-hash-generator.js, html-transformer.js               # CSP/template pipeline
+├── localized-page-builder.js, japanese-template/            # locale transforms
+├── worker-preamble.js, worker-routes/, worker-routes.js     # bundle emitters
+├── entry-router-utils/, entry-router-utils.js               # edge routing helpers
+├── routes/                                                   # runtime endpoints
+└── metrics/, metrics.js, tracing.js, es-logger.js            # observability
+```
 
 ## CONVENTIONS
 
-- Pure functions — receive `env` object, return values.
-- Data validation is imported from `@resume/shared/validation`.
-- Fire-and-forget telemetry (never await logging calls).
-- Never `trim()` script content before CSP hash computation.
+- Keep filesystem and process I/O in build-boundary modules; keep transforms
+  deterministic for the same explicit inputs.
+- Escape generated HTML and preserve placeholder/CSP-hash ordering.
+- Pass Worker bindings through explicit `env` parameters; do not capture them in
+  module globals.
+- Use `@resume/schemas` or `@resume/shared/validation` at untrusted boundaries.
+- Keep route families explicit about cache, security headers, status codes, and
+  `ctx.waitUntil()` telemetry.
+- The PDF routes are the only runtime `env.ASSETS` fetch exception.
 
 ## ANTI-PATTERNS
 
-- No external npm dependencies in lib modules except workspace package imports.
-- No worker binding leaks across module boundaries.
-- No mutable module-level state.
+- Never write `worker.js` outside the worker writer/orchestrator path.
+- Never trim or mutate inline script content after hash calculation.
+- Never interpolate unescaped resume or request data into HTML.
+- Never move dashboard implementation into portfolio helpers; only `entry.js`
+  owns the sanctioned cross-app import.
+- Never add mutable cross-request state to Worker runtime modules.
 
 ---
 
-Parent: [../../../AGENTS.md](../../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

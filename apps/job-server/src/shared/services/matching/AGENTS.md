@@ -61,4 +61,4 @@ weighting with optional Claude-based analysis and explicit fallback semantics.
 
 ---
 
-Parent: [../../../../../../AGENTS.md](../../../../../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

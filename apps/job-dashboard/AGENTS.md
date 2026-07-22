@@ -1,117 +1,69 @@
 # JOB DASHBOARD WORKER KNOWLEDGE BASE
 
-**Generated:** 2026-06-30
-**Commit:** `766d220c`
+**Generated:** 2026-07-22
+**Commit:** `164e83ac`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Dashboard Worker module serving `resume.jclee.me/job/*` after it is imported
 in-process by `apps/portfolio/entry.js`. Standalone deploy is disabled; source
-still owns dashboard routes, handlers, workflows, queues, and storage bindings.
+composition lives in `src/AGENTS.md`.
 
 ## STRUCTURE
 
 ```text
 job-dashboard/
-├── src/
-│   ├── index.js              # fetch handler + workflow exports
-│   ├── handlers/             # 14 BaseHandler subclasses
-│   ├── workflows/            # 7 CF Workflow classes
-│   ├── middleware/            # 5-layer request pipeline
-│   ├── services/             # cache, migration, tracing, backup
-│   └── utils/                # helpers
-├── package.json            # standalone deploy script intentionally fails
-└── migrations/             # dashboard D1 migrations
+├── src/                       # source composition and implementation
+│   ├── AGENTS.md             # source-level guide (new)
+│   ├── index.js              # fetch/queue/scheduled entry
+│   ├── handlers/             # request adapters
+│   ├── middleware/           # CORS/CSRF helpers
+│   ├── queues/               # queue validation and dispatch
+│   ├── routes/               # declarative route registrars
+│   ├── services/             # dashboard-local integrations
+│   ├── views/                # self-contained dashboard UI
+│   ├── workflows/            # 7 Cloudflare Workflow classes
+│   ├── durable-objects/      # BrowserSessionDO
+│   └── utils/                # dashboard-local helpers
+├── package.json              # standalone deploy intentionally fails
+├── migrations/               # D1 migrations
+└── README.md                 # deployment and API reference
 ```
 
 ## WHERE TO LOOK
 
-| Task               | Location                  | Notes                             |
-| ------------------ | ------------------------- | --------------------------------- |
-| Request routing    | `src/index.js`            | strips `/job` prefix after portfolio entry forwards |
-| Handler logic      | `src/handlers/`           | 14 handlers extending BaseHandler |
-| Workflow schedules | `src/workflows/`          | 7 CF Workflow classes             |
-| Auth middleware    | `src/middleware/`         | 5-layer middleware stack          |
-| DB migrations      | `migrations/`             | dashboard D1 migrations           |
-| Native auto-apply  | `src/handlers/auto-apply/`, `src/workflows/application/` | explicit candidates, approval gates, Browser Rendering |
+| Task                   | Location                   | Notes                                               |
+| ---------------------- | -------------------------- | --------------------------------------------------- |
+| Source composition     | `src/AGENTS.md`            | HTTP/queue/scheduled entry and exports              |
+| Request routing        | `src/index.js`             | strips `/job` prefix after portfolio entry forwards |
+| Handler contracts      | `src/handlers/AGENTS.md`   | adapter patterns and route-to-handler wiring        |
+| Middleware policy      | `src/middleware/AGENTS.md` | CORS/CSRF ordering and auth behavior                |
+| Queue rules            | `src/queues/AGENTS.md`     | message shape, retry, and DLQ handling              |
+| Route tables           | `src/routes/AGENTS.md`     | declarative path registration                       |
+| Service boundaries     | `src/services/AGENTS.md`   | auth, clients, config, notifications                |
+| Workflow orchestration | `src/workflows/AGENTS.md`  | idempotency, gates, and step contracts              |
+| Dashboard UI           | `src/views/AGENTS.md`      | HTML/CSS/JS escaping and inline assets              |
+| DB migrations          | `migrations/`              | D1 schema and data migrations                       |
 
-## HANDLERS (14)
+## BINDINGS & STORAGE
 
-ApplicationsHandler (7 methods), StatsHandler (4), AuthHandler (5),
-WebhookHandler (10+), AutoApplyHandler (3), AutoApplyWebhookHandler,
-DiagnosticsHandler, JobSearchHandler, ProfileSyncHandler, ReportHandler,
-ResumeMasterHandler, ResumeSyncHandler, TestHandler, BaseHandler.
-
-## WORKFLOWS (7)
-
-| Workflow    | Schedule        | Purpose                  |
-| ----------- | --------------- | ------------------------ |
-| JobCrawling | event-triggered | crawl job platforms      |
-| Application | on-demand       | process applications     |
-| ResumeSync  | event-triggered | sync resume data         |
-| DailyReport | event-triggered | Slack summary            |
-| HealthCheck | event-triggered | system health monitoring |
-| Backup      | event-triggered | D1 backup                |
-| Cleanup     | event-triggered | stale data removal       |
-
-## MIDDLEWARE STACK
-
-`logger → CORS → rate-limit (60/min/IP) → CSRF → auth → handler →
-response-logger`
-
-## STORAGE
-
-- **D1** (`job-dashboard-db`): applications, job_cache, sync_logs tables
-- **KV**: `SESSIONS`, `RATE_LIMIT_KV`, `NONCE_KV`
-- **AI**: Workers AI binding
-- **Browser**: `MYBROWSER` (Browser Rendering), `BROWSER_SESSION` (Durable
-  Object: BrowserSessionDO)
-- **Queue**: `crawl-tasks`
-- **Workflows**: 7 (job-crawling, application, resume-sync, daily-report,
-  health-check, backup, cleanup)
-
-## API SURFACE (47 endpoints)
-
-Health (3), Stats (4), Auth (7), Applications CRUD (6), Webhooks (9), Auto-apply
-(3), Workflows (7), Config (2), Testing (2), Diagnostics (2), Reports (2).
-
-## NATIVE AUTO-APPLY
-
-- HTTP payload parsing lives under `src/handlers/auto-apply/`.
-- `native-dispatch.js` bridges explicit candidates into Cloudflare Workflows.
-- `src/workflows/application/` owns platform normalization, approval gates,
-  dry-run preview metadata, and Browser Rendering submission.
-- JobKorea/Saramin native submits must go through URL host allowlisting before
-  browser/session hydration.
-
-## CHILD GUIDES
-
-- `src/handlers/AGENTS.md` owns handler-level contracts, route-to-handler
-  responsibilities, and common handler anti-patterns.
-- `src/workflows/AGENTS.md` owns workflow trigger semantics, step boundaries,
-  and idempotency constraints.
-- `src/middleware/AGENTS.md` owns middleware ordering, auth/rate-limit behavior,
-  and response safety rules.
-- `src/routes/AGENTS.md` owns route table wiring and path registration rules.
-- `src/services/AGENTS.md` owns dashboard-local integrations and service
-  boundaries.
-- `src/queues/AGENTS.md` owns Cloudflare Queue message, retry, and DLQ rules.
-- `src/views/AGENTS.md` owns generated dashboard HTML/CSS/JS conventions.
+- **D1** (`JOB_DB` / `job-dashboard-db`): dashboard schema owned by migrations
+- **KV**: `SESSIONS`, `RATE_LIMIT_KV`, `NONCE_KV` (all with TTL)
+- **Browser**: `MYBROWSER` (Browser Rendering), `BROWSER_SESSION` (Durable Object)
+- **Workflows**: 7 (job-crawling, application, resume-sync, daily-report, health-check, backup, cleanup)
 
 ## CONVENTIONS
 
-- All handlers extend `BaseHandler(db, cache, env)`.
+- Use `BaseHandler(db, cache, env)` where shared response helpers fit; several
+  focused handlers remain standalone classes.
 - Request/response logging via middleware, not handlers.
 - KV entries MUST have TTL — never set without expiry.
-- Rate limiting: 60 req/min per IP per endpoint.
-- Keep dashboard exports compatible with `apps/portfolio/entry.js`; workflows
-  and `BrowserSessionDO` are re-exported by the merged worker entry.
-- Use shared packages (`@resume/shared`, `@resume/schemas`, `@resume/types`)
-  for cross-app behavior instead of importing portfolio internals.
-- Queue `APPLY` payloads that already include `candidates`, `platforms`,
-  `searchCriteria`, or `triggerType` should pass through to
-  `APPLICATION_WORKFLOW` instead of being downgraded to legacy jobId payloads.
+- Rate limiting uses path-class policies from `@resume/shared/rate-limit`
+  (`auth`, `api`, and `dashboard` have distinct limits).
+- Queue `APPLY` payloads with `candidates`, `platforms`, `searchCriteria`, or `triggerType` pass through to `APPLICATION_WORKFLOW` unchanged.
+- Use `@resume/shared` for logging, errors, rate limiting, and cross-app policy.
+- Preserve exports consumed by `apps/portfolio/entry.js`: seven Workflows and `BrowserSessionDO`.
 
 ## ANTI-PATTERNS
 
@@ -119,10 +71,8 @@ Health (3), Stats (4), Auth (7), Applications CRUD (6), Webhooks (9), Auto-apply
 - Never log credentials or session tokens.
 - Never set KV without TTL.
 - Never bypass CSRF for state-changing operations.
-- Never re-enable standalone deploy from this package without updating ADR 0009,
-  root deploy docs, and portfolio entry routing in the same change.
-- Never send an arbitrary external URL to Browser Rendering; normalize and
-  allowlist the platform host first.
+- Never re-enable standalone deploy without updating ADR 0009 and portfolio entry routing.
+- Never send arbitrary external URLs to Browser Rendering; normalize and allowlist platform hosts first.
 
 ---
 

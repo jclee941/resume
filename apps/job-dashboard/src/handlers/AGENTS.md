@@ -1,7 +1,7 @@
-# WORKER HANDLERS KNOWLEDGE BASE
+# HANDLERS KNOWLEDGE BASE
 
-**Generated:** 2026-06-30
-**Commit:** `766d220c`
+**Generated:** 2026-07-22
+**Commit:** `164e83ac`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -25,7 +25,8 @@ handlers/
 ├── resume-sync-handler.js        # resume sync endpoints
 ├── stats.js                      # stats/report endpoints
 ├── test-handler.js               # test-only endpoints
-└── webhooks.js                   # webhook ingress routes
+├── webhooks.js                   # webhook ingress routes
+└── diagnostics.js                # diagnostics endpoints
 ```
 
 ## CONVENTIONS
@@ -52,4 +53,4 @@ handlers/
 
 ---
 
-Parent: [../../../../AGENTS.md](../../../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

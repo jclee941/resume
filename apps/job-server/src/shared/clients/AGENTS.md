@@ -1,43 +1,31 @@
-# CLIENTS KNOWLEDGE BASE
+# JOB-SERVER CLIENTS KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
-**Commit:** `882b837`
+**Generated:** 2026-07-22
+**Commit:** `164e83ac`
 **Branch:** `master`
 
 ## OVERVIEW
 
-3 external adapter clients following hexagonal architecture.
-
-## CLIENTS
-
-| Client     | Location | Role                     |
-| ---------- | -------- | ------------------------ |
-| `wanted/`  | 6 files  | Wanted API (40+ methods) |
-| `d1/`      | index.js | D1 REST adapter          |
-| `secrets/` | index.js | Vault/env secrets        |
-
-## PER-CLIENT STRUCTURE
-
-```text
-client/
-├── index.js          # factory function
-├── http-client.js    # transport layer
-├── types.js          # type definitions
-└── __tests__/        # unit tests
-```
+Job-server-local D1, secret, and Wanted adapters. The Wanted subtree preserves
+compatibility with the canonical `@resume/shared/clients/wanted` surface.
 
 ## CONVENTIONS
 
-- Factory functions, not singletons.
-- Each client self-contained with own types.
-- No cross-client imports (d1 ↛ wanted ↛ secrets).
+- Keep each client self-contained; clients expose domain-shaped results rather
+  than transport internals.
+- Inject HTTP/fetch, credentials, and endpoint configuration for testability.
+- Keep cross-app reusable Wanted behavior in `@resume/shared`; local modules may
+  adapt or re-export it for existing consumers.
+- Translate transport failures into typed/structured errors at the adapter edge.
+- Keep tests beside the adapter and mock network/session boundaries.
 
 ## ANTI-PATTERNS
 
-- Never import one client from another.
-- Never expose transport details to services.
-- Never use singletons — use factory pattern.
+- Never import one external client from another client.
+- Never log credentials, cookies, tokens, secret values, or raw auth headers.
+- Never add new implementation logic to a compatibility-only re-export.
+- Never leak raw HTTP response details into services.
 
 ---
 
-Parent: [../../../../../AGENTS.md](../../../../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

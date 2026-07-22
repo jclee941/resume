@@ -1,7 +1,7 @@
-# WORKER WORKFLOWS KNOWLEDGE BASE
+# WORKFLOWS KNOWLEDGE BASE
 
-**Generated:** 2026-06-30
-**Commit:** `766d220c`
+**Generated:** 2026-07-22
+**Commit:** `164e83ac`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -50,4 +50,4 @@ workflows/
 
 ---
 
-Parent: [../../../../AGENTS.md](../../../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

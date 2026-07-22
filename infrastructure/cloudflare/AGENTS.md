@@ -1,69 +1,56 @@
 # CLOUDFLARE TERRAFORM KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
-**Commit:** `882b837`
+**Generated:** 2026-07-22 (verified 164e83ac)
+**Commit:** `164e83ac`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Terraform IaC for Cloudflare DNS, worker routes, KV/D1 references, and related
-account resources. Worker code deployment is separate from Terraform.
+Terraform declarations for Cloudflare DNS, a legacy Worker script/route pair,
+and KV/D1 references. Production Worker deployment authority is Cloudflare
+Workers Builds, not this Terraform subtree.
 
 ## STRUCTURE
 
 ```text
 infrastructure/cloudflare/
-├── backend.tf              # S3-compatible backend (bucket: terraform-state)
+├── backend.tf              # S3-compatible state backend
 ├── versions.tf             # provider/version pins
 ├── variables.tf            # input variables
 ├── dns.tf                  # DNS records
-├── workers.tf              # worker scripts and routes
-├── kv.tf                   # KV data sources / references
-├── d1.tf                   # D1 data sources / references
+├── workers.tf              # legacy script upload from worker.js plus route
+├── kv.tf                   # KV namespace references
+├── d1.tf                   # D1 database references
 ├── outputs.tf              # output values
 ├── terraform.tfvars.example
-├── multi-region/           # region-specific Terraform assets
-└── r2/                     # R2-specific Terraform assets
+├── multi-region/           # region-specific assets
+└── r2/                     # R2-specific assets
 ```
 
 ## WHERE TO LOOK
 
-| Task                   | Location                                | Notes                                                |
-| ---------------------- | --------------------------------------- | ---------------------------------------------------- |
-| Backend/state behavior | `backend.tf`                            | S3-compatible backend (bucket: terraform-state)      |
-| Worker route bindings  | `workers.tf`                            | Terraform manages routes, not worker source code     |
-| DNS changes            | `dns.tf`                                | GitOps through PRs                                   |
-| KV/D1 references       | `kv.tf`, `d1.tf`                        | treat as read-only resource references               |
-| Operator overview      | `README.md`                             | import flow, quick start, division of responsibility |
-| CI flow                | `../../.github/workflows/terraform.yml` | plan/apply/drift workflow, current authority         |
+| Task                | Location                   | Notes                                                                    |
+| ------------------- | -------------------------- | ------------------------------------------------------------------------ |
+| Backend/state       | `backend.tf`               | S3-compatible (bucket: `terraform-state`)                                |
+| Worker script/route | `workers.tf`               | Reads generated `apps/portfolio/worker.js`; legacy, not deploy authority |
+| DNS changes         | `dns.tf`                   | GitOps through PRs                                                       |
+| KV/D1 refs          | `kv.tf`, `d1.tf`           | Read-only resource references                                            |
+| CI validation       | `.github/workflows/ci.yml` | repository validation only; no Terraform apply                           |
 
 ## CONVENTIONS
 
-- Import existing resources first; do not assume Terraform creates the full
-  estate from scratch.
-- State backend is S3-compatible (bucket: `terraform-state`); update docs and
-  workflow assumptions together if that changes.
-- Worker code and data plane changes go through Wrangler / build pipelines, not
-  Terraform.
-- Treat KV namespaces and D1 databases as referenced infrastructure, not mutable
-  application data managed here.
+- Import existing resources first; do not assume Terraform creates from scratch.
+- State backend is S3-compatible; update docs and CI together if that changes.
+- Keep Workers Builds as production deploy authority. Treat the script resource
+  in `workers.tf` as legacy configuration to reconcile or retire deliberately.
+- Treat KV and D1 as referenced infrastructure, not mutable application data.
 
 ## ANTI-PATTERNS
 
-- Never run `terraform apply` locally against production just to test.
-- Never document nonexistent files like `main.tf` when the directory is split by
-  concern.
-- Never manage worker JavaScript source via Terraform.
-- Never hardcode account IDs, zone IDs, or route IDs in prose without clearly
-  marking them examples.
-
-## NOTES
-
-- `README.md` is more trustworthy than the old AGENTS content was: it reflects
-  `backend.tf` and the current file layout.
-- This subtree is distinct from general infrastructure because Terraform
-  ownership boundaries matter here more than in `monitoring/` or `automation/`.
+- Never run `terraform apply` locally against production.
+- Never use `terraform apply` here as a routine Worker code deployment shortcut.
+- Never hardcode account IDs, zone IDs, or route IDs without marking as examples.
 
 ---
 
-Parent: [../../AGENTS.md](../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

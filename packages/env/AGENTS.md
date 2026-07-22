@@ -62,4 +62,4 @@ packages/env/
 
 ---
 
-Parent: [../../AGENTS.md](../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

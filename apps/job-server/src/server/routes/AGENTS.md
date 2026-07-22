@@ -36,4 +36,4 @@ resume, search, stats, sync, webhooks.
 
 ---
 
-Parent: [../../../../../AGENTS.md](../../../../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

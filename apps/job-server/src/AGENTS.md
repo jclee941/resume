@@ -1,60 +1,42 @@
-# JOB AUTOMATION SRC KNOWLEDGE BASE
+# JOB AUTOMATION SOURCE KNOWLEDGE BASE
 
-**Generated:** 2026-04-14
-**Commit:** `c2629c9`
+**Generated:** 2026-07-22
+**Commit:** `164e83ac`
 **Branch:** `master`
 
 ## OVERVIEW
 
-MCP server core with 19 tools (32 actions) for Wanted Korea job automation.
-Hexagonal architecture.
+Executable Node source for MCP, HTTP, crawler, session, and application flows.
+Entry points compose; `shared/` owns reusable domain and adapter behavior.
 
-## STRUCTURE
+## WHERE TO LOOK
 
-```text
-src/
-├── index.js              # MCP Fastify bootstrap
-├── cli.js                # job CLI entry
-├── server/routes/        # 13 Fastify route modules
-├── handlers/             # MCP handler registration + tool registry
-├── shared/               # hexagonal core (services + clients)
-├── tools/                # 19 MCP tool definitions
-├── crawlers/             # stealth Playwright crawlers
-├── session-broker/       # Wanted session renewal service
-├── auto-apply/           # form fill + rate limiting
-├── test-helpers/         # test mocks and fixtures
-└── lib/                  # utility wrappers (DEPRECATED)
-```
-
-## CODE MAP
-
-| Symbol                 | Type     | Location                     | Role                       |
-| ---------------------- | -------- | ---------------------------- | -------------------------- |
-| `main`                 | function | `index.js`                   | Fastify + MCP registration |
-| `WantedAPI`            | class    | `shared/clients/wanted/`     | 40+ methods, 6 files       |
-| `BaseCrawler`          | class    | `crawlers/base-crawler.js`   | stealth, UA rotation       |
-| `JobMatcher`           | class    | `shared/services/matching/`  | scoring + auto-apply gates |
-| `SessionManager`       | class    | `shared/services/session/`   | 24h TTL cookies            |
-| `SessionBrokerService` | class    | `session-broker/services/`   | Wanted session renewal     |
-| `AIMatcher`            | class    | `shared/services/matching/`  | AI-assisted scoring        |
-| `UnifiedApplySystem`   | class    | `auto-apply/auto-applier.js` | stealth form fill          |
+| Task                 | Location                   | Notes                                      |
+| -------------------- | -------------------------- | ------------------------------------------ |
+| MCP bootstrap        | `index.js`                 | server construction, handlers, shutdown    |
+| Tool registry        | `handlers/tools.js`        | list/call dispatch over tool `execute()`   |
+| Fastify runtime      | `server/`                  | child guide owns plugins and routes        |
+| Domain core          | `shared/`                  | services, repositories, clients, contracts |
+| Browser search/apply | `crawlers/`, `auto-apply/` | child guides own safety rules              |
+| Wanted renewal       | `session-broker/`          | encrypted session lifecycle                |
 
 ## CONVENTIONS
 
-- Skills v1 API only (v2 broken). Links API broken (500).
-- Session file: `~/.OpenCode/data/wanted-session.json`.
-- Import from `shared/` directly, not `lib/` wrappers.
-- `lib/` directory is deprecated — do not add new files.
-- `server/AGENTS.md` owns Fastify app assembly, plugins, and HTTP server
-  boundaries; `server/routes/AGENTS.md` owns route modules.
+- Keep `index.js` and server entries limited to composition, registration, and
+  lifecycle handling.
+- Inject clients and state into services; use the Fastify services plugin as the
+  HTTP composition root.
+- Keep MCP tools, CLI handlers, and routes as inbound adapters.
+- Import canonical implementations directly; compatibility shims only preserve
+  shipped consumers and must not gain new logic.
 
 ## ANTI-PATTERNS
 
-- Never hardcode resume IDs.
-- Never use naked Puppeteer — stealth plugins required.
-- Never commit cookies or session files.
-- Never import `lib/` wrappers — they are deleted/deprecated.
+- Do not introduce another service locator or module-global singleton.
+- Do not import dashboard Worker handlers into the Node server.
+- Do not read credentials/session files from domain services without an adapter.
+- Do not bypass typed validation at external input boundaries.
 
 ---
 
-Parent: [../../../AGENTS.md](../../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)

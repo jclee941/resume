@@ -1,40 +1,37 @@
-# PLATFORMS KNOWLEDGE BASE
+# PLATFORM ADAPTERS KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
-**Commit:** `882b837`
+**Generated:** 2026-07-22
+**Commit:** `164e83ac`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Platform-specific crawler implementations. Each platform has unique
-anti-detection requirements.
+Profile/crawler adapters for Wanted, JobKorea, Saramin, LinkedIn, Remember,
+Indeed, Jumpit, Programmers, Rallit, and RocketPunch.
 
-## PLATFORMS
+## STRUCTURE
 
-| Platform    | Method             | Detection | Notes                 |
-| ----------- | ------------------ | --------- | --------------------- |
-| `wanted/`   | WAF + manual auth  | Medium    | stealth required      |
-| `jobkorea/` | Cheerio            | Low       | HTML parsing          |
-| `saramin/`  | Playwright+stealth | Medium    | bot detection active  |
-| `linkedin/` | strict detection   | High      | fragile, rate-limited |
-| `remember/` | mobile API         | Low       | planned               |
+Shared adapter bases live in `base-profile-sync.js` and
+`browser-profile-sync.js`; platform directories own endpoint, parsing, and
+anti-detection differences. `sync-platforms.js` is the command adapter.
 
 ## CONVENTIONS
 
-- Stealth-first approach for all Playwright platforms.
-- Cookie-based authentication.
-- Rate limiting per platform.
+- Isolate credentials, sessions, selectors, payload mapping, and rate limits by
+  platform.
+- Reuse shared base behavior only when the platform contract is truly common.
+- Keep preview/diff paths separate from mutation and real submission paths.
+- Return explicit unsupported/partial results instead of silently dropping data.
+- Treat platform content as untrusted input before it reaches matching or LLMs.
 
 ## ANTI-PATTERNS
 
-- Never use headless-only for Wanted/LinkedIn (detected).
-- Never aggressive scraping — triggers permanent bans.
-- Never share cookies across platforms.
-- Never make LinkedIn website automation the default path; require explicit
-  approval for any LinkedIn browser automation.
-- Never hardcode credentials, cookies, tokens, auth headers, or account-specific
-  identifiers in platform adapters, fixtures, logs, or docs.
+- Never share cookies or account state across platforms.
+- Never hardcode credentials, account IDs, resume IDs, tokens, or auth headers.
+- Never default to LinkedIn website automation; require explicit approval.
+- Never weaken one platform's safety gates to fit a shared abstraction.
+- Never perform irreversible profile/application mutation from tests or dry runs.
 
 ---
 
-Parent: [../../../AGENTS.md](../../../AGENTS.md)
+Parent: [../AGENTS.md](../AGENTS.md)
