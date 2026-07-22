@@ -15,10 +15,16 @@ const sharedRules = {
     'warn',
     { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
   ],
-  'no-undef': 'off',
-  'no-empty': 'off',
-  'no-case-declarations': 'off',
-  'no-fallthrough': 'off',
+  'no-empty': ['error', { allowEmptyCatch: true }],
+  'no-case-declarations': 'error',
+  'no-fallthrough': 'error',
+  // 'no-undef' is intentionally NOT set here: for the '**/*.js'/'**/*.mjs'
+  // and '**/*.cjs' blocks it is enabled via their base configs (see below),
+  // while for TypeScript files it stays off via
+  // tsPlugin.configs['flat/eslint-recommended'] - the officially recommended
+  // typescript-eslint setting, since the TS compiler's own type-checking
+  // catches undefined identifiers more accurately than no-undef can (which
+  // doesn't understand ambient/global type declarations).
   'no-console': 'off',
   semi: ['error', 'always'],
   quotes: ['error', 'single', { avoidEscape: true }],
@@ -98,6 +104,30 @@ module.exports = [
     },
   },
   {
+    // CommonJS scripts (build configs, migration scripts, e2e/node fixtures).
+    // Not matched by the '**/*.js' glob above, so they previously ran with
+    // no rules and no globals at all. Give them Node globals (process,
+    // console, __dirname, Buffer, etc. - sourceType 'commonjs' only auto-
+    // defines require/module/exports) plus just the four correctness rules
+    // this config re-enables below, without opting these files into the
+    // full stylistic ruleset (quotes/no-var/etc.) they were never subject
+    // to and that is out of scope here.
+    files: ['**/*.cjs'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'commonjs',
+      globals: {
+        ...globals.node,
+      },
+    },
+    rules: {
+      'no-undef': 'error',
+      'no-empty': ['error', { allowEmptyCatch: true }],
+      'no-case-declarations': 'error',
+      'no-fallthrough': 'error',
+    },
+  },
+  {
     files: tsFiles,
     languageOptions: {
       ecmaVersion: 'latest',
@@ -158,6 +188,43 @@ module.exports = [
     files: ['tests/**/*.test.js', 'tests/**/*.spec.js', 'tests/**/*.test.ts', 'tests/**/*.spec.ts'],
     rules: {
       'no-new-func': 'off',
+    },
+  },
+  {
+    // Jest test files under tests/unit and tests/integration (per
+    // jest.config.cjs testMatch), plus their non-'.test.js' helper/fixture
+    // modules (e.g. tests/unit/job-dashboard/*-fixtures.js) that call
+    // jest.fn()/etc. and only ever run inside a Jest worker, where `jest`
+    // and friends are true runtime globals regardless of which module
+    // references them.
+    files: ['tests/unit/**/*.js', 'tests/integration/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+      },
+    },
+  },
+  {
+    // JobKorea profile-sync automation calls page.evaluate(() => ...); the
+    // callback body executes inside the target page's browser context,
+    // where the JobKorea site itself loads jQuery as the global `$` - it is
+    // not a Node/local identifier and is genuinely defined at runtime.
+    files: ['apps/job-server/scripts/profile-sync/**/*.js'],
+    languageOptions: {
+      globals: {
+        $: 'readonly',
+      },
+    },
+  },
+  {
+    // __SKILL_DATA__ is injected at build time via esbuild `define` (see
+    // apps/portfolio/lib/file-reader.js); it only exists in the bundled
+    // worker output, so the source module guards access with `typeof`.
+    files: ['apps/portfolio/src/scripts/modules/skill-radar-data.js'],
+    languageOptions: {
+      globals: {
+        __SKILL_DATA__: 'readonly',
+      },
     },
   },
 ];
