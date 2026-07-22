@@ -19,6 +19,7 @@ const ADMIN_ROUTES = [
   '/api/queue/enqueue',
   '/api/browser',
   '/api/wanted',
+  '/api/jobkorea',
 ];
 
 const NO_AUTH_ROUTES = [
