@@ -12,6 +12,11 @@ export function countCookieString(cookieString) {
   return typeof cookieString === 'string' ? cookieString.split(';').filter(Boolean).length : 0;
 }
 
+/**
+ * @param {string} name
+ * @param {string} token
+ * @param {object} [options]
+ */
 export function createSessionCookie(name, token, options = {}) {
   return serializeCookie(name, token, {
     httpOnly: true,
@@ -22,6 +27,10 @@ export function createSessionCookie(name, token, options = {}) {
   });
 }
 
+/**
+ * @param {string} name
+ * @param {object} [options]
+ */
 export function clearSessionCookie(name, options = {}) {
   return clearCookie(name, {
     httpOnly: true,

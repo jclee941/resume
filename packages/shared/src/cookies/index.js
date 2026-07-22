@@ -24,6 +24,7 @@
  */
 export function parseCookieHeader(cookieHeader) {
   if (!cookieHeader || typeof cookieHeader !== 'string') return {};
+  /** @type {Record<string, string>} */
   const out = {};
   for (const piece of cookieHeader.split(';')) {
     const trimmed = piece.trim();
@@ -47,7 +48,7 @@ export function parseCookieHeader(cookieHeader) {
  *  - a `Request` with `.headers.get('Cookie')` (Cloudflare Worker / fetch),
  *  - a Fastify-shaped request with `.headers.cookie` (Node).
  *
- * @param {object} request
+ * @param {{ headers?: { get?: (name: string) => string|null, cookie?: string, Cookie?: string } }} request
  * @param {string} name
  * @returns {string|null}
  */

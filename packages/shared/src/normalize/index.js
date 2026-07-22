@@ -32,6 +32,7 @@ export function normalizeCompanyName(name) {
     .trim();
 }
 
+/** @param {string|null|undefined} role */
 export function normalizeCareerRole(role) {
   const normalized = String(role || '')
     .replace(/\s*담당$/, '')
@@ -40,10 +41,12 @@ export function normalizeCareerRole(role) {
   return normalized.replace(/^보안운영(?=\s|$)/, '보안 운영');
 }
 
+/** @param {unknown} status */
 export function normalizeEducationStatus(status) {
   return typeof status === 'string' ? status.replace(/\s+/g, '') : '';
 }
 
+/** @param {string|null|undefined} workType */
 export function normalizeWorkTypeForProfile(workType) {
   const normalized = String(workType || '').replace(/\s+/g, ' ').trim();
   if (/^정규직\s*\([^)]*파견[^)]*\)$/.test(normalized)) return '정규직';

@@ -96,7 +96,7 @@ export function isValidApplicationStatus(status) {
  * @typedef {Object} ApplicationResult
  * @property {boolean} success
  * @property {Object} [application]
- * @property {Array} [applications]
+ * @property {Array<Application>} [applications]
  * @property {number} [total]
  * @property {string} [error]
  * @property {number} [statusCode]
@@ -104,7 +104,7 @@ export function isValidApplicationStatus(status) {
 
 /**
  * @typedef {Object} ApplicationManagerPort
- * @property {(options: Object) => Array} listApplications
+ * @property {(options: Object) => Array<Application>} listApplications
  * @property {(id: string) => Object|null} getApplication
  * @property {(job: Object, options?: Object) => Object} addApplication
  * @property {() => void} save

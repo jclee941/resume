@@ -38,6 +38,7 @@ export function createMemoryTokenBuckets({
 }) {
   const buckets = new Map();
 
+  /** @param {string} key */
   function getBucket(key) {
     let b = buckets.get(key);
     if (!b) {
@@ -85,6 +86,7 @@ export function createMemoryTokenBuckets({
 export function createMemorySlidingWindows({ windowMs, max, now = () => Date.now() }) {
   const windows = new Map();
 
+  /** @param {string} key */
   function getWindow(key) {
     let w = windows.get(key);
     if (!w) {

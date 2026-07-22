@@ -36,7 +36,7 @@ export const foreignAtsApplicationPacketMetadataSchema = z
     capturedAt: isoTimestampSchema,
     externalApplicationId: z.string().min(1).max(200).optional(),
     status: applicationStatusSchema.optional(),
-    raw: z.record(z.unknown()).optional(),
+    raw: z.record(z.string(), z.unknown()).optional(),
   })
   .strict();
 

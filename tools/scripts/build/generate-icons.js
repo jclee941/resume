@@ -11,6 +11,7 @@ const fs = require('fs');
 // Base64-encoded placeholders removed (unused)
 
 // Create SVG-based icons as temporary solution
+/** @param {number} size */
 const createSVGIcon = (size) => {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">

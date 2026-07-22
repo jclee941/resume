@@ -1,3 +1,4 @@
+/** @param {string|null|undefined} workType */
 export function mapWorkTypeToWantedEmploymentType(workType) {
   const normalized = String(workType || '').trim();
   if (/프리랜서|freelance/i.test(normalized)) return 'FREELANCE';

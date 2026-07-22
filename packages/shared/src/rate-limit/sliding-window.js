@@ -1,4 +1,7 @@
 export class SlidingWindow {
+  /**
+   * @param {{ windowMs: number, max: number, now?: () => number }} options
+   */
   constructor({ windowMs, max, now = () => Date.now() }) {
     if (!Number.isFinite(windowMs) || windowMs <= 0) {
       throw new RangeError('windowMs must be positive');
@@ -9,6 +12,7 @@ export class SlidingWindow {
     this.windowMs = windowMs;
     this.max = max;
     this.now = now;
+    /** @type {number[]} */
     this.entries = [];
   }
 

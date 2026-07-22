@@ -1,12 +1,12 @@
 {
   "//": [
-    "This is the RATCHETING strict typecheck gate — the only one that can actually fail CI.",
+    "This is the RATCHETING strict typecheck gate \u2014 the only one that can actually fail CI.",
     "`npm run typecheck` (tsconfig.json) cannot fail by design: tsconfig.base.json sets",
     "checkJs:false, so every file in its .js `include` glob is parsed but never type-checked.",
     "This file turns checkJs on and lists only directories/files VERIFIED to be zero-error",
     "under `--checkJs --strict` today. Add new entries ONE AT A TIME: run",
     "`npx tsc -p tsconfig.strict.json --noEmit` after each addition and only keep it if the",
-    "exit code stays 0. Do not silence errors with @ts-ignore/@ts-nocheck/any-casts — fix the",
+    "exit code stays 0. Do not silence errors with @ts-ignore/@ts-nocheck/any-casts \u2014 fix the",
     "source or leave the file out and note it as future work."
   ],
   "extends": "./tsconfig.base.json",
@@ -39,7 +39,30 @@
     "tools/scripts/dev/miniflare.config.js",
     "tools/scripts/utils/bump-version.js",
     "tools/scripts/utils/record-demo-video.js",
-    "tools/scripts/utils/resume-data-paths.js"
+    "tools/scripts/utils/resume-data-paths.js",
+    "packages/types/src/application.js",
+    "packages/schemas/src/application-core.js",
+    "packages/schemas/src/application.js",
+    "packages/schemas/src/foreign-ats-application.js",
+    "packages/schemas/src/index.js",
+    "packages/schemas/src/portfolio.js",
+    "packages/schemas/src/webhook.js",
+    "packages/shared/src/normalize/index.js",
+    "packages/shared/src/session/constants.js",
+    "packages/shared/src/session/cookies.js",
+    "packages/shared/src/cookies/index.js",
+    "packages/shared/src/rate-limit/token-bucket.js",
+    "packages/shared/src/rate-limit/sliding-window.js",
+    "packages/shared/src/rate-limit/adapters/memory.js",
+    "packages/shared/src/crypto/webcrypto.js",
+    "packages/shared/src/employment-types.js",
+    "packages/shared/src/job-categories.js",
+    "packages/shared/src/phone.js",
+    "packages/shared/src/ua.js",
+    "packages/shared/src/validation/portfolio.js",
+    "tools/scripts/build/generate-icons.js",
+    "tools/scripts/build/generate-screenshots.js",
+    "tools/scripts/build/convert-icons-to-png.js"
   ],
   "exclude": [
     "packages/env/src/__tests__/**"
