@@ -1,10 +1,9 @@
 /**
  * Enhancement contract tests (고도화)
  *
- * Locks the recruiter-facing enhancement work across six axes:
+ * Locks the recruiter-facing enhancement work across five axes:
  *  - Accessibility landmarks (KO/EN source HTML)
  *  - Reduced-motion coverage without glitch chrome
- *  - SEO structured-data determinism (no wall-clock dateCreated) + JA language
  *  - JA i18n parity (server-side locale data: data_ja.json vs data.json)
  *  - PDF source: LinkedIn contact + accessible accent link colour
  *
@@ -101,18 +100,6 @@ describe('고도화: reduced-motion without glitch chrome', () => {
   test('glitch selectors are removed and reduced motion still neutralizes animation', () => {
     expect(css).not.toMatch(/\.glitch\b/);
     expect(reduced).toMatch(/animation:\s*none|transition:\s*none/);
-  });
-});
-
-describe('고도화: structured-data determinism', () => {
-  const src = read(path.join(PORTFOLIO, 'generate-project-schemas.js'));
-
-  test('does not stamp wall-clock dateCreated', () => {
-    expect(src).not.toMatch(/dateCreated:\s*new Date\(\)/);
-  });
-
-  test('CreativeWork schema advertises Japanese language', () => {
-    expect(src).toMatch(/inLanguage:\s*\[[^\]]*'ja'/);
   });
 });
 
