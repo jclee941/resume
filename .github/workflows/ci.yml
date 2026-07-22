@@ -64,6 +64,31 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
+  dependency-audit:
+    name: Dependency Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit --no-fund
+
+      # Production dependencies only. Dev-only advisories currently come from
+      # wrangler -> miniflare -> sharp (libvips CVEs); wrangler and the root
+      # sharp are already on the newest release, and miniflare bundles its own
+      # older sharp that an override cannot displace, so gating on dev deps
+      # would block CI on an upstream issue we cannot fix.
+      - name: Audit production dependencies
+        run: npm run security:audit
+
   typecheck:
     name: Typecheck
     runs-on: ubuntu-latest
@@ -389,6 +414,7 @@ jobs:
       [
         secret-scan,
         lint,
+        dependency-audit,
         typecheck,
         test-jest,
         test-node,
@@ -410,6 +436,7 @@ jobs:
         run: |
           echo "secret-scan: ${{ needs.secret-scan.result }}"
           echo "lint: ${{ needs.lint.result }}"
+          echo "dependency-audit: ${{ needs.dependency-audit.result }}"
           echo "typecheck: ${{ needs.typecheck.result }}"
           echo "test-jest: ${{ needs.test-jest.result }}"
           echo "test-node: ${{ needs.test-node.result }}"
@@ -423,6 +450,7 @@ jobs:
           echo "merged-worker-e2e: ${{ needs.merged-worker-e2e.result }}"
           if [[ "${{ needs.secret-scan.result }}" != "success" || \
                 "${{ needs.lint.result }}" != "success" || \
+                "${{ needs.dependency-audit.result }}" != "success" || \
                 "${{ needs.typecheck.result }}" != "success" || \
                 "${{ needs.test-jest.result }}" != "success" || \
                 "${{ needs.test-node.result }}" != "success" || \
