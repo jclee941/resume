@@ -23,11 +23,11 @@ test.describe('Download Functionality', () => {
         )
         .first();
 
+      // The resume PDF download link is static server-rendered markup
+      // (apps/portfolio/index.html .hero-download); its absence is a real
+      // regression, not an environment condition worth skipping past.
       const count = await pdfLink.count();
-      if (count === 0) {
-        test.skip(true, 'No PDF download links found on page');
-        return;
-      }
+      expect(count).toBeGreaterThan(0);
 
       await expect(pdfLink).toBeVisible({ timeout: 10000 });
 
@@ -41,10 +41,8 @@ test.describe('Download Functionality', () => {
       const downloadLinks = page.locator('a[download]').filter({ hasText: /pdf/i });
       const count = await downloadLinks.count();
 
-      if (count === 0) {
-        test.skip(true, 'No PDF download links found on page');
-        return;
-      }
+      // Same static markup as above: absence here is a real regression.
+      expect(count).toBeGreaterThan(0);
 
       // Verify all have download attribute
       for (let i = 0; i < count; i++) {
@@ -91,10 +89,10 @@ test.describe('Download Functionality', () => {
       const downloadLinks = page.locator('a[download]');
       const count = await downloadLinks.count();
 
-      if (count === 0) {
-        test.skip(true, 'No download links found on page');
-        return;
-      }
+      // Same static markup as the resume download tests above: absence of
+      // any download link, or of a local Worker-served one, is a real
+      // regression rather than an environment condition worth skipping past.
+      expect(count).toBeGreaterThan(0);
 
       const hrefs = await downloadLinks.evaluateAll((links) =>
         links.map((link) => link.getAttribute('href')).filter((href) => href !== null)
@@ -103,10 +101,7 @@ test.describe('Download Functionality', () => {
         (href) => href.startsWith('/') || (baseURL ? href.startsWith(baseURL) : false)
       );
 
-      if (!localHref) {
-        test.skip(true, 'No local Worker download links found on page');
-        return;
-      }
+      expect(localHref).toBeTruthy();
 
       const response = await request.head(localHref);
       expect(response.status()).toBe(200);
