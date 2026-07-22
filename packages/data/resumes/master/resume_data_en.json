@@ -104,7 +104,7 @@
         {
           "id": "nextrade-security-operations",
           "name": "Nextrade Security Event Response Architecture Automation",
-          "description": "Splunk ES detections feed webhook relay and Slack/SMS alerts, and FortiManager API queries retrieve the related firewall policies on demand. Console-heavy checks turn into a Splunk-Fortinet path for detection, classification, and lookup, with Claude AI-assisted review cutting the false-positive triage backlog.",
+          "description": "Splunk ES detections feed webhook relay and Slack/SMS alerts, and FortiManager JSON-RPC API queries retrieve the related firewall policies on demand. Console-heavy checks turn into a Splunk-Fortinet path for detection, classification, and lookup, with Claude AI-assisted review cutting the false-positive triage backlog.",
           "period": "2025.03 ~ 2026.02",
           "techStack": [
             "Splunk ES",
