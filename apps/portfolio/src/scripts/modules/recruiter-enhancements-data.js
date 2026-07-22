@@ -73,7 +73,7 @@ export const EVIDENCE_ITEMS = [
     roleId: 'observability',
     title: 'Observability Platform',
     proof: {
-      ko: 'Prometheus, Loki, Grafana를 코드 기반 운영 흐름으로 묶은 관측성 구성',
+      ko: 'Prometheus·Loki·Grafana를 코드로 정의한 관측성 구성',
       en: 'Observability setup connecting Prometheus, Loki, and Grafana as code',
       ja: 'Prometheus、Loki、Grafanaをコードベース運用に接続した可観測性構成',
     },
