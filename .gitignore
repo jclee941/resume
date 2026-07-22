@@ -65,6 +65,8 @@ wanted-session.json
 **/cookies.json
 **/credentials.json
 secrets/
+!apps/job-server/src/shared/clients/secrets/
+!apps/job-server/src/shared/clients/secrets/**
 .secrets/
 # Cloudflare wrangler local secrets
 .wrangler/
@@ -112,6 +114,8 @@ bazel-testlogs
 # -----------------------------------------------------------------------------
 # Local binaries
 bin/
+!packages/cli/bin/
+!packages/cli/bin/**
 
 # Legacy standalone configs
 lighthouserc.js
