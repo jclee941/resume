@@ -4,7 +4,7 @@
  */
 
 import { mock } from 'node:test';
-import { mockResumeData, mockWantedResponse } from './fixtures.js';
+import { mockResumeData, mockWantedResponse, mockWantedSearchResponse } from './fixtures.js';
 
 // ========================
 // Logger Mock
