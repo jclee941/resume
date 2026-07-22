@@ -69,18 +69,40 @@ export async function submitAndWait(page, selector, opts) {
   ]);
 }
 
+const TRANSIENT_PAGE_ERROR =
+  /Execution context was destroyed|Target closed|Cannot find context|detached Frame|Session closed|because of a navigation|frame got detached|Navigation timeout/i;
+
+function isTransientPageError(err) {
+  return TRANSIENT_PAGE_ERROR.test(err?.message || '');
+}
+
+// Evaluate on the page, treating a transient in-flight-navigation error as the
+// fallback so the caller retries on the settled page instead of failing the mint.
+export async function safeEvaluate(page, fn, fallback) {
+  try {
+    return await page.evaluate(fn);
+  } catch (err) {
+    if (isTransientPageError(err)) return fallback;
+    throw err;
+  }
+}
+
 export async function isLoggedIn(page) {
-  return page.evaluate(() => {
-    const logoutLink = document.querySelector('a[href*="/Login/Logout"]');
-    const userLink = document.querySelector(
-      'header a[href*="/User/"], #header a[href*="/User/"], a[href*="/User/"]'
-    );
-    return Boolean(logoutLink || userLink);
-  });
+  return safeEvaluate(
+    page,
+    () => {
+      const logoutLink = document.querySelector('a[href*="/Login/Logout"]');
+      const userLink = document.querySelector(
+        'header a[href*="/User/"], #header a[href*="/User/"], a[href*="/User/"]'
+      );
+      return Boolean(logoutLink || userLink);
+    },
+    false
+  );
 }
 
 export async function detectCaptcha(page) {
-  return page.evaluate(() => {
+  return safeEvaluate(page, () => {
     const text = document.body?.innerText || '';
     const hasText =
       text.includes('보안인증') ||
@@ -93,7 +115,7 @@ export async function detectCaptcha(page) {
     const hasCaptchaInput = !!document.querySelector('#gtxt, input[name="gtxt"]');
     const hasCaptchaImage = !!document.querySelector('img[src*="captcha" i]');
     return hasText || hasIframe || hasCaptchaInput || hasCaptchaImage;
-  });
+  }, false);
 }
 
 export async function findCaptchaImageUrl(page) {
