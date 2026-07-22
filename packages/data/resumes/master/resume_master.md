@@ -1,3 +1,23 @@
+<!--
+  NOTICE (repo hygiene, 2026-07-22): This file is HAND-WRITTEN, not generated.
+  The canonical single source of truth is
+  packages/data/resumes/master/resume_data.json (+ resume_data_en.json /
+  resume_data_ja.json), per ADR 0003 (docs/adr/0003-single-source-of-truth.md).
+  This markdown file is a derived/secondary document maintained in parallel —
+  it is NOT synced from the JSON and can drift out of contradiction with it.
+  It is read directly by:
+    - tools/scripts/build/pdf-generator (catalog.go "full" variant) to
+      produce resume_full.pdf
+    - tools/scripts/build/generate-resume-variants.js to derive
+      resume_general.md / resume_technical.md / resume_security.md /
+      resume_short.md
+    - apps/job-server AI job-matching, ranking, auto-apply, and resume
+      optimization tooling (via getResumeMasterMarkdownPath() /
+      config.paths.resume) as the resume text fed to AI prompts
+  When editing career facts (roles, dates, employers), verify they match
+  resume_data.json — do not let this copy become the source of truth.
+-->
+
 # 이재철
 
 보안 엔지니어
