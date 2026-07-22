@@ -1,5 +1,12 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
+const forceNewServer = process.env.PORTFOLIO_FORCE_NEW_SERVER === '1';
+const ledgerUrl = process.env.PORTFOLIO_LEDGER_URL;
+const explicitBaseUrl = process.env.PLAYWRIGHT_BASE_URL;
+if (ledgerUrl && explicitBaseUrl && ledgerUrl !== explicitBaseUrl) {
+  throw new Error('PORTFOLIO_LEDGER_URL and PLAYWRIGHT_BASE_URL conflict');
+}
+const remoteBaseUrl = ledgerUrl || explicitBaseUrl || 'https://resume.jclee.me';
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -27,8 +34,8 @@ module.exports = defineConfig({
     // local (non-CI) branch fell back to production, so the launched webServer was
     // started but never exercised by the tests.
     baseURL: process.env.SKIP_WEBSERVER
-      ? process.env.PLAYWRIGHT_BASE_URL || 'https://resume.jclee.me'
-      : process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:8787',
+      ? remoteBaseUrl
+      : explicitBaseUrl || 'http://localhost:8787',
     // Force the Korean locale so '/' is not redirected to '/en/'. The data.json
     // fixtures the specs assert against are the Korean source of truth.
     locale: 'ko-KR',
@@ -93,7 +100,7 @@ module.exports = defineConfig({
           // (`npm run build`, cwd ".") resolves the root-only sync/build chain.
           command: 'CLOUDFLARE_ENV= npx wrangler dev --config wrangler.jsonc --port 8787 --local',
           port: 8787,
-          reuseExistingServer: !process.env.CI,
+          reuseExistingServer: forceNewServer ? false : !process.env.CI,
           // wrangler.jsonc's build command runs the root build on startup;
           // allow ample time for the data sync + worker build.
           timeout: 300 * 1000,
