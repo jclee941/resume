@@ -173,7 +173,7 @@ async function generateScreenshots() {
       successCount++;
     } catch (error) {
       console.error(`   ❌ Failed: ${config.name}`);
-      console.error(`   Error: ${error.message}\n`);
+      console.error(`   Error: ${error instanceof Error ? error.message : String(error)}\n`);
       failCount++;
     }
   }

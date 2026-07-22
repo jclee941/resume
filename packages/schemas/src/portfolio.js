@@ -48,7 +48,7 @@ export const portfolioDataSchema = z.object({
   resume: z.array(resumeItemSchema),
   projects: z.array(projectItemSchema),
   certifications: z.array(certificationItemSchema),
-  skills: z.record(skillCategorySchema),
+  skills: z.record(z.string(), skillCategorySchema),
 });
 
 /**

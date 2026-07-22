@@ -1,6 +1,7 @@
 const ALGORITHM = 'AES-GCM';
 const IV_LENGTH = 12;
 
+/** @param {{ ENCRYPTION_KEY?: string }} env */
 async function getKey(env) {
   if (!env?.ENCRYPTION_KEY) {
     throw new Error('ENCRYPTION_KEY not configured');
@@ -22,6 +23,10 @@ async function getKey(env) {
   return crypto.subtle.importKey('raw', keyBytes, ALGORITHM, false, ['encrypt', 'decrypt']);
 }
 
+/**
+ * @param {string} plaintext
+ * @param {{ ENCRYPTION_KEY?: string }} env
+ */
 export async function encrypt(plaintext, env) {
   const key = await getKey(env);
   const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH));
@@ -33,6 +38,10 @@ export async function encrypt(plaintext, env) {
   return btoa(String.fromCharCode(...combined));
 }
 
+/**
+ * @param {string} ciphertext
+ * @param {{ ENCRYPTION_KEY?: string }} env
+ */
 export async function decrypt(ciphertext, env) {
   const key = await getKey(env);
   const combined = Uint8Array.from(atob(ciphertext), (c) => c.charCodeAt(0));

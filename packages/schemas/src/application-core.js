@@ -33,7 +33,7 @@ export const applicationCreateSchema = z.object({
   company: z.string().min(1).max(200),
   position: z.string().min(1).max(300),
   status: applicationStatusSchema.optional().default('pending'),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const applicationUpdateSchema = z
@@ -41,7 +41,7 @@ export const applicationUpdateSchema = z
     company: z.string().min(1).max(200).optional(),
     position: z.string().min(1).max(300).optional(),
     status: applicationStatusSchema.optional(),
-    metadata: z.record(z.unknown()).optional(),
+    metadata: z.record(z.string(), z.unknown()).optional(),
   })
   .refine((d) => Object.keys(d).length > 0, { message: 'at least one field required' });
 

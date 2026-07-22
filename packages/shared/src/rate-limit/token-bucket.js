@@ -1,4 +1,7 @@
 export class TokenBucket {
+  /**
+   * @param {{ capacity: number, refillRatePerSecond: number, now?: () => number }} options
+   */
   constructor({ capacity, refillRatePerSecond, now = () => Date.now() }) {
     if (!Number.isFinite(capacity) || capacity <= 0) {
       throw new RangeError('capacity must be a positive number');

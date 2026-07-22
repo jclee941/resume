@@ -6,6 +6,11 @@
 
 const sharp = require('sharp');
 
+/**
+ * @param {string} svgPath
+ * @param {string} pngPath
+ * @param {number} size
+ */
 async function convertIcon(svgPath, pngPath, size) {
   try {
     await sharp(svgPath)
@@ -14,7 +19,7 @@ async function convertIcon(svgPath, pngPath, size) {
       .toFile(pngPath);
     console.log(`✅ Created ${pngPath}`);
   } catch (error) {
-    console.error(`❌ Error creating ${pngPath}:`, error.message);
+    console.error(`❌ Error creating ${pngPath}:`, error instanceof Error ? error.message : String(error));
     throw error;
   }
 }

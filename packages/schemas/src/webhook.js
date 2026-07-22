@@ -10,7 +10,7 @@ export const notificationPayloadSchema = z.object({
   message: z.string().min(1),
   company: z.string().optional(),
   jobId: idSchema.optional(),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const jobFoundPayloadSchema = z.object({

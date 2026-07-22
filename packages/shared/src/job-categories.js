@@ -45,18 +45,24 @@ export const JOB_CATEGORY_MAPPING = {
 /** @type {number} */
 export const DEFAULT_JOB_CATEGORY = 674;
 
+/** @param {string|null|undefined} role */
 function getRoleCategoryCandidates(role) {
   const raw = String(role || '').replace(/\s+/g, ' ').trim();
   const normalized = normalizeCareerRole(raw);
   return [...new Set([raw, normalized].filter(Boolean))];
 }
 
+/** @param {string|null|undefined} role */
 export function hasJobCategoryMapping(role) {
   return getRoleCategoryCandidates(role).some((candidate) =>
     Object.hasOwn(JOB_CATEGORY_MAPPING, candidate)
   );
 }
 
+/**
+ * @param {string|null|undefined} role
+ * @param {number} [fallback]
+ */
 export function resolveJobCategoryId(role, fallback = DEFAULT_JOB_CATEGORY) {
   for (const candidate of getRoleCategoryCandidates(role)) {
     if (Object.hasOwn(JOB_CATEGORY_MAPPING, candidate)) return JOB_CATEGORY_MAPPING[candidate];

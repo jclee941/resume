@@ -31,7 +31,7 @@ export const ADMIN_SESSION_TTL_MS = 4 * 60 * 60 * 1000;
  * @returns {number}
  */
 export function getSessionTtlMs(platform) {
-  return SESSION_PLATFORM_TTL_MS[platform] || DEFAULT_SESSION_TTL_MS;
+  return /** @type {Readonly<Record<string, number>>} */ (SESSION_PLATFORM_TTL_MS)[platform] || DEFAULT_SESSION_TTL_MS;
 }
 
 /** @param {number} ttlMs @param {number} now */
