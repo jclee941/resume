@@ -34,8 +34,22 @@ import { log } from '../sync-logger.js';
  *      shows a JS alert dialog ("새로운 이미지를 업로드해주세요.") and the popup STAYS
  *      OPEN with the photo unchanged — a rejection must be treated as failure
  *      even though the click itself succeeds.
+ *
+ * GUARD — never clobber an existing photo. The user may upload their profile
+ * photo MANUALLY on JobKorea, and the sync must never silently roll that back
+ * by re-uploading the repo's photo. Two env flags control this module:
+ *   - JOBKOREA_SYNC_PHOTO=true    opts in to running the photo step at all.
+ *   - JOBKOREA_PHOTO_OVERWRITE=true  is REQUIRED to replace an existing photo.
+ *     Without it, if a photo is already present (div.picture.dropped, a
+ *     populated div.picture .image img[src], or input.dev-photo value=True)
+ *     appendPhotoUpload logs and returns without touching the page.
  */
 const PHOTO_TRIGGER_SELECTORS = ['button.buttonChangePicture', 'a.buttonAddFile'];
+const EXISTING_PHOTO_SELECTORS = {
+  dropped: 'div.picture.dropped',
+  image: 'div.picture .image img',
+  hiddenFlag: 'input.dev-photo, input[class*=dev-photo]',
+};
 const POPUP_FILE_INPUT = '#up_file';
 const POPUP_FILE_INPUT_FALLBACK = 'input[name="up_file"]';
 const CROP_HOLDER = '.jcrop-holder';
@@ -131,6 +145,31 @@ async function defaultUploadPhoto(page, photoPath) {
   }
 }
 
+/**
+ * Detect whether a profile photo is already set on the resume edit page, so
+ * appendPhotoUpload can avoid clobbering a manually-uploaded photo. Considers
+ * a photo existing if the picture widget carries the "dropped" class, its
+ * <img> has a non-empty src, or the hidden dev-photo flag reads "True". On
+ * any evaluation error, returns false — a broken probe must not block a
+ * legitimate first-time upload.
+ * @param {import('playwright').Page} page
+ * @returns {Promise<boolean>}
+ */
+async function defaultHasExistingPhoto(page) {
+  try {
+    return await page.evaluate((selectors) => {
+      if (document.querySelector(selectors.dropped)) return true;
+      const img = document.querySelector(selectors.image);
+      if (img && img.getAttribute('src')) return true;
+      const hiddenFlag = document.querySelector(selectors.hiddenFlag);
+      if (hiddenFlag && hiddenFlag.value === 'True') return true;
+      return false;
+    }, EXISTING_PHOTO_SELECTORS);
+  } catch {
+    return false;
+  }
+}
+
 function buildPhotoUploadError(photoPath, timestamp) {
   const error = new Error(
     'JobKorea profile photo upload failed — the change-photo popup did not close ' +
@@ -142,11 +181,16 @@ function buildPhotoUploadError(photoPath, timestamp) {
 }
 
 /**
- * Upload the SSOT profile photo to the JobKorea resume edit page.
+ * Upload the SSOT profile photo to the JobKorea resume edit page. Guarded by
+ * two env flags: JOBKOREA_SYNC_PHOTO=true opts in to running this step at
+ * all (checked by the caller), and JOBKOREA_PHOTO_OVERWRITE=true is required
+ * to replace a photo that already exists — without it, an existing (e.g.
+ * manually-uploaded) photo is left untouched and the step is skipped.
  * @param {import('playwright').Page} page
  * @param {object} [options]
  * @param {string} [options.photoPath]
  * @param {(page: import('playwright').Page, photoPath: string) => Promise<boolean>} [options.uploadPhoto]
+ * @param {(page: import('playwright').Page) => Promise<boolean>} [options.hasExistingPhoto]
  * @param {(msg: string, type?: string, platform?: string|null) => void} [options.logger]
  * @param {() => string} [options.getTimestamp]
  * @returns {Promise<void>}
@@ -160,6 +204,16 @@ export async function appendPhotoUpload(page, options = {}) {
 
   if (!fs.existsSync(photoPath)) {
     logger(`JobKorea profile photo skipped — file not found (path=${photoPath})`, 'warn', 'jobkorea');
+    return;
+  }
+
+  const hasExistingPhoto = options.hasExistingPhoto ?? defaultHasExistingPhoto;
+  if (process.env.JOBKOREA_PHOTO_OVERWRITE !== 'true' && (await hasExistingPhoto(page))) {
+    logger(
+      'JobKorea profile photo already set — keeping it (set JOBKOREA_PHOTO_OVERWRITE=true to replace)',
+      'info',
+      'jobkorea'
+    );
     return;
   }
 

@@ -7,6 +7,7 @@ const FAKE_PHOTO_PATH = import.meta.url; // any file guaranteed to exist
 
 afterEach(() => {
   delete process.env.JOBKOREA_PHOTO_OPTIONAL;
+  delete process.env.JOBKOREA_PHOTO_OVERWRITE;
 });
 
 describe('appendPhotoUpload', () => {
@@ -83,5 +84,81 @@ describe('appendPhotoUpload', () => {
     assert.strictEqual(logs.length, 1);
     assert.strictEqual(logs[0].type, 'warn');
     assert.match(logs[0].msg, /JobKorea profile photo upload failed/);
+  });
+
+  it('skips (no uploadPhoto call) when hasExistingPhoto resolves true and JOBKOREA_PHOTO_OVERWRITE is unset', async () => {
+    delete process.env.JOBKOREA_PHOTO_OVERWRITE;
+    const logs = [];
+    const logger = (msg, type, platform) => logs.push({ msg, type, platform });
+    const uploadCalls = [];
+    const uploadPhoto = async () => {
+      uploadCalls.push(true);
+      return true;
+    };
+    const hasExistingPhoto = async () => true;
+    const page = {};
+
+    await appendPhotoUpload(page, {
+      photoPath: new URL(FAKE_PHOTO_PATH).pathname,
+      uploadPhoto,
+      hasExistingPhoto,
+      logger,
+    });
+
+    assert.strictEqual(uploadCalls.length, 0);
+    assert.strictEqual(logs.length, 1);
+    assert.strictEqual(logs[0].type, 'info');
+    assert.strictEqual(logs[0].platform, 'jobkorea');
+    assert.match(logs[0].msg, /already set/);
+  });
+
+  it('proceeds (calls uploadPhoto) when hasExistingPhoto is true but JOBKOREA_PHOTO_OVERWRITE=true', async () => {
+    process.env.JOBKOREA_PHOTO_OVERWRITE = 'true';
+    const logs = [];
+    const logger = (msg, type, platform) => logs.push({ msg, type, platform });
+    const uploadCalls = [];
+    const uploadPhoto = async () => {
+      uploadCalls.push(true);
+      return true;
+    };
+    const hasExistingPhoto = async () => true;
+    const page = {};
+
+    await appendPhotoUpload(page, {
+      photoPath: new URL(FAKE_PHOTO_PATH).pathname,
+      uploadPhoto,
+      hasExistingPhoto,
+      logger,
+    });
+
+    assert.strictEqual(uploadCalls.length, 1);
+    assert.strictEqual(logs.length, 1);
+    assert.strictEqual(logs[0].type, 'info');
+    assert.match(logs[0].msg, /JobKorea profile photo uploaded/);
+  });
+
+  it('proceeds (calls uploadPhoto) when hasExistingPhoto resolves false', async () => {
+    delete process.env.JOBKOREA_PHOTO_OVERWRITE;
+    const logs = [];
+    const logger = (msg, type, platform) => logs.push({ msg, type, platform });
+    const uploadCalls = [];
+    const uploadPhoto = async () => {
+      uploadCalls.push(true);
+      return true;
+    };
+    const hasExistingPhoto = async () => false;
+    const page = {};
+
+    await appendPhotoUpload(page, {
+      photoPath: new URL(FAKE_PHOTO_PATH).pathname,
+      uploadPhoto,
+      hasExistingPhoto,
+      logger,
+    });
+
+    assert.strictEqual(uploadCalls.length, 1);
+    assert.strictEqual(logs.length, 1);
+    assert.strictEqual(logs[0].type, 'info');
+    assert.match(logs[0].msg, /JobKorea profile photo uploaded/);
   });
 });
