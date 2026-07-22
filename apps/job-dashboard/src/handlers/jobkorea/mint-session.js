@@ -25,7 +25,9 @@ import {
 } from './page-helpers.js';
 
 export const AUTH_JOBKOREA_KEY = 'auth:jobkorea';
-export const JOBKOREA_LOGIN_URL = 'https://www.jobkorea.co.kr/Login/Login.asp';
+// /Login redirects to the unified login form (Login_Tot.asp); /Login/Login.asp
+// redirects to the homepage, so use /Login.
+export const JOBKOREA_LOGIN_URL = 'https://www.jobkorea.co.kr/Login';
 export const JOBKOREA_SESSION_TTL_S = 60 * 60 * 6; // 6h
 
 const DEFAULT_CAPTCHA_MODEL = 'gpt-5.5';
