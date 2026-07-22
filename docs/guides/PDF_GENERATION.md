@@ -3,64 +3,74 @@
 **Resume Portfolio System** - Automated PDF generation for resumes and technical
 documentation
 
-**Last Updated**: 2025-11-20
-**Version**: 1.0.3
+**Last Updated**: 2026-07-22 (corrected to match the current Go-based
+generator; see note below)
+**Generator**: `tools/scripts/build/pdf-generator/` (Go, invoked via `go run`)
+
+> **Drift note**: This guide previously described a bash script
+> (`generate-resumes.sh`) with `declare -A` variant tables, version-suffixed
+> filenames, and a Git LFS workflow. None of that exists anymore. The
+> generator was rewritten in Go
+> (`tools/scripts/build/pdf-generator/{main,catalog,generation,renderer,reproducibility}.go`),
+> variant definitions live in `catalog.go`, output filenames are static (no
+> version suffix), and PDFs are stored as regular Git objects (no LFS). This
+> revision documents the current behavior.
 
 ## 🎯 Overview
 
 Automated PDF generation system supporting multiple resume variants and
-technical documentation with version control integration.
+technical documentation, invoked from the repo root via `npm run sync:pdf` or
+directly via `go -C tools/scripts run ./build/pdf-generator <variant>`.
 
 ### Key Features
 
-- **Automated Generation**: Single script handles all PDF variants
-- **Version Control**: PDFs include semantic version in filename
-- **Docker Fallback**: Works without local Pandoc installation
-- **Git LFS Integration**: Efficient binary file storage
-- **CI/CD Ready**: Can be integrated into deployment pipeline
+- **Automated Generation**: Single Go program handles all PDF variants
+- **Reproducible Builds**: Deterministic `SOURCE_DATE_EPOCH` (from the
+  source file's last git commit time) and post-generation PDF `/ID`
+  normalization so identical input produces byte-identical output
+- **Docker Fallback**: Works without a local Pandoc installation
+- **CI/CD**: Not currently run in `.github/workflows/ci.yml` — this is a
+  manual/local step (or run via `npm run sync:all` / `npm run automate:ssot`)
 
 ## 🚀 Quick Start
 
-### Generate All PDFs
+### Generate the PDFs used by the portfolio
 
 ```bash
-# Generate all resume and documentation PDFs
+# Regenerates resume_final.pdf and resume_full.pdf (what the portfolio links to)
+npm run sync:pdf
+```
+
+This runs:
+
+```bash
+go -C tools/scripts run ./build/pdf-generator master
+go -C tools/scripts run ./build/pdf-generator full
+```
+
+### Generate All Variants
+
+```bash
+# Generate every resume and technical-doc variant
 go -C tools/scripts run ./build/pdf-generator all
 ```
 
-**Output**:
-
-```text
-=== Resume PDF Generation ===
-Version: 1.0.3
-
-Resume variants:
-  Generating resume_master_v1.0.3.pdf... ✓ (524K)
-  Generating resume_final_v1.0.3.pdf... ✓ (412K)
-  Generating lee_jaecheol_toss_v1.0.3.pdf... ✓ (485K)
-
-Technical documentation:
-  Generating ARCHITECTURE_COMPACT.pdf... ✓ (58K)
-  Generating DR_PLAN_COMPACT.pdf... ✓ (49K)
-  Generating SOC_RUNBOOK_COMPACT.pdf... ✓ (57K)
-
-✓ Generated: 6
-✓ Web downloads updated
-```
-
-### Generate Single Variant
+### Generate a Single Variant
 
 ```bash
-# Resume variants
-go -C tools/scripts run ./build/pdf-generator master      # Master resume
-go -C tools/scripts run ./build/pdf-generator final       # Final submission resume
-go -C tools/scripts run ./build/pdf-generator toss        # Toss-specific resume
+# Resume variants (see full list in "Resume Variants" below)
+go -C tools/scripts run ./build/pdf-generator master
+go -C tools/scripts run ./build/pdf-generator full
+go -C tools/scripts run ./build/pdf-generator toss
 
 # Technical documentation
-go -C tools/scripts run ./build/pdf-generator nextrade_arch   # Architecture document
-go -C tools/scripts run ./build/pdf-generator nextrade_dr     # DR plan
-go -C tools/scripts run ./build/pdf-generator nextrade_soc    # SOC runbook
+go -C tools/scripts run ./build/pdf-generator nextrade_arch
+go -C tools/scripts run ./build/pdf-generator nextrade_dr
+go -C tools/scripts run ./build/pdf-generator nextrade_soc
 ```
+
+Running an unknown variant name prints the full list of available resume and
+doc variants and exits non-zero.
 
 ## 📋 Prerequisites
 
@@ -81,115 +91,118 @@ pandoc --version
 - `texlive-xetex` - XeLaTeX PDF engine (Korean font support)
 - `texlive-collection-fontsrecommended` - Font collection
 
-**Disk space**: ~500MB
-
 ### Option 2: Docker Fallback (No Installation)
 
-If Pandoc is not installed, script automatically uses Docker:
+If Pandoc is not on `PATH`, the generator automatically falls back to Docker:
 
 ```bash
-# Requires Docker only
 sudo yum install docker
 sudo systemctl start docker
 sudo systemctl enable docker
-
-# Add user to docker group
 sudo usermod -aG docker $USER
 newgrp docker
 ```
 
-**Docker image**: `pandoc/latex:latest` (~1GB, pulls automatically)
+**Docker image**: `pandoc/latex:latest` (pulls automatically on first use)
+
+If neither `pandoc` nor `docker` is found on `PATH`, the generator prints an
+error and exits.
 
 ## 🏗️ Architecture
 
 ### PDF Generation Pipeline
 
 ```text
-Markdown Source Files
-  ├── master/resume_master.md
-  ├── toss/toss_commerce_...md
-  └── resume/nextrade/*.md
+Markdown Source Files (packages/data/resumes/)
+  ├── master/resume_summary.md      (recruiter summary)
+  ├── master/resume_master.md       (full CV)
+  ├── generated/resume_*.md         (general/technical/security/short)
+  ├── applications/<company>/*.md   (per-application resumes)
+  └── technical/nextrade/*.md       (technical docs)
          │
          ▼
-  tools/scripts/build/pdf-generator/
+  tools/scripts/build/pdf-generator/ (Go)
          │
          ├─ Check dependencies (Pandoc/Docker)
-         ├─ Read version from package.json
-         ├─ Generate PDF with metadata
-         └─ Copy to apps/portfolio/downloads/
+         ├─ Read version from package.json (for logging only — not embedded
+         │  in output filenames)
+         ├─ Render via `pandoc --pdf-engine=xelatex` (native or via
+         │  `docker run pandoc/latex:latest`), with
+         │  `tools/scripts/build/resume-style.tex` header include and
+         │  `tools/scripts/build/strip-emoji.lua` filter
+         ├─ Set SOURCE_DATE_EPOCH from the source file's last git commit
+         │  time (falls back to file mtime), then normalize the generated
+         │  PDF's `/ID` for reproducibility
+         └─ Copy technical-doc PDFs to apps/portfolio/downloads/
          │
          ▼
-  Generated PDFs (with version)
-  ├── master/resume_master_v1.0.3.pdf
-  ├── toss/lee_jaecheol_toss_v1.0.3.pdf
-  └── resume/nextrade/exports/*.pdf
-         │
-         ▼
-  Git LFS Storage
-  (tracked by .gitattributes)
+  Generated PDFs (static filenames, no version suffix)
+  ├── packages/data/resumes/master/resume_final.pdf
+  ├── packages/data/resumes/master/resume_full.pdf
+  ├── packages/data/resumes/applications/toss/toss_devops_engineer_resume.pdf
+  └── packages/data/resumes/technical/nextrade/exports/*.pdf
 ```
 
 ### Resume Variants
 
-Configured in `tools/scripts/build/pdf-generator/`:
+Defined in `tools/scripts/build/pdf-generator/catalog.go` as a Go map (not a
+bash `declare -A` array):
 
-```bash
-# Resume variants (line 28-32)
-declare -A RESUME_VARIANTS=(
-    ["master"]="master/resume_master.md|master/resume_master_v${VERSION}.pdf|NanumGothic"
-    ["final"]="master/resume_final.md|master/resume_final_v${VERSION}.pdf|NanumGothic"
-    ["toss"]="toss/toss_...md|toss/lee_jaecheol_toss_v${VERSION}.pdf|Noto Serif CJK KR"
-)
+```go
+var resumeVariants = map[string]Variant{
+    "master":         {"packages/data/resumes/master/resume_summary.md", "packages/data/resumes/master/resume_final.pdf", fontNanum},
+    "final":          {"packages/data/resumes/master/resume_summary.md", "packages/data/resumes/master/resume_final.pdf", fontNanum},
+    "full":           {"packages/data/resumes/master/resume_master.md", "packages/data/resumes/master/resume_full.pdf", fontNanum},
+    "toss":           {"packages/data/resumes/applications/toss/toss_devops_engineer_resume.md", "...", fontNoto},
+    "general":        {"packages/data/resumes/generated/resume_general.md", "...", fontNanum},
+    "technical":      {"packages/data/resumes/generated/resume_technical.md", "...", fontNanum},
+    "security":       {"packages/data/resumes/generated/resume_security.md", "...", fontNanum},
+    "short":          {"packages/data/resumes/generated/resume_short.md", "...", fontNanum},
+    "nextfin":        {"packages/data/resumes/applications/nextfin/...", "...", fontNanum},
+    "hyundaicapital":  {"packages/data/resumes/applications/hyundaicapital/...", "...", fontNanum},
+    "coupang":        {"packages/data/resumes/applications/coupang/...", "...", fontNanum},
+    "musinsa":        {"packages/data/resumes/applications/musinsa/...", "...", fontNanum},
+}
 
-# Technical documentation (line 35-39)
-declare -A DOC_VARIANTS=(
-    ["nextrade_arch"]="resume/nextrade/ARCHITECTURE_COMPACT.md|..."
-    ["nextrade_dr"]="resume/nextrade/DR_PLAN_COMPACT.md|..."
-    ["nextrade_soc"]="resume/nextrade/SOC_RUNBOOK_COMPACT.md|..."
-)
+var docVariants = map[string]DocVariant{
+    "nextrade_arch": {"packages/data/resumes/technical/nextrade/ARCHITECTURE_COMPACT.md", "packages/data/resumes/technical/nextrade/exports/ARCHITECTURE_COMPACT.pdf"},
+    "nextrade_dr":   {"packages/data/resumes/technical/nextrade/DR_PLAN_COMPACT.md", "packages/data/resumes/technical/nextrade/exports/DR_PLAN_COMPACT.pdf"},
+    "nextrade_soc":  {"packages/data/resumes/technical/nextrade/SOC_RUNBOOK_COMPACT.md", "packages/data/resumes/technical/nextrade/exports/SOC_RUNBOOK_COMPACT.pdf"},
+}
 ```
+
+See `catalog.go` for the exact, current field values — the table above is
+illustrative and may drift; the source file does not.
 
 ### Pandoc Configuration
 
-**Default settings** (customizable in script):
+**Current settings** (`tools/scripts/build/pdf-generator/renderer.go`):
 
-```bash
-FONT_NANUM="NanumGothic"           # Korean sans-serif font
-FONT_NOTO="Noto Serif CJK KR"      # Korean serif font
-MARGIN="2cm"                        # Page margins
-FONTSIZE="11pt"                     # Base font size
-LINESTRETCH="1.3"                   # Line spacing
+```go
+margin      = "1.35cm"
+fontSize    = "9pt"
+lineStretch = "1.06"
 ```
 
-**PDF metadata**:
+Fonts are per-variant (`fontNanum` = "NanumGothic", `fontNoto` = "Noto Serif
+CJK KR"), set via `catalog.go`.
 
-```bash
---metadata title="Resume - Jaecheol Lee"
---metadata author="Jaecheol Lee"
---metadata date="2025-11-20"
-```
-
-**PDF features**:
-
-- Table of contents (TOC) with 3 levels
-- Section numbering
-- Colored hyperlinks (blue)
-- Syntax highlighting for code blocks
+**PDF metadata**: `author=Jaecheol Lee`, `lang=ko-KR`. Links are colored
+(`#5AA9B8`). Technical-doc variants additionally get `--toc --toc-depth=3
+--number-sections`; resume variants do not.
 
 ## 🔧 Configuration
 
-### Adding New Resume Variant
+### Adding a New Resume Variant
 
-**Edit `tools/scripts/build/pdf-generator/`** (line 28-32):
+Edit `tools/scripts/build/pdf-generator/catalog.go` and add an entry to the
+`resumeVariants` map:
 
-```bash
-declare -A RESUME_VARIANTS=(
-    # Existing variants...
-    ["company"]="company-specific/new_resume.md|company-specific/new_resume_v${VERSION}.pdf|NanumGothic"
-)
+```go
+"company": {"packages/data/resumes/applications/company/new_resume.md", "packages/data/resumes/applications/company/new_resume.pdf", fontNanum},
 ```
 
-**Generate**:
+Then generate it:
 
 ```bash
 go -C tools/scripts run ./build/pdf-generator company
@@ -197,268 +210,87 @@ go -C tools/scripts run ./build/pdf-generator company
 
 ### Customizing PDF Appearance
 
-**Font selection** (line 21-24):
+Margin, font size, and line stretch are constants in `renderer.go` (see
+above); fonts are set per-variant in `catalog.go`. There is no `.env` or CLI
+flag for these — edit the Go source and re-run.
+
+**Check available Korean fonts**:
 
 ```bash
-# Use system fonts
-readonly FONT_NANUM="NanumGothic"        # Sans-serif
-readonly FONT_NOTO="Noto Serif CJK KR"   # Serif
-readonly FONT_MONO="D2Coding"            # Monospace (code blocks)
+fc-list :lang=ko | grep -i "nanum\|noto"
 ```
 
-**Check available fonts**:
+## 📊 Storage
 
-```bash
-fc-list :lang=ko | grep -i "nanum\|noto\|d2coding"
-```
-
-**Page layout** (line 25-27):
-
-```bash
-readonly MARGIN="2cm"          # Page margins (1cm-3cm)
-readonly FONTSIZE="11pt"       # Font size (9pt-14pt)
-readonly LINESTRETCH="1.3"     # Line spacing (1.0-2.0)
-```
-
-### PDF Optimization
-
-**Reduce file size**:
-
-```bash
-# In generate_pdf_native() function, add:
---variable=graphics:true \
---variable=linkcolor:blue \
---dpi=150  # Reduce image DPI (default: 300)
-```
-
-**Better code highlighting**:
-
-```bash
---highlight-style=tango     # Syntax theme
-# Options: tango, pygments, kate, monochrome, espresso, zenburn, haddock
-```
-
-## 📊 Git LFS Integration
-
-### Setup Git LFS
-
-**Initial setup** (one-time):
-
-```bash
-# Install Git LFS
-sudo yum install git-lfs
-
-# Initialize in repository
-cd /home/jclee/dev/resume
-git lfs install
-
-# Track PDF files (.gitattributes already configured)
-git lfs track "*.pdf"
-
-# Verify tracking
-git lfs track
-```
-
-**Expected output**:
-
-```text
-Tracking "*.pdf"
-Tracking "*.png"
-Tracking "*.docx"
-```
-
-### Git LFS Workflow
-
-**After generating PDFs**:
+PDFs are committed as regular Git objects — **Git LFS is not configured**
+for this repository (`.gitattributes` has no `filter=lfs` entry for `*.pdf`
+or `*.docx`).
 
 ```bash
 # Generate PDFs
 go -C tools/scripts run ./build/pdf-generator all
 
-# Stage files (LFS-tracked)
-git add master/*.pdf toss/*.pdf resume/nextrade/exports/*.pdf
-
-# Commit
-git commit -m "feat: update PDF exports to v1.0.3"
-
-# Push (LFS files uploaded automatically)
+# Stage and commit as normal files
+git add packages/data/resumes/master/*.pdf
+git commit -m "chore(data): regenerate resume PDFs"
 git push origin master
 ```
-
-**Check LFS status**:
-
-```bash
-git lfs ls-files          # List LFS-tracked files
-git lfs status            # Show LFS file status
-git lfs fetch --recent    # Download recent LFS objects
-```
-
-### Git LFS Storage
-
-**Current configuration** (`.gitattributes`):
-
-```gitattributes
-*.pdf filter=lfs diff=lfs merge=lfs -text
-*.png filter=lfs diff=lfs merge=lfs -text -crlf
-*.docx filter=lfs diff=lfs merge=lfs -text
-```
-
-**Storage locations**:
-
-- **GitHub LFS**: Primary (github.com/qws941/resume)
-
-**Storage limits**:
-
-- GitHub: 1GB storage, 1GB bandwidth/month (free tier)
 
 ## 🔄 CI/CD Integration
 
-### Manual Workflow (Current)
+### Current: Manual / Local Step
+
+PDF generation is **not** part of `.github/workflows/ci.yml`. It runs
+locally (or as part of `npm run sync:all` / `npm run automate:ssot` /
+`npm run automate:full`, which chain `sync:pdf` before build/test):
 
 ```bash
-# 1. Update markdown source
-vim master/resume_master.md
+# 1. Update the markdown source
+vim packages/data/resumes/master/resume_master.md
 
-# 2. Generate PDFs
-go -C tools/scripts run ./build/pdf-generator all
+# 2. Regenerate the PDFs the portfolio links to
+npm run sync:pdf
 
 # 3. Commit and push
-git add master/*.pdf
-git commit -m "feat: update resume content"
+git add packages/data/resumes/master/*.pdf
+git commit -m "chore(data): regenerate resume PDFs"
 git push origin master
 ```
 
-### Automated Workflow (Proposed)
-
-**Add to `.github/workflows/ci.yml`**:
-
-```yaml
-name: Deploy Resume Portfolio
-
-on:
-  push:
-    branches: [master]
-    paths:
-      - 'master/*.md'
-      - 'toss/*.md'
-      - 'resume/nextrade/*.md'
-
-jobs:
-  generate-pdfs:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          lfs: true
-
-      - name: Install Pandoc
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y pandoc texlive-xetex
-
-      - name: Generate PDFs
-        run: |
-          go -C tools/scripts run ./build/pdf-generator all
-
-      - name: Commit PDFs
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add **/*.pdf
-          git commit -m "chore: auto-generate PDFs [skip ci]" || exit 0
-          git push
-```
+There is no proposed/planned GitHub Actions job for this in the current
+workflows; if one is added later, update this section rather than describing
+a hypothetical pipeline.
 
 ## 🧪 Testing
 
-### Validate Single PDF
+`tools/scripts/build/pdf-generator/pdf_generator_test.go` covers the variant
+catalog shape and the PDF `/ID` normalization determinism:
 
 ```bash
-# Generate
+go -C tools/scripts test ./build/pdf-generator/...
+```
+
+### Validate a Generated PDF
+
+```bash
 go -C tools/scripts run ./build/pdf-generator master
-
-# Check file
-ls -lh master/resume_master_v1.0.3.pdf
-
-# Verify PDF metadata
-pdfinfo master/resume_master_v1.0.3.pdf
-# Should show:
-# Title: Resume - Jaecheol Lee
-# Author: Jaecheol Lee
-# Creator: LaTeX with hyperref / xelatex
+ls -lh packages/data/resumes/master/resume_final.pdf
+pdfinfo packages/data/resumes/master/resume_final.pdf
 ```
 
-### Validate All PDFs
+### Test the Docker Fallback
 
 ```bash
-# Generate all
-go -C tools/scripts run ./build/pdf-generator all
-
-# Check all generated PDFs
-find . -name "*_v1.0.3.pdf" -type f -exec ls -lh {} \;
-
-# Verify no errors
-find . -name "*.pdf" -type f -exec pdfinfo {} \; > /dev/null
-```
-
-### Test Docker Fallback
-
-```bash
-# Temporarily disable Pandoc
 sudo mv /usr/bin/pandoc /usr/bin/pandoc.bak
-
-# Should use Docker automatically
-go -C tools/scripts run ./build/pdf-generator master
-
-# Restore Pandoc
+go -C tools/scripts run ./build/pdf-generator master   # should use Docker
 sudo mv /usr/bin/pandoc.bak /usr/bin/pandoc
 ```
 
 ## 📝 Maintenance
 
-### Updating Version
-
-Version is automatically read from `package.json`:
-
-```bash
-# Bump version (automatically updates all PDFs on next generation)
-npm run version:bump
-
-# Generate with new version
-go -C tools/scripts run ./build/pdf-generator all
-```
-
-### Adding New Font
-
-**Install font**:
-
-```bash
-# Download font
-wget https://fonts.example.com/NewFont.ttf
-
-# Install system-wide
-sudo mv NewFont.ttf /usr/share/fonts/
-sudo fc-cache -fv
-
-# Verify
-fc-list | grep -i "newfont"
-```
-
-**Use in script**:
-
-```bash
-# Edit tools/scripts/build/pdf-generator/
-readonly FONT_NEW="NewFont"
-
-# Add to variant
-["variant"]="source.md|output.pdf|${FONT_NEW}"
-```
-
 ### Troubleshooting
 
 **Issue**: `pandoc: xelatex not found`
-
-**Solution**:
 
 ```bash
 sudo yum install texlive-xetex texlive-collection-latex
@@ -466,57 +298,39 @@ sudo yum install texlive-xetex texlive-collection-latex
 
 **Issue**: `! Font NanumGothic not found`
 
-**Solution**:
-
 ```bash
-# Install Korean fonts
 sudo yum install google-noto-sans-cjk-ttc-fonts
 sudo fc-cache -fv
-
-# Verify
 fc-list :lang=ko
 ```
 
 **Issue**: Docker permission denied
-
-**Solution**:
 
 ```bash
 sudo usermod -aG docker $USER
 newgrp docker
 ```
 
-**Issue**: PDF too large (>5MB)
-
-**Solution**:
-
-```bash
-# Optimize PDF
-gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook \
-   -dNOPAUSE -dQUIET -dBATCH \
-   -sOutputFile=optimized.pdf input.pdf
-
-# Or reduce image DPI in pandoc command:
---variable graphics=true --dpi=150
-```
+**Issue**: Neither Pandoc nor Docker found — the generator exits with
+`✗ Neither Pandoc nor Docker found` before attempting to render anything.
+Install one of the two options above.
 
 ## 🔗 Related Documentation
 
+- **SSoT**: `packages/data/resumes/master/resume_data.json` and the
+  markdown/PDF exports derived from it (see
+  [ADR 0003](../adr/0003-single-source-of-truth.md))
 - **Infrastructure**: `docs/guides/INFRASTRUCTURE.md`
-- **Monitoring**: `docs/guides/MONITORING_SETUP.md`
-- **Deployment**: `README.md` (Deployment section)
-- **Git LFS**: <https://git-lfs.github.com/>
+- **Deployment**: `docs/deployment-guide.md`
 
 ## 📚 References
 
 - [Pandoc User Guide](https://pandoc.org/MANUAL.html)
 - [XeLaTeX Documentation](https://www.latex-project.org/help/documentation/)
-- [Git LFS](https://git-lfs.github.com/)
-- [Markdown to PDF Best Practices](https://www.markdownguide.org/tools/pandoc/)
 
 ## 📞 Support
 
 - **Documentation**: This guide
-- **Script Issues**: Check `tools/scripts/build/pdf-generator/` comments
+- **Generator source**: `tools/scripts/build/pdf-generator/`
 - **Questions**: <qws941@kakao.com>
 - **Repository**: <https://github.com/qws941/resume>

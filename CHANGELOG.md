@@ -1,6 +1,14 @@
 # Changelog
 
-All notable changes documented automatically from conventional commits.
+> **Not currently maintained.** This file was generated once from
+> conventional commits and stops at v1.23.2 (2026-05-03); it is no longer
+> updated by the release pipeline. The repository has continued past this
+> point (root `package.json` is at a materially newer version) — for real
+> release history, see `git log`, `git tag --sort=-creatordate`, or the
+> `release.yml` workflow, which still tags each release on `master` but does
+> not write to this file. Do not treat the entries below as current.
+
+Historical entries below were documented from conventional commits.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), [Semantic
 Versioning](https://semver.org/).
 

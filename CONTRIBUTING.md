@@ -191,7 +191,7 @@ resume_data.json (SSoT)
 index.html
     -> generate-worker.js (escape backticks, compute CSP hashes)
 worker.js (GENERATED — never edit directly)
-    -> wrangler deploy
+    -> git push to master -> Cloudflare Workers Builds deploys
 resume.jclee.me (Cloudflare Edge)
 ```
 
@@ -200,8 +200,11 @@ Key commands:
 ```bash
 npm run build          # Build portfolio worker
 npm run build:full     # Build portfolio + CLI
-npm run deploy         # Version bump + build + deploy
 npm run sync:data      # Propagate SSoT data
+git push origin master # Deploy: Cloudflare Workers Builds deploys on push.
+                        # Manual `npm run deploy` is intentionally disabled;
+                        # it errors and points here. Emergency-only manual
+                        # escape hatch: `npm run deploy:wrangler:root`.
 ```
 
 ## Common Pitfalls

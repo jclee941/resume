@@ -144,5 +144,5 @@
 npm run build
 
 # Deploy (repo root, explicit config)
-npx wrangler deploy --config apps/portfolio/wrangler.jsonc --env production
+npx wrangler deploy --config wrangler.jsonc --env production
 ```

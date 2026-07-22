@@ -20,7 +20,6 @@ follows a layered architecture where `apps/` contains deployables and
 | Runtime        | Node.js            | >=22 required (`.nvmrc`)         |
 | Runtime        | Cloudflare Workers | Edge-deployed                    |
 | Build          | npm workspaces     | Monorepo management              |
-| Build          | Bazel              | Facade only, npm scripts primary |
 | Languages      | JavaScript         | Primary (.js)                    |
 | Languages      | TypeScript         | Types only (.ts)                 |
 | Frameworks     | Fastify            | ESM, job-server                  |

@@ -411,8 +411,8 @@ npm run build
 # Verify hashes
 npm test -- --testNamePattern="CSP hash"
 
-# Deploy
-npm run deploy
+# Deploy (git push to master; Cloudflare Workers Builds deploys)
+git push origin master
 ```
 
 ## Test Data Management

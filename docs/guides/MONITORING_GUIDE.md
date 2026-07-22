@@ -146,7 +146,7 @@ The monitoring script tracks these steps:
   └─ Checks for "Tests:.*passed"
 
 [3/4] Deploying to Cloudflare
-  ├─ npx wrangler deploy --config apps/portfolio/wrangler.jsonc --env production
+  ├─ npx wrangler deploy --config wrangler.jsonc --env production
   └─ Checks for "Published|Deployed|Success"
 
 [4/4] Verifying deployment
@@ -257,7 +257,7 @@ tmux new-session -d -s custom-deploy
 # Run commands
 tmux send-keys -t custom-deploy "npm run lint" C-m
 tmux send-keys -t custom-deploy "npm run build" C-m
-tmux send-keys -t custom-deploy "npm run deploy" C-m
+tmux send-keys -t custom-deploy "npm run deploy:wrangler:root" C-m
 
 # Monitor
 tmux attach -t custom-deploy

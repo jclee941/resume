@@ -400,8 +400,9 @@ npm test
 # Build
 npm run build
 
-# Deploy (manual)
-npm run deploy
+# Deploy (git push to master triggers Cloudflare Workers Builds;
+# manual `npm run deploy` is intentionally disabled)
+git push origin master
 
 # Check logs
 npm run monitor:logs

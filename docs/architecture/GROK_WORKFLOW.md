@@ -86,7 +86,8 @@ OpenCode implements Grok's recommendations, writes code, runs tests:
 Edit master/resume_master.md  # Apply content improvements
 npm run build                  # Regenerate worker.js
 npm test                       # Verify changes
-npm run deploy                 # Deploy if approved
+git push origin master         # Deploy if approved (Cloudflare Workers Builds;
+                                # manual `npm run deploy` is disabled)
 ```
 
 ### Total Workflow Cost

@@ -28,7 +28,7 @@ prevent breaking changes and security issues.
 ```bash
 # ❌ WRONG WORKFLOW
 vim apps/portfolio/worker.js  # Manual edit
-npm run deploy                              # Deploys manual changes
+git push origin master                      # Deploys manual changes
 # ... later ...
 npm run build                               # OVERWRITES manual changes!
 ```
@@ -39,7 +39,9 @@ npm run build                               # OVERWRITES manual changes!
 # ✅ CORRECT
 vim apps/portfolio/index.html  # Edit source HTML
 npm run build                               # Regenerate worker.js
-npm run deploy                              # Deploy generated artifact
+git push origin master                      # Deploy generated artifact
+                                             # (Cloudflare Workers Builds;
+                                             # manual `npm run deploy` is disabled)
 ```
 
 **References**:
@@ -344,13 +346,13 @@ production:
 # ❌ WRONG - Stale data deployed
 vim packages/data/resumes/master/resume_data.json
 npm run build:all  # Uses OLD data!
-npm run deploy
+git push origin master
 
 # ✅ CORRECT - Fresh data deployed
 vim packages/data/resumes/master/resume_data.json
 npm run sync:data  # Copies to all apps
 npm run build:all
-npm run deploy
+git push origin master
 ```
 
 **What `sync:data` Does**:

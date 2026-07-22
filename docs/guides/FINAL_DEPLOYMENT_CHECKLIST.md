@@ -98,7 +98,7 @@ npm run lighthouse
 npm run deploy:wrangler:root
 
 # Or use wrangler directly
-npx wrangler deploy --config apps/portfolio/wrangler.jsonc --env production
+npx wrangler deploy --config wrangler.jsonc --env production
 ```
 
 ### Step 4: Post-deployment Verification

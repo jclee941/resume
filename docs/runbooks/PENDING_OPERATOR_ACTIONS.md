@@ -46,8 +46,9 @@ The current KV-backed sliding-window has a non-atomic read-modify-write
 binding provides atomic semantics.
 
 - [ ] `RATE_LIMITER` binding created in the Cloudflare account dashboard
-- [ ] Binding wired into `apps/portfolio/wrangler.jsonc` (the merged worker
-      per ADR 0009 — `apps/job-dashboard/wrangler.jsonc` no longer exists)
+- [ ] Binding wired into the root `wrangler.jsonc` (the merged worker's
+      config per ADR 0009 — `apps/portfolio/wrangler.jsonc` and
+      `apps/job-dashboard/wrangler.jsonc` no longer exist)
 - [ ] Middleware migrated to consume the binding (recipe is in the file's
       header comment)
 - [ ] KV-based fallback removed once production traffic confirms parity
@@ -80,7 +81,7 @@ session whenever a probe surfaces a regression.
 
 ADR 0008 Migration Plan item 11. Producer functions are defined in code
 but Cloudflare queues (`crawl-tasks`, `notifications`) are not yet
-provisioned. The queue bindings in `apps/portfolio/wrangler.jsonc` are
+provisioned. The queue bindings in the root `wrangler.jsonc` are
 intentionally INACTIVE comments until the operator dispatches the
 provisioning workflow.
 
@@ -88,7 +89,7 @@ provisioning workflow.
       (workflow_dispatch, confirm input `PROVISION`)
 - [ ] Verify the 4 queues (`crawl-tasks`, `crawl-tasks-dlq`, `notifications`,
       `notifications-dlq`) appear in the Cloudflare dashboard
-- [ ] Replace the INACTIVE comment block in `apps/portfolio/wrangler.jsonc`
+- [ ] Replace the INACTIVE comment block in the root `wrangler.jsonc`
       with the active producer/consumer config (template in ADR 0008)
 - [ ] Push to master to redeploy with active bindings
 - [ ] Verify queue handlers process test messages

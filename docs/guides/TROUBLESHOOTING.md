@@ -150,7 +150,7 @@ wrangler login
 
 # Option 3: Set API token directly
 export CLOUDFLARE_API_TOKEN=your_token
-npx wrangler deploy --config apps/portfolio/wrangler.jsonc --env production
+npx wrangler deploy --config wrangler.jsonc --env production
 ```
 
 **See:** `docs/guides/CLOUDFLARE_TOKEN_SETUP.md` for token configuration.
