@@ -29,6 +29,7 @@ import {
   persistUpdatedCookies,
 } from './sync-form.js';
 import { appendPortfolioFields } from './sync-portfolio.js';
+import { appendPhotoUpload } from './sync-photo.js';
 import {
   loadOrRenewJobKoreaCookies,
   loadSavedJobKoreaCookies,
@@ -173,6 +174,10 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
         logger,
         getTimestamp: options.getTimestamp,
       });
+    }
+
+    if (process.env.JOBKOREA_SYNC_PHOTO === 'true') {
+      await appendPhotoUpload(page, { logger });
     }
 
     const currentFields = await page.evaluate(() => $('#frm1').serializeArray());
