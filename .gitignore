@@ -208,3 +208,10 @@ applications/_auto-apply-runs/
 
 # Local agent/orchestration runtime state — never tracked
 .omc/
+
+# Compiled Go helper binaries (build outputs; rebuild from the adjacent *.go sources)
+/tools/affected
+/tools/main
+/tools/ci/validate-migrations
+/tools/validate-cloudflare-native
+/tools/verify-agents-compliance
