@@ -51,6 +51,16 @@ describe('Worker Routes', () => {
     it('should handle preflight responses', () => {
       expect(code).toContain('preflightResponse');
     });
+
+    it('bypasses rate limiting only for the exact local environment (fail-closed)', () => {
+      // Local bypass must key on an explicit trusted signal (env.ENVIRONMENT), never the
+      // request hostname or a missing client IP, and must fail closed for production,
+      // preview, or any unset/misspelled value.
+      expect(code).toMatch(/ENVIRONMENT\s*===\s*['"]local['"]/);
+      expect(code).not.toContain('isLocalDevHost');
+      expect(code).not.toMatch(/ENVIRONMENT\s*!==\s*['"]production['"]/);
+      expect(code).not.toMatch(/clientIp\s*===\s*['"]unknown['"]/);
+    });
   });
 
   describe('generatePageRoutes', () => {

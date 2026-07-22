@@ -11,12 +11,15 @@ export default {
     const startTime = Date.now();
     const url = new URL(request.url);
     const clientIp = request.headers.get('cf-connecting-ip') || 'unknown';
-    const isLocalDevHost =
-      url.hostname === '127.0.0.1' || url.hostname === 'localhost' || url.hostname === '::1';
+    // Rate limiting is disabled ONLY when this worker runs as the explicit local
+    // dev environment (wrangler dev --var ENVIRONMENT:local). Fail-closed: any other
+    // value (production, preview, unset, misspelled) keeps the limiter on, and a
+    // missing cf-connecting-ip still maps to the shared "unknown" bucket above.
+    const isLocalDevEnv = env?.ENVIRONMENT === 'local';
 
     metrics.requests_total++;
 
-    const rateLimitStatus = isLocalDevHost
+    const rateLimitStatus = isLocalDevEnv
       ? {
           allowed: true,
           remaining: 999999,
