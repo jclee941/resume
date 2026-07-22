@@ -1,6 +1,7 @@
 import { jsonResponse } from '../middleware/cors.js';
 import { getConfig, saveConfig } from '../services/config.js';
 import { runBrowserSmoke } from '../handlers/browser/smoke.js';
+import { refreshWantedSession } from '../handlers/wanted/mint-session.js';
 import { enqueueTask } from '../queues/queue-enqueuer.js';
 import {
   getQueueCapability,
@@ -63,5 +64,12 @@ export function registerAdminRoutes(router, ctx) {
   router.get('/api/queue/status', async () => {
     const capability = getQueueCapability(env);
     return jsonResponse(capability, capability.available ? 200 : 503);
+  });
+
+  // Mint a fresh Wanted OneID session cookie and store it in KV as
+  // `auth:wanted` (Wave 1 root-unblocker for the Wanted sync/crawl paths).
+  router.post('/api/wanted/refresh-session', async () => {
+    const r = await refreshWantedSession(env);
+    return jsonResponse(r, r.ok ? 200 : 502);
   });
 }

@@ -18,6 +18,7 @@ const ADMIN_ROUTES = [
   '/api/report',
   '/api/queue/enqueue',
   '/api/browser',
+  '/api/wanted',
 ];
 
 const NO_AUTH_ROUTES = [
