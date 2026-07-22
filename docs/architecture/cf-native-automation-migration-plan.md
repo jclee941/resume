@@ -6,6 +6,20 @@
 
 The surface is already ~80% CF-native: deploy runs on Workers Builds (GitHub does only dry-runs), the daily job is a real Cron Trigger, 8 Workflows + Queues (with DLQs) + BrowserSessionDO + Browser Rendering + KV/D1 are all bound and deployed. The remaining work is NOT lift-and-shift; it is (1) wiring gaps where CF machinery exists but has no caller (ResumeSyncWorkflow has no cron, BrowserSessionDO has zero callers, session store is still a file), (2) moving pure-fetch auth (Wanted OneID token mint) server-side into scheduled()->KV, which is the root unblocker for everything downstream, and (3) porting a handful of Node-puppeteer browser crawlers onto the MYBROWSER binding. A hard tail of work is genuinely blocked by platform limits (non-headless/VNC captcha login, CDP scrape of a local human Chrome, JA3 TLS fingerprinting) and by design should stay off-CF, alongside all GitHub-native PR automation and the GitHub PR status-check matrix. The deploy/CI foundation is done, so waves are ordered by leverage: cheap additive wiring first, then activating dormant CF infra, then the browser ports that depend on it.
 
+## Live Validation & Activation (2026-07-22)
+
+- **Wave 2 broker validated LIVE**: `GET /job/api/browser/smoke` (admin) returned
+  `{"ok":true,"title":"Example Domain","elapsedMs":5863}` — cross-worker
+  `BrowserSessionDO.acquire -> puppeteer.connect(sessionId) -> newPage -> goto -> release`
+  works on real Cloudflare Browser Rendering. The Wave 2 "needs live validation" gate is cleared.
+- **cliproxy fully activated**: `CLIPROXY_BASE=https://cliproxy.jclee.me/v1` (committed) +
+  `CLIPROXY_API_KEY` set as a Worker Secret on `resume` (via `op://homelab/cloudflare` global key).
+  `isConfigured()` is now true → AI matching + JobKorea CAPTCHA vision solver live. Captcha gate cleared.
+- **Ops note**: the `op://homelab/resume/CLOUDFLARE_*` creds are stale (CF rejects them: 9109/9103);
+  only the dedicated `op://homelab/cloudflare` item's global key authenticates. Worth cleaning up the vault.
+- **Remaining for Wave 3**: JobKorea/Saramin anti-bot risk on CF egress IPs — now materially
+  mitigated because cliproxy can auto-solve the CAPTCHAs that egress triggers.
+
 ## Execution Status (2026-07-21)
 
 Executed autonomously (config-only, CI-verified, reversible):
