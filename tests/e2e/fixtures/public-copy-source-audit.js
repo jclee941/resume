@@ -21,9 +21,17 @@ const JSON_PATH = /^\$(?:(?:\.[A-Za-z_$][A-Za-z0-9_$]*)|(?:\[(?:0|[1-9]\d*)\]))*
 const { isFragmentRecord, isFrozenLedgerState, isLedgerSelector, isRfc6901Pointer } =
   require('./public-copy-ledger-serializer');
 
+function hasControlCharacter(value) {
+  for (const character of value) {
+    const code = character.codePointAt(0);
+    if (code < 0x20 || code === 0x7f) return true;
+  }
+  return false;
+}
+
 function isRepoRelative(value) {
   return typeof value === 'string' && value && !value.startsWith('/') && !value.includes('\\')
-    && !/^[A-Za-z]:\//.test(value) && !/[\x00-\x1f\x7f]/.test(value)
+    && !/^[A-Za-z]:\//.test(value) && !hasControlCharacter(value)
     && value.split('/').every((part) => part && part !== '.' && part !== '..');
 }
 
