@@ -97,7 +97,7 @@
       "teamSize": "Information Security Automation Cell",
       "myRole": "SIEM and firewall-policy automation design",
       "workType": "Freelance",
-      "description": "For the Nextrade trading system, wired Splunk ES Saved Searches to webhook relay, Slack/SMS alerts, and FortiManager JSON-RPC API policy lookups so a single detection runs straight through to the response. FortiGate events and policy lookups route through Splunk, where a Python/Docker state tracker follows each event and Claude AI-assisted review cuts the repetitive manual checks and false-positive triage. Detection rules, alert conditions, and policy-lookup results stay on record with their change history for later review.",
+      "description": "For the Nextrade trading system, wired Splunk ES Saved Searches to webhook relay, Slack/SMS alerting, and FortiManager JSON-RPC API policy lookups so a single detection runs straight through to the response. FortiGate events and policy lookups route through Splunk, where a Python/Docker state tracker follows each event and Claude AI-assisted review cuts the repetitive manual checks and false-positive triage. Detection rules, alert conditions, and policy-lookup results stay on record with their change history for later review.",
       "wantedSummary": "Splunk-Fortinet integration, FortiManager API, and Claude AI-assisted review for automated security-event analysis and firewall-policy lookup",
       "note": "ITCEN CTS engagement for Nextrade security-event response architecture automation",
       "projects": [
