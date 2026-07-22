@@ -4,42 +4,97 @@ import { CONFIG } from '../constants.js';
 import { log } from '../sync-logger.js';
 
 /**
- * Candidate selectors for the JobKorea resume photo <input type="file">.
- * BEST-EFFORT pending live DOM/HAR verification against a real session — mirrors
- * the same caveat already used for skills mapping in jobkorea-sections.js.
- * See docs/architecture/RESUME_SYNC_AUDIT_2026-04-29.md.
+ * JobKorea resume photo upload selectors — CONFIRMED via live read-only DOM
+ * probe of the resume edit page on 2026-07-22 (see jobkorea-handler/_photo-probe.mjs).
+ *
+ * The resume edit page has NO static photo <input type=file> — the only static
+ * file input is the portfolio one (#uploadPortfolioFile, name=File_Co_Name),
+ * which the old `#frm1 input[type=file]` fallback wrongly matched. The real
+ * flow is a popup:
+ *
+ *   1. div.picture holds the trigger: button.buttonChangePicture ("사진변경",
+ *      shown when a photo already exists) or a.buttonAddFile ("사진등록",
+ *      shown when none exists). Clicking the visible one opens a popup at
+ *      https://www.jobkorea.co.kr/User/MyPage/Photo?re_url=<edit-url>&callback=photoChangeCallback
+ *   2. In the popup, the file input is #up_file (name="up_file").
+ *   3. The popup form is #form1, posting multipart/form-data to
+ *      https://file2.jobkorea.co.kr/Net/UserPhoto/Upload.
+ *   4. The popup submit button is #btn_modify ("등록하기").
+ *
+ * Residual assumption: no separate crop/confirm step was observed beyond
+ * #btn_modify. If JobKorea later adds a crop UI, this flow needs updating.
  */
-const PHOTO_INPUT_SELECTORS = [
-  'input[type=file][name*=photo i]',
-  'input[type=file][name*=Photo]',
-  'input[type=file][id*=photo i]',
-  '.resume-photo input[type=file]',
-  '#frm1 input[type=file]',
-];
-
-// BEST-EFFORT confirm/upload button clicked after setInputFiles, if present.
-const PHOTO_CONFIRM_BUTTON_SELECTOR =
-  '.resume-photo .btnUpload, .resume-photo button[type=button], button[name*=photo i]';
+const PHOTO_TRIGGER_SELECTORS = ['button.buttonChangePicture', 'a.buttonAddFile'];
+const POPUP_FILE_INPUT = '#up_file';
+const POPUP_FILE_INPUT_FALLBACK = 'input[name="up_file"]';
+const POPUP_SUBMIT = '#btn_modify';
+const POPUP_SUBMIT_TEXT_FALLBACK = '등록하기';
+const POPUP_EVENT_TIMEOUT_MS = 15000;
+const POPUP_SUBMIT_TIMEOUT_MS = 10000;
+const POPUP_POST_SUBMIT_WAIT_MS = 2500;
 
 /**
- * Upload the profile photo via Playwright setInputFiles against a best-effort
- * candidate selector list, trying each until one resolves on the page.
+ * Find the visible photo-upload trigger on the resume edit page, trying
+ * PHOTO_TRIGGER_SELECTORS in order and returning the first that resolves
+ * to a visible element.
+ * @param {import('playwright').Page} page
+ * @returns {Promise<import('playwright').Locator|null>}
+ */
+async function findVisiblePhotoTrigger(page) {
+  for (const selector of PHOTO_TRIGGER_SELECTORS) {
+    const locator = page.locator(selector).first();
+    const visible = await locator.isVisible().catch(() => false);
+    if (visible) return locator;
+  }
+  return null;
+}
+
+/**
+ * Upload the profile photo via the JobKorea photo-change popup: click the
+ * visible trigger (button.buttonChangePicture / a.buttonAddFile), capture the
+ * popup window, set the file on #up_file, and submit via #btn_modify.
  * @param {import('playwright').Page} page
  * @param {string} photoPath
- * @returns {Promise<boolean>} true if an input was found and populated, false otherwise
+ * @returns {Promise<boolean>} true if the popup flow completed, false otherwise
  */
 async function defaultUploadPhoto(page, photoPath) {
-  for (const selector of PHOTO_INPUT_SELECTORS) {
-    const input = await page.$(selector);
-    if (!input) continue;
-    await page.setInputFiles(selector, photoPath);
-    const confirmButton = await page.$(PHOTO_CONFIRM_BUTTON_SELECTOR);
-    if (confirmButton) {
-      await confirmButton.click();
-    }
-    return true;
+  const trigger = await findVisiblePhotoTrigger(page);
+  if (!trigger) return false;
+
+  let popup;
+  try {
+    [popup] = await Promise.all([
+      page.waitForEvent('popup', { timeout: POPUP_EVENT_TIMEOUT_MS }),
+      trigger.click(),
+    ]);
+  } catch {
+    return false;
   }
-  return false;
+  if (!popup) return false;
+
+  try {
+    await popup.waitForLoadState('domcontentloaded', { timeout: POPUP_EVENT_TIMEOUT_MS });
+
+    try {
+      await popup.setInputFiles(POPUP_FILE_INPUT, photoPath);
+    } catch {
+      await popup.setInputFiles(POPUP_FILE_INPUT_FALLBACK, photoPath);
+    }
+
+    try {
+      await popup.click(POPUP_SUBMIT, { timeout: POPUP_SUBMIT_TIMEOUT_MS });
+    } catch {
+      await popup
+        .getByText(POPUP_SUBMIT_TEXT_FALLBACK, { exact: true })
+        .click({ timeout: POPUP_SUBMIT_TIMEOUT_MS });
+    }
+
+    await popup.waitForTimeout(POPUP_POST_SUBMIT_WAIT_MS);
+    return true;
+  } catch {
+    await popup.close().catch(() => {});
+    return false;
+  }
 }
 
 function buildPhotoUploadError(photoPath, timestamp) {
