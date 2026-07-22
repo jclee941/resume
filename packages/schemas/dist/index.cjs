@@ -368,19 +368,10 @@ var resumeItemSchema = import_zod9.z.object({
   pdfUrl: import_zod9.z.string().optional(),
   docxUrl: import_zod9.z.string().optional()
 });
-var fullStackEvidenceSchema = import_zod9.z.object({
-  userSurface: import_zod9.z.string().min(1).optional(),
-  backendApi: import_zod9.z.string().min(1).optional(),
-  dataAsync: import_zod9.z.string().min(1).optional(),
-  securityReliability: import_zod9.z.string().min(1).optional(),
-  deliveryOperations: import_zod9.z.string().min(1).optional(),
-  architectureSteps: import_zod9.z.array(import_zod9.z.string().min(1)).min(2).max(6).optional()
-}).strict();
 var projectItemSchema = import_zod9.z.object({
   title: import_zod9.z.string().min(1),
   tech: import_zod9.z.string().min(1),
-  description: import_zod9.z.string().min(1),
-  fullStackEvidence: fullStackEvidenceSchema.optional()
+  description: import_zod9.z.string().min(1)
 });
 var certificationItemSchema = import_zod9.z.object({
   name: import_zod9.z.string().min(1),
