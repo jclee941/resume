@@ -133,8 +133,8 @@ async function defaultUploadPhoto(page, photoPath) {
 
 function buildPhotoUploadError(photoPath, timestamp) {
   const error = new Error(
-    'JobKorea profile photo upload was not accepted — the change-photo popup did not ' +
-      'close cleanly. Check the image meets JobKorea requirements (min 150x210px; ' +
+    'JobKorea profile photo upload failed — the change-photo popup did not close ' +
+      'cleanly. Check the image meets JobKorea requirements (min 150x210px; ' +
       `gif/jpg/jpeg/png only) and that the 사진변경 popup flow is reachable (path=${photoPath}, timestamp=${timestamp})`
   );
   error.failLoud = true;
