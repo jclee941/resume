@@ -76,6 +76,14 @@ func waitForDeployment(parent context.Context, config WaitConfig) (WaitReceipt, 
 		receipt.Attempts++
 		deployedSHA, err := fetchHealth(ctx, config.HTTPClient, config.HealthURL)
 		if err != nil {
+			// The HTTP round-trip can fail because the poll context's deadline
+			// expired mid-request (e.g. a slow health endpoint), racing with the
+			// ctx.Done() case below. Surface that as ErrTimeout instead of a raw
+			// "context deadline exceeded" so callers get a consistent, wrapped
+			// error regardless of which point in the loop the deadline hit.
+			if ctx.Err() != nil {
+				return receipt, fmt.Errorf("expected %s after %d attempts: %w", config.ExpectedSHA, receipt.Attempts, ErrTimeout)
+			}
 			return receipt, err
 		}
 		if deployedSHA == config.ExpectedSHA {

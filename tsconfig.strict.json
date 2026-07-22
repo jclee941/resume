@@ -1,0 +1,47 @@
+{
+  "//": [
+    "This is the RATCHETING strict typecheck gate — the only one that can actually fail CI.",
+    "`npm run typecheck` (tsconfig.json) cannot fail by design: tsconfig.base.json sets",
+    "checkJs:false, so every file in its .js `include` glob is parsed but never type-checked.",
+    "This file turns checkJs on and lists only directories/files VERIFIED to be zero-error",
+    "under `--checkJs --strict` today. Add new entries ONE AT A TIME: run",
+    "`npx tsc -p tsconfig.strict.json --noEmit` after each addition and only keep it if the",
+    "exit code stays 0. Do not silence errors with @ts-ignore/@ts-nocheck/any-casts — fix the",
+    "source or leave the file out and note it as future work."
+  ],
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "checkJs": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": [
+    "packages/env/src/**/*",
+    "packages/types/src/job-categories.js",
+    "packages/types/src/notification.js",
+    "packages/types/src/queue.js",
+    "packages/types/src/resume.js",
+    "packages/types/src/session.js",
+    "packages/schemas/src/common.js",
+    "packages/schemas/src/auth.js",
+    "packages/schemas/src/resume.js",
+    "packages/schemas/src/application-dashboard.js",
+    "tools/scripts/dev/miniflare.config.js",
+    "tools/scripts/utils/bump-version.js",
+    "tools/scripts/utils/record-demo-video.js",
+    "tools/scripts/utils/resume-data-paths.js"
+  ],
+  "exclude": [
+    "packages/env/src/__tests__/**"
+  ]
+}
