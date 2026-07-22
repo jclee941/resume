@@ -4,8 +4,9 @@ import { CONFIG } from '../constants.js';
 import { log } from '../sync-logger.js';
 
 /**
- * JobKorea resume photo upload selectors — CONFIRMED via live read-only DOM
- * probe of the resume edit page on 2026-07-22 (see jobkorea-handler/_photo-probe.mjs).
+ * JobKorea resume photo upload selectors — CONFIRMED via a LIVE run of the
+ * popup flow on 2026-07-22 (see jobkorea-handler/_photo-probe.mjs for the
+ * earlier read-only DOM probe).
  *
  * The resume edit page has NO static photo <input type=file> — the only static
  * file input is the portfolio one (#uploadPortfolioFile, name=File_Co_Name),
@@ -17,21 +18,33 @@ import { log } from '../sync-logger.js';
  *      shown when none exists). Clicking the visible one opens a popup at
  *      https://www.jobkorea.co.kr/User/MyPage/Photo?re_url=<edit-url>&callback=photoChangeCallback
  *   2. In the popup, the file input is #up_file (name="up_file").
- *   3. The popup form is #form1, posting multipart/form-data to
+ *   3. Setting the file triggers a Jcrop crop UI (`.jcrop-holder` and its
+ *      `.jcrop-hline` / `.jcrop-vline` / `.jcrop-tracker` handles) with the
+ *      instruction "파일 선택 후 마우스를 드래그하여 사진 크기를 편집하세요." JobKorea
+ *      auto-selects a crop region once Jcrop initializes, so no manual drag
+ *      is required. Requirement text: "권장 사진 사이즈는 150X210픽셀이며, gif, jpg,
+ *      jpeg, png 이미지 파일만 등록 가능합니다." — the source image must be at least
+ *      150x210px and gif/jpg/jpeg/png; only gif/jpg/jpeg/png are accepted.
+ *   4. The popup form is #form1, posting multipart/form-data to
  *      https://file2.jobkorea.co.kr/Net/UserPhoto/Upload.
- *   4. The popup submit button is #btn_modify ("등록하기").
- *
- * Residual assumption: no separate crop/confirm step was observed beyond
- * #btn_modify. If JobKorea later adds a crop UI, this flow needs updating.
+ *   5. The popup submit button is #btn_modify ("등록하기"). On ACCEPTANCE,
+ *      JobKorea posts to /Net/UserPhoto/Modify and CLOSES the popup (firing
+ *      callback photoChangeCallback) — that popup close is the only reliable
+ *      success signal. On REJECTION (e.g. source smaller than 150x210), it
+ *      shows a JS alert dialog ("새로운 이미지를 업로드해주세요.") and the popup STAYS
+ *      OPEN with the photo unchanged — a rejection must be treated as failure
+ *      even though the click itself succeeds.
  */
 const PHOTO_TRIGGER_SELECTORS = ['button.buttonChangePicture', 'a.buttonAddFile'];
 const POPUP_FILE_INPUT = '#up_file';
 const POPUP_FILE_INPUT_FALLBACK = 'input[name="up_file"]';
+const CROP_HOLDER = '.jcrop-holder';
 const POPUP_SUBMIT = '#btn_modify';
 const POPUP_SUBMIT_TEXT_FALLBACK = '등록하기';
 const POPUP_EVENT_TIMEOUT_MS = 15000;
 const POPUP_SUBMIT_TIMEOUT_MS = 10000;
-const POPUP_POST_SUBMIT_WAIT_MS = 2500;
+const CROP_INIT_TIMEOUT_MS = 6000;
+const POPUP_CLOSE_TIMEOUT_MS = 6000;
 
 /**
  * Find the visible photo-upload trigger on the resume edit page, trying
@@ -52,10 +65,14 @@ async function findVisiblePhotoTrigger(page) {
 /**
  * Upload the profile photo via the JobKorea photo-change popup: click the
  * visible trigger (button.buttonChangePicture / a.buttonAddFile), capture the
- * popup window, set the file on #up_file, and submit via #btn_modify.
+ * popup window, set the file on #up_file, wait for the Jcrop crop UI to
+ * initialize, and submit via #btn_modify. Success is determined by the
+ * popup closing (JobKorea posts to /Net/UserPhoto/Modify and closes on
+ * acceptance); rejection (e.g. source smaller than 150x210px) surfaces as a
+ * JS alert dialog and leaves the popup open, which is treated as failure.
  * @param {import('playwright').Page} page
  * @param {string} photoPath
- * @returns {Promise<boolean>} true if the popup flow completed, false otherwise
+ * @returns {Promise<boolean>} true only if the popup closed with no rejection dialog
  */
 async function defaultUploadPhoto(page, photoPath) {
   const trigger = await findVisiblePhotoTrigger(page);
@@ -72,6 +89,12 @@ async function defaultUploadPhoto(page, photoPath) {
   }
   if (!popup) return false;
 
+  let rejectionMessage = null;
+  popup.on('dialog', async (dialog) => {
+    rejectionMessage = dialog.message();
+    await dialog.dismiss().catch(() => {});
+  });
+
   try {
     await popup.waitForLoadState('domcontentloaded', { timeout: POPUP_EVENT_TIMEOUT_MS });
 
@@ -81,6 +104,8 @@ async function defaultUploadPhoto(page, photoPath) {
       await popup.setInputFiles(POPUP_FILE_INPUT_FALLBACK, photoPath);
     }
 
+    await popup.waitForSelector(CROP_HOLDER, { timeout: CROP_INIT_TIMEOUT_MS }).catch(() => {});
+
     try {
       await popup.click(POPUP_SUBMIT, { timeout: POPUP_SUBMIT_TIMEOUT_MS });
     } catch {
@@ -89,7 +114,16 @@ async function defaultUploadPhoto(page, photoPath) {
         .click({ timeout: POPUP_SUBMIT_TIMEOUT_MS });
     }
 
-    await popup.waitForTimeout(POPUP_POST_SUBMIT_WAIT_MS);
+    const closed = await popup
+      .waitForEvent('close', { timeout: POPUP_CLOSE_TIMEOUT_MS })
+      .then(() => true)
+      .catch(() => false);
+
+    if (rejectionMessage) return false;
+    if (!closed) {
+      await popup.close().catch(() => {});
+      return false;
+    }
     return true;
   } catch {
     await popup.close().catch(() => {});
@@ -99,8 +133,9 @@ async function defaultUploadPhoto(page, photoPath) {
 
 function buildPhotoUploadError(photoPath, timestamp) {
   const error = new Error(
-    'JobKorea profile photo upload failed — no matching file input found; verify ' +
-      `resume edit page photo selector via HAR capture (path=${photoPath}, timestamp=${timestamp})`
+    'JobKorea profile photo upload was not accepted — the change-photo popup did not ' +
+      'close cleanly. Check the image meets JobKorea requirements (min 150x210px; ' +
+      `gif/jpg/jpeg/png only) and that the 사진변경 popup flow is reachable (path=${photoPath}, timestamp=${timestamp})`
   );
   error.failLoud = true;
   return error;
