@@ -13,7 +13,7 @@ import json
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable
+from typing import Callable, TypeAlias
 
 try:
     from pptx import Presentation
@@ -23,23 +23,32 @@ except ImportError:
     sys.exit(1)
 
 from pptx.util import Pt
-from pptx_utils import apply_korean_font_to_table
+from pptx.shapes.graphfrm import GraphicFrame
+from pptx.table import Table
+from .pptx_layouts import (
+    PPTXLayoutProfile,
+    SlideSizeMismatchError,
+)
+from .pptx_publication import publish_pptx
+from .pptx_utils import apply_korean_font_to_table
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
+JSONValue: TypeAlias = str | int | float | bool | None | list["JSONValue"] | dict[str, "JSONValue"]
+ResumeData: TypeAlias = dict[str, JSONValue]
+TableHandler: TypeAlias = Callable[[Table, ResumeData, PPTXLayoutProfile], None]
 
-@dataclass
+@dataclass(frozen=True, slots=True)
 class TemplateSpec:
     """Template specification for PPTX generation."""
     name: str
     source_path: Path
     template_path: Path
     output_path: Path
+    layout_profile: PPTXLayoutProfile
     # Maps (rows, cols) -> handler function
-    table_handlers: dict = field(default_factory=dict)
-    # Optional: title font size (default 24pt)
-    title_size_pt: int = 24
+    table_handlers: dict[tuple[int, int], TableHandler] = field(default_factory=dict)
 
 
 def normalize_slide_title(slide, size_pt: int = 24) -> bool:
@@ -71,13 +80,18 @@ def normalize_slide_title(slide, size_pt: int = 24) -> bool:
     return False
 
 
-def get_current_age(birth_date_str: str) -> int:
+def get_current_age(birth_date_str: str, today: datetime.date | None = None) -> int:
     """Calculate current age from birth date string (YYYY.MM.DD or YYYY-MM-DD)."""
-    birth_year = int(birth_date_str.split(".")[0].split("-")[0])
-    return datetime.date.today().year - birth_year
+    birth_date = datetime.date.fromisoformat(birth_date_str.replace(".", "-"))
+    current_date = today or datetime.date.today()
+    birthday_has_not_arrived = (current_date.month, current_date.day) < (
+        birth_date.month,
+        birth_date.day,
+    )
+    return current_date.year - birth_date.year - int(birthday_has_not_arrived)
 
 
-def generate(spec: TemplateSpec, source: dict = None) -> Path:
+def generate(spec: TemplateSpec, source: ResumeData | None = None) -> Path:
     """
     Generate PPTX from template using source data.
     
@@ -92,20 +106,35 @@ def generate(spec: TemplateSpec, source: dict = None) -> Path:
     if source is None:
         logger.info(f"📄 Loading: {spec.source_path}")
         with open(spec.source_path, "r", encoding="utf-8") as f:
-            source = json.load(f)
+            source_data: ResumeData = json.load(f)
+    else:
+        source_data = source
     
     logger.info(f"📝 Filling: {spec.template_path}")
     prs = Presentation(str(spec.template_path))
+    actual_width_emu = int(prs.slide_width or 0)
+    actual_height_emu = int(prs.slide_height or 0)
+    if (actual_width_emu, actual_height_emu) != (
+        spec.layout_profile.slide_width_emu,
+        spec.layout_profile.slide_height_emu,
+    ):
+        raise SlideSizeMismatchError(
+            profile_name=spec.layout_profile.name,
+            expected_width_emu=spec.layout_profile.slide_width_emu,
+            expected_height_emu=spec.layout_profile.slide_height_emu,
+            actual_width_emu=actual_width_emu,
+            actual_height_emu=actual_height_emu,
+        )
     
-    unhandled_tables = []
+    unhandled_tables: list[str] = []
     
     for slide_idx, slide in enumerate(prs.slides):
         # Normalize title
-        normalize_slide_title(slide, spec.title_size_pt)
+        normalize_slide_title(slide, spec.layout_profile.title_size_pt)
         
         # Process tables
         for shape in slide.shapes:
-            if not shape.has_table:
+            if not isinstance(shape, GraphicFrame) or not shape.has_table:
                 continue
             
             tbl = shape.table
@@ -114,7 +143,7 @@ def generate(spec: TemplateSpec, source: dict = None) -> Path:
             
             handler = spec.table_handlers.get(key)
             if handler:
-                handler(tbl, source)
+                handler(tbl, source_data, spec.layout_profile)
                 apply_korean_font_to_table(tbl)
             else:
                 unhandled_tables.append(f"Slide {slide_idx + 1}: {rows}x{cols}")
@@ -123,57 +152,8 @@ def generate(spec: TemplateSpec, source: dict = None) -> Path:
     if unhandled_tables:
         logger.warning(f"⚠️  Unhandled tables: {', '.join(unhandled_tables)}")
     
-    # Save output
-    spec.output_path.parent.mkdir(parents=True, exist_ok=True)
-    prs.save(str(spec.output_path))
+    publish_pptx(prs, spec.output_path)
     
     logger.info(f"✅ Generated: {spec.output_path}")
-    if "personal" in source:
-        logger.info(f"   - Name: {source['personal'].get('name', 'N/A')}")
-    if "summary" in source:
-        logger.info(f"   - Experience: {source['summary'].get('totalExperience', 'N/A')}")
-    
+    print(f"Layout profile: {spec.layout_profile.name}")
     return spec.output_path
-
-
-def generate_from_cli(template_name: str, source_path: Path = None, output_path: Path = None) -> Path:
-    """
-    CLI wrapper for generate().
-    
-    Args:
-        template_name: Template name ("ta" or "shinhan")
-        source_path: Optional override for source data path
-        output_path: Optional override for output path
-    
-    Returns:
-        Path to generated output file
-    """
-    # Import here to avoid circular dependency
-    from pptx_templates import TEMPLATES
-    
-    if template_name not in TEMPLATES:
-        raise ValueError(f"Unknown template: {template_name}. Available: {list(TEMPLATES.keys())}")
-    
-    spec = TEMPLATES[template_name]
-    
-    # Override paths if provided
-    if source_path:
-        spec = TemplateSpec(
-            name=spec.name,
-            source_path=source_path,
-            template_path=spec.template_path,
-            output_path=output_path or spec.output_path,
-            table_handlers=spec.table_handlers,
-            title_size_pt=spec.title_size_pt,
-        )
-    elif output_path:
-        spec = TemplateSpec(
-            name=spec.name,
-            source_path=spec.source_path,
-            template_path=spec.template_path,
-            output_path=output_path,
-            table_handlers=spec.table_handlers,
-            title_size_pt=spec.title_size_pt,
-        )
-    
-    return generate(spec)
