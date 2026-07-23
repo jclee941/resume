@@ -19,7 +19,7 @@
   "scripts": {
     "strip-exif": "exiftool -all= -overwrite_original apps/portfolio/src/images/*.png apps/portfolio/src/images/*.webp 2>/dev/null || echo 'exiftool not found - skipping'",
     "sync:data": "node tools/scripts/utils/sync-resume-data.js",
-    "sync:pptx": "python3 tools/scripts/build/generate_shinhan_pptx.py",
+    "sync:pptx": "python3 tools/scripts/build/generate_ta_pptx.py",
     "sync:pdf": "go -C tools/scripts run ./build/pdf-generator master && go -C tools/scripts run ./build/pdf-generator full",
     "sync:all": "npm run sync:data && npm run sync:pdf && npm run sync:pptx",
     "sync:jobkorea": "npm run op:run -- --env-file ../../.env.1password -- env JOBKOREA_SYNC_MODE=hybrid-api node ../../apps/job-server/scripts/profile-sync.js jobkorea --apply",
