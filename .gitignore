@@ -18,6 +18,12 @@ tools/scripts/build/*
 !tools/scripts/build/AGENTS.md
 !tools/scripts/build/pdf-generator/
 !tools/scripts/build/pdf-generator/**
+!tools/scripts/build/__init__.py
+!tools/scripts/build/pptx_layouts.py
+!tools/scripts/build/pptx_publication.py
+!tools/scripts/build/pptx_ta.py
+!tools/scripts/build/test_pptx_profiles.py
+!tools/scripts/build/test_pptx_publication.py
 *.tsbuildinfo
 
 # Generated files — portfolio worker bundle and propagated SSoT snapshots
