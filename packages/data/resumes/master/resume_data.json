@@ -44,7 +44,7 @@
       "Fortinet",
       "관측성"
     ],
-    "profileStatement": "본인가 심사와 감사 대응에서 '왜 그렇게 결정했는가'를 데이터로 남기는 일에 집중해 온 보안 인프라·자동화 엔지니어입니다. KAI 폐쇄망 OA 운영에서 출발해 FSDC 금감원 감사, 넥스트레이드 구축과 금융위 본인가, 자동화 단계까지 같은 원칙을 이어왔습니다. FortiGate HA·망분리, Splunk ES 탐지 룰, Slack/SMS 알림, FortiManager API 조회를 하나의 대응 체계로 연결해 담당자가 장비 콘솔을 오가며 확인하던 절차를 줄였습니다. AI가 쓴 코드와 알림도 같은 검증 체계를 거쳐야 한다고 보고, LLM PR 리뷰 자동화(jclee-bot)와 MCP 서버를 직접 운영하며 AI 출력물의 검증 경계를 설계합니다. 현재는 보안 자동화·보안 인프라·SIEM 엔지니어링 역할의 제안과 면접을 우선 검토합니다.",
+    "profileStatement": "본인가 심사와 감사 대응에서 '왜 그렇게 결정했는가'를 데이터로 남기는 일에 집중해 온 보안·인프라 엔지니어입니다. KAI 폐쇄망 OA 운영에서 출발해 FSDC 금감원 감사, 넥스트레이드 구축과 금융위 본인가, 자동화 단계까지 같은 원칙을 이어왔습니다. FortiGate HA·망분리, Splunk ES 탐지 룰, Slack/SMS 알림, FortiManager API 조회를 하나의 대응 체계로 연결해 담당자가 장비 콘솔을 오가며 확인하던 절차를 줄였습니다. AI가 쓴 코드와 알림도 같은 검증 체계를 거쳐야 한다고 보고, LLM PR 리뷰 자동화(jclee-bot)와 MCP 서버를 직접 운영하며 AI 출력물의 검증 경계를 설계합니다. 현재는 보안·인프라 엔지니어링과 SIEM 엔지니어링 역할의 제안과 면접을 우선 검토합니다.",
     "coreCompetencies": [
       "FortiGate HA·망분리·엔드포인트 보안 운영 내역을 본인가 심사 자료로 제출해 심사 질의에 직접 답변한 경험",
       "Splunk ES Saved Search, Webhook, Slack/SMS 알림을 하나로 이어 보안 이벤트를 인지·분류·알림까지 한 번에 처리하는 운영 체계",
@@ -96,8 +96,8 @@
     "status": "구직 중",
     "availability": "즉시 투입 가능",
     "desiredRoles": [
-      "보안 자동화",
-      "보안 인프라",
+      "보안 엔지니어링",
+      "인프라 엔지니어링",
       "SIEM 엔지니어링",
       "Observability"
     ]
@@ -834,7 +834,7 @@
       "name": "Terraform Homelab IaC",
       "period": "2024.06 ~ 현재",
       "githubUrl": "https://github.com/jclee941/terraform",
-      "description": "NVMe 스토리지 기반 Proxmox VE, Cloudflare DNS/Workers, k3s 홈랩 인프라를 GUI로 관리하다 보니 변경 이력 추적과 재구축이 어려웠습니다. Proxmox VM/LXC, Cloudflare DNS·Workers·WAF, k3s bootstrap 리소스를 Terraform module로 옮기고 PR마다 plan 검증을 거치게 했습니다. GUI 변경을 줄이고, 인프라 변경 이력을 Git 기준으로 추적하도록 전환했습니다.",
+      "description": "홈랩 GUI 변경은 추적·재현이 어려웠습니다. Proxmox VM/LXC, Cloudflare DNS·Workers·WAF, k3s bootstrap 리소스를 Terraform module로 옮기고 PR마다 plan 검증을 거치게 했습니다. GUI 변경을 줄이고, 인프라 변경 이력을 Git 기준으로 추적하도록 전환했습니다.",
       "highlights": [
         "NVMe 기반 Proxmox 마이그레이션 이후 변경 이력을 Git으로 추적하는 IaC 전환",
         "DNS·Edge 설정을 코드로 관리해 일관성 유지",
@@ -1174,8 +1174,8 @@
       "원격·하이브리드 협의"
     ],
     "roles": [
-      "보안 자동화",
-      "보안 인프라",
+      "보안 엔지니어링",
+      "인프라 엔지니어링",
       "SIEM 엔지니어링",
       "Observability"
     ],
@@ -1193,7 +1193,7 @@
   },
   "coverLetter": {
     "ko": {
-      "headline": "설명 가능한 보안 자동화를 설계하는 엔지니어",
+      "headline": "설명 가능한 보안·인프라 시스템을 설계하는 엔지니어",
       "paragraphs": [
         "커리어는 한국항공우주산업(KAI) 폐쇄망 IT 환경에서 서버 패치 일정을 엑셀로 관리하던 일에서 시작했습니다. 같은 작업을 반복하면서 보안 엔지니어링의 가치는 사고가 없기를 바라는 데 있지 않고, 반복 가능한 절차와 기록으로 위험을 줄이는 데 있다는 확신이 생겼습니다. 이후 RHCSA·LPIC-1·리눅스마스터 2급을 취득하며 Linux 시스템 기초를 다졌고, 그 기반을 현장 자동화 경험으로 이어갔습니다.",
         "메타넷엠플랫폼에서는 Ansible과 Python으로 컨택센터 NAC 정책 배포를 반복 가능한 절차로 바꿨습니다. 조인트리에서는 국민대 차세대 정보시스템에 NSX-T 마이크로세그멘테이션을 적용해 동서 트래픽 정책을 세분화하고, NAC와 DLP 탐지 정책을 재정비했습니다. 도구는 바뀌었지만, 반복적으로 수작업이 필요한 절차는 스크립트와 문서로 남긴다는 원칙은 같았습니다.",
@@ -1204,7 +1204,7 @@
       "closing": "반복 작업을 줄이고 운영 기록을 남기는 방식으로, 귀사의 보안 인프라가 풀어야 할 다음 문제를 함께 정리하겠습니다."
     },
     "en": {
-      "headline": "An engineer who designs explainable security automation",
+      "headline": "An engineer who designs explainable security and infrastructure systems",
       "paragraphs": [
         "My career started inside Korea Aerospace Industries' closed network, tracking patch schedules for the closed-network Linux fleet on an Excel sheet. The repetition drove one conviction: security engineering is not about hoping incidents never happen, it is about lowering risk through repeatable procedures, automation, and evidence. RHCSA, LPIC-1, and Linux Master Level 2 came next, rebuilding the Linux foundation, and that base carried directly into hands-on automation work.",
         "At Metanet M Platform I picked up Ansible and Python, and turned the NAC policy deployment procedure into a single reviewable workflow for contact-center operations. At Jointree, NSX-T microsegmentation on Kookmin University's next-generation information system closed the east-west traffic blind spots, and the NAC and DLP detection policies got the same reviewable treatment. The tools changed, but the principle held: any task that takes repeated manual effort is a candidate for a runbook.",
@@ -1215,7 +1215,7 @@
       "closing": "I will work with you to organize the next problem your security infrastructure needs to solve, in the way of reducing repeated work and leaving operating evidence behind."
     },
     "ja": {
-      "headline": "説明可能なセキュリティ自動化を設計するエンジニア",
+      "headline": "説明可能なセキュリティ・インフラシステムを設計するエンジニア",
       "paragraphs": [
         "キャリアの出発点は、韓国航空宇宙産業(KAI)の閉鎖網IT環境で、LinuxサーバのパッチスケジュールをExcelに手書きしていた現場でした。毎週同じ作業を繰り返す中で確信したのは、セキュリティエンジニアリングの価値は事故を願わないことではなく、反復可能な手順と自動化と根拠でリスクを下げることにある、という点です。RHCSA、LPIC-1、Linuxマスター2級を連続取得してLinux基盤を再構築し、その土台を現場の自動化経験へつなげました。",
         "メタネットMプラットフォームでAnsibleとPythonを引き合いに、コンタクトセンタのNACポリシー展開手順を一つのレビュー可能なワークフローに整理しました。ジョイントリーでは国民大学校の次世代情報システムにNSX-Tマイクロセグメンテーションを適用し、東西トラフィックの盲点を塞ぎ、NACとDLPの検知ポリシーを同じ基準で再整備しています。ツールは入れ替わっても、手が繰り返しかかる作業は標準化の対象という視点は変わっていません。",

@@ -37,22 +37,24 @@ describe('portfolio hiring appeal copy', () => {
   test('Korean hero gives recruiters a direct hiring-decision path', () => {
     const html = buildHeroContent('ko');
 
-    expect(html).toContain('보안 자동화 · 보안 인프라 면접 제안 가능');
+    expect(html).toContain('보안·인프라 엔지니어 면접 제안을 환영합니다.');
     expect(html).toContain(
-      '넥스트레이드 보안 인프라 구축·자동화와 LLM 출력 검증 자동화(jclee-bot), 공개 프로젝트와 이력서 PDF를 한 화면에 정리했습니다.'
+      '넥스트레이드 보안 인프라 구축과 SIEM 탐지·알림 경험, jclee-bot LLM 출력 검증, 공개 프로젝트를 정리했습니다.'
     );
     expect(html).toContain('<ul class="hero-proof-list" aria-label="핵심 이력 요약">');
     expect(html).toContain('공개 자동화 프로젝트');
-    expect(html).toContain('대상 역할: Security Automation / Infrastructure Engineer');
-    expect(html).toContain('최근 이력: 넥스트레이드 보안 인프라 구축·자동화, jclee-bot LLM 출력 검증');
-    expect(html).toContain('면접 제안 가능');
+    expect(html).toContain('FortiGate HA·망분리·엔드포인트 보안 운영 경험이 있습니다.');
+    expect(html).toContain(
+      '넥스트레이드 보안 인프라를 구축하고, Splunk ES 탐지·알림과 jclee-bot LLM 출력 검증을 운영했습니다.'
+    );
+    expect(html).toContain('채용 제안 문의 가능');
     expect(html).toContain('LLM 출력에 시크릿 스캔·Check Run 검증을 함께 표시');
     expect(html).toContain('JADX 디컴파일과 mitmproxy 캡처로 모바일 클라이언트·API 흐름 분석');
     expect(html).toContain('메트릭·로그 관측성으로 장애와 보안 신호를 함께 확인');
-    expect(html).toContain('AI 검증 자동화');
-    expect(html).toContain('연락·PDF');
+    expect(html).toContain('AI 엔지니어링');
+    expect(html).toContain('연락 및 이력서');
     expect(html).toContain(
-      '경력, 공개 자동화 프로젝트, 연락처와 이력서 PDF를 한 화면에 모았습니다.'
+      '채용 검토에 필요한 경력, 공개 프로젝트, 연락처, 이력서 PDF를 모았습니다.'
     );
     expect(html).not.toContain('공개 증거 바로가기');
     expect(html).not.toContain('검토할 핵심 증거');
@@ -73,12 +75,12 @@ describe('portfolio hiring appeal copy', () => {
     const html = buildHeroContent('en');
 
     expect(html).toContain(
-      'Open to interview requests for security automation and security infrastructure roles'
+      'Open to interview requests for security and infrastructure engineering roles'
     );
     expect(html).toContain(
-      'Exchange security infrastructure, LLM output verification automation (jclee-bot), public projects, and resume PDF — all on one page.'
+      'Nextrade security infrastructure, SIEM operations, the jclee-bot LLM output verifier, public projects, and a resume PDF are gathered here.'
     );
-    expect(html).toContain('Target role: Security Automation / Infrastructure Engineer');
+    expect(html).toContain('Target role: Security &amp; Infrastructure Engineer');
     expect(html).toContain(
       'Recent role: exchange security infrastructure and LLM output verification (jclee-bot)'
     );
@@ -112,18 +114,18 @@ describe('portfolio hiring appeal copy', () => {
   test('Japanese hero localizes recruiter evidence and hiring-decision actions', () => {
     const html = buildHeroContent('ja');
 
-    expect(html).toContain('セキュリティ自動化・セキュリティ基盤の面接依頼を歓迎');
+    expect(html).toContain('セキュリティ・インフラエンジニア職の面接依頼を歓迎');
     expect(html).toContain(
       '直近のセキュリティ基盤構築とLLM出力検証自動化(jclee-bot)、公開プロジェクト、履歴書PDFを1ページにまとめました。'
     );
     expect(html).toContain('<ul class="hero-proof-list" aria-label="経歴サマリー">');
-    expect(html).toContain('希望職種: Security Automation / Infrastructure Engineer');
+    expect(html).toContain('希望職種: Security &amp; Infrastructure Engineer');
     expect(html).toContain('直近役割: 取引所セキュリティ基盤とLLM出力検証(jclee-bot)');
     expect(html).toContain('面接依頼を受付中');
     expect(html).toContain('LLM出力にシークレットスキャン・チェックラン検証を併記');
     expect(html).toContain('JADXデコンパイルとmitmproxyキャプチャでモバイルクライアント・APIフローを分析');
     expect(html).toContain('メトリクスとログの可観測性で障害とセキュリティ信号を確認');
-    expect(html).toContain('AI検証自動化');
+    expect(html).toContain('AIエンジニアリング');
     expect(html).not.toContain('職務別レビュー経路');
     expect(html).not.toContain('セキュリティ基盤・SRE');
     expect(html).not.toContain('DevSecOps');
@@ -150,7 +152,10 @@ describe('portfolio hiring appeal copy', () => {
       ...Object.values(role.proof || {}),
     ]);
 
-    expect(roleCopy).toContain('Automation');
+    expect(roleCopy).toContain('Security Engineering');
+    expect(roleCopy).toContain('AI Engineering');
+    expect(roleCopy).not.toContain('Security Automation');
+    expect(roleCopy).not.toContain('Automation');
     expect(roleCopy).not.toContain('Automation Workflow');
     expect(roleCopy).toContain('jclee-bot LLM 리뷰, MCP 서버, Check Run');
     expect(roleCopy).not.toContain('Ops Workflow');
