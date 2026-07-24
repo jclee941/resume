@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import SessionBrokerService, { SESSION_STATES } from '../services/session-broker-service.js';
-import { createMemorySessionStore } from '../../shared/services/session/session-store.js';
+import { createMemorySessionStore } from '@resume/shared/session';
 
 class FakeEncryptionService {
   encrypt(data) {

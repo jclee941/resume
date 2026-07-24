@@ -257,7 +257,7 @@ describe('SessionManager', () => {
   });
 
   it('returns api client for cookieString, array cookies, token, and null paths', async () => {
-    const wantedModule = await import('../../../clients/wanted/index.js');
+    const wantedModule = await import('@resume/shared/clients/wanted');
     const setCookiesMock = mock.method(wantedModule.default.prototype, 'setCookies', () => {});
     SessionManager.configure({
       store: createMemoryStore({
