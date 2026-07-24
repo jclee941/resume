@@ -32,7 +32,7 @@ function prepareOutputDirectories(outputPaths) {
     return bindings;
   } catch (error) {
     closeOutputDirectories(bindings);
-    throw error;
+    throw new Error(error.message, { cause: error });
   }
 }
 
@@ -53,7 +53,9 @@ function writeGeneratedSnapshot(binding, outputName, data) {
     );
   } catch (error) {
     if (error instanceof Error && 'code' in error && error.code === 'ELOOP') {
-      throw new Error(`Refusing to overwrite generated output symbolic link: ${outputName}`);
+      throw new Error(`Refusing to overwrite generated output symbolic link: ${outputName}`, {
+        cause: error,
+      });
     }
     throw error;
   }

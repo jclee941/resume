@@ -16,7 +16,7 @@ export class ImportCommand extends BaseCommand {
 
     const localData = this.readJsonFile(filePath);
 
-    const validation = this.validateLocalData(localData);
+    const validation = this.validateLocalData(localData, filePath);
     if (!validation.valid) {
       return {
         success: false,

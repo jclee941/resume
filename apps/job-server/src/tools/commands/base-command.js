@@ -46,8 +46,8 @@ export class BaseCommand {
     writeFileSync(filePath, JSON.stringify(data, null, 2));
   }
 
-  validateLocalData(data) {
-    const validation = validateResumeData(data, masterSchema);
+  validateLocalData(data, sourceFile) {
+    const validation = validateResumeData(data, masterSchema, sourceFile);
     if (!validation.valid) {
       return {
         valid: false,
