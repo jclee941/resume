@@ -9,7 +9,7 @@ export function getSessionCookieString(session) {
 }
 
 export async function createAuthenticatedWantedApi(session) {
-  const WantedAPI = (await import('../../../clients/wanted/index.js')).default;
+  const WantedAPI = (await import('@resume/shared/clients/wanted')).default;
   const api = new WantedAPI();
   const cookieStr = getSessionCookieString(session);
 

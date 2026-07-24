@@ -8,4 +8,4 @@ export {
   getSessionTtlMs,
 } from './session-constants.js';
 
-export { createMemorySessionStore } from './session-store.js';
+export { createMemorySessionStore } from '@resume/shared/session';
