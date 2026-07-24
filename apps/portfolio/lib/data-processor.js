@@ -23,17 +23,6 @@ const {
   generateProjectSchemasHtml,
 } = require('./cards');
 
-/**
- * @typedef {Object} ResumeProject
- * @property {string} icon - Emoji icon for the project
- * @property {string} title - Project title
- * @property {string} description - Project description
- * @property {string[]} stats - Array of stats/tags
- * @property {boolean} [highlight] - Whether to highlight this card
- * @property {string} [completePdfUrl] - URL for complete PDF (highlighted cards)
- * @property {string} [pdfUrl] - URL for PDF (standard cards)
- * @property {string} [docxUrl] - URL for DOCX (standard cards)
- */
 
 /**
  * @typedef {Object} Dashboard
@@ -53,15 +42,6 @@ const {
  * @property {string} [repoUrl] - Repository URL (GitHub/GitLab)
  */
 
-/**
- * @typedef {Object} LinkConfig
- * @property {string} url - Link URL
- * @property {string} text - Link text
- * @property {string} className - CSS class name
- * @property {string} ariaLabel - Accessibility label
- * @property {boolean} [isExternal] - Whether link opens in new tab
- * @property {boolean} [isDownload] - Whether link is a download
- */
 
 /**
  * Validate source data and build reusable HTML fragments.
