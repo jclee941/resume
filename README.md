@@ -1,6 +1,6 @@
 # Resume Workspace
 
-![version](https://img.shields.io/badge/version-1.40.11-blue.svg)
+![version](https://img.shields.io/badge/version-1.40.12-blue.svg)
 ![node](https://img.shields.io/badge/node-22-339933.svg)
 [![license](https://img.shields.io/badge/license-see%20LICENSE-lightgrey.svg)](LICENSE)
 

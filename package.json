@@ -1,6 +1,6 @@
 {
   "name": "resume",
-  "version": "1.40.11",
+  "version": "1.40.12",
   "description": "Portfolio automation workspace: Cloudflare Worker edge site, job automation (Wanted/JobKorea), SSoT data, self-hosted observability",
   "main": "apps/portfolio/worker.js",
   "private": true,
