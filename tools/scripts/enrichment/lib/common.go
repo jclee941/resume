@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 )
 
 const (
@@ -18,36 +17,65 @@ const (
 
 // Proposal represents a proposed change to the resume SSoT.
 type Proposal struct {
-	ID            string          `json:"id"`
-	Status        string          `json:"status"`
-	Source        string          `json:"source"`
-	GeneratedAt   string          `json:"generatedAt"`
+	Version         int                `json:"version"`
+	ID              string             `json:"id"`
+	Status          string             `json:"status"`
+	CreatedAt       string             `json:"createdAt"`
+	Source          ProposalSource     `json:"source"`
+	Target          ProposalTarget     `json:"target"`
+	ProposedValue   json.RawMessage    `json:"proposedValue"`
+	CurrentValue    any                `json:"currentValue"`
+	Confidence      float64            `json:"confidence"`
+	Evidence        []ProposalEvidence `json:"evidence"`
+	Notes           string             `json:"notes"`
+	MasterRevision  string             `json:"masterRevision"`
+	ProposalHash    string             `json:"proposalHash"`
+	SourceRefs      []SourceRef        `json:"sourceRefs"`
+	AllowedChanges  []ProposalChange   `json:"allowedChanges"`
+	RejectedChanges []ProposalChange   `json:"rejectedChanges"`
+}
+
+type ProposalSource struct {
+	Crawler  string  `json:"crawler"`
+	Platform string  `json:"platform"`
+	JobID    string  `json:"jobId"`
+	URL      *string `json:"url"`
+}
+
+type SourceRef struct {
+	Type     string  `json:"type"`
+	Crawler  string  `json:"crawler"`
+	Platform string  `json:"platform"`
+	JobID    string  `json:"jobId"`
+	URL      *string `json:"url"`
+}
+
+type ProposalEvidence struct {
+	Type string `json:"type"`
+	Text string `json:"text"`
+}
+
+type ProposalChange struct {
 	Target        ProposalTarget  `json:"target"`
 	ProposedValue json.RawMessage `json:"proposedValue"`
-	Evidence      string          `json:"evidence,omitempty"`
 }
 
 // ProposalTarget identifies where and how to apply a proposal.
 type ProposalTarget struct {
-	Path      string `json:"path"`
-	Operation string `json:"operation"`
+	ResumePath string `json:"resumePath"`
+	Path       string `json:"path"`
+	Operation  string `json:"operation"`
 }
 
 // WriteProposal writes a proposal to the pending proposals directory.
 func WriteProposal(root, source, id string, target ProposalTarget, value any, evidence string) error {
-	proposedValue, err := json.MarshalIndent(value, "", "  ")
+	resume, err := ReadResume(root)
 	if err != nil {
-		return fmt.Errorf("marshal proposed value: %w", err)
+		return err
 	}
-
-	proposal := Proposal{
-		ID:            id,
-		Status:        "pending",
-		Source:        source,
-		GeneratedAt:   time.Now().UTC().Format(time.RFC3339),
-		Target:        target,
-		ProposedValue: proposedValue,
-		Evidence:      evidence,
+	proposal, err := newProposal(source, id, target, value, evidence, resume)
+	if err != nil {
+		return err
 	}
 
 	data, err := json.MarshalIndent(proposal, "", "  ")
@@ -56,7 +84,7 @@ func WriteProposal(root, source, id string, target ProposalTarget, value any, ev
 	}
 	data = append(data, '\n')
 
-	pendingDir := filepath.Join(root, ProposalDir, ApprovedSubdir)
+	pendingDir := filepath.Join(root, ProposalDir)
 	if err := os.MkdirAll(pendingDir, 0o755); err != nil {
 		return fmt.Errorf("create proposal dir: %w", err)
 	}

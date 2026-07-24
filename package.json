@@ -29,7 +29,7 @@
     "op:seed:resume": "cd tools/scripts && go run ./onepassword/seed-resume",
     "op:seed:sessions": "cd tools/scripts && go run ./onepassword/session-files seed",
     "op:restore:sessions": "cd tools/scripts && go run ./onepassword/session-files restore",
-    "sync:proposals": "node apps/job-server/src/sync/proposal-review-cli.js && go run ./tools/scripts/sync/apply-proposals.go",
+    "sync:proposals": "node apps/job-server/src/sync/proposal-review-cli.js && go -C tools/scripts run ./sync",
     "enrich:github": "cd tools/scripts/enrichment/github && go run main.go",
     "enrich:skills": "cd tools/scripts/enrichment/skills && go run main.go",
     "enrich:ai": "cd tools/scripts/enrichment/ai && go run main.go",
@@ -48,7 +48,7 @@
     "test": "npm run test:jest && npm run test:node && npm run test:schemas && npm run test:shared && npm run test:tools && npm run test:cli && npm run test:python && npm run test:go",
     "test:jest": "NODE_OPTIONS='--experimental-vm-modules' jest",
     "test:node": "npm test --workspace=@resume/job-automation",
-    "test:go": "GO111MODULE=off go -C tools/ci test affected.go affected_test.go && GO111MODULE=off go -C tools/ci test validate-migrations.go validate_migrations_test.go && go -C tools/scripts test ./release/publish ./release/next-version ./build/pdf-generator ./onepassword/session-files ./onepassword/native-run ./verification/wait-for-deployment && go -C tools/scripts/enrichment test ./... # apps/job-server/src/session-broker/scripts (separate go.mod) has zero _test.go files and its sources declare multiple standalone func main() in one dir (verify-e2e.go/setup-server.go), so it can't build as a single package -- nothing to run there, excluded intentionally",
+    "test:go": "GO111MODULE=off go -C tools/ci test affected.go affected_test.go && GO111MODULE=off go -C tools/ci test validate-migrations.go validate_migrations_test.go && go -C tools/scripts test ./release/publish ./release/next-version ./build/pdf-generator ./sync ./onepassword/session-files ./onepassword/native-run ./verification/wait-for-deployment && go -C tools/scripts/enrichment test ./... # apps/job-server/src/session-broker/scripts (separate go.mod) has zero _test.go files and its sources declare multiple standalone func main() in one dir (verify-e2e.go/setup-server.go), so it can't build as a single package -- nothing to run there, excluded intentionally",
     "test:python": "python3 -m unittest discover -s tools/scripts/build -p 'test_pptx_*.py'",
     "test:schemas": "node --test 'packages/schemas/src/__tests__/**/*.test.js' 'packages/env/src/__tests__/**/*.test.js'",
     "test:shared": "node --test 'packages/shared/src/**/__tests__/*.test.js'",
@@ -108,7 +108,7 @@
   "license": "MIT",
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
-    "@eslint/js": "^9.39.1",
+    "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.61.1",
     "@redocly/cli": "^2.39.0",
     "@types/jest": "^30.0.0",
@@ -122,12 +122,12 @@
     "html-minifier-terser": "^7.2.0",
     "jest": "^30.4.2",
     "jsonc-parser": "^3.3.1",
-    "lighthouse": "^12.6.1",
+    "lighthouse": "^13.4.1",
     "prettier": "^3.9.5",
     "sharp": "^0.35.3",
     "typescript": "^6.0.3",
     "wrangler": "^4.112.0",
-    "yaml": "2.8.3"
+    "yaml": "2.9.0"
   },
   "overrides": {
     "semver": "^7.6.3",
