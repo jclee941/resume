@@ -9,9 +9,9 @@ import {
 } from './application-reader.js';
 import {
   createApplication,
-  updateApplication,
   updateApplicationStatus,
 } from './application-writer.js';
+import { updateApplication } from './application-field-writer.js';
 
 export class ApplicationRepository {
   /**

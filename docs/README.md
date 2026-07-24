@@ -51,6 +51,7 @@ context. ADR files stay in place so their decision history remains intact.
 - [Cloudflare Authentication](guides/CLOUDFLARE_AUTH_METHODS.md)
 - [Slack Integration](guides/SLACK_INTEGRATION.md)
 - [Troubleshooting](guides/TROUBLESHOOTING.md)
+- [Canonical Job URL Migration](guides/CANONICAL_JOB_URL_MIGRATION.md)
 - [Fetch Error Guide](guides/FETCH_ERROR_GUIDE.md)
 - [TypeScript Session Troubleshooting](guides/TS_SESSION_TROUBLESHOOTING.md)
 - [API Reference](api/README.md)

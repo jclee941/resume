@@ -1,3 +1,5 @@
+import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
+
 export async function saveWorkflowState(ctx, workflow) {
   await ctx.env.JOB_DB.prepare(
     `
@@ -113,24 +115,26 @@ export async function getApprovalStatus(ctx, requestId) {
 
 export async function recordApplication(
   ctx,
-  { workflowId, jobId, platform, company, position, resumeId, coverLetter, matchScore }
+  { workflowId, jobId, platform, sourceUrl, company, position, resumeId, coverLetter, matchScore }
 ) {
   const applicationId = `${workflowId}-${jobId}`;
 
   await ctx.env.JOB_DB.prepare(
     `
       INSERT INTO applications (
-        id, workflow_id, job_id, source, company, position,
-        match_score, status, resume_id, cover_letter, applied_at, created_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+        id, workflow_id, job_id, source, source_url, canonical_url, company, position,
+        match_score, status, resume_id, cover_letter, applied_at, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'), datetime('now'))
       `
   )
     .bind(
       applicationId,
       workflowId,
-      jobId,
-      platform,
-      company,
+        jobId,
+        platform,
+        sourceUrl,
+        canonicalizeJobUrl(sourceUrl),
+        company,
       position,
       matchScore,
       'applied',

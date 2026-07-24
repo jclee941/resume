@@ -27,7 +27,7 @@ describe('job-dashboard auto-apply application metadata', () => {
 
     expect(body.runId).toBe('run-auto-apply-1');
     expect(recorded).toBeDefined();
-    expect(recorded.slice(14, 21)).toEqual([
+    expect(recorded.slice(15, 22)).toEqual([
       'run-auto-apply-1',
       1,
       'would_apply',
@@ -36,7 +36,7 @@ describe('job-dashboard auto-apply application metadata', () => {
       null,
       null,
     ]);
-    expect(JSON.parse(recorded[18])).toEqual(
+    expect(JSON.parse(recorded[19])).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ stage: 'dry_run_recorded', outcome: 'would_apply' }),
       ])

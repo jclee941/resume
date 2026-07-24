@@ -1,3 +1,5 @@
+import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
+
 export class WantedHistoryRepository {
   constructor(db) {
     this.db = db;
@@ -60,6 +62,7 @@ export class WantedHistoryRepository {
           job_id,
           source,
           source_url,
+          canonical_url,
           position,
           company,
           status,
@@ -69,10 +72,11 @@ export class WantedHistoryRepository {
           updated_at,
           applied_at
         )
-        VALUES (?, ?, 'wanted', ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, 'wanted', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT(id) DO UPDATE SET
           job_id = excluded.job_id,
           source_url = excluded.source_url,
+          canonical_url = excluded.canonical_url,
           position = excluded.position,
           company = excluded.company,
           status = excluded.status,
@@ -86,6 +90,7 @@ export class WantedHistoryRepository {
         record.id,
         record.wantedJobId,
         record.sourceUrl,
+        canonicalizeJobUrl(record.sourceUrl),
         record.position,
         record.company,
         record.status,

@@ -1,4 +1,5 @@
 import { recordAtsApplication } from './ats-application-recorder.js';
+import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
 
 export class ApplicationRepository {
   constructor(db) {
@@ -9,8 +10,8 @@ export class ApplicationRepository {
     await this.db
       .prepare(
         `
-        INSERT INTO applications (id, job_id, source, source_url, position, company, location, match_score, status, priority, resume_id, cover_letter, notes, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO applications (id, job_id, source, source_url, canonical_url, position, company, location, match_score, status, priority, resume_id, cover_letter, notes, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `
       )
       .bind(
@@ -18,6 +19,7 @@ export class ApplicationRepository {
         app.jobId || null,
         app.source,
         app.sourceUrl,
+        canonicalizeJobUrl(app.sourceUrl),
         app.position,
         app.company,
         app.location,

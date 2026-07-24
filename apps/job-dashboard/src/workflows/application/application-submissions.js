@@ -92,6 +92,7 @@ async function submitApprovedApplication(ctx, workflow, job, resumeId) {
         workflowId: workflow.id,
         jobId: job.id,
         platform: job.source,
+        sourceUrl: job.sourceUrl || job.url || null,
         company: job.company,
         position: job.position,
         resumeId,

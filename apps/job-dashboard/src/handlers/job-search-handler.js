@@ -1,5 +1,6 @@
 import { BaseHandler } from './base-handler.js';
 import { normalizeError } from '@resume/shared/errors';
+import { canonicalizeJobUrl } from '../job-url-canonicalization.js';
 
 /**
  * Handler for job search operations.
@@ -76,13 +77,14 @@ export class JobSearchHandler extends BaseHandler {
 
         const result = await db
           .prepare(
-            'INSERT OR IGNORE INTO applications (id, job_id, source, source_url, position, company, location, match_score, status, priority, notes, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            'INSERT OR IGNORE INTO applications (id, job_id, source, source_url, canonical_url, position, company, location, match_score, status, priority, notes, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
           )
           .bind(
             appId,
             jobId,
             'wanted',
             sourceUrl,
+            canonicalizeJobUrl(sourceUrl),
             position,
             company,
             location,
@@ -90,7 +92,6 @@ export class JobSearchHandler extends BaseHandler {
             'saved',
             'medium',
             notes,
-            now,
             now,
             now
           )

@@ -57,7 +57,7 @@ describe('scheduled Cliproxy auto-apply discovery', () => {
       adapterBacked: true,
     });
     expect(cliproxy.searchJobs).toHaveBeenCalledWith('security', { limit: 20 });
-    expect(db.recorded[0].slice(14, 18)).toEqual([body.runId, 1, 'would_apply', 1]);
+    expect(db.recorded[0].slice(15, 19)).toEqual([body.runId, 1, 'would_apply', 1]);
   });
 
   test('skips discovery when disabled by environment opt-out', async () => {

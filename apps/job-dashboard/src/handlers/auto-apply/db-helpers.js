@@ -1,4 +1,6 @@
 import { getDecisionTrace } from './decision-trace.js';
+import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
+import { insertApplicationRecord } from './application-recorder.js';
 
 const DEFAULT_KEYWORDS = ['DevOps', 'SRE', 'Platform Engineer', '보안'];
 
@@ -88,6 +90,8 @@ export async function recordApplication(env, applicationData) {
   } = applicationData;
   const now = new Date().toISOString();
   const appId = `${source}_${job.sourceId || job.id}`;
+  const sourceUrl = job.sourceUrl || job.url || '';
+  const canonicalUrl = canonicalizeJobUrl(sourceUrl);
   const applyResult = serializeJson(result);
   const decisionTrace = serializeJson(getDecisionTrace(job));
   const approvalMetadata = serializeJson(getApprovalMetadata(job));
@@ -95,7 +99,7 @@ export async function recordApplication(env, applicationData) {
     appId,
     String(job.sourceId || job.id),
     source,
-    job.sourceUrl || job.url || '',
+    sourceUrl,
     job.position || job.title || '',
     job.company || '',
     job.location || '',
@@ -107,8 +111,13 @@ export async function recordApplication(env, applicationData) {
     now,
     status === 'applied' ? now : null,
   ];
+  const canonicalParams = [
+    ...legacyParams.slice(0, 4),
+    canonicalUrl,
+    ...legacyParams.slice(4),
+  ];
   const currentParams = [
-    ...legacyParams,
+    ...canonicalParams,
     runId,
     dryRun ? 1 : 0,
     action,
@@ -118,55 +127,7 @@ export async function recordApplication(env, applicationData) {
     applyResult,
   ];
 
-  try {
-    await insertApplicationWithAutoApplyMetadata(db, currentParams);
-  } catch (error) {
-    if (!isMissingAutoApplyColumn(error)) throw error;
-    await insertLegacyApplication(db, legacyParams);
-  }
-}
-
-async function insertApplicationWithAutoApplyMetadata(db, params) {
-  await db
-    .prepare(
-      `INSERT INTO applications
-        (
-          id, job_id, source, source_url, position, company, location, match_score,
-          status, priority, notes, created_at, updated_at, applied_at,
-          auto_apply_run_id, auto_apply_dry_run, auto_apply_action, adapter_backed,
-          decision_trace, approval_metadata, apply_result
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ON CONFLICT(id) DO UPDATE SET
-          status = excluded.status,
-          updated_at = excluded.updated_at,
-          applied_at = excluded.applied_at,
-          notes = excluded.notes,
-          auto_apply_run_id = excluded.auto_apply_run_id,
-          auto_apply_dry_run = excluded.auto_apply_dry_run,
-          auto_apply_action = excluded.auto_apply_action,
-          adapter_backed = excluded.adapter_backed,
-          decision_trace = excluded.decision_trace,
-          approval_metadata = excluded.approval_metadata,
-          apply_result = excluded.apply_result`
-    )
-    .bind(...params)
-    .run();
-}
-
-async function insertLegacyApplication(db, params) {
-  await db
-    .prepare(
-      `INSERT INTO applications
-        (id, job_id, source, source_url, position, company, location, match_score, status, priority, notes, created_at, updated_at, applied_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ON CONFLICT(id) DO UPDATE SET
-          status = excluded.status,
-          updated_at = excluded.updated_at,
-          applied_at = excluded.applied_at`
-    )
-    .bind(...params)
-    .run();
+  await insertApplicationRecord(db, { canonicalParams, currentParams, legacyParams });
 }
 
 function getApprovalMetadata(job) {
@@ -178,9 +139,4 @@ function getApprovalMetadata(job) {
 
 function serializeJson(value) {
   return value === null || value === undefined ? null : JSON.stringify(value);
-}
-
-function isMissingAutoApplyColumn(error) {
-  const message = String(error?.message || error);
-  return /no such column|has no column named|unknown column/i.test(message);
 }
