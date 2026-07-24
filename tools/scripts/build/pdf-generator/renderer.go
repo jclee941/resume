@@ -8,12 +8,6 @@ import (
 	"strings"
 )
 
-const (
-	margin      = "1.35cm"
-	fontSize    = "9pt"
-	lineStretch = "1.06"
-)
-
 func checkDependencies() bool {
 	fmt.Printf("%sChecking dependencies...%s\n", Blue, NoColor)
 	if _, err := exec.LookPath("pandoc"); err == nil {
@@ -33,8 +27,8 @@ func checkDependencies() bool {
 	return false
 }
 
-func generatePDFNative(source, output, font string, toc bool) error {
-	args := pandocPDFArgs(source, output, font)
+func generatePDFNative(source, output, font string, layout PDFLayoutProfile, toc bool) error {
+	args := pandocPDFArgsForProfile(source, output, font, layout)
 	if toc {
 		args = append(args, "--toc", "--toc-depth=3", "--number-sections")
 	}
@@ -44,7 +38,7 @@ func generatePDFNative(source, output, font string, toc bool) error {
 	return cmd.Run()
 }
 
-func generatePDFDocker(source, output, font string, toc bool) error {
+func generatePDFDocker(source, output, font string, layout PDFLayoutProfile, toc bool) error {
 	relSource, _ := filepath.Rel(projectRoot, source)
 	relOutput, _ := filepath.Rel(projectRoot, output)
 	args := []string{
@@ -55,7 +49,7 @@ func generatePDFDocker(source, output, font string, toc bool) error {
 		"-w", "/data",
 		"pandoc/latex:latest",
 	}
-	args = append(args, pandocPDFArgs(relSource, relOutput, font)...)
+	args = append(args, pandocPDFArgsForProfile(relSource, relOutput, font, layout)...)
 	if toc {
 		args = append(args, "--toc", "--toc-depth=3", "--number-sections")
 	}
@@ -65,29 +59,71 @@ func generatePDFDocker(source, output, font string, toc bool) error {
 }
 
 func pandocPDFArgs(source, output, font string) []string {
-	return []string{
+	return pandocPDFArgsForProfile(source, output, font, defaultPDFLayout)
+}
+
+func pandocPDFArgsForProfile(source, output, font string, layout PDFLayoutProfile) []string {
+	args := []string{
 		source,
 		"-o", output,
 		"--pdf-engine=xelatex",
-		"--include-in-header", "tools/scripts/build/resume-style.tex",
-		"-V", fmt.Sprintf("mainfont=%s", font),
-		"-V", fmt.Sprintf("CJKmainfont=%s", font),
-		"-V", fmt.Sprintf("sansfont=%s", font),
-		"-V", fmt.Sprintf("monofont=%s", font),
-		"-V", fmt.Sprintf("geometry:margin=%s", margin),
-		"-V", "papersize=a4",
-		"-V", fmt.Sprintf("fontsize=%s", fontSize),
-		"-V", fmt.Sprintf("linestretch=%s", lineStretch),
+		"--include-in-header", layout.HeaderPath,
+	}
+	for _, variable := range layout.FontVariables {
+		args = append(args, "-V", fmt.Sprintf("%s=%s", variable, font))
+	}
+	args = append(args,
+		"-V", fmt.Sprintf("geometry:margin=%s", layout.Margin),
+		"-V", fmt.Sprintf("papersize=%s", layout.PaperSize),
+		"-V", fmt.Sprintf("fontsize=%s", layout.FontSize),
+		"-V", fmt.Sprintf("linestretch=%s", layout.LineStretch),
 		"-V", "colorlinks:true",
 		"-V", "linkcolor:[HTML]{5AA9B8}",
 		"-V", "urlcolor:[HTML]{5AA9B8}",
 		"--metadata", "author=Jaecheol Lee",
 		"--metadata", "lang=ko-KR",
 		"--lua-filter", "tools/scripts/build/strip-emoji.lua",
-	}
+	)
+	return args
 }
 
-func generateSinglePDF(source, output, font string, toc bool) bool {
+type pdfGenerator func(temporaryOutputPath string) error
+
+type pdfNormalizer func(path string) error
+
+func generatePDFAtomically(outputPath string, generator pdfGenerator) error {
+	return generatePDFWithNormalizer(outputPath, generator, normalizePdfFile)
+}
+
+func generatePDFWithNormalizer(outputPath string, generator pdfGenerator, normalizer pdfNormalizer) error {
+	temporaryOutputPattern := "." + strings.TrimSuffix(filepath.Base(outputPath), filepath.Ext(outputPath)) + ".tmp-*" + filepath.Ext(outputPath)
+	temporaryFile, err := os.CreateTemp(filepath.Dir(outputPath), temporaryOutputPattern)
+	if err != nil {
+		return fmt.Errorf("create temporary PDF output: %w", err)
+	}
+	temporaryOutputPath := temporaryFile.Name()
+	defer os.Remove(temporaryOutputPath)
+	if err := temporaryFile.Close(); err != nil {
+		return fmt.Errorf("close temporary PDF output: %w", err)
+	}
+	if err := generator(temporaryOutputPath); err != nil {
+		return fmt.Errorf("generate temporary PDF: %w", err)
+	}
+	if err := normalizer(temporaryOutputPath); err != nil {
+		return fmt.Errorf("normalize temporary PDF: %w", err)
+	}
+	if err := os.Rename(temporaryOutputPath, outputPath); err != nil {
+		return fmt.Errorf("publish generated PDF: %w", err)
+	}
+	return nil
+}
+
+func generateSinglePDF(source, output, font, layoutName string, toc bool) bool {
+	layout, err := layoutProfileByName(layoutName)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s✗ %s%s\n", Red, err, NoColor)
+		return false
+	}
 	sourcePath := filepath.Join(projectRoot, source)
 	outputPath := filepath.Join(projectRoot, output)
 	if _, err := os.Stat(sourcePath); os.IsNotExist(err) {
@@ -98,17 +134,19 @@ func generateSinglePDF(source, output, font string, toc bool) bool {
 		fmt.Fprintf(os.Stderr, "%s✗ Failed to create output directory: %v%s\n", Red, err, NoColor)
 		return false
 	}
-	fmt.Printf("  Generating %s... ", filepath.Base(output))
+	fmt.Printf("  Generating %s [%s]... ", filepath.Base(output), layout.Name)
 	if _, err := exec.LookPath("pandoc"); err == nil {
-		if err := generatePDFNative(sourcePath, outputPath, font, toc); err == nil {
-			normalizeGeneratedPDF(outputPath)
+		if err := generatePDFAtomically(outputPath, func(temporaryOutputPath string) error {
+			return generatePDFNative(sourcePath, temporaryOutputPath, font, layout, toc)
+		}); err == nil {
 			fmt.Printf("%s✓ (%s)%s\n", Green, getFileSize(outputPath), NoColor)
 			return true
 		}
 	}
 	if _, err := exec.LookPath("docker"); err == nil {
-		if err := generatePDFDocker(sourcePath, outputPath, font, toc); err == nil {
-			normalizeGeneratedPDF(outputPath)
+		if err := generatePDFAtomically(outputPath, func(temporaryOutputPath string) error {
+			return generatePDFDocker(sourcePath, temporaryOutputPath, font, layout, toc)
+		}); err == nil {
 			fmt.Printf("%s✓ Docker (%s)%s\n", Green, getFileSize(outputPath), NoColor)
 			return true
 		}
@@ -116,13 +154,6 @@ func generateSinglePDF(source, output, font string, toc bool) bool {
 	fmt.Printf("%s✗ Failed%s\n", Red, NoColor)
 	return false
 }
-
-func normalizeGeneratedPDF(outputPath string) {
-	if err := normalizePdfFile(outputPath); err != nil {
-		fmt.Printf("%s⚠ generated but /ID normalize failed: %s%s\n", Yellow, err, NoColor)
-	}
-}
-
 func getFileSize(path string) string {
 	info, err := os.Stat(path)
 	if err != nil {

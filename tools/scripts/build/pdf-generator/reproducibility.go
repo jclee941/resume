@@ -73,5 +73,30 @@ func normalizePdfFile(path string) error {
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(path, normalizePdfID(data), 0o644)
+	if !bytes.HasPrefix(data, []byte("%PDF-")) {
+		return fmt.Errorf("generated file is not a PDF: %s", path)
+	}
+	return writePDFFileAtomically(path, normalizePdfID(data))
+}
+
+func writePDFFileAtomically(path string, data []byte) error {
+	temporaryFile, err := os.CreateTemp(filepath.Dir(path), "."+filepath.Base(path)+".tmp-*")
+	if err != nil {
+		return err
+	}
+	temporaryPath := temporaryFile.Name()
+	defer os.Remove(temporaryPath)
+	if err := temporaryFile.Chmod(0o644); err != nil {
+		return err
+	}
+	if _, err := temporaryFile.Write(data); err != nil {
+		return err
+	}
+	if err := temporaryFile.Sync(); err != nil {
+		return err
+	}
+	if err := temporaryFile.Close(); err != nil {
+		return err
+	}
+	return os.Rename(temporaryPath, path)
 }
