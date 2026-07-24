@@ -325,7 +325,7 @@ describe('public-copy source audit allowlist', () => {
 describe('ledger prerequisites', () => {
   test('yaml is a pinned direct dev dependency', () => {
     const packageJson = require('../../../package.json');
-    expect(packageJson.devDependencies.yaml).toBe('2.8.3');
+    expect(packageJson.devDependencies.yaml).toBe('2.9.0');
   });
 
   test('force-new-server disables Playwright server reuse explicitly', () => {

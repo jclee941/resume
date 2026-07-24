@@ -33,7 +33,7 @@ function caseStudyCopy(lang) {
   }
   return {
     title: '운영 사례 심층 검토',
-    description: '선별한 프로젝트의 운영 배경과 구성을 자세히 정리했습니다.',
+    description: '선별한 프로젝트의 운영 맥락과 구성을 자세히 정리했습니다.',
     gridLabel: '케이스 스터디',
     cta: '상세 검토',
   };
