@@ -61,10 +61,10 @@ ${colors.yellow}Options:${colors.reset}
   --file <path>                  Custom file path for import/export
 
 ${colors.yellow}Examples:${colors.reset}
-  node src/cli.js export AwcICwcLBAFIAgcDCwUAB01F
-  node src/cli.js diff AwcICwcLBAFIAgcDCwUAB01F
-  node src/cli.js sync AwcICwcLBAFIAgcDCwUAB01F --dry-run
-  node src/cli.js pipeline run AwcICwcLBAFIAgcDCwUAB01F
+  node src/cli.js export <resume_id>
+  node src/cli.js diff <resume_id>
+  node src/cli.js sync <resume_id> --dry-run
+  node src/cli.js pipeline run <resume_id>
 
 ${colors.dim}Data directory: ${DATA_DIR}${colors.reset}
 `);

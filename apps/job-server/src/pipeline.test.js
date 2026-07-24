@@ -4,7 +4,11 @@ import { existsSync, unlinkSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { DATA_DIR } from './tools/commands/base-command.js';
 
-const RESUME_ID = 'AwcICwcLBAFIAgcDCwUAB01F';
+const RESUME_ID = process.env.WANTED_RESUME_ID;
+if (!RESUME_ID) {
+  console.error('Set WANTED_RESUME_ID in the environment (see apps/job-server README).');
+  process.exit(1);
+}
 const TEST_FILE = join(DATA_DIR, `${RESUME_ID}.json`);
 
 async function runTests() {

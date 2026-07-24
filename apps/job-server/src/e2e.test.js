@@ -1,7 +1,11 @@
 import { SessionManager } from './shared/services/session/index.js';
 import { resumeTool } from './tools/resume/index.js';
 
-const RESUME_ID = 'AwcICwcLBAFIAgcDCwUAB01F';
+const RESUME_ID = process.env.WANTED_RESUME_ID;
+if (!RESUME_ID) {
+  console.error('Set WANTED_RESUME_ID in the environment (see apps/job-server README).');
+  process.exit(1);
+}
 
 async function runTests() {
   console.log('='.repeat(60));
