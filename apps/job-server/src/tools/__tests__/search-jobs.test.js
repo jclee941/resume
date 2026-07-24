@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, mock } from 'node:test';
 import assert from 'node:assert';
-import WantedAPI from '../../shared/clients/wanted/index.js';
+import WantedAPI from '@resume/shared/clients/wanted';
 import { searchJobsTool } from '../search-jobs.js';
 
 describe('searchJobsTool', () => {

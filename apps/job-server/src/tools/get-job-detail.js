@@ -2,7 +2,7 @@
  * MCP Tool: Get Job Detail
  */
 
-import WantedAPI from '../shared/clients/wanted/index.js';
+import WantedAPI from '@resume/shared/clients/wanted';
 
 export const getJobDetailTool = {
   name: 'wanted_get_job_detail',
