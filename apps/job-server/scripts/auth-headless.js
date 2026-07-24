@@ -117,7 +117,9 @@ async function authenticate(platformKey, username, password) {
           await page.fill(sel, username);
           log(`Filled email using selector: ${sel}`);
           break;
-        } catch {}
+        } catch {
+          // selector not present on this page variant; try the next candidate
+        }
       }
 
       for (const sel of passwordSelectors) {
@@ -126,7 +128,9 @@ async function authenticate(platformKey, username, password) {
           await page.fill(sel, password);
           log(`Filled password using selector: ${sel}`);
           break;
-        } catch {}
+        } catch {
+          // selector not present on this page variant; try the next candidate
+        }
       }
     }
 
@@ -149,7 +153,9 @@ async function authenticate(platformKey, username, password) {
         await page.click(sel);
         log(`Clicked submit using selector: ${sel}`);
         break;
-      } catch {}
+      } catch {
+        // submit button variant not present; try the next candidate
+      }
     }
 
     log('Waiting for login to complete...');
