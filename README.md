@@ -62,7 +62,7 @@
 
 - `applications/` — 역할별 지원 패키지(에어프레미아 시큐리티, 쿠팡 파이낸스 SRE, Cloudflare One SE, GitLab APAC 인프라시큐리티, OpenAI Codex Korea 등)와 생성된 실행 로그.
 - `ta/` — Python/PPTX TA 프로필 생성 도구와 산출물.
-- `tools/`, `tests/`, `infrastructure/`, `docs/`, `supabase/functions/`, `third_party/` — CI/빌드/배포/검증 스크립트, 테스트, 인프라 정의, ADRs, Edge 함수, 의존성 라이선스 정리.
+- `tools/`, `tests/`, `infrastructure/`, `docs/`, `third_party/` — CI/빌드/배포/검증 스크립트, 테스트, 인프라 정의, ADRs, 의존성 라이선스 정리.
 
 ## 먼저 읽을 파일 / First Files to Read
 
@@ -112,6 +112,15 @@ curl -fsS http://127.0.0.1:3000/health
 > 이 워크스페이스는 운영 중인 1Password 기반 시크릿 주입, Docker 컨테이너 헬스 체크, CI 검증을 갖춘 프로덕션 구성입니다. 다만 개인 운영을 전제로 하므로 외부 다중 사용자 부하 테스트는 수행되지 않았습니다.
 
 ## 설정 / Configuration
+
+| 계층      | 책임                              | 위치                                    |
+| --------- | --------------------------------- | --------------------------------------- |
+| 데이터    | 이력서/지원 단일 진실             | `packages/data/resumes/master/`         |
+| 빌드      | Go 우선 빌드, PDF/PPTX/정적 자산  | `tools/scripts/build`                   |
+| 엣지      | Cloudflare Worker 사이트/대시보드 | `apps/portfolio`, `apps/job-dashboard`  |
+| 런타임    | 잡 자동화, MCP, 크롤러            | `apps/job-server`                       |
+| 비밀/세션 | 1Password 연동                    | `tools/scripts/onepassword`             |
+| 관측      | 자체 호스팅 관측성                | `infrastructure/`, `docs/observability` |
 
 | 항목 | 출처 | 비고 |
 | --- | --- | --- |

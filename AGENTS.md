@@ -32,7 +32,6 @@ automation/observability support.
 ├── infrastructure/       # Cloudflare, DB, monitoring, system automation
 ├── docs/                 # ADRs, architecture, conventions, guides, security
 ├── ta/                   # Python/PPTX TA profile generation
-├── supabase/functions/   # Deno edge functions
 ├── third_party/          # dependency-license coordination; not a build system
 └── package.json          # workspace root and command hub
 ```
@@ -116,7 +115,7 @@ automation/observability support.
 ## UNIQUE STYLES
 
 - Mixed runtime stack: Cloudflare Workers, Node automation, Go operational
-  scripts, Deno Supabase functions, and selective Python/PPTX tooling.
+  scripts, and selective Python/PPTX tooling.
 - Deep child AGENTS files already govern hot paths; add new child files only for
   distinct domains, not just large directories.
 - Docs are split by purpose: ADRs for decisions, architecture for system shape,

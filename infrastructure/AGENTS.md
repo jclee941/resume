@@ -6,15 +6,15 @@
 
 ## OVERVIEW
 
-Cloudflare infrastructure (Terraform), database migrations (D1 and Supabase),
-monitoring dashboards (Grafana), and automation workflows.
+Cloudflare infrastructure (Terraform), D1 database migrations, monitoring
+dashboards (Grafana), and automation workflows.
 
 ## STRUCTURE
 
 ```text
 infrastructure/
 ├── cloudflare/           # Terraform for DNS, routes, KV/D1 references
-├── database/             # D1 and Supabase migrations, seeds
+├── database/             # D1 migrations and seeds
 ├── monitoring/           # Grafana dashboards and alert rules
 ├── automation/           # systemd services and workflow exports
 ├── configs/              # Grafana alert configurations
@@ -29,8 +29,7 @@ infrastructure/
 | -------------------------------- | ------------------------- | ------------------------------------------------------------------ |
 | DNS and Cloudflare declarations  | Terraform files           | Review `cloudflare/*.tf`; no active apply workflow                 |
 | Production Worker code           | Cloudflare Workers Builds | Build from `master`; local Wrangler is verification/emergency only |
-| D1 schema (migrations 0000-0008) | Migrations                | `database/migrations/*.sql`                                        |
-| Supabase schema                  | Supabase CLI              | `database/supabase/migrations/*.sql`                               |
+| D1 schema (migrations 0000-0009) | Migrations                | `database/migrations/*.sql`                                        |
 | Monitoring dashboards            | Grafana UI                | `monitoring/*.json` (reference only)                               |
 | Automation workflows             | Workflow UI               | `automation/*.json` (reference only)                               |
 
@@ -39,7 +38,6 @@ infrastructure/
 - Terraform state is S3-compatible backend (bucket: `terraform-state`).
 - Never run `terraform apply` locally against production.
 - D1 migrations are immutable once deployed; create new migrations for changes.
-- Supabase and D1 migrations are separate lineages; keep them distinct.
 - Monitoring and automation exports are reference snapshots, not deployment sources.
 
 ## ANTI-PATTERNS
@@ -48,7 +46,6 @@ infrastructure/
   routine production deployment path.
 - Never hardcode Cloudflare resource IDs in prose.
 - Never edit deployed migrations.
-- Never mix D1 and Supabase migrations in the same file.
 
 ---
 
