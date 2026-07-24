@@ -125,13 +125,13 @@ var applicationCreateSchema = import_zod3.z.object({
   company: import_zod3.z.string().min(1).max(200),
   position: import_zod3.z.string().min(1).max(300),
   status: applicationStatusSchema.optional().default("pending"),
-  metadata: import_zod3.z.record(import_zod3.z.unknown()).optional()
+  metadata: import_zod3.z.record(import_zod3.z.string(), import_zod3.z.unknown()).optional()
 });
 var applicationUpdateSchema = import_zod3.z.object({
   company: import_zod3.z.string().min(1).max(200).optional(),
   position: import_zod3.z.string().min(1).max(300).optional(),
   status: applicationStatusSchema.optional(),
-  metadata: import_zod3.z.record(import_zod3.z.unknown()).optional()
+  metadata: import_zod3.z.record(import_zod3.z.string(), import_zod3.z.unknown()).optional()
 }).refine((d) => Object.keys(d).length > 0, { message: "at least one field required" });
 var applicationStatusUpdateSchema = import_zod3.z.object({
   status: applicationStatusSchema
@@ -172,7 +172,7 @@ var foreignAtsApplicationPacketMetadataSchema = import_zod4.z.object({
   capturedAt: isoTimestampSchema,
   externalApplicationId: import_zod4.z.string().min(1).max(200).optional(),
   status: applicationStatusSchema.optional(),
-  raw: import_zod4.z.record(import_zod4.z.unknown()).optional()
+  raw: import_zod4.z.record(import_zod4.z.string(), import_zod4.z.unknown()).optional()
 }).strict();
 var foreignAtsApplicationPacketSchema = import_zod4.z.object({
   metadata: foreignAtsApplicationPacketMetadataSchema,
@@ -336,7 +336,7 @@ var notificationPayloadSchema = import_zod8.z.object({
   message: import_zod8.z.string().min(1),
   company: import_zod8.z.string().optional(),
   jobId: idSchema.optional(),
-  metadata: import_zod8.z.record(import_zod8.z.unknown()).optional()
+  metadata: import_zod8.z.record(import_zod8.z.string(), import_zod8.z.unknown()).optional()
 });
 var jobFoundPayloadSchema = import_zod8.z.object({
   jobId: idSchema,
@@ -391,7 +391,7 @@ var portfolioDataSchema = import_zod9.z.object({
   resume: import_zod9.z.array(resumeItemSchema),
   projects: import_zod9.z.array(projectItemSchema),
   certifications: import_zod9.z.array(certificationItemSchema),
-  skills: import_zod9.z.record(skillCategorySchema)
+  skills: import_zod9.z.record(import_zod9.z.string(), skillCategorySchema)
 });
 function validatePortfolioData(data, options = {}) {
   const result = portfolioDataSchema.safeParse(data);

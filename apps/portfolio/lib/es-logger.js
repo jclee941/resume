@@ -95,7 +95,7 @@ async function logToElasticsearch(env, message, level = 'INFO', labels = {}, opt
       try {
         globalThis.__esLogTotal = (globalThis.__esLogTotal || 0) + 1;
       } catch {
-        // ignore
+        // best-effort: success counters must never break logging
       }
     } catch (err) {
       // P2-19: bump a global counter so /metrics exposes
@@ -104,7 +104,7 @@ async function logToElasticsearch(env, message, level = 'INFO', labels = {}, opt
       try {
         globalThis.__esLogFailures = (globalThis.__esLogFailures || 0) + 1;
       } catch {
-        // ignore
+        // best-effort: failure counters must never break logging
       }
       console.error('[ES] Log failed:', err.message);
     } finally {

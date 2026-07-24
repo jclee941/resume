@@ -23,7 +23,8 @@ function safeParseJSON(jsonString, source = 'unknown') {
           ? `...${jsonString.substring(Math.max(0, position - 20), position + 20)}...`
           : '';
       throw new Error(
-        `Invalid JSON in ${source}: ${err.message}${context ? ` near: ${context}` : ''}`
+        `Invalid JSON in ${source}: ${err.message}${context ? ` near: ${context}` : ''}`,
+        { cause: err }
       );
     }
     throw err;

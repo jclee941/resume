@@ -1,3 +1,5 @@
+import { normalizeError } from '../../errors/index.js';
+
 /**
  * Elasticsearch Logger for Cloudflare Workers
  * Enhanced with batching, ECS format, request timing, and distributed tracing
@@ -70,8 +72,13 @@ async function flushLogs(env, index) {
       headers: buildHeaders(env, 'application/x-ndjson'),
       body: bulkBody,
     });
-  } catch {
-    // Silent fail
+  } catch (error) {
+    const normalized = normalizeError(error, {
+      client: 'elasticsearch',
+      operation: 'flushLogs',
+      index,
+    });
+    console.warn('[ES] Bulk flush failed:', normalized.toJSON());
   } finally {
     clearTimeout(timeoutId);
   }
@@ -97,8 +104,14 @@ export async function logToElasticsearch(env, message, level = 'INFO', labels = 
         headers: buildHeaders(env),
         body: JSON.stringify(doc),
       });
-    } catch {
-      // Silent fail
+    } catch (error) {
+      const normalized = normalizeError(error, {
+        client: 'elasticsearch',
+        operation: 'logToElasticsearch',
+        index,
+        immediate: true,
+      });
+      console.warn('[ES] Immediate log failed:', normalized.toJSON());
     } finally {
       clearTimeout(timeoutId);
     }

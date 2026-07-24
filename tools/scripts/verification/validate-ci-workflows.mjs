@@ -9,7 +9,7 @@ function loadWorkflow(repositoryRoot, name) {
   try {
     return { source: readFileSync(file, 'utf8'), definition: parse(readFileSync(file, 'utf8')) };
   } catch (error) {
-    throw new Error(`${name} YAML is invalid: ${error.message}`);
+    throw new Error(`${name} YAML is invalid: ${error.message}`, { cause: error });
   }
 }
 

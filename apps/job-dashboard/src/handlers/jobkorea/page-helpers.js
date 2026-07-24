@@ -172,7 +172,7 @@ export async function fillCaptchaInput(page, value) {
 }
 
 export async function collectJobKoreaCookies(page, browser) {
-  let cookies = [];
+  let cookies;
   try {
     cookies = (await page.cookies()) || [];
   } catch {

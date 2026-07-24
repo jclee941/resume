@@ -136,7 +136,7 @@ export class CloakBrowser {
       body: JSON.stringify(body),
     });
 
-    let payload = {};
+    let payload;
     try {
       payload = await response.json();
     } catch {

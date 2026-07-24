@@ -44,7 +44,7 @@ export async function exportFromWanted(env, resumeId) {
     const data = await response.json();
     return normalizeWantedResume(data);
   } catch (error) {
-    throw new Error(`Wanted export failed: ${error.message}`);
+    throw new Error(`Wanted export failed: ${error.message}`, { cause: error });
   }
 }
 

@@ -176,7 +176,7 @@ describe('TelegramNotificationAdapter.sendJobPostingsSeparately', () => {
 
   it('R3: waits and retries a rate-limited chunk instead of dropping it', async () => {
     let attempts = 0;
-    let firstRateLimited = false;
+    const firstRateLimited = true;
     const fakeFetch = async (url) => {
       if (/\/sendMessage$/.test(url)) {
         attempts += 1;
@@ -209,7 +209,6 @@ describe('TelegramNotificationAdapter.sendJobPostingsSeparately', () => {
     // Force the rate limiter to report 'allowed: false' on the FIRST chunk by
     // saturating the in-memory window (resets on the simulated next window).
     adapter.rateState = rateState;
-    firstRateLimited = true;
 
     const res = await adapter.sendJobPostingsSeparately([jobs[0]]);
 

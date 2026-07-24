@@ -49,7 +49,7 @@ export async function loadOrRenewJobKoreaCookies(handler, options, logger, renew
   try {
     await renewSavedJobKoreaSession(options, logger);
   } catch (renewError) {
-    throw new Error(`Session auto-renewal failed: ${renewError.message}`);
+    throw new Error(`Session auto-renewal failed: ${renewError.message}`, { cause: renewError });
   }
 
   const renewedCookies = loadSavedJobKoreaCookies(handler, {
