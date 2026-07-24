@@ -22,9 +22,9 @@
 
 보안 엔지니어
 
-폐쇄망 OA 환경에서 출발해 금융권 보안 인프라 구축, SIEM 탐지·알림 자동화, 관측성·IaC 기반 개선을 이어 온 보안 엔지니어입니다. 직전 금융권 정보보안팀에서는 FortiGate HA·망분리 환경에서 Splunk ES, Slack/SMS 알림 워크플로, FortiManager API, Claude AI 보조 분석을 연결해 보안 이벤트 인지·분류·알림 흐름을 설계했습니다. 현재 보안 인프라, Security Automation, SIEM Engineering, Observability 중심의 역할을 찾고 있습니다.
+폐쇄망 OA 환경에서 출발해 금융권 보안 인프라 구축, SIEM 탐지·알림 자동화, 관측성·IaC 기반 개선을 이어 온 보안 엔지니어입니다. 직전 금융권 정보보안팀에서는 FortiGate HA·망분리 환경에서 Splunk ES, Slack/SMS 알림 워크플로, FortiManager API, LLM 출력 검증을 연결해 보안 이벤트 인지·분류·알림 흐름을 설계했습니다. 현재 보안 인프라, Security Automation, SIEM Engineering, Observability 중심의 역할을 찾고 있습니다.
 
-**핵심 역량**: 금융권 보안 인프라 설계·구축 · FortiGate 다층 망분리 · Splunk SIEM 탐지·알림 자동화 · IaC 기반 관측성 · 금융감독원 감사 대응
+**핵심 역량**: 금융권 보안 인프라 설계·구축 · 보안 장비·접근통제 운영 · Splunk SIEM 탐지·알림 자동화 · IaC 기반 관측성 · 금융감독원 감사 대응
 
 ## 연락처
 
@@ -49,12 +49,12 @@
 
 ### 보유 기술
 
-- **보안**: FortiGate 방화벽, DDoS, IPS, WAF, NAC·DLP, EDR, APT, Splunk SIEM
+- **보안**: FortiGate 방화벽, DDoS, IPS, WAF, SWG, NAC, DLP·nDLP, DRM, SSL VPN, APT, Active Directory, EDR, Splunk SIEM
 - **클라우드**: Docker, Kubernetes, Cloudflare Workers (Edge Computing)
 - **운영 스크립트**: Python·Shell·Ansible·Terraform·워크플로 오케스트레이션
 - **모니터링**: Grafana·Prometheus·Loki (통합 관제 플랫폼)
 - **DevOps**: GitLab EE·CI/CD·Container Registry·Docker Compose
-- **AI/ML**: Claude 기반 운영 보조 도구, ML 기반 위협 예측 및 라우팅 실험
+- **LLM/ML**: LLM 기반 운영 보조·출력 검증, ML 기반 위협 예측 및 라우팅 실험
 
 ### 자격증 및 교육
 
@@ -80,14 +80,14 @@
 **업무 개요**
 
 - Splunk ES·FortiGate/FortiManager·Slack/SMS 알림을 연결한 보안 이벤트 대응 아키텍처 설계
-- Python·Docker 기반 자동화 도구와 Claude AI 보조 분석으로 반복 수동 확인·오탐 검토 흐름 정리
+- Python·Docker 기반 자동화 도구와 LLM 출력 검증으로 반복 수동 확인·오탐 검토 흐름 정리
 
 주요 업무
 
 - Splunk ES Saved Search와 FortiGate 이벤트 기준을 연결해 탐지·분류·알림 흐름 설계
 - Webhook relay와 Slack/SMS 알림으로 보안 이벤트 전달 경로 표준화
 - FortiManager JSON-RPC API 기반 방화벽 정책 조회 흐름 구축
-- Claude AI를 활용한 위협 정보 수집·분류 보조와 오탐 흐름 정리
+- LLM을 활용한 위협 정보 수집·분류 보조와 오탐 흐름 정리
 - DR 사이트 점검 및 주기적 DR 테스트
 - 취약점 스캔 결과 정리 및 심각도 기준의 패치 적용
 - 개발팀·거래팀·운영팀과 보안 요구사항 커뮤니케이션
@@ -100,7 +100,7 @@
 - 거래 플랫폼 운영 기준 유지
 - Splunk·Fortinet 연동 환경에서 방화벽 정책 조회·배포 자동화 스크립트 작성
 - Grafana 대시보드로 시스템·컨테이너·로그 지표를 한 화면에 정리
-- Claude AI를 활용한 위협 정보 수집·분류 스크립트 작성으로 수동 분석 의존도 낮춤
+- LLM 기반 위협 정보 수집·분류 스크립트 작성으로 수동 분석 의존도 낮춤
 - 알림 워크플로로 반복 API 호출 자동화 스크립트 정리
 - SIEM 탐지 룰 검토 및 조건 조정으로 오탐 정리
 - 취약점 SLA 기준에 따라 패치 일정을 관리
@@ -291,7 +291,7 @@
 - **주요 업무**:
   - Splunk ES Saved Search, webhook relay, Slack/SMS 알림을 연결한 보안 이벤트 전달 흐름 설계
   - FortiManager JSON-RPC API 기반 방화벽 정책 조회 자동화
-  - Claude AI 보조 분석으로 반복 수동 확인과 오탐 검토 흐름 정리
+  - LLM 출력 검증으로 반복 수동 확인과 오탐 검토 흐름 정리
   - DR 사이트 점검 및 주기적 DR 테스트
 - **주요 성과**:
   - 보안 이벤트 탐지·알림·정책 조회 결과를 감사 대응 가능한 운영 근거로 구조화
@@ -329,7 +329,7 @@
 
 **기술스택 & 도구**
 
-- **AI/ML**: Claude Code, MCP Protocol, GitHub Copilot
+- **LLM 도구**: LLM CLI, MCP Protocol
 - **컨테이너**: Docker, Docker Compose, Watchtower, Portainer API
 - **모니터링**: Grafana, Prometheus, Loki, Tempo, Splunk, cAdvisor, Node Exporter
 - **언어**: Python, Node.js, JavaScript/TypeScript, Shell Script
@@ -344,7 +344,7 @@
    - 공개 Grafana 대시보드로 실제 운영 표면을 확인 가능하게 구성
 
 2. **AI/자동화 거버넌스**
-   - Claude Code, MCP, GitHub App, 세션 자동화 도구를 운영 흐름으로 통합
+   - LLM CLI, MCP, GitHub App, 세션 자동화 도구를 운영 흐름으로 통합
    - Python·n8n·Supabase 기반 콘텐츠 자동화 파이프라인으로 스크립트 생성, TTS, 영상 생성, 업로드 단계를 분리
    - 작업 상태와 산출물 메타데이터를 저장해 실패 재시도와 채널별 후처리 기준을 관리
 
@@ -448,9 +448,9 @@
 
 ### 보안 솔루션
 
-- 네트워크 보안: 방화벽, DDoS, IPS/IDS, WAF
-- 엔드포인트: NAC·DLP, EDR/EPP, MDM, APT
-- 접근제어: 서버/DB 접근제어, SSL VPN, IPSec, SSL 복호화
+- 네트워크 보안: 방화벽, DDoS, IPS/IDS, WAF, SWG
+- 엔드포인트: NAC, DLP·nDLP, DRM, EDR/EPP, MDM, APT
+- 접근제어: 서버/DB 접근제어, Active Directory, SSL VPN, IPSec, SSL 복호화
 - 모니터링: SIEM, SOAR
 
 ### 클라우드 및 가상화
@@ -467,7 +467,7 @@
 
 ### AI/ML 및 운영 도구
 
-- AI 도구: Claude Code, GitHub Copilot, ChatGPT API
+- LLM 도구: LLM CLI, MCP, LLM API
 - MCP 프로토콜: 서버 통합 (filesystem, github, brave-search, memory, tmux 등)
 - 운영 스크립트 프레임워크: Custom SlashCommand 시스템
 - 관찰성: Universal Observability 아키텍처 (Grafana 중심)
