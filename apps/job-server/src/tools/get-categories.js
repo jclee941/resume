@@ -2,7 +2,7 @@
  * MCP Tool: Get Job Categories
  */
 
-import WantedAPI from '../shared/clients/wanted/index.js';
+import WantedAPI from '@resume/shared/clients/wanted';
 
 export const getCategoriesTool = {
   name: 'wanted_get_categories',

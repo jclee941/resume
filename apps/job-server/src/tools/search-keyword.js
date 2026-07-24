@@ -2,7 +2,7 @@
  * MCP Tool: Search Jobs by Keyword
  */
 
-import WantedAPI from '../shared/clients/wanted/index.js';
+import WantedAPI from '@resume/shared/clients/wanted';
 
 export const searchKeywordTool = {
   name: 'wanted_search_keyword',
