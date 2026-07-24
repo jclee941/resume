@@ -1,8 +1,7 @@
 <!-- Generated from master resume -->
 <!-- Variant: short -->
-<!-- Generated: 2026-07-12T16:30:52.211Z -->
+<!-- Generated: 2026-07-24T01:35:21.877Z -->
 <!-- Description: Short form resume (1-2 pages) -->
-
 ## 연락처
 
 - 전화: 010-5757-9592
@@ -12,6 +11,7 @@
 - LinkedIn: linkedin.com/in/jclee0109
 
 ---
+
 
 ---
 
@@ -42,6 +42,7 @@
 - **금융권 보안**: 거래 데이터 처리 환경의 보안 운영
 
 ---
+
 
 ---
 
@@ -184,6 +185,7 @@
 - 정기 취약점 점검 절차 정리
 
 ---
+
 
 ---
 
