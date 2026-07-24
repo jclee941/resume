@@ -30,7 +30,7 @@ describe('project review cards', () => {
   ];
 
   test('detects localized labels from project copy', () => {
-    expect(projectLabelsFor(projects).railTitle).toBe('채용 검토용 프로젝트 빠른 경로');
+    expect(projectLabelsFor(projects).railTitle).toBe('채용 검토용 프로젝트 바로가기');
     expect(
       projectLabelsFor([
         {

@@ -3,7 +3,7 @@ const { escapeHtml } = require('../template-sanitizer');
 const PROJECT_LABELS = {
   ko: {
     railEyebrow: '검토 경로',
-    railTitle: '채용 검토용 프로젝트 빠른 경로',
+    railTitle: '채용 검토용 프로젝트 바로가기',
     railDesc: '긴 목록을 훑기 전에 운영 근거가 가장 분명한 사례로 바로 이동할 수 있습니다.',
     problem: '문제',
     role: '역할',
