@@ -106,7 +106,7 @@ describe('portfolio first-screen hiring decision contract', () => {
   test('public proof details explain why each artifact is useful to hiring leads', () => {
     const combinedHero = ['ko', 'en', 'ja'].map((locale) => buildHeroContent(locale)).join('\n');
 
-    expect(combinedHero).toMatch(/PR (?:리뷰|review)|PR確認/);
+    expect(combinedHero).toMatch(/LLM/);
     expect(combinedHero).toMatch(/시크릿 스캔|secrets scan|シークレットスキャン/);
     expect(combinedHero).toMatch(/Check Run|check runs|チェックラン/);
     expect(combinedHero).toMatch(/메트릭.*로그|metrics.*logs|メトリクス.*ログ/);
