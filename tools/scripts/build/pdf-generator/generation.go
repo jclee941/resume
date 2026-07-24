@@ -14,7 +14,7 @@ func generateAllResumes() {
 	failed := 0
 	fmt.Println("Resume variants:")
 	for _, variant := range resumeVariants {
-		if generateSinglePDF(variant.Source, formatOutputPath(variant.Output), variant.Font, false) {
+		if generateSinglePDF(variant.Source, formatOutputPath(variant.Output), variant.Font, variant.LayoutProfile, false) {
 			success++
 		} else {
 			failed++
@@ -22,7 +22,7 @@ func generateAllResumes() {
 	}
 	fmt.Println("\nTechnical documentation:")
 	for _, variant := range docVariants {
-		if generateSinglePDF(variant.Source, variant.Output, fontNanum, true) {
+		if generateSinglePDF(variant.Source, variant.Output, fontNanum, variant.LayoutProfile, true) {
 			success++
 		} else {
 			failed++
@@ -65,13 +65,13 @@ func copyFile(src, dst string) {
 func generateVariant(variant string) {
 	fmt.Printf("%s=== Generating %s ===%s\n\n", Blue, variant, NoColor)
 	if resume, ok := resumeVariants[variant]; ok {
-		if generateSinglePDF(resume.Source, formatOutputPath(resume.Output), resume.Font, false) {
+		if generateSinglePDF(resume.Source, formatOutputPath(resume.Output), resume.Font, resume.LayoutProfile, false) {
 			return
 		}
 		os.Exit(1)
 	}
 	if doc, ok := docVariants[variant]; ok {
-		if generateSinglePDF(doc.Source, doc.Output, fontNanum, true) {
+		if generateSinglePDF(doc.Source, doc.Output, fontNanum, doc.LayoutProfile, true) {
 			return
 		}
 		os.Exit(1)
