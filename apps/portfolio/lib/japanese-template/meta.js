@@ -7,7 +7,7 @@ function applyJapaneseMeta(html) {
     .replace(/<html lang="ko"/i, '<html lang="ja"')
     .replace(
       /<title>[^<]*<\/title>/i,
-      '<title>イ・ジェチョル - Security Automation / Infrastructure Engineer</title>'
+      '<title>イ・ジェチョル - Security & Infrastructure Engineer</title>'
     )
     .replace(
       /<link rel="canonical" href="https:\/\/resume\.jclee\.me\/?" \/>/i,
@@ -27,7 +27,7 @@ function applyJapaneseMeta(html) {
     )
     .replace(
       /<meta property="og:title" content="[^"]*" \/>/i,
-      '<meta property="og:title" content="イ・ジェチョル - Security Automation / Infrastructure Engineer" />'
+      '<meta property="og:title" content="イ・ジェチョル - Security & Infrastructure Engineer" />'
     )
     .replace(
       /<meta property="og:locale" content="ko_KR" \/>/i,
@@ -44,11 +44,11 @@ function applyJapaneseMeta(html) {
     )
     .replace(
       /<meta name="twitter:title" content="[^"]*" \/>/i,
-      '<meta name="twitter:title" content="イ・ジェチョル - Security Automation / Infrastructure Engineer" />'
+      '<meta name="twitter:title" content="イ・ジェチョル - Security & Infrastructure Engineer" />'
     )
     .replace(
-      /"name": "이재철 - Security Automation \/ Infrastructure Engineer"/g,
-      '"name": "イ・ジェチョル - Security Automation / Infrastructure Engineer"'
+      /"name": "이재철 - Security & Infrastructure Engineer"/g,
+      '"name": "イ・ジェチョル - Security & Infrastructure Engineer"'
     )
     .replace(/"name": "이재철"/g, '"name": "イ・ジェチョル"')
     .replace(/"inLanguage": "ko-KR"/g, '"inLanguage": "ja-JP"')
@@ -59,12 +59,16 @@ function applyJapaneseMeta(html) {
       '"image": "https://resume.jclee.me/og-image-ja.webp"'
     )
     .replace(
-      /"jobTitle": "Security Automation \/ Infrastructure Engineer"/g,
-      '"jobTitle": "Security Automation / Infrastructure Engineer"'
+      /"jobTitle": "Security & Infrastructure Engineer"/g,
+      '"jobTitle": "Security & Infrastructure Engineer"'
+    )
+    .replace(
+      /"name": "Security & Infrastructure Engineer — 면접 제안 접수 중"/g,
+      '"name": "Security & Infrastructure Engineer — 面接依頼受付中"'
     )
     .replace(
       /<meta\s+name="description"[\s\S]*?\/>/i,
-      '<meta name="description" content="イ・ジェチョル - Security Automation / Infrastructure Engineer ポートフォリオ" />'
+      '<meta name="description" content="イ・ジェチョル - Security & Infrastructure Engineer ポートフォリオ" />'
     )
     .replace(
       /<meta\s+name="keywords"[\s\S]*?\/>/i,
@@ -76,15 +80,15 @@ function applyJapaneseMeta(html) {
     )
     .replace(
       /<meta\s+property="og:description"[\s\S]*?\/>/i,
-      '<meta property="og:description" content="イ・ジェチョル - Security Automation / Infrastructure Engineer ポートフォリオ" />'
+      '<meta property="og:description" content="イ・ジェチョル - Security & Infrastructure Engineer ポートフォリオ" />'
     )
     .replace(
       /<meta\s+name="twitter:description"[\s\S]*?\/>/i,
-      '<meta name="twitter:description" content="イ・ジェチョル - Security Automation / Infrastructure Engineer ポートフォリオ" />'
+      '<meta name="twitter:description" content="イ・ジェチョル - Security & Infrastructure Engineer ポートフォリオ" />'
     )
     .replace(
       /"description": "[^"]*"/g,
-      '"description": "イ・ジェチョル - Security Automation / Infrastructure Engineer ポートフォリオ"'
+      '"description": "イ・ジェチョル - Security & Infrastructure Engineer ポートフォリオ"'
     )
     .replace(LANGUAGE_LINK_RE, (_match, attrs, lang, label) =>
       buildLanguageLink(attrs, lang, label)
