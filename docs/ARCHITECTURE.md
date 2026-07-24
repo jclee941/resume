@@ -122,7 +122,6 @@ MS|│   └── job-dashboard/          # Dashboard API module (imported into
 │   └── integration/            # Integration tests (3 files)
 ├── docs/                       # Architecture, guides, analysis, reports
 ├── ta/                         # Python PPTX analysis scripts
-├── supabase/                   # Supabase edge functions
 ├── third_party/                # Vendored external dependencies (npm-managed)
 ├── .github/
 │   ├── workflows/              # 29 CI/CD workflows

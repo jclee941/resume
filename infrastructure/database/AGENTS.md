@@ -6,24 +6,20 @@
 
 ## OVERVIEW
 
-D1 and Supabase database migrations, seeds, and configuration. Two separate
-migration lineages: D1 (Cloudflare Workers) and Supabase (PostgreSQL).
+Cloudflare D1 database migrations and seed data.
 
 ## STRUCTURE
 
 ```text
 infrastructure/database/
-├── migrations/             # D1 migrations (0000-0008)
+├── migrations/             # D1 migrations (0000-0009)
 ├── seeds/                  # D1 seed data
-├── supabase/
-│   ├── migrations/         # Supabase PostgreSQL migrations
-│   └── seed/               # Supabase seed data
 └── README.md
 ```
 
 ## D1 MIGRATIONS
 
-Immutable numbered migrations (0000-0008) for Cloudflare D1 SQLite database.
+Immutable numbered migrations (0000-0009) for Cloudflare D1 SQLite database.
 
 | Migration | Purpose                    |
 | --------- | -------------------------- |
@@ -33,20 +29,13 @@ Immutable numbered migrations (0000-0008) for Cloudflare D1 SQLite database.
 | 0003      | Monitoring tables          |
 | 0004      | Sync logs table            |
 | 0005      | Resume sync tables         |
-| 0006      | Vault table                |
 | 0007      | Wanted application history |
 | 0008      | Auto-apply metadata        |
+| 0009      | Canonical job URLs         |
 
-## SUPABASE MIGRATIONS
-
-Separate PostgreSQL migration lineage for Supabase (0001-0004).
-
-| Migration | Purpose              |
-| --------- | -------------------- |
-| 0001      | Resume tables        |
-| 0002      | RLS policies         |
-| 0003      | Indexes and triggers |
-| 0004      | Tighten grants       |
+**Note:** Migration `0006` was removed on 2026-07-23. It was a misfiled
+PostgreSQL/Supabase Vault schema that could never execute on D1. The
+`0005 -> 0007` sequence gap is intentional; do not reuse number 0006.
 
 ## CONVENTIONS
 
@@ -55,12 +44,12 @@ Separate PostgreSQL migration lineage for Supabase (0001-0004).
 - Do not assume migrations are rerunnable; later D1 migrations include plain
   `ALTER TABLE` statements and rely on ordered, one-time application.
 - Never edit existing migrations after deployment.
-- D1 and Supabase migrations are separate; keep them distinct.
 
 ## ANTI-PATTERNS
 
 - Never edit deployed migration files.
-- Never skip migration numbers.
+- Never skip migration numbers — the single documented exception is the
+  retired 0006 (see the note above); do not introduce new gaps.
 - Never commit production credentials in seed files.
 
 ---

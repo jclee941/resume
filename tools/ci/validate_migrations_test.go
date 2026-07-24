@@ -10,7 +10,7 @@ func TestMigrationSequenceWarningsSortsMapKeys(t *testing.T) {
 		3: "0003_add_sync_runs.sql",
 		4: "0004_add_profile_tables.sql",
 		5: "0005_add_auth_tables.sql",
-		6: "0006_create_vault.sql",
+		6: "0006_add_sessions.sql",
 	})
 
 	if len(warnings) != 0 {

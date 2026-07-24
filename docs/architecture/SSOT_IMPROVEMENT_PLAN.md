@@ -460,15 +460,9 @@ npm scripts directly`. Bazel symlinks at root confuse tooling.
     (`byName`, `byId`) exported. Consumers updated.
   - **Depends on:** SSOT-022
 
-- [ ] **SSOT-026 — Generate Supabase types into `packages/types`**
-  - **Severity:** P3 · **Effort:** S
-  - **Files:** `infrastructure/database/supabase/`,
-    `packages/types/src/db.supabase.ts` (generated)
-  - **Why:** Supabase PostgreSQL schema is the SSoT for those tables but no
-    generated TypeScript types exist for consumers.
-  - **Acceptance:** `npm run gen:types:supabase` produces
-    `packages/types/src/db.supabase.ts`. CI runs on schema migration changes.
-  - **Depends on:** SSOT-022
+- [x] **SSOT-026 — REMOVED 2026-07-23: Supabase type generation**
+  - **Reason:** Supabase stack deleted from the repository; there is no schema
+    or generated type surface to maintain.
 
 - [ ] **SSOT-027 — Generate D1 types into `packages/types`**
   - **Severity:** P3 · **Effort:** S
@@ -950,9 +944,8 @@ Refresh AGENTS.md, link checks, GitLab legacy purge, root cleanup.
   k8s/Cloudflare/automation/monitoring split). Only minor doc/cleanup tasks touch it
   (SSOT-051 for root binaries that source from `infrastructure/automation/`).
 - **`ta/`** (Python PPTX) is intentionally out of npm workspaces. No changes.
-- **`supabase/`** top-level directory (Edge Functions only) and
-  `infrastructure/database/supabase/` (PostgreSQL schema) are correctly
-  separated. No changes.
+- **REMOVED 2026-07-23:** The Supabase Edge Functions and PostgreSQL schema
+  directories were deleted with the Supabase stack.
 - **Bazel symlinks at repo root** (`bazel-bin`, `bazel-out`, `bazel-resume`,
   `bazel-testlogs`) are resolved by D-1 / SSOT-018.
 
