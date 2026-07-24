@@ -42,11 +42,11 @@ export const ROLE_PROFILES = [
     id: 'automation',
     label: 'Automation',
     proof: {
-      ko: 'jclee-bot, PR 검토, 시크릿 스캔, Check Run',
-      en: 'jclee-bot, PR review, secret scan, and check runs',
-      ja: 'jclee-bot、PRレビュー、シークレットスキャン、チェックラン',
+      ko: 'jclee-bot LLM 리뷰, MCP 서버, Check Run',
+      en: 'jclee-bot LLM review, MCP servers, check runs',
+      ja: 'jclee-bot LLMレビュー、MCPサーバ、チェックラン',
     },
-    keywords: ['Security Alert', 'Bug Bounty', 'jclee-bot', 'SafetyWallet', 'tmux'],
+    keywords: ['Security Alert', 'Bug Bounty', 'jclee-bot', 'Idle Outpost', 'SafetyWallet', 'tmux'],
   },
 ];
 
