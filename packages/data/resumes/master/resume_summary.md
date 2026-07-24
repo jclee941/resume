@@ -4,7 +4,9 @@
 
 폐쇄망 OA 환경에서 출발해 금융권 보안 인프라 구축, SIEM 탐지·알림 자동화, 관측성·IaC 기반 개선을 이어 왔습니다. FortiGate HA·망분리 환경에서 Splunk ES, Slack/SMS 알림 워크플로, FortiManager API를 연결해 보안 이벤트 인지·분류·알림 흐름을 설계했습니다. 보안 인프라, Security Automation, SIEM Engineering, Observability 중심의 역할을 검토합니다.
 
-**핵심 역량**: 금융권 보안 인프라 설계·구축 · FortiGate 다층 망분리 · Splunk SIEM 탐지·알림 자동화 · IaC 기반 관측성 · 금융감독원 감사 대응
+**핵심 역량**: 금융권 보안 인프라 설계·구축 · 보안 장비·접근통제 운영 · Splunk SIEM 탐지·알림 자동화 · IaC 기반 관측성 · 금융감독원 감사 대응
+
+**보안 장비 경험**: DLP·nDLP · APT · SWG · IPS · DDoS · DRM · SSL VPN · NAC · Active Directory
 
 ## 연락처
 
@@ -67,7 +69,7 @@
 - **제품·백엔드**: TypeScript, JavaScript, Next.js, Node.js, Python, Flask, REST API
 - **데이터·비동기**: PostgreSQL, Cloudflare D1, Drizzle ORM, Redis, Workers Queue
 - **플랫폼·배포**: Cloudflare Workers, Docker, Kubernetes, GitHub Actions, GitLab CI/CD
-- **관측성·보안**: Grafana, Prometheus, Loki, Splunk ES, FortiGate, WAF, NAC·DLP, EDR
+- **관측성·보안**: Grafana, Prometheus, Loki, Splunk ES, FortiGate, WAF, DLP·nDLP, APT, SWG, IPS, DDoS, DRM, SSL VPN, NAC, Active Directory, EDR
 - **자동화·IaC**: Python, Shell, Ansible, Terraform
 
 ## 학력·자격
