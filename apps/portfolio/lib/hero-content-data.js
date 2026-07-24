@@ -2,15 +2,15 @@ const HERO_CONTENT = {
   ko: {
     title: '이재철',
     srTitle: 'Jaecheol Lee',
-    role: 'Security Automation / Infrastructure Engineer',
-    availability: '보안 자동화 · 보안 인프라 면접 제안 가능',
+    role: 'Security & Infrastructure Engineer',
+    availability: '보안·인프라 엔지니어 면접 제안을 환영합니다.',
     positioning:
-      '넥스트레이드 보안 인프라 구축·자동화와 LLM 출력 검증 자동화(jclee-bot), 공개 프로젝트와 이력서 PDF를 한 화면에 정리했습니다.',
+      '넥스트레이드 보안 인프라 구축과 SIEM 탐지·알림 경험, jclee-bot LLM 출력 검증, 공개 프로젝트를 정리했습니다.',
     proofLabel: '핵심 이력 요약',
     proofItems: [
-      '대상 역할: Security Automation / Infrastructure Engineer',
-      '최근 이력: 넥스트레이드 보안 인프라 구축·자동화, jclee-bot LLM 출력 검증',
-      '연락처: 이메일 면접 제안, 이력서 PDF',
+      'FortiGate HA·망분리·엔드포인트 보안 운영 경험이 있습니다.',
+      '넥스트레이드 보안 인프라를 구축하고, Splunk ES 탐지·알림과 jclee-bot LLM 출력 검증을 운영했습니다.',
+      '이메일 면접 제안 · 이력서 PDF 확인',
     ],
     publicProofLabel: '공개 자동화 프로젝트',
     publicProofLinks: [
@@ -21,26 +21,26 @@ const HERO_CONTENT = {
     ],
     reviewLabel: '바로 확인하기',
     reviewLinks: [
-      ['#resume', '경력 상세', '본인가·감사 대응 이력'],
+      ['#resume', '경력 및 성과', '본인가·감사 대응 경험'],
       ['#projects', '공개 자동화 프로젝트', '탐지·알림·장비 API 조회'],
-      ['#contact', '연락·PDF', '메일, 면접 제안, 이력서 PDF'],
+      ['#contact', '연락 및 이력서', '면접 제안 메일 · PDF 다운로드'],
     ],
     packetLabel: '채용 담당자용 요약',
     packetEyebrow: '채용 담당자용 요약',
-    packetStatus: '면접 제안 가능',
-    packetSummary: '경력, 공개 자동화 프로젝트, 연락처와 이력서 PDF를 한 화면에 모았습니다.',
+    packetStatus: '채용 제안 문의 가능',
+    packetSummary: '채용 검토에 필요한 경력, 공개 프로젝트, 연락처, 이력서 PDF를 모았습니다.',
     packetItems: [
-      ['대상 역할', '보안 자동화 · 보안 인프라 · SIEM'],
-      ['주요 경력', '넥스트레이드 구축·자동화 · FSDC 감사 대응 · 프로젝트 로그'],
-      ['다음 액션', '메일로 면접 제안 또는 일정 확인'],
+      ['대상 역할', '보안 엔지니어링 · 인프라 · SIEM'],
+      ['주요 경력', '넥스트레이드 구축·운영 · FSDC 감사 대응 · 프로젝트 로그'],
+      ['다음 액션', '이메일로 면접 제안 또는 일정 문의'],
     ],
-    quickTitle: '역할별 프로젝트 보기',
-    quickDesc: '역할을 고르면 관련 경력과 프로젝트로 바로 이동합니다.',
+    quickTitle: '직무별 경력·프로젝트',
+    quickDesc: '관심 직무를 선택하면 관련 경력과 프로젝트로 이동합니다.',
     quickRoles: [
-      ['security', '보안 자동화', 'Splunk ES, FortiGate, 감사 대응'],
+      ['security', '보안 엔지니어링', 'Splunk ES, FortiGate, 감사 대응'],
       ['infra', '보안 인프라', 'FortiGate HA, 망분리, Ansible 절차'],
       ['observability', '관측성', 'Grafana·Loki, 로그 기반 장애 조사'],
-      ['automation', 'AI 검증 자동화', 'jclee-bot, MCP 서버, CLIProxyAPI'],
+      ['automation', 'AI 엔지니어링', 'jclee-bot, MCP 서버, CLIProxyAPI'],
     ],
     actionsLabel: '주요 이동',
     mailSubject: '채용 제안 또는 면접 문의',
@@ -49,14 +49,14 @@ const HERO_CONTENT = {
   },
   en: {
     title: 'Jaecheol Lee',
-    role: 'Security Automation / Infrastructure Engineer',
+    role: 'Security & Infrastructure Engineer',
     availability:
-      'Open to interview requests for security automation and security infrastructure roles',
+      'Open to interview requests for security and infrastructure engineering roles',
     positioning:
-      'Exchange security infrastructure, LLM output verification automation (jclee-bot), public projects, and resume PDF — all on one page.',
+      'Nextrade security infrastructure, SIEM operations, the jclee-bot LLM output verifier, public projects, and a resume PDF are gathered here.',
     proofLabel: 'Résumé at a glance',
     proofItems: [
-      'Target role: Security Automation / Infrastructure Engineer',
+      'Target role: Security & Infrastructure Engineer',
       'Recent role: exchange security infrastructure and LLM output verification (jclee-bot)',
       'Contact: email for interview requests and resume PDF',
     ],
@@ -83,7 +83,7 @@ const HERO_CONTENT = {
     packetSummary:
       'Security-appliance builds, SIEM work, public automation projects, contact, and resume PDF — gathered on one page.',
     packetItems: [
-      ['Target role', 'Security Automation / Infrastructure Engineer'],
+      ['Target role', 'Security & Infrastructure Engineer'],
       ['Recent work', 'Exchange build/automation · audit response · resume PDF'],
       ['Contact and resume PDF', 'Email for interview requests'],
     ],
@@ -103,13 +103,13 @@ const HERO_CONTENT = {
   ja: {
     title: '李在哲',
     srTitle: 'イ・ジェチョル',
-    role: 'Security Automation / Infrastructure Engineer',
-    availability: 'セキュリティ自動化・セキュリティ基盤の面接依頼を歓迎',
+    role: 'Security & Infrastructure Engineer',
+    availability: 'セキュリティ・インフラエンジニア職の面接依頼を歓迎',
     positioning:
       '直近のセキュリティ基盤構築とLLM出力検証自動化(jclee-bot)、公開プロジェクト、履歴書PDFを1ページにまとめました。',
     proofLabel: '経歴サマリー',
     proofItems: [
-      '希望職種: Security Automation / Infrastructure Engineer',
+      '希望職種: Security & Infrastructure Engineer',
       '直近役割: 取引所セキュリティ基盤とLLM出力検証(jclee-bot)',
       '連絡先: メールで面接依頼、履歴書PDF',
     ],
@@ -132,17 +132,17 @@ const HERO_CONTENT = {
     packetSummary:
       'セキュリティ機器構築、SIEM、公開自動化プロジェクト、連絡先・履歴書PDFを1ページにまとめました。',
     packetItems: [
-      ['希望職種', 'Security Automation / Infrastructure Engineer'],
+      ['希望職種', 'Security & Infrastructure Engineer'],
       ['主要経歴', '取引所構築・自動化、監査対応、履歴書PDF'],
       ['連絡・履歴書PDF', 'メールで面接依頼を相談'],
     ],
     quickTitle: '職務別に見る',
     quickDesc: '役割を選ぶと、関連する経歴とプロジェクトへ移動できます。',
     quickRoles: [
-      ['security', 'セキュリティ自動化', 'Splunk ES、FortiGate、監査対応'],
+      ['security', 'セキュリティエンジニアリング', 'Splunk ES、FortiGate、監査対応'],
       ['infra', 'セキュリティ基盤', 'FortiGate HA、分離、Ansible手順'],
       ['observability', '可観測性', 'Grafana/Loki、ログベースの障害調査'],
-      ['automation', 'AI検証自動化', 'jclee-bot、MCPサーバ、CLIProxyAPI'],
+      ['automation', 'AIエンジニアリング', 'jclee-bot、MCPサーバ、CLIProxyAPI'],
     ],
     actionsLabel: '主要導線',
     mailSubject: '採用提案または面接依頼',

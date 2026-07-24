@@ -23,7 +23,7 @@ function renderHeroTitle(content) {
 }
 
 function renderProofList(content) {
-  const items = content.proofItems.map((item) => `<li>${item}</li>`).join('');
+  const items = content.proofItems.map((item) => `<li>${escapeHtml(item)}</li>`).join('');
   return `<ul class="hero-proof-list" aria-label="${content.proofLabel}">${items}</ul>`;
 }
 
@@ -59,7 +59,7 @@ function renderReviewPacket(content) {
       return (
         '<div>' +
         `<span class="hiring-review-packet__step" aria-hidden="true">${step}</span>` +
-        `<dt>${term}</dt><dd>${description}</dd></div>`
+        `<dt>${escapeHtml(term)}</dt><dd>${escapeHtml(description)}</dd></div>`
       );
     })
     .join('');
@@ -119,7 +119,7 @@ function buildHeroContent(locale) {
   const content = HERO_CONTENT[locale] || HERO_CONTENT.ko;
   return [
     renderHeroTitle(content),
-    `<p class="hero-role">${content.role}</p>`,
+    `<p class="hero-role">${escapeHtml(content.role)}</p>`,
     `<p class="hero-availability">${content.availability}</p>`,
     `<p class="hero-positioning">${content.positioning}</p>`,
     renderActions(content),
