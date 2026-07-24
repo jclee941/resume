@@ -1,5 +1,5 @@
 import { ValidationError } from '../../shared/errors/apply-errors.js';
-import SessionManager from '../../shared/services/session/session-manager.js';
+import SessionManager from '../../shared/services/session/index.js';
 
 export const WANTED_PLATFORM = 'wanted';
 

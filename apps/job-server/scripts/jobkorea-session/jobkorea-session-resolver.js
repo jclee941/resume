@@ -1,4 +1,4 @@
-import SessionManager from '../../src/shared/services/session/session-manager.js';
+import SessionManager from '../../src/shared/services/session/index.js';
 import { sessionContentValidationMethods } from '../../src/shared/services/session/session-manager/session-content-validation.js';
 import {
   buildCookieString,
@@ -70,7 +70,7 @@ export function resolveJobKoreaSession(options = {}) {
   const saveResolvedFallback = options.saveResolvedFallback !== false;
   const requireFresh = options.requireFresh !== false;
 
-  let managedSession = null;
+  let managedSession;
   try {
     managedSession = normalizeJobKoreaSession(
       sessionManager.load(JOBKOREA_SESSION_PLATFORM),
@@ -124,7 +124,7 @@ export function saveJobKoreaSession(session, options = {}) {
     return false;
   }
 
-  let saved = false;
+  let saved;
   try {
     saved = sessionManager.save(JOBKOREA_SESSION_PLATFORM, normalized);
   } catch {

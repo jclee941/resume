@@ -1,4 +1,4 @@
-import SessionManager from '../../src/shared/services/session/session-manager.js';
+import SessionManager from '../../src/shared/services/session/index.js';
 import { toPlaywrightCookies } from '../jobkorea-session/cookie-utils.js';
 
 import { generateCoverLetterForJob } from './cover-letter.js';

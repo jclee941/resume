@@ -1,4 +1,4 @@
-import { SessionManager } from './tools/auth.js';
+import { SessionManager } from './shared/services/session/index.js';
 import { resumeTool } from './tools/resume/index.js';
 
 const RESUME_ID = 'AwcICwcLBAFIAgcDCwUAB01F';

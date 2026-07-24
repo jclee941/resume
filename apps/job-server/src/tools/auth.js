@@ -4,7 +4,6 @@
  */
 
 export { authTool } from './auth/auth-tool.js';
-export { SessionManager } from './auth/session-manager.js';
 export * from './auth/handlers.js';
 export * from './auth/session-actions.js';
 export * from './auth/credential-actions.js';

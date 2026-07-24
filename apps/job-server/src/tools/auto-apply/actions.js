@@ -1,4 +1,4 @@
-import { SessionManager } from '../auth.js';
+import { SessionManager } from '../../shared/services/session/index.js';
 import { AUTO_APPLY_ACTIONS } from './constants.js';
 import {
   createApplySystem,

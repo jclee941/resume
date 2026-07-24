@@ -3,7 +3,7 @@ import assert from 'node:assert';
 import fs from 'node:fs';
 import { syncBuiltinESMExports } from 'node:module';
 import { unifiedResumeSyncTool } from '../unified-resume-sync.js';
-import { SessionManager } from '../auth.js';
+import { SessionManager } from '../../shared/services/session/index.js';
 
 const BASE_RESUME_DATA = {
   current: { position: 'DevOps Engineer', company: 'TestCorp' },

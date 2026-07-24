@@ -7,7 +7,7 @@
  * 2. Resume API (Chaos API) - for resume careers/education/skills
  */
 
-import { SessionManager } from './auth.js';
+import { SessionManager } from '../shared/services/session/index.js';
 import * as profileActions from './resume/profile-actions.js';
 import * as resumeActions from './resume/resume-actions.js';
 import * as careerActions from './resume/career-actions.js';

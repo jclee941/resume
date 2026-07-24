@@ -1,4 +1,4 @@
-import SessionManager from '../../shared/services/session/session-manager.js';
+import SessionManager from '../../shared/services/session/index.js';
 import {
   extractApplicationId,
   isAppliedJob,

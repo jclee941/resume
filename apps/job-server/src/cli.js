@@ -12,7 +12,7 @@
  *   node src/cli.js pipeline status
  */
 
-import { SessionManager } from './tools/auth.js';
+import { SessionManager } from './shared/services/session/index.js';
 import resumeSyncTool from './tools/resume-sync.js';
 import optimizeResumeTool from './tools/optimize-resume.js';
 import { DATA_DIR } from './tools/commands/base-command.js';

@@ -6,7 +6,7 @@ import {
   sessionExpiry,
   toCookieString,
 } from './cookie-utils.js';
-import { SessionManager } from './session-manager.js';
+import { SessionManager } from '../../shared/services/session/index.js';
 
 const ACCOUNT_HINT = 'Use wanted_profile or wanted_resume to manage your account';
 

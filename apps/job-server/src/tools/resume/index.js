@@ -1,4 +1,4 @@
-import { SessionManager } from '../auth.js';
+import { SessionManager } from '../../shared/services/session/index.js';
 import * as profile from './commands/profile.js';
 import * as resumeCrud from './commands/resume-crud.js';
 import * as career from './commands/career.js';

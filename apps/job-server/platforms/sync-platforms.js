@@ -125,7 +125,7 @@ async function checkStatus(platforms) {
 async function getPlatformStatus(platform) {
   switch (platform) {
     case 'wanted': {
-      const { SessionManager } = await import('../src/tools/auth.js');
+  const { SessionManager } = await import('../src/shared/services/session/index.js');
       let api = await SessionManager.getAPI();
       if (!api) {
         const renewed = await autoRenewWantedSession();
@@ -223,7 +223,7 @@ async function syncPlatforms(sourceData, platforms, options) {
 async function syncToPlatform(sourceData, platform, options) {
   switch (platform) {
     case 'wanted': {
-      const { SessionManager } = await import('../src/tools/auth.js');
+  const { SessionManager } = await import('../src/shared/services/session/index.js');
       let api = await SessionManager.getAPI();
       if (!api) {
         const renewed = await autoRenewWantedSession();

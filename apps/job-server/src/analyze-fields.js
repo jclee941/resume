@@ -2,7 +2,7 @@
  * Analyze all controllable fields in Wanted Resume API
  */
 
-import { SessionManager } from './tools/auth.js';
+import { SessionManager } from './shared/services/session/index.js';
 
 const RESUME_ID = 'AwcICwcLBAFIAgcDCwUAB01F';
 

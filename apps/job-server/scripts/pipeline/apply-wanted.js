@@ -1,4 +1,4 @@
-import SessionManager from '../../src/shared/services/session/session-manager.js';
+import SessionManager from '../../src/shared/services/session/index.js';
 
 import { generateCoverLetterForJob } from './cover-letter.js';
 import { APPLY_DELAY_MS, config } from './constants.js';

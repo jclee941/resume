@@ -2,7 +2,7 @@
  * Add projects to all careers
  */
 
-import { SessionManager } from './tools/auth.js';
+import { SessionManager } from './shared/services/session/index.js';
 
 const RESUME_ID = 'AwcICwcLBAFIAgcDCwUAB01F';
 

@@ -2,7 +2,7 @@ import { mock } from 'node:test';
 
 import { resetRetryState } from '@resume/shared/retry';
 
-import SessionManager from '../../../shared/services/session/session-manager.js';
+import SessionManager from '../../../shared/services/session/index.js';
 import { resetCircuitState } from '../wanted-strategy.js';
 
 export const WANTED_PLATFORM = 'wanted';

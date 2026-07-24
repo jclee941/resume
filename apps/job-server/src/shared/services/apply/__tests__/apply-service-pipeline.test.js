@@ -10,7 +10,7 @@ import {
   applyToJob,
   resetCircuitState,
 } from '../../../../auto-apply/strategies/wanted-strategy.js';
-import SessionManager from '../../session/session-manager.js';
+import SessionManager from '../../session/index.js';
 import { notifications } from '../../notifications/index.js';
 import { createApplyServiceFixture, getTimeline } from './integration-fixtures.js';
 

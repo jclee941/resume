@@ -5,7 +5,7 @@
  * See: ./commands/ for individual command implementations.
  */
 
-import { SessionManager } from './auth.js';
+import { SessionManager } from '../shared/services/session/index.js';
 import { CommandRegistry } from './commands/index.js';
 
 export const resumeSyncTool = {
