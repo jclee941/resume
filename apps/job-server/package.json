@@ -11,7 +11,7 @@
     "build": "echo 'Pure ESM - no build required'",
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
-    "test": "node --test 'src/shared/**/*.test.js' 'src/auto-apply/__tests__/queue-apply.test.js' 'src/auto-apply/__tests__/auto-apply.e2e.test.js' 'src/auto-apply/__tests__/submission-flow.test.js' 'src/auto-apply/cli/__tests__/*.test.js' 'src/auto-apply/cli/handlers/__tests__/*.test.js' 'src/auto-apply/strategies/__tests__/retry-behavior.test.js' 'src/auto-apply/strategies/__tests__/wanted-job-id-validation.test.js' 'src/tools/__tests__/*.test.js' 'src/tools/**/__tests__/*.test.js' 'src/session-broker/**/*.test.js' 'scripts/profile-sync/__tests__/*.test.js' 'scripts/profile-sync-cli/__tests__/*.test.js' 'scripts/jobkorea-session/__tests__/*.test.js' 'scripts/pipeline/search.test.js' 'scripts/__tests__/*.test.js' 'platforms/**/__tests__/*.test.js' 'src/test-helpers/__tests__/*.test.js' 'src/server/__tests__/server.test.js' 'src/server/__tests__/automation-webhook.test.js' 'src/server/middleware/__tests__/error-handler.test.js' 'src/server/routes/__tests__/auth-route-registration.test.js' 'src/server/routes/__tests__/auto-apply.routes.test.js'",
+    "test": "node --test 'src/shared/**/*.test.js' 'src/sync/__tests__/*.test.js' 'src/auto-apply/__tests__/queue-apply.test.js' 'src/auto-apply/__tests__/auto-apply.e2e.test.js' 'src/auto-apply/__tests__/submission-flow.test.js' 'src/auto-apply/cli/__tests__/*.test.js' 'src/auto-apply/cli/handlers/__tests__/*.test.js' 'src/auto-apply/strategies/__tests__/retry-behavior.test.js' 'src/auto-apply/strategies/__tests__/wanted-job-id-validation.test.js' 'src/tools/__tests__/*.test.js' 'src/tools/**/__tests__/*.test.js' 'src/session-broker/**/*.test.js' 'scripts/profile-sync/__tests__/*.test.js' 'scripts/profile-sync-cli/__tests__/*.test.js' 'scripts/jobkorea-session/__tests__/*.test.js' 'scripts/pipeline/search.test.js' 'scripts/__tests__/*.test.js' 'platforms/**/__tests__/*.test.js' 'src/test-helpers/__tests__/*.test.js' 'src/server/__tests__/server.test.js' 'src/server/__tests__/automation-webhook.test.js' 'src/server/middleware/__tests__/error-handler.test.js' 'src/server/routes/__tests__/auth-route-registration.test.js' 'src/server/routes/__tests__/auto-apply.routes.test.js'",
     "test:all": "node --test 'src/**/*.test.js'",
     "test:coverage": "node --test --experimental-test-coverage 'src/shared/**/*.test.js'",
     "test:external": "node --test 'src/e2e.test.js' 'src/pipeline.test.js' 'src/auto-apply/strategies/__tests__/jobkorea-strategy.test.js' 'src/auto-apply/strategies/__tests__/saramin-strategy.test.js' # excluded from `npm test`: e2e.test.js and pipeline.test.js require a live Wanted session/login (network + real credentials, run wanted_auth first); jobkorea-strategy.test.js and saramin-strategy.test.js use real un-mocked timers (40s-90s+ per run) and saramin-strategy.test.js additionally has pre-existing failing assertions (message-check ordering mismatch between test and source, unrelated to this fix) -- run manually, do not wire into CI",
@@ -66,25 +66,25 @@
     "@fastify/swagger": "^9.8.1",
     "@fastify/swagger-ui": "^6.1.0",
     "@modelcontextprotocol/sdk": "^1.27.1",
+    "@resume/data": "*",
     "@resume/schemas": "*",
     "@resume/shared": "*",
     "@resume/types": "*",
-    "@resume/data": "*",
     "fastify": "^5.10.0",
-    "fastify-plugin": "^5.0.0",
+    "fastify-plugin": "^6.0.0",
     "google-auth-library": "^10.9.0",
     "googleapis": "^173.0.0",
     "node-fetch": "^3.3.2",
     "pino": "^10.3.1",
-    "pino-pretty": "^13.0.0",
-    "puppeteer": "^24.43.0"
+    "pino-pretty": "^13.0.0"
   },
   "optionalDependencies": {
     "@cloudflare/puppeteer": "^1.0.6"
   },
   "devDependencies": {
-    "better-sqlite3": "^12.11.1",
+    "better-sqlite3": "^13.0.1",
     "playwright": "^1.58.2",
+    "puppeteer": "24.43.0",
     "ws": "^8.21.1"
   }
 }

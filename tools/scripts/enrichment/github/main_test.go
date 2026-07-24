@@ -105,7 +105,7 @@ func writeResumeFixture(t *testing.T, resumeJSON string) string {
 func readProposedProject(t *testing.T, root, filename string) map[string]any {
 	t.Helper()
 
-	path := filepath.Join(root, lib.ProposalDir, lib.ApprovedSubdir, filename)
+	path := filepath.Join(root, lib.ProposalDir, filename)
 	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatalf("read proposal %s: %v", filename, err)

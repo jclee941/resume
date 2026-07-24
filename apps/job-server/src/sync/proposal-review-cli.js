@@ -1,14 +1,17 @@
 #!/usr/bin/env node
-import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync } from 'fs';
-import { basename, join } from 'path';
+import { readdirSync, readFileSync, writeFileSync } from 'fs';
+import { join } from 'path';
 import { createInterface } from 'readline/promises';
 import { stdin as input, stdout as output } from 'process';
+import { fileURLToPath } from 'url';
 import {
   PROPOSALS_DIR,
   RESUME_DATA_PATH,
   ensureProposalDirectories,
   loadResumeData,
 } from './proposal-generator.js';
+import { updateProposalValue } from './proposal-provenance.js';
+import { publishReviewedProposal } from './proposal-review-publication.js';
 
 const APPROVED_DIR = join(PROPOSALS_DIR, 'approved');
 const REJECTED_DIR = join(PROPOSALS_DIR, 'rejected');
@@ -89,11 +92,7 @@ async function editProposal(rl, proposal) {
   console.log('Enter JSON for proposedValue. Leave blank to keep unchanged.');
   const value = await rl.question(`${formatValue(proposal.proposedValue)}\n> `);
   if (!value.trim()) return;
-  const edited = {
-    ...proposal,
-    proposedValue: JSON.parse(value),
-    editedAt: new Date().toISOString(),
-  };
+  const edited = { ...updateProposalValue(proposal, JSON.parse(value)), editedAt: new Date().toISOString() };
   delete edited.filePath;
   writeFileSync(proposal.filePath, `${JSON.stringify(edited, null, 2)}\n`);
   console.log('Updated proposal. Review it again before approval.');
@@ -111,11 +110,7 @@ function batchApprove(proposals, threshold) {
 }
 
 function moveProposal(proposal, targetDir, status) {
-  if (!existsSync(targetDir)) mkdirSync(targetDir, { recursive: true });
-  const updated = { ...proposal, status, reviewedAt: new Date().toISOString() };
-  delete updated.filePath;
-  writeFileSync(proposal.filePath, `${JSON.stringify(updated, null, 2)}\n`);
-  renameSync(proposal.filePath, join(targetDir, basename(proposal.filePath)));
+  publishReviewedProposal({ proposal, targetDir, status });
   console.log(`${status}: ${proposal.id}`);
 }
 
@@ -134,7 +129,9 @@ function formatValue(value) {
   return JSON.stringify(value ?? null, null, 2);
 }
 
-main().catch((error) => {
-  console.error(error.message);
-  process.exit(1);
-});
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    console.error(error.message);
+    process.exit(1);
+  });
+}

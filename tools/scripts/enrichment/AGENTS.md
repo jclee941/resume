@@ -41,8 +41,8 @@ enrichment/
 - Use `lib.RepoRoot()` and repository-relative constants instead of machine paths.
 - Proposal filenames are stable, but `generatedAt` changes on rerun; do not claim
   byte-for-byte idempotence.
-- `WriteProposal()` currently writes under `packages/data/proposals/approved/`.
-  Treat placement as input to the explicit apply command, not proof of review.
+- `WriteProposal()` writes pending records under `packages/data/proposals/`.
+  Human review moves an approved record before the explicit apply command reads it.
 
 ## ANTI-PATTERNS
 
