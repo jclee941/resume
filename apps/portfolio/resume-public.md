@@ -1,6 +1,6 @@
 # 이재철
 
-Security Automation / Infrastructure Engineer
+Security & Infrastructure Engineer
 
 ## 연락처
 
