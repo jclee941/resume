@@ -1,7 +1,26 @@
 <!-- Generated from master resume -->
 <!-- Variant: general -->
-<!-- Generated: 2026-07-12T16:30:52.209Z -->
+<!-- Generated: 2026-07-24T01:35:21.874Z -->
 <!-- Description: General purpose resume for all industries -->
+<!--
+  NOTICE (repo hygiene, 2026-07-22): This file is HAND-WRITTEN, not generated.
+  The canonical single source of truth is
+  packages/data/resumes/master/resume_data.json (+ resume_data_en.json /
+  resume_data_ja.json), per ADR 0003 (docs/adr/0003-single-source-of-truth.md).
+  This markdown file is a derived/secondary document maintained in parallel —
+  it is NOT synced from the JSON and can drift out of contradiction with it.
+  It is read directly by:
+    - tools/scripts/build/pdf-generator (catalog.go "full" variant) to
+      produce resume_full.pdf
+    - tools/scripts/build/generate-resume-variants.js to derive
+      resume_general.md / resume_technical.md / resume_security.md /
+      resume_short.md
+    - apps/job-server AI job-matching, ranking, auto-apply, and resume
+      optimization tooling (via getResumeMasterMarkdownPath() /
+      config.paths.resume) as the resume text fed to AI prompts
+  When editing career facts (roles, dates, employers), verify they match
+  resume_data.json — do not let this copy become the source of truth.
+-->
 
 # 이재철
 
@@ -10,6 +29,7 @@
 폐쇄망 OA 환경에서 출발해 금융권 보안 인프라 구축, SIEM 탐지·알림 자동화, 관측성·IaC 기반 개선을 이어 온 보안 엔지니어입니다. 직전 금융권 정보보안팀에서는 FortiGate HA·망분리 환경에서 Splunk ES, Slack/SMS 알림 워크플로, FortiManager API, Claude AI 보조 분석을 연결해 보안 이벤트 인지·분류·알림 흐름을 설계했습니다. 현재 보안 인프라, Security Automation, SIEM Engineering, Observability 중심의 역할을 찾고 있습니다.
 
 **핵심 역량**: 금융권 보안 인프라 설계·구축 · FortiGate 다층 망분리 · Splunk SIEM 탐지·알림 자동화 · IaC 기반 관측성 · 금융감독원 감사 대응
+
 
 ---
 
@@ -23,6 +43,7 @@
 
 ---
 
+
 ---
 
 ## 학력
@@ -31,6 +52,7 @@
 용남고등학교 졸업
 
 ---
+
 
 ---
 
@@ -61,6 +83,7 @@
 - **금융권 보안**: 거래 데이터 처리 환경의 보안 운영
 
 ---
+
 
 ---
 
@@ -203,6 +226,7 @@
 - 정기 취약점 점검 절차 정리
 
 ---
+
 
 ---
 
@@ -439,6 +463,7 @@
 
 ---
 
+
 ---
 
 ## 기술 스택
@@ -483,6 +508,7 @@
 - SDN: VMware NSX-T, OpenFlow
 
 ---
+
 
 ---
 
