@@ -107,7 +107,7 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
           throw new Error('Session auto-renewal did not produce saved JobKorea cookies');
         }
       } catch (renewError) {
-        throw new Error(`Session auto-renewal failed: ${renewError.message}`);
+        throw new Error(`Session auto-renewal failed: ${renewError.message}`, { cause: renewError });
       }
     }
     await ensureResumeAccess(page, {

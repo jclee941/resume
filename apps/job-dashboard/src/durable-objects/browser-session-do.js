@@ -114,8 +114,8 @@ export class BrowserSessionDO {
    * @returns {Promise<Response>}
    */
   async #handleStatus() {
-    let sessions = null;
-    let limits = null;
+    let sessions;
+    let limits;
 
     try {
       sessions = await puppeteer.sessions(this.env.MYBROWSER);
@@ -152,7 +152,7 @@ export class BrowserSessionDO {
    * session has gone away. Reschedules itself only while locks remain.
    */
   async alarm() {
-    let sessions = [];
+    let sessions;
     try {
       sessions = await puppeteer.sessions(this.env.MYBROWSER);
     } catch {

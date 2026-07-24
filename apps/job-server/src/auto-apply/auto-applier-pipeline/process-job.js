@@ -19,8 +19,8 @@ export async function processJob(job, context = {}) {
   const jobId = getJobIdentifier(job);
   const stageState = createInitialStageState();
 
-  let trackedApplication = null;
-  let coverLetter = null;
+  let trackedApplication;
+  let coverLetter;
 
   try {
     trackedApplication = await trackAndScoreJob(this, job, score, stageState);
