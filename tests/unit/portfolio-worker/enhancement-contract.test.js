@@ -50,7 +50,7 @@ describe('T3: localized nav toggle copy and deferred metadata', () => {
   const ja = buildJapaneseTemplate(ko);
   const manifest = JSON.parse(read(path.join(PORTFOLIO, 'manifest.json')));
   const manifestEn = JSON.parse(read(path.join(PORTFOLIO, 'manifest_en.json')));
-  const targetRole = 'Security Automation / Infrastructure Engineer';
+  const targetRole = 'Security & Infrastructure Engineer';
 
   test('nav toggle accessible names are localized per locale', () => {
     expect(ko).toContain('aria-label="메뉴 열기"');
@@ -74,6 +74,8 @@ describe('T3: localized nav toggle copy and deferred metadata', () => {
     );
     expect(ja).toContain(`<title>イ・ジェチョル - ${targetRole}</title>`);
     expect(ja).toContain(`<meta property="og:title" content="イ・ジェチョル - ${targetRole}" />`);
+    expect(ja).toContain(`"name": "${targetRole} — 面接依頼受付中"`);
+    expect(ja).not.toContain('면접 제안 접수 중');
     expect(manifest.name).toBe(`이재철 - ${targetRole}`);
     expect(manifest.description).toContain(targetRole);
     expect(manifestEn.name).toBe(`Jaecheol Lee - ${targetRole}`);

@@ -5,7 +5,7 @@ const { buildHeroContent } = require('../../../apps/portfolio/lib/hero-content')
 const { HERO_CONTENT } = require('../../../apps/portfolio/lib/hero-content-data');
 
 const PORTFOLIO_DIR = path.resolve(__dirname, '../../../apps/portfolio');
-const TARGET_ROLE = 'Security Automation / Infrastructure Engineer';
+const TARGET_ROLE = 'Security & Infrastructure Engineer';
 
 function readPortfolioFile(fileName) {
   return fs.readFileSync(path.join(PORTFOLIO_DIR, fileName), 'utf8');
@@ -36,7 +36,7 @@ function visibleText(html) {
 }
 
 describe('portfolio first-screen hiring decision contract', () => {
-  test('KO and EN metadata names the security automation/infrastructure role', () => {
+  test('KO and EN metadata names the security and infrastructure role', () => {
     for (const fileName of ['index.html', 'index-en.html']) {
       const html = readPortfolioFile(fileName);
       const title = extractTagContent(html, /<title>([^<]+)<\/title>/i);
@@ -68,7 +68,7 @@ describe('portfolio first-screen hiring decision contract', () => {
     });
 
     const expectations = {
-      ko: ['채용 담당자', '공개 자동화 프로젝트', '연락·PDF', '면접 제안'],
+      ko: ['채용 담당자', '공개 자동화 프로젝트', '연락 및 이력서', '면접 제안'],
       en: [
         'Recruiter summary',
         'Public automation projects',

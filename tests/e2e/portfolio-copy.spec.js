@@ -7,14 +7,16 @@ test.describe('Portfolio hiring copy', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const hero = page.locator('#hero');
-    await expect(hero.getByText('보안 자동화 · 보안 인프라 면접 제안 가능')).toBeVisible();
+    await expect(
+      hero.getByText('보안·인프라 엔지니어 면접 제안을 환영합니다.')
+    ).toBeVisible();
     await expect(
       hero.getByText(
-        '넥스트레이드 보안 인프라 구축·자동화와 LLM 출력 검증 자동화(jclee-bot), 공개 프로젝트와 이력서 PDF를 한 화면에 정리했습니다.'
+        '넥스트레이드 보안 인프라 구축과 SIEM 탐지·알림 경험, jclee-bot LLM 출력 검증, 공개 프로젝트를 정리했습니다.'
       )
     ).toBeVisible();
-    await expect(hero.getByText('보안 자동화 · 보안 인프라 · SIEM')).toBeVisible();
-    await expect(hero.locator('.hiring-review-packet__status')).toHaveText('면접 제안 가능');
+    await expect(hero.getByText('보안 엔지니어링 · 인프라 · SIEM')).toBeVisible();
+    await expect(hero.locator('.hiring-review-packet__status')).toHaveText('채용 제안 문의 가능');
     await expect(hero.getByText(/SRE|DevSecOps/)).toHaveCount(0);
     await expect(hero.getByText('검토 가능')).toHaveCount(0);
     await expect(hero.getByRole('link', { name: '면접 문의', exact: true })).toHaveAttribute(
@@ -46,7 +48,7 @@ test.describe('Portfolio hiring copy', () => {
     const englishHero = page.locator('#hero');
     await expect(
       englishHero.getByText(
-        'Open to interview requests for security automation and security infrastructure roles'
+        'Open to interview requests for security and infrastructure engineering roles'
       )
     ).toBeVisible();
     await expect(
@@ -73,7 +75,7 @@ test.describe('Portfolio hiring copy', () => {
     await page.goto('/ja/', { waitUntil: 'domcontentloaded' });
     const japaneseHero = page.locator('#hero');
     await expect(
-      japaneseHero.getByText('セキュリティ自動化・セキュリティ基盤の面接依頼を歓迎')
+      japaneseHero.getByText('セキュリティ・インフラエンジニア職の面接依頼を歓迎')
     ).toBeVisible();
     await expect(
       japaneseHero.getByText(

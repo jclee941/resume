@@ -17,8 +17,8 @@ function applyJapaneseSections(html) {
     .replace(/(<h2[^>]*class="section-title"[^>]*>)운영(<\/h2>)/g, '$1運用$2')
     .replace(/(<h2[^>]*class="section-title"[^>]*>)연락처(<\/h2>)/g, '$1連絡先$2')
     .replace(
-      /"jobTitle": "Security Automation \/ Infrastructure Engineer"/g,
-      '"jobTitle": "Security Automation / Infrastructure Engineer"'
+      /"jobTitle": "Security & Infrastructure Engineer"/g,
+      '"jobTitle": "Security & Infrastructure Engineer"'
     )
     .replace(/"addressRegion": "경기도"/g, '"addressRegion": "京畿道"')
     .replace(/"addressLocality": "시흥시"/g, '"addressLocality": "始興市"')

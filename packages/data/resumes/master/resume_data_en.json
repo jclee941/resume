@@ -44,7 +44,7 @@
       "Fortinet",
       "Observability"
     ],
-    "profileStatement": "I'm a security infrastructure and automation engineer who documents why each decision was made, a habit built through license reviews and audit-defense work. The same principle carried me from KAI's closed-network OA operations through FSDC and Financial Supervisory Service audits, then Nextrade's build phase and the Korean Financial Services Commission main-license review, into the current automation phase. FortiGate HA and network segmentation, Splunk ES detection rules, Slack/SMS notifications, and FortiManager API lookups now form one response architecture that cuts down the console-hopping an operator used to do. AI-written code and AI-generated alerts deserve the same verification bar, so I run LLM PR-review automation (jclee-bot) and MCP servers myself, designing the boundaries where AI output gets checked before it is trusted. Currently prioritizing proposal and interview opportunities in Security Automation, Security Infrastructure, and SIEM Engineering roles.",
+    "profileStatement": "I'm a security and infrastructure engineer who documents why each decision was made, a habit built through license reviews and audit-defense work. The same principle carried me from KAI's closed-network OA operations through FSDC and Financial Supervisory Service audits, then Nextrade's build phase and the Korean Financial Services Commission main-license review, into the current automation phase. FortiGate HA and network segmentation, Splunk ES detection rules, Slack/SMS notifications, and FortiManager API lookups now form one response architecture that cuts down the console-hopping an operator used to do. AI-written code and AI-generated alerts deserve the same verification bar, so I run LLM PR-review automation (jclee-bot) and MCP servers myself, designing the boundaries where AI output gets checked before it is trusted. Currently prioritizing proposal and interview opportunities in Security & Infrastructure Engineering and SIEM Engineering roles.",
     "coreCompetencies": [
       "Submitted FortiGate HA, network segmentation, and endpoint security operating records as license-review material, then answered examiner questions directly from them.",
       "Chained Splunk ES Saved Search, Webhook, and Slack/SMS notifications so each security event moves from recognition to classification and alerting in one consistent path.",
@@ -84,8 +84,8 @@
     "status": "Open to work",
     "availability": "Open to interview requests",
     "desiredRoles": [
-      "Security Automation",
-      "Security Infrastructure",
+      "Security Engineering",
+      "Infrastructure Engineering",
       "SIEM Engineering",
       "Observability"
     ]
@@ -311,7 +311,7 @@
         "Fortinet"
       ],
       "os": "Linux, Docker",
-      "role": "Security Automation Engineer",
+      "role": "Security Engineering",
       "description": "Security-event automation that joins Splunk ES alerting and FortiManager API policy lookup under one architecture.\n• Splunk ES Saved Searches drive Slack/SMS notifications as soon as a security event fires.\n• Firewall policy lookup runs through FortiManager API, so the response path no longer waits on a console operator."
     },
     {
@@ -1146,8 +1146,8 @@
       "Seoul"
     ],
     "roles": [
-      "Security Automation",
-      "Security Infrastructure",
+      "Security Engineering",
+      "Infrastructure Engineering",
       "SIEM Engineering",
       "Observability"
     ]
@@ -1164,7 +1164,7 @@
   },
   "coverLetter": {
     "en": {
-      "headline": "An engineer who designs explainable security automation",
+      "headline": "An engineer who designs explainable security and infrastructure systems",
       "paragraphs": [
         "My career started inside Korea Aerospace Industries' closed network, tracking patch schedules for the closed-network Linux fleet on an Excel sheet. The repetition drove one conviction: security engineering is not about hoping incidents never happen, it is about lowering risk through repeatable procedures, automation, and documentation. RHCSA, LPIC-1, and Linux Master Level 2 came next, rebuilding the Linux foundation, and that base carried directly into hands-on automation work.",
         "At Metanet M Platform I picked up Ansible and Python, and turned the NAC policy deployment procedure into a single reviewable workflow for contact-center operations. At Jointree, NSX-T microsegmentation on Kookmin University's next-generation information system closed the east-west traffic blind spots, and the NAC and DLP detection policies got the same reviewable treatment. The tools changed, but the principle held: any task that takes repeated manual effort is a candidate for a runbook.",
@@ -1177,7 +1177,7 @@
   },
   "careerSummary": {
     "en": {
-      "headline": "Security infrastructure and automation career summary",
+      "headline": "Security infrastructure and SIEM career summary",
       "paragraphs": [
         "ITCEN CTS (2025.03 ~ 2026.02): Designed Nextrade exchange security-operations architecture connecting Splunk ES detection rules, Slack/SMS alert flows, and FortiManager API firewall-policy lookups.",
         "Gaonnuri Information Systems (2024.03 ~ 2025.02): Built Nextrade security infrastructure, including FortiGate HA, network segmentation, endpoint security, Ansible Role-based configuration standards, and Korean Financial Services Commission main-license review response.",
