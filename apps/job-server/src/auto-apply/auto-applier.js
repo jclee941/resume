@@ -6,13 +6,10 @@ import {
 import { createAutoApplierJobFilter } from './auto-applier-filter.js';
 import { runAutoApply } from './auto-applier-runner.js';
 import { applyToJob } from './auto-applier-strategy-router.js';
-import {
-  processJob,
-  shouldApply,
-  submitApplication,
-  handleApproval,
-  getExistingJobKeys,
-} from './auto-applier-pipeline.js';
+import { processJob } from './auto-applier-pipeline/process-job.js';
+import { shouldApply, handleApproval } from './auto-applier-pipeline/approval-flow.js';
+import { submitApplication } from './auto-applier-pipeline/submission-flow.js';
+import { getExistingJobKeys } from './auto-applier-pipeline/pipeline-stages.js';
 import {
   findByText,
   findElementWithText,

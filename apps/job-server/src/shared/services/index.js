@@ -60,7 +60,7 @@ export {
 } from './lazy-loader.js';
 
 // Optimized orchestrator
-export { OptimizedApplyOrchestrator } from './apply/optimized-orchestrator.js';
+export { OptimizedApplyOrchestrator } from './apply/optimized-orchestrator/core.js';
 
 // Benchmark utilities
 export {

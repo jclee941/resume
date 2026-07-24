@@ -10,7 +10,7 @@ const osCjs = require('os');
 mock.method(osCjs, 'homedir', () => '/home/tester');
 syncBuiltinESMExports();
 process.env.RESUME_BASE_PATH = '/home/tester/dev/resume';
-const { SessionManager } = await import('../session-manager.js');
+const { SessionManager } = await import('../session-manager/index.js');
 
 function createFsState(initialFiles = {}) {
   const files = new Map(Object.entries(initialFiles));
