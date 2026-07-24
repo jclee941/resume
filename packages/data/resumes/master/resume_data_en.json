@@ -40,17 +40,21 @@
       "Security Infrastructure",
       "SIEM/SOAR",
       "Network Security",
+      "Security Appliances & Access Control",
       "Fortinet",
       "Observability"
     ],
-    "profileStatement": "I'm a security infrastructure and automation engineer who documents why each decision was made, a habit built through license reviews and audit-defense work. The same principle carried me from KAI's closed-network OA operations through FSDC and Financial Supervisory Service audits, then Nextrade's build phase and the Korean Financial Services Commission main-license review, into the current automation phase. FortiGate HA and network segmentation, Splunk ES detection rules, Slack/SMS notifications, FortiManager API lookups, and Claude AI-assisted review now form one response architecture that cuts down the console-hopping an operator used to do. Currently prioritizing proposal and interview opportunities in Security Automation, Security Infrastructure, and SIEM Engineering roles.",
+    "profileStatement": "I'm a security infrastructure and automation engineer who documents why each decision was made, a habit built through license reviews and audit-defense work. The same principle carried me from KAI's closed-network OA operations through FSDC and Financial Supervisory Service audits, then Nextrade's build phase and the Korean Financial Services Commission main-license review, into the current automation phase. FortiGate HA and network segmentation, Splunk ES detection rules, Slack/SMS notifications, and FortiManager API lookups now form one response architecture that cuts down the console-hopping an operator used to do. AI-written code and AI-generated alerts deserve the same verification bar, so I run LLM PR-review automation (jclee-bot) and MCP servers myself, designing the boundaries where AI output gets checked before it is trusted. Currently prioritizing proposal and interview opportunities in Security Automation, Security Infrastructure, and SIEM Engineering roles.",
     "coreCompetencies": [
       "Submitted FortiGate HA, network segmentation, and endpoint security operating records as license-review material, then answered examiner questions directly from them.",
       "Chained Splunk ES Saved Search, Webhook, and Slack/SMS notifications so each security event moves from recognition to classification and alerting in one consistent path.",
       "Built FortiManager API lookup scripts that turn firewall policy change history and query results into a traceable operating record.",
       "Responded to FSDC Financial Supervisory Service periodic audits with a DLP policy operating framework and audit deliverable templates, keeping the material reusable.",
+      "Operated and troubleshot DLP, nDLP, APT, SWG, IPS, DDoS, DRM, SSL VPN, NAC, and Active Directory controls.",
       "Put Grafana, Prometheus, and Loki on one observability stack so metrics and logs sit side by side on one screen, which speeds up finding the root cause.",
-      "Manage appliance, Edge, and homelab configuration as PR-reviewable code with Terraform and Ansible, cutting dependence on GUI changes."
+      "Manage appliance, Edge, and homelab configuration as PR-reviewable code with Terraform and Ansible, cutting dependence on GUI changes.",
+      "Operate jclee-bot, which pairs LLM PR review with secret-scan, actionlint, and docs-policy Check Runs; built and deployed PlayMCP-compatible MCP servers on Kakao Cloud.",
+      "Trace Android client UI and reward-processing flows through JADX decompilation, then summarize endpoints, authorization-header presence, and request/response JSON fields from mitmproxy captures."
     ],
     "aboutSection": {
       "careerHighlights": [
@@ -58,7 +62,8 @@
         "Built recordkeeping frameworks for financial license reviews and audits that present security controls and change rationale as data.",
         "Turned NAC and firewall policies, Splunk ES detection rules, and Slack/SMS alert conditions into procedures an operator can follow as written.",
         "Combines Linux, Python, Ansible, Terraform, Splunk SPL, and Cloudflare Workers to fit whatever the problem needs.",
-        "I run Proxmox, Grafana, k3s, 1Password, and MCP in the homelab first, then check how well they hold up in real use."
+        "I run Proxmox, Grafana, k3s, 1Password, and MCP in the homelab first, then check how well they hold up in real use.",
+        "AI-written code and AI alerts stay provisional until verified. I build the verification path myself: LLM review automation and MCP tool boundaries."
       ],
       "techPhilosophy": [
         "\"If you can't observe it, you can't operate it\"",
@@ -97,20 +102,25 @@
       "teamSize": "Information Security Automation Cell",
       "myRole": "SIEM and firewall-policy automation design",
       "workType": "Freelance",
-      "description": "For the Nextrade trading system, wired Splunk ES Saved Searches to webhook relay, Slack/SMS alerting, and FortiManager JSON-RPC API policy lookups so a single detection runs straight through to the response. FortiGate events and policy lookups route through Splunk, where a Python/Docker state tracker follows each event and Claude AI-assisted review cuts the repetitive manual checks and false-positive triage. Detection rules, alert conditions, and policy-lookup results stay on record with their change history for later review.",
-      "wantedSummary": "Splunk-Fortinet integration, FortiManager API, and Claude AI-assisted review for automated security-event analysis and firewall-policy lookup",
+      "description": "For the Nextrade trading system, wired Splunk ES Saved Searches to webhook relay, Slack/SMS alerting, and FortiManager JSON-RPC API policy lookups so a single detection runs straight through to the response. FortiGate events and policy lookups route through Splunk, where a Python/Docker state tracker follows each event. Detection rules, alert conditions, and policy-lookup results stay on record with their change history for later review.",
+      "wantedSummary": "Splunk-Fortinet integration and FortiManager API automation for security-event analysis and firewall-policy lookup",
       "note": "ITCEN CTS engagement for Nextrade security-event response architecture automation",
       "projects": [
         {
           "id": "nextrade-security-operations",
           "name": "Nextrade Security Event Response Architecture Automation",
-          "description": "Splunk ES detections feed webhook relay and Slack/SMS alerts, and FortiManager JSON-RPC API queries retrieve the related firewall policies on demand. Console-heavy checks turn into a Splunk-Fortinet path for detection, classification, and lookup, with Claude AI-assisted review cutting the false-positive triage backlog.",
+          "description": "Splunk ES detections feed webhook relay and Slack/SMS alerts, and FortiManager JSON-RPC API queries retrieve the related firewall policies on demand. Console-heavy checks turn into a Splunk-Fortinet path for detection, classification, and lookup.",
           "period": "2025.03 ~ 2026.02",
-          "techStack": ["Splunk ES", "FortiGate", "FortiManager API", "Python", "Claude AI"],
+          "techStack": [
+            "Splunk ES",
+            "FortiGate",
+            "FortiManager API",
+            "Python"
+          ],
           "achievements": [
             "Unified event classification and alert criteria across Splunk ES and FortiGate.",
             "Webhook relay plus Slack/SMS notifications standardize the post-detection handoff path and reduce dependence on manual console checks.",
-            "FortiManager API policy lookups and Claude AI-assisted analysis replace the manual false-positive triage that used to sit on a single engineer's screen."
+            "FortiManager API policy lookups put the policy context needed for false-positive triage on the same response path."
           ]
         }
       ],
@@ -136,7 +146,13 @@
           "name": "Nextrade Security Infrastructure Build",
           "description": "Securities trading platform security configuration, designed for handover from build to operations.\n• Active-Passive HA via FGCP (FortiGate Clustering Protocol) for service continuity.\n• Reusable Ansible roles for initial device setup and policy deployment, so per-device drift does not survive a handover.",
           "period": "2024.03 ~ 2025.02",
-          "techStack": ["FortiGate", "FortiManager", "Ansible", "Python", "VMware"],
+          "techStack": [
+            "FortiGate",
+            "FortiManager",
+            "Ansible",
+            "Python",
+            "VMware"
+          ],
           "achievements": [
             "FortiGate FGCP active-passive HA so service continuity no longer depends on a single node's uptime.",
             "Network segmentation and endpoint security controls, documented to satisfy the Korean Financial Services Commission main-license review.",
@@ -166,7 +182,13 @@
           "name": "Quantec Investment Management AI Trading Platform Infrastructure Operations",
           "description": "Python runbooks took over the operational and audit-response work that used to live in scattered shell scripts, and tuned PostgreSQL access-control queries carried the PB platform POC through launch.",
           "period": "2022.08 ~ 2024.03",
-          "techStack": ["Python", "Linux", "DLP", "PostgreSQL", "FSDC"],
+          "techStack": [
+            "Python",
+            "Linux",
+            "DLP",
+            "PostgreSQL",
+            "FSDC"
+          ],
           "achievements": [
             "DLP policy operations and audit deliverables now follow the FSS regular-audit template, so each cycle arrives with the same documentation shape as the last.",
             "Tuned PostgreSQL access-control queries while running audits and operations in parallel.",
@@ -194,7 +216,13 @@
           "name": "Kookmin University Next-Generation Information System",
           "description": "On the Kookmin University campus network, east-west traffic was the blind spot under perimeter-based security.\n• NSX-T microsegmentation and DFW distributed firewall policy broke the policy unit down to the workload level, with NSX-T Manager as the single source of truth for change flow.\n• NAC, DLP, and Wazuh integration delivered host-level security-event visibility.",
           "period": "2021.09 ~ 2022.04",
-          "techStack": ["VMware NSX-T", "vSphere", "NAC", "DLP", "Wazuh"],
+          "techStack": [
+            "VMware NSX-T",
+            "vSphere",
+            "NAC",
+            "DLP",
+            "Wazuh"
+          ],
           "achievements": [
             "East-west visibility was the gap; NSX-T microsegmentation exposed server-to-server traffic that perimeter firewalls could not surface.",
             "DFW policies enforce at the workload level, so server-to-server flows become reviewable rather than inferred from logs.",
@@ -221,7 +249,13 @@
           "name": "Contact Center Remote-Work Infrastructure",
           "description": "VPN infrastructure design and runbooks for contact-center remote access.\n• Python scripts and Ansible apply a shared configuration baseline to remote-access servers, reducing drift during site onboarding.\n• VPN session monitoring plus abnormal-access detection dashboards expose the connection surface that used to be a black box.",
           "period": "2020.08 ~ 2021.08",
-          "techStack": ["Ansible", "Python", "VPN", "NAC", "FortiGate"],
+          "techStack": [
+            "Ansible",
+            "Python",
+            "VPN",
+            "NAC",
+            "FortiGate"
+          ],
           "achievements": [
             "Standardized recurring configuration work with Ansible.",
             "NAC policy runbooks turn new-terminal registration into a one-step process instead of a queue of tickets.",
@@ -249,7 +283,12 @@
           "name": "KAI Infrastructure Operations",
           "description": "Closed-network infrastructure operations focused on early hardware-failure indicators and audit-ready configurations.\n• Periodic system-log analysis identifies hardware-failure indicators early.\n• System configurations follow internal security audit standards.",
           "period": "2018.10 ~ 2019.10",
-          "techStack": ["Linux", "Bash", "Firewall", "WSUS"],
+          "techStack": [
+            "Linux",
+            "Bash",
+            "Firewall",
+            "WSUS"
+          ],
           "achievements": [
             "Maintained Linux server availability in a closed-network environment.",
             "Unused firewall rules removed after parsing the firewall-cmd policy set, so the rule base stopped accumulating historical risk.",
@@ -265,17 +304,26 @@
       "period": "2025.03 ~ 2026.02",
       "name": "Nextrade Security Operations Architecture Automation",
       "client": "Nextrade",
-      "technologies": ["Python", "Splunk ES", "FortiManager API", "Fortinet"],
+      "technologies": [
+        "Python",
+        "Splunk ES",
+        "FortiManager API",
+        "Fortinet"
+      ],
       "os": "Linux, Docker",
       "role": "Security Automation Engineer",
-      "description": "Security-event automation that joins Splunk ES, FortiManager APIs, and Claude AI-assisted review under one architecture.\n• Splunk ES Saved Searches drive Slack/SMS notifications as soon as a security event fires.\n• Firewall policy lookup runs through FortiManager API, so the response path no longer waits on a console operator."
+      "description": "Security-event automation that joins Splunk ES alerting and FortiManager API policy lookup under one architecture.\n• Splunk ES Saved Searches drive Slack/SMS notifications as soon as a security event fires.\n• Firewall policy lookup runs through FortiManager API, so the response path no longer waits on a console operator."
     },
     {
       "id": "nextrade-security-infrastructure",
       "period": "2024.03 ~ 2025.02",
       "name": "Nextrade Security Infrastructure Build",
       "client": "Nextrade",
-      "technologies": ["Python", "FortiManager API", "Ansible"],
+      "technologies": [
+        "Python",
+        "FortiManager API",
+        "Ansible"
+      ],
       "os": "Linux, VMware",
       "role": "Security Infrastructure Design",
       "description": "Securities trading platform security configuration, designed for build-to-operations handover.\n• Active-Passive HA via FGCP (FortiGate Clustering Protocol) keeps service continuity off a single node.\n• Reusable Ansible roles drive initial device setup and policy deployment so per-device drift fails the next review."
@@ -285,7 +333,11 @@
       "period": "2021.09 ~ 2022.04",
       "name": "Kookmin University Next-Generation Information System",
       "client": "Kookmin University",
-      "technologies": ["VMware NSX-T", "Firewall", "NAC"],
+      "technologies": [
+        "VMware NSX-T",
+        "Firewall",
+        "NAC"
+      ],
       "os": "Linux, vSphere",
       "role": "Network Virtualization",
       "description": "SDN-based network virtualization with microsegmentation built around workload visibility.\n• East-west traffic becomes enforceable through VMware NSX-T Distributed Firewall (DFW), not just visible in logs.\n• NSX-T Manager central policy management gives the team one surface to review, audit, and roll back."
@@ -295,7 +347,12 @@
       "period": "2020.08 ~ 2021.08",
       "name": "Contact Center Remote Work Infrastructure",
       "client": "Metanet M Platform",
-      "technologies": ["Ansible", "Python", "VPN", "NAC"],
+      "technologies": [
+        "Ansible",
+        "Python",
+        "VPN",
+        "NAC"
+      ],
       "os": "Linux",
       "role": "Remote Work Infrastructure",
       "description": "VPN infrastructure runbooks for contact-center remote access, with configuration drift managed through a shared baseline.\n• Python and Ansible keep remote-access server configurations synchronized across sites.\n• VPN session monitoring and anomaly detection dashboards expose the connection surface that used to be a black box."
@@ -305,7 +362,11 @@
       "period": "2018.10 ~ 2019.10",
       "name": "KAI Infrastructure Operations",
       "client": "Korea Aerospace Industries (KAI)",
-      "technologies": ["Linux", "Bash", "Firewall"],
+      "technologies": [
+        "Linux",
+        "Bash",
+        "Firewall"
+      ],
       "os": "Linux",
       "role": "Systems Operations",
       "description": "Closed-network security infrastructure operations centered on early hardware-failure detection and audit-ready configurations.\n• Periodic system-log analysis identifies hardware-failure indicators early.\n• System configurations follow internal security audit standards."
@@ -553,6 +614,38 @@
           "level": "intermediate"
         },
         {
+          "name": "nDLP",
+          "level": "intermediate"
+        },
+        {
+          "name": "APT",
+          "level": "intermediate"
+        },
+        {
+          "name": "SWG",
+          "level": "intermediate"
+        },
+        {
+          "name": "IPS",
+          "level": "intermediate"
+        },
+        {
+          "name": "DDoS",
+          "level": "intermediate"
+        },
+        {
+          "name": "DRM",
+          "level": "intermediate"
+        },
+        {
+          "name": "SSL VPN",
+          "level": "intermediate"
+        },
+        {
+          "name": "Active Directory",
+          "level": "intermediate"
+        },
+        {
           "name": "Wazuh",
           "level": "advanced"
         },
@@ -599,7 +692,13 @@
       "name": "Observability Platform",
       "period": "2024.06 ~ Present",
       "description": "After the homelab moved to NVMe-backed Proxmox VE, metrics and logs were still scattered per service, so root-cause analysis meant switching tabs during incidents. Prometheus node_exporter scrapes Proxmox VM/CT metrics, Loki Promtail ingests logs, and Grafana dashboard definitions live as code for IaC-reproducible deployment. PromQL and LogQL cross-queries in Grafana Explore put metrics and logs on a single analysis surface.",
-      "technologies": ["Grafana", "Prometheus", "Loki", "Blackbox Exporter", "Docker"],
+      "technologies": [
+        "Grafana",
+        "Prometheus",
+        "Loki",
+        "Blackbox Exporter",
+        "Docker"
+      ],
       "icon": "📊",
       "tagline": "Monitoring Platform",
       "language": "PromQL",
@@ -623,7 +722,11 @@
       "name": "Security Alert System",
       "period": "2025.01 ~ Present",
       "description": "FortiGate security events were scattered across device syslog and Splunk, making operator awareness and response handoff hard to keep consistent. Splunk Saved Search webhooks now send matching detections to Slack, and the security-event notification plus operator-response flow lives in one place.",
-      "technologies": ["Splunk", "Python", "Slack"],
+      "technologies": [
+        "Splunk",
+        "Python",
+        "Slack"
+      ],
       "icon": "🔔",
       "tagline": "Security Alert Automation",
       "language": "Python",
@@ -643,7 +746,12 @@
       "name": "IP Blacklist Platform",
       "period": "2024.12 ~ Present",
       "description": "Threat intelligence feeds were scattered across AbuseIPDB, Emerging Threats, AlienVault OTX, and others, so analyzing a single malicious IP meant querying each source by hand. Per-source adapters live in Flask Blueprints, schema versions flow through SQLAlchemy + Alembic migrations, and a Next.js frontend cross-compares reputation, frequency, and distribution. Multiple threat feeds now sit behind a single reproducible pipeline.",
-      "technologies": ["JavaScript", "Flask", "PostgreSQL", "Python"],
+      "technologies": [
+        "JavaScript",
+        "Flask",
+        "PostgreSQL",
+        "Python"
+      ],
       "icon": "🚫",
       "tagline": "Threat Intelligence",
       "language": "JavaScript",
@@ -657,7 +765,12 @@
       "name": "HYCU FSDS Autonomous Driving",
       "period": "2025.11 ~ 2026.02",
       "description": "Formula Student Driverless Simulator required cone perception and driving control on the same node graph, with Docker as the unit of reproducibility. ROS-based perception and control nodes run inside containers and validate against the AirSim simulation environment. Competed in the Hanyang Cyber University Autonomous Driving Competition.",
-      "technologies": ["Python", "ROS", "Docker", "AirSim"],
+      "technologies": [
+        "Python",
+        "ROS",
+        "Docker",
+        "AirSim"
+      ],
       "icon": "🏎️",
       "tagline": "Autonomous Driving Simulation",
       "url": "https://github.com/jclee941/hycu_fsds",
@@ -672,13 +785,20 @@
       "name": "Resume Portfolio",
       "period": "2024.01 ~ Present",
       "description": "Recruiters were getting a fragmented view of the work, so the monorepo now hosts an SSoT resume site on the Cloudflare Workers Edge runtime, alongside MCP tools and an auto-apply pipeline. Resume rendering, cover-letter generation, auto-apply, and observability all live in the same repository.",
-      "technologies": ["Cloudflare Workers", "HTML/CSS", "JSON-LD SEO", "Grafana Loki"],
+      "technologies": [
+        "Cloudflare Workers",
+        "HTML/CSS",
+        "JSON-LD SEO",
+        "Grafana Loki"
+      ],
       "icon": "⚡",
       "tagline": "Portfolio Platform",
       "language": "JavaScript",
       "githubUrl": "https://github.com/jclee941/resume",
       "demoUrl": "https://resume.jclee.me",
-      "highlights": ["Public portfolio site running on the Cloudflare Workers Edge runtime."],
+      "highlights": [
+        "Public portfolio site running on the Cloudflare Workers Edge runtime."
+      ],
       "featured": true,
       "displayOrder": 7
     },
@@ -694,7 +814,13 @@
         "Codified k3s cluster rebuilds as repeatable provisioning",
         "CI pipeline that runs plan validation on every PR"
       ],
-      "technologies": ["Terraform", "Proxmox VE", "Cloudflare", "Helm", "k3s"],
+      "technologies": [
+        "Terraform",
+        "Proxmox VE",
+        "Cloudflare",
+        "Helm",
+        "k3s"
+      ],
       "featured": true,
       "displayOrder": 3
     },
@@ -710,24 +836,48 @@
         "Offline support enabling manual access in constrained-network environments",
         "RBAC + JWT that separates field-worker and admin access"
       ],
-      "technologies": ["Cloudflare Workers", "TypeScript", "Hono", "Drizzle ORM", "D1"],
+      "technologies": [
+        "Cloudflare Workers",
+        "TypeScript",
+        "Hono",
+        "Drizzle ORM",
+        "D1"
+      ],
       "featured": false,
       "displayOrder": 9,
       "language": "TypeScript"
+    },
+    {
+      "id": "idle-outpost-reverse-engineering",
+      "name": "Idle Outpost Mobile Analysis",
+      "period": "2026.05 ~ Present",
+      "description": "Decompiled the Idle Outpost Android client with JADX to trace UI and reward-processing flows. Built a mitmproxy capture analyzer that summarizes endpoints, HTTP methods, authorization-header presence, and request/response JSON fields.",
+      "tagline": "Android client and API analysis",
+      "technologies": ["Python", "JADX", "mitmproxy", "Android"],
+      "githubUrl": "https://github.com/jclee941/idle-outpost",
+      "featured": false,
+      "displayOrder": 14,
+      "language": "Python"
     },
     {
       "id": "jclee-bot-github-app",
       "name": "jclee-bot GitHub App",
       "period": "2026.04 ~ Present",
       "githubUrl": "https://github.com/jclee941/jclee-bot",
-      "description": "PR review, secret scanning, GitHub Actions policy checks, and repository documentation checks each had their own workflow for jclee941 repositories, and the gap between them was where context fell through the cracks. The GitHub App now publishes PR metadata, secret scan, actionlint, and docs-policy results as Check Runs, with Korean-first review comments and run logs observable in ELK.",
+      "description": "jclee-bot publishes LLM PR reviews routed through CLIProxyAPI alongside secret-scan, actionlint, and docs-policy Check Runs. Generated reviews and independent policy checks are visible on one screen, while Korean-first review comments and run logs follow the same standard across repositories.",
       "highlights": [
-        "GitHub App event flow for PR automation",
-        "Check Runs for secret scan, actionlint, and docs policy",
+        "LLM PR reviews via CLIProxyAPI",
+        "Check Runs verify LLM output with secret scan, actionlint, and docs policy",
         "Korean-first review comments and PR descriptions",
         "ELK observability connected to GitHub Actions run logs"
       ],
-      "technologies": ["Python", "GitHub App", "GitHub Actions", "ELK", "GitHub API"],
+      "technologies": [
+        "Python",
+        "GitHub App",
+        "GitHub Actions",
+        "ELK",
+        "GitHub API"
+      ],
       "featured": true,
       "displayOrder": 6,
       "language": "Python"
@@ -768,7 +918,13 @@
         "Cron-scheduled workflow linking recon to operator notifications",
         "Aligns detection results to MITRE ATT&CK for risk assessment"
       ],
-      "technologies": ["JavaScript", "Subfinder", "httpx", "Nuclei", "Go"],
+      "technologies": [
+        "JavaScript",
+        "Subfinder",
+        "httpx",
+        "Nuclei",
+        "Go"
+      ],
       "featured": false,
       "displayOrder": 10,
       "language": "JavaScript"
@@ -785,7 +941,12 @@
         "VBA workflow that stays inside the operator's existing Excel format",
         "Reduced repetitive work in firewall-policy review"
       ],
-      "technologies": ["Excel VBA", "Firewall Policy", "Network Operations", "Runbook"],
+      "technologies": [
+        "Excel VBA",
+        "Firewall Policy",
+        "Network Operations",
+        "Runbook"
+      ],
       "featured": false,
       "displayOrder": 4,
       "language": "VBA"
@@ -802,9 +963,32 @@
         "Scripts and key bindings for repeated entry points",
         "Personal operations tooling managed as versioned infrastructure"
       ],
-      "technologies": ["TypeScript", "Bun", "tmux", "Bash", "YAML"],
+      "technologies": [
+        "TypeScript",
+        "Bun",
+        "tmux",
+        "Bash",
+        "YAML"
+      ],
       "featured": false,
       "displayOrder": 12,
+      "language": "TypeScript"
+    },
+    {
+      "id": "mcp-servers",
+      "name": "PlayMCP Tool Servers",
+      "period": "2026.06 ~ Present",
+      "description": "A project for defining the boundaries of tools called by AI agents. meetup-coordinator and nunchi-translator are implemented as PlayMCP-compatible MCP servers in TypeScript/Bun and deployed on Kakao Cloud. Each tool validates its input/output contract through schemas and stateless request handling.",
+      "tagline": "AI tool boundary design",
+      "technologies": [
+        "TypeScript",
+        "Bun",
+        "MCP SDK",
+        "Kakao Cloud"
+      ],
+      "githubUrl": null,
+      "featured": false,
+      "displayOrder": 13,
       "language": "TypeScript"
     }
   ],
@@ -840,12 +1024,14 @@
   },
   "achievements": [
     "Built and operated FortiGate FGCP active-passive HA, network segmentation, and endpoint security for the Nextrade exchange, and prepared the security operating records the Korean Financial Services Commission main-license review required.",
-    "I brought Splunk ES detection rules, alert workflows, FortiManager API policy lookups, and Claude AI-assisted review onto one security-event path — awareness, classification, then notification — so operators lean less on console checks.",
+    "I brought Splunk ES detection rules, alert workflows, and FortiManager API policy lookups onto one security-event path — awareness, classification, then notification — so operators lean less on console checks.",
     "After migrating the homelab to NVMe-backed Proxmox VE, metrics and logs come in through Prometheus node_exporter and Loki Promtail, with Grafana dashboard JSON managed as code.",
     "Slack, GitHub Actions, and Cloudflare hooks share one event workflow with consistent error handling and retry, so a new notification path deploys through configuration rather than a new script.",
     "During Metanet's contact-center remote-work migration, I standardized NAC exception requests, terminal registration, and on-site inspection into Ansible playbooks and reusable operating checklists.",
     "I root-caused a FortiGate SSL-VPN profile collision between the endpoint-protection agent and the VPN client with tcpdump, resolved it by separating FortiClient profiles, and followed up with VLAN subnetting for the new sites.",
-    "Across KAI closed-network Linux servers, firewall-cmd parsing surfaced duplicate rules that nobody had decommissioned, and the cleanup left the rule base leaner for the next audit cycle."
+    "Across KAI closed-network Linux servers, firewall-cmd parsing surfaced duplicate rules that nobody had decommissioned, and the cleanup left the rule base leaner for the next audit cycle.",
+    "Operate jclee-bot, pairing LLM PR reviews via CLIProxyAPI with secret-scan, actionlint, and docs-policy Check Runs; deployed MCP servers on Kakao Cloud with schema-validated tool contracts.",
+    "Used JADX to trace Android client UI and reward-processing flows, then built a mitmproxy capture analyzer for endpoints, authorization-header presence, and request/response JSON fields."
   ],
   "infrastructure": [
     {
@@ -956,17 +1142,24 @@
     }
   ],
   "hope": {
-    "locations": ["Seoul"],
-    "roles": ["Security Automation", "Security Infrastructure", "SIEM Engineering", "Observability"]
+    "locations": [
+      "Seoul"
+    ],
+    "roles": [
+      "Security Automation",
+      "Security Infrastructure",
+      "SIEM Engineering",
+      "Observability"
+    ]
   },
   "platformVariants": {
     "wanted": {
       "headline": "Information Security Engineer",
-      "about": "I'm an information security engineer who has handled financial security infrastructure, SIEM engineering, and security automation. Through the Nextrade trading system build, the Korean Financial Services Commission main-license review, and FSDC Financial Supervisory Service audit response, I connected FortiGate HA and network segmentation, Splunk ES detection, and FortiManager API lookups into a single response architecture. I leave repeated security responses as scripts and IaC, and focus on presenting evidence as data during audits and incidents.\n\n[Target Roles]\nI prioritize proposals and interviews for Security Automation, Security Infrastructure, and SIEM Engineering roles. I fit teams that reduce repeated response work through documentation, scripts, and API integrations, and that leave an operating record they can explain during audits and incidents.\n\n[Key Experience]\n- Nextrade trading system: designed a security-event response architecture chaining Splunk ES Saved Search detection, webhook relay, Slack/SMS notifications, and FortiManager API lookup, with Claude AI-assisted review reducing dependence on manual false-positive triage\n- Nextrade security infrastructure build: eliminated single points of failure with FortiGate HA, network segmentation, and endpoint security, Ansible Role-based configuration management, and submission of Korean Financial Services Commission main-license review material\n- FSDC (Financial Security Data Center): Financial Supervisory Service audit response, DB access-control query tuning, and DLP policy artifact management\n- Network/systems: NSX-T microsegmentation, Wazuh, NAC, VPN, Linux, and Python/Ansible automation scripts\n\n[Skills/Cert]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP, RHCSA\n\nPortfolio: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "about": "I'm an information security engineer who has handled financial security infrastructure, SIEM engineering, and security automation. Through the Nextrade trading system build, the Korean Financial Services Commission main-license review, and FSDC Financial Supervisory Service audit response, I connected FortiGate HA and network segmentation, Splunk ES detection, and FortiManager API lookups into a single response architecture. I leave repeated security responses as scripts and IaC, and focus on presenting evidence as data during audits and incidents.\n\n[Target Roles]\nI prioritize proposals and interviews for Security Automation, Security Infrastructure, and SIEM Engineering roles. I fit teams that reduce repeated response work through documentation, scripts, and API integrations, and that leave an operating record they can explain during audits and incidents.\n\n[Key Experience]\n- Nextrade trading system: designed a security-event response architecture chaining Splunk ES Saved Search detection, webhook relay, Slack/SMS notifications, and FortiManager API lookup, keeping detection history and policy context on the same response path\n- Nextrade security infrastructure build: eliminated single points of failure with FortiGate HA, network segmentation, and endpoint security, Ansible Role-based configuration management, and submission of Korean Financial Services Commission main-license review material\n- FSDC (Financial Security Data Center): Financial Supervisory Service audit response, DB access-control query tuning, and DLP policy artifact management\n- AI verification automation: operate jclee-bot with LLM PR review and independent Check Run policy verification, PlayMCP-compatible MCP servers, and CLIProxyAPI\n- Mobile app and API analysis: traced Android client UI and reward-processing flows with JADX, then summarized endpoints, authorization-header presence, and request/response JSON fields from mitmproxy captures\n- Network/systems: NSX-T microsegmentation, Wazuh, NAC, VPN, Linux, and Python/Ansible automation scripts\n\n[Skills/Cert]\nSplunk ES, FortiGate/FortiManager, FortiAnalyzer, Ansible, Python, Terraform, Docker, Linux, Grafana/Prometheus/Loki, Elasticsearch/Kibana, CCNP, RHCSA\n\nPortfolio: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
       "headline": "Information Security Engineer",
-      "about": "[Target Roles]\nI am a security infrastructure and automation engineer who started in Korea Aerospace Industries (KAI) closed-network operations and moved through network and security infrastructure build, financial trading system security, and audit response, and now handles security operations automation. I prioritize proposals and interviews for Security Infrastructure, SIEM Engineering, Security Automation, and financial information security roles. I connect FortiGate HA and network segmentation, Splunk ES detection rules, Slack/SMS notifications, FortiManager API lookup, and Claude AI-assisted review into a single response architecture to reduce repeated work, and I have kept operating records that can be explained with data during the Korean Financial Services Commission main-license review, Financial Supervisory Service audits, and incidents.\n\n[Career Summary]\n- MT Data (2018.10~2019.10): Korea Aerospace Industries (KAI) closed-network Linux server and OA operations. Firewall policy change-history management, WSUS patching, and access-log audit-response material.\n- Metanet M Platform (2020.08~2021.08): Contact center remote-work infrastructure operations. VPN and NAC operations, Python and Ansible scripts, and a FortiGate-log-based VPN session monitoring dashboard.\n- Jointree (2021.09~2022.04): Kookmin University next-generation information system network security build. VMware NSX-T microsegmentation, DFW distributed firewall, NAC, DLP, and Wazuh integration, and vSphere.\n- Quantec Investment Management (2022.08~2024.03): Financial Security Data Center (FSDC) AI trading platform infrastructure operations and Financial Supervisory Service audit response. DLP policy deliverables, PostgreSQL access-control query tuning, and Python operational scripts.\n- Gaonnuri Information System (2024.03~2025.02): Nextrade trading system security infrastructure build and Korean Financial Services Commission main-license review response. FortiGate FGCP active-passive HA, network segmentation, endpoint security, Ansible Role, FortiManager, and VMware.\n- ITCEN CTS (2025.03~2026.02): Nextrade security operations architecture automation (SIEM and firewall-policy automation design). Splunk ES Saved Search, webhook relay, Slack/SMS notifications, FortiManager API lookup, Claude AI-assisted review, and Python and Docker state tracker.\n\n[Skills/Cert]\n- SIEM and Security: FortiGate, FortiManager, FortiAnalyzer, Splunk ES, NAC, DLP, Wazuh, NSX-T, MITRE ATT&CK\n- Observability: Grafana, Prometheus, Loki, Elasticsearch/Kibana, OpenTelemetry\n- Automation and IaC: Python, Bash, Go, Ansible, Terraform, GitHub Actions, GitLab CI/CD\n- Infrastructure and Cloud: Linux, Docker, Kubernetes, k3s, Proxmox VE, VMware, Cloudflare Workers\n- Certifications: CCNP, RHCSA, CompTIA Linux+, LPIC-1, Linux Master Level 2\n\nPortfolio: https://resume.jclee.me"
+      "about": "[Target Roles]\nI am a security infrastructure and automation engineer who started in Korea Aerospace Industries (KAI) closed-network operations and moved through network and security infrastructure build, financial trading system security, and audit response, and now handles security operations automation. I prioritize proposals and interviews for Security Infrastructure, SIEM Engineering, Security Automation, and financial information security roles. I connect FortiGate HA and network segmentation, Splunk ES detection rules, Slack/SMS notifications, and FortiManager API lookup into a single response architecture to reduce repeated work, and I have kept operating records that can be explained with data during the Korean Financial Services Commission main-license review, Financial Supervisory Service audits, and incidents.\n\n[Career Summary]\n- MT Data (2018.10~2019.10): Korea Aerospace Industries (KAI) closed-network Linux server and OA operations. Firewall policy change-history management, WSUS patching, and access-log audit-response material.\n- Metanet M Platform (2020.08~2021.08): Contact center remote-work infrastructure operations. VPN and NAC operations, Python and Ansible scripts, and a FortiGate-log-based VPN session monitoring dashboard.\n- Jointree (2021.09~2022.04): Kookmin University next-generation information system network security build. VMware NSX-T microsegmentation, DFW distributed firewall, NAC, DLP, and Wazuh integration, and vSphere.\n- Quantec Investment Management (2022.08~2024.03): Financial Security Data Center (FSDC) AI trading platform infrastructure operations and Financial Supervisory Service audit response. DLP policy deliverables, PostgreSQL access-control query tuning, and Python operational scripts.\n- Gaonnuri Information System (2024.03~2025.02): Nextrade trading system security infrastructure build and Korean Financial Services Commission main-license review response. FortiGate FGCP active-passive HA, network segmentation, endpoint security, Ansible Role, FortiManager, and VMware.\n- ITCEN CTS (2025.03~2026.02): Nextrade security operations architecture automation (SIEM and firewall-policy automation design). Splunk ES Saved Search, webhook relay, Slack/SMS notifications, FortiManager API lookup, and Python and Docker state tracker.\n- AI verification automation: operate jclee-bot with LLM PR review and independent Check Run policy verification, PlayMCP-compatible MCP servers, and CLIProxyAPI.\n- Mobile reverse engineering: traced Android client UI and reward-processing flows with JADX, then built a mitmproxy capture analyzer for endpoints, authorization-header presence, and request/response JSON fields.\n\n[Skills/Cert]\n- SIEM and Security: FortiGate, FortiManager, FortiAnalyzer, Splunk ES, NAC, DLP, Wazuh, NSX-T, MITRE ATT&CK\n- Observability: Grafana, Prometheus, Loki, Elasticsearch/Kibana, OpenTelemetry\n- Automation and IaC: Python, Bash, Go, Ansible, Terraform, GitHub Actions, GitLab CI/CD\n- Infrastructure and Cloud: Linux, Docker, Kubernetes, k3s, Proxmox VE, VMware, Cloudflare Workers\n- Certifications: CCNP, RHCSA, CompTIA Linux+, LPIC-1, Linux Master Level 2\n\nPortfolio: https://resume.jclee.me"
     }
   },
   "coverLetter": {
@@ -976,7 +1169,7 @@
         "My career started inside Korea Aerospace Industries' closed network, tracking patch schedules for the closed-network Linux fleet on an Excel sheet. The repetition drove one conviction: security engineering is not about hoping incidents never happen, it is about lowering risk through repeatable procedures, automation, and documentation. RHCSA, LPIC-1, and Linux Master Level 2 came next, rebuilding the Linux foundation, and that base carried directly into hands-on automation work.",
         "At Metanet M Platform I picked up Ansible and Python, and turned the NAC policy deployment procedure into a single reviewable workflow for contact-center operations. At Jointree, NSX-T microsegmentation on Kookmin University's next-generation information system closed the east-west traffic blind spots, and the NAC and DLP detection policies got the same reviewable treatment. The tools changed, but the principle held: any task that takes repeated manual effort is a candidate for a runbook.",
         "At Quantec Investment Management's Financial Security Data Center (FSDC), the Financial Supervisory Service audits taught a different lesson: security infrastructure is not a one-time setup, it is the ability to present current state and change history with data during audits and incidents. Tuning DB access-control queries and validating the PB platform POC were both acts of explaining system state with data and leaving an auditable trail for changes.",
-        "Most recently, in the Nextrade exchange security track, the engagement ran continuously from the build phase at Gaonnuri through the automation phase at ITCEN CTS. Network segmentation and endpoint security controls went up first, with the Korean Financial Services Commission main-license review on the critical path. I pulled Splunk ES detection rules, the alert workflow, FortiManager API policy lookups, and Claude AI-assisted review into one operating setup, so a detected event carried straight through to alert delivery.",
+        "Most recently, in the Nextrade exchange security track, the engagement ran continuously from the build phase at Gaonnuri through the automation phase at ITCEN CTS. Network segmentation and endpoint security controls went up first, with the Korean Financial Services Commission main-license review on the critical path. I pulled Splunk ES detection rules, the alert workflow, and FortiManager API policy lookups into one operating setup, so a detected event carried straight through to alert delivery.",
         "Next, I am widening the scope of automation tooling from security appliances and scripts toward MCP and Edge runtimes. The homelab (Cloudflare Workers, MCP, Grafana, 1Password) runs on Terraform-managed IaC, where the experiment is letting an MCP tool take the first pass over repetitive security-response items. In the next chapter, I want the security problem to come before the tool, and to take on the role of turning that problem into a repeatable engineering structure."
       ],
       "closing": "I will work with you to frame the next problem your security infrastructure needs to solve, by reducing repeated work and leaving an operating record behind."
@@ -986,14 +1179,14 @@
     "en": {
       "headline": "Security infrastructure and automation career summary",
       "paragraphs": [
-        "ITCEN CTS (2025.03 ~ 2026.02): Designed Nextrade exchange security-operations architecture connecting Splunk ES detection rules, Slack/SMS alert flows, FortiManager API firewall-policy lookups, and Claude AI-assisted review.",
+        "ITCEN CTS (2025.03 ~ 2026.02): Designed Nextrade exchange security-operations architecture connecting Splunk ES detection rules, Slack/SMS alert flows, and FortiManager API firewall-policy lookups.",
         "Gaonnuri Information Systems (2024.03 ~ 2025.02): Built Nextrade security infrastructure, including FortiGate HA, network segmentation, endpoint security, Ansible Role-based configuration standards, and Korean Financial Services Commission main-license review response.",
         "Quantec Investment Management (2022.08 ~ 2024.03): Operated Financial Security Data Center infrastructure, supported financial regulator audits, tuned DB access-control queries, and validated PB platform POC work.",
         "Jointree (2021.09 ~ 2022.04): Worked on Kookmin University information-system infrastructure with VMware NSX-T microsegmentation, DFW policies, NAC, DLP, and Wazuh monitoring integration.",
         "Metanet M Platform (2020.08 ~ 2021.08): Supported remote-work infrastructure for a contact center, including SSL-VPN and NAC operations, endpoint registration runbooks, Python/Ansible operational scripts, and FortiGate VPN session monitoring.",
         "MT Data (2018.10 ~ 2019.10): Operated KAI closed-network Linux/OA environments, patch schedules, firewall policy change history, and site IT support."
       ],
-      "closing": "Across security infrastructure build, SIEM detection and alerting, audits, and repeated-response automation, I leave an operating record in documents and systems that teams can review."
+      "closing": "I operated DLP, nDLP, APT, SWG, IPS, DDoS, DRM, SSL VPN, NAC, and Active Directory controls, leaving reviewable records for infrastructure build, detection, alerting, and audits."
     }
   }
 }

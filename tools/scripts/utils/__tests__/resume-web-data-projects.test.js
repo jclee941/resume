@@ -70,11 +70,16 @@ describe('generateWebData → public jclee941 repository showcase', () => {
     );
     assert.ok(projectIds.includes('tmux-productivity-suite'), 'tmux suite must be showcased');
     assert.ok(
+      projectIds.includes('idle-outpost-reverse-engineering'),
+      'idle-outpost reverse-engineering evidence must be showcased'
+    );
+    assert.ok(
       !repoUrls.includes('https://github.com/jclee941/jclee-bot'),
       'unavailable jclee-bot repository must stay unlinked'
     );
     assert.ok(repoUrls.includes('https://github.com/jclee941/firewall'));
     assert.ok(repoUrls.includes('https://github.com/jclee941/tmux'));
+    assert.ok(repoUrls.includes('https://github.com/jclee941/idle-outpost'));
 
     const searchableProjectRefs = out.projects.flatMap((project) => [
       project.id,
@@ -85,7 +90,6 @@ describe('generateWebData → public jclee941 repository showcase', () => {
 
     for (const rejected of [
       'mcp-server-hub',
-      'idle-outpost',
       'account',
       'meetup-coordinator-mcp',
       'nunchi-translator-mcp',
