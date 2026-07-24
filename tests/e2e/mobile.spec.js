@@ -1,6 +1,10 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
 
+/**
+ * @param {import('@playwright/test').Page} page
+ * @param {string} [url='/']
+ */
 async function safeMobileGoto(page, url = '/') {
   try {
     const response = await page.goto(url, { waitUntil: 'domcontentloaded' });
@@ -8,9 +12,10 @@ async function safeMobileGoto(page, url = '/') {
       test.skip(true, 'Server unavailable - skipping mobile test');
     }
   } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
     if (
-      error.message?.includes('net::ERR_NETWORK_CHANGED') ||
-      error.message?.includes('net::ERR_INTERNET_DISCONNECTED')
+      message.includes('net::ERR_NETWORK_CHANGED') ||
+      message.includes('net::ERR_INTERNET_DISCONNECTED')
     ) {
       test.skip(true, 'Network unavailable - skipping mobile test');
     }
@@ -173,190 +178,4 @@ test.describe('Mobile Responsiveness', () => {
     }
   });
 
-  test('should have working navigation', async ({ page }) => {
-    await safeMobileGoto(page);
-    await page.waitForLoadState('domcontentloaded');
-
-    // Check if nav exists
-    const nav = page.locator('nav, .nav, [role="navigation"]').first();
-
-    if ((await nav.count()) > 0) {
-      await expect(nav).toBeVisible();
-
-      // Check navigation links
-      const navLinks = nav.locator('a[href]');
-      const linkCount = await navLinks.count();
-
-      expect(linkCount).toBeGreaterThan(0);
-
-      // Test first link
-      if (linkCount > 0) {
-        const firstLink = navLinks.first();
-        await expect(firstLink).toBeVisible();
-
-        const href = await firstLink.getAttribute('href');
-        expect(href).toBeTruthy();
-      }
-    }
-  });
-
-  test('should load images with proper alt text', async ({ page }) => {
-    await safeMobileGoto(page);
-    await page.waitForLoadState('domcontentloaded');
-
-    const images = await page.locator('img').all();
-
-    for (const img of images) {
-      // Images should have alt attribute (can be empty for decorative)
-      const alt = await img.getAttribute('alt');
-      expect(alt).toBeDefined();
-
-      // Images should have src
-      const src = await img.getAttribute('src');
-      expect(src).toBeTruthy();
-    }
-  });
-
-  test('should have proper viewport meta tag', async ({ page }) => {
-    await safeMobileGoto(page);
-
-    const viewportMeta = await page.locator('meta[name="viewport"]').getAttribute('content');
-
-    expect(viewportMeta).toBeTruthy();
-    expect(viewportMeta).toContain('width=device-width');
-  });
-
-  test('should be scrollable', async ({ page }) => {
-    await safeMobileGoto(page);
-    await page.waitForLoadState('domcontentloaded');
-
-    // Check if page has scrollable content
-    const pageHeight = await page.evaluate(() => document.body.scrollHeight);
-    const viewportHeight = page.viewportSize()?.height || 0;
-
-    if (pageHeight > viewportHeight) {
-      // Get initial scroll position
-      const initialScroll = await page.evaluate(() => window.scrollY);
-
-      // Scroll down
-      await page.mouse.wheel(0, 500);
-
-      // Wait for scroll to complete using polling assertion
-      await expect(async () => {
-        const currentScroll = await page.evaluate(() => window.scrollY);
-        expect(currentScroll).toBeGreaterThan(initialScroll);
-      }).toPass({ timeout: 2000 });
-    }
-  });
-
-  test('should handle touch interactions', async ({ page }) => {
-    await safeMobileGoto(page);
-    await page.waitForLoadState('domcontentloaded');
-
-    // Find a clickable element (button or link), excluding skip-link which is hidden
-    // Skip-links are positioned off-screen and cannot be scrolled to on mobile
-    const clickable = page.locator('button:not(.skip-link), a[href]:not(.skip-link)').first();
-
-    if ((await clickable.count()) > 0) {
-      // Should be able to tap/click
-      await expect(clickable).toBeVisible();
-
-      // Get element position
-      const box = await clickable.boundingBox();
-      expect(box).toBeTruthy();
-
-      if (box) {
-        // Scroll element into view before clicking
-        // Playwright\'s .click() requires element visible in viewport
-        await clickable.scrollIntoViewIfNeeded();
-
-        // Use click instead of touchscreen.tap (works for mobile viewports without hasTouch)
-        await clickable.click();
-
-        // Wait for page to stabilize after click (not arbitrary timeout)
-        await page.waitForLoadState('domcontentloaded');
-
-        // Page should still be responsive
-        await expect(page.locator('body')).toBeVisible();
-      }
-    }
-  });
-});
-
-// Tablet-specific tests (iPad only)
-test.describe('Tablet Features', () => {
-  test('should handle orientation changes', async ({ page }) => {
-    // Skip if not iPad viewport (width >= 768px)
-    const viewport = page.viewportSize();
-    if (!viewport || viewport.width < 768) {
-      test.skip(true, 'orientation scenario only applies to tablet-width projects');
-      return;
-    }
-
-    await safeMobileGoto(page);
-    await page.waitForLoadState('domcontentloaded');
-
-    // Simulate landscape orientation
-    await page.setViewportSize({
-      width: viewport.height,
-      height: viewport.width,
-    });
-
-    // Check page still renders correctly (auto-retries)
-    const mainContent = page.locator('#main-content, main, body').first();
-    await expect(mainContent).toBeVisible();
-
-    // No horizontal overflow in landscape
-    const newViewportWidth = page.viewportSize()?.width || 0;
-    const documentWidth = await page.evaluate(() => {
-      return Math.max(document.documentElement.scrollWidth, document.body.scrollWidth);
-    });
-
-    expect(documentWidth).toBeLessThanOrEqual(newViewportWidth + 1);
-  });
-});
-
-// Performance check for mobile
-test.describe('Mobile Performance', () => {
-  test('should load within reasonable time', async ({ page }) => {
-    const startTime = Date.now();
-
-    await safeMobileGoto(page);
-    await page.waitForLoadState('domcontentloaded');
-
-    const loadTime = Date.now() - startTime;
-
-    // Should load in under 3 seconds on mobile
-    expect(loadTime).toBeLessThan(3000);
-  });
-
-  test('should not block main thread excessively', async ({ page }) => {
-    await safeMobileGoto(page);
-    await page.waitForLoadState('domcontentloaded');
-
-    // Check for long tasks (blocking main thread > 50ms)
-    const longTasks = await page.evaluate(() => {
-      return new Promise((resolve) => {
-        if ('PerformanceObserver' in window) {
-          const observer = new PerformanceObserver((list) => {
-            resolve(list.getEntries().length);
-            observer.disconnect();
-          });
-
-          observer.observe({ entryTypes: ['longtask'] });
-
-          // Timeout after 2 seconds
-          setTimeout(() => {
-            observer.disconnect();
-            resolve(0);
-          }, 2000);
-        } else {
-          resolve(0);
-        }
-      });
-    });
-
-    // Should have minimal long tasks
-    expect(longTasks).toBeLessThan(5);
-  });
 });

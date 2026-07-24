@@ -109,7 +109,9 @@ test.describe('Accessibility - axe-core WCAG 2.1 AA', () => {
     ).toEqual([]);
 
     const firstCard = page.locator('#skill-radar-grid .skill-domain-card').first();
-    await expect(firstCard).toHaveAccessibleName(/^[^:]+: .+, \d+ skills$/);
+    await expect(firstCard).toHaveAccessibleName(
+      /^[^0-9]+ \d+개 기술 (?:주력|실무 적용|활용 가능)$/
+    );
     await expect(firstCard).not.toHaveAccessibleName(/Evidence|Recent proof|Related project/i);
     await expect(firstCard).toHaveAttribute('aria-expanded', 'false');
     await firstCard.click();
