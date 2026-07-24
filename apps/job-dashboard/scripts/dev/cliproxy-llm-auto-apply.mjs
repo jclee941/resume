@@ -162,14 +162,14 @@ function toRecordedApplication(row) {
     jobId: row[1],
     source: row[2],
     sourceUrl: row[3],
-    position: row[4],
-    company: row[5],
-    matchScore: row[7],
-    status: row[8],
-    runId: row[14],
-    dryRun: row[15],
-    action: row[16],
-    adapterBacked: row[17],
+    position: row[5],
+    company: row[6],
+    matchScore: row[8],
+    status: row[9],
+    runId: row[15],
+    dryRun: row[16],
+    action: row[17],
+    adapterBacked: row[18],
   };
 }
 

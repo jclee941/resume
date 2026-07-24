@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
+import { canonicalizeJobUrl } from '@resume/shared/job-url-canonicalization';
 import { AppError, ErrorCodes, ExternalServiceError, ValidationError } from '../../errors/index.js';
 
 export const STATUS_UPDATE_TIMESTAMPS = {
@@ -36,11 +37,14 @@ export function normalizeCreateInput(application, now) {
 
   const id = application.id || randomUUID();
 
+  const sourceUrl = application.source_url || null;
+
   return {
     id,
     job_id: application.job_id || null,
     source,
-    source_url: application.source_url || null,
+    source_url: sourceUrl,
+    canonical_url: canonicalizeJobUrl(sourceUrl),
     position,
     company,
     location: application.location || null,

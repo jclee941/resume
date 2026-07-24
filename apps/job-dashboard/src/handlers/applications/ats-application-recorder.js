@@ -1,3 +1,5 @@
+import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
+
 export async function recordAtsApplication(repository, app) {
   const source = String(app?.source || '').trim();
   const externalJobId = String(app?.externalJobId || app?.jobId || '').trim();
@@ -28,8 +30,16 @@ export async function recordAtsApplication(repository, app) {
   const notes = [app.notes, payloadHash && payloadMarker, approvalId && approvalMarker]
     .filter(Boolean)
     .join('\n');
+  const sourceUrl = app.sourceUrl || app.source_url || app.url || app.jobUrl || app.job_url || null;
   return {
     status: 'recorded',
-    application: await repository.insert({ ...app, source, jobId: externalJobId || null, notes }),
+    application: await repository.insert({
+      ...app,
+      source,
+      sourceUrl,
+      canonicalUrl: canonicalizeJobUrl(sourceUrl),
+      jobId: externalJobId || null,
+      notes,
+    }),
   };
 }

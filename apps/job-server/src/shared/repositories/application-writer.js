@@ -17,16 +17,17 @@ export async function createApplication(d1Client, application) {
     await d1Client.query(
       `
         INSERT INTO applications (
-          id, job_id, source, source_url, position, company, location,
+          id, job_id, source, source_url, canonical_url, position, company, location,
           match_score, status, priority, resume_id, cover_letter, notes,
           created_at, updated_at, applied_at, workflow_id, approved_at, rejected_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         payload.id,
         payload.job_id,
         payload.source,
         payload.source_url,
+        payload.canonical_url,
         payload.position,
         payload.company,
         payload.location,
@@ -64,78 +65,6 @@ export async function createApplication(d1Client, application) {
     return created;
   } catch (error) {
     throwD1Error('create', error, { id: payload.id });
-  }
-}
-
-/**
- * @param {{query: Function}} d1Client
- * @param {string} id
- * @param {Record<string, unknown>} updates
- * @returns {Promise<Record<string, unknown>>}
- */
-export async function updateApplication(d1Client, id, updates) {
-  if (!id || typeof id !== 'string') {
-    throw new ValidationError('id is required', {
-      fields: ['id'],
-      code: ErrorCodes.VALIDATION,
-    });
-  }
-
-  if (!updates || typeof updates !== 'object') {
-    throw new ValidationError('updates object is required', {
-      fields: ['updates'],
-    });
-  }
-
-  await requireById(d1Client, id);
-  const allowed = {
-    job_id: updates.job_id,
-    source: updates.source,
-    source_url: updates.source_url,
-    position: updates.position,
-    company: updates.company,
-    location: updates.location,
-    match_score: updates.match_score,
-    priority: updates.priority,
-    resume_id: updates.resume_id,
-    cover_letter: updates.cover_letter,
-    notes: updates.notes,
-    applied_at: updates.applied_at,
-    workflow_id: updates.workflow_id,
-    approved_at: updates.approved_at,
-    rejected_at: updates.rejected_at,
-  };
-
-  const entries = Object.entries(allowed).filter(([, value]) => value !== undefined);
-  if (entries.length === 0) {
-    throw new ValidationError('No updatable fields provided', {
-      fields: Object.keys(allowed),
-    });
-  }
-
-  const setClauses = entries.map(([key]) => `${key} = ?`);
-  const params = entries.map(([, value]) => value);
-  setClauses.push('updated_at = ?');
-  params.push(new Date().toISOString(), id);
-
-  try {
-    await d1Client.query(`UPDATE applications SET ${setClauses.join(', ')} WHERE id = ?`, params);
-
-    const updated = await findById(d1Client, id);
-    if (!updated) {
-      throw new AppError(
-        'Application update completed but record was not found',
-        ErrorCodes.UNKNOWN,
-        500,
-        {
-          id,
-        }
-      );
-    }
-
-    return updated;
-  } catch (error) {
-    throwD1Error('update', error, { id });
   }
 }
 

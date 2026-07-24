@@ -1,4 +1,5 @@
 import { validateApplicationCreate } from '@resume/shared/validation';
+import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
 import { APPLICATION_STATUS, VALID_STATUSES } from './statuses.js';
 
 function normalizeNewApplication(body) {
@@ -8,20 +9,23 @@ function normalizeNewApplication(body) {
   const matchScoreRaw =
     job.matchScore ?? job.match_score ?? job.matchPercentage ?? job.match_percentage ?? 0;
 
+  const sourceUrl =
+    job.sourceUrl ||
+    job.source_url ||
+    job.jobUrl ||
+    job.job_url ||
+    body.sourceUrl ||
+    body.source_url ||
+    body.jobUrl ||
+    body.job_url ||
+    null;
+
   return {
     job,
     options,
     source: job.source || job.platform || 'manual',
-    sourceUrl:
-      job.sourceUrl ||
-      job.source_url ||
-      job.jobUrl ||
-      job.job_url ||
-      body.sourceUrl ||
-      body.source_url ||
-      body.jobUrl ||
-      body.job_url ||
-      null,
+    sourceUrl,
+    canonicalUrl: canonicalizeJobUrl(sourceUrl),
     notes: job.notes ?? options.notes ?? '',
     status: VALID_STATUSES.includes(statusCandidate) ? statusCandidate : APPLICATION_STATUS.SAVED,
     matchScore: Math.max(0, Math.min(100, parseInt(matchScoreRaw) || 0)),
@@ -50,6 +54,7 @@ export async function createApplication(handler, request) {
     jobId: data.job.id || null,
     source: data.source,
     sourceUrl: data.sourceUrl,
+    canonicalUrl: data.canonicalUrl,
     position: data.job.position || data.job.title || 'Unknown',
     company: data.job.company || 'Unknown',
     location: data.job.location || null,

@@ -1,3 +1,5 @@
+import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
+
 /**
  * Persist the top matched jobs to D1.
  *
@@ -8,13 +10,14 @@
 export async function saveMatchedJobs(env, matchedJobs) {
   const stmt = env.JOB_DB.prepare(`
     INSERT INTO job_search_results (
-      id, source, source_url, position, company, location, description,
-      tech_stack, experience_level, match_score, crawled_at, created_at, updated_at
+      id, source, source_url, canonical_url, position, company, location, description,
+      tech_stack, experience_level, match_score, status, crawled_at, created_at, updated_at
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'), datetime('now'))
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'), datetime('now'))
     ON CONFLICT (id) DO UPDATE SET
       source = excluded.source,
       source_url = excluded.source_url,
+      canonical_url = excluded.canonical_url,
       position = excluded.position,
       company = excluded.company,
       location = excluded.location,
@@ -28,20 +31,23 @@ export async function saveMatchedJobs(env, matchedJobs) {
 
   const batch = matchedJobs
     .slice(0, 50)
-    .map((job) =>
-      stmt.bind(
+    .map((job) => {
+      const sourceUrl = job.sourceUrl || job.url || null;
+      return stmt.bind(
         job.id,
         job.source,
-        job.sourceUrl || job.url || null,
+        sourceUrl,
+        canonicalizeJobUrl(sourceUrl),
         job.position,
         job.company,
         job.location || null,
         job.description || null,
         Array.isArray(job.techStack) ? JSON.stringify(job.techStack) : job.techStack || null,
         job.experienceLevel || job.experience || null,
-        job.matchScore ?? 0
-      )
-    );
+        job.matchScore ?? 0,
+        job.discoveryStatus || 'new'
+      );
+    });
 
   await env.JOB_DB.batch(batch);
   return { saved: batch.length };

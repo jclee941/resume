@@ -35,6 +35,7 @@ export class InMemoryD1Client {
         job_id TEXT,
         source TEXT,
         source_url TEXT,
+        canonical_url TEXT,
         position TEXT,
         company TEXT,
         location TEXT,
@@ -126,7 +127,9 @@ afterEach(() => {
   for (const db of openDbs) {
     try {
       db.close();
-    } catch {}
+    } catch {
+      // best-effort cleanup: a test may already have closed this in-memory DB
+    }
   }
   openDbs.clear();
 });
