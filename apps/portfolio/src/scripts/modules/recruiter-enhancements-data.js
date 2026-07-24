@@ -1,7 +1,7 @@
 export const ROLE_PROFILES = [
   {
     id: 'security',
-    label: 'Security Automation',
+    label: 'Security Engineering',
     proof: {
       ko: 'SIEM 탐지·대응, FortiGate, 금융 보안 자동화',
       en: 'SIEM response, FortiGate, financial security automation',
@@ -40,7 +40,7 @@ export const ROLE_PROFILES = [
   },
   {
     id: 'automation',
-    label: 'Automation',
+    label: 'AI Engineering',
     proof: {
       ko: 'jclee-bot LLM 리뷰, MCP 서버, Check Run',
       en: 'jclee-bot LLM review, MCP servers, check runs',
@@ -167,7 +167,7 @@ export function getProofCountLabel(count) {
   if (key === 'ja') {
     return `${new Intl.NumberFormat('ja-JP').format(count)}件の根拠`;
   }
-  return `${new Intl.NumberFormat('ko-KR').format(count)}개 근거`;
+  return `근거 ${new Intl.NumberFormat('ko-KR').format(count)}건`;
 }
 
 function localizeProof(item, key) {
