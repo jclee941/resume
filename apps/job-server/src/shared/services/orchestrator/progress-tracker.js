@@ -18,23 +18,7 @@ import {
 import { applyTaskProgressUpdate, createTaskState } from './progress-tracker/task-state.js';
 
 /**
- * @typedef {'pending'|'running'|'completed'|'failed'|'cancelled'} TaskStatus
- */
-
-/**
- * @typedef {Object} TaskState
- * @property {string} id - Unique task identifier
- * @property {string} platform - Platform name (e.g., 'wanted', 'linkedin')
- * @property {string} type - Task type (e.g., 'search', 'detail', 'apply')
- * @property {TaskStatus} status - Current status
- * @property {number} createdAt - Creation timestamp
- * @property {number|null} startedAt - Start timestamp
- * @property {number|null} completedAt - Completion timestamp
- * @property {number} progress - 0-100 percentage
- * @property {number} itemsProcessed - Items processed so far
- * @property {number} itemsTotal - Total items expected
- * @property {Error|null} error - Error if failed
- * @property {Record<string, unknown>} metadata - Arbitrary metadata
+ * @import { TaskState, TaskStatus } from './progress-tracker/task-state.js'
  */
 
 export class ProgressTracker extends EventEmitter {
