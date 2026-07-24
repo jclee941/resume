@@ -39,16 +39,17 @@ describe('portfolio hiring appeal copy', () => {
 
     expect(html).toContain('보안 자동화 · 보안 인프라 면접 제안 가능');
     expect(html).toContain(
-      '넥스트레이드 보안 인프라 구축·자동화와 공개 자동화 프로젝트, 연락처·이력서 PDF를 한 화면에 정리했습니다.'
+      '넥스트레이드 보안 인프라 구축·자동화와 LLM 출력 검증 자동화(jclee-bot), 공개 프로젝트와 이력서 PDF를 한 화면에 정리했습니다.'
     );
     expect(html).toContain('<ul class="hero-proof-list" aria-label="핵심 이력 요약">');
     expect(html).toContain('공개 자동화 프로젝트');
     expect(html).toContain('대상 역할: Security Automation / Infrastructure Engineer');
-    expect(html).toContain('최근 이력: 넥스트레이드 보안 인프라 구축·자동화, FSDC 감사 대응');
+    expect(html).toContain('최근 이력: 넥스트레이드 보안 인프라 구축·자동화, jclee-bot LLM 출력 검증');
     expect(html).toContain('면접 제안 가능');
-    expect(html).toContain('PR 리뷰 · 시크릿 스캔 · Check Run으로 코드 변경 위험을 설명');
+    expect(html).toContain('LLM 출력에 시크릿 스캔·Check Run 검증을 함께 표시');
+    expect(html).toContain('JADX 디컴파일과 mitmproxy 캡처로 모바일 클라이언트·API 흐름 분석');
     expect(html).toContain('메트릭·로그 관측성으로 장애와 보안 신호를 함께 확인');
-    expect(html).toContain('자동화 연계');
+    expect(html).toContain('AI 검증 자동화');
     expect(html).toContain('연락·PDF');
     expect(html).toContain(
       '경력, 공개 자동화 프로젝트, 연락처와 이력서 PDF를 한 화면에 모았습니다.'
@@ -75,17 +76,18 @@ describe('portfolio hiring appeal copy', () => {
       'Open to interview requests for security automation and security infrastructure roles'
     );
     expect(html).toContain(
-      'Security-appliance builds, SIEM work, public automation projects, contact, and resume PDF — gathered on one page.'
+      'Exchange security infrastructure, LLM output verification automation (jclee-bot), public projects, and resume PDF — all on one page.'
     );
     expect(html).toContain('Target role: Security Automation / Infrastructure Engineer');
     expect(html).toContain(
-      'Recent role: exchange security infrastructure build/automation and audit response'
+      'Recent role: exchange security infrastructure and LLM output verification (jclee-bot)'
     );
     expect(html).toContain('Open to interview requests');
-    expect(html).toContain('PR review, secrets scan, and check runs explain change risk');
+    expect(html).toContain('LLM output paired with secrets scan and Check Run verification');
+    expect(html).toContain('JADX decompilation and mitmproxy captures trace mobile client and API flows');
     expect(html).toContain('Metrics and logs provide observability for incidents and signals');
     expect(html).toContain('class="role-chip__label">Sec</span>');
-    expect(html).toContain('class="role-chip__label">Flow</span>');
+    expect(html).toContain('class="role-chip__label">AI</span>');
     expect(html).not.toContain('Automation Workflow');
     expect(html).toContain('Public automation projects');
     expect(html).not.toContain('Public proof shortcuts');
@@ -112,15 +114,16 @@ describe('portfolio hiring appeal copy', () => {
 
     expect(html).toContain('セキュリティ自動化・セキュリティ基盤の面接依頼を歓迎');
     expect(html).toContain(
-      '直近のセキュリティ基盤構築、公開プロジェクト、連絡先・履歴書PDFを1ページにまとめました。'
+      '直近のセキュリティ基盤構築とLLM出力検証自動化(jclee-bot)、公開プロジェクト、履歴書PDFを1ページにまとめました。'
     );
     expect(html).toContain('<ul class="hero-proof-list" aria-label="経歴サマリー">');
     expect(html).toContain('希望職種: Security Automation / Infrastructure Engineer');
-    expect(html).toContain('直近役割: 取引所セキュリティ基盤の構築・自動化');
+    expect(html).toContain('直近役割: 取引所セキュリティ基盤とLLM出力検証(jclee-bot)');
     expect(html).toContain('面接依頼を受付中');
-    expect(html).toContain('PR確認・シークレットスキャン・チェックランで変更リスクを説明');
+    expect(html).toContain('LLM出力にシークレットスキャン・チェックラン検証を併記');
+    expect(html).toContain('JADXデコンパイルとmitmproxyキャプチャでモバイルクライアント・APIフローを分析');
     expect(html).toContain('メトリクスとログの可観測性で障害とセキュリティ信号を確認');
-    expect(html).toContain('自動化連携');
+    expect(html).toContain('AI検証自動化');
     expect(html).not.toContain('職務別レビュー経路');
     expect(html).not.toContain('セキュリティ基盤・SRE');
     expect(html).not.toContain('DevSecOps');
@@ -149,7 +152,7 @@ describe('portfolio hiring appeal copy', () => {
 
     expect(roleCopy).toContain('Automation');
     expect(roleCopy).not.toContain('Automation Workflow');
-    expect(roleCopy).toContain('jclee-bot, PR 검토, 시크릿 스캔, Check Run');
+    expect(roleCopy).toContain('jclee-bot LLM 리뷰, MCP 서버, Check Run');
     expect(roleCopy).not.toContain('Ops Workflow');
     expect(roleCopy).not.toContain('jclee-bot, PR 검토, 시크릿 스캔, 운영 로그');
     expect(roleCopy.join('\n')).not.toMatch(/Security Ops|Ops Visibility/);

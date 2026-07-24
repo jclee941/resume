@@ -10,7 +10,7 @@ test.describe('Portfolio hiring copy', () => {
     await expect(hero.getByText('보안 자동화 · 보안 인프라 면접 제안 가능')).toBeVisible();
     await expect(
       hero.getByText(
-        '넥스트레이드 보안 인프라 구축·자동화와 공개 자동화 프로젝트, 연락처·이력서 PDF를 한 화면에 정리했습니다.'
+        '넥스트레이드 보안 인프라 구축·자동화와 LLM 출력 검증 자동화(jclee-bot), 공개 프로젝트와 이력서 PDF를 한 화면에 정리했습니다.'
       )
     ).toBeVisible();
     await expect(hero.getByText('보안 자동화 · 보안 인프라 · SIEM')).toBeVisible();
@@ -33,7 +33,7 @@ test.describe('Portfolio hiring copy', () => {
       hero.getByRole('link', { name: /jclee-bot PR 리뷰 · 시크릿 스캔 · ELK 로그/ })
     ).toHaveCount(0);
     await expect(
-      hero.getByRole('link', { name: /jclee-bot PR 리뷰 · 시크릿 스캔 · Check Run/ })
+      hero.getByRole('link', { name: /jclee-bot.*시크릿 스캔.*Check Run/ })
     ).toBeVisible();
     await expect(hero.getByText('증빙 프로젝트 보기')).toHaveCount(0);
     await expect(hero.getByText('공개 운영 근거')).toHaveCount(0);
@@ -77,7 +77,7 @@ test.describe('Portfolio hiring copy', () => {
     ).toBeVisible();
     await expect(
       japaneseHero.getByText(
-        '直近のセキュリティ基盤構築、公開プロジェクト、連絡先・履歴書PDFを1ページにまとめました。'
+        '直近のセキュリティ基盤構築とLLM出力検証自動化(jclee-bot)、公開プロジェクト、履歴書PDFを1ページにまとめました。'
       )
     ).toBeVisible();
     await expect(japaneseHero.getByText(/SRE|DevSecOps/)).toHaveCount(0);
