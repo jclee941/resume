@@ -8,6 +8,7 @@ function validateStringValue(errors, data, schema, path) {
       message: `Value must be one of: ${schema.enum.join(', ')}`,
       value: data,
       allowed: schema.enum,
+      type: 'enum',
     });
   }
 }
@@ -19,6 +20,7 @@ function validateStringPattern(errors, data, schema, path) {
       message: `String does not match pattern '${schema.pattern}'`,
       value: data,
       expectedFormat: schema.description || schema.pattern,
+      type: 'pattern',
     });
   }
 }
@@ -29,6 +31,7 @@ function validateStringLength(errors, data, schema, path) {
       path,
       message: `String too short (min: ${schema.minLength}, got: ${data.length})`,
       value: data,
+      type: 'minLength',
     });
   }
   if (schema.maxLength !== undefined && data.length > schema.maxLength) {
@@ -36,16 +39,17 @@ function validateStringLength(errors, data, schema, path) {
       path,
       message: `String too long (max: ${schema.maxLength}, got: ${data.length})`,
       value: data,
+      type: 'maxLength',
     });
   }
 }
 
 function validateStringFormat(errors, data, schema, path) {
   if (schema.format === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data)) {
-    errors.push({ path, message: 'Invalid email format', value: data });
+    errors.push({ path, message: 'Invalid email format', value: data, type: 'format' });
   }
   if (schema.format === 'uri' && !isUri(data)) {
-    errors.push({ path, message: 'Invalid URI format', value: data });
+    errors.push({ path, message: 'Invalid URI format', value: data, type: 'format' });
   }
 }
 
@@ -59,6 +63,7 @@ function validateNumberValue(errors, data, schema, path, allowsInteger) {
       path,
       message: `Value must be at least ${schema.minimum}, got ${data}`,
       value: data,
+      type: 'minimum',
     });
   }
 }

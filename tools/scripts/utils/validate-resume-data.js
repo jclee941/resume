@@ -10,15 +10,47 @@ const path = require('path');
 const { JsonSchemaLiteValidator } = require('./json-schema-lite-validator.js');
 
 class SimpleValidator extends JsonSchemaLiteValidator {}
+
+function isUsableSchema(schema) {
+  return (
+    schema !== null &&
+    typeof schema === 'object' &&
+    !Array.isArray(schema) &&
+    schema.type === 'object' &&
+    schema.properties !== null &&
+    typeof schema.properties === 'object' &&
+    Array.isArray(schema.required)
+  );
+}
+
+function schemaUnavailableError(sourceFile) {
+  return {
+    path: '(schema)',
+    message: 'Canonical resume schema is unavailable',
+    file: sourceFile,
+    sourceFile,
+    jsonPointer: '',
+    arrayIndex: null,
+    expected: 'a usable JSON schema',
+    expectedFormat: null,
+    allowed: null,
+    type: 'schema',
+    code: 'schema-unavailable',
+  };
+}
+
 /**
  * Validate resume data against schema
  * @param {Object} data - Resume data to validate
  * @param {Object} schema - JSON Schema
  * @returns {Object} - { valid: boolean, errors: Array|null }
  */
-function validateResumeData(data, schema) {
+function validateResumeData(data, schema, sourceFile) {
+  if (!isUsableSchema(schema)) {
+    return { valid: false, errors: [schemaUnavailableError(sourceFile)] };
+  }
   const validator = new SimpleValidator(schema);
-  return validator.validate(data);
+  return validator.validate(data, sourceFile);
 }
 
 /**
@@ -34,16 +66,10 @@ function validateResumeDataFile(filePath, schemaPath) {
     let data;
     try {
       data = JSON.parse(dataContent);
-    } catch (e) {
+    } catch {
       return {
         valid: false,
-        errors: [
-          {
-            type: 'parse_error',
-            message: `Invalid JSON: ${e.message}`,
-            file: filePath,
-          },
-        ],
+        errors: [fileError('parse_error', 'Malformed JSON input', filePath)],
         data: null,
       };
     }
@@ -53,22 +79,23 @@ function validateResumeDataFile(filePath, schemaPath) {
     let schema;
     try {
       schema = JSON.parse(schemaContent);
-    } catch (e) {
+    } catch {
       return {
         valid: false,
-        errors: [
-          {
-            type: 'schema_parse_error',
-            message: `Invalid schema JSON: ${e.message}`,
-            file: schemaPath,
-          },
-        ],
+        errors: [fileError('schema_parse_error', 'Malformed JSON schema', schemaPath)],
+        data: null,
+      };
+    }
+    if (!isUsableSchema(schema)) {
+      return {
+        valid: false,
+        errors: [schemaUnavailableError(schemaPath)],
         data: null,
       };
     }
 
     // Validate
-    const result = validateResumeData(data, schema);
+    const result = validateResumeData(data, schema, filePath);
     return {
       ...result,
       data: result.valid ? data : null,
@@ -76,15 +103,26 @@ function validateResumeDataFile(filePath, schemaPath) {
   } catch (e) {
     return {
       valid: false,
-      errors: [
-        {
-          type: 'file_error',
-          message: `Error reading file: ${e.message}`,
-        },
-      ],
+      errors: [fileError('file_error', e.message, filePath)],
       data: null,
     };
   }
+}
+
+function fileError(type, detail, sourceFile) {
+  return {
+    path: '(root)',
+    message: `Invalid ${type.replaceAll('_', ' ')}: ${detail}`,
+    file: sourceFile,
+    sourceFile,
+    jsonPointer: '',
+    arrayIndex: null,
+    expected: null,
+    expectedFormat: null,
+    allowed: null,
+    type,
+    code: type.replaceAll('_', '-'),
+  };
 }
 
 /**
@@ -102,24 +140,24 @@ function formatErrors(errors) {
   for (let i = 0; i < errors.length; i++) {
     const error = errors[i];
     output += `${i + 1}. Field: ${error.path || 'unknown'}\n`;
+    output += `   JSON Pointer: ${error.jsonPointer ?? ''}\n`;
+    output += `   Source file: ${error.sourceFile ?? error.file ?? 'unknown'}\n`;
+    output += `   Array index: ${error.arrayIndex ?? 'n/a'}\n`;
+    output += `   Expected: ${formatValue(error.expected)}\n`;
+    output += `   Expected format: ${formatValue(error.expectedFormat)}\n`;
+    output += `   Allowed: ${formatValue(error.allowed)}\n`;
+    output += `   Type: ${error.type ?? 'validation'}\n`;
+    output += `   Code: ${error.code ?? 'validation'}\n`;
     output += `   Message: ${error.message}\n`;
-
-    if (error.value !== undefined) {
-      output += `   Got: ${JSON.stringify(error.value).substring(0, 100)}\n`;
-    }
-
-    if (error.allowed) {
-      output += `   Allowed: ${error.allowed.join(', ')}\n`;
-    }
-
-    if (error.expectedFormat) {
-      output += `   Expected format: ${error.expectedFormat}\n`;
-    }
 
     output += '\n';
   }
 
   return output;
+}
+
+function formatValue(value) {
+  return value === undefined ? 'n/a' : JSON.stringify(value);
 }
 
 // CLI usage

@@ -1,4 +1,5 @@
 const { validateNumberValue, validateStringValue } = require('./json-schema-lite-primitives.js');
+const { normalizeDiagnostics } = require('./json-schema-lite-diagnostics.js');
 
 class JsonSchemaLiteValidator {
   constructor(schema) {
@@ -6,12 +7,13 @@ class JsonSchemaLiteValidator {
     this.errors = [];
   }
 
-  validate(data) {
+  validate(data, sourceFile) {
     this.errors = [];
     this._validateObject(data, this.schema, '');
+    const errors = normalizeDiagnostics(this.errors, this.schema, sourceFile);
     return {
-      valid: this.errors.length === 0,
-      errors: this.errors.length > 0 ? this.errors : null,
+      valid: errors.length === 0,
+      errors: errors.length > 0 ? errors : null,
     };
   }
 
@@ -93,6 +95,7 @@ class JsonSchemaLiteValidator {
         path,
         message: `Array must have at least ${schema.minItems} items, got ${data.length}`,
         value: data,
+        type: 'minItems',
       });
     }
     if (schema.items) {

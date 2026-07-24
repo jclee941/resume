@@ -14,26 +14,50 @@ function resolveSchemaPath() {
   }
 }
 
+function isUsableSchema(schema) {
+  return (
+    schema !== null &&
+    typeof schema === 'object' &&
+    !Array.isArray(schema) &&
+    schema.type === 'object' &&
+    schema.properties !== null &&
+    typeof schema.properties === 'object' &&
+    Array.isArray(schema.required)
+  );
+}
+
 function loadMasterSchema() {
   const schemaPath = resolveSchemaPath();
-  if (!schemaPath) return {};
+  if (!schemaPath) return null;
   try {
-    return JSON.parse(readFileSync(schemaPath, 'utf-8'));
+    const schema = JSON.parse(readFileSync(schemaPath, 'utf-8'));
+    return isUsableSchema(schema) ? schema : null;
   } catch {
-    return {};
+    return null;
   }
 }
 
 function loadValidatorEngine() {
   try {
-    const require = createRequire(import.meta.url);
-    return require('../../../../tools/scripts/utils/validate-resume-data.js');
+    const requireCanonicalValidator = createRequire(import.meta.url);
+    const validatorEngine = requireCanonicalValidator(
+      '../../../../tools/scripts/utils/validate-resume-data.js'
+    );
+    if (typeof validatorEngine.validateResumeData !== 'function') {
+      throw new TypeError('Canonical resume validator has no validateResumeData function');
+    }
+    return validatorEngine;
   } catch {
     return {
-      validateResumeData: () => ({
+      validateResumeData: (_data, _schema, sourceFile) => ({
         valid: false,
         errors: [
-          { path: '(validator)', message: 'Canonical resume validator could not be loaded' },
+          diagnostic(
+            '(validator)',
+            'Canonical resume validator could not be loaded',
+            null,
+            sourceFile
+          ),
         ],
       }),
     };
@@ -43,58 +67,55 @@ function loadValidatorEngine() {
 export const masterSchema = loadMasterSchema();
 const validatorEngine = loadValidatorEngine();
 
-export function validateResumeData(data, schema = masterSchema) {
-  const errors = [];
+export function validateResumeData(data, schema = masterSchema, sourceFile) {
+  if (!isUsableSchema(schema)) {
+    return {
+      valid: false,
+      errors: [
+        {
+          ...diagnostic('(schema)', 'Canonical resume schema is unavailable', null, sourceFile),
+          expected: 'a usable JSON schema',
+          type: 'schema',
+          code: 'schema-unavailable',
+        },
+      ],
+    };
+  }
 
   if (data === null || data === undefined || typeof data !== 'object') {
-    return { valid: false, errors: [{ path: '(root)', message: 'Resume data must be an object' }] };
+    return { valid: false, errors: [diagnostic('(root)', 'Resume data must be an object', data, sourceFile)] };
   }
 
-  if (Array.isArray(schema.required)) {
-    for (const field of schema.required) {
-      if (!(field in data))
-        errors.push({ path: field, message: `Required field missing: ${field}` });
-    }
-  }
-
-  collectNestedObjectErrors(errors, data, schema, 'personal');
-  collectNestedObjectErrors(errors, data, schema, 'education');
-
-  if ('careers' in data && !Array.isArray(data.careers)) {
-    errors.push({ path: 'careers', message: "Field 'careers' must be an array" });
-  }
-  if ('skills' in data && data.skills !== null && typeof data.skills !== 'object') {
-    errors.push({ path: 'skills', message: "Field 'skills' must be an object" });
-  }
-
-  if (errors.length === 0) {
-    const engineResult = validatorEngine.validateResumeData(data, schema);
-    if (!engineResult.valid && engineResult.errors) errors.push(...engineResult.errors);
-  }
-
-  return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
+  const result = validatorEngine.validateResumeData(data, schema, sourceFile);
+  return { valid: result.valid, errors: result.errors ?? undefined };
 }
 
-function collectNestedObjectErrors(errors, data, schema, fieldName) {
-  if (!(fieldName in data)) return;
-  if (data[fieldName] === null || typeof data[fieldName] !== 'object') {
-    errors.push({ path: fieldName, message: `Field '${fieldName}' must be an object` });
-    return;
-  }
-  for (const field of schema.properties?.[fieldName]?.required ?? []) {
-    if (!(field in data[fieldName])) {
-      errors.push({
-        path: `${fieldName}.${field}`,
-        message: `Required field missing: ${fieldName}.${field}`,
-      });
-    }
-  }
+function diagnostic(path, message, rawInput = null, sourceFile = null) {
+  return {
+    path,
+    message,
+    sourceFile: sourceFile ?? null,
+    jsonPointer: '',
+    arrayIndex: null,
+    rawInput,
+    expected: "'object'",
+    expectedFormat: null,
+    allowed: null,
+    type: 'type',
+    code: 'invalid-type',
+  };
 }
 
 export function formatErrorsForMCP(errors) {
   if (!errors || !Array.isArray(errors)) return [];
-  return errors.map((err) => ({
-    field: err.path || err.field || '(root)',
-    message: err.message || 'Validation error',
-  }));
+  return errors.map((error) => {
+    const safeError = Object.fromEntries(
+      Object.entries(error).filter(([key]) => key !== 'rawInput' && key !== 'value')
+    );
+    return {
+      ...safeError,
+      field: safeError.path || safeError.field || '(root)',
+      message: safeError.message || 'Validation error',
+    };
+  });
 }

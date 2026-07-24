@@ -71,6 +71,54 @@ describe('Resume Sync Validation', () => {
     expect(typeof formatted[0].message).toBe('string');
   });
 
+  test('returns all structured validation diagnostics through MCP', async () => {
+    const { validateResumeData, formatErrorsForMCP, masterSchema } = await importValidation();
+    const sourceFile = 'fixtures/malformed-resume.json';
+    const malformedResume = {
+      ...VALID_RESUME_DATA,
+      personal: { ...VALID_RESUME_DATA.personal, phone: 'bad-phone' },
+      education: { ...VALID_RESUME_DATA.education, status: 'unknown-status' },
+      careers: [{ ...VALID_RESUME_DATA.careers[0], period: 42 }],
+    };
+
+    const validation = validateResumeData(malformedResume, masterSchema, sourceFile);
+    const formatted = formatErrorsForMCP(validation.errors);
+
+    expect(validation.valid).toBe(false);
+    expect(formatted).toHaveLength(3);
+    expect(formatted).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          field: 'personal.phone',
+          sourceFile,
+          jsonPointer: '/personal/phone',
+          expectedFormat: 'Phone number in XXX-XXXX-XXXX format',
+          type: 'pattern',
+          code: 'pattern',
+        }),
+        expect.objectContaining({
+          field: 'education.status',
+          sourceFile,
+          jsonPointer: '/education/status',
+          allowed: expect.arrayContaining(['Graduated']),
+          type: 'enum',
+          code: 'enum',
+        }),
+        expect.objectContaining({
+          field: 'careers[0].period',
+          sourceFile,
+          jsonPointer: '/careers/0/period',
+          arrayIndex: 0,
+          expected: "'string'",
+          type: 'type',
+          code: 'invalid-type',
+        }),
+      ])
+    );
+    expect(formatted.every((error) => !Object.hasOwn(error, 'rawInput'))).toBe(true);
+    expect(formatted.every((error) => !Object.hasOwn(error, 'value'))).toBe(true);
+  });
+
   test('returns empty MCP error array for valid data', async () => {
     const { validateResumeData, formatErrorsForMCP, masterSchema } = await importValidation();
     const validation = validateResumeData(VALID_RESUME_DATA, masterSchema);
