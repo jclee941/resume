@@ -33,7 +33,7 @@ const HERO_CONTENT = {
       ['주요 경력', '넥스트레이드 구축·자동화 · FSDC 감사 대응 · 프로젝트 로그'],
       ['다음 액션', '메일로 면접 제안 또는 일정 확인'],
     ],
-    quickTitle: '관심 직무별로 보기',
+    quickTitle: '역할별 프로젝트 보기',
     quickDesc: '역할을 고르면 관련 경력과 프로젝트로 바로 이동합니다.',
     quickRoles: [
       ['security', '보안 자동화', 'Splunk ES, FortiGate, 감사 대응'],
