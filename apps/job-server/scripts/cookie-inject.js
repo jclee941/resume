@@ -12,7 +12,7 @@
  */
 
 import fs from 'fs';
-import { SessionManager } from '../src/shared/services/session/session-manager.js';
+import { SessionManager } from '../src/shared/services/session/index.js';
 
 function parseCookieString(cookieStr) {
   return cookieStr

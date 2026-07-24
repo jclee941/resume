@@ -2,7 +2,7 @@
  * Test Wanted Chaos API for projects endpoint discovery
  */
 
-import { SessionManager } from './tools/auth.js';
+import { SessionManager } from './shared/services/session/index.js';
 
 const RESUME_ID = 'AwcICwcLBAFIAgcDCwUAB01F';
 const CAREER_ID = 6100646; // 아이티센 CTS

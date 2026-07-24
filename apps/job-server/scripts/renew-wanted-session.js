@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { withStealthBrowser } from '../src/crawlers/browser-utils.js';
-import SessionManager from '../src/shared/services/session/session-manager.js';
+import SessionManager from '../src/shared/services/session/index.js';
 
 export const WANTED_EMAIL_LOGIN_MATCHER = Object.freeze({
   identity: '이메일',

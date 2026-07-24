@@ -1,4 +1,4 @@
-import SessionManager from '../../src/shared/services/session/session-manager.js';
+import SessionManager from '../../src/shared/services/session/index.js';
 
 import { log } from './logging.js';
 import { shipToElk } from './logging.js';

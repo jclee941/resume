@@ -1,4 +1,4 @@
-import { SessionManager } from './session-manager.js';
+import { SessionManager } from '../../shared/services/session/index.js';
 
 export function handleStatus() {
   const session = SessionManager.load('wanted');

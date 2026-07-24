@@ -7,7 +7,7 @@ import JobKoreaHandler from '../jobkorea-handler.js';
 import { syncJobKoreaProfile } from '../jobkorea-handler/sync.js';
 import { createJobKoreaEntrySlots } from '../jobkorea-handler/section-slots.js';
 import { resolveCliproxyBase } from '../jobkorea-handler/captcha-solver.js';
-import SessionManager from '../../../src/shared/services/session/session-manager.js';
+import SessionManager from '../../../src/shared/services/session/index.js';
 import {
   assertJobKoreaResumeAccess,
   assertEditableResume,

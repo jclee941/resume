@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, mock } from 'node:test';
 import assert from 'node:assert';
-import { SessionManager } from '../auth.js';
+import { SessionManager } from '../../shared/services/session/index.js';
 import { syncToWanted } from '../platforms/wanted-sync.js';
 import { syncToJobKorea } from '../platforms/jobkorea-sync.js';
 import { syncToRemember } from '../platforms/remember-sync.js';

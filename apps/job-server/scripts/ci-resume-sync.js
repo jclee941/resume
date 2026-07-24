@@ -16,7 +16,7 @@
  *   DRY_RUN          - 'true' for preview only
  */
 
-import { SessionManager } from '../src/tools/auth.js';
+import { SessionManager } from '../src/shared/services/session/index.js';
 import { unifiedResumeSyncTool } from '../src/tools/unified-resume-sync.js';
 
 const requiredEnvVars = ['WANTED_EMAIL', 'WANTED_RESUME_ID'];

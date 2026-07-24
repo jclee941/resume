@@ -1,4 +1,4 @@
-import { SessionManager } from './tools/auth.js';
+import { SessionManager } from './shared/services/session/index.js';
 import resumeSyncTool from './tools/resume-sync.js';
 import { existsSync, unlinkSync, mkdirSync } from 'fs';
 import { join } from 'path';

@@ -1,4 +1,4 @@
-import SessionManager from '../src/shared/services/session/session-manager.js';
+import SessionManager from '../src/shared/services/session/index.js';
 
 import { applyToJobKoreaJobs } from './pipeline/apply-jobkorea.js';
 import { applyToJobs } from './pipeline/apply-wanted.js';
