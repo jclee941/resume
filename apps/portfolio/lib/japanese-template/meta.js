@@ -59,10 +59,6 @@ function applyJapaneseMeta(html) {
       '"image": "https://resume.jclee.me/og-image-ja.webp"'
     )
     .replace(
-      /"jobTitle": "Security & Infrastructure Engineer"/g,
-      '"jobTitle": "Security & Infrastructure Engineer"'
-    )
-    .replace(
       /"name": "Security & Infrastructure Engineer — 면접 제안 접수 중"/g,
       '"name": "Security & Infrastructure Engineer — 面接依頼受付中"'
     )
