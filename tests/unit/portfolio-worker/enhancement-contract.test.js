@@ -74,6 +74,7 @@ describe('T3: localized nav toggle copy and deferred metadata', () => {
     );
     expect(ja).toContain(`<title>イ・ジェチョル - ${targetRole}</title>`);
     expect(ja).toContain(`<meta property="og:title" content="イ・ジェチョル - ${targetRole}" />`);
+    expect(ja).toContain(`"jobTitle": "${targetRole}"`);
     expect(ja).toContain(`"name": "${targetRole} — 面接依頼受付中"`);
     expect(ja).not.toContain('면접 제안 접수 중');
     expect(manifest.name).toBe(`이재철 - ${targetRole}`);
