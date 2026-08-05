@@ -99,15 +99,11 @@ function renderRoleQuickPaths(content) {
   );
 }
 
-function buildMailHref(subject) {
-  return `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}`;
-}
-
 function renderActions(content) {
   const [contact, resume, projects, pdf] = content.actions;
   return (
     `<div class="hero-cta" role="group" aria-label="${content.actionsLabel}">` +
-    `<a href="${buildMailHref(content.mailSubject)}" class="link-subtle link-subtle--primary">${contact}</a>` +
+    `<a href="mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(content.mailSubject)}" class="link-subtle link-subtle--primary">${contact}</a>` +
     `<a href="#resume" class="link-subtle">${resume}</a>` +
     `<a href="#projects" class="link-subtle">${projects}</a>` +
     `<a href="${RESUME_PDF_PATH}" download="${content.downloadName}" class="link-subtle">${pdf}</a>` +
