@@ -5,6 +5,7 @@
   "type": "module",
   "description": "Job automation dashboard Cloudflare Worker",
   "dependencies": {
+    "@cloudflare/puppeteer": "^1.3.0",
     "@resume/env": "*",
     "@resume/schemas": "*",
     "@resume/shared": "*",
