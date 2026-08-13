@@ -70,6 +70,17 @@ describe('strict CI workflow contracts', () => {
   });
 });
 
+describe('external workflow source contracts', () => {
+  it('rejects a mutable external repository checkout ref', () => {
+    mutate(
+      '10_pr-review.yml',
+      '          ref: d8d9e16d790bcb6005c2c7ab96969989251a06a3',
+      '          ref: feature-branch'
+    );
+    rejects(/10_pr-review\.yml.*immutable.*40-character SHA/u);
+  });
+});
+
 describe('strict post-deploy workflow contracts', () => {
   it('rejects a push path filter', () => {
     mutate(
