@@ -45,6 +45,7 @@ jobs:
           ref: d8d9e16d790bcb6005c2c7ab96969989251a06a3
           token: ${{ secrets.GH_PAT }}
           persist-credentials: false
+          path: local-actions-source
           fetch-depth: 1
       - name: Check out pr-agent source from jclee941/.github
         uses: actions/checkout@v7
@@ -57,10 +58,10 @@ jobs:
           fetch-depth: 1
 
       - name: Set up build cache (NAS-backed on self-hosted)
-        uses: ./.github/actions/setup-build-cache
+        uses: ./local-actions-source/.github/actions/setup-build-cache
 
       - name: Set up Python 3.12
-        uses: ./.github/actions/setup-python-compatible
+        uses: ./local-actions-source/.github/actions/setup-python-compatible
         with:
           python-version: '3.12'
 

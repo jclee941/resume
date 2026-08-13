@@ -93,6 +93,11 @@ describe('external workflow source contracts', () => {
     mutate('10_pr-review.yml', '          persist-credentials: false', '          persist-credentials: true');
     rejects(/10_pr-review\.yml.*must not persist/u);
   });
+
+  it('rejects an external checkout that replaces the workflow workspace', () => {
+    mutate('10_pr-review.yml', '          path: local-actions-source\n', '');
+    rejects(/10_pr-review\.yml.*isolated path/u);
+  });
 });
 
 describe('strict post-deploy workflow contracts', () => {
