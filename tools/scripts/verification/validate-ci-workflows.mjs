@@ -3,6 +3,8 @@ import path from 'node:path';
 import { parse } from 'yaml';
 
 const REQUIRED_JOBS = ['architecture-hardening', 'wrangler-dry-run', 'merged-worker-e2e'];
+const EXTERNAL_SOURCE_WORKFLOWS = ['10_pr-review.yml', '11_security-pr-review.yml'];
+const IMMUTABLE_GIT_REF = /^[0-9a-f]{40}$/u;
 
 function loadWorkflow(repositoryRoot, name) {
   const file = path.join(repositoryRoot, '.github/workflows', name);
@@ -69,6 +71,21 @@ function validateCI(ci) {
   );
 }
 
+function validateExternalSources(name, workflow) {
+  const jobs = Object.values(workflow.definition.jobs ?? {});
+  for (const job of jobs) {
+    for (const step of job?.steps ?? []) {
+      if (step.with?.repository !== 'jclee941/.github') {
+        continue;
+      }
+      requireContract(
+        IMMUTABLE_GIT_REF.test(step.with.ref),
+        `${name} external checkout ref must be an immutable 40-character SHA`
+      );
+    }
+  }
+}
+
 function validatePostDeploy(workflow) {
   const trigger = workflow.definition.on ?? {};
   requireContract(
@@ -113,6 +130,9 @@ export function validateCIWorkflows(repositoryRoot = process.cwd()) {
   const ci = loadWorkflow(repositoryRoot, 'ci.yml');
   const postDeploy = loadWorkflow(repositoryRoot, 'post-deploy-verify.yml');
   validateCI(ci);
+  for (const name of EXTERNAL_SOURCE_WORKFLOWS) {
+    validateExternalSources(name, loadWorkflow(repositoryRoot, name));
+  }
   validatePostDeploy(postDeploy);
   return { jobs: [...REQUIRED_JOBS] };
 }
