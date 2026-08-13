@@ -79,6 +79,20 @@ describe('external workflow source contracts', () => {
     );
     rejects(/10_pr-review\.yml.*immutable.*40-character SHA/u);
   });
+
+  it('rejects the repository-scoped token for a private external checkout', () => {
+    mutate(
+      '11_security-pr-review.yml',
+      '          token: ${{ secrets.GH_PAT }}',
+      '          token: ${{ secrets.GITHUB_TOKEN }}'
+    );
+    rejects(/11_security-pr-review\.yml.*cross-repository token/u);
+  });
+
+  it('rejects persisted cross-repository checkout credentials', () => {
+    mutate('10_pr-review.yml', '          persist-credentials: false', '          persist-credentials: true');
+    rejects(/10_pr-review\.yml.*must not persist/u);
+  });
 });
 
 describe('strict post-deploy workflow contracts', () => {

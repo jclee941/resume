@@ -82,6 +82,14 @@ function validateExternalSources(name, workflow) {
         IMMUTABLE_GIT_REF.test(step.with.ref),
         `${name} external checkout ref must be an immutable 40-character SHA`
       );
+      requireContract(
+        step.with.token === '${{ secrets.GH_PAT }}',
+        `${name} private external checkout must use the cross-repository token`
+      );
+      requireContract(
+        step.with['persist-credentials'] === false,
+        `${name} external checkout must not persist the cross-repository token`
+      );
     }
   }
 }
