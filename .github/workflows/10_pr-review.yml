@@ -41,9 +41,7 @@ jobs:
       - name: Checkout local actions
         uses: actions/checkout@v7
         with:
-          repository: jclee941/.github
-          ref: d8d9e16d790bcb6005c2c7ab96969989251a06a3
-          token: ${{ secrets.GH_PAT }}
+          ref: ${{ github.event.pull_request.base.sha }}
           persist-credentials: false
           path: local-actions-source
           fetch-depth: 1
