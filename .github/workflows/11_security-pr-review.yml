@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           repository: jclee941/.github
-          ref: master
+          ref: d8d9e16d790bcb6005c2c7ab96969989251a06a3
           path: pr-agent-src
           fetch-depth: 1
 
