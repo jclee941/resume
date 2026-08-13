@@ -90,6 +90,10 @@ function validateExternalSources(name, workflow) {
         step.with['persist-credentials'] === false,
         `${name} external checkout must not persist the cross-repository token`
       );
+      requireContract(
+        typeof step.with.path === 'string' && step.with.path.length > 0,
+        `${name} external checkout must use an isolated path`
+      );
     }
   }
 }
