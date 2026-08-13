@@ -90,12 +90,16 @@ describe('external workflow source contracts', () => {
   });
 
   it('rejects persisted cross-repository checkout credentials', () => {
-    mutate('10_pr-review.yml', '          persist-credentials: false', '          persist-credentials: true');
+    mutate(
+      '10_pr-review.yml',
+      '          token: ${{ secrets.GH_PAT }}\n          persist-credentials: false',
+      '          token: ${{ secrets.GH_PAT }}\n          persist-credentials: true'
+    );
     rejects(/10_pr-review\.yml.*must not persist/u);
   });
 
   it('rejects an external checkout that replaces the workflow workspace', () => {
-    mutate('10_pr-review.yml', '          path: local-actions-source\n', '');
+    mutate('10_pr-review.yml', '          path: pr-agent-src\n', '');
     rejects(/10_pr-review\.yml.*isolated path/u);
   });
 });
