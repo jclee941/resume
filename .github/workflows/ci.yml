@@ -81,11 +81,9 @@ jobs:
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit --no-fund
 
-      # Production dependencies only. Dev-only advisories currently come from
-      # wrangler -> miniflare -> sharp (libvips CVEs); wrangler and the root
-      # sharp are already on the newest release, and miniflare bundles its own
-      # older sharp that an override cannot displace, so gating on dev deps
-      # would block CI on an upstream issue we cannot fix.
+      # Audit all production dependencies. The policy wrapper fails closed and
+      # accepts only the documented Cloudflare Puppeteer extract-zip advisory
+      # while its vulnerable archive-extraction path remains unreachable.
       - name: Audit production dependencies
         run: npm run security:audit
 
