@@ -63,7 +63,7 @@
     "test:e2e:smoke": "npx playwright test worker-health deploy-verification --project=chromium",
     "verify:production": "SKIP_WEBSERVER=1 PLAYWRIGHT_BASE_URL=https://resume.jclee.me npx playwright test deploy-verification --project=chromium",
     "lighthouse:ci": "node tools/scripts/verification/run-lighthouse-ci.mjs --config=tools/lighthouserc.json",
-    "security:audit": "npm audit --omit=dev --audit-level=high",
+    "security:audit": "node tools/scripts/verification/audit-production-dependencies.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "validate:openapi": "redocly lint packages/contracts/openapi.yaml",
