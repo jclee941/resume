@@ -21,6 +21,7 @@ import { existsSync, readFileSync, appendFileSync, mkdirSync } from 'fs';
 import { join, resolve, dirname } from 'path';
 import { homedir } from 'os';
 import { fileURLToPath } from 'url';
+import { parseMaxArgument } from '../src/auto-apply/cli/parse-max.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -32,8 +33,7 @@ const CLI_PATH = join(PROJECT_ROOT, 'src', 'auto-apply', 'cli.js');
 
 const args = process.argv.slice(2);
 const realApply = args.includes('--apply');
-const maxFlag = args.find((a) => a.startsWith('--max='));
-const maxApply = maxFlag ? parseInt(maxFlag.split('=')[1], 10) : 5;
+const maxApply = parseMaxArgument(args, 5);
 
 mkdirSync(LOG_DIR, { recursive: true });
 
@@ -206,9 +206,9 @@ async function attemptSessionRefresh() {
   return false;
 }
 
-async function runAutoApply() {
+async function runAutoApply(applyEnabled) {
   const cliArgs = ['apply', `--max=${maxApply}`];
-  if (realApply) cliArgs.push('--apply');
+  if (applyEnabled) cliArgs.push('--apply');
 
   log(`Running auto-apply: node ${CLI_PATH} ${cliArgs.join(' ')}`);
 
@@ -252,6 +252,7 @@ async function main() {
 
   loadEnv();
 
+  let applyEnabled = realApply;
   const health = await checkSessionHealth();
   log(
     `Session health: valid=${health.valid}, expiringSoon=${health.expiringSoon}, expiresAt=${health.expiresAt}`
@@ -266,6 +267,7 @@ async function main() {
       );
       if (realApply) {
         log('ERROR: Cannot real-apply without valid session. Switching to dry-run.');
+        applyEnabled = false;
       }
     }
   } else if (health.expiringSoon) {
@@ -273,7 +275,7 @@ async function main() {
     await attemptSessionRefresh();
   }
 
-  const result = await runAutoApply();
+  const result = await runAutoApply(applyEnabled);
 
   if (result.code === 0) {
     log(`Auto-apply completed successfully (exit code ${result.code})`);
