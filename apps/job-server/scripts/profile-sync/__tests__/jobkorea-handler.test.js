@@ -650,13 +650,13 @@ describe('JobKoreaHandler.saveSession', () => {
       expiresAt: '2026-04-01T00:00:00.000Z',
       cookieCount: 5,
       extractedAt: '2026-03-15T00:00:00.000Z',
-      cookies: [{ name: 'old', value: 'cookie' }],
-      cookieString: 'old=cookie',
+      cookies: [{ name: 'NET_SessionId', value: 'existing-session' }],
+      cookieString: 'NET_SessionId=existing-session',
     };
     SessionManager.load.mock.mockImplementation(() => existingSession);
 
     const newCookies = [
-      { name: 'ACNT_COOKIE', value: 'abc123' },
+      { name: 'NET_SessionId', value: 'abc123' },
       { name: 'SES_ID', value: 'xyz789' },
     ];
     handler.saveSession(newCookies);
@@ -664,8 +664,8 @@ describe('JobKoreaHandler.saveSession', () => {
     assert.strictEqual(savedData.platform, 'jobkorea');
     assert.strictEqual(savedData.expiresAt, '2026-04-01T00:00:00.000Z');
     assert.strictEqual(savedData.cookies.length, 2);
-    assert.strictEqual(savedData.cookies[0].name, 'ACNT_COOKIE');
-    assert.strictEqual(savedData.cookieString, 'ACNT_COOKIE=abc123; SES_ID=xyz789');
+    assert.strictEqual(savedData.cookies[0].name, 'NET_SessionId');
+    assert.strictEqual(savedData.cookieString, 'NET_SessionId=abc123; SES_ID=xyz789');
     assert.strictEqual(savedData.cookieCount, 2);
     assert.notStrictEqual(savedData.extractedAt, '2026-03-15T00:00:00.000Z');
   });
@@ -727,10 +727,10 @@ describe('JobKoreaHandler.loadSession - auth-sync compatibility', () => {
     const authSyncSession = {
       platform: 'jobkorea',
       cookies: [
-        { name: 'ACNT_COOKIE', value: 'abc', domain: '.jobkorea.co.kr', path: '/' },
+        { name: 'NET_SessionId', value: 'abc', domain: '.jobkorea.co.kr', path: '/' },
         { name: 'SES_ID', value: 'xyz', domain: '.jobkorea.co.kr', path: '/' },
       ],
-      cookieString: 'ACNT_COOKIE=abc; SES_ID=xyz',
+      cookieString: 'NET_SessionId=abc; SES_ID=xyz',
       cookieCount: 2,
       extractedAt: '2026-03-18T00:00:00.000Z',
       expiresAt: '2999-03-19T00:00:00.000Z',
@@ -741,7 +741,7 @@ describe('JobKoreaHandler.loadSession - auth-sync compatibility', () => {
     const result = handler.loadSession();
     assert.ok(Array.isArray(result), 'must return array');
     assert.strictEqual(result.length, 2);
-    assert.strictEqual(result[0].name, 'ACNT_COOKIE');
+    assert.strictEqual(result[0].name, 'NET_SessionId');
     assert.strictEqual(result[1].domain, '.jobkorea.co.kr');
   });
 
@@ -758,8 +758,8 @@ describe('JobKoreaHandler.loadSession - auth-sync compatibility', () => {
       fallbackFile,
       JSON.stringify({
         platform: 'jobkorea',
-        cookies: [{ name: 'ACNT_COOKIE', value: 'abc', domain: '.jobkorea.co.kr', path: '/' }],
-        cookieString: 'ACNT_COOKIE=abc',
+        cookies: [{ name: 'NET_SessionId', value: 'abc', domain: '.jobkorea.co.kr', path: '/' }],
+        cookieString: 'NET_SessionId=abc',
         cookieCount: 1,
         extractedAt: '2026-03-18T00:00:00.000Z',
         expiresAt: '2999-03-19T00:00:00.000Z',
@@ -775,7 +775,7 @@ describe('JobKoreaHandler.loadSession - auth-sync compatibility', () => {
       assert.strictEqual(saveCalls, 0);
       assert.ok(Array.isArray(result), 'must return array');
       assert.strictEqual(result.length, 1);
-      assert.strictEqual(result[0].name, 'ACNT_COOKIE');
+      assert.strictEqual(result[0].name, 'NET_SessionId');
     } finally {
       rmSync(tempDir, { recursive: true, force: true });
     }
