@@ -48,7 +48,7 @@ export async function getConfig(env) {
   return {
     autoApplyEnabled: config.auto_apply_enabled === 'true',
     maxDailyApplications: parseInt(config.max_daily_applications) || 10,
-    minMatchScore: parseInt(config.min_match_score) || 70,
+    minMatchScore: parseInt(config.min_match_score) || 60,
     keywords,
   };
 }
@@ -124,11 +124,7 @@ export async function recordApplication(env, applicationData) {
     now,
     status === 'applied' ? now : null,
   ];
-  const canonicalParams = [
-    ...legacyParams.slice(0, 4),
-    canonicalUrl,
-    ...legacyParams.slice(4),
-  ];
+  const canonicalParams = [...legacyParams.slice(0, 4), canonicalUrl, ...legacyParams.slice(4)];
   const currentParams = [
     ...canonicalParams,
     runId,
