@@ -1,4 +1,5 @@
 import { calculateMatchScore } from '../../handlers/auto-apply/match-scoring.js';
+import { loadMatchingConfig } from '../application/matching-config.js';
 
 /**
  * Flatten platform crawl results and deduplicate by company and position.
@@ -45,12 +46,5 @@ export async function matchJobs(env, jobs) {
  * @returns {Promise<Object>}
  */
 export async function getMatchingConfig(env) {
-  try {
-    const config = await env.JOB_DB.prepare(
-      "SELECT value FROM config WHERE key = 'auto_apply_config'"
-    ).first();
-    return config?.value ? JSON.parse(config.value) : { minMatchScore: 70 };
-  } catch {
-    return { minMatchScore: 70 };
-  }
+  return loadMatchingConfig(env);
 }
