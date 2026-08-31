@@ -40,7 +40,7 @@ describe('CliproxyClient', () => {
     assert.deepEqual(result, { jobs: [] });
   });
 
-  it('uses GPT-5.5 as the default model for Cliproxy requests', async () => {
+  it('uses gpt-sol as the default model for Cliproxy requests', async () => {
     let requestBody = null;
     const fetcher = mock.fn(async (_url, options) => {
       requestBody = JSON.parse(options.body);
@@ -66,7 +66,7 @@ describe('CliproxyClient', () => {
 
     await client.searchJobs('security', { limit: 1 });
 
-    assert.equal(requestBody.model, 'gpt-5.5');
+    assert.equal(requestBody.model, 'gpt-sol');
   });
 
   it('allows CLIPROXY_MODEL to override the default model', async () => {
