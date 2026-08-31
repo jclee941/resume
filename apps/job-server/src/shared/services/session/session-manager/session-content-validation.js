@@ -1,93 +1,146 @@
-function hasEmptyCriticalCookie(cookie) {
-  const [name, ...valueParts] = cookie.split('=');
-  const value = valueParts.join('=').trim();
+function hasValue(value) {
+  return typeof value === 'string' && value.trim().length > 0;
+}
 
-  return (
-    name &&
-    value === '' &&
-    ['UID', 'User'].some((critical) => name.toLowerCase() === critical.toLowerCase())
+const WANTED_AUTH_COOKIE_NAMES = new Set(['WWW_ONEID_ACCESS_TOKEN', 'ONEID_SESSION']);
+const JWT_EXPIRY_SKEW_MS = 60_000;
+const BASE64URL_SEGMENT = /^[A-Za-z0-9_-]+$/;
+
+function parseCookieString(cookieString) {
+  if (!hasValue(cookieString)) return [];
+
+  return cookieString
+    .split(';')
+    .map((cookie) => cookie.trim())
+    .filter((cookie) => cookie.includes('='))
+    .map((cookie) => {
+      const separator = cookie.indexOf('=');
+      return {
+        name: cookie.slice(0, separator).trim(),
+        value: cookie.slice(separator + 1).trim(),
+      };
+    });
+}
+
+function getCookies(session) {
+  const cookies = Array.isArray(session.cookies) ? session.cookies : parseCookieString(session.cookies);
+  return [...cookies, ...parseCookieString(session.cookieString)].filter(
+    (cookie) =>
+      cookie !== null &&
+      typeof cookie === 'object' &&
+      hasValue(cookie.name) &&
+      typeof cookie.value === 'string'
   );
 }
 
-function validateCookieString(cookieString) {
-  const cookies = cookieString.split(';').map((c) => c.trim());
+function decode(value) {
+  if (typeof value !== 'string') return '';
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+function normalizedName(cookie) {
+  return decode(cookie.name).toUpperCase();
+}
+
+function hasValidJkat(value) {
+  if (!hasValue(value)) return false;
+  const segments = value.split('.');
+  if (segments.length !== 3 || segments.some((segment) => !BASE64URL_SEGMENT.test(segment))) {
+    return false;
+  }
+
+  try {
+    const payload = JSON.parse(Buffer.from(segments[1], 'base64url').toString('utf8'));
+    return (
+      payload !== null &&
+      typeof payload === 'object' &&
+      !Array.isArray(payload) &&
+      typeof payload.exp === 'number' &&
+      Number.isFinite(payload.exp) &&
+      payload.exp * 1000 >= Date.now() + JWT_EXPIRY_SKEW_MS
+    );
+  } catch {
+    return false;
+  }
+}
+
+function validateEmptyCriticalCookie(cookies) {
+  for (const cookie of cookies) {
+    if (
+      !hasValue(cookie.value) &&
+      ['uid', 'user'].includes(String(cookie.name).toLowerCase())
+    ) {
+      return { valid: false, reason: `empty_${cookie.name}` };
+    }
+  }
+  return null;
+}
+
+function validateJobKoreaSession(session, cookies) {
+  let authenticated = hasValue(session.token);
 
   for (const cookie of cookies) {
-    if (hasEmptyCriticalCookie(cookie)) {
-      const [name] = cookie.split('=');
-      return { valid: false, reason: `empty_${name}` };
+    const name = normalizedName(cookie);
+    const value = decode(cookie.value);
+
+    if (name === 'NET_SESSIONID' && hasValue(value)) authenticated = true;
+    if (name === 'JKAT' && hasValidJkat(value)) authenticated = true;
+
+    if (name === 'JK_USER') {
+      const memberId = value.match(/(?:^|&)M_ID=([^&]*)/);
+      if (memberId && hasValue(memberId[1])) authenticated = true;
+    }
+
+    if (name === 'USER' || name === 'C_USER') {
+      const userId = value.match(/(?:^|&)UID=([^&]*)/);
+      if (userId && !hasValue(userId[1])) {
+        return {
+          valid: false,
+          reason: name === 'USER' ? 'empty_jobkorea_uid' : 'empty_jobkorea_cuser_uid',
+        };
+      }
+      if (userId && hasValue(userId[1])) authenticated = true;
     }
   }
 
-  return null;
+  return authenticated ? null : { valid: false, reason: 'no_jobkorea_auth' };
 }
 
-function validateJobKoreaCookies(cookies) {
-  const userCookie = cookies.find((c) => c.name === 'User');
-  const cUserCookie = cookies.find((c) => c.name === 'C%5FUSER' || c.name === 'C_USER');
-  const jkUserCookie = cookies.find((c) => c.name === 'JK%5FUser' || c.name === 'JK_User');
-
-  // Modern JobKorea sessions use JK_User instead of User. If JK_User has a
-  // valid member ID, the session is authenticated regardless of User cookie.
-  if (jkUserCookie) {
-    const decodedValue = decodeURIComponent(jkUserCookie.value);
-    if (decodedValue.includes('M%5FID=') || decodedValue.includes('M_ID=')) {
-      const midMatch = decodedValue.match(/M[_%5F]ID=([^&]+)/);
-      if (midMatch && midMatch[1]) {
-        return null;
-      }
-    }
-  }
-
-  if (userCookie) {
-    const decodedValue = decodeURIComponent(userCookie.value);
-    if (decodedValue.includes('UID=&') || decodedValue.includes('UID=')) {
-      const uidMatch = decodedValue.match(/UID=([^&]*)/);
-      if (!uidMatch || !uidMatch[1]) {
-        return { valid: false, reason: 'empty_jobkorea_uid' };
-      }
-    }
-  }
-
-  if (cUserCookie) {
-    const decodedValue = decodeURIComponent(cUserCookie.value);
-    if (decodedValue.includes('UID=&') || decodedValue === 'UID=') {
-      return { valid: false, reason: 'empty_jobkorea_cuser_uid' };
-    }
-  }
-
-  return null;
+function validateWantedSession(session, cookies) {
+  const authenticated =
+    hasValue(session.token) ||
+    cookies.some(
+      (cookie) => WANTED_AUTH_COOKIE_NAMES.has(normalizedName(cookie)) && hasValue(cookie.value)
+    );
+  return authenticated ? null : { valid: false, reason: 'no_wanted_cookies' };
 }
 
-function validateWantedSession(session) {
-  if (!session.cookieString && !session.cookies) {
-    return { valid: false, reason: 'no_wanted_cookies' };
-  }
-
-  if (session.cookieString && !session.cookieString.includes('ONEID')) {
-    console.warn('[SessionManager] Wanted session missing ONEID token');
-  }
-
-  return null;
+function validateSaraminSession(session, cookies) {
+  const authenticated =
+    hasValue(session.token) ||
+    cookies.some(
+      (cookie) =>
+        ['PHPSESSID', '_SARAMIN_SESSION'].includes(normalizedName(cookie)) &&
+        hasValue(cookie.value)
+    );
+  return authenticated ? null : { valid: false, reason: 'no_saramin_auth' };
 }
 
 export const sessionContentValidationMethods = {
   validateSessionContent(platform, session) {
-    if (session.cookieString) {
-      const cookieStringValidation = validateCookieString(session.cookieString);
-      if (cookieStringValidation) return cookieStringValidation;
-    }
+    const cookies = getCookies(session);
+    const emptyCriticalCookie = validateEmptyCriticalCookie(cookies);
+    if (emptyCriticalCookie) return emptyCriticalCookie;
 
-    if (platform === 'jobkorea' && session.cookies) {
-      const jobKoreaValidation = validateJobKoreaCookies(session.cookies);
-      if (jobKoreaValidation) return jobKoreaValidation;
-    }
+    let validation = null;
+    if (platform === 'wanted') validation = validateWantedSession(session, cookies);
+    if (platform === 'jobkorea') validation = validateJobKoreaSession(session, cookies);
+    if (platform === 'saramin') validation = validateSaraminSession(session, cookies);
 
-    if (platform === 'wanted') {
-      const wantedValidation = validateWantedSession(session);
-      if (wantedValidation) return wantedValidation;
-    }
-
-    return { valid: true, reason: null };
+    return validation ?? { valid: true, reason: null };
   },
 };
