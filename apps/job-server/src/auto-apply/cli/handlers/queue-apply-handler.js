@@ -1,10 +1,11 @@
 import { ApplicationManager } from '../../application-manager.js';
 import { AutoApplier } from '../../auto-applier.js';
 import { runQueueApply } from '../../queue-apply.js';
+import { parseMaxArgument } from '../parse-max.js';
 
 export async function runQueueAutoApply(args) {
   const dryRun = !args.includes('--apply');
-  const max = parseInt(args.find((a) => a.startsWith('--max='))?.split('=')[1], 10);
+  const max = parseMaxArgument(args);
   const queuePath =
     args.find((a) => a.startsWith('--queue='))?.split('=')[1] ||
     args.find((a) => !a.startsWith('--'));
@@ -34,7 +35,7 @@ export async function runQueueAutoApply(args) {
       queuePath,
       applier,
       dryRun,
-      max: Number.isNaN(max) ? undefined : max,
+      max,
       logger: console,
     });
 

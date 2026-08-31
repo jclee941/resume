@@ -3,10 +3,11 @@ import { ApplicationManager } from '../../application-manager.js';
 import { UnifiedJobCrawler } from '../../../crawlers/unified/unified-job-crawler.js';
 import { AutoApplier } from '../../auto-applier.js';
 import { getResumeMasterMarkdownPath } from '../../../shared/utils/paths.js';
+import { parseMaxArgument } from '../parse-max.js';
 
 export async function runAutoApply(args) {
   const dryRun = !args.includes('--apply');
-  const maxApps = parseInt(args.find((a) => a.startsWith('--max='))?.split('=')[1]) || 5;
+  const maxApps = parseMaxArgument(args, 5);
 
   console.log(`
 🤖 Auto Apply ${dryRun ? '(DRY RUN)' : ''} (Unified System)
@@ -68,7 +69,7 @@ export async function runAutoApply(args) {
 
 export async function runUnifiedSystem(args) {
   const dryRun = !args.includes('--apply');
-  const maxApps = parseInt(args.find((a) => a.startsWith('--max='))?.split('=')[1]) || 3;
+  const maxApps = parseMaxArgument(args, 3);
 
   console.log(`\n🚀 Unified Apply System ${dryRun ? '(DRY RUN)' : ''}\n`);
 
