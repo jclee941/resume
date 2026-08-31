@@ -13,8 +13,8 @@
  * Run from repo root:
  *   node tools/scripts/utils/validate-application-variants.js
  *
- * Exits 0 on success, 1 on any contract violation. Wired into the
- * `validate-data` CI job (.github/workflows/ci.yml).
+ * Exits 0 on success, 1 on any contract violation. Invoked by the local
+ * validation pipeline.
  *
  * Closes Issue C in docs/architecture/RESUME_SYNC_AUDIT_2026-04-29.md.
  */

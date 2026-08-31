@@ -21,7 +21,7 @@ CI validation scripts: change-impact detection, wrangler config guards, environm
 
 - Non-interactive, deterministic, fail-fast.
 - Exit codes: 0 = pass, non-zero = fail.
-- Used by `.github/workflows/ci.yml`.
+- Invoked locally and by external build infrastructure.
 - Report actionable paths and identifiers, never resolved secrets.
 
 ## ANTI-PATTERNS

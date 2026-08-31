@@ -51,7 +51,7 @@ automation/observability support.
 | Shared utilities        | `packages/shared/`                             | errors, logger, retry, crypto, rate-limit, auth, browser, clients                           |
 | Operational scripts     | `tools/scripts/`                               | Go-first operations; child guides own release, verification, enrichment, and secret tooling |
 | Tests                   | `tests/`                                       | unit/integration/e2e child guides define test-layer rules                                   |
-| CI/release              | `.github/workflows/`                           | validation and release jobs; production deploy authority is Cloudflare Workers Builds       |
+| Repository automation   | `.github/`                                     | minimal validation CI; production deploy authority is Cloudflare Workers Builds               |
 | Architecture rules      | `docs/conventions/architecture-rules.md`       | 200-LOC rule, naming, automation SSoT, script language policy                               |
 | Secrets/security        | `docs/security/`, `tools/scripts/onepassword/` | secret rotation and local 1Password/session migration                                       |
 
