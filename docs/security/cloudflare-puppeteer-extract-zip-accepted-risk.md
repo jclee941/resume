@@ -1,7 +1,9 @@
 # Cloudflare Puppeteer extract-zip Advisory, Accepted Risk
 
-**Status**: Accepted risk · unreachable installation path  
-**Date**: 2026-08-13  
+**Status**: Accepted risk · unreachable installation path
+
+**Date**: 2026-08-13
+
 **Scope**: Cloudflare Browser Rendering dependency
 
 The production dependency audit reports `GHSA-jmr9-qjv8-65gv`, an
