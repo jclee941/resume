@@ -5,7 +5,7 @@ import { insertApplicationRecord } from './application-recorder.js';
 const DEFAULT_KEYWORDS = ['DevOps', 'SRE', 'Platform Engineer', '보안'];
 
 function getDb(env) {
-  return env?.DB || env?.JOB_DB;
+  return env?.JOB_DB || env?.DB;
 }
 
 export async function getConfig(env) {
@@ -30,13 +30,26 @@ export async function getConfig(env) {
     config[row.key] = row.value;
   }
 
+  let keywords = DEFAULT_KEYWORDS;
+  if (config.auto_apply_keywords) {
+    try {
+      const parsedKeywords = JSON.parse(config.auto_apply_keywords);
+      if (
+        Array.isArray(parsedKeywords) &&
+        parsedKeywords.every((keyword) => typeof keyword === 'string')
+      ) {
+        keywords = parsedKeywords;
+      }
+    } catch {
+      keywords = DEFAULT_KEYWORDS;
+    }
+  }
+
   return {
     autoApplyEnabled: config.auto_apply_enabled === 'true',
     maxDailyApplications: parseInt(config.max_daily_applications) || 10,
     minMatchScore: parseInt(config.min_match_score) || 70,
-    keywords: config.auto_apply_keywords
-      ? JSON.parse(config.auto_apply_keywords)
-      : DEFAULT_KEYWORDS,
+    keywords,
   };
 }
 
