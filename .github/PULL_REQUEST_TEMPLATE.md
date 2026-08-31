@@ -37,7 +37,6 @@ Branch / 브랜치: feat/* | fix/* | hotfix/* | docs/* | refactor/* | chore/* | 
 
 - [ ] Backward compatible / 후방 호환성 영향 없음
 - [ ] No security impact / 보안 영향 없음 (if yes, add `security-review` label)
-- [ ] Downstream sync required / 다운스트림 동기화 필요 (`.github/workflows` 변경 시)
 
 ## Checklist / 체크리스트
 
@@ -46,5 +45,4 @@ Branch / 브랜치: feat/* | fix/* | hotfix/* | docs/* | refactor/* | chore/* | 
 - [ ] Documentation updated (README/AGENTS.md/docs/) / 관련 문서 업데이트
 - [ ] Tests added/updated / 테스트 추가/갱신 (해당 시)
 
-> This PR is auto-reviewed by `jclee-bot` (cli_proxy + Kimi-k2.6, 한국어 응답).
 > 이 PR은 `jclee-bot`이 자동 리뷰합니다 (cli_proxy + Kimi-k2.6, 한국어 응답).

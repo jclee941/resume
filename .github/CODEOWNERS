@@ -6,8 +6,7 @@
 # Default owner
 *                                   @jclee941
 
-# Workflow + automation source of truth
-/.github/workflows/                 @jclee941
+# Repository automation metadata
 /.github/dependabot.yml             @jclee941
 /scripts/                           @jclee941
 /.github/ISSUE_TEMPLATE/              @jclee941
@@ -17,9 +16,6 @@
 /pr_agent/settings/configuration.toml @jclee941
 
 # Security-sensitive
-/.github/workflows/security/        @jclee941
-/.github/workflows/06_codeql.yml    @jclee941
-/.github/workflows/05_gitleaks.yml  @jclee941
 /.github/CODEOWNERS                 @jclee941
 
 # Docs / templates
