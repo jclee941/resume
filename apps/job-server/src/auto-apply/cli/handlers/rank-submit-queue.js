@@ -12,6 +12,7 @@ export function buildSubmitQueue(candidates, options = {}) {
       loginPlatform: job.source,
       needsHumanLogin: true,
       status: 'ready-pending-review',
+      matchScore: job.matchPercentage,
       matchPercentage: job.matchPercentage,
       tier: job.tier,
     }));
