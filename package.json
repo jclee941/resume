@@ -124,7 +124,7 @@
     "prettier": "^3.9.5",
     "sharp": "^0.35.3",
     "typescript": "^6.0.3",
-    "wrangler": "^4.114.0",
+    "wrangler": "^4.127.1",
     "yaml": "2.9.0"
   },
   "overrides": {
