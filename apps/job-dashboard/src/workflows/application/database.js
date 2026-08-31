@@ -27,7 +27,7 @@ export async function saveWorkflowState(ctx, workflow) {
       workflow.stats.jobsApplied,
       workflow.stats.jobsFailed,
       workflow.startedAt,
-      workflow.completedAt,
+      workflow.completedAt ?? null,
       JSON.stringify({ steps: workflow.steps, errors: workflow.errors })
     )
     .run();
@@ -130,11 +130,11 @@ export async function recordApplication(
     .bind(
       applicationId,
       workflowId,
-        jobId,
-        platform,
-        sourceUrl,
-        canonicalizeJobUrl(sourceUrl),
-        company,
+      jobId,
+      platform,
+      sourceUrl,
+      canonicalizeJobUrl(sourceUrl),
+      company,
       position,
       matchScore,
       'applied',
