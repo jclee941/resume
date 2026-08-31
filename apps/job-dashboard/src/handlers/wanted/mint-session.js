@@ -8,6 +8,7 @@
  */
 
 export const WANTED_TOKEN_URL = 'https://id-api.wanted.co.kr/v1/auth/token';
+export const WANTED_PROFILE_URL = 'https://www.wanted.co.kr/api/v4/user';
 export const AUTH_WANTED_KEY = 'auth:wanted';
 export const WANTED_SESSION_TTL_S = 60 * 60 * 12; // 12h
 
@@ -79,9 +80,27 @@ export async function mintWantedSession(env, { fetchImpl = fetch } = {}) {
 export async function refreshWantedSession(env, opts = {}) {
   try {
     const cookie = await mintWantedSession(env, opts);
+    await validateWantedSession(cookie, opts);
     await env.SESSIONS.put(AUTH_WANTED_KEY, cookie, { expirationTtl: WANTED_SESSION_TTL_S });
     return { ok: true, key: AUTH_WANTED_KEY, length: cookie.length };
   } catch (err) {
     return { ok: false, error: err?.message || String(err) };
+  }
+}
+
+async function validateWantedSession(cookie, { fetchImpl = fetch } = {}) {
+  const response = await fetchImpl(WANTED_PROFILE_URL, {
+    headers: {
+      Accept: 'application/json',
+      Cookie: cookie,
+      Origin: 'https://www.wanted.co.kr',
+      Referer: 'https://www.wanted.co.kr/',
+    },
+  });
+  const payload = await response.json().catch(() => null);
+  const user = payload?.data || payload?.user || payload;
+  const valid = response.ok && Boolean(user?.id || user?.oneid || user?.email || user?.name);
+  if (!valid) {
+    throw new Error(`Wanted profile validation failed with status ${response.status}`);
   }
 }
