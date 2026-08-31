@@ -17,7 +17,6 @@ operational tooling.
 | ---------------------- | ------------------------------------------------------------- | ---------------------------------------------- |
 | Worker topology        | `validate-worker-config.mjs`                                  | bindings, queues, Workflows, preview isolation |
 | Workspace dependencies | `validate-workspace-dependencies.mjs`                         | declared imports and `*` workspace links       |
-| CI/release policy      | `validate-ci-workflows.mjs`, `validate-release-workflows.mjs` | workflow structure and publication boundary    |
 | Architecture docs      | `validate-architecture-docs.mjs`, `architecture-docs-*.mjs`   | current-state and ADR-link checks              |
 | Naming                 | `validate-monorepo-naming.mjs`                                | project naming and script-language rules       |
 | AGENTS hierarchy       | `verify-agents-compliance.go`, `check-agents-coverage.js`     | required guides and hotspot coverage           |

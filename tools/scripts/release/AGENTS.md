@@ -6,7 +6,9 @@
 
 ## OVERVIEW
 
-Release automation: deterministic version decisions, immutable source bundles, idempotent GitHub release publication, and separation from Cloudflare Workers production deploy. Two subpackages orchestrate prepare → verify → publish via `.github/workflows/release.yml`.
+Release tooling: deterministic version decisions, immutable source bundles,
+idempotent GitHub release publication, and separation from Cloudflare Workers
+production deploy. Operators invoke the two subpackages directly.
 
 ## STRUCTURE
 
@@ -34,7 +36,6 @@ Release automation: deterministic version decisions, immutable source bundles, i
 
 | Task                  | Location                        | Notes                                                     |
 | --------------------- | ------------------------------- | --------------------------------------------------------- |
-| Release workflow      | `.github/workflows/release.yml` | prepare → verify → publish orchestrator                   |
 | Version decision      | `next-version/policy.go`        | SemVer bump logic, release policy                         |
 | Git inspection        | `next-version/repository.go`    | Tag listing, commit range, remote tip                     |
 | Publish state machine | `publish/transaction.go`        | Idempotent draft → publish flow                           |
@@ -48,7 +49,7 @@ Release automation: deterministic version decisions, immutable source bundles, i
 - **Deterministic source**: `git archive` run twice, byte-for-byte identical (gzip -n -9, no timestamps).
 - **Idempotent publish**: Publish transaction checks for existing release before any write; returns `OutcomeIdempotent` if already published.
 - **Ownership markers**: Draft releases tagged with `run-marker` (e.g., `release-run:12345`) to prevent cross-run interference.
-- **Separation of concerns**: Release workflow creates GitHub release metadata only; Cloudflare Workers Builds owns production deploy authority.
+- **Separation of concerns**: Release tooling creates GitHub release metadata only; Cloudflare Workers Builds owns production deploy authority.
 - **Decision artifact**: `release-decision.json` created by `next-version`, uploaded before verify stage, downloaded by publish stage.
 - **Manifest contract**: `release-manifest.json` contains target SHA, tag, asset name, SHA-256 digest, and size; `publish` verifies it against the source asset.
 
@@ -57,16 +58,16 @@ Release automation: deterministic version decisions, immutable source bundles, i
 - Never edit generated artifacts (source bundle, manifest, release notes) by hand.
 - Never bypass the prepare stage decision; always pin `TARGET_SHA` to a specific commit.
 - Never treat GitHub release publication as production deployment; Cloudflare Workers Builds is the deploy authority.
-- Never reuse `run-marker` across different release runs; each run gets a unique GitHub Actions `GITHUB_RUN_ID`.
-- Never publish without verify stage; the workflow enforces `needs: [prepare, verify]` before publish.
+- Never reuse `run-marker` across different release runs.
+- Never publish without completing the verify stage first.
 - Never hardcode version numbers; derive from git tags and commit history via `next-version`.
 
 ## NOTES
 
-- `next-version` exits with decision in `release-decision.json`; workflow validates decision shape before proceeding.
+- `next-version` exits with decision in `release-decision.json`; the operator validates its shape before proceeding.
 - `publish` is a pure transaction: checks for idempotency, creates draft, uploads asset, publishes, or cleans up on failure.
 - Release notes are generated from commit log range (`git log --format='- %s (%h)'`) and included in GitHub release body.
-- Source bundle is deterministic and reproducible; CI verifies by building twice and comparing byte-for-byte.
+- Source bundle is deterministic and reproducible; verification builds it twice and compares byte-for-byte.
 
 ---
 
