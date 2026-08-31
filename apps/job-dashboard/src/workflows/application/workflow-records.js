@@ -1,6 +1,6 @@
 export function createWorkflowRecord(event, triggerType) {
   return {
-    id: event.instanceId,
+    id: resolveWorkflowId(event),
     triggerType,
     status: 'running',
     startedAt: new Date().toISOString(),
@@ -15,6 +15,15 @@ export function createWorkflowRecord(event, triggerType) {
     },
     errors: [],
   };
+}
+
+function resolveWorkflowId(event) {
+  const runId = typeof event?.payload?.runId === 'string' ? event.payload.runId.trim() : '';
+  if (runId) return runId;
+  if (event?.instanceId) return event.instanceId;
+  if (event?.id) return event.id;
+  if (typeof globalThis.crypto?.randomUUID === 'function') return globalThis.crypto.randomUUID();
+  return `application-workflow-${Date.now()}`;
 }
 
 export function averageScore(scoredJobs) {

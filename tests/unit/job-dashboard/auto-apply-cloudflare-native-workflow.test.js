@@ -63,6 +63,15 @@ describe('job-dashboard Cloudflare native application workflow', () => {
     expect(result.workflow.stats.jobsScored).toBe(1);
     expect(calls).toEqual({ search: 0, submit: 1, record: 0 });
   });
+
+  test('Application Workflow persists the request run ID as its workflow ID', async () => {
+    const { ctx, savedWorkflowIds, step } = createWorkflowHarness();
+    await runNativeWorkflow(runApplicationWorkflow, ctx, step, makeNativeCandidate(), {
+      runId: 'cf-score-contract-test',
+    });
+
+    expect(savedWorkflowIds).toContain('cf-score-contract-test');
+  });
 });
 
 function runNativeWorkflow(runApplicationWorkflow, ctx, step, candidate, payload = {}) {
@@ -97,11 +106,15 @@ function expectNativeHandoff(result) {
 
 function createWorkflowHarness() {
   const calls = { search: 0, submit: 0, record: 0 };
+  const savedWorkflowIds = [];
   return {
     calls,
+    savedWorkflowIds,
     ctx: {
       env: { JOB_DB: createEmptyApplicationsDb() },
-      async saveWorkflowState() {},
+      async saveWorkflowState(workflow) {
+        savedWorkflowIds.push(workflow.id);
+      },
       async logWorkflowStep() {},
       async getDailyApplicationCount() {
         return 0;
