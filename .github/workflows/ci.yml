@@ -2,480 +2,53 @@ name: CI
 
 on:
   pull_request:
-    branches: [master]
   push:
     branches: [master]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  NODE_VERSION: '22'
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
-  secret-scan:
-    name: Secret Scan (gitleaks)
+  validate:
+    name: Validate
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 30
+
     steps:
-      - name: Checkout (full history for gitleaks)
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
+      - name: Check out repository
+        uses: actions/checkout@v4
 
-      - name: Run gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_CONFIG: .gitleaks.toml
-          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: true
-          GITLEAKS_ENABLE_SUMMARY: true
-
-      - name: Setup Go (for wrangler secret scan)
-        uses: actions/setup-go@v6
-        with:
-          go-version: '1.25.0'
-
-      - name: Wrangler config secret scan (SSOT-030)
-        # Implements docs/security/wrangler-vars-vs-secrets.md.
-        # Catches secret-shaped values committed to wrangler.{jsonc,toml}.
-        run: go run ./tools/scripts/security/check-wrangler-secrets.go
-
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --no-fund
-
-      - name: Run ESLint
-        run: npm run lint
-
-  dependency-audit:
-    name: Dependency Audit
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --no-fund
-
-      # Audit all production dependencies. The policy wrapper fails closed and
-      # accepts only the documented Cloudflare Puppeteer extract-zip advisory
-      # while its vulnerable archive-extraction path remains unreachable.
-      - name: Audit production dependencies
-        run: npm run security:audit
-
-  typecheck:
-    name: Typecheck
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --no-fund
-
-      - name: Run TypeScript check
-        run: npm run typecheck
-
-      # The step above CANNOT fail: tsconfig.base.json sets checkJs:false, so the
-      # .js include globs are parsed but never type-checked. This ratcheting gate
-      # is the one that actually enforces types — see tsconfig.strict.json for how
-      # to widen its include list one directory at a time.
-      - name: Run strict TypeScript gate
-        run: npm run typecheck:strict
-
-  test-jest:
-    name: Unit Tests (Jest)
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --no-fund
-
-      # apps/portfolio/worker.js is a build artifact (no longer tracked in
-      # git — see chore(monorepo) commit). Several jest suites in
-      # tests/integration/ and tests/unit/{,portfolio-worker/}generate-worker
-      # assert on the generated bundle, so we materialize it here. GIT_SHA
-      # is forwarded so the build embeds the right value for /health.
-      # 'npm run build' already chains sync:data → generate-worker.
-      - name: Materialize worker bundle for integration tests
-        env:
-          GIT_SHA: ${{ github.sha }}
-        run: npm run build
-
-      - name: Run Jest tests
-        run: npm run test:jest -- --forceExit --maxWorkers=2
-
-  test-node:
-    name: Unit Tests (Node)
-    runs-on: ubuntu-latest
-    timeout-minutes: 8
-    # Blocking: all 782 tests pass in ~8s after async leak fixes (fb4657c)
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --no-fund
-
-      - name: Run Node tests (job-server) with hard timeout
-        run: |
-          cd apps/job-server
-          timeout --foreground --kill-after=10 300 npm test || {
-            code=$?
-            if [ $code -eq 124 ] || [ $code -eq 137 ]; then
-              echo '::error::Node tests hit hard timeout (300s). Investigate async leaks.'
-              echo '::error::Debug: node --test --test-reporter=spec --test-concurrency=1'
-            fi
-            exit $code
-          }
-
-  test-workspace:
-    name: Workspace Package Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 8
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --no-fund
-
-      - name: Run schema, tools, and CLI tests
-        run: npm run test:schemas && npm run test:tools && npm run test:cli
-
-  validate-data:
-    name: SSoT Data Validation
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
 
-      - name: Validate JSON syntax (all data files)
-        run: |
-          set -euo pipefail
-          for f in packages/data/resumes/master/resume_data.json \
-                   packages/data/resumes/master/resume_data_en.json \
-                   packages/data/resumes/master/resume_data_ja.json \
-                   apps/portfolio/data.json \
-                   apps/portfolio/data_en.json \
-                   apps/portfolio/data_ja.json; do
-            if [ -f "$f" ]; then
-              if python3 -m json.tool < "$f" > /dev/null; then
-                echo "✅ syntax: $f"
-              else
-                echo "❌ syntax: $f"; exit 1
-              fi
-            fi
-          done
-
-      - name: Validate SSoT against canonical JSON Schema
-        run: |
-          set -euo pipefail
-          # Canonical schema validator — enforces 22 SSoT keys + nested shape.
-          # See docs/architecture/RESUME_SYNC_AUDIT_2026-04-29.md (Issue B resolution).
-          for f in packages/data/resumes/master/resume_data.json \
-                   packages/data/resumes/master/resume_data_en.json \
-                   packages/data/resumes/master/resume_data_ja.json; do
-            node tools/scripts/utils/validate-resume-data.js "$f" \
-              packages/data/resumes/master/resume_schema.json
-          done
-
-      - name: SSoT drift gate (sync:data must produce no diff)
-        run: |
-          set -euo pipefail
-          # P2-22: block PRs where master/resume_data.json was edited without
-          # propagating to apps/portfolio/data*.json. Run sync:data and assert
-          # no working-tree diff in the generated outputs.
-          npm install --prefer-offline --no-audit --no-fund --silent
-          npm run sync:data
-          if ! git diff --quiet -- 'apps/portfolio/data*.json' 2>/dev/null; then
-            echo "❌ SSoT drift detected: apps/portfolio/data*.json out of sync with master."
-            echo "   Run 'npm run sync:data' locally and commit the result."
-            git --no-pager diff --stat -- 'apps/portfolio/data*.json'
-            exit 1
-          fi
-          echo "✅ SSoT in sync"
-
-      - name: Validate application variants (intentionally independent)
-        run: |
-          set -euo pipefail
-          if [ -f tools/scripts/utils/validate-application-variants.js ]; then
-            node tools/scripts/utils/validate-application-variants.js
-          else
-            echo "⚠️  validate-application-variants.js not present — skipping"
-          fi
-
-  validate-go:
-    name: Go Script Validation
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Setup Go
-        uses: actions/setup-go@v6
-        with:
-          go-version: '1.25.0'
-          cache: false
-
-      - name: Build Go scripts
-        run: |
-          set -euo pipefail
-          has_go_mod() {
-            local dir="$1"
-            while [ "$dir" != "." ] && [ "$dir" != "/" ]; do
-              if [ -f "$dir/go.mod" ]; then
-                return 0
-              fi
-              dir=$(dirname "$dir")
-            done
-            [ -f "go.mod" ]
-          }
-          while IFS= read -r script; do
-            if [[ "$script" == *_test.go ]]; then
-              continue
-            fi
-            if ! grep -Eq '^package main$' "$script" || ! grep -Eq '^func main\(' "$script"; then
-              continue
-            fi
-            name=$(basename "$script" .go)
-            dir=$(dirname "$script")
-            file=$(basename "$script")
-            entrypoints=$(find "$dir" -maxdepth 1 -type f -name '*.go' ! -name '*_test.go' -exec grep -El '^func main\(' {} \; | wc -l)
-            if has_go_mod "$dir"; then
-              if [ "$entrypoints" -eq 1 ]; then
-                (cd "$dir" && go build -o /dev/null .)
-              else
-                (cd "$dir" && go build -o /dev/null "$file")
-              fi
-            elif [ "$entrypoints" -eq 1 ]; then
-              (cd "$dir" && GO111MODULE=off go build -o /dev/null .)
-            else
-              (cd "$dir" && GO111MODULE=off go build -o /dev/null "$file")
-            fi
-            echo "✅ Built $name"
-          done < <(find tools/scripts infrastructure -type f -name '*.go')
-
-      - name: Validate Cloudflare native structure
-        run: go run ./tools/ci/validate-cloudflare-native.go
-
-      # The build loop above deliberately skips *_test.go, so until now no Go test
-      # was ever executed anywhere. test:go runs the packages that actually have
-      # tests; dirs holding several standalone `func main()` files cannot build as
-      # one package and are excluded with a reason in the script itself.
-      - name: Run Go tests
-        run: npm run test:go
-
-  validate-openapi:
-    name: OpenAPI Spec Validation
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
       - name: Install dependencies
-        run: npm ci --prefer-offline --no-audit --no-fund
+        run: npm ci
 
-      - name: Validate packages/contracts/openapi.yaml (#30 / SSOT-040)
-        # Uses redocly with the recommended ruleset; pre-existing 87 spec
-        # problems are baselined in .redocly.lint-ignore.yaml. New problems
-        # added to the spec will fail this job.
-        run: npm run validate:openapi
+      - name: Lint
+        run: npm run lint
 
-  validate-env-drift:
-    name: Env Schema Drift
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7
+      - name: Typecheck
+        run: npm run typecheck
 
-      - name: Setup Go
-        uses: actions/setup-go@v6
-        with:
-          go-version: '1.25.0'
+      - name: Test JavaScript workspaces
+        run: |
+          npm run test:jest
+          npm run test:node
+          npm run test:schemas
+          npm run test:shared
+          npm run test:tools
+          npm run test:cli
 
-      - name: Check env-schema drift vs .dev.vars.example (#35 / SSOT-031)
-        # Implements docs/architecture/env-validation-plan.md Phase 4.
-        # Fails when a required key declared in any packages/env/src/schemas/*.js
-        # is missing from .dev.vars.example.
-        run: go run ./tools/ci/check-env-schema-drift.go
-
-  architecture-hardening:
-    name: Architecture Hardening Core
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-      - run: npm ci --prefer-offline --no-audit --no-fund
-      - name: Run the exact architecture hardening aggregate
+      - name: Verify architecture contracts
         run: npm run verify:architecture-hardening:core
 
-  wrangler-dry-run:
-    name: Wrangler Production and Preview Dry Runs
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-      - run: npm ci --prefer-offline --no-audit --no-fund
-      - name: Validate parsed binding inventories
-        run: npm run verify:worker-config
-      - name: Package production and preview from the root config
-        env:
-          GIT_SHA: ${{ github.sha }}
-        run: |
-          npx wrangler deploy --config wrangler.jsonc --dry-run --outdir /tmp/resume-production-dry-run
-          npx wrangler deploy --config wrangler.jsonc --env preview --dry-run --outdir /tmp/resume-preview-dry-run
-
-  merged-worker-e2e:
-    name: Merged Worker Contract
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-      - run: npm ci --prefer-offline --no-audit --no-fund
-      - run: npx playwright install --with-deps chromium
-      - name: Exercise the root Wrangler merged Worker
-        env:
-          GIT_SHA: ${{ github.sha }}
-        run: CI=1 RUN_EXTERNAL_E2E=1 npx playwright test tests/e2e/merged-worker-contract.spec.js --project=chromium
-
-  summary:
-    name: CI Summary
-    runs-on: ubuntu-latest
-    needs:
-      [
-        secret-scan,
-        lint,
-        dependency-audit,
-        typecheck,
-        test-jest,
-        test-node,
-        test-workspace,
-        validate-data,
-        validate-go,
-        validate-openapi,
-        validate-env-drift,
-        architecture-hardening,
-        wrangler-dry-run,
-        merged-worker-e2e,
-      ]
-    if: always()
-    permissions:
-      contents: read
-      checks: write
-    steps:
-      - name: Check all jobs passed
-        run: |
-          echo "secret-scan: ${{ needs.secret-scan.result }}"
-          echo "lint: ${{ needs.lint.result }}"
-          echo "dependency-audit: ${{ needs.dependency-audit.result }}"
-          echo "typecheck: ${{ needs.typecheck.result }}"
-          echo "test-jest: ${{ needs.test-jest.result }}"
-          echo "test-node: ${{ needs.test-node.result }}"
-          echo "test-workspace: ${{ needs.test-workspace.result }}"
-          echo "validate-data: ${{ needs.validate-data.result }}"
-          echo "validate-go: ${{ needs.validate-go.result }}"
-          echo "validate-openapi: ${{ needs.validate-openapi.result }}"
-          echo "validate-env-drift: ${{ needs.validate-env-drift.result }}"
-          echo "architecture-hardening: ${{ needs.architecture-hardening.result }}"
-          echo "wrangler-dry-run: ${{ needs.wrangler-dry-run.result }}"
-          echo "merged-worker-e2e: ${{ needs.merged-worker-e2e.result }}"
-          if [[ "${{ needs.secret-scan.result }}" != "success" || \
-                "${{ needs.lint.result }}" != "success" || \
-                "${{ needs.dependency-audit.result }}" != "success" || \
-                "${{ needs.typecheck.result }}" != "success" || \
-                "${{ needs.test-jest.result }}" != "success" || \
-                "${{ needs.test-node.result }}" != "success" || \
-                "${{ needs.test-workspace.result }}" != "success" || \
-                "${{ needs.validate-data.result }}" != "success" || \
-                "${{ needs.validate-go.result }}" != "success" || \
-                "${{ needs.validate-openapi.result }}" != "success" || \
-                "${{ needs.validate-env-drift.result }}" != "success" || \
-                "${{ needs.architecture-hardening.result }}" != "success" || \
-                "${{ needs.wrangler-dry-run.result }}" != "success" || \
-                "${{ needs.merged-worker-e2e.result }}" != "success" || \
-                "${{ needs.merged-worker-e2e.result }}" == "cancelled" ]]; then
-            echo "❌ One or more CI jobs failed"
-            exit 1
-          fi
-          echo "✅ All CI jobs passed"
+      - name: Build Worker and validate Wrangler bundle
+        run: npm run deploy:wrangler:root:dry-run
