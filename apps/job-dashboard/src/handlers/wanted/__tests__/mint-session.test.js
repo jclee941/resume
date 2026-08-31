@@ -5,6 +5,7 @@ import {
   mintWantedSession,
   refreshWantedSession,
   AUTH_WANTED_KEY,
+  WANTED_PROFILE_URL,
   WANTED_TOKEN_URL,
   WANTED_SESSION_TTL_S,
 } from '../mint-session.js';
@@ -20,6 +21,16 @@ function okResponse(token) {
     ok: true,
     async json() {
       return { token };
+    },
+  };
+}
+
+function profileResponse() {
+  return {
+    ok: true,
+    status: 200,
+    async json() {
+      return { id: 'wanted-user' };
     },
   };
 }
@@ -120,7 +131,9 @@ describe('mintWantedSession', () => {
 
 describe('refreshWantedSession', () => {
   it('mints a session and stores it in KV with the expected TTL', async () => {
-    const fetchImpl = mock.fn(async () => okResponse('fresh-token'));
+    const fetchImpl = mock.fn(async (url) =>
+      url === WANTED_TOKEN_URL ? okResponse('fresh-token') : profileResponse()
+    );
     const putCalls = [];
     const env = {
       ...CREDS,
@@ -139,9 +152,28 @@ describe('refreshWantedSession', () => {
       length: 'WWW_ONEID_ACCESS_TOKEN=fresh-token'.length,
     });
     assert.equal(env.SESSIONS.put.mock.callCount(), 1);
+    assert.equal(fetchImpl.mock.callCount(), 2);
+    assert.equal(fetchImpl.mock.calls[1].arguments[0], WANTED_PROFILE_URL);
     assert.equal(putCalls[0].key, AUTH_WANTED_KEY);
     assert.equal(putCalls[0].value, 'WWW_ONEID_ACCESS_TOKEN=fresh-token');
     assert.deepEqual(putCalls[0].opts, { expirationTtl: WANTED_SESSION_TTL_S });
+  });
+
+  it('does not store a token rejected by the Wanted profile API', async () => {
+    const fetchImpl = mock.fn(async (url) => {
+      if (url === WANTED_TOKEN_URL) return okResponse('rejected-token');
+      return { ok: false, status: 401, json: async () => ({}) };
+    });
+    const env = {
+      ...CREDS,
+      SESSIONS: { put: mock.fn(async () => {}) },
+    };
+
+    const result = await refreshWantedSession(env, { fetchImpl });
+
+    assert.equal(result.ok, false);
+    assert.match(result.error, /profile validation failed.*401/i);
+    assert.equal(env.SESSIONS.put.mock.callCount(), 0);
   });
 
   it('returns ok:false and never throws when creds are missing', async () => {
