@@ -21,6 +21,25 @@ function createCliproxyResponse(content) {
 }
 
 describe('CliproxyClient', () => {
+  it('calls the default fetcher with the Worker global receiver', async (t) => {
+    const originalFetch = globalThis.fetch;
+    t.after(() => {
+      globalThis.fetch = originalFetch;
+    });
+    globalThis.fetch = async function () {
+      assert.equal(this, globalThis);
+      return createCliproxyResponse({ jobs: [] });
+    };
+    const client = new CliproxyClient({
+      CLIPROXY_BASE: 'https://cliproxy.example.test/v1',
+      CLIPROXY_API_KEY: 'secret-test-key',
+    });
+
+    const result = await client.searchJobs('security', { limit: 1 });
+
+    assert.deepEqual(result, { jobs: [] });
+  });
+
   it('uses GPT-5.5 as the default model for Cliproxy requests', async () => {
     let requestBody = null;
     const fetcher = mock.fn(async (_url, options) => {

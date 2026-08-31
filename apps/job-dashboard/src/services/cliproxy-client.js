@@ -5,7 +5,7 @@ export class CliproxyClient {
     this.baseUrl = normalizeBaseUrl(env.CLIPROXY_BASE || options.baseUrl);
     this.apiKey = normalizeApiKey(env.CLIPROXY_API_KEY || options.apiKey);
     this.model = env.CLIPROXY_MODEL || options.model || DEFAULT_MODEL;
-    this.fetcher = options.fetcher || fetch;
+    this.fetcher = options.fetcher || ((...args) => globalThis.fetch(...args));
   }
 
   isConfigured() {
