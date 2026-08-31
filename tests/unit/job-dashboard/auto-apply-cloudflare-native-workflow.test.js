@@ -44,9 +44,28 @@ describe('job-dashboard Cloudflare native application workflow', () => {
     expectNativeHandoff(result);
     expect(calls).toEqual({ search: 0, submit: 1, record: 0 });
   });
+
+  test('Application Workflow preserves a normalized local rank percentage', async () => {
+    const { calls, ctx, step } = createWorkflowHarness();
+    const result = await runNativeWorkflow(
+      runApplicationWorkflow,
+      ctx,
+      step,
+      makeNativeCandidate({ matchScore: undefined, matchPercentage: 72 }),
+      {
+        autoApprove: true,
+        autoApproveThreshold: 70,
+        minMatchScore: 60,
+      }
+    );
+
+    expectNativeHandoff(result);
+    expect(result.workflow.stats.jobsScored).toBe(1);
+    expect(calls).toEqual({ search: 0, submit: 1, record: 0 });
+  });
 });
 
-function runNativeWorkflow(runApplicationWorkflow, ctx, step, candidate) {
+function runNativeWorkflow(runApplicationWorkflow, ctx, step, candidate, payload = {}) {
   return runApplicationWorkflow(
     ctx,
     {
@@ -55,6 +74,7 @@ function runNativeWorkflow(runApplicationWorkflow, ctx, step, candidate) {
         candidates: [candidate],
         dryRun: false,
         maxDailyApplications: 1,
+        ...payload,
       },
     },
     step
@@ -91,7 +111,7 @@ function createWorkflowHarness() {
       },
       async createApprovalRequest(_workflowId, job, status) {
         expect(job.source).toBe('jobkorea');
-        expect(status).toBe('approved');
+        expect(['approved', 'auto-approved']).toContain(status);
         return `approval-${job.id}`;
       },
       async getApprovalStatus() {

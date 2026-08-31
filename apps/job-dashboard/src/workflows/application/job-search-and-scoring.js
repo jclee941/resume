@@ -112,12 +112,13 @@ export async function scoreWorkflowJobs(ctx, step, workflow, jobsFound, minMatch
 }
 
 function scoreJob(job, config) {
-  const explicitScore = Number(job?.matchScore);
-  const matchScore = Number.isFinite(explicitScore)
-    ? explicitScore
-    : hasDeterministicAtsDryRunScore(job)
-      ? job.matchScore
-      : calculateMatchScore(job, config);
+  const explicitScore = normalizedExplicitScore(job);
+  const matchScore =
+    explicitScore !== null
+      ? explicitScore
+      : hasDeterministicAtsDryRunScore(job)
+        ? job.matchScore
+        : calculateMatchScore(job, config);
   const scoredJob = { ...job, matchScore };
 
   if (!isAtsDryRunJob(scoredJob)) return scoredJob;
@@ -128,6 +129,16 @@ function scoreJob(job, config) {
     status: 'dry-run',
     action: 'would_apply',
   };
+}
+
+function normalizedExplicitScore(job) {
+  return normalizeScore(job?.matchPercentage) ?? normalizeScore(job?.matchScore);
+}
+
+function normalizeScore(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const score = Number(value);
+  return Number.isFinite(score) && score >= 0 && score <= 100 ? score : null;
 }
 
 function hasDeterministicAtsDryRunScore(job) {
