@@ -1,4 +1,5 @@
 import { NotificationService } from '../../services/notifications.js';
+import { loadMatchingConfig } from './matching-config.js';
 
 export async function generateCoverLetter(ctx, job) {
   if (ctx.env.AI) {
@@ -69,14 +70,7 @@ export async function getStoredResume(ctx) {
 }
 
 export async function getMatchingConfig(ctx) {
-  try {
-    const config = await ctx.env.JOB_DB.prepare(
-      "SELECT value FROM config WHERE key = 'auto_apply_config'"
-    ).first();
-    return config?.value ? JSON.parse(config.value) : { minMatchScore: 70 };
-  } catch {
-    return { minMatchScore: 70 };
-  }
+  return loadMatchingConfig(ctx.env);
 }
 
 export async function sendApprovalRequestNotification(ctx, workflowId, requestId, job) {
