@@ -41,7 +41,7 @@ export function normalizeQueueEntry(entry) {
  * @returns {{ok: boolean, reason?: string}}
  */
 export function assessQueueEntry(job, deps = {}) {
-  const checkHealth = deps.checkHealth || ((p) => SessionManager.checkHealth(p));
+  const checkHealth = deps.checkHealth || ((p) => SessionManager.checkHealth(p, undefined, true));
 
   if (!job.source) {
     return { ok: false, reason: 'missing_source' };

@@ -7,6 +7,7 @@ import {
   planQueueApply,
   runQueueApply,
 } from '../queue-apply.js';
+import { SessionManager } from '../../shared/services/session/index.js';
 
 const validHealth = { valid: true };
 const invalidHealth = { valid: false, reason: 'no_session' };
@@ -96,6 +97,24 @@ describe('assessQueueEntry', () => {
     const v = assessQueueEntry(job, { checkHealth: () => validHealth });
     assert.equal(v.ok, false);
     assert.match(v.reason, /invalid_wanted_id/);
+  });
+
+  it('blocks a fresh Wanted session when default health validation finds missing cookies', () => {
+    SessionManager.configure({
+      store: {
+        load: () => ({ timestamp: Date.now(), cookies: [] }),
+      },
+    });
+
+    try {
+      const job = normalizeQueueEntry(queue[2]);
+      const verdict = assessQueueEntry(job);
+
+      assert.equal(verdict.ok, false);
+      assert.equal(verdict.reason, 'no_valid_session:wanted');
+    } finally {
+      SessionManager.configure();
+    }
   });
 });
 
