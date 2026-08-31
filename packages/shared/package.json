@@ -52,6 +52,6 @@
     "zod": "^4.4.3"
   },
   "optionalDependencies": {
-    "@cloudflare/puppeteer": "^1.3.0"
+    "@cloudflare/puppeteer": "^1.4.0"
   }
 }
