@@ -20,6 +20,39 @@ describe('auto-apply CLI process exits', () => {
     assert.match(`${result.stdout}${result.stderr}`, /Provide a queue file/);
   });
 
+  for (const [command, args, startedPattern] of [
+    ['apply', ['--max=invalid'], /Auto Apply/],
+    ['unified', ['--max=invalid'], /Unified Apply System/],
+    [
+      'apply_queue',
+      ['--queue=/does/not/exist.json', '--apply', '--max=invalid'],
+      /Queue Apply/,
+    ],
+  ]) {
+    it(`${command} rejects invalid --max before constructing its runtime`, () => {
+      const result = runCli([command, ...args]);
+      const output = `${result.stdout}${result.stderr}`;
+
+      assert.notStrictEqual(result.status, 0);
+      assert.match(output, /--max must be a non-negative safe integer/);
+      assert.doesNotMatch(result.stdout, startedPattern);
+    });
+  }
+
+  for (const maxArgs of [
+    ['--max=100', '--max=1'],
+    ['--max=1', '--max=100'],
+  ]) {
+    it(`rejects duplicate ${maxArgs.join(' ')} before constructing the queue runtime`, () => {
+      const result = runCli(['apply_queue', ...maxArgs]);
+      const output = `${result.stdout}${result.stderr}`;
+
+      assert.notStrictEqual(result.status, 0);
+      assert.match(output, /--max must be a non-negative safe integer/);
+      assert.doesNotMatch(output, /Provide a queue file|Queue Apply/);
+    });
+  }
+
   it('unknown command exits nonzero while help exits zero', () => {
     const help = runCli(['help']);
     const unknown = runCli(['unknown_command']);
