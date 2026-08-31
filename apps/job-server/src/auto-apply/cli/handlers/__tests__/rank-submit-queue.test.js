@@ -22,6 +22,7 @@ describe('buildSubmitQueue Wanted id preservation', () => {
 
     const job = normalizeQueueEntry(entry);
 
+    assert.equal(entry.matchScore, 82);
     assert.equal(job.id, 'wanted_12345');
     assert.equal(parseWantedJobId(job.id), 12345);
   });
