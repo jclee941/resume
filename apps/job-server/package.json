@@ -70,7 +70,7 @@
     "@resume/schemas": "*",
     "@resume/shared": "*",
     "@resume/types": "*",
-    "fastify": "^5.10.0",
+    "fastify": "^5.12.1",
     "fastify-plugin": "^6.0.0",
     "google-auth-library": "^10.9.1",
     "googleapis": "^173.0.0",
