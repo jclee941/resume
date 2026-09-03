@@ -30,7 +30,7 @@
 
 - 전화: 010-5757-9592
 - 이메일: <qws941@kakao.com>
-- 주소: 경기도 시흥시 장현천로61
+- 주소: 대한민국
 - GitHub: github.com/jclee941
 - LinkedIn: linkedin.com/in/jclee0109
 
