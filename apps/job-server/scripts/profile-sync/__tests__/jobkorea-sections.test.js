@@ -996,18 +996,18 @@ describe('dry-run smoke with real SSOT', () => {
 });
 
 describe('JobKorea SSoT field-mapping correctness — RED', () => {
-  it('B1 buildJobKoreaFormData normalizes real dotted birth date to 8 digits', () => {
+  it('B1 buildJobKoreaFormData omits birth date when public SSoT has none', () => {
     const ssot = loadSSOT();
     const byName = toMap(buildJobKoreaFormData(ssot, {}));
 
-    assert.strictEqual(byName.get('UserResume.Birth_YMD'), '19941017');
+    assert.strictEqual(byName.get('UserResume.Birth_YMD'), undefined);
   });
 
   it('B1 mapPersonalFieldsToFormFields normalizes dotted birth date to 8 digits', () => {
-    const fields = mapPersonalFieldsToFormFields({ personal: { birthDate: '1994.10.17' } });
+    const fields = mapPersonalFieldsToFormFields({ personal: { birthDate: '2000.10.17' } });
     const byName = toMap(fields);
 
-    assert.strictEqual(byName.get('UserResume.Birth_YMD'), '19941017');
+    assert.strictEqual(byName.get('UserResume.Birth_YMD'), '20001017');
   });
 
   it('B2 buildJobKoreaFormData includes real SSoT skills', () => {
