@@ -13,12 +13,10 @@ from pathlib import Path
 from typing import Final
 from zipfile import ZipFile
 
-BUILD_DIR = Path(__file__).resolve().parent
-if str(BUILD_DIR.parent) not in sys.path:
-    sys.path.insert(0, str(BUILD_DIR.parent))
+from tools.scripts.build.pptx_engine import ResumeData, get_current_age
+from tools.scripts.build.pptx_templates import TEMPLATES
 
-from build.pptx_engine import ResumeData, get_current_age
-from build.pptx_templates import TEMPLATES
+BUILD_DIR = Path(__file__).resolve().parent
 
 PYTHON_311_BUILD_SOURCES: Final = (
     "pptx_engine.py",
@@ -32,7 +30,7 @@ PYTHON_311_BUILD_SOURCES: Final = (
 
 
 TA_SOURCE: Final[ResumeData] = {
-    "personal": {"name": "Fixture", "birthDate": "1994.10.17"},
+    "personal": {"name": "Fixture", "birthDate": "2000.10.17"},
     "education": {"school": "Fixture School", "status": "Graduated", "major": "CS"},
     "summary": {"grade": "Senior", "totalExperience": "1 year", "expertise": ["Security"]},
     "current": {"company": "(주)Fixture", "position": "Engineer"},
@@ -85,9 +83,9 @@ class PPTXProfileCharacterizationTest(unittest.TestCase):
                 )
 
     def test_korean_age_does_not_increment_before_birthday(self) -> None:
-        age = get_current_age("1994.10.17", datetime.date(2026, 7, 23))
+        age = get_current_age("2000.10.17", datetime.date(2026, 7, 23))
 
-        self.assertEqual(age, 31)
+        self.assertEqual(age, 25)
 
     def test_named_profiles_preserve_template_observations(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
