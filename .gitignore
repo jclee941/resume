@@ -158,6 +158,8 @@ sessions.json
 test-results/
 *.backup-*
 downloaded_files/
+applications/security-ir-2026/Jaecheol_Lee_Resume_Security_IR_KR.pdf
+applications/security-ir-2026/resume-security-ir-preview.png
 # Generated dashboards
 apps/job-server/scripts/dashboard.html
 
@@ -165,6 +167,7 @@ apps/job-server/scripts/dashboard.html
 .tmp/
 **/.tmp/
 apps/portfolio/.tmp/
+apps/job-server/scripts/profile-sync/jobkorea-handler/browser-template.json
 
 # 1Password secret backups (rotated values awaiting upload)
 /tmp/resume-new-secrets.env
@@ -176,8 +179,12 @@ apps/portfolio/.tmp/
 #       as a record of submitted application materials.
 apps/portfolio/downloads/*.pdf
 packages/data/resumes/generated/*.pdf
+packages/data/resumes/generated/**/*.pptx
+!packages/data/resumes/generated/ta.pptx
+packages/data/resumes/generated/jobkorea/jobkorea_resume_payload.json
 packages/data/resumes/master/*.pdf
 packages/data/resumes/archive/**/*.pdf
+packages/data/resumes/archive/versions/*.docx
 packages/data/resumes/technical/**/*.pdf
 !packages/data/resumes/applications/**/*.pdf
 
