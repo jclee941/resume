@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import sys
 import tempfile
 import unittest
 from dataclasses import replace
@@ -12,16 +11,14 @@ from zipfile import ZipFile
 
 from pptx.presentation import Presentation as PPTXPresentation
 
-BUILD_DIR = Path(__file__).resolve().parent
-if str(BUILD_DIR.parent) not in sys.path:
-    sys.path.insert(0, str(BUILD_DIR.parent))
+from tools.scripts.build.pptx_engine import ResumeData, generate
+from tools.scripts.build.pptx_publication import PPTXPublicationError
+from tools.scripts.build.pptx_templates import TEMPLATES
 
-from build.pptx_engine import ResumeData, generate
-from build.pptx_publication import PPTXPublicationError
-from build.pptx_templates import TEMPLATES
+BUILD_DIR = Path(__file__).resolve().parent
 
 TA_SOURCE: Final[ResumeData] = {
-    "personal": {"name": "Fixture", "birthDate": "1994.10.17"},
+    "personal": {"name": "Fixture", "birthDate": "2000.10.17"},
     "education": {"school": "Fixture School", "status": "Graduated", "major": "CS"},
     "summary": {"grade": "Senior", "totalExperience": "1 year", "expertise": ["Security"]},
     "current": {"company": "(주)Fixture", "position": "Engineer"},
@@ -45,7 +42,7 @@ class PPTXPublicationTest(unittest.TestCase):
             _ = redirected_output.write_bytes(previous_output)
             destination_directory.symlink_to(redirected_directory, target_is_directory=True)
 
-            from build.test_pptx_profiles import run_pptx_cli
+            from tools.scripts.build.test_pptx_profiles import run_pptx_cli
 
             result = run_pptx_cli(
                 "ta",
@@ -71,7 +68,7 @@ class PPTXPublicationTest(unittest.TestCase):
             _ = target_path.write_bytes(previous_output)
             output_path.symlink_to(target_path)
 
-            from build.test_pptx_profiles import run_pptx_cli
+            from tools.scripts.build.test_pptx_profiles import run_pptx_cli
 
             result = run_pptx_cli("ta", "--data", str(source_path), "--output", str(output_path))
 

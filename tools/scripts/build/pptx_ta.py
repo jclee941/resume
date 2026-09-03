@@ -36,7 +36,9 @@ def handle_ta_profile(tbl, source, profile: PPTXLayoutProfile):
     set_cell_text(tbl.cell(2, 4), summary.get("grade", latest_career.get("role", "")))
     set_cell_text(tbl.cell(2, 5), f"{education['school']}({education['status']})")
     set_cell_text(tbl.cell(2, 6), education["major"])
-    set_cell_text(tbl.cell(3, 1), f"만   {get_current_age(personal['birthDate'])} 세")
+    birth_date = personal.get("birthDate")
+    age = f"만   {get_current_age(birth_date)} 세" if birth_date else ""
+    set_cell_text(tbl.cell(3, 1), age)
     set_cell_text(tbl.cell(3, 4), summary["totalExperience"])
     set_cell_text(tbl.cell(2, 7), ", ".join(summary.get("expertise", [])))
 
