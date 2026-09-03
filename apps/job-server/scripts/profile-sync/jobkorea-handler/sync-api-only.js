@@ -24,9 +24,9 @@ function resolveLogger(options) {
   return options.logger ?? log;
 }
 
-function loadBrowserTemplate() {
+function loadBrowserTemplate(templatePath = BROWSER_TEMPLATE_PATH) {
   try {
-    const data = readFileSync(BROWSER_TEMPLATE_PATH, 'utf8');
+    const data = readFileSync(templatePath, 'utf8');
     return JSON.parse(data);
   } catch {
     return null;
@@ -117,6 +117,8 @@ export function overlayTemplate(templateFields, targetFields) {
  * @param {string} [options.userAgent] - User-Agent header
  * @param {boolean} [options.dryRun=false] - Preview without saving
  * @param {Function} [options.logger] - Logger function
+ * @param {Array<{name: string, value: string}>} [options.browserTemplate] - Injected template fields
+ * @param {string} [options.browserTemplatePath] - Local captured template path
  */
 export async function syncToJobKoreaAPI(ssot, options = {}) {
   const logger = resolveLogger(options);
@@ -145,7 +147,9 @@ export async function syncToJobKoreaAPI(ssot, options = {}) {
   logger('Edit page tokens fetched', 'info', 'jobkorea');
 
   // 2. Load browser template and build our updates
-  const browserTemplate = loadBrowserTemplate();
+  const browserTemplate =
+    options.browserTemplate ??
+    loadBrowserTemplate(options.browserTemplatePath ?? process.env.JOBKOREA_BROWSER_TEMPLATE_PATH);
   if (!browserTemplate) {
     throw new Error('Browser template not found. Please capture a browser save request first.');
   }
