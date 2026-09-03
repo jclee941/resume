@@ -15,7 +15,7 @@ test('parseProfileSections extracts normalized fields from text snapshot', () =>
       '이름: 홍길동',
       '이메일: hong@example.com',
       '연락처 010-1234-5678',
-      '1994.10.17',
+      '2000.10.17',
       '남자',
       '학교명: 한양사이버대학교',
       '전공: 컴퓨터공학과',
@@ -35,7 +35,7 @@ test('parseProfileSections extracts normalized fields from text snapshot', () =>
   assert.equal(parsed.personal.name, '홍길동');
   assert.equal(parsed.personal.email, 'hong@example.com');
   assert.equal(parsed.personal.phone, '010-1234-5678');
-  assert.equal(parsed.personal.birthDate, '1994.10.17');
+  assert.equal(parsed.personal.birthDate, '2000.10.17');
   assert.ok(parsed.skills.some((skill) => skill.name === 'Python'));
   assert.ok(parsed.certifications.some((cert) => cert.name.includes('CCNP')));
   assert.equal(parsed.desiredConditions.location, '경기');
