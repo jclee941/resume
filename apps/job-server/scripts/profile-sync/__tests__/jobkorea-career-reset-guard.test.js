@@ -112,7 +112,7 @@ describe('JobKorea career reset guard', () => {
           { company: 'B', period: '2025.01 ~ 현재' },
         ],
       },
-      { cookieString: 'ACNT_COOKIE=test', logger: () => {} }
+      { cookieString: 'ACNT_COOKIE=test', logger: () => {}, browserTemplate: [] }
     );
 
     const payload = new URLSearchParams(saveBody);
