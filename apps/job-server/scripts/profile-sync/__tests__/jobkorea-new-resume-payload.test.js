@@ -92,21 +92,9 @@ describe('JobKorea new resume payload contract from real SSoT', () => {
     );
   });
 
-  it('includes normalized personal identity and links', () => {
-    const birthYmd = byName.get('UserResume.Birth_YMD');
-
-    assert.strictEqual(
-      birthYmd,
-      '19941017',
-      `UserResume.Birth_YMD should normalize ${realSSoT.personal.birthDate} to 19941017; got ${JSON.stringify(
-        birthYmd
-      )}`
-    );
-    assert.match(birthYmd ?? '', /^\d{8}$/, 'UserResume.Birth_YMD should be 8 digits');
-    assert.ok(
-      (byName.get('UserResume.Address') ?? '').trim().length > 0,
-      `UserResume.Address should be non-empty, got ${JSON.stringify(byName.get('UserResume.Address'))}`
-    );
+  it('omits private identity fields and includes public links', () => {
+    assert.strictEqual(byName.get('UserResume.Birth_YMD'), undefined);
+    assert.strictEqual(byName.get('UserResume.Address'), undefined);
     assert.ok(
       (byName.get('UserResume.GitHub') ?? '').trim().length > 0,
       `UserResume.GitHub should be non-empty, got ${JSON.stringify(byName.get('UserResume.GitHub'))}`
