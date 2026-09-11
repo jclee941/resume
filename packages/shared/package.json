@@ -49,9 +49,9 @@
   },
   "dependencies": {
     "@resume/schemas": "*",
-    "zod": "^4.4.3"
+    "zod": "^4.5.4"
   },
   "optionalDependencies": {
-    "@cloudflare/puppeteer": "^1.3.0"
+    "@cloudflare/puppeteer": "^1.4.0"
   }
 }
