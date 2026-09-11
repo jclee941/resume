@@ -35,7 +35,7 @@ function generateAboutContent(aboutData, dataHash, locale = 'ko') {
     .filter((block) => Array.isArray(block.items) && block.items.length > 0)
     .map((block) => {
       const items = block.items
-        .map((item) => `<li>${escapeHtml(String(item))}</li>`)
+        .map((item) => `<li>${escapeHtml(String(item)).replace(/·/g, '·<wbr>')}</li>`)
         .join('\n          ');
       return `<div class="about-block">
         <span class="about-label">${block.label}</span>

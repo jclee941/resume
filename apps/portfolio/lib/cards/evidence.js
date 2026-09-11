@@ -70,9 +70,9 @@ function generateExpertiseSection(data, locale = 'en') {
     const items = competencies
       .map(
         (c) =>
-          `<li class="competency-item"><span class="competency-item__marker">&gt;</span> ${escapeHtml(
+          `<li class="competency-item"><span class="competency-item__marker">&gt;</span><span>${escapeHtml(
             String(c)
-          )}</li>`
+          ).replace(/·/g, '·<wbr>')}</span></li>`
       )
       .join('\n          ');
     html += `\n      <div class="about-subsection about-subsection--competencies">

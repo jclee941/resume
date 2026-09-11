@@ -42,6 +42,21 @@ test.describe('Portfolio visual accessibility', () => {
   });
 
   for (const locale of ['ko', 'en', 'ja']) {
+    test(`${locale} about content fits a 320px viewport without clipping`, async ({ page }) => {
+      await page.setViewportSize({ width: 320, height: 568 });
+      await page.goto(`/${locale}/`, { waitUntil: 'domcontentloaded' });
+      const dimensions = await page.locator('.about-grid').evaluate((grid) => ({
+        viewport: window.innerWidth,
+        body: document.body.scrollWidth,
+        panels: [...grid.children].map((panel) => panel.getBoundingClientRect().right),
+      }));
+
+      expect(dimensions.body).toBeLessThanOrEqual(dimensions.viewport);
+      for (const right of dimensions.panels) {
+        expect(right).toBeLessThanOrEqual(dimensions.viewport);
+      }
+    });
+
     test(`${locale} skill search uses the shared component radius`, async ({ page }) => {
       await page.goto(`/${locale}/`, { waitUntil: 'domcontentloaded' });
 
