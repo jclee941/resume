@@ -74,7 +74,10 @@ test.describe('Mobile recruiter actions', () => {
 
     await page.evaluate(() => document.body.focus());
     const firstTabStops = [];
-    for (let index = 0; index < 14; index += 1) {
+    const focusableCount = await page
+      .locator('a[href], button, input, textarea, select, [tabindex]')
+      .count();
+    for (let index = 0; index < focusableCount; index += 1) {
       await page.keyboard.press('Tab');
       firstTabStops.push(
         await page.evaluate(() => {
@@ -90,6 +93,7 @@ test.describe('Mobile recruiter actions', () => {
           };
         })
       );
+      if (firstTabStops.at(-1)?.isReviewOrRole) break;
     }
 
     const contactIndex = firstTabStops.findIndex(
