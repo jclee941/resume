@@ -1,5 +1,6 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
+const { projects } = require('../../apps/portfolio/data.json');
 
 test.describe('Portfolio recruiter enhancements', () => {
   test.beforeEach(async ({ page }) => {
@@ -12,7 +13,7 @@ test.describe('Portfolio recruiter enhancements', () => {
     const projectCards = page.locator('#projects li.project-item');
     const initialProjectCount = await projectCards.count();
     const securityOpsChip = page.getByRole('button', {
-      name: /보안 자동화|Security Automation/,
+      name: /^보안 엔지니어링/,
     });
 
     await securityOpsChip.click();
@@ -61,21 +62,27 @@ test.describe('Portfolio recruiter enhancements', () => {
   }) => {
     const matrix = page.locator('.project-evidence-matrix');
     await expect(matrix).toBeVisible();
-    await expect(page.getByRole('heading', { name: '역할별 프로젝트 보기' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '직무별 경력·프로젝트' })).toBeVisible();
     await expect(page.getByRole('heading', { name: '프로젝트 한눈에 보기' })).toBeVisible();
     await expect(matrix.locator('.project-evidence-card')).toHaveCount(4);
     await expect(matrix.locator('.project-evidence-card').first()).toContainText(/역할|Role/);
     await expect(matrix.locator('.project-evidence-card').first()).toContainText(/근거|Evidence/);
 
     const projectCards = page.locator('#projects li.project-item');
-    await expect(projectCards).toHaveCount(12);
+    await expect(projectCards).toHaveCount(projects.length);
+    const collapsedCards = page.locator('#projects li.project-item.project-item--collapsed');
+    expect(await collapsedCards.count()).toBeGreaterThan(0);
+    await expect(collapsedCards.first()).toBeHidden();
 
     const moreButton = page.locator('.project-more-btn');
     await expect(moreButton).toBeVisible();
     await moreButton.click();
 
     await expect(page.locator('#project-list')).toHaveClass(/is-expanded/);
-    await expect(projectCards.nth(11)).toBeVisible();
+    await expect(projectCards).toHaveCount(projects.length);
+    for (const card of await collapsedCards.all()) {
+      await expect(card).toBeVisible();
+    }
   });
 
   test('default project order starts with security operations evidence', async ({ page }) => {
@@ -166,5 +173,4 @@ test.describe('Portfolio recruiter enhancements', () => {
       expect(Math.max(...labels.map((label) => label.length))).toBeLessThanOrEqual(40);
     }
   });
-
 });

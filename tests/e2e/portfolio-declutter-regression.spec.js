@@ -84,9 +84,25 @@ test.describe('Declutter — consolidated operated section + regression', () => 
   for (const loc of ['/', '/en/', '/ja/']) {
     test(`S6: ${loc} visible copy has no forbidden quantified metrics`, async ({ page }) => {
       await go(page, loc);
+      const proofCounts = await page.locator('.role-chip').evaluateAll((chips) =>
+        chips.map((chip) => {
+          const role = chip.getAttribute('data-role-filter') || '';
+          const label = chip.querySelector('.role-chip__count')?.textContent || '';
+          return {
+            displayed: Number(label.match(/\d+/)?.[0]),
+            actual: document.querySelectorAll(
+              `#project-list .project-item[data-role~="${CSS.escape(role)}"]`
+            ).length,
+          };
+        })
+      );
+      expect(proofCounts).toHaveLength(4);
+      for (const { displayed, actual } of proofCounts) {
+        expect(displayed).toBe(actual);
+      }
       // Benchmark rule: no fabricated performance metrics or absolute impact counts
       // in visible copy. Allowed facts (tenure years, cert dates, 5-tier
-      // segmentation) are not matched by these patterns.
+      // segmentation) and the verified live UI counters are not impact claims.
       const hits = await page.evaluate(() => {
         const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
         const bad = [];
@@ -105,6 +121,7 @@ test.describe('Declutter — consolidated operated section + regression', () => 
           const p = n.parentElement;
           if (!p) continue;
           if (p.closest('script, style, code, pre')) continue;
+          if (p.closest('.role-chip__count')) continue;
           const t = (n.textContent || '').trim();
           if (!t) continue;
           if (pats.some((re) => re.test(t))) bad.push(t.slice(0, 70));
