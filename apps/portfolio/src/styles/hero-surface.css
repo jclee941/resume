@@ -25,9 +25,9 @@
 }
 
 .hero-proof-list {
-  padding: var(--space-3);
-  border-color: rgb(var(--color-accent-rgb) / 0.13);
-  background: var(--glass-bg);
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
 .hero-proof-list li {
@@ -49,12 +49,16 @@
 }
 
 .hiring-review-packet__list > div {
-  padding: var(--space-2) var(--space-3);
-  background: rgb(var(--bg-primary-rgb) / 0.24);
+  padding: var(--space-2) 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
-.hero-proof-list,
-.hero-review-path,
+.hiring-review-packet__list > div + div {
+  border-top: 1px solid var(--border-primary);
+}
+
 .hiring-review-packet,
 .about-content,
 .expertise-block,

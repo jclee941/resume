@@ -56,13 +56,6 @@
   background: var(--color-accent);
   box-shadow: 0 0 0 3px rgb(var(--color-accent-rgb) / 0.14);
 }
-.hiring-review-packet__summary {
-  margin: 0;
-  color: var(--text-secondary);
-  font-size: var(--text-sm);
-  line-height: var(--leading-relaxed);
-  text-wrap: pretty;
-}
 .hiring-review-packet__list {
   display: grid;
   gap: var(--space-2);
