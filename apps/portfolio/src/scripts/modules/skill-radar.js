@@ -4,42 +4,19 @@
  */
 
 import { createIconElement } from './project-card-formatting.js';
-import { resolveSkillData } from './skill-radar-data.js';
+import {
+  resolveSkillData,
+  getLevelInfo,
+  getTierLabel,
+  skillCountText,
+} from './skill-radar-data.js';
+import { initSkillSearch } from './skill-radar-search.js';
 
 function createElement(tagName, className, text = '') {
   const element = document.createElement(tagName);
   if (className) element.className = className;
   if (text) element.textContent = text;
   return element;
-}
-
-const TIER_LABELS = {
-  ko: { primary: '주력', applied: '실무 적용', working: '활용 가능' },
-  en: { primary: 'Primary', applied: 'Applied', working: 'Working' },
-  ja: { primary: '主力', applied: '実務適用', working: '活用可能' },
-};
-
-function tierLabels() {
-  const lang = (document.documentElement.lang || 'ko').toLowerCase();
-  if (lang.startsWith('en')) return TIER_LABELS.en;
-  if (lang.startsWith('ja')) return TIER_LABELS.ja;
-  return TIER_LABELS.ko;
-}
-
-const LEVELS = {
-  primary: { min: 90, key: 'primary', color: 'var(--color-accent-strong)' },
-  applied: { min: 70, key: 'applied', color: 'var(--color-accent)' },
-  working: { min: 50, key: 'working', color: 'var(--text-secondary)' },
-};
-
-function getLevelInfo(level) {
-  if (level >= LEVELS.primary.min) return LEVELS.primary;
-  if (level >= LEVELS.applied.min) return LEVELS.applied;
-  return LEVELS.working;
-}
-
-function getTierLabel(level) {
-  return tierLabels()[getLevelInfo(level).key];
 }
 
 function createSkillRadar() {
@@ -203,83 +180,6 @@ function toggleCard(card) {
     panel.hidden = false;
     expandIcon.style.transform = 'rotate(180deg)';
   }
-}
-
-function filterSkills(searchTerm) {
-  const cards = document.querySelectorAll('.skill-domain-card');
-  const skillItems = document.querySelectorAll('.skill-item');
-  const evidenceItems = document.querySelectorAll('.skill-evidence-item');
-  let matchCount = 0;
-
-  const normalizedSearch = searchTerm.toLowerCase().trim();
-
-  cards.forEach((card) => {
-    const domain = card.dataset.domain;
-    const domainData = resolveSkillData()[domain];
-    const skillNames = domainData.skills.map((s) => s.name.toLowerCase());
-    const domainTitle = domainData.title.toLowerCase();
-
-    const matchesDomain =
-      !normalizedSearch ||
-      domainTitle.includes(normalizedSearch) ||
-      skillNames.some((name) => name.includes(normalizedSearch));
-
-    card.style.display = matchesDomain ? '' : 'none';
-
-    if (matchesDomain) {
-      skillItems.forEach((item) => {
-        const skillName = item.dataset.skill.toLowerCase();
-        const matchesSkill = !normalizedSearch || skillName.includes(normalizedSearch);
-        item.style.display = matchesSkill ? '' : 'none';
-        if (matchesSkill && matchesDomain) matchCount++;
-      });
-
-      evidenceItems.forEach((item) => {
-        const skillName = item.dataset.skill.toLowerCase();
-        const matchesEvidence = !normalizedSearch || skillName.includes(normalizedSearch);
-        item.style.display = matchesEvidence ? '' : 'none';
-      });
-    }
-  });
-
-  updateMatchCount(matchCount);
-}
-
-function skillCountText(count) {
-  const lang = (document.documentElement.lang || 'ko').toLowerCase();
-  if (lang.startsWith('en')) return `${count} skill${count !== 1 ? 's' : ''}`;
-  if (lang.startsWith('ja')) return `${count}件のスキル`;
-  return `${count}개 기술`;
-}
-
-function updateMatchCount(count) {
-  const counter = document.getElementById('skill-search-count');
-  if (counter) {
-    const lang = (document.documentElement.lang || 'ko').toLowerCase();
-    counter.textContent = lang.startsWith('en')
-      ? `${skillCountText(count)} found`
-      : lang.startsWith('ja')
-        ? `${skillCountText(count)}が見つかりました`
-        : `${skillCountText(count)} 검색됨`;
-    counter.style.display = count > 0 ? '' : 'none';
-  }
-}
-
-function initSkillSearch() {
-  const searchInput = document.getElementById('skill-search-input');
-  if (!searchInput) return;
-
-  let debounceTimer;
-  searchInput.addEventListener('input', (e) => {
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-      filterSkills(e.target.value);
-    }, 150);
-  });
-
-  searchInput.addEventListener('clear', () => {
-    filterSkills('');
-  });
 }
 
 function initSkillRadar() {
