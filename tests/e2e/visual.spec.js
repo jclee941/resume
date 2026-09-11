@@ -11,6 +11,8 @@ const {
   waitForVisualStability,
 } = require('./visual-helpers');
 
+test.use({ serviceWorkers: 'block' });
+
 test.describe('Visual Regression Tests', () => {
   test.describe('Desktop Screenshots', () => {
     test.beforeEach(async ({ page }) => {
