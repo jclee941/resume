@@ -92,14 +92,39 @@ All spacing derives from a base of 4px.
 
 - Use CSS Grid for mixed proof/detail layouts.
 - Keep mobile one-column layouts scannable and avoid first-screen sections exceeding the viewport without a strong reason.
+- About-grid text must wrap long technology sequences at 320px without widening
+  either column or clipping content. Render soft breaks after middle-dot
+  separators, preserving whole technology names and the existing CJK word grouping.
 
 ## 5. Components
+
+### Hero Content Groups
+
+- **Structure**: `.hero-content` contains `.hero-intro` (identity, positioning,
+  primary actions and recruiter summary), `.hero-evidence` (career proof and
+  public projects), and `.hero-navigation` (section links and role filters).
+- **Layout**: only the introduction uses two desktop columns. Groups follow DOM
+  order with `--space-6` gaps; no implicit row spans or CSS order corrections.
+  Public projects use four equal desktop columns, two at tablet, one on mobile.
+- **Surface**: the existing hero shell provides depth. Evidence and navigation
+  use open spacing rather than additional enclosing cards; project links keep
+  their own interactive surface. Recruiter entries use separators, not nested cards.
+- **Accessibility**: primary actions precede secondary navigation in keyboard
+  order; retained copy stays visible at every width. Role
+  chips remain disabled in SSR until enhanced. Existing CJK, print and reduced
+  motion behavior remains in force. The document owns scrolling.
+- **Copy**: remove duplicate contact-only proof/packet rows and the packet's
+  page-description summary. Preserve all action links, public project details,
+  availability/status copy and career evidence; do not invent career claims.
+- **Accepted debt**: identity and target-role terminology still overlap to retain
+  the localized recruiter summary contract.
 
 ### Hero Proof List
 
 - **Structure**: `ul.hero-proof-list > li`.
 - **Variants**: one-column mobile, two-column tablet/desktop.
-- **Spacing**: `--space-3` gap, `--space-4` padding.
+- **Spacing**: `--space-3` gap; open layout without outer padding. The first
+  evidence item spans both columns to retain the primary-experience hierarchy.
 - **States**: static evidence block.
 - **Accessibility**: list keeps native semantics and an `aria-label`.
 - **Motion**: none.
@@ -107,7 +132,8 @@ All spacing derives from a base of 4px.
 ### Hero Review Path
 
 - **Structure**: `nav.hero-review-path > a > span + strong`.
-- **Variants**: three equal columns on desktop; one-column scan path on mobile.
+- **Variants**: three equal columns on desktop; two columns with the final link
+  spanning the row on mobile.
 - **Spacing**: `--space-2` gap, `--space-3` link padding.
 - **States**: hover/focus uses accent border and subtle background only.
 - **Accessibility**: nav uses a locale-specific `aria-label`; link text remains visible.
@@ -115,8 +141,9 @@ All spacing derives from a base of 4px.
 
 ### Hiring Review Packet
 
-- **Structure**: `div.hiring-review-packet > p + dl > div > dt + dd`.
-- **Variants**: compact one-column mobile; three-card grid on wider viewports.
+- **Structure**: `.hiring-review-packet` contains a header and a definition list
+  of numbered `dt` / `dd` rows.
+- **Variants**: compact definition-list rows at every viewport.
 - **Spacing**: `--space-3` to `--space-5`.
 - **States**: static evidence block.
 - **Accessibility**: keeps definition-list semantics and explicit section label.
@@ -139,6 +166,20 @@ All spacing derives from a base of 4px.
 - **States**: hover, focus, active dialog open.
 - **Accessibility**: keyboard focus and dialog controls.
 - **Motion**: transform and opacity only.
+
+### Skill Search
+
+- **Structure**: a labeled textbox, polite live result count, domain cards and
+  an inline empty-result paragraph. KO, EN and JA use the same bundled styles.
+- **States**: an empty query shows all cards without a counter; a skill-name
+  query counts matching entries once across cards; a domain-name query retains
+  every skill and its evidence. No matches show a localized explanation and zero
+  count. Clearing restores all entries without changing expanded-card state.
+- **Accessibility**: retain keyboard card toggles and input focus while filtering;
+  announce counts through the existing live region. Search radius uses
+  `--radius-md` and the minimum input height remains 44px in every locale.
+- **Motion**: no new animation. Existing reduced-motion and print rules remain
+  in the shared component stylesheet rather than localized HTML copies.
 
 ## 6. Motion & Interaction
 
