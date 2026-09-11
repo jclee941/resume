@@ -40,4 +40,22 @@ test.describe('Portfolio visual accessibility', () => {
     expect(box).not.toBeNull();
     expect(box.height).toBeGreaterThanOrEqual(44);
   });
+
+  for (const locale of ['ko', 'en', 'ja']) {
+    test(`${locale} skill search uses the shared component radius`, async ({ page }) => {
+      await page.goto(`/${locale}/`, { waitUntil: 'domcontentloaded' });
+
+      const search = page.getByRole('textbox');
+      await expect(search).toBeVisible();
+      const styles = await search.evaluate((input) => {
+        const computed = getComputedStyle(input);
+        return {
+          radius: computed.borderTopLeftRadius,
+          token: computed.getPropertyValue('--radius-md').trim(),
+        };
+      });
+
+      expect(styles.radius).toBe(styles.token);
+    });
+  }
 });
