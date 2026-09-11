@@ -144,3 +144,38 @@ export function resolveSkillData() {
       : null;
   return radarFromLocaleSkills(injected) || SKILL_DATA_INJECTED;
 }
+
+const TIER_LABELS = {
+  ko: { primary: '주력', applied: '실무 적용', working: '활용 가능' },
+  en: { primary: 'Primary', applied: 'Applied', working: 'Working' },
+  ja: { primary: '主力', applied: '実務適用', working: '活用可能' },
+};
+
+const LEVELS = {
+  primary: { min: 90, key: 'primary', color: 'var(--color-accent-strong)' },
+  applied: { min: 70, key: 'applied', color: 'var(--color-accent)' },
+  working: { min: 50, key: 'working', color: 'var(--text-secondary)' },
+};
+
+export function getLevelInfo(level) {
+  if (level >= LEVELS.primary.min) return LEVELS.primary;
+  if (level >= LEVELS.applied.min) return LEVELS.applied;
+  return LEVELS.working;
+}
+
+export function getTierLabel(level) {
+  const lang = (document.documentElement.lang || 'ko').toLowerCase();
+  const labels = lang.startsWith('en')
+    ? TIER_LABELS.en
+    : lang.startsWith('ja')
+      ? TIER_LABELS.ja
+      : TIER_LABELS.ko;
+  return labels[getLevelInfo(level).key];
+}
+
+export function skillCountText(count) {
+  const lang = (document.documentElement.lang || 'ko').toLowerCase();
+  if (lang.startsWith('en')) return `${count} skill${count !== 1 ? 's' : ''}`;
+  if (lang.startsWith('ja')) return `${count}件のスキル`;
+  return `${count}개 기술`;
+}

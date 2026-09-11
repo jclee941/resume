@@ -64,6 +64,10 @@
   color: var(--color-accent);
 }
 
+.skill-radar__search-count:not(:empty) {
+  display: block;
+}
+
 /* ----------------------------------------
    SKILL RADAR GRID
    ---------------------------------------- */

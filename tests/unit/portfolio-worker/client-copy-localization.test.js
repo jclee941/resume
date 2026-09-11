@@ -36,13 +36,13 @@ describe('client copy localization', () => {
   });
 
   test('skill-radar counter copy is locale-aware', () => {
-    const src = read('skill-radar.js');
+    const src = read('skill-radar-data.js');
     expect(src).toContain('개 기술');
     expect(src).toContain('件のスキル');
   });
 
   test('skill-radar tier labels are locale-aware', () => {
-    const src = read('skill-radar.js');
+    const src = read('skill-radar-data.js');
     // KO / JA tier names next to the English defaults.
     expect(src).toContain('주력');
     expect(src).toContain('실무 적용');
