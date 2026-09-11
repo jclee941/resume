@@ -89,6 +89,14 @@ describe('cards/evidence generateExpertiseSection', () => {
     expect(html).not.toContain('competency-item');
   });
 
+  it('allows breaks between technology names without splitting words or trusting markup', () => {
+    const html = generateExpertiseSection({
+      coreCompetencies: ['Linux·Terraform·Splunk SPL·<script>'],
+    });
+    expect(html).toContain('<span>Linux·<wbr>Terraform·<wbr>Splunk SPL·<wbr>&lt;script&gt;</span>');
+    expect(html).not.toContain('<script>');
+  });
+
   it('localizes generated subsection headings for English and Japanese data', () => {
     const englishHtml = generateExpertiseSection(
       {
