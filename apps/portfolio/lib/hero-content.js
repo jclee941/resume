@@ -69,7 +69,6 @@ function renderReviewPacket(content) {
     `<p class="hiring-review-packet__eyebrow">${content.packetEyebrow}</p>` +
     `<p class="hiring-review-packet__status"><span aria-hidden="true"></span>${content.packetStatus}</p>` +
     '</div>' +
-    `<p class="hiring-review-packet__summary">${content.packetSummary}</p>` +
     `<dl class="hiring-review-packet__list">${items}</dl></div>`
   );
 }
@@ -114,16 +113,23 @@ function renderActions(content) {
 function buildHeroContent(locale) {
   const content = HERO_CONTENT[locale] || HERO_CONTENT.ko;
   return [
+    '<div class="hero-intro"><header class="hero-identity">',
     renderHeroTitle(content),
     `<p class="hero-role">${escapeHtml(content.role)}</p>`,
     `<p class="hero-availability">${content.availability}</p>`,
     `<p class="hero-positioning">${content.positioning}</p>`,
     renderActions(content),
+    '</header>',
+    renderReviewPacket(content),
+    '</div>',
+    `<section class="hero-evidence" aria-label="${escapeHtml(content.proofLabel)}">`,
     renderProofList(content),
     renderPublicProofLinks(content),
+    '</section>',
+    '<div class="hero-navigation">',
     renderReviewPath(content),
-    renderReviewPacket(content),
     renderRoleQuickPaths(content),
+    '</div>',
   ].join('');
 }
 

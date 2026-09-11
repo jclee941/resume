@@ -3,11 +3,6 @@
     padding: var(--space-4) 0 var(--space-6);
   }
 
-  .hero-content {
-    display: flex;
-    flex-direction: column;
-  }
-
   .hero-title {
     word-break: keep-all;
   }
@@ -27,19 +22,8 @@
     gap: var(--space-2);
   }
 
-  .hero-proof-list {
-    order: 5;
-  }
-
-  .hero-public-proof {
-    order: 6;
-    margin-bottom: var(--space-2);
-  }
-
   .hero-review-path {
-    order: 7;
     min-block-size: auto;
-    margin-bottom: var(--space-4);
   }
 
   .hero-review-path a {
@@ -51,25 +35,12 @@
     grid-column: 1 / -1;
   }
 
-  .hero-review-path strong {
-    font-size: var(--text-xs);
-  }
-
-  .hero-review-path + .hiring-review-packet {
-    margin-top: var(--space-3);
-  }
-
   .hiring-review-packet {
-    order: 8;
     padding: var(--space-3);
   }
 
   .hiring-review-packet__list {
     gap: var(--space-2);
-  }
-
-  .hiring-review-packet__summary {
-    display: none;
   }
 
   .hiring-review-packet__list > div {
@@ -87,15 +58,10 @@
   }
 
   .hero-cta {
-    order: 4;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     margin-top: var(--space-2);
     margin-bottom: var(--space-2);
-  }
-
-  .role-quick-paths {
-    order: 9;
   }
 
   .hero-cta .link-subtle {

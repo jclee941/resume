@@ -8,14 +8,17 @@ const HERO_CONTENT = {
       '넥스트레이드 보안 인프라 구축과 SIEM 탐지·알림 경험, jclee-bot LLM 출력 검증, 공개 프로젝트를 정리했습니다.',
     proofLabel: '핵심 이력 요약',
     proofItems: [
-      'FortiGate HA·망분리·엔드포인트 보안 운영 경험이 있습니다.',
+      'FortiGate HA·망분리·엔드포인트 보안을 운영했습니다.',
       '넥스트레이드 보안 인프라를 구축하고, Splunk ES 탐지·알림과 jclee-bot LLM 출력 검증을 운영했습니다.',
-      '이메일 면접 제안 · 이력서 PDF 확인',
     ],
     publicProofLabel: '공개 자동화 프로젝트',
     publicProofLinks: [
       ['#projects', 'jclee-bot', 'LLM 출력에 시크릿 스캔·Check Run 검증을 함께 표시'],
-      ['#projects', 'Idle Outpost', 'JADX 디컴파일과 mitmproxy 캡처로 모바일 클라이언트·API 흐름 분석'],
+      [
+        '#projects',
+        'Idle Outpost',
+        'JADX 디컴파일과 mitmproxy 캡처로 모바일 클라이언트·API 흐름 분석',
+      ],
       ['#projects', 'Grafana', '메트릭·로그 관측성으로 장애와 보안 신호를 함께 확인'],
       ['#projects', 'ELK', '보안 이벤트 수집·분류·추적으로 대응 이력을 남김'],
     ],
@@ -28,11 +31,9 @@ const HERO_CONTENT = {
     packetLabel: '채용 담당자용 요약',
     packetEyebrow: '채용 담당자용 요약',
     packetStatus: '채용 제안 문의 가능',
-    packetSummary: '채용 검토에 필요한 경력, 공개 프로젝트, 연락처, 이력서 PDF를 모았습니다.',
     packetItems: [
       ['대상 역할', '보안 엔지니어링 · 인프라 · SIEM'],
       ['주요 경력', '넥스트레이드 구축·운영 · FSDC 감사 대응 · 프로젝트 로그'],
-      ['다음 액션', '이메일로 면접 제안 또는 일정 문의'],
     ],
     quickTitle: '직무별 경력·프로젝트',
     quickDesc: '관심 직무를 선택하면 관련 경력과 프로젝트로 이동합니다.',
@@ -50,20 +51,22 @@ const HERO_CONTENT = {
   en: {
     title: 'Jaecheol Lee',
     role: 'Security & Infrastructure Engineer',
-    availability:
-      'Open to interview requests for security and infrastructure engineering roles',
+    availability: 'Open to interview requests for security and infrastructure engineering roles',
     positioning:
       'Nextrade security infrastructure, SIEM operations, the jclee-bot LLM output verifier, public projects, and a resume PDF are gathered here.',
     proofLabel: 'Résumé at a glance',
     proofItems: [
       'Target role: Security & Infrastructure Engineer',
       'Recent role: exchange security infrastructure and LLM output verification (jclee-bot)',
-      'Contact: email for interview requests and resume PDF',
     ],
     publicProofLabel: 'Public automation projects',
     publicProofLinks: [
       ['#projects', 'jclee-bot', 'LLM output paired with secrets scan and Check Run verification'],
-      ['#projects', 'Idle Outpost', 'JADX decompilation and mitmproxy captures trace mobile client and API flows'],
+      [
+        '#projects',
+        'Idle Outpost',
+        'JADX decompilation and mitmproxy captures trace mobile client and API flows',
+      ],
       ['#projects', 'Grafana', 'Metrics and logs provide observability for incidents and signals'],
       [
         '#projects',
@@ -80,12 +83,9 @@ const HERO_CONTENT = {
     packetLabel: 'Recruiter summary',
     packetEyebrow: 'Recruiter summary',
     packetStatus: 'Open to interview requests',
-    packetSummary:
-      'Security-appliance builds, SIEM work, public automation projects, contact, and resume PDF — gathered on one page.',
     packetItems: [
       ['Target role', 'Security & Infrastructure Engineer'],
       ['Recent work', 'Exchange build/automation · audit response · resume PDF'],
-      ['Contact and resume PDF', 'Email for interview requests'],
     ],
     quickTitle: 'Browse by role',
     quickDesc: 'Pick a role and jump straight to the matching career and project work.',
@@ -111,12 +111,15 @@ const HERO_CONTENT = {
     proofItems: [
       '希望職種: Security & Infrastructure Engineer',
       '直近役割: 取引所セキュリティ基盤とLLM出力検証(jclee-bot)',
-      '連絡先: メールで面接依頼、履歴書PDF',
     ],
     publicProofLabel: '公開自動化プロジェクト',
     publicProofLinks: [
       ['#projects', 'jclee-bot', 'LLM出力にシークレットスキャン・チェックラン検証を併記'],
-      ['#projects', 'Idle Outpost', 'JADXデコンパイルとmitmproxyキャプチャでモバイルクライアント・APIフローを分析'],
+      [
+        '#projects',
+        'Idle Outpost',
+        'JADXデコンパイルとmitmproxyキャプチャでモバイルクライアント・APIフローを分析',
+      ],
       ['#projects', 'Grafana', 'メトリクスとログの可観測性で障害とセキュリティ信号を確認'],
       ['#projects', 'ELK', 'セキュリティイベント収集・トリアージ・追跡で対応履歴を保持'],
     ],
@@ -129,12 +132,9 @@ const HERO_CONTENT = {
     packetLabel: '採用担当者向けサマリー',
     packetEyebrow: '採用担当者向けサマリー',
     packetStatus: '面接依頼を受付中',
-    packetSummary:
-      'セキュリティ機器構築、SIEM、公開自動化プロジェクト、連絡先・履歴書PDFを1ページにまとめました。',
     packetItems: [
       ['希望職種', 'Security & Infrastructure Engineer'],
       ['主要経歴', '取引所構築・自動化、監査対応、履歴書PDF'],
-      ['連絡・履歴書PDF', 'メールで面接依頼を相談'],
     ],
     quickTitle: '職務別に見る',
     quickDesc: '役割を選ぶと、関連する経歴とプロジェクトへ移動できます。',

@@ -43,7 +43,7 @@ describe('portfolio hiring appeal copy', () => {
     );
     expect(html).toContain('<ul class="hero-proof-list" aria-label="핵심 이력 요약">');
     expect(html).toContain('공개 자동화 프로젝트');
-    expect(html).toContain('FortiGate HA·망분리·엔드포인트 보안 운영 경험이 있습니다.');
+    expect(html).toContain('FortiGate HA·망분리·엔드포인트 보안을 운영했습니다.');
     expect(html).toContain(
       '넥스트레이드 보안 인프라를 구축하고, Splunk ES 탐지·알림과 jclee-bot LLM 출력 검증을 운영했습니다.'
     );
@@ -53,8 +53,9 @@ describe('portfolio hiring appeal copy', () => {
     expect(html).toContain('메트릭·로그 관측성으로 장애와 보안 신호를 함께 확인');
     expect(html).toContain('AI 엔지니어링');
     expect(html).toContain('연락 및 이력서');
+    expect(html).toContain('<dt>대상 역할</dt><dd>보안 엔지니어링 · 인프라 · SIEM</dd>');
     expect(html).toContain(
-      '채용 검토에 필요한 경력, 공개 프로젝트, 연락처, 이력서 PDF를 모았습니다.'
+      '<dt>주요 경력</dt><dd>넥스트레이드 구축·운영 · FSDC 감사 대응 · 프로젝트 로그</dd>'
     );
     expect(html).not.toContain('공개 증거 바로가기');
     expect(html).not.toContain('검토할 핵심 증거');
@@ -86,7 +87,9 @@ describe('portfolio hiring appeal copy', () => {
     );
     expect(html).toContain('Open to interview requests');
     expect(html).toContain('LLM output paired with secrets scan and Check Run verification');
-    expect(html).toContain('JADX decompilation and mitmproxy captures trace mobile client and API flows');
+    expect(html).toContain(
+      'JADX decompilation and mitmproxy captures trace mobile client and API flows'
+    );
     expect(html).toContain('Metrics and logs provide observability for incidents and signals');
     expect(html).toContain('class="role-chip__label">Sec</span>');
     expect(html).toContain('class="role-chip__label">AI</span>');
@@ -111,6 +114,19 @@ describe('portfolio hiring appeal copy', () => {
     expect(readPortfolioFile('index-en.html')).toContain('<!-- HERO_CONTENT_PLACEHOLDER -->');
   });
 
+  test.each(['ko', 'en', 'ja'])(
+    '%s hero groups keep actions before evidence and navigation',
+    (locale) => {
+      const html = buildHeroContent(locale);
+      const groups = ['hero-intro', 'hero-cta', 'hero-evidence', 'hero-navigation'];
+      const positions = groups.map((name) => html.indexOf(`class="${name}"`));
+      expect(positions.every((position) => position >= 0)).toBe(true);
+      expect(positions).toEqual([...positions].sort((left, right) => left - right));
+      expect(html).not.toContain('hiring-review-packet__summary');
+      expect(extractHeroActions(html)).toHaveLength(4);
+    }
+  );
+
   test('Japanese hero localizes recruiter evidence and hiring-decision actions', () => {
     const html = buildHeroContent('ja');
 
@@ -123,7 +139,9 @@ describe('portfolio hiring appeal copy', () => {
     expect(html).toContain('直近役割: 取引所セキュリティ基盤とLLM出力検証(jclee-bot)');
     expect(html).toContain('面接依頼を受付中');
     expect(html).toContain('LLM出力にシークレットスキャン・チェックラン検証を併記');
-    expect(html).toContain('JADXデコンパイルとmitmproxyキャプチャでモバイルクライアント・APIフローを分析');
+    expect(html).toContain(
+      'JADXデコンパイルとmitmproxyキャプチャでモバイルクライアント・APIフローを分析'
+    );
     expect(html).toContain('メトリクスとログの可観測性で障害とセキュリティ信号を確認');
     expect(html).toContain('AIエンジニアリング');
     expect(html).not.toContain('職務別レビュー経路');

@@ -3,17 +3,12 @@
 }
 .hero-proof-list {
   margin: 0;
+  max-width: none;
 }
 .hero-public-proof {
   display: grid;
   gap: var(--space-2);
   margin: 0;
-  padding: var(--space-3);
-  border: 1px solid rgb(var(--color-accent-rgb) / 0.3);
-  border-radius: var(--radius-lg);
-  background:
-    linear-gradient(135deg, rgb(var(--color-accent-rgb) / 0.12), rgb(var(--bg-primary-rgb) / 0.44)),
-    var(--glass-bg);
 }
 
 .hero-public-proof__label {
@@ -27,7 +22,7 @@
 
 .hero-public-proof__links {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-2);
 }
 
@@ -35,17 +30,16 @@
   display: grid;
   gap: calc(var(--space-1) / 2);
   min-width: 0;
-  min-height: 5.15rem;
   padding: var(--space-3);
   border: 1px solid rgb(var(--color-accent-rgb) / 0.38);
   border-radius: var(--radius-md);
   background: color-mix(in srgb, var(--bg-secondary) 78%, var(--color-accent) 22%);
   color: var(--text-primary);
   text-decoration: none;
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-sm);
   transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease;
+    border-color var(--transition-base),
+    background-color var(--transition-base);
 }
 
 .hero-public-proof a:hover,
