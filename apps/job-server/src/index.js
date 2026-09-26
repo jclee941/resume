@@ -49,6 +49,7 @@ async function main() {
 
   let isShuttingDown = false;
 
+  /** @param {string} signal */
   async function gracefulShutdown(signal) {
     if (isShuttingDown) {
       return;
@@ -61,7 +62,7 @@ async function main() {
       log('info', 'MCP server closed gracefully');
       process.exit(0);
     } catch (err) {
-      log('error', `Error during shutdown: ${err.message}`);
+      log('error', `Error during shutdown: ${err instanceof Error ? err.message : String(err)}`);
       process.exit(1);
     }
   }

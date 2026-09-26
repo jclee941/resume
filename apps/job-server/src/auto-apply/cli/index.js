@@ -6,6 +6,7 @@ import { runQueueAutoApply } from './handlers/queue-apply-handler.js';
 import { runAIUnifiedSystem, showAICareerAdvice } from './handlers/ai-apply.js';
 import { listApplications, showStats, showReport, updateStatus } from './handlers/management.js';
 
+/** @type {Record<string, { handler: (args: string[]) => unknown, desc: string }>} */
 const COMMANDS = {
   search: { handler: searchJobs, desc: '채용공고 검색 (통합 시스템)' },
   ai_search: { handler: aiSearchJobs, desc: 'AI 기반 지능형 채용공고 검색' },

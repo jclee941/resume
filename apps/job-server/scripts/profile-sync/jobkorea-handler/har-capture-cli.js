@@ -12,7 +12,19 @@ const VALID_FLAGS = new Set([
   '--include-portfolio',
 ]);
 
+/**
+ * @param {string[]} [argv]
+ */
 export function parseHarCaptureCliArgs(argv = process.argv.slice(2)) {
+  /**
+   * @type {{
+   *   output: string | undefined,
+   *   apply: boolean,
+   *   dryRun: boolean,
+   *   includeSave: boolean,
+   *   includePortfolio: boolean,
+   * }}
+   */
   const options = {
     output: undefined,
     apply: false,
@@ -53,6 +65,7 @@ export function parseHarCaptureCliArgs(argv = process.argv.slice(2)) {
   return options;
 }
 
+/** @param {Awaited<ReturnType<typeof captureJobKoreaProfileSyncHar>>} result */
 function toPrintableSummary(result) {
   return {
     success: result.success,

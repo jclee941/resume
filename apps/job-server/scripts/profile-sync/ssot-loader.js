@@ -2,7 +2,7 @@ import fs from 'fs';
 import { CONFIG } from './constants.js';
 
 /**
- * @returns {Object}
+ * @returns {import('./constants.js').SsotResume}
  */
 export function loadSSOT() {
   if (!fs.existsSync(CONFIG.SSOT_PATH)) {

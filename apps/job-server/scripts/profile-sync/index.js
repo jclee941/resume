@@ -25,7 +25,10 @@ import WantedHandler from './wanted-handler.js';
 import JobKoreaHandler from './jobkorea-handler.js';
 import SaraminHandler from './saramin-handler.js';
 
-/** Handler registry — maps platform key to handler instance */
+/**
+ * Handler registry — maps platform key to handler instance
+ * @type {Record<string, WantedHandler | JobKoreaHandler | SaraminHandler>}
+ */
 const HANDLERS = {
   wanted: new WantedHandler(),
   jobkorea: new JobKoreaHandler(),
@@ -50,6 +53,7 @@ async function main() {
 
   const ssot = loadSSOT();
 
+  /** @type {Record<string, { success?: boolean, changes?: unknown[], dryRun?: boolean }>} */
   const results = {};
   for (const platform of targetPlatforms) {
     const handler = HANDLERS[platform];
