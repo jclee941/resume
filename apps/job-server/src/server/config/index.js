@@ -22,7 +22,7 @@ const config = {
 
   ai: {
     anthropicApiKey: process.env.ANTHROPIC_API_KEY,
-    claudeModel: process.env.CLAUDE_MODEL || 'claude-3-5-sonnet-20241022',
+    claudeModel: process.env.CLAUDE_MODEL || 'claude-sonnet-5',
   },
 
   paths: {
