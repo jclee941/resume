@@ -36,7 +36,7 @@ export function addCorsHeaders(response, request, env) {
   headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
   headers.set('X-Content-Type-Options', 'nosniff');
   headers.set('X-Frame-Options', 'SAMEORIGIN');
-  headers.set('X-XSS-Protection', '1; mode=block');
+  headers.set('X-XSS-Protection', '0');
   headers.set('Referrer-Policy', 'same-origin');
   headers.set(
     'Permissions-Policy',

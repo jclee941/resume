@@ -28,6 +28,11 @@ views/
 - Prefer existing CSS variables and component style modules over one-off colors.
 - Keep the UI dense and operations-focused; this dashboard is for repeated
   job-automation work.
+- Wire controls with `data-action` attributes handled by `DASHBOARD_ACTIONS` in
+  `scripts/core.js`; the page CSP (nonce script-src, hash style-src) blocks
+  inline `on*` handlers and `style` attributes.
+- Call APIs through `apiFetch()` so requests keep the `/job` prefix and CSRF
+  header when served from the merged portfolio Worker.
 
 ## ANTI-PATTERNS
 

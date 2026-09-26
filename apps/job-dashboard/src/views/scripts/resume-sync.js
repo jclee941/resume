@@ -57,9 +57,9 @@ async function loadResumeSyncState() {
   try {
     const resumeId = document.getElementById('masterResumeId')?.value || 'master';
     const [masterRes, historyRes, authRes] = await Promise.all([
-      fetch('/api/resume/master?resumeId=' + encodeURIComponent(resumeId), { credentials: 'include' }),
-      fetch('/api/automation/profile-sync/history?limit=10', { credentials: 'include' }),
-      fetch('/api/auth/status', { credentials: 'include' })
+      apiFetch('/api/resume/master?resumeId=' + encodeURIComponent(resumeId)),
+      apiFetch('/api/automation/profile-sync/history?limit=10'),
+      apiFetch('/api/auth/status')
     ]);
 
     if (masterRes.ok) {

@@ -27,6 +27,14 @@ export const MODAL_STYLES = `
   animation: modalSlideIn 0.2s ease;
 }
 
+.modal-content-narrow {
+  max-width: 400px;
+}
+
+.modal-message {
+  margin-bottom: 1.5rem;
+}
+
 @keyframes modalSlideIn {
   from {
     opacity: 0;

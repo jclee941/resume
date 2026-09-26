@@ -26,4 +26,11 @@ tr {
 tr:hover {
   background: var(--color-bg-tertiary);
 }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
 `;
