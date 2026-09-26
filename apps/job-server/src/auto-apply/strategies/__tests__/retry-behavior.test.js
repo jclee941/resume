@@ -98,6 +98,7 @@ function createBaseContext({ platform, gotoFailures = 0, forceLogin = false }) {
         info: () => {},
         error: () => {},
       },
+      sleep: async () => {},
     },
     getGotoCalls: () => gotoCalls,
   };
