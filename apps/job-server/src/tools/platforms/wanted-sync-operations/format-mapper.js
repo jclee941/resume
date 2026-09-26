@@ -10,6 +10,71 @@ import { parseDate } from '../../date-parser.js';
 
 import { WANTED_HEADLINE_LIMIT } from './constants.js';
 
+/**
+ * @typedef {Object} WantedFormatLanguage
+ * @property {string} [name]
+ * @property {string} [level]
+ * @property {string} [note]
+ */
+
+/**
+ * @typedef {Object} WantedFormatCareer
+ * @property {string} [role]
+ * @property {string} [company]
+ * @property {string} [period]
+ * @property {string} [workType]
+ */
+
+/**
+ * @typedef {Object} WantedFormatEducation
+ * @property {string} [school]
+ * @property {string} [major]
+ * @property {string} [status]
+ * @property {string} [startDate]
+ * @property {string} [endDate]
+ */
+
+/**
+ * @typedef {Object} WantedFormatPersonal
+ * @property {string} [github]
+ * @property {string} [linkedin]
+ * @property {string} [portfolio]
+ * @property {string} [birthDate]
+ * @property {string} [address]
+ */
+
+/**
+ * @typedef {Object} WantedFormatHope
+ * @property {string[]} [locations]
+ * @property {string[]} [roles]
+ * @property {string} [salary]
+ * @property {string[]} [industries]
+ */
+
+/**
+ * @typedef {Object} WantedFormatCoverLetterKo
+ * @property {string} [headline]
+ * @property {string[]} [paragraphs]
+ * @property {string} [closing]
+ */
+
+/**
+ * @typedef {Object} WantedFormatSource
+ * @property {{ position?: string }} [current]
+ * @property {WantedFormatCareer[]} [careers]
+ * @property {{ totalExperience?: string; expertise?: string[] }} [summary]
+ * @property {WantedFormatEducation} [education]
+ * @property {{ wanted?: { headline?: string; about?: string } }} [platformVariants]
+ * @property {Record<string, import('../../../../scripts/skill-tag-map.js').SkillCategory | null | undefined> | null | undefined} [skills]
+ * @property {WantedFormatLanguage[]} [languages]
+ * @property {WantedFormatHope} [hope]
+ * @property {{ ko?: WantedFormatCoverLetterKo }} [coverLetter]
+ * @property {WantedFormatPersonal} [personal]
+ */
+
+/**
+ * @param {WantedFormatSource} source
+ */
 export function mapToWantedFormat(source) {
   const currentPosition = source.current?.position || source.careers?.[0]?.role || '';
   const totalExperience = source.summary?.totalExperience || '';

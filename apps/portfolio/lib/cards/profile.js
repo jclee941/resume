@@ -26,8 +26,60 @@ const PROFILE_LABELS = {
   },
 };
 
+/**
+ * @typedef {Object} ProfileEducation
+ * @property {string} school
+ * @property {string} [major]
+ * @property {string} [status]
+ * @property {string} [startDate]
+ */
+
+/**
+ * @typedef {Object} ProfileLanguage
+ * @property {string} name
+ * @property {string} [level]
+ * @property {string} [note]
+ */
+
+/**
+ * @typedef {Object} ProfileAward
+ * @property {string} [id]
+ * @property {string} name
+ * @property {string} [organization]
+ * @property {string} [year]
+ */
+
+/**
+ * @typedef {Object} ProfileOssContribution
+ * @property {string} [id]
+ * @property {string} [name]
+ * @property {string} [url]
+ * @property {string} [description]
+ * @property {string[]} [techStack]
+ * @property {string} [role]
+ */
+
+/**
+ * @typedef {Object} ProfileMilitary
+ * @property {string} [status]
+ * @property {string} [period]
+ */
+
+/**
+ * @typedef {Object} ProfileBentoData
+ * @property {ProfileEducation} [education]
+ * @property {ProfileLanguage[]} [languages]
+ * @property {ProfileAward[]} [awards]
+ * @property {ProfileOssContribution[]} [ossContributions]
+ * @property {ProfileMilitary} [military]
+ */
+
+/**
+ * @param {string} [locale]
+ * @returns {typeof PROFILE_LABELS.ko}
+ */
 function profileLabels(locale) {
-  return PROFILE_LABELS[locale] || PROFILE_LABELS.ko;
+  return PROFILE_LABELS[/** @type {keyof typeof PROFILE_LABELS} */ (locale)] || PROFILE_LABELS.ko;
 }
 
 /**
@@ -36,7 +88,7 @@ function profileLabels(locale) {
  * military service. Rendered as clean mini cards with localized,
  * reader-facing labels (no terminal-style '>' prefixes).
  *
- * @param {Object} data - data.json (uses education, languages, awards,
+ * @param {ProfileBentoData | null | undefined} data - data.json (uses education, languages, awards,
  *   ossContributions, military).
  * @param {'ko'|'en'|'ja'} [locale='ko'] - Locale for card labels.
  * @returns {string} HTML for the profile bento, or '' if nothing to show.

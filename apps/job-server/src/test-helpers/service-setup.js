@@ -14,9 +14,44 @@ import {
 // ========================
 
 /**
+ * @typedef {Object} TestServiceMocks
+ * @property {ReturnType<typeof createMockLogger>} logger
+ * @property {ReturnType<typeof createMockD1Client>} d1Client
+ * @property {ReturnType<typeof createMockFetch>} fetch
+ * @property {ReturnType<typeof mockTelegramAPI>} telegram
+ * @property {ReturnType<typeof mockClaudeAPI>} claude
+ * @property {ReturnType<typeof mockWantedAPI>} wanted
+ */
+
+/**
+ * @typedef {Object} TestServicesOptions
+ * @property {ReturnType<typeof createMockLogger>} [logger]
+ * @property {ReturnType<typeof createMockD1Client>} [d1Client]
+ * @property {ReturnType<typeof createMockFetch>} [fetch]
+ * @property {ReturnType<typeof createMockEnv>} [env]
+ * @property {ReturnType<typeof createMockRepository>} [repository]
+ * @property {ReturnType<typeof mockTelegramAPI>} [telegram]
+ * @property {ReturnType<typeof mockClaudeAPI>} [claude]
+ * @property {ReturnType<typeof mockWantedAPI>} [wanted]
+ */
+
+/**
+ * @typedef {Object} TestServices
+ * @property {ReturnType<typeof createMockLogger>} logger
+ * @property {ReturnType<typeof createMockD1Client>} d1Client
+ * @property {ReturnType<typeof createMockFetch>} fetch
+ * @property {ReturnType<typeof createMockEnv>} env
+ * @property {ReturnType<typeof createMockRepository>} repository
+ * @property {ReturnType<typeof mockTelegramAPI>} telegram
+ * @property {ReturnType<typeof mockClaudeAPI>} claude
+ * @property {ReturnType<typeof mockWantedAPI>} wanted
+ * @property {() => TestServiceMocks} getMocks
+ */
+
+/**
  * Create service instances with mocks
- * @param {Object} [options]
- * @returns {Object} Service instances
+ * @param {TestServicesOptions} [options]
+ * @returns {TestServices} Service instances
  */
 export function createTestServices(options = {}) {
   const logger = options.logger || createMockLogger();
@@ -41,7 +76,7 @@ export function createTestServices(options = {}) {
 
     /**
      * Get all mocks
-     * @returns {Object}
+     * @returns {TestServiceMocks}
      */
     getMocks() {
       return {

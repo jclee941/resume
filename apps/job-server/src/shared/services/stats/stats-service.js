@@ -4,11 +4,30 @@
  */
 
 /**
+ * @typedef {import('../../../auto-apply/application-manager/statistics.js').ApplicationStats & {
+ *   successRate: number;
+ *   responseRate: number;
+ *   averageResponseTime: number | null;
+ * }} FullApplicationStats
+ */
+
+/**
+ * @typedef {import('../../../auto-apply/application-manager/reports.js').DailyReport} DailyReport
+ */
+
+/**
+ * @typedef {import('@resume/types').ApplicationManagerPort & {
+ *   getStats(): FullApplicationStats;
+ *   generateDailyReport(date?: string): DailyReport;
+ * }} StatsManagerPort
+ */
+
+/**
  * @typedef {Object} WeeklyStats
  * @property {number} total
- * @property {Object<string, number>} byDay
- * @property {Object<string, number>} byStatus
- * @property {Object<string, number>} bySource
+ * @property {Record<string, number>} byDay
+ * @property {Record<string, number>} byStatus
+ * @property {Record<string, number>} bySource
  * @property {{start: string, end: string}} period
  */
 
@@ -36,10 +55,10 @@ export class StatsService {
 
   /**
    * Get overall stats
-   * @returns {Object}
+   * @returns {FullApplicationStats}
    */
   getStats() {
-    return this.#appService.getManager().getStats();
+    return /** @type {StatsManagerPort} */ (this.#appService.getManager()).getStats();
   }
 
   /**
@@ -51,10 +70,17 @@ export class StatsService {
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
     const result = this.#appService.list({ fromDate: weekAgo.toISOString() });
-    const apps = result.applications || [];
+    /** @type {Array<import('@resume/types').Application & { createdAt: string; source: string }>} */
+    const apps =
+      /** @type {Array<import('@resume/types').Application & { createdAt: string; source: string }>} */ (
+        result.applications || []
+      );
 
+    /** @type {Record<string, number>} */
     const byDay = {};
+    /** @type {Record<string, number>} */
     const byStatus = {};
+    /** @type {Record<string, number>} */
     const bySource = {};
 
     // Initialize last 7 days
@@ -83,10 +109,11 @@ export class StatsService {
   /**
    * Generate recommendations based on stats
    * @param {WeeklyStats} weeklyStats
-   * @param {Object} allStats
+   * @param {FullApplicationStats} allStats
    * @returns {Recommendation[]}
    */
   generateRecommendations(weeklyStats, allStats) {
+    /** @type {Recommendation[]} */
     const recommendations = [];
 
     if (weeklyStats.total < 5) {
@@ -116,7 +143,12 @@ export class StatsService {
 
   /**
    * Get comprehensive weekly report with recommendations
-   * @returns {Object}
+   * @returns {WeeklyStats & {
+   *   successRate: number;
+   *   responseRate: number;
+   *   averageResponseTime: number | null;
+   *   recommendations: Recommendation[];
+   * }}
    */
   getWeeklyReport() {
     const weeklyStats = this.getWeeklyStats();
@@ -134,10 +166,12 @@ export class StatsService {
   /**
    * Generate daily report
    * @param {string} [date]
-   * @returns {Object}
+   * @returns {DailyReport}
    */
   getDailyReport(date) {
-    return this.#appService.getManager().generateDailyReport(date);
+    return /** @type {StatsManagerPort} */ (this.#appService.getManager()).generateDailyReport(
+      date
+    );
   }
 }
 
