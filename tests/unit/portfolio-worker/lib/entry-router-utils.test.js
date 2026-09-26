@@ -203,6 +203,12 @@ describe('entry-router-utils', () => {
       expect(wrapped.headers.get('Cache-Control')).toBe('no-store');
     });
 
+    test('never stores merged dashboard API responses', () => {
+      const wrapped = utils.applyResponseHeaders(new Response('{}'), '/job/api/applications');
+
+      expect(wrapped.headers.get('Cache-Control')).toBe('no-store');
+    });
+
     test('applies static and document cache branches', () => {
       const base = new Response('ok');
 
