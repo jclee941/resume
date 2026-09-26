@@ -29,11 +29,15 @@ import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
  */
 
 /**
- * @typedef {Object} ApplicationJob
- * @property {string} id
- * @property {string} position
- * @property {string} company
- * @property {string} source
+ * Scored job handed to the approval-request insert. Scoring passes the crawled
+ * record through, so only the columns the insert reads are declared.
+ * @typedef {{
+ *   id?: string | number;
+ *   position?: unknown;
+ *   company?: unknown;
+ *   source?: string;
+ *   [key: string]: unknown;
+ * }} ApplicationJob
  */
 
 /**

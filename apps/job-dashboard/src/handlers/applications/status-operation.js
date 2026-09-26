@@ -12,7 +12,7 @@ import { APPLICATION_STATUS } from './statuses.js';
  * }} StatusHandler
  *
  * @typedef {{
- *   params: { id: string };
+ *   params: Record<string, string>;
  *   json(): Promise<unknown>;
  * }} StatusRequest
  *

@@ -27,7 +27,7 @@ import { getEscalationLevel, isServiceAffected } from './evaluation.js';
  * @typedef {'emergency' | 'critical' | 'warning' | 'none'} EscalationLevel
  *
  * @typedef {{
- *   env: Record<string, unknown>;
+ *   env: import('../../services/notifications.js').NotificationEnv;
  *   getConsecutiveFailures(): Promise<number>;
  * }} HealthWorkflow
  */

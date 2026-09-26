@@ -5,7 +5,8 @@ import { runHealthCheckWorkflow } from './health-check/orchestration.js';
 
 /**
  * @typedef {import('./health-check/probes.js').HealthCheckEnv &
- *   import('./health-check/metrics.js').HealthWorkflowEnv} HealthCheckEnv
+ *   import('./health-check/metrics.js').HealthWorkflowEnv &
+ *   import('../services/notifications.js').NotificationEnv} HealthCheckEnv
  * @typedef {{ services?: string[] }} HealthCheckParams
  */
 

@@ -22,13 +22,12 @@ import {
  * @typedef {{
  *   DB?: ProfileSyncDb;
  *   [key: string]: unknown;
- * }} ProfileSyncEnv
+ * } & import('../services/notifications.js').NotificationEnv} ProfileSyncEnv
  */
 
 /**
  * @typedef {{
  *   getCookies(platform: string): Promise<string | null>;
- *   [key: string]: unknown;
  * }} ProfileSyncAuth
  */
 
@@ -52,7 +51,7 @@ export class ProfileSyncHandler extends BaseHandler {
    * @returns {Promise<Response>}
    */
   async triggerProfileSync(request) {
-    /** @type {{ resumeId?: string; targetResumeId?: string | null; ssotData?: { personal?: Record<string, unknown>; [key: string]: unknown } | null; platforms?: string[]; dryRun?: boolean; callbackUrl?: string }} */
+    /** @type {{ resumeId?: string; targetResumeId?: string | null; ssotData?: import('./sync/wanted-profile-changes.js').SsotData | null; platforms?: string[]; dryRun?: boolean; callbackUrl?: string }} */
     const body = await request.json().catch(() => ({}));
     const logicalResumeId = body.resumeId || 'master';
     let targetResumeId = body.targetResumeId || null;
@@ -124,7 +123,7 @@ export class ProfileSyncHandler extends BaseHandler {
       if (platforms.includes('wanted')) {
         results.wanted = await syncWantedProfile(
           {
-            auth: this.auth,
+            auth: /** @type {ProfileSyncAuth} */ (this.auth),
           },
           ssotData,
           profileData,

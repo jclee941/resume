@@ -12,7 +12,7 @@ import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
  * @property {string} [description]
  * @property {string[] | string} [techStack]
  * @property {string} [experienceLevel]
- * @property {string} [experience]
+ * @property {string | number} [experience]
  * @property {number} [matchScore]
  * @property {string} [discoveryStatus]
  */

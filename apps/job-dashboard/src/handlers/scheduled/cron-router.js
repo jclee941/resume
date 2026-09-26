@@ -13,6 +13,13 @@ export const RESUME_SYNC_CRON = '0 21 * * *';
  *   `auth:wanted` KV session first (best-effort — a mint failure is logged but
  *   must not abort workflow creation; export-wanted then fails with the reason).
  * - anything else     -> logged and ignored; wrangler.jsonc declares no other cron.
+ * @param {{ cron?: string }} controller
+ * @param {Parameters<typeof refreshWantedSession>[0] & {
+ *   RESUME_SYNC_WORKFLOW?: { create(options: { params: unknown }): Promise<unknown> };
+ *   RESUME_SYNC_CRON_DRY_RUN?: string;
+ * }} env
+ * @param {{ waitUntil(promise: Promise<unknown>): void }} ctx
+ * @returns {Promise<void>}
  */
 export async function scheduled(controller, env, ctx) {
   if (controller?.cron === RESUME_SYNC_CRON) {

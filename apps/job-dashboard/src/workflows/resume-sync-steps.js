@@ -18,10 +18,12 @@ import { calculateDiff } from './resume-sync-diff.js';
  */
 
 /**
+ * Own bindings come first so `JOB_DB.prepare(...).bind(...).run()` resolves
+ * against this module's statement shape; the export helpers need the rest.
  * @typedef {{
  *   SESSIONS: KvNamespaceLike;
  *   JOB_DB: D1DatabaseLike;
- * }} ResumeSyncEnv
+ * } & import('./resume-sync-data.js').ResumeSyncEnv} ResumeSyncEnv
  */
 
 /**

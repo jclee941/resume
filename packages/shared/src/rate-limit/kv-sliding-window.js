@@ -18,6 +18,11 @@
  * @property {number} [blockTtlSec]
  */
 
+/**
+ * @typedef {{ ok: true; headers?: Record<string, string> }
+ *   | { ok: false; status: number; error: string; headers: Record<string, string> }} RateLimitResult
+ */
+
 const DEFAULT_POLICIES = {
   auth: { limit: 10, windowSec: 60 },
   webhook: { limit: 20, windowSec: 60 },
@@ -83,6 +88,7 @@ function getHeaderSet(policy, remaining, resetAt) {
  * @param {string} pathname
  * @param {{ RATE_LIMIT_KV?: RateLimitKvNamespace }} [env]
  * @param {KvSlidingWindowOptions} [options]
+ * @returns {Promise<RateLimitResult>}
  */
 export async function checkKvSlidingWindowRateLimit(request, pathname, env, options = {}) {
   const kv = options.kv || env?.RATE_LIMIT_KV;
@@ -149,6 +155,7 @@ export async function checkKvSlidingWindowRateLimit(request, pathname, env, opti
  * @param {RateLimitPolicy} policy
  * @param {number} resetAt
  * @param {number} retryAfter
+ * @returns {Extract<RateLimitResult, { ok: false }>}
  */
 function tooMany(policy, resetAt, retryAfter) {
   return {
@@ -167,6 +174,7 @@ function tooMany(policy, resetAt, retryAfter) {
  * @param {RateLimitPolicy} policy
  * @param {number} resetAt
  * @param {number} retryAfter
+ * @returns {Extract<RateLimitResult, { ok: false }>}
  */
 function blocked(policy, resetAt, retryAfter) {
   return {

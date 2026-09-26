@@ -10,6 +10,35 @@ import { createResumeBackup, recordSyncHistory, verifyPlatformSync } from './res
 import { notifySyncCompletion } from './resume-sync-notifications.js';
 
 /**
+ * @typedef {import('./resume-sync-steps.js').ResumeSyncEnv
+ *   & import('./resume-sync-platforms.js').PlatformSyncEnv
+ *   & import('../services/notifications.js').NotificationEnv} ResumeSyncWorkflowEnv
+ *
+ * @typedef {{
+ *   resumeId?: string;
+ *   targetResumeId?: string;
+ *   platforms?: string[];
+ *   dryRun?: boolean;
+ *   sections?: string[];
+ *   source?: string;
+ * }} ResumeSyncParams
+ *
+ * @typedef {{
+ *   id: string;
+ *   resumeId: string;
+ *   platforms: string[];
+ *   dryRun: boolean;
+ *   startedAt: string;
+ *   status: string;
+ *   steps: Array<{ step: string; status: string; error?: string }>;
+ *   changes: Record<string, import('./resume-sync-notifications.js').SyncPlatformChanges>;
+ *   completedAt?: string;
+ *   backupId?: string;
+ *   verification?: Record<string, import('./resume-sync-steps.js').PlatformVerification>;
+ * }} ResumeSyncRecord
+ */
+
+/**
  * Resume Sync Workflow
  *
  * Synchronizes resume data across platforms (Wanted, LinkedIn, Remember).
@@ -20,8 +49,13 @@ import { notifySyncCompletion } from './resume-sync-notifications.js';
  * @param {string} [params.targetResumeId] - Wanted resume ID (defaults to the stored target)
  * @param {string[]} params.platforms - Target platforms
  * @param {boolean} params.dryRun - Preview changes without applying
+ * @extends {WorkflowEntrypoint<ResumeSyncWorkflowEnv, ResumeSyncParams>}
  */
 export class ResumeSyncWorkflow extends WorkflowEntrypoint {
+  /**
+   * @param {import('cloudflare:workers').WorkflowEvent<ResumeSyncParams>} event
+   * @param {import('cloudflare:workers').WorkflowStep} step
+   */
   async run(event, step) {
     // Cron and queue producers omit resumeId; 'master' is the canonical master key.
     const {
@@ -32,6 +66,7 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
       sections = [],
     } = event.payload || {};
 
+    /** @type {ResumeSyncRecord} */
     const sync = {
       id: event.instanceId,
       resumeId,
@@ -66,6 +101,7 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
     sync.steps.push({ step: 'export-master', status: 'completed' });
 
     // Step 2: Export current state from each platform
+    /** @type {Record<string, Record<string, import('./resume-sync-diff.js').ResumeItem[]>>} */
     const platformStates = {};
     for (const platform of platforms) {
       const platformData = await step.do(
@@ -89,6 +125,7 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
     }
 
     // Step 3: Calculate diff for each platform
+    /** @type {Record<string, import('./resume-sync-diff.js').ResumeDiff>} */
     const diffs = {};
     for (const platform of platforms) {
       const diff = await step.do(
@@ -140,6 +177,7 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
     sync.steps.push({ step: 'create-backup', status: 'completed' });
 
     // Step 5: Apply changes to each platform
+    /** @type {Record<string, import('./resume-sync-steps.js').PlatformSyncResult>} */
     const syncResults = {};
     for (const platform of platforms) {
       const diff = diffs[platform];

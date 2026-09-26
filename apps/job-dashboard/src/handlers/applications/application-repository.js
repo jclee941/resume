@@ -28,7 +28,7 @@ import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
  *
  * @typedef {{
  *   notes?: string;
- *   priority?: number;
+ *   priority?: string;
  *   resumeId?: string;
  *   [key: string]: unknown;
  * }} UpdateFields

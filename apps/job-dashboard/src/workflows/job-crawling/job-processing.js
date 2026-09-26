@@ -5,6 +5,7 @@ import { loadMatchingConfig } from '../application/matching-config.js';
 
 /**
  * @typedef {Object} CrawledJob
+ * @property {string} id
  * @property {string} company
  * @property {string} position
  * @property {string} [source]
@@ -14,6 +15,8 @@ import { loadMatchingConfig } from '../application/matching-config.js';
  * @property {string} [location]
  * @property {string[]} [skills]
  * @property {string[]} [techStack]
+ * @property {string} [url]
+ * @property {string | number} [experience]
  */
 
 /**
@@ -25,7 +28,7 @@ import { loadMatchingConfig } from '../application/matching-config.js';
  * Flatten platform crawl results and deduplicate by company and position.
  *
  * @param {CrawlResults} results
- * @returns {CrawledJob[]}
+ * @returns {Array<CrawledJob & { source: string }>}
  */
 export function collectDeduplicatedJobs(results) {
   const allJobs = [];
@@ -46,9 +49,10 @@ export function collectDeduplicatedJobs(results) {
 /**
  * Score and filter crawled jobs against persisted matching config.
  *
+ * @template {CrawledJob} J
  * @param {Parameters<typeof loadMatchingConfig>[0]} env
- * @param {CrawledJob[]} jobs
- * @returns {Promise<CrawledJob[]>}
+ * @param {J[]} jobs
+ * @returns {Promise<Array<J & { matchScore: number }>>}
  */
 export async function matchJobs(env, jobs) {
   const config = await getMatchingConfig(env);

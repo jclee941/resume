@@ -189,7 +189,7 @@ export async function getMatchingConfig(ctx) {
  * @param {ProfileContext} ctx
  * @param {string} _workflowId
  * @param {string} requestId
- * @param {JobProfile} job
+ * @param {Record<string, unknown>} job
  * @returns {Promise<void>}
  */
 export async function sendApprovalRequestNotification(ctx, _workflowId, requestId, job) {

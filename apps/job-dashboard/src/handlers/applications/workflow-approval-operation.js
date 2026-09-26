@@ -9,7 +9,7 @@
 
 /**
  * @param {WorkflowApprovalHandler} handler
- * @param {{ params: { instanceId: string } }} request
+ * @param {{ params: Record<string, string> }} request
  * @param {string} decision
  * @returns {Promise<Response>}
  */

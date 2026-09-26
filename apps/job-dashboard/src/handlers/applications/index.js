@@ -50,7 +50,7 @@ export class ApplicationsHandler {
   }
 
   /**
-   * @param {Request & { params: { id: string } }} request
+   * @param {import('../../router.js').RouterRequest} request
    * @returns {Promise<Response>}
    */
   async get(request) {
@@ -66,7 +66,7 @@ export class ApplicationsHandler {
   }
 
   /**
-   * @param {Request & { params: { id: string } }} request
+   * @param {import('../../router.js').RouterRequest} request
    * @returns {Promise<Response>}
    */
   async update(request) {
@@ -74,7 +74,7 @@ export class ApplicationsHandler {
   }
 
   /**
-   * @param {Request & { params: { id: string } }} request
+   * @param {import('../../router.js').RouterRequest} request
    * @returns {Promise<Response>}
    */
   async updateStatus(request) {
@@ -82,7 +82,7 @@ export class ApplicationsHandler {
   }
 
   /**
-   * @param {Request & { params: { id: string } }} request
+   * @param {import('../../router.js').RouterRequest} request
    * @returns {Promise<Response>}
    */
   async delete(request) {
@@ -106,7 +106,7 @@ export class ApplicationsHandler {
   }
 
   /**
-   * @param {Request & { params: { instanceId: string } }} request
+   * @param {import('../../router.js').RouterRequest} request
    * @param {string} decision
    * @returns {Promise<Response>}
    */

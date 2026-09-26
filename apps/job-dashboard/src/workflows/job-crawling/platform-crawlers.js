@@ -1,6 +1,54 @@
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 import { resolveWantedSession } from './session.js';
 
+/**
+ * @typedef {{
+ *   keyword?: unknown;
+ *   keywords?: unknown;
+ *   limit?: unknown;
+ *   offset?: unknown;
+ *   location?: string;
+ *   [key: string]: unknown;
+ * }} CrawlCriteria
+ *
+ * @typedef {import('./session.js').SessionEnv & {
+ *   SESSIONS: { get(key: string): Promise<string | null> };
+ * }} CrawlerEnv
+ *
+ * @typedef {{
+ *   id: string;
+ *   company: string;
+ *   position: string;
+ *   url: string;
+ *   location: string;
+ *   experience: string | number;
+ * }} CrawledPosting
+ *
+ * @typedef {{ jobs: CrawledPosting[]; error?: string }} CrawlResult
+ *
+ * @typedef {{
+ *   id: string | number;
+ *   company?: { name?: string };
+ *   position?: string;
+ *   address?: { location?: string };
+ *   years?: string | number;
+ * }} WantedJobPosting
+ *
+ * @typedef {{
+ *   id?: string | number;
+ *   organization?: { name?: string };
+ *   company?: { name?: string };
+ *   title?: string;
+ *   location?: { name?: string };
+ *   address?: { full_location?: string };
+ *   career_period?: string | number;
+ * }} RememberJobPosting
+ */
+
+/**
+ * @param {CrawlCriteria} [criteria]
+ * @returns {string}
+ */
 function normalizeKeyword(criteria = {}) {
   for (const candidate of [criteria?.keyword, criteria?.keywords]) {
     const values = Array.isArray(candidate) ? candidate : [candidate];
@@ -14,12 +62,13 @@ function normalizeKeyword(criteria = {}) {
 /**
  * Dispatch crawling to the selected platform adapter.
  *
- * @param {Object} env
+ * @param {CrawlerEnv} env
  * @param {string} platform
- * @param {Object} criteria
- * @returns {Promise<{jobs: Object[], error?: string}>}
+ * @param {CrawlCriteria} criteria
+ * @returns {Promise<CrawlResult>}
  */
 export async function crawlPlatform(env, platform, criteria) {
+  /** @type {Record<string, () => Promise<CrawlResult>>} */
   const clients = {
     wanted: () => crawlWanted(env, criteria),
     linkedin: () => crawlLinkedIn(criteria),
@@ -35,9 +84,9 @@ export async function crawlPlatform(env, platform, criteria) {
 }
 
 /**
- * @param {Object} env
- * @param {Object} criteria
- * @returns {Promise<{jobs: Object[], error?: string}>}
+ * @param {CrawlerEnv} env
+ * @param {CrawlCriteria} [criteria]
+ * @returns {Promise<CrawlResult>}
  */
 export async function crawlWanted(env, criteria = {}) {
   const session = await env.SESSIONS.get('auth:wanted');
@@ -72,6 +121,7 @@ export async function crawlWanted(env, criteria = {}) {
       return { jobs: [], error: `API error: ${response.status}` };
     }
 
+    /** @type {{ data?: WantedJobPosting[] }} */
     const data = await response.json();
     return {
       jobs: (data.data || []).map((job) => ({
@@ -84,13 +134,13 @@ export async function crawlWanted(env, criteria = {}) {
       })),
     };
   } catch (error) {
-    return { jobs: [], error: error.message };
+    return { jobs: [], error: error instanceof Error ? error.message : String(error) };
   }
 }
 
 /**
- * @param {Object} criteria
- * @returns {Promise<{jobs: Object[], error?: string}>}
+ * @param {CrawlCriteria} [criteria]
+ * @returns {Promise<CrawlResult>}
  */
 export async function crawlLinkedIn(criteria = {}) {
   try {
@@ -135,13 +185,13 @@ export async function crawlLinkedIn(criteria = {}) {
 
     return { jobs };
   } catch (error) {
-    return { jobs: [], error: error.message };
+    return { jobs: [], error: error instanceof Error ? error.message : String(error) };
   }
 }
 
 /**
- * @param {Object} criteria
- * @returns {Promise<{jobs: Object[], error?: string}>}
+ * @param {CrawlCriteria} [criteria]
+ * @returns {Promise<CrawlResult>}
  */
 export async function crawlRemember(criteria = {}) {
   try {
@@ -175,6 +225,7 @@ export async function crawlRemember(criteria = {}) {
     }
 
     const data = await response.json();
+    /** @type {RememberJobPosting[]} */
     const rawJobs = Array.isArray(data?.data?.job_postings)
       ? data.data.job_postings
       : Array.isArray(data?.data)
@@ -194,6 +245,6 @@ export async function crawlRemember(criteria = {}) {
         })),
     };
   } catch (error) {
-    return { jobs: [], error: error.message };
+    return { jobs: [], error: error instanceof Error ? error.message : String(error) };
   }
 }

@@ -24,10 +24,9 @@ import { TelegramWebhookHandler } from './telegram-webhook-handler.js';
  *   TELEGRAM_BOT_TOKEN?: string;
  *   TELEGRAM_CHAT_ID?: string | number;
  *   [key: string]: unknown;
- * }} WebhookEnv
+ * } & import('../services/notifications.js').NotificationEnv} WebhookEnv
  *
- * @typedef {import('./auto-apply-webhook-handler.js').AutoApplyAuth &
- *   Record<string, unknown>} WebhookAuth
+ * @typedef {import('./auto-apply-webhook-handler.js').AutoApplyAuth} WebhookAuth
  */
 
 export class WebhookHandler {

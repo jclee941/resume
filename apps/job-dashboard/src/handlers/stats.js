@@ -10,10 +10,7 @@
  *   };
  * }} StatsDb
  *
- * @typedef {{
- *   query: { date?: string };
- *   [key: string]: unknown;
- * }} StatsRequest
+ * @typedef {import('../router.js').RouterRequest} StatsRequest
  *
  * @typedef {{
  *   total: number;

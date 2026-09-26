@@ -4,6 +4,11 @@ import { SUPPORTED_PLATFORMS } from './constants.js';
 import { jsonResponse } from '../../middleware/cors.js';
 import { ATS_DRY_RUN_PLATFORMS } from '../../workflows/application/platforms.js';
 
+/**
+ * @typedef {import('./db-helpers.js').DbEnv} StatusEnv
+ * @typedef {import('./db-helpers.js').D1DatabaseLike} StatusDb
+ */
+
 const SAFE_CONFIG = {
   autoApplyEnabled: false,
   maxDailyApplications: 0,
@@ -11,10 +16,15 @@ const SAFE_CONFIG = {
   keywords: [],
 };
 
+/**
+ * @param {StatusEnv} env
+ * @returns {Promise<Response>}
+ */
 export async function getAutoApplyStatus(env) {
   const config = await getSafeConfig(env);
   const todayCount = await getSafeTodayCount(env);
   const cookies = await getSafeWantedSession(env);
+  /** @type {Record<string, Record<string, unknown>>} */
   const platformStatus = {};
   const pendingApprovals = await getPendingApprovalCount(env);
 
@@ -54,6 +64,9 @@ export async function getAutoApplyStatus(env) {
   });
 }
 
+/**
+ * @param {StatusEnv} env
+ */
 async function getSafeConfig(env) {
   try {
     return { ...SAFE_CONFIG, ...(await getConfig(env)) };
@@ -62,6 +75,11 @@ async function getSafeConfig(env) {
   }
 }
 
+/**
+ * @param {StatusEnv} env
+ * @param {string | null} [platform]
+ * @returns {Promise<number>}
+ */
 async function getSafeTodayCount(env, platform = null) {
   try {
     return await getTodayApplicationCount(env, platform);
@@ -70,6 +88,10 @@ async function getSafeTodayCount(env, platform = null) {
   }
 }
 
+/**
+ * @param {StatusEnv} env
+ * @returns {Promise<string | null>}
+ */
 async function getSafeWantedSession(env) {
   try {
     return await getWantedSession(env);
@@ -78,6 +100,10 @@ async function getSafeWantedSession(env) {
   }
 }
 
+/**
+ * @param {StatusEnv} env
+ * @returns {Promise<number>}
+ */
 async function getPendingApprovalCount(env) {
   const db = env?.DB || env?.JOB_DB;
   if (!db) return 0;
@@ -89,6 +115,10 @@ async function getPendingApprovalCount(env) {
   }
 }
 
+/**
+ * @param {StatusDb} db
+ * @returns {Promise<number>}
+ */
 async function countPendingApprovalRequests(db) {
   const result = await db
     .prepare('SELECT COUNT(*) as count FROM approval_requests WHERE status IN (?, ?, ?)')
@@ -97,6 +127,10 @@ async function countPendingApprovalRequests(db) {
   return result?.count || 0;
 }
 
+/**
+ * @param {StatusDb} db
+ * @returns {Promise<number>}
+ */
 async function countPendingApplicationApprovals(db) {
   try {
     const result = await db
