@@ -18,10 +18,30 @@ const DEFAULT_LOKI_URL =
 const DEFAULT_TIMEOUT_MS = 5000;
 
 /**
+ * @typedef {Object} LokiTransportOptions
+ * @property {number} [timeoutMs]
+ */
+
+/**
+ * @typedef {Record<string, string | undefined> & {
+ *   LOKI_API_KEY?: string,
+ *   LOKI_URL?: string,
+ * }} LokiEnv
+ */
+
+/**
+ * @typedef {Object} LokiEntry
+ * @property {string} level
+ * @property {string} message
+ * @property {string} [service]
+ * @property {Record<string, unknown>} [labels]
+ * @property {LokiEnv} [env]
+ */
+
+/**
  * Create a Loki transport.
- * @param {Object} [options]
- * @param {number} [options.timeoutMs]
- * @returns {{name: string, send: Function}}
+ * @param {LokiTransportOptions} [options]
+ * @returns {{ name: string, send: (entry: LokiEntry) => Promise<void> }}
  */
 export function createLokiTransport(options = {}) {
   const timeoutMs = options.timeoutMs || DEFAULT_TIMEOUT_MS;
@@ -31,12 +51,7 @@ export function createLokiTransport(options = {}) {
 
     /**
      * Send one log entry to Loki. Fire-and-forget on transport errors.
-     * @param {Object} entry
-     * @param {string} entry.level
-     * @param {string} entry.message
-     * @param {string} entry.service
-     * @param {Object} entry.labels
-     * @param {Object} entry.env
+     * @param {LokiEntry} entry
      */
     async send(entry) {
       const env = entry.env || {};
@@ -84,17 +99,21 @@ export function createLokiTransport(options = {}) {
  * Loki stream labels must be a flat string→string map. Recursively flatten
  * nested label objects (e.g. `http.request.method`) into dotted keys and drop
  * non-stringifiable values.
- * @param {Object} labels
+ * @param {Record<string, unknown>} labels
  * @param {string} [prefix]
  * @returns {Record<string, string>}
  */
 function flattenLabelsForLoki(labels, prefix = '') {
+  /** @type {Record<string, string>} */
   const out = {};
   for (const [key, value] of Object.entries(labels)) {
     if (value === null || value === undefined) continue;
     const flatKey = prefix ? `${prefix}_${key}` : key;
     if (typeof value === 'object' && !Array.isArray(value)) {
-      Object.assign(out, flattenLabelsForLoki(value, flatKey));
+      Object.assign(
+        out,
+        flattenLabelsForLoki(/** @type {Record<string, unknown>} */ (value), flatKey)
+      );
     } else if (
       typeof value === 'string' ||
       typeof value === 'number' ||

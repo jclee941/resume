@@ -40,21 +40,32 @@ const ALLOWED_SH_PATTERNS = [/^\.githooks\//];
 // Catch-all filenames prohibited in source directories
 const CATCH_ALL_NAMES = new Set(['utils', 'helpers', 'misc']);
 
+/**
+ * @param {string} filePath
+ * @returns {boolean}
+ */
 function isExcludedDir(filePath) {
   const parts = filePath.split(path.sep);
   return parts.some((p) => EXCLUDED_DIRS.has(p));
 }
 
+/**
+ * @param {string} filePath
+ * @returns {boolean}
+ */
 function isAllowedSh(filePath) {
   return ALLOWED_SH_PATTERNS.some((re) => re.test(filePath));
 }
 
+/**
+ * @returns {string[]}
+ */
 function getTrackedFiles() {
   try {
     const out = execSync('git ls-files', { encoding: 'utf-8', cwd: REPO_ROOT });
     return out.trim().split('\n').filter(Boolean);
   } catch (error) {
-    console.error(`Error: unable to run git ls-files: ${error.message}`);
+    console.error(`Error: unable to run git ls-files: ${/** @type {Error} */ (error).message}`);
     process.exit(EXIT_VIOLATION);
   }
 }

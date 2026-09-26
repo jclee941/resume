@@ -1,3 +1,54 @@
+/**
+ * @typedef {Object} ServiceStatsEntry
+ * @property {number} executions
+ * @property {number} successes
+ * @property {number} failures
+ * @property {number} retries
+ * @property {number} circuitRejections
+ * @property {number} totalLatencyMs
+ * @property {number} minLatencyMs
+ * @property {number} maxLatencyMs
+ * @property {string | Error | null} lastError
+ */
+
+/**
+ * @typedef {Object} FormattedServiceStats
+ * @property {number} executions
+ * @property {number} successes
+ * @property {number} failures
+ * @property {number} retries
+ * @property {number} circuitRejections
+ * @property {number} successRate
+ * @property {number} averageLatencyMs
+ * @property {number | null} minLatencyMs
+ * @property {number | null} maxLatencyMs
+ * @property {string | Error | null} lastError
+ */
+
+/**
+ * @typedef {Object} StatsState
+ * @property {number} totalExecutions
+ * @property {number} totalSuccesses
+ * @property {number} totalFailures
+ * @property {number} totalRetries
+ * @property {number} totalCircuitRejections
+ * @property {Map<string, ServiceStatsEntry>} services
+ */
+
+/**
+ * @typedef {Object} OverallStats
+ * @property {number} totalExecutions
+ * @property {number} totalSuccesses
+ * @property {number} totalFailures
+ * @property {number} totalRetries
+ * @property {number} totalCircuitRejections
+ * @property {number} totalSuccessRate
+ * @property {Record<string, FormattedServiceStats>} services
+ */
+
+/**
+ * @returns {StatsState}
+ */
 export function createStats() {
   return {
     totalExecutions: 0,
@@ -9,6 +60,11 @@ export function createStats() {
   };
 }
 
+/**
+ * @param {StatsState} state
+ * @param {string} name
+ * @returns {ServiceStatsEntry}
+ */
 export function serviceStats(state, name) {
   if (!state.services.has(name)) {
     state.services.set(name, {
@@ -23,15 +79,24 @@ export function serviceStats(state, name) {
       lastError: null,
     });
   }
-  return state.services.get(name);
+  return /** @type {ServiceStatsEntry} */ (state.services.get(name));
 }
 
+/**
+ * @param {ServiceStatsEntry} s
+ * @param {number} ms
+ * @returns {void}
+ */
 export function addLatency(s, ms) {
   s.totalLatencyMs += ms;
   s.minLatencyMs = Math.min(s.minLatencyMs, ms);
   s.maxLatencyMs = Math.max(s.maxLatencyMs, ms);
 }
 
+/**
+ * @param {ServiceStatsEntry} s
+ * @returns {FormattedServiceStats}
+ */
 function formatServiceStats(s) {
   const successRate = s.executions > 0 ? s.successes / s.executions : 0;
   return {
@@ -48,7 +113,12 @@ function formatServiceStats(s) {
   };
 }
 
+/**
+ * @param {StatsState} statsState
+ * @returns {OverallStats}
+ */
 export function formatOverallStats(statsState) {
+  /** @type {Record<string, FormattedServiceStats>} */
   const services = {};
   for (const [serviceName, value] of statsState.services.entries()) {
     services[serviceName] = formatServiceStats(value);

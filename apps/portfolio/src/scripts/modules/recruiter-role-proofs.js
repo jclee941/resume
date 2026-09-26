@@ -1,11 +1,18 @@
 import { ROLE_PROFILES, getProofCountLabel } from './recruiter-enhancements-data.js';
 
+/**
+ * @param {string} text
+ * @returns {string[]}
+ */
 function roleIdsForText(text) {
   return ROLE_PROFILES.filter((role) =>
     role.keywords.some((keyword) => text.includes(keyword))
   ).map((role) => role.id);
 }
 
+/**
+ * @returns {Element[]}
+ */
 export function tagProjectCards() {
   const cards = Array.from(document.querySelectorAll('#projects li.project-item'));
   cards.forEach((card) => {
@@ -16,6 +23,10 @@ export function tagProjectCards() {
   return cards;
 }
 
+/**
+ * @param {Element[]} cards
+ * @returns {Map<string, number>}
+ */
 export function countRoleProofs(cards) {
   const counts = new Map(ROLE_PROFILES.map((role) => [role.id, 0]));
   cards.forEach((card) => {
@@ -25,10 +36,19 @@ export function countRoleProofs(cards) {
   return counts;
 }
 
+/**
+ * @param {Map<string, number>} proofCounts
+ * @param {string} roleId
+ * @returns {string}
+ */
 export function roleProofCountText(proofCounts, roleId) {
   return getProofCountLabel(proofCounts.get(roleId) || 0);
 }
 
+/**
+ * @param {Map<string, number>} proofCounts
+ * @returns {void}
+ */
 export function applyRoleProofCounts(proofCounts) {
   document.querySelectorAll('.role-chip').forEach((button) => {
     const roleId = button.getAttribute('data-role-filter') || '';

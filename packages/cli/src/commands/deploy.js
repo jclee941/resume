@@ -3,6 +3,10 @@ import chalk from 'chalk';
 import fs from 'fs';
 import path from 'path';
 
+/**
+ * @param {string} baseDir
+ * @returns {string}
+ */
 function resolveRepositoryRoot(baseDir) {
   let current = path.resolve(baseDir);
   while (true) {
@@ -17,6 +21,25 @@ function resolveRepositoryRoot(baseDir) {
   throw new Error(`No root Wrangler config found above ${baseDir}`);
 }
 
+/**
+ * @typedef {Object} DeployOptions
+ * @property {string} [workerFile]
+ * @property {string} [dir]
+ * @property {string} env
+ */
+
+/**
+ * @typedef {Object} WranglerDeployInvocation
+ * @property {string} command
+ * @property {string[]} args
+ * @property {string} cwd
+ * @property {Record<string, string>} environment
+ */
+
+/**
+ * @param {DeployOptions} options
+ * @returns {WranglerDeployInvocation}
+ */
 export function createWranglerDeployInvocation({ workerFile, dir, env }) {
   const targetDirectory = workerFile ? path.dirname(workerFile) : dir;
   if (!targetDirectory) throw new Error('A worker file or directory is required');
@@ -30,6 +53,10 @@ export function createWranglerDeployInvocation({ workerFile, dir, env }) {
   return { command: 'npx', args, cwd, environment: { CLOUDFLARE_ENV: '' } };
 }
 
+/**
+ * @param {DeployOptions} options
+ * @returns {Promise<void>}
+ */
 export async function deploy(options) {
   console.log(chalk.blue('🚀 Starting deployment...'));
 
@@ -52,7 +79,7 @@ export async function deploy(options) {
 
     console.log(chalk.green('✅ Deployment successful!'));
   } catch (error) {
-    console.error(chalk.red('❌ Deployment failed:'), error.message);
+    console.error(chalk.red('❌ Deployment failed:'), /** @type {Error} */ (error).message);
     process.exit(1);
   }
 }

@@ -16,6 +16,10 @@ export const JOB_CATEGORIES = {
   pm: 876,
 };
 
+/**
+ * @param {import('../../../../types/src/wanted.js').RawWantedJob} job
+ * @returns {import('../../../../types/src/wanted.js').WantedJob}
+ */
 export function normalizeJob(job) {
   return {
     id: job.id,
@@ -38,6 +42,10 @@ export function normalizeJob(job) {
   };
 }
 
+/**
+ * @param {import('../../../../types/src/wanted.js').RawWantedJobDetail} detail
+ * @returns {import('../../../../types/src/wanted.js').WantedJobDetail}
+ */
 export function normalizeJobDetail(detail) {
   return {
     ...normalizeJob(detail),
@@ -50,6 +58,10 @@ export function normalizeJobDetail(detail) {
   };
 }
 
+/**
+ * @param {import('../../../../types/src/wanted.js').RawWantedCompany} company
+ * @returns {import('../../../../types/src/wanted.js').WantedCompany}
+ */
 export function normalizeCompany(company) {
   return {
     id: company.id,

@@ -1,6 +1,28 @@
 import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 
+/**
+ * @typedef {Object} AuditVulnerability
+ * @property {unknown[]} via
+ * @property {string} severity
+ */
+
+/**
+ * @typedef {Object} AuditReportError
+ * @property {string} [code]
+ * @property {string} [summary]
+ */
+
+/**
+ * @typedef {Object} AuditReport
+ * @property {AuditReportError} [error]
+ * @property {Record<string, AuditVulnerability>} [vulnerabilities]
+ */
+
+/**
+ * @param {AuditReport} report
+ * @returns {{ violations: string[] }}
+ */
 export function evaluateAuditReport(report) {
   if (report?.error) {
     const { code = 'unknown', summary = '' } = report.error;
@@ -38,15 +60,22 @@ function runAudit() {
       stdio: ['ignore', 'pipe', 'pipe'],
     });
   } catch (error) {
-    if (!error || typeof error !== 'object' || typeof error.stdout !== 'string') throw error;
-    output = error.stdout;
+    if (
+      !error ||
+      typeof error !== 'object' ||
+      typeof (/** @type {{ stdout?: unknown }} */ (error).stdout) !== 'string'
+    )
+      throw error;
+    output = /** @type {{ stdout: string }} */ (error).stdout;
   }
 
   let report;
   try {
     report = JSON.parse(output);
   } catch (error) {
-    throw new Error(`npm audit returned invalid JSON: ${error.message}`, { cause: error });
+    throw new Error(`npm audit returned invalid JSON: ${/** @type {Error} */ (error).message}`, {
+      cause: error,
+    });
   }
 
   const result = evaluateAuditReport(report);

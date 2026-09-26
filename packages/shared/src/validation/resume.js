@@ -14,6 +14,26 @@ function resolveSchemaPath() {
   }
 }
 
+/**
+ * @typedef {Object} ValidationError
+ * @property {string} [path]
+ * @property {string} [field]
+ * @property {string} message
+ * @property {string | null} [sourceFile]
+ * @property {string} [jsonPointer]
+ * @property {number | null} [arrayIndex]
+ * @property {unknown} [rawInput]
+ * @property {string} [expected]
+ * @property {string | null} [expectedFormat]
+ * @property {string[] | null} [allowed]
+ * @property {string} [type]
+ * @property {string} [code]
+ */
+
+/**
+ * @param {Record<string, unknown> | null | undefined} schema
+ * @returns {boolean}
+ */
 function isUsableSchema(schema) {
   return (
     schema !== null &&
@@ -49,6 +69,12 @@ function loadValidatorEngine() {
     return validatorEngine;
   } catch {
     return {
+      /**
+       * @param {unknown} _data
+       * @param {unknown} _schema
+       * @param {string | null} [sourceFile]
+       * @returns {{ valid: boolean, errors: ValidationError[] }}
+       */
       validateResumeData: (_data, _schema, sourceFile) => ({
         valid: false,
         errors: [
@@ -67,6 +93,12 @@ function loadValidatorEngine() {
 export const masterSchema = loadMasterSchema();
 const validatorEngine = loadValidatorEngine();
 
+/**
+ * @param {unknown} data
+ * @param {Record<string, unknown> | null} [schema]
+ * @param {string | null} [sourceFile]
+ * @returns {{ valid: boolean, errors?: ValidationError[] }}
+ */
 export function validateResumeData(data, schema = masterSchema, sourceFile) {
   if (!isUsableSchema(schema)) {
     return {
@@ -83,13 +115,23 @@ export function validateResumeData(data, schema = masterSchema, sourceFile) {
   }
 
   if (data === null || data === undefined || typeof data !== 'object') {
-    return { valid: false, errors: [diagnostic('(root)', 'Resume data must be an object', data, sourceFile)] };
+    return {
+      valid: false,
+      errors: [diagnostic('(root)', 'Resume data must be an object', data, sourceFile)],
+    };
   }
 
   const result = validatorEngine.validateResumeData(data, schema, sourceFile);
   return { valid: result.valid, errors: result.errors ?? undefined };
 }
 
+/**
+ * @param {string} path
+ * @param {string} message
+ * @param {unknown} [rawInput]
+ * @param {string | null} [sourceFile]
+ * @returns {ValidationError}
+ */
 function diagnostic(path, message, rawInput = null, sourceFile = null) {
   return {
     path,
@@ -106,6 +148,10 @@ function diagnostic(path, message, rawInput = null, sourceFile = null) {
   };
 }
 
+/**
+ * @param {ValidationError[] | unknown} errors
+ * @returns {Record<string, unknown>[]}
+ */
 export function formatErrorsForMCP(errors) {
   if (!errors || !Array.isArray(errors)) return [];
   return errors.map((error) => {

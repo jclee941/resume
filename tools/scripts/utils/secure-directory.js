@@ -13,10 +13,28 @@ function requireFdRelativeSupport() {
   }
 }
 
+/**
+ * @typedef {Object} PinnedDirectoryBinding
+ * @property {number} descriptor
+ * @property {string} fdPath
+ * @property {import('node:fs').Stats} identity
+ * @property {string} originalPath
+ */
+
+/**
+ * @param {import('node:fs').Stats | { dev: number, ino: number }} left
+ * @param {import('node:fs').Stats | { dev: number, ino: number }} right
+ * @returns {boolean}
+ */
 function sameIdentity(left, right) {
   return left.dev === right.dev && left.ino === right.ino;
 }
 
+/**
+ * @param {string} directoryPath
+ * @param {string} [originalPath]
+ * @returns {PinnedDirectoryBinding}
+ */
 function openPinnedDirectory(directoryPath, originalPath = directoryPath) {
   requireFdRelativeSupport();
   const descriptor = fs.openSync(
@@ -42,6 +60,10 @@ function openPinnedDirectory(directoryPath, originalPath = directoryPath) {
   }
 }
 
+/**
+ * @param {PinnedDirectoryBinding} binding
+ * @returns {boolean}
+ */
 function matchesOriginal(binding) {
   try {
     const current = fs.lstatSync(binding.originalPath);
@@ -52,11 +74,20 @@ function matchesOriginal(binding) {
   }
 }
 
+/**
+ * @param {PinnedDirectoryBinding} binding
+ * @param {string} name
+ * @returns {string}
+ */
 function leafPath(binding, name) {
   if (path.basename(name) !== name) throw new Error(`Directory-FD path must be a leaf: ${name}`);
   return path.join(binding.fdPath, name);
 }
 
+/**
+ * @param {PinnedDirectoryBinding} binding
+ * @returns {void}
+ */
 function closePinnedDirectory(binding) {
   fs.closeSync(binding.descriptor);
 }

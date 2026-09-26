@@ -10,6 +10,20 @@ const path = require('path');
 
 const WEB_DIR = path.join(__dirname, '../../../apps/portfolio');
 
+/**
+ * @typedef {Object} OptimizeImageOptions
+ * @property {number | null} [width]
+ * @property {number | null} [height]
+ * @property {number} [quality]
+ * @property {number} [effort]
+ */
+
+/**
+ * @param {string} inputPath
+ * @param {string} outputPath
+ * @param {OptimizeImageOptions} [options]
+ * @returns {Promise<void>}
+ */
 async function optimizeImage(inputPath, outputPath, options = {}) {
   const {width = null, height = null, quality = 80, effort = 6} = options;
 
