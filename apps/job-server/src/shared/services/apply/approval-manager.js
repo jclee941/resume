@@ -41,8 +41,16 @@ export class ApprovalWorkflowManager {
    * @param {ApprovalWorkflowOptions} [options]
    */
   constructor(options = {}) {
-    this.applicationRepository = options.applicationRepository || new ApplicationRepository();
-    this.notificationAdapter = options.notificationAdapter || new TelegramNotificationAdapter();
+    /** @type {ApplicationRepository & import('./approval-processor.js').ApprovalContext['applicationRepository']} */
+    this.applicationRepository =
+      /** @type {ApplicationRepository & import('./approval-processor.js').ApprovalContext['applicationRepository']} */ (
+        options.applicationRepository || new ApplicationRepository()
+      );
+    /** @type {TelegramNotificationAdapter & import('./approval-processor.js').ApprovalContext['notificationAdapter']} */
+    this.notificationAdapter =
+      /** @type {TelegramNotificationAdapter & import('./approval-processor.js').ApprovalContext['notificationAdapter']} */ (
+        options.notificationAdapter || new TelegramNotificationAdapter()
+      );
     this.logger = options.logger || console;
     this.config = {
       approvalTimeoutHours: asNumber(options.config?.approvalTimeoutHours, 24),
@@ -100,10 +108,10 @@ export class ApprovalWorkflowManager {
 
   /**
    * @param {string} applicationId
-   * @returns {Promise<import('./approval-reviewer.js').ApprovalRequestRecord>}
+   * @returns {Promise<import('./approval-processor.js').PendingApprovalRecord>}
    */
   async getApprovalRequestById(applicationId) {
-    return await /** @type {Promise<import('./approval-reviewer.js').ApprovalRequestRecord>} */ (
+    return await /** @type {Promise<import('./approval-processor.js').PendingApprovalRecord>} */ (
       getApprovalRequestById(this.applicationRepository, applicationId)
     );
   }
@@ -134,7 +142,7 @@ export class ApprovalWorkflowManager {
   }
 
   /**
-   * @param {unknown} request
+   * @param {{ status?: unknown } | null | undefined} request
    * @param {string} applicationId
    */
   assertPendingRequest(request, applicationId) {

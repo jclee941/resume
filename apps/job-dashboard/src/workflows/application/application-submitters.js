@@ -10,8 +10,11 @@ import { submitWithBrowserRendering } from './browser-rendering-submit.js';
  * }} SubmitResume
  *
  * @typedef {{
- *   env: Record<string, unknown>;
- *   [key: string]: unknown;
+ *   env: Record<string, unknown> & {
+ *     MYBROWSER?: import('@cloudflare/puppeteer').BrowserWorker;
+ *     SESSIONS?: { get: Function };
+ *     ENCRYPTION_KEY?: string;
+ *   };
  * }} SubmitContext
  *
  * @typedef {{

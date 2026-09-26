@@ -10,6 +10,45 @@ function toIso(value = Date.now()) {
   return new Date(value).toISOString();
 }
 
+/**
+ * @typedef {{
+ *   id?: string;
+ *   job_id?: string;
+ *   applicationId?: string;
+ *   application_id?: string;
+ *   workflowId?: string;
+ *   workflow_id?: string;
+ *   position?: string;
+ *   title?: string;
+ *   company?: string;
+ *   companyName?: string;
+ *   source?: string;
+ *   platform?: string;
+ *   [key: string]: unknown;
+ * }} ApprovalJob
+ */
+
+/**
+ * @typedef {{
+ *   applicationRepository: import('../../repositories/application-repository.js').ApplicationRepository;
+ *   notificationAdapter: {
+ *     sendApprovalRequest: (
+ *       job: Record<string, unknown>,
+ *       matchScore: number,
+ *       applicationId: string
+ *     ) => Promise<unknown>;
+ *   };
+ *   config: {
+ *     approvalTimeoutHours: number;
+ *   };
+ * }} ApprovalRequesterContext
+ */
+
+/**
+ * @param {ApprovalRequesterContext} context
+ * @param {ApprovalJob} job
+ * @param {number | string} matchScore
+ */
 export async function requestApproval(context, job, matchScore) {
   const score = Number(matchScore);
   if (!Number.isFinite(score) || score < 60 || score > 74) {
@@ -19,7 +58,10 @@ export async function requestApproval(context, job, matchScore) {
   }
 
   const applicationId = resolveApplicationId(job);
-  const application = await context.applicationRepository.findById(applicationId);
+  const application =
+    /** @type {{ workflow_id?: string; job_id?: string; position?: string; company?: string; source?: string; [key: string]: unknown } | null} */ (
+      await context.applicationRepository.findById(applicationId)
+    );
   if (!application) {
     throw new AppError('Application not found for approval request', ErrorCodes.NOT_FOUND, 404, {
       applicationId,

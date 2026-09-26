@@ -2,7 +2,7 @@
  * @fileoverview Platform crawl execution for crawl orchestration.
  * @typedef {import('./constants.js').CrawlOrchestratorOptions} CrawlOrchestratorOptions
  * @typedef {import('./result-aggregation.js').PlatformResult} PlatformResult
- * @typedef {import('./orchestrator.js').CrawlOrchestrator} CrawlOrchestrator
+ * @typedef {import('./orchestrator.js').CrawlOrchestrator & { _crawlPlatform(platform: string, searchParams: SearchParams, taskId: string, opts?: unknown): Promise<PlatformResult> }} CrawlOrchestrator
  * @typedef {import('../../../../crawlers/unified/job-normalization.js').ConvertParamsInput & { keywords: string | string[], extra?: import('../../../../crawlers/unified/search-operations.js').SearchOptions }} SearchParams
  * @typedef {Error & { statusCode?: number, status?: number, retryAfter?: number }} PlatformCrawlError
  */

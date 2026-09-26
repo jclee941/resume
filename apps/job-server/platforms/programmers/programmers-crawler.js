@@ -23,7 +23,6 @@ import { BaseCrawler } from '../../src/crawlers/base-crawler.js';
 export class ProgrammersCrawler extends BaseCrawler {
   /**
    * @param {import('../../src/crawlers/base-crawler.js').BaseCrawlerOptions} [options] - Crawler options
-   * @param {number} [options.rateLimit=1200] - Rate limit in ms between requests
    */
   constructor(options = {}) {
     super('programmers', {
@@ -36,11 +35,7 @@ export class ProgrammersCrawler extends BaseCrawler {
 
   /**
    * Build search query URL from parameters.
-   * @param {ProgrammersSearchParams} params - Search parameters
-   * @param {string} [params.keyword] - Search keyword
-   * @param {number} [params.offset=0] - Pagination offset
-   * @param {number} [params.limit=20] - Results per page
-   * @param {string} [params.category] - Job category filter
+   * @param {ProgrammersSearchParams} [params] - Search parameters
    * @returns {string} Query URL
    */
   buildSearchQuery(params = {}) {

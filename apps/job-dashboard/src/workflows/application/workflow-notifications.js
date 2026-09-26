@@ -1,15 +1,13 @@
 import { NotificationService, escapeHtml } from '../../services/notifications.js';
 
 /**
- * @typedef {{
- *   company: string;
- *   position: string;
- *   matchScore: number | string;
+ * @typedef {import('./application-submission-gates.js').GateJob & {
+ *   matchScore?: number | string;
  * }} ApprovedJob
  */
 
 /**
- * @param {{ env: Record<string, unknown> }} ctx
+ * @param {{ env: import('../../services/notifications.js').NotificationEnv }} ctx
  * @returns {NotificationService}
  */
 export function createNotificationService(ctx) {

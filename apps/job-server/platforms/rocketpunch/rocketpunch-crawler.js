@@ -23,7 +23,6 @@ import { BaseCrawler } from '../../src/crawlers/base-crawler.js';
 export class RocketPunchCrawler extends BaseCrawler {
   /**
    * @param {import('../../src/crawlers/base-crawler.js').BaseCrawlerOptions} [options] - Crawler options
-   * @param {number} [options.rateLimit=1500] - Rate limit in ms between requests
    */
   constructor(options = {}) {
     super('rocketpunch', {
@@ -36,12 +35,7 @@ export class RocketPunchCrawler extends BaseCrawler {
 
   /**
    * Build search query URL from parameters.
-   * @param {RocketPunchSearchParams} params - Search parameters
-   * @param {string} [params.keyword] - Search keyword
-   * @param {number} [params.offset=0] - Pagination offset
-   * @param {number} [params.limit=20] - Results per page
-   * @param {string} [params.location] - Job location filter
-   * @param {string} [params.career] - Career level filter
+   * @param {RocketPunchSearchParams} [params] - Search parameters
    * @returns {string} Query URL
    */
   buildSearchQuery(params = {}) {

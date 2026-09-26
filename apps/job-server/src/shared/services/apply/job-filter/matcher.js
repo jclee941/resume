@@ -16,20 +16,53 @@ import {
   scoreAiCandidates,
 } from './scoring.js';
 
+/**
+ * @typedef {{
+ *   useAI?: boolean;
+ *   resumePath?: string | null;
+ * }} FilterOptions
+ *
+ * @typedef {import('./criteria.js').CriteriaJob & {
+ *   id?: string | number;
+ *   title?: string;
+ *   source?: string;
+ *   matchScore?: number;
+ *   [key: string]: unknown;
+ * }} FilterJob
+ *
+ * @typedef {{
+ *   score: number;
+ *   confidence: number | string;
+ *   timestamp: number;
+ * }} CachedAiScore
+ */
+
 export class JobFilter {
   #config;
   #aiScoreCache;
   #jobIdToCacheKey;
   #stats;
 
+  /**
+   * @param {import('./criteria.js').FilterConfigInput & { logger?: Console | { warn: (msg: string, ...args: unknown[]) => void; error?: (msg: string, ...args: unknown[]) => void } }} [config]
+   */
   constructor(config = {}) {
+    /** @type {Console | { warn: (msg: string, ...args: unknown[]) => void; error?: (msg: string, ...args: unknown[]) => void }} */
     this.logger = config.logger ?? console;
     this.#config = createFilterConfig(config);
+    /** @type {Map<string, CachedAiScore>} */
     this.#aiScoreCache = new Map();
+    /** @type {Map<string, string>} */
     this.#jobIdToCacheKey = new Map();
     this.#stats = createScoringStats();
   }
 
+  /**
+   * @template {FilterJob} T
+   * @param {T[]} jobs
+   * @param {Set<string>} [existingJobIds]
+   * @param {FilterOptions} [options]
+   */
   async filter(jobs, existingJobIds = new Set(), options = {}) {
     const { useAI = false, resumePath = null } = options;
     const deduplicated = deduplicateJobs(jobs, existingJobIds);
@@ -49,6 +82,11 @@ export class JobFilter {
     };
   }
 
+  /**
+   * @template {FilterJob} T
+   * @param {T[]} jobs
+   * @param {FilterOptions} [options]
+   */
   async scoreBatch(jobs, options = {}) {
     const { useAI = false, resumePath = null } = options;
     const scored = [];
@@ -101,10 +139,18 @@ export class JobFilter {
     };
   }
 
+  /**
+   * @param {Partial<import('./criteria.js').FilterConfigInput>} updates
+   */
   updateConfig(updates) {
     Object.assign(this.#config, updates);
   }
 
+  /**
+   * @template {FilterJob} T
+   * @param {T[]} jobs
+   * @param {Map<string, { heuristicScore: number }>} jobMeta
+   */
   #scoreHeuristicOnly(jobs, jobMeta) {
     return jobs.map((job) => {
       const heuristicScore = getHeuristicScore(job, jobMeta, this.#config);
@@ -113,6 +159,13 @@ export class JobFilter {
     });
   }
 
+  /**
+   * @template {FilterJob} T
+   * @param {T[]} jobs
+   * @param {Map<string, { heuristicScore: number }>} jobMeta
+   * @param {string} resumePath
+   * @returns {Promise<Map<string, CachedAiScore>>}
+   */
   async #collectAiScores(jobs, jobMeta, resumePath) {
     const aiCandidates = [];
     const uniqueCandidateKeys = new Set();
@@ -139,10 +192,16 @@ export class JobFilter {
       config: this.#config,
       logger: this.logger,
       stats: this.#stats,
-      setCachedAiScore: (key, value) => this.#setCachedAiScore(key, value),
+      setCachedAiScore: /** @type {(key: string, value: CachedAiScore) => void} */ (
+        (key, value) => this.#setCachedAiScore(key, value)
+      ),
     });
   }
 
+  /**
+   * @param {string} key
+   * @param {{ score: number; confidence: number | string; timestamp?: number }} aiData
+   */
   #setCachedAiScore(key, aiData) {
     this.#aiScoreCache.set(key, {
       score: aiData.score,
@@ -151,6 +210,10 @@ export class JobFilter {
     });
   }
 
+  /**
+   * @param {string} key
+   * @returns {CachedAiScore | null}
+   */
   #getCachedAiScore(key) {
     const cached = this.#aiScoreCache.get(key);
     if (!cached) return null;

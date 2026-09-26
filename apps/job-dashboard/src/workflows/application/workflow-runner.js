@@ -15,6 +15,12 @@ import {
   notifyNoJobs,
 } from './workflow-notifications.js';
 
+/**
+ * @param {import('../application.js').ApplicationWorkflow} ctx
+ * @param {import('cloudflare:workers').WorkflowEvent<import('../application.js').ApplicationWorkflowParams>} event
+ * @param {import('cloudflare:workers').WorkflowStep} step
+ * @returns {Promise<Record<string, unknown>>}
+ */
 export async function runApplicationWorkflow(ctx, event, step) {
   const {
     triggerType = 'manual',
@@ -38,6 +44,7 @@ export async function runApplicationWorkflow(ctx, event, step) {
       ? requestedPlatforms
       : [...new Set(explicitCandidates.map((job) => job.source).filter(Boolean))]
     : requestedPlatforms || ['wanted'];
+  /** @type {string[] & { payload?: typeof _eventData }} */
   const platforms = normalizeApplicationPlatforms(platformInput, { atsStub, dryRun });
   const criteria = atsStub ? { ...searchCriteria, atsStub } : searchCriteria;
 
@@ -104,6 +111,14 @@ export async function runApplicationWorkflow(ctx, event, step) {
   };
 }
 
+/**
+ * @param {import('../application.js').ApplicationWorkflow} ctx
+ * @param {import('cloudflare:workers').WorkflowStep} step
+ * @param {import('./workflow-records.js').WorkflowRecord} workflow
+ * @param {Array<Record<string, unknown> & { source: string }>} candidates
+ * @param {string[]} platforms
+ * @returns {Promise<Array<Record<string, unknown> & { source: string }>>}
+ */
 async function loadExplicitCandidates(ctx, step, workflow, candidates, platforms) {
   const platformSet = new Set(platforms);
   const jobsFound = await step.do(
@@ -128,6 +143,10 @@ async function loadExplicitCandidates(ctx, step, workflow, candidates, platforms
   return jobsFound;
 }
 
+/**
+ * @param {Array<Record<string, unknown> | null | undefined> | unknown} candidates
+ * @returns {Array<Record<string, unknown> & { id: string | number; source: string; sourceId: string | number; position: string; sourceUrl: string }>}
+ */
 function normalizeWorkflowCandidates(candidates) {
   if (!Array.isArray(candidates)) return [];
   return candidates
@@ -149,6 +168,15 @@ function normalizeWorkflowCandidates(candidates) {
     });
 }
 
+/**
+ * @param {import('../application.js').ApplicationWorkflow} ctx
+ * @param {import('cloudflare:workers').WorkflowStep} step
+ * @param {import('./workflow-records.js').WorkflowRecord} workflow
+ * @param {import('../../services/notifications.js').NotificationService} notificationService
+ * @param {string} triggerType
+ * @param {string[]} platforms
+ * @returns {Promise<Record<string, unknown>>}
+ */
 async function completeWithoutJobs(
   ctx,
   step,

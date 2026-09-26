@@ -12,31 +12,58 @@ import {
   normalizeJobKoreaJob,
 } from './jobkorea-crawler-utils.js';
 
+/**
+ * @typedef {import('../../src/crawlers/base-crawler.js').BaseCrawlerOptions & {
+ *   resumeNo?: string;
+ *   browserRunner?: <T>(action: (page: import('puppeteer').Page) => Promise<T>) => Promise<T>;
+ * }} JobKoreaCrawlerOptions
+ */
+
+/**
+ * @typedef {Object} JobKoreaSearchParams
+ * @property {string} [keyword]
+ * @property {string | number} [page]
+ * @property {number} [limit]
+ * @property {string} [sort]
+ * @property {number} [experience]
+ * @property {number} [experienceMax]
+ * @property {string} [location]
+ * @property {string} [jobCategory]
+ */
+
 export class JobKoreaCrawler extends BaseCrawler {
+  /**
+   * @param {JobKoreaCrawlerOptions} [options]
+   */
   constructor(options = {}) {
     super('jobkorea', {
       baseUrl: 'https://www.jobkorea.co.kr',
       rateLimit: 2000,
       ...options,
     });
+    /** @type {string} */
     this.resumeNo = options.resumeNo || process.env.JOBKOREA_RNO || '';
+    /** @type {<T>(action: (page: import('puppeteer').Page) => Promise<T>) => Promise<T>} */
     this.browserRunner = options.browserRunner || withStealthBrowser;
   }
 
+  /**
+   * @param {JobKoreaSearchParams} params
+   */
   buildSearchQuery(params) {
     const query = new URLSearchParams({
       stext: params.keyword || '',
       tabType: 'recruit',
-      Page_No: params.page || 1,
-      Page_Count: Math.min(params.limit || 20, 50),
+      Page_No: String(params.page || 1),
+      Page_Count: String(Math.min(params.limit || 20, 50)),
       orderBy: params.sort || 'RegDtDesc',
     });
 
     if (params.experience !== undefined) {
       query.set('careerType', params.experience === 0 ? 'N' : 'E');
       if (params.experience > 0) {
-        query.set('careerMin', params.experience);
-        query.set('careerMax', params.experienceMax || params.experience + 5);
+        query.set('careerMin', String(params.experience));
+        query.set('careerMax', String(params.experienceMax || params.experience + 5));
       }
     }
 
@@ -51,7 +78,11 @@ export class JobKoreaCrawler extends BaseCrawler {
     return query.toString();
   }
 
+  /**
+   * @param {string} location
+   */
   getLocationCode(location) {
+    /** @type {Record<string, string>} */
     const locationMap = {
       seoul: 'I000',
       서울: 'I000',
@@ -65,6 +96,9 @@ export class JobKoreaCrawler extends BaseCrawler {
     return locationMap[location.toLowerCase()] || '';
   }
 
+  /**
+   * @param {JobKoreaSearchParams} [params]
+   */
   async searchJobs(params = {}) {
     try {
       const jobs = await this.searchWithBrowser(params);
@@ -79,12 +113,15 @@ export class JobKoreaCrawler extends BaseCrawler {
       return {
         success: false,
         source: 'jobkorea',
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         jobs: [],
       };
     }
   }
 
+  /**
+   * @param {JobKoreaSearchParams} params
+   */
   async searchWithBrowser(params) {
     return withStealthBrowser(async (page) => {
       const query = this.buildSearchQuery(params);
@@ -104,6 +141,9 @@ export class JobKoreaCrawler extends BaseCrawler {
     });
   }
 
+  /**
+   * @param {string} jobId
+   */
   async getJobDetail(jobId) {
     try {
       const job = await withStealthBrowser(async (page) => {
@@ -147,11 +187,14 @@ export class JobKoreaCrawler extends BaseCrawler {
       return {
         success: false,
         source: 'jobkorea',
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   }
 
+  /**
+   * @param {string} [resumeNo]
+   */
   async getProfile(resumeNo = this.resumeNo) {
     if (!this.cookies) {
       return {
@@ -218,16 +261,22 @@ export class JobKoreaCrawler extends BaseCrawler {
         success: false,
         source: 'jobkorea',
         status: 'SCRAPE_FAILED',
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         profile: null,
       };
     }
   }
 
+  /**
+   * @param {import('puppeteer').Page} page
+   */
   async applyCookiesToPage(page) {
     return applyJobKoreaCookiesToPage(page, this.cookies);
   }
 
+  /**
+   * @param {import('./jobkorea-crawler-utils.js').RawJobKoreaJob} rawJob
+   */
   normalizeJob(rawJob) {
     return normalizeJobKoreaJob(rawJob, this.baseUrl);
   }

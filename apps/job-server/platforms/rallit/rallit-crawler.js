@@ -22,7 +22,6 @@ import { BaseCrawler } from '../../src/crawlers/base-crawler.js';
 export class RallitCrawler extends BaseCrawler {
   /**
    * @param {import('../../src/crawlers/base-crawler.js').BaseCrawlerOptions} [options] - Crawler options
-   * @param {number} [options.rateLimit=1200] - Rate limit in ms between requests
    */
   constructor(options = {}) {
     super('rallit', {
@@ -35,11 +34,7 @@ export class RallitCrawler extends BaseCrawler {
 
   /**
    * Build search query URL from parameters.
-   * @param {RallitSearchParams} params - Search parameters
-   * @param {string} [params.keyword] - Search keyword
-   * @param {number} [params.offset=0] - Pagination offset
-   * @param {number} [params.limit=20] - Results per page
-   * @param {string} [params.jobGroup] - Job group filter
+   * @param {RallitSearchParams} [params] - Search parameters
    * @returns {string} Query URL
    */
   buildSearchQuery(params = {}) {
