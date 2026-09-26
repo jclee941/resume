@@ -33,6 +33,12 @@ const acceptedReport = {
           url: 'https://github.com/advisories/GHSA-jmr9-qjv8-65gv',
           severity: 'high',
         },
+        {
+          name: 'extract-zip',
+          dependency: 'extract-zip',
+          url: 'https://github.com/advisories/GHSA-7pqw-9j4j-h8q3',
+          severity: 'high',
+        },
       ],
       effects: ['@puppeteer/browsers'],
       nodes: ['node_modules/extract-zip'],
@@ -45,7 +51,7 @@ describe('production dependency audit policy', () => {
     const result = evaluateAuditReport(structuredClone(acceptedReport));
 
     assert.deepEqual(result, {
-      acceptedAdvisories: ['GHSA-jmr9-qjv8-65gv'],
+      acceptedAdvisories: ['GHSA-7pqw-9j4j-h8q3', 'GHSA-jmr9-qjv8-65gv'],
       violations: [],
     });
   });
@@ -75,10 +81,30 @@ describe('production dependency audit policy', () => {
     assert.match(result.violations.join('\n'), /@puppeteer\/browsers.*graph/u);
   });
 
-  it('rejects malformed audit output', () => {
-    assert.throws(
-      () => evaluateAuditReport({ auditReportVersion: 2 }),
-      /vulnerabilities object/u
+  it('rejects the graph when an accepted advisory disappears', () => {
+    const report = structuredClone(acceptedReport);
+    report.vulnerabilities['extract-zip'].via.pop();
+
+    const result = evaluateAuditReport(report);
+
+    assert.match(
+      result.violations.join('\n'),
+      /extract-zip: accepted vulnerability graph changed/u
     );
+    assert.match(
+      result.violations.join('\n'),
+      /GHSA-7pqw-9j4j-h8q3: accepted advisory is missing/u
+    );
+  });
+
+  it('surfaces npm audit errors instead of a generic shape error', () => {
+    assert.throws(
+      () => evaluateAuditReport({ error: { code: 'EALLOWSCRIPTS', summary: 'not allowed' } }),
+      /npm audit failed: EALLOWSCRIPTS not allowed/u
+    );
+  });
+
+  it('rejects malformed audit output', () => {
+    assert.throws(() => evaluateAuditReport({ auditReportVersion: 2 }), /vulnerabilities object/u);
   });
 });

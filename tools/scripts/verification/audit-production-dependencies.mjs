@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 
-const ACCEPTED_ADVISORY = 'GHSA-jmr9-qjv8-65gv';
+const ACCEPTED_ADVISORIES = ['GHSA-7pqw-9j4j-h8q3', 'GHSA-jmr9-qjv8-65gv'];
 const ACCEPTED_GRAPH = {
   '@cloudflare/puppeteer': {
     via: ['@puppeteer/browsers'],
@@ -12,7 +12,7 @@ const ACCEPTED_GRAPH = {
     effects: ['@cloudflare/puppeteer'],
   },
   'extract-zip': {
-    via: [ACCEPTED_ADVISORY],
+    via: ACCEPTED_ADVISORIES,
     effects: ['@puppeteer/browsers'],
   },
 };
@@ -36,6 +36,10 @@ function sameMembers(actual, expected) {
 }
 
 export function evaluateAuditReport(report) {
+  if (report?.error) {
+    const { code = 'unknown', summary = '' } = report.error;
+    throw new Error(`npm audit failed: ${code} ${summary}`.trim());
+  }
   if (!report || typeof report !== 'object' || !report.vulnerabilities) {
     throw new TypeError('npm audit report must contain a vulnerabilities object');
   }
@@ -74,8 +78,10 @@ export function evaluateAuditReport(report) {
     }
   }
 
-  if (!acceptedAdvisories.has(ACCEPTED_ADVISORY)) {
-    violations.push(`${ACCEPTED_ADVISORY}: accepted advisory is missing`);
+  for (const advisory of ACCEPTED_ADVISORIES) {
+    if (!acceptedAdvisories.has(advisory)) {
+      violations.push(`${advisory}: accepted advisory is missing`);
+    }
   }
 
   return { acceptedAdvisories: sorted(acceptedAdvisories), violations };
@@ -84,8 +90,12 @@ export function evaluateAuditReport(report) {
 function runAudit() {
   let output;
   try {
+    // `npm run` exports user-level npm config to children; an inherited
+    // allow-scripts setting makes the nested `npm audit` fail with EALLOWSCRIPTS.
+    const { npm_config_allow_scripts: _inheritedAllowScripts, ...env } = process.env;
     output = execFileSync('npm', ['audit', '--omit=dev', '--json'], {
       encoding: 'utf8',
+      env,
       stdio: ['ignore', 'pipe', 'pipe'],
     });
   } catch (error) {
@@ -106,7 +116,7 @@ function runAudit() {
   }
 
   console.warn(
-    `Accepted risk: ${ACCEPTED_ADVISORY} via @cloudflare/puppeteer -> @puppeteer/browsers -> extract-zip. See docs/security/cloudflare-puppeteer-extract-zip-accepted-risk.md.`
+    `Accepted risk: ${ACCEPTED_ADVISORIES.join(', ')} via @cloudflare/puppeteer -> @puppeteer/browsers -> extract-zip. See docs/security/cloudflare-puppeteer-extract-zip-accepted-risk.md.`
   );
 }
 
