@@ -72,6 +72,7 @@
     "verify:profile-sync": "GO111MODULE=off go run ./tools/scripts/verification/verify-context-profile-sync",
     "verify:all": "npm run verify:production && npm run verify:profile-sync",
     "lint:naming": "node tools/scripts/verification/validate-monorepo-naming.mjs",
+    "lint:loc": "node tools/scripts/verification/check-source-loc.mjs",
     "hooks:install": "pre-commit install",
     "hooks:run": "pre-commit run --all-files",
     "typecheck": "tsc --project tsconfig.json --noEmit",
