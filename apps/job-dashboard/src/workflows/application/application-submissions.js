@@ -10,6 +10,52 @@ import {
 
 export { attachWorkflowApproval, WORKFLOW_APPROVAL };
 
+/**
+ * @typedef {{
+ *   success?: boolean;
+ *   alreadyApplied?: boolean;
+ *   status?: string;
+ *   error?: string;
+ *   networkWrite?: boolean;
+ *   browserRendered?: boolean;
+ *   targetUrl?: string;
+ *   finalUrl?: string;
+ *   visibleAction?: string;
+ *   requiresJobServer?: boolean;
+ *   requiresBrowserAutomation?: boolean;
+ *   browserRequired?: boolean;
+ *   requiresBrowserRendering?: boolean;
+ *   [key: string]: unknown;
+ * }} SubmitApplicationResult
+ */
+
+/**
+ * @typedef {{
+ *   logWorkflowStep(workflowId: string, stepName: string, status: string, data?: Record<string, unknown>): Promise<unknown>;
+ *   generateCoverLetter(job: unknown): Promise<string>;
+ *   getResume(resumeId: string): Promise<unknown>;
+ *   submitApplication(params: Record<string, unknown>): Promise<SubmitApplicationResult>;
+ *   recordApplication(record: Record<string, unknown>): Promise<unknown>;
+ * }} ApplicationSubmissionContext
+ */
+
+/**
+ * @typedef {{
+ *   do<T>(name: string, options: { retries?: { limit?: number; delay?: string; backoff?: string }; timeout?: string }, fn: () => Promise<T>): Promise<T>;
+ *   sleep(name: string, duration: string): Promise<void>;
+ * }} SubmissionStepContext
+ */
+
+/**
+ * @param {ApplicationSubmissionContext} ctx
+ * @param {SubmissionStepContext} step
+ * @param {import('./workflow-records.js').WorkflowRecord} workflow
+ * @param {import('./application-submission-gates.js').GateJob[]} approvedJobs
+ * @param {string} resumeId
+ * @param {boolean} dryRun
+ * @param {{ explicitSubmit?: boolean; submitOptIn?: boolean }} [submitOptions]
+ * @returns {Promise<unknown[]>}
+ */
 // prettier-ignore
 export async function submitApprovedApplications(ctx, step, workflow, approvedJobs, resumeId, dryRun, submitOptions = {}) {
   const applicationResults = [];
@@ -45,6 +91,7 @@ export async function submitApprovedApplications(ctx, step, workflow, approvedJo
     workflow.steps.push({ step: 'apply-jobs', status: 'dry-run', count: jobs.length, previewed: applicationResults.length, networkWrites: 0 });
   }
 
+  /** @type {{ applied: number; failed: number; previewed: number; networkWrites?: number }} */
   const logData = {
     applied: workflow.stats.jobsApplied,
     failed: workflow.stats.jobsFailed,
@@ -57,6 +104,13 @@ export async function submitApprovedApplications(ctx, step, workflow, approvedJo
   return applicationResults;
 }
 
+/**
+ * @param {ApplicationSubmissionContext} ctx
+ * @param {import('./workflow-records.js').WorkflowRecord} workflow
+ * @param {import('./application-submission-gates.js').GateJob} job
+ * @param {string} resumeId
+ * @returns {Promise<unknown>}
+ */
 async function submitApprovedApplication(ctx, workflow, job, resumeId) {
   try {
     const coverLetter = await ctx.generateCoverLetter(job);
@@ -127,10 +181,14 @@ async function submitApprovedApplication(ctx, workflow, job, resumeId) {
     return createSubmitFailure(job.id, submitResult.error);
   } catch (error) {
     workflow.stats.jobsFailed++;
-    return createSubmitFailure(job.id, error.message);
+    return createSubmitFailure(job.id, error instanceof Error ? error.message : String(error));
   }
 }
 
+/**
+ * @param {SubmitApplicationResult | null | undefined} result
+ * @returns {boolean}
+ */
 function requiresDeferredBrowserAction(result) {
   return Boolean(
     result?.requiresJobServer === true ||
@@ -140,6 +198,11 @@ function requiresDeferredBrowserAction(result) {
   );
 }
 
+/**
+ * @param {unknown} jobId
+ * @param {unknown} error
+ * @returns {{ success: boolean; jobId: unknown; error: unknown }}
+ */
 function createSubmitFailure(jobId, error) {
   return { success: false, jobId, error };
 }

@@ -8,15 +8,49 @@ import {
   findConfirmControl,
   renderedReviewResult,
 } from './browser-rendering-results.js';
+
+/**
+ * @typedef {{
+ *   BrowserService?: typeof BrowserService;
+ * }} BrowserDependencies
+ */
+
+/**
+ * @typedef {{
+ *   platform: string;
+ *   sourceUrl?: string;
+ *   job?: { sourceUrl?: string };
+ *   jobId?: string | number;
+ * }} BrowserSubmitParams
+ */
+
+/**
+ * @typedef {import('./browser-rendering-page.js').PageWithClick & {
+ *   title?: () => Promise<string>;
+ *   url?: () => string;
+ *   close?: () => Promise<unknown>;
+ *   goto: (url: string, options?: { waitUntil?: string; timeout?: number }) => Promise<import('./browser-rendering-results.js').ResponseLike | null>;
+ *   evaluate: (fn: (selector: string) => { bodyText: string; controls: import('./browser-rendering-page.js').PageControl[] }, arg: string) => Promise<{ bodyText: string; controls: import('./browser-rendering-page.js').PageControl[] }>;
+ * }} RenderedSubmitPage
+ */
+
 const BROWSER_CONFIG = {
   pageTimeoutMs: 20_000,
   acceptLanguage: 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
 };
+
+/** @type {Record<string, string>} */
 const PLATFORM_URL_HOSTS = {
   jobkorea: 'jobkorea.co.kr',
   saramin: 'saramin.co.kr',
 };
 
+/**
+ * @param {{ env?: import('@resume/shared/browser/service').BrowserEnv }} ctx
+ * @param {BrowserSubmitParams} params
+ * @param {BrowserDependencies} [dependencies]
+ * @returns {Promise<Record<string, unknown>>}
+ */
 export async function submitWithBrowserRendering(ctx, params, dependencies = {}) {
   const platform = params.platform;
   const targetUrl = createApplicationUrl(
@@ -32,8 +66,11 @@ export async function submitWithBrowserRendering(ctx, params, dependencies = {})
   }
 
   const Service = dependencies.BrowserService ?? BrowserService;
-  const browserService = new Service(ctx.env, BROWSER_CONFIG);
-  const page = await browserService.newPage();
+  const browserService = new Service(
+    /** @type {import('@resume/shared/browser/service').BrowserEnv} */ (ctx.env),
+    BROWSER_CONFIG
+  );
+  const page = /** @type {RenderedSubmitPage} */ (await browserService.newPage());
 
   try {
     const cookieCount = await hydrateSessionCookies(ctx, page, platform, targetUrl);
@@ -58,6 +95,11 @@ export async function submitWithBrowserRendering(ctx, params, dependencies = {})
   }
 }
 
+/**
+ * @param {string} platform
+ * @param {unknown} candidate
+ * @returns {string | null}
+ */
 export function createApplicationUrl(platform, candidate) {
   if (!candidate) return null;
   const value = String(candidate);
@@ -74,6 +116,11 @@ export function createApplicationUrl(platform, candidate) {
   return null;
 }
 
+/**
+ * @param {string} platform
+ * @param {string} value
+ * @returns {string | null}
+ */
 function normalizeAllowedApplicationUrl(platform, value) {
   const allowedHost = PLATFORM_URL_HOSTS[platform];
   if (!allowedHost) return null;
@@ -88,8 +135,17 @@ function normalizeAllowedApplicationUrl(platform, value) {
   }
 }
 
+/**
+ * @param {string} platform
+ * @param {string} targetUrl
+ * @param {RenderedSubmitPage} page
+ * @param {import('./browser-rendering-results.js').ResponseLike | null} response
+ * @param {number} cookieCount
+ * @param {import('./browser-rendering-results.js').PageState & { bodyText?: string }} pageState
+ * @returns {Promise<Record<string, unknown>>}
+ */
 async function submitFromRenderedPage(platform, targetUrl, page, response, cookieCount, pageState) {
-  const title = await page.title?.();
+  const title = /** @type {string} */ (await page.title?.());
   const finalUrl = typeof page.url === 'function' ? page.url() : targetUrl;
   const completion = detectCompletion(pageState.bodyText);
 
@@ -119,7 +175,10 @@ async function submitFromRenderedPage(platform, targetUrl, page, response, cooki
     );
   }
 
-  const applyClicked = await clickControl(page, applyControl);
+  const applyClicked = await clickControl(
+    page,
+    /** @type {{ selector?: string } | undefined} */ (applyControl)
+  );
   if (!applyClicked) {
     return renderedReviewResult(
       platform,
@@ -146,7 +205,10 @@ async function submitFromRenderedPage(platform, targetUrl, page, response, cooki
   }
 
   const confirmControl = findConfirmControl(afterApply);
-  if (!confirmControl || !(await clickControl(page, confirmControl))) {
+  if (
+    !confirmControl ||
+    !(await clickControl(page, /** @type {{ selector?: string } | undefined} */ (confirmControl)))
+  ) {
     return renderedReviewResult(
       platform,
       targetUrl,
@@ -190,6 +252,12 @@ async function submitFromRenderedPage(platform, targetUrl, page, response, cooki
   );
 }
 
+/**
+ * @param {string} platform
+ * @param {string | null} targetUrl
+ * @param {string} reason
+ * @returns {Record<string, unknown>}
+ */
 function browserRenderingRequired(platform, targetUrl, reason) {
   return {
     success: false,
