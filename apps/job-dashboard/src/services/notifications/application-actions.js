@@ -1,39 +1,38 @@
 import { escapeHtml } from './formatters.js';
 import { sendTelegramNotification } from './delivery.js';
 
-async function updateWorkflowApprovalState(service, applicationId, stateMutator) {
-  const workflowKey = `workflow:application:${applicationId}`;
-  const workflowState = await service.env.SESSIONS.get(workflowKey);
+// Approval buttons carry approval_requests ids (ApplicationWorkflow and the
+// notification queue); older messages may still carry applications ids.
+async function recordDecision(service, id, decision) {
+  const db = service.env.JOB_DB;
+  const approval = await db
+    .prepare(
+      `
+        UPDATE approval_requests
+        SET status = ?, reviewed_by = 'telegram', reviewed_at = datetime('now'),
+            updated_at = datetime('now')
+        WHERE id = ?
+      `
+    )
+    .bind(decision, id)
+    .run();
+  if (approval.meta?.changes) return true;
 
-  if (!workflowState) {
-    return;
-  }
-
-  const state = JSON.parse(workflowState);
-  stateMutator(state);
-
-  await service.env.SESSIONS.put(workflowKey, JSON.stringify(state), {
-    expirationTtl: 86400 * 7,
-  });
+  const decidedAtColumn = decision === 'approved' ? 'approved_at' : 'rejected_at';
+  const application = await db
+    .prepare(
+      `UPDATE applications SET status = ?, ${decidedAtColumn} = datetime('now') WHERE id = ?`
+    )
+    .bind(decision, id)
+    .run();
+  return Boolean(application.meta?.changes);
 }
 
 export async function approveApplication(service, applicationId) {
   try {
-    await service.env.JOB_DB.prepare(
-      `
-        UPDATE applications
-        SET status = 'approved', approved_at = datetime('now')
-        WHERE id = ?
-      `
-    )
-      .bind(applicationId)
-      .run();
-
-    await updateWorkflowApprovalState(service, applicationId, (state) => {
-      state.approved = true;
-      state.approvedAt = new Date().toISOString();
-    });
-
+    if (!(await recordDecision(service, applicationId, 'approved'))) {
+      return { success: false, message: `❌ Application ${applicationId} not found.` };
+    }
     return { success: true, message: `✅ Application ${applicationId} approved.` };
   } catch (error) {
     console.error('[NotificationService] Approve error:', error);
@@ -43,21 +42,9 @@ export async function approveApplication(service, applicationId) {
 
 export async function rejectApplication(service, applicationId) {
   try {
-    await service.env.JOB_DB.prepare(
-      `
-        UPDATE applications
-        SET status = 'rejected', rejected_at = datetime('now')
-        WHERE id = ?
-      `
-    )
-      .bind(applicationId)
-      .run();
-
-    await updateWorkflowApprovalState(service, applicationId, (state) => {
-      state.approved = false;
-      state.rejectedAt = new Date().toISOString();
-    });
-
+    if (!(await recordDecision(service, applicationId, 'rejected'))) {
+      return { success: false, message: `❌ Application ${applicationId} not found.` };
+    }
     return { success: true, message: `❌ Application ${applicationId} rejected.` };
   } catch (error) {
     console.error('[NotificationService] Reject error:', error);
@@ -67,11 +54,20 @@ export async function rejectApplication(service, applicationId) {
 
 export async function viewApplicationDetails(service, applicationId) {
   try {
-    const application = await service.env.JOB_DB.prepare(
-      `
-        SELECT * FROM applications WHERE id = ?
-      `
-    )
+    const db = service.env.JOB_DB;
+    const approval = await db
+      .prepare(
+        'SELECT id, job_title, company, platform, match_score, status FROM approval_requests WHERE id = ?'
+      )
+      .bind(applicationId)
+      .first();
+    if (approval) {
+      await sendTelegramNotification(service, { text: formatApprovalDetails(approval) });
+      return { success: true, message: 'Details sent.' };
+    }
+
+    const application = await db
+      .prepare('SELECT * FROM applications WHERE id = ?')
       .bind(applicationId)
       .first();
 
@@ -94,4 +90,16 @@ export async function viewApplicationDetails(service, applicationId) {
     console.error('[NotificationService] View error:', error);
     return { success: false, message: `Failed to fetch details: ${error.message}` };
   }
+}
+
+function formatApprovalDetails(approval) {
+  return (
+    '📋 <b>Approval Request</b>\n\n' +
+    `<b>ID:</b> <code>${escapeHtml(approval.id)}</code>\n` +
+    `<b>Company:</b> ${escapeHtml(approval.company)}\n` +
+    `<b>Position:</b> ${escapeHtml(approval.job_title)}\n` +
+    `<b>Platform:</b> ${escapeHtml(approval.platform)}\n` +
+    `<b>Match Score:</b> ${approval.match_score}/100\n` +
+    `<b>Status:</b> ${escapeHtml(approval.status)}`
+  );
 }

@@ -63,10 +63,25 @@ export async function getResume(ctx, resumeId) {
 
 export async function getStoredResume(ctx) {
   try {
-    return await ctx.env.SESSIONS.get('resume:current', 'json');
-  } catch {
+    const master = await getResume(ctx, 'master');
+    return master?.data ? summarizeResumeForPrompt(JSON.parse(master.data)) : null;
+  } catch (error) {
+    console.warn('Master resume unavailable for cover letter prompt:', error.message);
     return null;
   }
+}
+
+function summarizeResumeForPrompt(data) {
+  const skills = Object.values(data.skills || {})
+    .flatMap((category) => category.items || [])
+    .map((item) => item.name)
+    .filter(Boolean)
+    .join(', ');
+  const experience = (data.careers || [])
+    .map((career) => [career.company, career.role].filter(Boolean).join(' '))
+    .filter(Boolean)
+    .join('; ');
+  return { skills, experience };
 }
 
 export async function getMatchingConfig(ctx) {

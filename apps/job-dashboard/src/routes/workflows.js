@@ -1,7 +1,7 @@
 import { jsonResponse } from '../middleware/cors.js';
 
 export function registerWorkflowRoutes(router, ctx) {
-  const { env } = ctx;
+  const { env, apps } = ctx;
 
   router.post('/api/workflows/job-crawling', async (req) => {
     const body = await req.json().catch(() => ({}));
@@ -46,23 +46,11 @@ export function registerWorkflowRoutes(router, ctx) {
     return jsonResponse({ instanceId, status: status.status, output: status.output });
   });
 
-  router.post('/api/workflows/application/:instanceId/approve', async (req) => {
-    const { instanceId } = req.params;
-    await env.SESSIONS.put(
-      `workflow:application:${instanceId}:approval`,
-      JSON.stringify({ approved: true, at: new Date().toISOString() }),
-      { expirationTtl: 86400 }
-    );
-    return jsonResponse({ success: true, approved: true });
-  });
+  router.post('/api/workflows/application/:instanceId/approve', (req) =>
+    apps.decideWorkflowApprovals(req, 'approved')
+  );
 
-  router.post('/api/workflows/application/:instanceId/reject', async (req) => {
-    const { instanceId } = req.params;
-    await env.SESSIONS.put(
-      `workflow:application:${instanceId}:approval`,
-      JSON.stringify({ approved: false, at: new Date().toISOString() }),
-      { expirationTtl: 86400 }
-    );
-    return jsonResponse({ success: true, approved: false });
-  });
+  router.post('/api/workflows/application/:instanceId/reject', (req) =>
+    apps.decideWorkflowApprovals(req, 'rejected')
+  );
 }
