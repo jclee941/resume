@@ -16,7 +16,8 @@ function loadModules() {
     'Response',
     'Headers',
     'CompressionStream',
-    `${transformedSource}
+    `const CONTENT_LASTMOD = '2024-01-01';
+${transformedSource}
 module.exports = { applyResponseHeaders, LAST_MODIFIED, BUILD_ETAG_VERSION };`
   );
 

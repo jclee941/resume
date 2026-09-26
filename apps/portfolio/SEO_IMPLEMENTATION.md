@@ -264,7 +264,6 @@ apps/portfolio/
 - **Weekly**: Monitor Search Console for new issues
 - **Monthly**: Update sitemap with new projects
 - **Quarterly**: Review SEO performance metrics
-- **Annually**: Update lastmod dates
 
 ### Update Procedures
 
@@ -280,9 +279,8 @@ apps/portfolio/
 #### Updating Content
 
 1. Modify `index.html` or `index-en.html`
-2. Update lastmod in `sitemap.xml`
-3. Run `bash validate-seo.sh`
-4. Deploy with `npm run deploy`
+2. Push to `master`; the build derives sitemap `<lastmod>` and `Last-Modified`
+   from the last commit that touched rendered content
 
 #### Regenerating Images
 

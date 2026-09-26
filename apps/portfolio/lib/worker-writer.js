@@ -66,7 +66,10 @@ function buildWorkerCode(options) {
     authHelpersStr: authModule.generateAuthHelpers(),
   };
 
+  const contentLastmod = options.contentLastmod || new Date().toISOString().slice(0, 10);
+  const contentLastmodExport = `export const CONTENT_LASTMOD = ${JSON.stringify(contentLastmod)};\n`;
   return (
+    contentLastmodExport +
     generateWorkerPreamble(preambleOpts) +
     generateFetchAndRateLimit() +
     generatePageRoutes() +
