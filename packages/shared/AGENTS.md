@@ -46,7 +46,6 @@ packages/shared/src/
 | `@resume/shared/es-client`        | Elasticsearch client                      |
 | `@resume/shared/browser`          | Cloudflare Browser Rendering adapter      |
 | `@resume/shared/browser/stealth`  | Stealth patches                           |
-| `@resume/shared/wanted-client`    | Wanted API base client                    |
 | `@resume/shared/clients/wanted/*` | Wanted endpoints (jobs, profile, resume)  |
 | `@resume/shared/retry`            | HTTP retry + circuit breaker              |
 | `@resume/shared/crypto`           | Webcrypto + Node adapters                 |

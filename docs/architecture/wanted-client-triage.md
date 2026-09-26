@@ -112,15 +112,16 @@ packages/clients-wanted/
       (or delete and update job-server imports — depends on how many call sites).
 - [ ] Move `types.js` to `@resume/types/wanted`; both packages re-export.
 
-### Phase 3 (follow-up PR — A retirement)
+### Phase 3 (follow-up PR — A retirement) — **complete**
 
-- [ ] Identify every consumer of `@resume/shared/wanted-client`. Currently:
-      inspect `tools/scripts/`, `apps/portfolio/`, integration tests.
-- [ ] Migrate each consumer to `@resume/clients-wanted`.
-- [ ] Delete `packages/shared/src/wanted-client.js`,
-      `packages/shared/src/wanted-resume-api.js`,
-      `packages/shared/src/wanted-skill-api.js`,
-      `packages/shared/src/wanted-profile-api.js`.
+- [x] Identify every consumer of `@resume/shared/wanted-client`. Only its own
+      unit test imported it; the canonical client is
+      `@resume/shared/clients/wanted`.
+- [x] Migrate each consumer (none remained).
+- [x] Delete `packages/shared/src/wanted-client.js`, its base
+      `packages/shared/src/wanted-client-base.js`, the unit test, and the
+      `./wanted-client` package export. `wanted-resume-api.js`,
+      `wanted-skill-api.js`, and `wanted-profile-api.js` were already gone.
 
 ---
 
@@ -138,5 +139,4 @@ This PR adds the triage doc only — no code changes. It satisfies the
   § SSOT-037 — original consolidation entry.
 - [`apps/job-server/AGENTS.md`](../../apps/job-server/AGENTS.md) — `WantedAPI`
   conventions (40+ methods, Skills v1 only, Links API broken).
-- [`packages/shared/src/wanted-client.js`](../../packages/shared/src/wanted-client.js)
-  — older client to be retired.
+- `packages/shared/src/wanted-client.js` — older client, retired in Phase 3.
