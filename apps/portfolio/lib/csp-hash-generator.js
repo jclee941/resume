@@ -106,22 +106,19 @@ function extractAllHashes(html) {
 
 /**
  * Merge hashes from multiple HTML documents using Set union (removes duplicates)
- * Useful for combining KO and EN portfolio hashes
- * @param {string[]} hash1 - First hash array
- * @param {string[]} hash2 - Second hash array
+ * Useful for combining the KO, EN, and JA portfolio hashes
+ * @param {...string[]} hashArrays - Hash arrays to merge
  * @returns {string[]} Merged hash array with duplicates removed
  * @example
- * const koHashes = extractScriptHashes(koHtml);
- * const enHashes = extractScriptHashes(enHtml);
- * const merged = mergeHashes(koHashes, enHashes);
+ * const merged = mergeHashes(koHashes, enHashes, jaHashes);
  */
-function mergeHashes(hash1, hash2) {
-  if (!Array.isArray(hash1) || !Array.isArray(hash2)) {
-    throw new Error('Both parameters must be arrays');
+function mergeHashes(...hashArrays) {
+  if (!hashArrays.every((hashes) => Array.isArray(hashes))) {
+    throw new Error('All parameters must be arrays');
   }
 
   // Use Set to automatically deduplicate
-  return Array.from(new Set([...hash1, ...hash2]));
+  return Array.from(new Set(hashArrays.flat()));
 }
 
 /**
