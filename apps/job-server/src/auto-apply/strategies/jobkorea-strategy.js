@@ -43,7 +43,7 @@ function classifyJobKoreaError(error) {
 
 async function executeJobKoreaApply(job) {
   await this.page.goto(job.sourceUrl, { waitUntil: 'domcontentloaded' });
-  await new Promise((r) => setTimeout(r, 2000));
+  await this.sleep(2000);
 
   const pageTitle = await this.page.title();
   this.logger.info(`  📄 JobKorea page: ${pageTitle} — ${job.sourceUrl}`);
@@ -52,7 +52,7 @@ async function executeJobKoreaApply(job) {
   if (loginLink) {
     this.logger.info('  ⚠️ JobKorea: NOT logged in despite cookies — trying cookie refresh...');
     await this.page.goto('https://www.jobkorea.co.kr', { waitUntil: 'domcontentloaded' });
-    await new Promise((r) => setTimeout(r, 2000));
+    await this.sleep(2000);
     const stillLoggedOut = await this.findByText('a', '로그인');
     if (stillLoggedOut) {
       this.logger.info('  ❌ JobKorea: Login failed — cookies may be expired');
@@ -61,7 +61,7 @@ async function executeJobKoreaApply(job) {
       });
     }
     await this.page.goto(job.sourceUrl, { waitUntil: 'domcontentloaded' });
-    await new Promise((r) => setTimeout(r, 2000));
+    await this.sleep(2000);
   }
 
   const captchaChallenge =
@@ -106,7 +106,7 @@ async function executeJobKoreaApply(job) {
     throw new ValidationError('Apply button not found', { platform: 'jobkorea' });
   }
   await applyButton.click();
-  await new Promise((r) => setTimeout(r, 3000));
+  await this.sleep(3000);
 
   const alreadyApplied = await this.findElementWithText('이미 지원한');
   if (alreadyApplied) {
@@ -128,7 +128,7 @@ async function executeJobKoreaApply(job) {
 
   if (finalSubmit) {
     await finalSubmit.click();
-    await new Promise((r) => setTimeout(r, 3000));
+    await this.sleep(3000);
   }
 
   const successMessage =
@@ -170,6 +170,7 @@ export async function applyToJobKorea(job) {
       logger: this.logger,
       classifyError: classifyJobKoreaError,
       reporter: createRetryReporter(this, job),
+      sleep: (ms) => this.sleep(ms),
     });
   } catch (error) {
     const normalizedError = classifyJobKoreaError(error);

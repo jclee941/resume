@@ -70,6 +70,7 @@ const createContext = (pageMock, overrides = {}) => ({
   findByText: mock.fn(() => Promise.resolve(null)),
   findElementWithText: mock.fn(() => Promise.resolve(null)),
   notifications: mockNotifications,
+  sleep: mock.fn(async () => {}),
   ...overrides,
 });
 

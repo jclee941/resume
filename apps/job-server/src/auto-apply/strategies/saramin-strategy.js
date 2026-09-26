@@ -41,7 +41,7 @@ function classifySaraminError(error) {
 
 async function executeSaraminApply(job) {
   await this.page.goto(job.sourceUrl, { waitUntil: 'domcontentloaded' });
-  await new Promise((r) => setTimeout(r, 2000));
+  await this.sleep(2000);
 
   const loginLink =
     (await this.findByText('a', '로그인')) ||
@@ -88,7 +88,7 @@ async function executeSaraminApply(job) {
   }
 
   await applyButton.click();
-  await new Promise((r) => setTimeout(r, 3000));
+  await this.sleep(3000);
 
   const alreadyApplied = await this.findElementWithText('이미 지원한');
   if (alreadyApplied) {
@@ -101,7 +101,7 @@ async function executeSaraminApply(job) {
 
   if (confirmButton) {
     await confirmButton.click();
-    await new Promise((r) => setTimeout(r, 3000));
+    await this.sleep(3000);
   }
 
   const successMessage =
@@ -143,6 +143,7 @@ export async function applyToSaramin(job) {
       logger: this.logger,
       classifyError: classifySaraminError,
       reporter: createRetryReporter(this, job),
+      sleep: (ms) => this.sleep(ms),
     });
   } catch (error) {
     const normalizedError = classifySaraminError(error);

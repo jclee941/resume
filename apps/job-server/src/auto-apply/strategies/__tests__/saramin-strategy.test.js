@@ -3,6 +3,7 @@ import assert from 'node:assert';
 
 const { applyToSaramin } = await import('../saramin-strategy.js');
 const { APPLICATION_STATUS } = await import('../../application-manager.js');
+const { resetRetryState } = await import('@resume/shared/retry');
 
 describe('applyToSaramin', () => {
   const testJob = {
@@ -15,19 +16,28 @@ describe('applyToSaramin', () => {
   let mockPage;
   let mockLogger;
   let mockAppManager;
-  let findByTextResults;
-  let findElementResults;
+  let pageControls;
+  let pageTexts;
   let addAppCalls;
   let updateStatusCalls;
 
+  const button = (overrides = {}) => ({ click: mock.fn(() => Promise.resolve()), ...overrides });
+
+  function showApplyFlow({ confirm = true, result = '지원 완료' } = {}) {
+    pageControls.set('a:입사지원', button());
+    if (confirm) pageControls.set('button:확인', button());
+    if (result) pageTexts.push(result);
+  }
+
   beforeEach(() => {
-    findByTextResults = [];
-    findElementResults = [];
+    resetRetryState('saramin');
+    pageControls = new Map();
+    pageTexts = [];
     addAppCalls = [];
     updateStatusCalls = [];
 
     mockPage = {
-      goto: mock.fn(() => new Promise((r) => setTimeout(r, 2000))),
+      goto: mock.fn(() => Promise.resolve()),
       $: mock.fn(() => Promise.resolve(null)),
       click: mock.fn(() => Promise.resolve()),
       screenshot: mock.fn(() => Promise.resolve()),
@@ -47,8 +57,8 @@ describe('applyToSaramin', () => {
     };
 
     mockAppManager = {
-      addApplication: mock.fn(() => {
-        addAppCalls.push(testJob);
+      addApplication: mock.fn((job) => {
+        addAppCalls.push(job);
         return mockApplication;
       }),
       updateStatus: mock.fn((id, status) => {
@@ -57,22 +67,16 @@ describe('applyToSaramin', () => {
       recordRetryMetric: mock.fn(() => {}),
     };
 
-    const findByText = async (_tag, _text, _cssAlt) => {
-      if (findByTextResults.length === 0) return null;
-      return findByTextResults.shift();
-    };
-
-    const findElementWithText = async (_text) => {
-      if (findElementResults.length === 0) return null;
-      return findElementResults.shift();
-    };
-
     ctx = {
       page: mockPage,
       logger: mockLogger,
       appManager: mockAppManager,
-      findByText,
-      findElementWithText,
+      findByText: async (tag, text) => pageControls.get(`${tag}:${text}`) ?? null,
+      findElementWithText: async (text) => {
+        const match = pageTexts.find((pageText) => pageText.includes(text));
+        return match ? { text: match } : null;
+      },
+      sleep: mock.fn(async () => {}),
     };
   });
 
@@ -80,47 +84,22 @@ describe('applyToSaramin', () => {
     mock.reset();
   });
 
-  // Code flow (verified via debug):
-  // login: findByText('로그인'), findByText('Sign in') = 2 calls
-  // captcha: findElementWithText 3 calls
-  // rate limit: findElementWithText 3 calls
-  // apply button: findByText 4 calls
-  // then: already applied, confirm button, success/error message
-
   // ===== Success Cases =====
 
   it('applies to Saramin successfully with confirmation button', async () => {
-    // login (2 calls)
-    findByTextResults.push(null, null);
-    // captcha (3 calls)
-    findElementResults.push(null, null, null);
-    // rate limit (3 calls)
-    findElementResults.push(null, null, null);
-    // apply button (4 calls)
-    findByTextResults.push(null, null, null, { click: mock.fn() });
-    // already applied (1 call)
-    findElementResults.push(null);
-    // confirm button
-    findByTextResults.push({ click: mock.fn() });
-    // success message
-    findElementResults.push({ text: '지원 완료' });
+    showApplyFlow();
 
     const result = await applyToSaramin.call(ctx, testJob);
 
     assert.strictEqual(result.success, true);
+    assert.strictEqual(pageControls.get('button:확인').click.mock.callCount(), 1);
     assert.strictEqual(addAppCalls.length, 1);
     assert.strictEqual(updateStatusCalls.length, 1);
     assert.strictEqual(updateStatusCalls[0].id, 'app-123');
   });
 
   it('applies to Saramin successfully without confirmation button', async () => {
-    findByTextResults.push(null, null);
-    findElementResults.push(null, null, null);
-    findElementResults.push(null, null, null);
-    findByTextResults.push(null, null, null, { click: mock.fn() });
-    findElementResults.push(null);
-    findByTextResults.push(null);
-    findElementResults.push({ text: '지원 완료' });
+    showApplyFlow({ confirm: false });
 
     const result = await applyToSaramin.call(ctx, testJob);
 
@@ -133,14 +112,7 @@ describe('applyToSaramin', () => {
       id: 'saramin-app-456',
       company: '테스트회사',
     }));
-
-    findByTextResults.push(null, null);
-    findElementResults.push(null, null, null);
-    findElementResults.push(null, null, null);
-    findByTextResults.push(null, null, null, { click: mock.fn() });
-    findElementResults.push(null);
-    findByTextResults.push(null);
-    findElementResults.push({ text: '지원 완료' });
+    showApplyFlow({ confirm: false });
 
     const result = await applyToSaramin.call(ctx, testJob);
 
@@ -151,22 +123,18 @@ describe('applyToSaramin', () => {
   // ===== Error Cases - Authentication =====
 
   it('returns error when not logged in', async () => {
-    findByTextResults.push({ href: '#login' });
+    pageControls.set('a:로그인', { href: '#login' });
 
     const result = await applyToSaramin.call(ctx, testJob);
 
     assert.strictEqual(result.success, false);
-    assert.ok(result.error);
-    assert.ok(
-      result.error.toLowerCase().includes('not logged in') || result.error.includes('AuthError')
-    );
+    assert.ok(result.error.toLowerCase().includes('not logged in'));
   });
 
   // ===== Error Cases - CAPTCHA =====
 
   it('returns error when CAPTCHA challenge detected', async () => {
-    findByTextResults.push(null, null);
-    findElementResults.push({ text: '로봇이 아닙니다' });
+    pageTexts.push('로봇이 아닙니다');
 
     const result = await applyToSaramin.call(ctx, testJob);
 
@@ -175,8 +143,7 @@ describe('applyToSaramin', () => {
   });
 
   it('returns error when CAPTCHA blocks application - 자동입력방지', async () => {
-    findByTextResults.push(null, null);
-    findElementResults.push({ text: '자동입력방지' });
+    pageTexts.push('자동입력방지');
 
     const result = await applyToSaramin.call(ctx, testJob);
 
@@ -187,109 +154,73 @@ describe('applyToSaramin', () => {
   // ===== Error Cases - Rate Limiting =====
 
   it('returns error when rate limited - Korean message', async () => {
-    // RateLimitError is retryable - withRetry will retry
-    for (let i = 0; i < 3; i++) {
-      findByTextResults.push(null, null);
-      findElementResults.push(null, null, null);
-      findElementResults.push({ text: '잠시 후 다시 시도' });
-    }
+    pageTexts.push('잠시 후 다시 시도해 주세요');
 
     const result = await applyToSaramin.call(ctx, testJob);
 
     assert.strictEqual(result.success, false);
-    assert.ok(result.error);
+    assert.ok(result.error.toLowerCase().includes('rate limit'));
+    assert.ok(mockPage.goto.mock.callCount() > 1, 'rate limits are retried');
+    assert.ok(ctx.sleep.mock.callCount() > 0, 'retry backoff uses the injected sleep');
   });
 
   it('returns error when rate limited - English message', async () => {
-    for (let i = 0; i < 3; i++) {
-      findByTextResults.push(null, null);
-      findElementResults.push(null, null, null);
-      findElementResults.push({ text: 'too many requests' });
-    }
+    pageTexts.push('Too many requests', 'too many requests');
 
     const result = await applyToSaramin.call(ctx, testJob);
 
     assert.strictEqual(result.success, false);
-    assert.ok(result.error);
+    assert.ok(result.error.toLowerCase().includes('rate limit'));
   });
 
   // ===== Error Cases - Application Status =====
 
   it('returns error when already applied', async () => {
-    findByTextResults.push(null, null); // login
-    findElementResults.push(null, null, null); // captcha
-    findElementResults.push(null, null, null); // rate limit
-    findByTextResults.push(null, null, null, { click: mock.fn() }); // apply button
-    findElementResults.push({ text: '이미 지원한' }); // already applied
+    pageControls.set('a:입사지원', button());
+    pageTexts.push('이미 지원한 공고입니다');
 
     const result = await applyToSaramin.call(ctx, testJob);
 
     assert.strictEqual(result.success, false);
     assert.ok(result.error.toLowerCase().includes('already'));
+    assert.strictEqual(addAppCalls.length, 0);
   });
 
   it('returns error when job posting no longer accepting applications', async () => {
-    findByTextResults.push(null, null); // login
-    findElementResults.push(null, null, null); // captcha
-    findElementResults.push(null, null, null); // rate limit
-    findByTextResults.push(null, null, null, { click: mock.fn() }); // apply button
-    findElementResults.push(null); // already applied
-    findByTextResults.push(null); // confirm button
-    findElementResults.push({ text: '지원할 수 없습니다' }); // error
+    showApplyFlow({ result: '지원할 수 없습니다' });
 
     const result = await applyToSaramin.call(ctx, testJob);
 
     assert.strictEqual(result.success, false);
+    assert.strictEqual(addAppCalls.length, 0);
   });
 
   // ===== Error Cases - Form/Page Errors =====
 
   it('returns error when apply button not found', async () => {
-    findByTextResults.push(null, null); // login
-    findElementResults.push(null, null, null); // captcha
-    findElementResults.push(null, null, null); // rate limit
-    findByTextResults.push(null, null, null, null); // apply button NOT found
-
     const result = await applyToSaramin.call(ctx, testJob);
 
     assert.strictEqual(result.success, false);
-    assert.ok(
-      result.error.toLowerCase().includes('apply button') ||
-        result.error.toLowerCase().includes('not found')
-    );
+    assert.ok(result.error.toLowerCase().includes('apply button not found'));
+    assert.strictEqual(mockPage.screenshot.mock.callCount(), 1);
   });
 
   it('returns error when no success confirmation found', async () => {
-    findByTextResults.push(null, null); // login
-    findElementResults.push(null, null, null); // captcha
-    findElementResults.push(null, null, null); // rate limit
-    findByTextResults.push(null, null, null, { click: mock.fn() }); // apply button
-    findElementResults.push(null); // already applied
-    findByTextResults.push(null); // confirm button
-    findElementResults.push(null); // success NOT found
+    showApplyFlow({ result: null });
 
     const result = await applyToSaramin.call(ctx, testJob);
 
     assert.strictEqual(result.success, false);
-    assert.ok(
-      result.error.toLowerCase().includes('confirmation') ||
-        result.error.toLowerCase().includes('not found')
-    );
+    assert.ok(result.error.toLowerCase().includes('confirmation not found'));
   });
 
   it('returns error when error message appears on page', async () => {
-    findByTextResults.push(null, null); // login
-    findElementResults.push(null, null, null); // captcha
-    findElementResults.push(null, null, null); // rate limit
-    findByTextResults.push(null, null, null, { click: mock.fn() }); // apply button
-    findElementResults.push(null); // already applied
-    findByTextResults.push(null); // confirm button
-    findElementResults.push({ text: '오류가 발생했습니다' }); // error message
+    showApplyFlow({ result: '오류가 발생했습니다' });
 
     const result = await applyToSaramin.call(ctx, testJob);
 
     assert.strictEqual(result.success, false);
-    assert.ok(result.error.toLowerCase().includes('error'));
+    assert.ok(result.error.toLowerCase().includes('error detected'));
   });
 
   // ===== Edge Cases =====
@@ -304,39 +235,30 @@ describe('applyToSaramin', () => {
   });
 
   it('handles exception during apply button click', async () => {
-    findByTextResults.push(null, null); // login
-    findElementResults.push(null, null, null); // captcha
-    findElementResults.push(null, null, null); // rate limit
-    findByTextResults.push(null, null, null, {
-      click: mock.fn(() => Promise.reject(new Error('Click failed'))),
-    });
+    pageControls.set(
+      'a:입사지원',
+      button({ click: mock.fn(() => Promise.reject(new Error('Click failed'))) })
+    );
 
     const result = await applyToSaramin.call(ctx, testJob);
 
     assert.strictEqual(result.success, false);
+    assert.strictEqual(addAppCalls.length, 0);
   });
 
   it('handles missing Korean text alternatives gracefully', async () => {
-    findByTextResults.push(null, null); // login
-    findElementResults.push(null, null, null); // captcha
-    findElementResults.push(null, null, null); // rate limit
-    findByTextResults.push(null, null, null, null); // apply button not found
+    pageControls.set('button:지원하기', button());
+    pageTexts.push('지원하였습니다');
 
     const result = await applyToSaramin.call(ctx, testJob);
 
-    assert.strictEqual(result.success, false);
+    assert.strictEqual(result.success, true);
   });
 
   // ===== Application Manager Integration =====
 
   it('adds application to manager on success', async () => {
-    findByTextResults.push(null, null);
-    findElementResults.push(null, null, null);
-    findElementResults.push(null, null, null);
-    findByTextResults.push(null, null, null, { click: mock.fn() });
-    findElementResults.push(null);
-    findByTextResults.push(null);
-    findElementResults.push({ text: '지원 완료' });
+    showApplyFlow();
 
     await applyToSaramin.call(ctx, testJob);
 
@@ -345,13 +267,7 @@ describe('applyToSaramin', () => {
   });
 
   it('updates status to APPLIED on success', async () => {
-    findByTextResults.push(null, null);
-    findElementResults.push(null, null, null);
-    findElementResults.push(null, null, null);
-    findByTextResults.push(null, null, null, { click: mock.fn() });
-    findElementResults.push(null);
-    findElementResults.push(null);
-    findElementResults.push({ text: '지원 완료' });
+    showApplyFlow();
 
     await applyToSaramin.call(ctx, testJob);
 
@@ -360,17 +276,11 @@ describe('applyToSaramin', () => {
     assert.strictEqual(updateStatusCalls[0].status, APPLICATION_STATUS.APPLIED);
   });
 
-  it('logs retry metrics on success', async () => {
-    findByTextResults.push(null, null);
-    findElementResults.push(null, null, null);
-    findElementResults.push(null, null, null);
-    findByTextResults.push(null, null, null, { click: mock.fn() });
-    findElementResults.push(null);
-    findByTextResults.push(null);
-    findElementResults.push({ text: '지원 완료' });
+  it('records retry metrics on success', async () => {
+    showApplyFlow();
 
     await applyToSaramin.call(ctx, testJob);
 
-    assert.ok(mockLogger.info.mock.callCount() >= 0);
+    assert.ok(mockAppManager.recordRetryMetric.mock.callCount() > 0);
   });
 });
