@@ -52,7 +52,7 @@ import { insertApplicationRecord } from './application-recorder.js';
  *   maxDailyApplications: number;
  *   reviewThreshold?: number;
  *   autoApplyThreshold?: number;
- *   minMatchScore?: number;
+ *   minMatchScore: number;
  *   keywords: string[];
  * }} AutoApplyConfig
  */
@@ -79,6 +79,7 @@ export async function getConfig(env) {
       maxDailyApplications: 10,
       reviewThreshold: 60,
       autoApplyThreshold: 75,
+      minMatchScore: 60,
       keywords: DEFAULT_KEYWORDS,
     };
   }
@@ -147,7 +148,7 @@ export async function getTodayApplicationCount(env, platform = null) {
 
 /**
  * @param {DbEnv | null | undefined} env
- * @param {string | number} jobId
+ * @param {string | number | undefined} jobId
  * @param {string} source
  * @returns {Promise<boolean>}
  */

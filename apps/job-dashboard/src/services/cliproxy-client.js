@@ -19,9 +19,9 @@ const DEFAULT_MODEL = 'gpt-6-pro';
 
 /**
  * @typedef {Object} CliproxyCandidateProfile
- * @property {string[]} [skills]
+ * @property {readonly string[]} [skills]
  * @property {number} [experienceYears]
- * @property {string[]} [preferredLocations]
+ * @property {readonly string[]} [preferredLocations]
  */
 
 /**

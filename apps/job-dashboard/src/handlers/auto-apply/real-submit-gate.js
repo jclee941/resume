@@ -10,10 +10,7 @@ const REAL_SUBMIT_ERROR = 'REAL_SUBMIT_APPROVAL_REQUIRED';
  *   [key: string]: unknown;
  * }} CandidateJob
  *
- * @typedef {{
- *   hasExplicitCandidates: boolean;
- *   jobs: CandidateJob[];
- * }} ExplicitCandidates
+ * @typedef {import('./explicit-candidates.js').ValidExplicitCandidates} ExplicitCandidates
  *
  * @typedef {{
  *   explicitSubmit?: boolean;

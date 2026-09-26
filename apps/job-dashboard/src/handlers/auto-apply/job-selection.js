@@ -3,10 +3,20 @@ import { appendDecisionTrace } from './decision-trace.js';
 
 /**
  * @typedef {{
+ *   searched: number;
  *   matched: number;
+ *   applied: number;
  *   [key: string]: unknown;
  * }} PlatformStats
  *
+ * @typedef {{
+ *   platform: string;
+ *   keyword: string;
+ *   message: string;
+ *   errorCode?: string | number;
+ * }} SearchErrorDetail
+ *
+ * One results object is shared by search, selection, and application steps.
  * @typedef {{
  *   searched: number;
  *   matched: number;
@@ -15,8 +25,8 @@ import { appendDecisionTrace } from './decision-trace.js';
  *   errors: number;
  *   searchAttempts: number;
  *   searchFailures: number;
- *   errorDetails: unknown[];
- *   jobs: unknown[];
+ *   errorDetails: SearchErrorDetail[];
+ *   jobs: Array<Record<string, unknown>>;
  *   byPlatform: Record<string, PlatformStats>;
  * }} SearchResults
  *
@@ -48,13 +58,14 @@ export function createSearchResults() {
 // `profile` is the loadMatchingConfig() matching profile the Workflows score with;
 // calculateMatchScore ignores search keywords, which capped every score below minScore.
 /**
+ * @template {JobCandidate} T
  * @param {{
- *   allJobs: JobCandidate[];
+ *   allJobs: T[];
  *   profile: import('./match-scoring.js').MatchScoringConfig;
  *   minScore: number;
  *   searchResults: SearchResults;
  * }} options
- * @returns {(JobCandidate & { matchScore: number; decisionTrace: unknown[] })[]}
+ * @returns {(T & { matchScore: number; decisionTrace: unknown[] })[]}
  */
 export function selectMatchedJobs({ allJobs, profile, minScore, searchResults }) {
   const scoredJobs = allJobs.map((job) => {

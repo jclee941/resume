@@ -42,11 +42,7 @@ const AUTO_NATIVE_PLATFORMS = new Set(['jobkorea', 'saramin']);
  *   [key: string]: unknown;
  * }} NativeDispatchEnv
  *
- * @typedef {{
- *   hasExplicitCandidates?: boolean;
- *   jobs: Array<Record<string, unknown>>;
- *   [key: string]: unknown;
- * }} NativeExplicitCandidates
+ * @typedef {import('./explicit-candidates.js').ValidExplicitCandidates} NativeExplicitCandidates
  */
 
 /**

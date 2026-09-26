@@ -83,6 +83,12 @@ describe('job-dashboard auto-apply DB helpers', () => {
     expect(config.keywords).toEqual(DEFAULT_KEYWORDS);
   });
 
+  test('falls back to the default match threshold without a database', async () => {
+    const config = await helpers.getConfig({});
+
+    expect(config.minMatchScore).toBe(60);
+  });
+
   test('preserves valid auto_apply_keywords config', async () => {
     const keywords = ['Cloud Security', 'Platform'];
     const db = createRecordingDb(JSON.stringify(keywords));
