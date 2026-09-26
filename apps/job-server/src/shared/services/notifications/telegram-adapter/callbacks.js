@@ -1,6 +1,26 @@
 import { answerCallbackQuery } from './delivery.js';
 import { saveNotificationHistory } from './history.js';
 
+/**
+ * @typedef {import('./history.js').HistoryAdapter & {
+ *   telegramToken?: string;
+ *   handlers?: Record<string, (...args: unknown[]) => Promise<{ success?: boolean; message?: string } | void>>;
+ * }} TelegramAdapter
+ *
+ * @typedef {{
+ *   id?: string;
+ *   data?: string;
+ *   [key: string]: unknown;
+ * }} CallbackQuery
+ *
+ * @typedef {Record<string, (...args: unknown[]) => Promise<{ success?: boolean; message?: string } | void>>} CallbackHandlers
+ */
+
+/**
+ * @param {TelegramAdapter} adapter
+ * @param {CallbackQuery} query
+ * @param {CallbackHandlers} [handlers]
+ */
 export async function handleCallbackQuery(adapter, query, handlers = {}) {
   try {
     const callbackData = query?.data;
@@ -62,7 +82,7 @@ export async function handleCallbackQuery(adapter, query, handlers = {}) {
       channels: ['telegram'],
       timestamp: new Date().toISOString(),
       status: result?.success === false ? 'failed' : 'success',
-      results: result,
+      results: /** @type {Record<string, { sent?: boolean }> | undefined} */ (result),
     });
 
     return {
@@ -74,16 +94,21 @@ export async function handleCallbackQuery(adapter, query, handlers = {}) {
   } catch (error) {
     adapter.logger.error(
       '[TelegramNotificationAdapter] handleCallbackQuery error:',
-      error?.message
+      /** @type {{ message?: string }} */ (error)?.message
     );
     return {
       handled: false,
       reason: 'callback_handler_error',
-      error: error?.message,
+      error: /** @type {{ message?: string }} */ (error)?.message,
     };
   }
 }
 
+/**
+ * @param {TelegramAdapter} adapter
+ * @param {string} applicationId
+ * @param {string} status
+ */
 async function updateApprovalStatus(adapter, applicationId, status) {
   const normalized = status === 'approved' ? 'approved' : 'rejected';
 
@@ -123,7 +148,7 @@ async function updateApprovalStatus(adapter, applicationId, status) {
   } catch (error) {
     return {
       success: false,
-      message: `Failed to update application ${applicationId}: ${error?.message}`,
+      message: `Failed to update application ${applicationId}: ${/** @type {{ message?: string }} */ (error)?.message}`,
     };
   }
 }

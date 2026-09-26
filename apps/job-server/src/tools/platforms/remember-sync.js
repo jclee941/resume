@@ -1,5 +1,41 @@
 import { syncToRemember as platformSyncToRemember } from '../../../platforms/remember/remember-profile-sync.js';
 
+/**
+ * @typedef {Object} RememberCareer
+ * @property {string} company
+ * @property {string} [role]
+ * @property {string} [period]
+ * @property {string} [project]
+ */
+
+/**
+ * @typedef {Object} RememberSourceResume
+ * @property {{ name: string }} personal
+ * @property {{ position?: string, company?: string }} [current]
+ * @property {{ totalExperience: string | number, expertise?: unknown }} summary
+ * @property {RememberCareer[]} careers
+ */
+
+/**
+ * @typedef {Object} RememberFormattedResume
+ * @property {string} name
+ * @property {string} headline
+ * @property {string | number} experience
+ * @property {Array<{ company: string, title?: string, period?: string, project?: string }>} careers
+ * @property {unknown} skills
+ */
+
+/**
+ * @typedef {{
+ *   dry_run?: boolean,
+ *   [key: string]: unknown,
+ * }} RememberSyncParams
+ */
+
+/**
+ * @param {RememberSourceResume} source
+ * @returns {RememberFormattedResume}
+ */
 export function mapToRememberFormat(source) {
   return {
     name: source.personal.name,
@@ -15,6 +51,11 @@ export function mapToRememberFormat(source) {
   };
 }
 
+/**
+ * @param {RememberFormattedResume | Record<string, unknown>} data
+ * @param {RememberSyncParams} params
+ * @returns {Promise<unknown>}
+ */
 export async function syncToRemember(data, params) {
   if (params.dry_run) {
     return {

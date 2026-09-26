@@ -2,6 +2,36 @@
  * MCP Tool: Get Job Detail
  */
 
+/**
+ * @typedef {Object} RawCompanyInfo
+ * @property {string} [name]
+ * @property {string} [industry_name]
+ * @property {{ origin?: string }} [logo_img]
+ *
+ * @typedef {Object} RawJobDetailSection
+ * @property {string} [main_tasks]
+ * @property {string} [requirements]
+ * @property {string} [preferred_points]
+ * @property {string} [benefits]
+ * @property {string} [intro]
+ *
+ * @typedef {import('@resume/types/wanted.js').WantedJobDetail & {
+ *   job?: unknown,
+ *   data?: unknown,
+ *   company?: RawCompanyInfo,
+ *   address?: { full_location?: string, location?: string },
+ *   annual_from?: number,
+ *   annual_to?: number,
+ *   reward?: { formatted_total?: string },
+ *   due_time?: string,
+ *   detail?: RawJobDetailSection,
+ *   requirements?: string,
+ *   preferred?: string,
+ *   benefits?: string,
+ *   intro?: string,
+ * }} JobDetailApiResponse
+ */
+
 import WantedAPI from '@resume/shared/clients/wanted';
 
 export const getJobDetailTool = {
@@ -25,12 +55,16 @@ Use this after searching for jobs to get full details including:
     required: ['job_id'],
   },
 
+  /**
+   * @param {{ job_id: number | string }} params
+   * @returns {Promise<Record<string, unknown>>}
+   */
   async execute(params) {
     const api = new WantedAPI();
 
     try {
-      const result = await api.getJobDetail(params.job_id);
-      const job = result.job || result.data || result;
+      const result = /** @type {JobDetailApiResponse} */ (await api.getJobDetail(params.job_id));
+      const job = /** @type {JobDetailApiResponse} */ (result.job || result.data || result);
 
       return {
         success: true,
@@ -57,7 +91,7 @@ Use this after searching for jobs to get full details including:
     } catch (error) {
       return {
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   },

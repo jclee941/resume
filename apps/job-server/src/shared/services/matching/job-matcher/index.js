@@ -14,31 +14,59 @@ import { DEFAULT_SCORING_CONFIG, calculateMatchScore, createScoringConfig } from
 import { filterAndRankJobs, prioritizeApplications } from './ranking.js';
 
 export class JobMatcher {
+  /**
+   * @param {Partial<import('./scoring.js').ScoringConfig> & { scoringConfig?: Partial<import('./scoring.js').ScoringConfig>, resumeReader?: (resumePath?: string) => string }} [options]
+   */
   constructor(options = {}) {
+    /** @type {import('./scoring.js').ScoringConfig} */
     this.scoringConfig = createScoringConfig(options.scoringConfig || options);
+    /** @type {(resumePath?: string) => string} */
     this.resumeReader = options.resumeReader || loadResume;
   }
 
+  /**
+   * @param {string} [resumePath]
+   * @returns {string}
+   */
   loadResume(resumePath) {
     return this.resumeReader(resumePath);
   }
 
+  /**
+   * @param {string} resumeText
+   * @returns {Map<string, { keywords: string[]; weight: number; count: number }>}
+   */
   extractSkills(resumeText) {
     return extractSkills(resumeText, {
       skillCategories: this.scoringConfig.skillCategories,
     });
   }
 
+  /**
+   * @param {string} resumeText
+   * @returns {number}
+   */
   extractExperience(resumeText) {
     return extractExperience(resumeText);
   }
 
+  /**
+   * @param {import('./scoring.js').ScoringJob} job
+   * @param {Iterable<[string, import('./scoring.js').SkillCategoryConfig]>} resumeSkills
+   * @param {number} resumeExperience
+   * @returns {ReturnType<typeof calculateMatchScore>}
+   */
   calculateMatchScore(job, resumeSkills, resumeExperience) {
     return calculateMatchScore(job, resumeSkills, resumeExperience, {
       scoringConfig: this.scoringConfig,
     });
   }
 
+  /**
+   * @param {Parameters<typeof filterAndRankJobs>[0]} jobs
+   * @param {{ resumeReader?: (resumePath?: string) => string, scoringConfig?: Partial<import('./scoring.js').ScoringConfig>, [key: string]: unknown }} [options]
+   * @returns {ReturnType<typeof filterAndRankJobs>}
+   */
   filterAndRankJobs(jobs, options = {}) {
     return filterAndRankJobs(jobs, {
       ...options,
@@ -47,6 +75,10 @@ export class JobMatcher {
     });
   }
 
+  /**
+   * @param {Parameters<typeof prioritizeApplications>[0]} scoredJobs
+   * @returns {ReturnType<typeof prioritizeApplications>}
+   */
   prioritizeApplications(scoredJobs) {
     return prioritizeApplications(scoredJobs);
   }

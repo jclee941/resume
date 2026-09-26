@@ -721,7 +721,22 @@
     "apps/job-server/src/shared/services/cache/tier-operations.js",
     "apps/job-server/src/shared/services/cache/tier-operations/index.js",
     "apps/job-server/src/shared/services/cache/tier-operations/read.js",
-    "apps/job-server/src/shared/services/cache/tier-operations/write.js"
+    "apps/job-server/src/shared/services/cache/tier-operations/write.js",
+    "apps/job-server/src/shared/services/matching/job-matcher.js",
+    "apps/job-server/src/shared/services/matching/job-matcher/index.js",
+    "apps/job-server/src/shared/services/session/session-manager/session-cookie.js",
+    "apps/job-server/src/tools/commands/index.js",
+    "apps/job-server/src/tools/get-categories.js",
+    "apps/job-server/src/tools/get-company.js",
+    "apps/job-server/src/tools/get-job-detail.js",
+    "apps/job-server/src/tools/platforms/remember-sync.js",
+    "apps/job-server/src/tools/search-jobs.js",
+    "apps/job-server/src/tools/search-keyword.js",
+    "apps/portfolio/lib/data-processor.js",
+    "apps/portfolio/lib/html-transformer.js",
+    "apps/portfolio/lib/worker-writer.js",
+    "apps/portfolio/src/scripts/modules/project-cards.js",
+    "apps/portfolio/src/scripts/modules/skill-radar-search.js"
   ],
   "exclude": ["packages/env/src/__tests__/**"]
 }

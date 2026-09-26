@@ -34,8 +34,35 @@ const {
 } = require('./routes');
 
 /**
+ * @typedef {Object} WorkerOptions
+ * @property {string} deployedAt
+ * @property {string} indexHtml
+ * @property {string} [indexEnHtml]
+ * @property {string} [indexJaHtml]
+ * @property {string} [resumeDataJson]
+ * @property {string} [resumeDataEnJson]
+ * @property {string} [resumeDataJaJson]
+ * @property {string} manifestJson
+ * @property {string} [manifestEnJson]
+ * @property {string} serviceWorker
+ * @property {string} mainJs
+ * @property {string} robotsTxt
+ * @property {string} sitemapXml
+ * @property {string} ogImageBase64
+ * @property {string} [ogImageEnBase64]
+ * @property {string} [ogImageJaBase64]
+ * @property {Record<string, unknown>} [securityHeaders]
+ * @property {Record<string, unknown>} [metrics]
+ * @property {Record<string, unknown>} [rateLimitConfig]
+ * @property {string} [contentLastmod]
+ * @property {string[]} [allowedEmails]
+ * @property {string} version
+ * @property {string} [gitSha]
+ */
+
+/**
  * Build complete worker source code.
- * @param {Object} options - Worker generation options.
+ * @param {WorkerOptions} options - Worker generation options.
  * @returns {string} Worker source code.
  */
 function buildWorkerCode(options) {
@@ -107,7 +134,7 @@ function writeWorkerFile({ baseDir, workerCode }) {
 
 /**
  * Build, write, and report size for worker output.
- * @param {{baseDir: string} & Object} options - Worker generation options.
+ * @param {{baseDir: string} & WorkerOptions} options - Worker generation options.
  * @returns {{workerCode: string, workerSizeKB: string}} Worker output data.
  */
 function buildAndWriteWorker(options) {

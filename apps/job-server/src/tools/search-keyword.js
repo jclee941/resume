@@ -2,6 +2,33 @@
  * MCP Tool: Search Jobs by Keyword
  */
 
+/**
+ * @typedef {Object} KeywordJobItem
+ * @property {string|number} id
+ * @property {string} position
+ * @property {{ name?: string, industry_name?: string }} [company]
+ * @property {{ full_location?: string }} [address]
+ * @property {number} [annual_from]
+ * @property {number} [annual_to]
+ * @property {string} [highlight]
+ */
+
+/**
+ * @typedef {Object} SearchKeywordParams
+ * @property {string} query
+ * @property {number} [limit]
+ * @property {number} [offset]
+ * @property {number} [years]
+ */
+
+/**
+ * @typedef {{
+ *   jobs?: KeywordJobItem[],
+ *   data?: { jobs?: KeywordJobItem[] } & KeywordJobItem[],
+ *   total?: number,
+ * }} KeywordSearchResult
+ */
+
 import WantedAPI from '@resume/shared/clients/wanted';
 
 export const searchKeywordTool = {
@@ -40,6 +67,10 @@ Returns job listings with: id, position, company, location, highlight snippets.`
     required: ['query'],
   },
 
+  /**
+   * @param {SearchKeywordParams} params
+   * @returns {Promise<Record<string, unknown>>}
+   */
   async execute(params) {
     const api = new WantedAPI();
 
@@ -51,7 +82,12 @@ Returns job listings with: id, position, company, location, highlight snippets.`
       });
 
       // Handle different response structures
-      const jobsData = result.data?.jobs || result.jobs || result.data || [];
+      const jobsData = /** @type {KeywordJobItem[]} */ (
+        /** @type {KeywordSearchResult} */ (result).data?.jobs ||
+          result.jobs ||
+          /** @type {KeywordSearchResult} */ (result).data ||
+          []
+      );
 
       const jobs = jobsData.map((job) => ({
         id: job.id,
@@ -74,7 +110,7 @@ Returns job listings with: id, position, company, location, highlight snippets.`
     } catch (error) {
       return {
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   },

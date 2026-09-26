@@ -8,8 +8,12 @@ import { PipelineScheduleCommand } from './pipeline-schedule-command.js';
 import { SyncSectionCommand } from './sync-section-command.js';
 
 export class CommandRegistry {
+  /**
+   * @param {import('./base-command.js').BaseCommandApi} api
+   */
   constructor(api) {
     this.api = api;
+    /** @type {Map<string, import('./base-command.js').BaseCommand>} */
     this.commands = new Map();
     this._registerCommands();
   }
@@ -29,6 +33,10 @@ export class CommandRegistry {
     this.commands.set('sync_language_certs', new SyncSectionCommand(this.api, 'language_certs'));
   }
 
+  /**
+   * @param {string} action
+   * @returns {import('./base-command.js').BaseCommand | undefined}
+   */
   getCommand(action) {
     return this.commands.get(action);
   }
