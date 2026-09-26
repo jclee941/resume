@@ -1,9 +1,44 @@
 import { logToElasticsearch } from './transport.js';
 
+/**
+ * @typedef {import('./transport.js').ElasticsearchEnv} ElasticsearchEnv
+ * @typedef {import('./transport.js').ElasticsearchLogOptions & {
+ *   requestId?: string,
+ *   startTime?: number
+ * }} FormatterOptions
+ *
+ * @typedef {Object} CfData
+ * @property {string} [country]
+ * @property {string} [city]
+ * @property {number} [asn]
+ *
+ * @typedef {Object} RequestLike
+ * @property {string} method
+ * @property {{ get(name: string): string | null }} headers
+ * @property {CfData} [cf]
+ *
+ * @typedef {Object} UrlLike
+ * @property {string} pathname
+ * @property {string} [search]
+ *
+ * @typedef {Object} ResponseLike
+ * @property {number} status
+ */
+
+/**
+ * @returns {string}
+ */
 export function generateRequestId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
+/**
+ * @param {ElasticsearchEnv} env
+ * @param {RequestLike} request
+ * @param {UrlLike} url
+ * @param {FormatterOptions} [options]
+ * @returns {Promise<void>}
+ */
 export async function logRequest(env, request, url, options = {}) {
   const requestId = options.requestId || generateRequestId();
   const startTime = options.startTime || Date.now();
@@ -44,6 +79,13 @@ export async function logRequest(env, request, url, options = {}) {
   );
 }
 
+/**
+ * @param {ElasticsearchEnv} env
+ * @param {{ method: string }} request
+ * @param {ResponseLike} response
+ * @param {FormatterOptions} [options]
+ * @returns {Promise<void>}
+ */
 export async function logResponse(env, request, response, options = {}) {
   const requestId = options.requestId || generateRequestId();
   const startTime = options.startTime || Date.now();
@@ -67,6 +109,13 @@ export async function logResponse(env, request, response, options = {}) {
   );
 }
 
+/**
+ * @param {ElasticsearchEnv} env
+ * @param {Error | { name: string, message: string, stack?: string }} error
+ * @param {Record<string, unknown>} [context]
+ * @param {FormatterOptions} [options]
+ * @returns {Promise<void>}
+ */
 export async function logError(env, error, context = {}, options = {}) {
   return logToElasticsearch(
     env,
@@ -85,6 +134,13 @@ export async function logError(env, error, context = {}, options = {}) {
   );
 }
 
+/**
+ * @param {ElasticsearchEnv} env
+ * @param {string} event
+ * @param {Record<string, unknown>} [data]
+ * @param {FormatterOptions} [options]
+ * @returns {Promise<void>}
+ */
 export async function logEvent(env, event, data = {}, options = {}) {
   return logToElasticsearch(
     env,
