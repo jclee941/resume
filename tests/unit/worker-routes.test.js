@@ -195,10 +195,10 @@ describe('Worker Routes', () => {
             }),
           },
           SESSIONS: {
-            put: async () => {
+            get: async () => {
               if (kvThrows) throw new Error('kv boom');
+              return '1';
             },
-            get: async () => '1',
           },
         };
         let captured = null;

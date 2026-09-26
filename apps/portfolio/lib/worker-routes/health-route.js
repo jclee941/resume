@@ -25,8 +25,7 @@ function generateHealthRoute(opts) {
         }
         try {
           const kvStart = Date.now();
-          await env.SESSIONS.put('_health_check', Date.now().toString());
-          await env.SESSIONS.get('_health_check');
+          await env.SESSIONS.get('pf:health:check');
           bindings.kv = { healthy: true, latency_ms: Date.now() - kvStart };
         } catch (e) {
           bindings.kv = { healthy: false, error: e.message };
@@ -72,8 +71,7 @@ function generateHealthRoute(opts) {
           bindings.d1 = { healthy: false };
         }
         try {
-          await env.SESSIONS.put('_health_check', Date.now().toString());
-          await env.SESSIONS.get('_health_check');
+          await env.SESSIONS.get('pf:health:check');
           bindings.kv = { healthy: true };
         } catch (e) {
           bindings.kv = { healthy: false };

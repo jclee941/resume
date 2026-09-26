@@ -1,6 +1,6 @@
 const HEALTH_CHECK_USER_AGENT = 'HealthCheckWorkflow/1.0';
 const HTTP_TIMEOUT_MS = 25000;
-const KV_TEST_KEY = '_health_check';
+const KV_TEST_KEY = 'jd:health:check';
 const KV_TEST_TTL_SECONDS = 60;
 
 export async function checkServices(services) {
