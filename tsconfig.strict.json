@@ -623,7 +623,12 @@
     "apps/job-server/src/shared/services/performance-metrics.js",
     "apps/job-server/src/shared/services/queue/index.js",
     "apps/job-server/src/shared/services/session/session-manager/session-expiration.js",
-    "apps/job-server/src/shared/services/session/session-manager/session-store-factory.js"
+    "apps/job-server/src/shared/services/session/session-manager/session-store-factory.js",
+    "apps/portfolio/lib/cards/projects.js",
+    "packages/shared/src/retry/retry-service.js",
+    "tools/scripts/build/generate-resume-variants.js",
+    "tools/scripts/utils/validate-resume-data.js",
+    "tools/scripts/verification/run-lighthouse-ci.mjs"
   ],
   "exclude": ["packages/env/src/__tests__/**"]
 }

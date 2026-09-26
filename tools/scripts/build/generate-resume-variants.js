@@ -21,7 +21,14 @@
 
 const fs = require('fs').promises;
 
-const {CONFIG} = require('./resume-variant-config');
+/**
+ * @typedef {import('./resume-variant-content').VariantConfig & { filename: string, description: string }} VariantItemConfig
+ */
+
+const {CONFIG} =
+  /** @type {{ CONFIG: { masterFile: string, outputDir: string, archiveDir: string, variants: Record<string, VariantItemConfig> } }} */ (
+    require('./resume-variant-config')
+  );
 const {parseMasterResume, generateVariant} = require('./resume-variant-generator');
 const {archiveOldResumes} = require('./resume-variant-archive');
 
@@ -85,8 +92,8 @@ async function main() {
     console.log(`\n📁 Output directory: ${CONFIG.outputDir}`);
     console.log(`📁 Archive directory: ${CONFIG.archiveDir}`);
   } catch (error) {
-    console.error('\n❌ Fatal error:', error.message);
-    console.error(error.stack);
+    console.error('\n❌ Fatal error:', /** @type {Error} */ (error).message);
+    console.error(/** @type {Error} */ (error).stack);
     process.exit(1);
   }
 }

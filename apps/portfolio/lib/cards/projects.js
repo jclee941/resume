@@ -1,4 +1,7 @@
-const { TEMPLATE_CACHE } = require('../config');
+const { TEMPLATE_CACHE } =
+  /** @type {{ TEMPLATE_CACHE: { dataHash: string | null, projectCardsHtml: string | null } }} */ (
+    require('../config')
+  );
 const { escapeHtml } = require('../template-sanitizer');
 const logger = require('../../logger');
 const {
@@ -8,19 +11,57 @@ const {
   projectLabelsFor,
 } = require('./project-review');
 
+/**
+ * @typedef {Object} Dashboard
+ * @property {string} name
+ * @property {string} url
+ */
+
+/**
+ * @typedef {Object} Project
+ * @property {string | number} [id]
+ * @property {string} title
+ * @property {string} description
+ * @property {string} tech
+ * @property {string} [name]
+ * @property {string} [tagline]
+ * @property {string} [period]
+ * @property {string} [language]
+ * @property {string} [githubUrl]
+ * @property {string} [repoUrl]
+ * @property {string} [demoUrl]
+ * @property {string} [liveUrl]
+ * @property {number} [displayOrder]
+ * @property {Dashboard[]} [dashboards]
+ */
+
+/**
+ * @param {Project} project
+ * @param {string | undefined} link
+ * @param {unknown} hasLink
+ * @returns {string}
+ */
 function buildProjectTitle(project, link, hasLink) {
   const title = escapeHtml(project.title);
   return hasLink
-    ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer" class="project-link-title" aria-label="View ${title} project (opens in new tab)">${title}<span class="arrow">↗</span></a>`
+    ? `<a href="${escapeHtml(/** @type {string} */ (link))}" target="_blank" rel="noopener noreferrer" class="project-link-title" aria-label="View ${title} project (opens in new tab)">${title}<span class="arrow">↗</span></a>`
     : `<span class="project-title-text">${title}</span>`;
 }
 
+/**
+ * @param {Project} project
+ * @returns {Dashboard[]}
+ */
 function projectDashboards(project) {
   return Array.isArray(project.dashboards)
     ? project.dashboards.filter((dashboard) => dashboard && dashboard.name && dashboard.url)
     : [];
 }
 
+/**
+ * @param {string | undefined | null} period
+ * @returns {string | null}
+ */
 function projectActivityBadge(period) {
   if (typeof period !== 'string') return null;
   const [, end] = period.split('~').map((part) => part.trim());
@@ -33,6 +74,12 @@ function projectActivityBadge(period) {
   return null;
 }
 
+/**
+ * @param {Project} project
+ * @param {string | undefined} [githubUrl]
+ * @param {string | undefined} [demoUrl]
+ * @returns {string}
+ */
 function buildProjectMeta(project, githubUrl, demoUrl) {
   const language = project.language ? escapeHtml(String(project.language)) : null;
   const metaBadges = [];
@@ -56,6 +103,12 @@ function buildProjectMeta(project, githubUrl, demoUrl) {
   return metaBadges.join('');
 }
 
+/**
+ * @param {Project} project
+ * @param {string | undefined} [githubUrl]
+ * @param {string | undefined} [demoUrl]
+ * @returns {string}
+ */
 function buildProjectLinks(project, githubUrl, demoUrl) {
   const dashboards = projectDashboards(project);
   const linkFragments = [];
@@ -89,7 +142,7 @@ function buildProjectLinks(project, githubUrl, demoUrl) {
 
 /**
  * Generate project list items HTML from JSON data
- * @param {Array} projectsData - Array of project objects
+ * @param {Array<Project>} projectsData - Array of project objects
  * @param {string} dataHash - Hash of the data for cache validation
  * @returns {string} HTML string for project list items
  */
