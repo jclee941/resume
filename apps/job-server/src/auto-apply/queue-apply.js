@@ -9,12 +9,81 @@ import { parseWantedJobId } from './strategies/wanted-id.js';
 const SUPPORTED_PLATFORMS = new Set(['jobkorea', 'saramin', 'wanted']);
 
 /**
+ * @typedef {Object} RawQueueEntry
+ * @property {string} [id]
+ * @property {string} [source]
+ * @property {string} [loginPlatform]
+ * @property {string} [url]
+ * @property {string} [sourceUrl]
+ * @property {string} [position]
+ * @property {string} [title]
+ * @property {string} [company]
+ */
+
+/**
+ * @typedef {Object} NormalizedQueueJob
+ * @property {string} id
+ * @property {string} source
+ * @property {string} company
+ * @property {string} title
+ * @property {string} sourceUrl
+ */
+
+/**
+ * @typedef {Object} QueueDeps
+ * @property {(platform: string) => { valid: boolean; reason?: string }} [checkHealth]
+ * @property {(path: string) => string} [readFile]
+ */
+
+/**
+ * @typedef {Object} QueueBlockedItem
+ * @property {NormalizedQueueJob} job
+ * @property {string | undefined} reason
+ */
+
+/**
+ * @typedef {Object} QueuePlan
+ * @property {NormalizedQueueJob[]} submittable
+ * @property {QueueBlockedItem[]} blocked
+ */
+
+/**
+ * @typedef {Object} QueueAppliedResult
+ * @property {NormalizedQueueJob} job
+ * @property {boolean} success
+ * @property {unknown} [error]
+ */
+
+/**
+ * @typedef {Object} QueueApplier
+ * @property {(job: NormalizedQueueJob) => Promise<{ success?: boolean; error?: unknown }>} applyToJob
+ */
+
+/**
+ * @typedef {Object} RunQueueApplyParams
+ * @property {string} queuePath
+ * @property {QueueApplier} applier
+ * @property {boolean} [dryRun]
+ * @property {number} [max]
+ * @property {{ info?: (msg: string) => void }} [logger]
+ */
+
+/**
+ * @typedef {Object} RunQueueApplyResult
+ * @property {number} planned
+ * @property {number} submittable
+ * @property {QueueAppliedResult[]} applied
+ * @property {QueueBlockedItem[]} blocked
+ * @property {boolean} dryRun
+ */
+
+/**
  * Normalize a curated submit-queue entry into the shape the apply strategies expect.
  * The queue stores {company, position, source, url, ...}; strategies read
  * {source, company, title, sourceUrl}.
  *
- * @param {object} entry - curated queue entry
- * @returns {{source: string, company: string, title: string, sourceUrl: string, id: string}}
+ * @param {RawQueueEntry} entry - curated queue entry
+ * @returns {NormalizedQueueJob}
  */
 export function normalizeQueueEntry(entry) {
   const source = entry.source || entry.loginPlatform || '';
@@ -35,9 +104,8 @@ export function normalizeQueueEntry(entry) {
  * Decide, without submitting, whether a queue entry can actually be applied to.
  * Returns a structured reason so the caller can report honestly.
  *
- * @param {object} job - normalized job
- * @param {object} [deps]
- * @param {(platform: string) => {valid: boolean, reason?: string}} [deps.checkHealth]
+ * @param {NormalizedQueueJob} job - normalized job
+ * @param {QueueDeps} [deps]
  * @returns {{ok: boolean, reason?: string}}
  */
 export function assessQueueEntry(job, deps = {}) {
@@ -67,8 +135,8 @@ export function assessQueueEntry(job, deps = {}) {
  * and which are blocked and why. Pure (no submission, no browser).
  *
  * @param {string} queuePath - path to submit-queue.json
- * @param {object} [deps]
- * @returns {{submittable: object[], blocked: {job: object, reason: string}[]}}
+ * @param {QueueDeps} [deps]
+ * @returns {QueuePlan}
  */
 export function planQueueApply(queuePath, deps = {}) {
   const readFile = deps.readFile || ((p) => readFileSync(p, 'utf8'));
@@ -94,14 +162,9 @@ export function planQueueApply(queuePath, deps = {}) {
  * dryRun is false AND the platform session is valid. Unsupported platforms and
  * missing sessions are reported as blocked, never silently skipped.
  *
- * @param {object} params
- * @param {string} params.queuePath
- * @param {object} params.applier - AutoApplier instance (applyToJob, initBrowser...)
- * @param {boolean} [params.dryRun=true]
- * @param {number} [params.max]
- * @param {object} [params.logger=console]
- * @param {object} [deps]
- * @returns {Promise<{planned:number, submittable:number, applied:object[], blocked:object[], dryRun:boolean}>}
+ * @param {RunQueueApplyParams} params
+ * @param {QueueDeps} [deps]
+ * @returns {Promise<RunQueueApplyResult>}
  */
 export async function runQueueApply(params, deps = {}) {
   const { queuePath, applier, dryRun = true, max, logger = console } = params;
@@ -115,6 +178,7 @@ export async function runQueueApply(params, deps = {}) {
     submittable = submittable.slice(0, max);
   }
 
+  /** @type {RunQueueApplyResult} */
   const result = {
     planned: plan.submittable.length + plan.blocked.length,
     submittable: submittable.length,
@@ -135,7 +199,11 @@ export async function runQueueApply(params, deps = {}) {
       const res = await applier.applyToJob(job);
       result.applied.push({ job, success: !!res?.success, error: res?.error });
     } catch (error) {
-      result.applied.push({ job, success: false, error: error.message });
+      result.applied.push({
+        job,
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
   return result;

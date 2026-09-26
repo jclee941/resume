@@ -25,6 +25,15 @@ import { normalizePlatform, SESSION_STATES } from './session-broker-constants.js
 import { getState, setState } from './session-broker-state.js';
 import { loadSession, normalizeRenewalResult, saveSession } from './session-broker-storage.js';
 
+/**
+ * @typedef {{ renew?: () => Promise<unknown>; execute: (platform: string) => Promise<unknown> }} LoginFlow
+ */
+
+/**
+ * @param {import('./session-broker-service.js').default} service
+ * @param {string} normalized
+ * @returns {LoginFlow | null}
+ */
 function getLoginFlow(service, normalized) {
   const factory = service.loginFlowFactories[normalized];
   if (typeof factory === 'function') {
@@ -34,6 +43,10 @@ function getLoginFlow(service, normalized) {
   return service.loginFlows[normalized] ?? null;
 }
 
+/**
+ * @param {import('./session-broker-service.js').default} service
+ * @param {string} platform
+ */
 export async function checkSession(service, platform) {
   const normalized = normalizePlatform(platform);
 
@@ -103,6 +116,10 @@ export async function checkSession(service, platform) {
   return { valid: true, expiresAt: expiresAtRaw, renewedAt: renewedAtRaw };
 }
 
+/**
+ * @param {import('./session-broker-service.js').default} service
+ * @param {string} platform
+ */
 export async function renewSession(service, platform) {
   const normalized = normalizePlatform(platform);
 
@@ -121,6 +138,7 @@ export async function renewSession(service, platform) {
     lastError: null,
   });
 
+  /** @type {Error | { message?: string } | null | undefined} */
   let lastError;
   for (let attempt = 1; attempt <= service.retryAttempts; attempt++) {
     try {
@@ -153,9 +171,11 @@ export async function renewSession(service, platform) {
         },
       };
     } catch (error) {
-      lastError = error;
+      lastError = /** @type {Error} */ (error);
       service.logger.error?.(
-        `[SessionBrokerService] Renewal attempt ${attempt} failed: ${error.message}`
+        `[SessionBrokerService] Renewal attempt ${attempt} failed: ${
+          error instanceof Error ? error.message : String(error)
+        }`
       );
 
       if (attempt < service.retryAttempts) {
@@ -172,6 +192,10 @@ export async function renewSession(service, platform) {
   return { success: false, error: errorMessage };
 }
 
+/**
+ * @param {import('./session-broker-service.js').default} service
+ * @param {string} platform
+ */
 export async function getValidSession(service, platform) {
   const normalized = normalizePlatform(platform);
   const check = await checkSession(service, normalized);
@@ -199,6 +223,11 @@ export async function getValidSession(service, platform) {
   };
 }
 
+/**
+ * @param {import('./session-broker-service.js').default} service
+ * @param {string} platform
+ * @param {string} encryptedSession
+ */
 export async function validateEncryptedSession(service, platform, encryptedSession) {
   try {
     const decrypted = service.encryptionService.decrypt(encryptedSession);
@@ -208,11 +237,18 @@ export async function validateEncryptedSession(service, platform, encryptedSessi
 
     return { valid: true, decrypted };
   } catch (error) {
-    return { valid: false, error: error.message };
+    return {
+      valid: false,
+      error: error instanceof Error ? error.message : String(error),
+    };
   }
 }
 
+/**
+ * @param {import('./session-broker-service.js').default} service
+ */
 export async function getHealth(service) {
+  /** @type {Record<string, { state: string; valid: boolean; expiresAt: string | null; renewedAt: string | null; lastError: string | null }>} */
   const platforms = {};
 
   for (const platformName of service.platforms) {

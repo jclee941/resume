@@ -1,6 +1,46 @@
 import { JobMatcher } from '../../shared/services/matching/index.js';
 import { WANTED_CATEGORIES } from './platform-crawlers.js';
 
+/**
+ * @typedef {Object} SearchWithMatchingParams
+ * @property {number} [minScore]
+ * @property {number} [maxResults]
+ * @property {string[]} [excludeCompanies]
+ * @property {string} [keyword]
+ * @property {number} [limit]
+ * @property {string[]} [sources]
+ * @property {string | number} [experience]
+ * @property {boolean} [writeProposals]
+ * @property {string[]} [categories]
+ * @property {string} [location]
+ */
+
+/**
+ * @typedef {Object} SearchRecommendedOptions
+ * @property {string[]} [categories]
+ * @property {number | string} [experience]
+ * @property {string} [location]
+ * @property {string[]} [keywords]
+ * @property {string[]} [sources]
+ * @property {number} [minScore]
+ * @property {number} [maxResults]
+ */
+
+/**
+ * @typedef {Object} CrawlerContext
+ * @property {JobMatcher} [jobMatcher]
+ * @property {Parameters<typeof JobMatcher.prototype.filterAndRankJobs>[1] extends infer O ? (O extends { resumeReader?: infer R } ? R : never) : never} [resumeReader]
+ * @property {Parameters<typeof JobMatcher.prototype.filterAndRankJobs>[1] extends infer O ? (O extends { scoringConfig?: infer S } ? S : never) : never} [scoringConfig]
+ * @property {string} [resumePath]
+ * @property {(params: SearchWithMatchingParams | Record<string, unknown>) => Promise<{ success: boolean; jobs: Record<string, unknown>[]; sourceStats?: unknown }>} searchAll
+ * @property {(source: string, params: Record<string, unknown>) => Promise<{ success: boolean; jobs?: Record<string, unknown>[] }>} searchSource
+ * @property {(jobs: Record<string, unknown>[]) => Record<string, unknown>[]} deduplicateJobs
+ */
+
+/**
+ * @param {CrawlerContext} crawlerContext
+ * @returns {JobMatcher}
+ */
 function getJobMatcher(crawlerContext) {
   if (crawlerContext.jobMatcher) {
     return crawlerContext.jobMatcher;
@@ -12,6 +52,10 @@ function getJobMatcher(crawlerContext) {
   });
 }
 
+/**
+ * @param {CrawlerContext} crawlerContext
+ * @param {SearchWithMatchingParams} [params]
+ */
 export async function searchWithMatching(crawlerContext, params = {}) {
   const searchResult = await crawlerContext.searchAll(params);
 
@@ -39,6 +83,10 @@ export async function searchWithMatching(crawlerContext, params = {}) {
   };
 }
 
+/**
+ * @param {CrawlerContext} crawlerContext
+ * @param {SearchRecommendedOptions} [options]
+ */
 export async function searchRecommended(crawlerContext, options = {}) {
   const defaultCategories = [
     WANTED_CATEGORIES.SECURITY,

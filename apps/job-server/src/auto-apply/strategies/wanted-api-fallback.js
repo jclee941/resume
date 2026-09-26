@@ -4,6 +4,54 @@ import { WANTED_PLATFORM } from './wanted-id.js';
 import { extractApplicationId } from './wanted-applications.js';
 import { getErrorStatus, isAlreadyAppliedWantedError, sleep } from './wanted-retry.js';
 
+/**
+ * @typedef {Object} CircuitState
+ * @property {number} failures
+ * @property {number} threshold
+ * @property {number} openedAt
+ * @property {number} resetMs
+ */
+
+/**
+ * @typedef {Object} ApiFallbackJob
+ * @property {string | number} [id]
+ * @property {string} company
+ * @property {string} title
+ * @property {string} sourceUrl
+ * @property {string} [source]
+ */
+
+/**
+ * @typedef {Object} ApiFallbackContext
+ * @property {{
+ *   recordApplyRetryMetric?: (param: { attempt: number; status: number }) => void
+ * }} [statsService]
+ * @property {{
+ *   recordRetryMetric?: (param: { attempt: number; status: number }) => void,
+ *   addApplication: (job: ApiFallbackJob, opts: { resumeKey: string; notes: string }) => { id: string; [key: string]: unknown },
+ *   updateStatus: (id: string, status: string, notes: string) => void
+ * }} appManager
+ */
+
+/**
+ * @typedef {Object} WantedFallbackApi
+ * @property {(path: string, options: { method: string; body: unknown }) => Promise<import('./wanted-applications.js').ApplicationIdContainer>} chaosRequest
+ */
+
+/**
+ * @typedef {Object} WantedApiFallbackParams
+ * @property {ApiFallbackContext} ctx
+ * @property {WantedFallbackApi} api
+ * @property {ApiFallbackJob} job
+ * @property {unknown} payload
+ * @property {string} resumeKey
+ * @property {import('./wanted-retry.js').RetryReporter} retryReporter
+ * @property {CircuitState} circuitState
+ */
+
+/**
+ * @param {WantedApiFallbackParams} params
+ */
 export async function applyViaWantedApiFallback({
   ctx,
   api,
@@ -36,7 +84,11 @@ export async function applyViaWantedApiFallback({
       });
       break;
     } catch (error) {
-      if (isAlreadyAppliedWantedError(error)) {
+      if (
+        isAlreadyAppliedWantedError(
+          /** @type {import('./wanted-retry.js').WantedErrorLike} */ (error)
+        )
+      ) {
         return {
           success: true,
           applied: false,
@@ -47,7 +99,9 @@ export async function applyViaWantedApiFallback({
         };
       }
 
-      const status = getErrorStatus(error);
+      const status = getErrorStatus(
+        /** @type {import('./wanted-retry.js').WantedErrorLike} */ (error)
+      );
       if (status >= 500 && attempt < maxRetries) {
         retryReporter('retry', { attempt, error });
         ctx.statsService?.recordApplyRetryMetric?.({ attempt, status });
