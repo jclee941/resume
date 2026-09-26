@@ -10,7 +10,7 @@ import {
  * @typedef {{
  *   summary?: { profileStatement?: string };
  *   personal: { email?: string; phone: string; [key: string]: unknown };
- *   careers?: Array<Omit<import('../mappers/wanted-profile-mapper.js').WantedCareerInput, 'company'> & { company: string; [key: string]: unknown }>;
+ *   careers?: Array<Omit<import('../mappers/wanted-profile-mapper.js').WantedCareerInput, 'company'> & { company: string; project?: string; description?: string; [key: string]: unknown }>;
  *   education?: import('../mappers/wanted-profile-mapper.js').WantedEducationInput;
  *   certifications?: Array<import('../mappers/wanted-profile-mapper.js').WantedCertificationInput & { status?: string; [key: string]: unknown }>;
  *   languages?: Array<{ name: string; level: string; [key: string]: unknown }>;
@@ -25,7 +25,7 @@ import {
  *   about?: string;
  *   email?: string;
  *   mobile?: string;
- *   careers?: Array<{ id: string | number; company?: { name?: string }; company_name?: string; projects?: unknown[]; [key: string]: unknown }>;
+ *   careers?: Array<{ id: string | number; company?: { name?: string }; company_name?: string; projects?: Array<{ id: string | number; [key: string]: unknown }>; [key: string]: unknown }>;
  *   educations?: Array<{ id: string | number; name?: string; school_name?: string; [key: string]: unknown }>;
  *   activities?: Array<{ id: string | number; title?: string; activity_type?: string; [key: string]: unknown }>;
  *   language_certs?: Array<{ id: string | number; language_name?: string; [key: string]: unknown }>;
@@ -36,49 +36,33 @@ import {
  *   id?: string | number;
  *   company?: string;
  *   data?: unknown;
- *   ssotCareer?: unknown;
- *   existingProjects?: unknown[];
+ *   ssotCareer?: NonNullable<SsotData['careers']>[number];
+ *   existingProjects?: Array<{ id: string | number; [key: string]: unknown }>;
  * }} CareerChangeItem
  *
  * @typedef {{
  *   toUpdate: CareerChangeItem[];
  *   toAdd: CareerChangeItem[];
- *   toDelete: CareerChangeItem[];
+ *   toDelete: Array<{ id: string | number; company: string }>;
  * }} CareerChanges
  *
  * @typedef {{
- *   id?: string | number;
- *   school?: string;
- *   data?: unknown;
- * }} EducationChangeItem
- *
- * @typedef {{
- *   toUpdate: EducationChangeItem[];
- *   toAdd: EducationChangeItem[];
+ *   toUpdate: Array<{ id: string | number; school: string | undefined; data: unknown }>;
+ *   toAdd: Array<{ school: string | undefined; data: unknown }>;
  * }} EducationChanges
  *
  * @typedef {{
- *   id?: string | number;
- *   title?: string;
- *   data?: unknown;
- * }} ActivityChangeItem
- *
- * @typedef {{
- *   toUpdate: ActivityChangeItem[];
- *   toAdd: ActivityChangeItem[];
- *   toDelete: ActivityChangeItem[];
+ *   toUpdate: Array<{ id: string | number; title: string | undefined; data: unknown }>;
+ *   toAdd: Array<{ title: string | undefined; data: unknown }>;
+ *   toDelete: Array<{ id: string | number; title: string }>;
  * }} ActivityChanges
  *
- * @typedef {{
- *   id?: string | number;
- *   name?: string;
- *   data?: { language_name: string; level: number };
- * }} LanguageCertChangeItem
+ * @typedef {{ language_name: string; level: number }} LanguageCertData
  *
  * @typedef {{
- *   toUpdate: LanguageCertChangeItem[];
- *   toAdd: LanguageCertChangeItem[];
- *   toDelete: LanguageCertChangeItem[];
+ *   toUpdate: Array<{ id: string | number; name: string; data: LanguageCertData }>;
+ *   toAdd: Array<{ name: string; data: LanguageCertData }>;
+ *   toDelete: Array<{ id: string | number; name: string }>;
  * }} LanguageCertChanges
  */
 

@@ -10,7 +10,7 @@
 
 /**
  * @param {DetailQueryHandler} handler
- * @param {{ params: { id: string } }} request
+ * @param {{ params: Record<string, string> }} request
  * @returns {Promise<Response>}
  */
 export async function getApplication(handler, request) {

@@ -3,7 +3,7 @@ import { escapeHtml, sendTelegramNotification } from '../../services/notificatio
 /**
  * Send the crawl summary notification.
  *
- * @param {Object} env
+ * @param {import('../../services/notifications.js').NotificationEnv} env
  * @param {string[]} platforms
  * @param {{totalJobs: number}} results
  * @param {Array<{ company?: string, position?: string, matchScore?: number }>} matchedJobs
@@ -31,7 +31,7 @@ export async function notifyJobCrawlingResults(env, platforms, results, matchedJ
 }
 
 /**
- * @param {Object} env
+ * @param {import('../../services/notifications.js').NotificationEnv} env
  * @param {string} message
  * @returns {Promise<void>}
  */

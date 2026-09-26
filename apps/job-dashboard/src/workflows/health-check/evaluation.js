@@ -1,5 +1,6 @@
 /**
  * @typedef {Object} ServiceResult
+ * @property {string} url
  * @property {string} [name]
  * @property {boolean} healthy
  * @property {number} latencyMs

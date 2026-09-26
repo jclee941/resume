@@ -21,7 +21,7 @@ import { WorkflowEntrypoint } from 'cloudflare:workers';
  *   TELEGRAM_BOT_TOKEN?: string;
  *   TELEGRAM_CHAT_ID?: string;
  *   [key: string]: unknown;
- * }} BackupEnv
+ * } & import('../services/notifications.js').NotificationEnv} BackupEnv
  *
  * @typedef {{
  *   tables?: string[];

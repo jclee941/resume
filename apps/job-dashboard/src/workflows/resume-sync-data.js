@@ -21,20 +21,22 @@ import { readPlatformSession } from '../services/platform-session.js';
  */
 
 /**
+ * @typedef {import('./resume-sync-diff.js').ResumeItem} ResumeItem
+ *
  * @typedef {{
- *   careers?: unknown[];
- *   educations?: unknown[];
- *   skills?: unknown[];
- *   activities?: unknown[];
- *   language_certs?: unknown[];
- *   links?: unknown[];
+ *   careers?: ResumeItem[];
+ *   educations?: ResumeItem[];
+ *   skills?: ResumeItem[];
+ *   activities?: ResumeItem[];
+ *   language_certs?: ResumeItem[];
+ *   links?: ResumeItem[];
  * }} RawWantedResumeData
  */
 
 /**
  * @param {ResumeSyncEnv} env
  * @param {string | number} resumeId
- * @returns {Promise<{ data: unknown; targetResumeId: string | null } | null>}
+ * @returns {Promise<{ data: Record<string, ResumeItem[]>; targetResumeId: string | null } | null>}
  */
 export async function getMasterResumeRecord(env, resumeId) {
   const row = await env.JOB_DB.prepare('SELECT data, target_resume_id FROM resumes WHERE id = ?')
@@ -49,11 +51,11 @@ export async function getMasterResumeRecord(env, resumeId) {
 /**
  * @param {ResumeSyncEnv} env
  * @param {string} platform
- * @param {string | number} resumeId
- * @returns {Promise<unknown>}
+ * @param {string | number | null | undefined} resumeId
+ * @returns {Promise<Record<string, ResumeItem[]>>}
  */
 export async function exportFromPlatform(env, platform, resumeId) {
-  /** @type {Record<string, () => Promise<unknown>>} */
+  /** @type {Record<string, () => Promise<Record<string, ResumeItem[]>>>} */
   const exporters = {
     wanted: () => exportFromWanted(env, resumeId),
     linkedin: () => exportFromLinkedIn(resumeId),
@@ -70,7 +72,7 @@ export async function exportFromPlatform(env, platform, resumeId) {
 
 /**
  * @param {ResumeSyncEnv} env
- * @param {string | number} resumeId
+ * @param {string | number | null | undefined} resumeId
  * @returns {Promise<ReturnType<typeof normalizeWantedResume>>}
  */
 export async function exportFromWanted(env, resumeId) {
@@ -106,16 +108,16 @@ export async function exportFromWanted(env, resumeId) {
 }
 
 /**
- * @param {string | number} [_resumeId]
- * @returns {Promise<{ careers: unknown[]; educations: unknown[]; skills: unknown[] }>}
+ * @param {string | number | null} [_resumeId]
+ * @returns {Promise<Record<string, ResumeItem[]>>}
  */
 export async function exportFromLinkedIn(_resumeId) {
   return { careers: [], educations: [], skills: [] };
 }
 
 /**
- * @param {string | number} [_resumeId]
- * @returns {Promise<{ careers: unknown[]; educations: unknown[]; skills: unknown[] }>}
+ * @param {string | number | null} [_resumeId]
+ * @returns {Promise<Record<string, ResumeItem[]>>}
  */
 export async function exportFromRemember(_resumeId) {
   return { careers: [], educations: [], skills: [] };

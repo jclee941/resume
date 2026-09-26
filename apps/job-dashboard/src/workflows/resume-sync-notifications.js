@@ -14,7 +14,7 @@ import { sendTelegramNotification, escapeHtml } from '../services/notifications.
  */
 
 /**
- * @param {Record<string, unknown>} env
+ * @param {import('../services/notifications.js').NotificationEnv} env
  * @param {ResumeSync} sync
  * @param {unknown} [_diffs]
  * @returns {Promise<void>}
@@ -36,7 +36,7 @@ export async function notifyPreview(env, sync, _diffs) {
 }
 
 /**
- * @param {Record<string, unknown>} env
+ * @param {import('../services/notifications.js').NotificationEnv} env
  * @param {{
  *   resumeId: string;
  *   platforms: string[];

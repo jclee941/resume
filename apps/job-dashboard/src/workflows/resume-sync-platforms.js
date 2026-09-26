@@ -11,7 +11,7 @@ import { readPlatformSession } from '../services/platform-session.js';
 /**
  * @typedef {{
  *   section: string;
- *   existing: { id: string | number };
+ *   existing: { id?: string | number };
  *   item: unknown;
  * }} ResumeDiffUpdate
  */
@@ -52,7 +52,7 @@ import { readPlatformSession } from '../services/platform-session.js';
 /**
  * @param {PlatformSyncEnv} env
  * @param {string} platform
- * @param {string | number} resumeId
+ * @param {string | number | null} resumeId
  * @param {ResumeDiff} diff
  * @returns {Promise<{ success: boolean; error?: string; [key: string]: unknown }>}
  */
@@ -78,7 +78,7 @@ export async function syncToPlatform(env, platform, resumeId, diff) {
 
 /**
  * @param {PlatformSyncEnv} env
- * @param {string | number} resumeId
+ * @param {string | number | null} resumeId
  * @param {ResumeDiff} diff
  * @returns {Promise<{ success: boolean; error?: string; additions?: number; updates?: number; deletions?: number; errors?: SyncError[] }>}
  */
@@ -156,7 +156,7 @@ export async function wantedApiRequest(method, path, body, session) {
 }
 
 /**
- * @param {string | number} [_resumeId]
+ * @param {string | number | null} [_resumeId]
  * @param {ResumeDiff} [_diff]
  * @returns {Promise<{ success: boolean; error: string }>}
  */
@@ -168,7 +168,7 @@ export async function syncToLinkedIn(_resumeId, _diff) {
 }
 
 /**
- * @param {string | number} [_resumeId]
+ * @param {string | number | null} [_resumeId]
  * @param {ResumeDiff} [_diff]
  * @returns {Promise<{ success: boolean; error: string }>}
  */

@@ -15,7 +15,7 @@ export { attachWorkflowApproval, WORKFLOW_APPROVAL };
  *   success?: boolean;
  *   alreadyApplied?: boolean;
  *   status?: string;
- *   error?: string;
+ *   error?: string | null;
  *   networkWrite?: boolean;
  *   browserRendered?: boolean;
  *   targetUrl?: string;
@@ -40,10 +40,7 @@ export { attachWorkflowApproval, WORKFLOW_APPROVAL };
  */
 
 /**
- * @typedef {{
- *   do<T>(name: string, options: { retries?: { limit?: number; delay?: string; backoff?: string }; timeout?: string }, fn: () => Promise<T>): Promise<T>;
- *   sleep(name: string, duration: string): Promise<void>;
- * }} SubmissionStepContext
+ * @typedef {import('cloudflare:workers').WorkflowStep} SubmissionStepContext
  */
 
 /**

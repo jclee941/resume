@@ -1,9 +1,11 @@
 import { HttpError, normalizeError } from '@resume/shared/errors';
 
 /**
+ * Request as route handlers see it: `Router.handle` fills in the matched path
+ * params and the parsed query string before dispatching.
  * @typedef {Request & {
- *   params?: Record<string, string>;
- *   query?: Record<string, string>;
+ *   params: Record<string, string>;
+ *   query: Record<string, string>;
  * }} RouterRequest
  */
 
@@ -73,7 +75,7 @@ export class Router {
    * Wraps each handler in an error boundary that:
    * - Converts HttpError to structured HTTP responses
    * - Normalizes unknown errors and re-throws for top-level handling
-   * @param {RouterRequest} request
+   * @param {Request & { params?: Record<string, string>; query?: Record<string, string> }} request
    * @param {URL} url
    * @param {import('@resume/shared/logger').Logger} [logger]
    * @returns {Promise<Response|null>}
@@ -91,7 +93,7 @@ export class Router {
         request.query = Object.fromEntries(url.searchParams);
 
         try {
-          return await route.handler(request);
+          return await route.handler(/** @type {RouterRequest} */ (request));
         } catch (err) {
           const error = normalizeError(err, {
             route: route.pattern,

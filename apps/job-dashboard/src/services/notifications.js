@@ -229,7 +229,7 @@ export class NotificationService {
   /**
    * @param {Parameters<typeof deliverTelegramNotification>[1]} data
    * @param {Parameters<typeof deliverTelegramNotification>[2]} [options]
-   * @returns {Promise<unknown>}
+   * @returns {ReturnType<typeof deliverTelegramNotification>}
    */
   async sendTelegramNotification(data, options = {}) {
     return deliverTelegramNotification(this, data, options);
@@ -381,7 +381,7 @@ export class NotificationService {
 /**
  * @param {NotificationEnv} env
  * @param {Parameters<typeof deliverTelegramNotification>[1]} message
- * @returns {Promise<unknown>}
+ * @returns {ReturnType<typeof deliverTelegramNotification>}
  */
 export async function sendTelegramNotification(env, message) {
   return new NotificationService(env).sendTelegramNotification(message);

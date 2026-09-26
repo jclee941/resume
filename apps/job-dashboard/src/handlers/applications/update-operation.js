@@ -20,7 +20,7 @@ import { validateApplicationUpdate } from '@resume/shared/validation';
  * }} UpdateHandler
  *
  * @typedef {{
- *   params: { id: string };
+ *   params: Record<string, string>;
  *   json(): Promise<unknown>;
  * }} UpdateRequest
  */

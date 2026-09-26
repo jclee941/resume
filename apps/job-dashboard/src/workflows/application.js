@@ -49,6 +49,7 @@ import {
  *   submitOptIn?: boolean;
  *   candidates?: unknown[];
  *   _eventData?: Record<string, unknown>;
+ *   runId?: string;
  *   [key: string]: unknown;
  * }} ApplicationWorkflowParams
  *
@@ -287,7 +288,7 @@ export class ApplicationWorkflow extends WorkflowEntrypoint {
   /**
    * @param {string} workflowId
    * @param {string} requestId
-   * @param {import('./application/profile.js').JobProfile} job
+   * @param {Record<string, unknown>} job
    * @returns {Promise<void>}
    */
   async sendApprovalRequestNotification(workflowId, requestId, job) {

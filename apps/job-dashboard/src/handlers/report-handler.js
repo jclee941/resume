@@ -24,7 +24,7 @@ import { sendTelegramNotification, escapeHtml } from '../services/notifications.
  *   TELEGRAM_BOT_TOKEN?: string;
  *   TELEGRAM_CHAT_ID?: string | number;
  *   [key: string]: unknown;
- * }} ReportEnv
+ * } & import('../services/notifications.js').NotificationEnv} ReportEnv
  */
 
 /**

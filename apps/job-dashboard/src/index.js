@@ -54,7 +54,7 @@ export {
   BrowserSessionDO,
 };
 
-export default {
+export default /** @satisfies {import('./worker-env.js').DashboardWorker} */ ({
   async fetch(request, env, ctx) {
     const originalUrl = new URL(request.url);
 
@@ -72,7 +72,7 @@ export default {
     const logger = Logger.create(env, { service: 'job-worker' });
     const reqCtx = RequestContext.fromRequest(request, url);
     const log = logger.withRequest(reqCtx);
-    const respond = (response) => {
+    const respond = (/** @type {Response} */ response) => {
       ctx.waitUntil(log.logResponse(response));
       return response;
     };
@@ -196,4 +196,4 @@ export default {
   async scheduled(controller, env, ctx) {
     await cronRouter.scheduled(controller, env, ctx);
   },
-};
+});

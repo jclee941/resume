@@ -43,7 +43,7 @@ export function normalizeSkillName(skill) {
  * @property {string} [company]
  * @property {string} [position]
  * @property {string} [description]
- * @property {string} [experience]
+ * @property {string | number} [experience]
  * @property {string} [location]
  * @property {string | number | Date} [postedAt]
  */

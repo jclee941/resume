@@ -33,7 +33,7 @@ import { answerCallbackQuery, sendTelegramNotification } from './delivery.js';
 /**
  * @typedef {{
  *   id: string;
- *   data: string;
+ *   data?: string;
  *   [key: string]: unknown;
  * }} TelegramCallbackQuery
  */
@@ -77,8 +77,7 @@ export async function handleTelegramCommand(service, command, args, message) {
  * @returns {Promise<unknown>}
  */
 export async function handleTelegramCallback(service, query) {
-  const { data } = query;
-  const [action, applicationId] = data.split(':');
+  const [action, applicationId] = (query.data ?? '').split(':');
 
   if (!applicationId) {
     return { handled: false, reason: 'invalid_callback_data' };

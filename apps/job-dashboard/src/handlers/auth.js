@@ -116,7 +116,7 @@ export class AuthHandler {
   }
 
   /**
-   * @param {Request & { params: { platform: string } }} request
+   * @param {import('../router.js').RouterRequest} request
    * @returns {Promise<Response>}
    */
   async clearAuth(request) {

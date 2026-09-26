@@ -6,6 +6,33 @@ import { refreshJobKoreaSession } from '../handlers/jobkorea/mint-session.js';
 import { enqueueTask } from '../queues/queue-enqueuer.js';
 import { getQueueCapability, parseQueueRequest, QUEUE_NAME } from '../queues/queue-request.js';
 
+/**
+ * @typedef {import('../router.js').RouteHandler} RouteHandler
+ *
+ * @typedef {Parameters<typeof runBrowserSmoke>[0]
+ *   & Parameters<typeof refreshWantedSession>[0]
+ *   & Parameters<typeof refreshJobKoreaSession>[0]
+ *   & Parameters<typeof enqueueTask>[0]
+ *   & NonNullable<Parameters<typeof getQueueCapability>[0]>
+ *   & { JOB_DB: Parameters<typeof getConfig>[0] }} AdminEnv
+ *
+ * @typedef {{
+ *   get(path: string, handler: RouteHandler): void;
+ *   post(path: string, handler: RouteHandler): void;
+ *   put(path: string, handler: RouteHandler): void;
+ * }} AdminRouter
+ *
+ * @typedef {{
+ *   env: AdminEnv;
+ *   diagnostics: { checkBindings(req: Request): Promise<Response> | Response };
+ *   log: { error(message: string, error: unknown): unknown };
+ * }} AdminContext
+ */
+
+/**
+ * @param {AdminRouter} router
+ * @param {AdminContext} ctx
+ */
 export function registerAdminRoutes(router, ctx) {
   const { env, diagnostics, log } = ctx;
 
@@ -53,7 +80,9 @@ export function registerAdminRoutes(router, ctx) {
         202
       );
     } catch (err) {
-      log.error('Queue enqueue failed', { error: err.message });
+      log.error('Queue enqueue failed', {
+        error: err instanceof Error ? err.message : String(err),
+      });
       return jsonResponse({ error: 'Failed to enqueue task' }, 500);
     }
   });

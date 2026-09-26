@@ -1,6 +1,21 @@
 import { normalizeError } from '@resume/shared/errors';
 import { sendTelegramNotification } from '../../services/notifications.js';
 
+/**
+ * @typedef {import('../profile-sync-handler.js').ProfileSyncHandler} ProfileSyncStatusHandler
+ *
+ * @typedef {{
+ *   syncId?: string;
+ *   status?: string;
+ *   result?: { platforms?: Array<{ success?: boolean }> } | null;
+ * }} ProfileSyncStatusUpdate
+ */
+
+/**
+ * @param {ProfileSyncStatusHandler} handler
+ * @param {Request & { params?: Record<string, string> }} request
+ * @returns {Promise<Response>}
+ */
 export async function getProfileSyncStatusResponse(handler, request) {
   const syncId = request.params?.syncId;
   const db = handler.env?.DB;
@@ -39,7 +54,13 @@ export async function getProfileSyncStatusResponse(handler, request) {
   }
 }
 
+/**
+ * @param {ProfileSyncStatusHandler} handler
+ * @param {Request} request
+ * @returns {Promise<Response>}
+ */
 export async function updateProfileSyncStatusResponse(handler, request) {
+  /** @type {ProfileSyncStatusUpdate} */
   const body = await request.json().catch(() => ({}));
   const { syncId, status, result } = body;
   const db = handler.env?.DB;

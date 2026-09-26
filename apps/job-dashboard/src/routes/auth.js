@@ -7,7 +7,7 @@ import {
 } from '../services/auth.js';
 
 /**
- * @typedef {Request & { params: { platform: string; [key: string]: string } }} RoutedRequest
+ * @typedef {import('../router.js').RouterRequest} RoutedRequest
  *
  * @typedef {{
  *   get(path: string, handler: (req: RoutedRequest) => Promise<Response> | Response): void;

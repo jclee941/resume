@@ -59,14 +59,10 @@ const FOREIGN_COMPANY_PACKET_PATH =
  *   createApprovalRequest(workflowId: string, job: ScoredJob, status: string, matchScore: number, metadata: ApprovalMetadata): Promise<string>;
  *   sendApprovalRequestNotification(workflowId: string, requestId: string, job: ScoredJob): Promise<void>;
  *   getApprovalStatus(requestId: string): Promise<string>;
- *   logWorkflowStep(workflowId: string, stepName: string, status: string, details: Record<string, unknown>): Promise<void>;
- *   [key: string]: unknown;
+ *   logWorkflowStep(workflowId: string, stepName: string, status: string, details: Record<string, unknown>): Promise<unknown>;
  * }} ApprovalContext
  *
- * @typedef {{
- *   do<T>(name: string, optionsOrFn: unknown, fn?: () => Promise<T>): Promise<T>;
- *   sleep(name: string, duration: string): Promise<void>;
- * }} ApprovalStep
+ * @typedef {import('cloudflare:workers').WorkflowStep} ApprovalStep
  *
  * @typedef {{
  *   id: string;

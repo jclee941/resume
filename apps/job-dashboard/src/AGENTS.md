@@ -16,6 +16,7 @@ implementation details.
 src/
 ├── index.js          # fetch/queue/scheduled composition and Workflow exports
 ├── router.js         # route matching and handler error boundary
+├── worker-env.js     # Worker env/ctx types derived from binding consumers
 ├── handlers/         # request adapters and scheduled dispatch
 ├── middleware/       # CORS and CSRF helpers
 ├── queues/           # queue validation, retry, metrics, Workflow dispatch

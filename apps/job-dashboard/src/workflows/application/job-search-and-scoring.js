@@ -13,10 +13,7 @@ import { averageScore } from './workflow-records.js';
  */
 
 /**
- * @typedef {{
- *   do<T>(name: string, options: { retries?: { limit?: number; delay?: string; backoff?: string }; timeout?: string }, fn: () => Promise<T>): Promise<T>;
- *   sleep(name: string, duration: string): Promise<void>;
- * }} WorkflowStepContext
+ * @typedef {import('cloudflare:workers').WorkflowStep} WorkflowStepContext
  */
 
 /**

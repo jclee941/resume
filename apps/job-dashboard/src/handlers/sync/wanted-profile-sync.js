@@ -23,7 +23,7 @@ import { applyWantedChanges } from './wanted-profile-apply.js';
 
 /**
  * @param {WantedSyncContext} context
- * @param {Record<string, unknown>} ssotData
+ * @param {import('./wanted-profile-changes.js').SsotData} ssotData
  * @param {{ headline: string; [key: string]: unknown }} profileData
  * @param {boolean} dryRun
  * @param {string | number | null | undefined} targetResumeId

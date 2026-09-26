@@ -2,7 +2,7 @@ import { extractWantedApplications, normalizeWantedApplication } from './wanted-
 
 /**
  * @typedef {{
- *   auth?: { getCookies(provider: string): Promise<string | null> };
+ *   auth?: { getCookies(provider: string): Promise<string | null> } | null;
  *   fetcher: (url: string, init?: RequestInit) => Promise<Response>;
  *   wantedHistoryRepository: {
  *     upsertHistory(record: unknown): Promise<unknown>;

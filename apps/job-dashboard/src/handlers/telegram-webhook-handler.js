@@ -10,7 +10,7 @@ import { NotificationService } from '../services/notifications.js';
  *   TELEGRAM_BOT_TOKEN?: string;
  *   TELEGRAM_CHAT_ID?: string | number;
  *   [key: string]: unknown;
- * }} TelegramEnv
+ * } & import('../services/notifications.js').NotificationEnv} TelegramEnv
  *
  * @typedef {{
  *   text?: string;
@@ -19,7 +19,7 @@ import { NotificationService } from '../services/notifications.js';
  * }} TelegramMessage
  *
  * @typedef {{
- *   id?: string;
+ *   id: string;
  *   data?: string;
  *   message?: TelegramMessage;
  *   from?: { id?: string | number };
