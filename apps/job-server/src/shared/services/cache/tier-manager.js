@@ -1,12 +1,25 @@
 import { LRUCache } from './lru-cache.js';
 
 /**
+ * @typedef {object} CacheOptions
+ * @property {number} [maxSize]
+ * @property {number} [defaultTTL]
+ * @property {boolean} [autoCleanup]
+ * @property {number} [cleanupIntervalMs]
+ */
+
+/**
  * Typed cache namespaces for different data types.
  */
 export class TypedCache {
+  /** @type {Map<string, LRUCache>} */
   #caches = new Map();
+  /** @type {CacheOptions} */
   #defaultOptions;
 
+  /**
+   * @param {CacheOptions} [defaultOptions]
+   */
   constructor(defaultOptions = {}) {
     this.#defaultOptions = defaultOptions;
   }
@@ -14,14 +27,14 @@ export class TypedCache {
   /**
    * Get or create namespaced cache.
    * @param {string} namespace
-   * @param {Object} [options] - Override default options
+   * @param {CacheOptions} [options] - Override default options
    * @returns {LRUCache}
    */
   namespace(namespace, options = {}) {
     if (!this.#caches.has(namespace)) {
       this.#caches.set(namespace, new LRUCache({ ...this.#defaultOptions, ...options }));
     }
-    return this.#caches.get(namespace);
+    return /** @type {LRUCache} */ (this.#caches.get(namespace));
   }
 
   /** @returns {LRUCache} Job details cache (TTL: 1 hour). */
@@ -46,9 +59,10 @@ export class TypedCache {
 
   /**
    * Get all cache statistics.
-   * @returns {Object}
+   * @returns {Record<string, import('./lru-cache.js').CacheStats>}
    */
   getAllStats() {
+    /** @type {Record<string, import('./lru-cache.js').CacheStats>} */
     const stats = {};
     for (const [name, cache] of this.#caches) {
       stats[name] = cache.getStats();
@@ -74,7 +88,7 @@ export class TypedCache {
 
 /**
  * Create an isolated typed cache instance for constructor-injected services.
- * @param {Object} [defaultOptions] - Default options passed to each namespaced LRUCache.
+ * @param {CacheOptions} [defaultOptions] - Default options passed to each namespaced LRUCache.
  * @returns {TypedCache}
  */
 export function createCache(defaultOptions = {}) {

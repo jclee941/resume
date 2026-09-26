@@ -7,8 +7,10 @@ import { decryptAes256Gcm, deriveAes256GcmKey, encryptAes256Gcm } from '@resume/
 
 const _AUTH_TAG_LENGTH = 16; // Used implicitly by AES-256-GCM
 
+/** @typedef {typeof _AUTH_TAG_LENGTH} _AuthTagLength */
+
 // Issue #16: closure-bound holder eliminates top-level mutable Map binding.
-/** @type {{ get: () => Map, clear: () => void }} */
+/** @type {{ get: () => Map<string, import('@resume/shared/crypto/node.js').EncryptedEntry>, clear: () => void }} */
 const _credentialStoreHolder = (() => {
   let m = new Map();
   return {
@@ -96,6 +98,7 @@ export function listCredentialPlatforms() {
  */
 export function loadFromEnv(platform, encryptionSecret) {
   const prefix = platform.toUpperCase().replace(/-/g, '_');
+  /** @type {Record<string, string>} */
   const credentials = {};
   let found = false;
 

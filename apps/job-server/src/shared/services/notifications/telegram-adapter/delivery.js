@@ -10,10 +10,53 @@ import { triggerAutomationWebhook } from './webhook-delivery.js';
 
 export { triggerAutomationWebhook } from './webhook-delivery.js';
 
+/**
+ * @typedef {import('./history.js').HistoryAdapter & import('./rate-limit.js').RateLimitedAdapter & import('./webhook-delivery.js').WebhookAdapter & {
+ *   telegramToken?: string;
+ *   telegramChatId?: string | number;
+ *   fetchImpl?: typeof fetch;
+ * }} DeliveryAdapter
+ */
+
+/**
+ * @typedef {Object} TelegramMessagePayload
+ * @property {string} [text]
+ * @property {string} [parse_mode]
+ * @property {unknown} [reply_markup]
+ * @property {string} [company]
+ * @property {string} [title]
+ * @property {string} [platform]
+ * @property {string} [url]
+ * @property {string} [status]
+ * @property {string} [error]
+ * @property {string} [jobType]
+ * @property {number} [duration]
+ * @property {unknown} [result]
+ * @property {unknown} [details]
+ */
+
+/**
+ * @typedef {Object} TelegramSendResult
+ * @property {boolean} sent
+ * @property {string} [reason]
+ * @property {number} [resetTime]
+ * @property {number | null} [status]
+ * @property {string} [error]
+ * @property {number} [attempts]
+ * @property {number | string} [messageId]
+ */
+
+/**
+ * @param {number} ms
+ */
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/**
+ * @param {{ name?: string; code?: string; message?: string } | null | undefined} [error]
+ * @param {number | null | undefined} [status]
+ */
 function isRetryableError(error, status) {
   if (!error && !status) return false;
 
@@ -27,9 +70,14 @@ function isRetryableError(error, status) {
     return true;
   }
 
-  return status === 429 || status >= 500;
+  return status === 429 || /** @type {number} */ (status) >= 500;
 }
 
+/**
+ * @param {DeliveryAdapter} adapter
+ * @param {string} callbackQueryId
+ * @param {string} [text]
+ */
 export async function answerCallbackQuery(adapter, callbackQueryId, text) {
   if (!adapter.telegramToken || !callbackQueryId) {
     return { sent: false, reason: 'not_configured' };
@@ -51,16 +99,21 @@ export async function answerCallbackQuery(adapter, callbackQueryId, text) {
   } catch (error) {
     adapter.logger.error(
       '[TelegramNotificationAdapter] answerCallbackQuery error:',
-      error?.message
+      /** @type {{ message?: string }} */ (error)?.message
     );
     return {
       sent: false,
       reason: 'fetch_error',
-      error: error?.message,
+      error: /** @type {{ message?: string }} */ (error)?.message,
     };
   }
 }
 
+/**
+ * @param {DeliveryAdapter} adapter
+ * @param {TelegramMessagePayload} [message]
+ * @returns {Promise<TelegramSendResult>}
+ */
 export async function sendTelegramNotification(adapter, message = {}) {
   if (!adapter.telegramToken || !adapter.telegramChatId) {
     return { sent: false, reason: 'not_configured' };
@@ -76,6 +129,7 @@ export async function sendTelegramNotification(adapter, message = {}) {
   }
 
   const endpoint = `https://api.telegram.org/bot${adapter.telegramToken}/sendMessage`;
+  /** @type {{ chat_id: unknown; parse_mode: string; disable_web_page_preview: boolean; text: string; reply_markup?: unknown }} */
   const body = {
     chat_id: adapter.telegramChatId,
     parse_mode: message.parse_mode || 'HTML',
@@ -136,15 +190,24 @@ export async function sendTelegramNotification(adapter, message = {}) {
       clearTimeout(timeoutId);
       lastError = error;
 
-      if (attempt < RETRY_DELAYS_MS.length && isRetryableError(error, lastStatus)) {
+      if (
+        attempt < RETRY_DELAYS_MS.length &&
+        isRetryableError(
+          /** @type {{ name?: string; code?: string } | null | undefined} */ (error),
+          lastStatus
+        )
+      ) {
         await sleep(RETRY_DELAYS_MS[attempt]);
         continue;
       }
 
       return {
         sent: false,
-        reason: error?.name === 'AbortError' ? 'timeout' : 'fetch_error',
-        error: error?.message || String(error),
+        reason:
+          /** @type {{ name?: string }} */ (error)?.name === 'AbortError'
+            ? 'timeout'
+            : 'fetch_error',
+        error: /** @type {{ message?: string }} */ (error)?.message || String(error),
         attempts: attempt + 1,
       };
     }
@@ -154,13 +217,22 @@ export async function sendTelegramNotification(adapter, message = {}) {
     sent: false,
     reason: 'max_retries_exceeded',
     status: lastStatus,
-    error: lastError?.message || 'Unknown error',
+    error: /** @type {{ message?: string }} */ (lastError)?.message || 'Unknown error',
     attempts: RETRY_DELAYS_MS.length + 1,
   };
 }
 
+/**
+ * @param {DeliveryAdapter} adapter
+ * @param {string} eventType
+ * @param {unknown} data
+ * @param {TelegramMessagePayload} [telegramPayload]
+ */
 export async function notify(adapter, eventType, data, telegramPayload) {
-  const historyRecord = createNotificationHistoryRecord(eventType, data);
+  const historyRecord = /** @type {Required<import('./history.js').NotificationHistoryRecord>} */ (
+    createNotificationHistoryRecord(eventType, data)
+  );
+  /** @type {TelegramSendResult} */
   let telegramResult = { sent: false, reason: 'not_attempted' };
   let webhookResult;
 

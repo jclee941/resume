@@ -1,3 +1,4 @@
+/** @type {readonly string[]} */
 export const FOREIGN_ATS_LOCATION_TARGETS = Object.freeze([
   'remote',
   'seoul',
@@ -5,6 +6,7 @@ export const FOREIGN_ATS_LOCATION_TARGETS = Object.freeze([
   'gyeonggi',
 ]);
 
+/** @type {readonly (readonly [string, RegExp])[]} */
 const LOCATION_MATCHERS = Object.freeze([
   ['remote', /remote|anywhere|work from home|재택|원격/i],
   ['seoul', /seoul|서울/i],
@@ -12,13 +14,33 @@ const LOCATION_MATCHERS = Object.freeze([
   ['gyeonggi', /gyeonggi|경기|경기도|pangyo|판교|bundang|분당|seongnam|성남/i],
 ]);
 
+/**
+ * @typedef {object} ForeignAtsSearchCriteria
+ * @property {string | readonly string[]} [locations]
+ * @property {readonly string[]} [keywords]
+ */
+
+/**
+ * @typedef {object} NormalizedSearchCriteria
+ * @property {string[]} keywords
+ * @property {boolean} dryRun
+ * @property {string[]} locationTargets
+ * @property {string[]} unsupportedLocations
+ */
+
+/**
+ * @param {ForeignAtsSearchCriteria} [criteria]
+ * @returns {NormalizedSearchCriteria}
+ */
 export function normalizeForeignAtsSearchCriteria(criteria = {}) {
   const locationInput = Array.isArray(criteria.locations)
     ? criteria.locations
     : criteria.locations
       ? [criteria.locations]
       : FOREIGN_ATS_LOCATION_TARGETS;
+  /** @type {string[]} */
   const normalized = [];
+  /** @type {string[]} */
   const unsupported = [];
 
   for (const location of locationInput) {
@@ -41,8 +63,13 @@ export function normalizeForeignAtsSearchCriteria(criteria = {}) {
   };
 }
 
+/**
+ * @param {unknown} source
+ * @returns {string[]}
+ */
 export function normalizePostingLocations(source) {
   const values = collectLocationValues(source);
+  /** @type {string[]} */
   const normalized = [];
 
   for (const value of values) {
@@ -58,16 +85,22 @@ export function normalizePostingLocations(source) {
   return normalized;
 }
 
+/**
+ * @param {unknown} source
+ * @returns {(string | number)[]}
+ */
 function collectLocationValues(source) {
   if (source === null || source === undefined) return [];
   if (typeof source === 'string' || typeof source === 'number') return [source];
   if (typeof source === 'boolean') return [];
-  if (Array.isArray(source)) return source.flatMap((item) => collectLocationValues(item));
+  if (Array.isArray(source))
+    return source.flatMap(/** @param {unknown} item */ (item) => collectLocationValues(item));
   if (typeof source !== 'object') return [];
 
+  /** @type {(string | number)[]} */
   const values = [];
 
-  if (source.remote === true) values.push('remote');
+  if (/** @type {Record<string, unknown>} */ (source).remote === true) values.push('remote');
 
   for (const key of [
     'name',
@@ -82,7 +115,7 @@ function collectLocationValues(source) {
     'categories',
   ]) {
     if (Object.hasOwn(source, key)) {
-      values.push(...collectLocationValues(source[key]));
+      values.push(...collectLocationValues(/** @type {Record<string, unknown>} */ (source)[key]));
     }
   }
 

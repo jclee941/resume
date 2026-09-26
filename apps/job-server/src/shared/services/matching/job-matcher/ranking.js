@@ -1,6 +1,39 @@
 import { loadResume, extractSkills, extractExperience } from './resume-analysis.js';
 import { calculateMatchScore, createScoringConfig } from './scoring.js';
 
+/**
+ * @typedef {import('./scoring.js').ScoringJob & {
+ *   company?: string;
+ *   due_date?: string | Date;
+ *   matchScore?: number;
+ *   matchPercentage: number;
+ *   matchDetails?: import('./scoring.js').MatchDetails;
+ *   [key: string]: unknown;
+ * }} ScoredJob
+ */
+
+/**
+ * @typedef {object} FilterAndRankOptions
+ * @property {string} [resumePath]
+ * @property {number} [minScore]
+ * @property {number} [maxResults]
+ * @property {string[]} [excludeCompanies]
+ * @property {(resumePath?: string) => string} [resumeReader]
+ * @property {Partial<import('./scoring.js').ScoringConfig>} [scoringConfig]
+ */
+
+/**
+ * @typedef {object} PrioritizedJob
+ * @property {string} applicationPriority
+ * @property {string[]} priorityReason
+ * @property {number} rank
+ */
+
+/**
+ * @param {import('./scoring.js').ScoringJob[]} jobs
+ * @param {FilterAndRankOptions} [options]
+ * @returns {{ jobs: ScoredJob[]; resumeAnalysis: { experience: number; skillCategories: string[]; totalSkills: number } }}
+ */
 export function filterAndRankJobs(jobs, options = {}) {
   const {
     resumePath,
@@ -48,6 +81,10 @@ export function filterAndRankJobs(jobs, options = {}) {
   };
 }
 
+/**
+ * @param {ScoredJob[]} scoredJobs
+ * @returns {(ScoredJob & PrioritizedJob)[]}
+ */
 export function prioritizeApplications(scoredJobs) {
   return scoredJobs.map((job, index) => {
     let priority = 'low';
@@ -62,8 +99,10 @@ export function prioritizeApplications(scoredJobs) {
     }
 
     if (job.due_date) {
-      const dueDate = new Date(job.due_date);
-      const daysLeft = Math.ceil((dueDate - new Date()) / (1000 * 60 * 60 * 24));
+      const dueDate = /** @type {Date & number} */ (new Date(job.due_date));
+      const daysLeft = Math.ceil(
+        (dueDate - /** @type {Date & number} */ (new Date())) / (1000 * 60 * 60 * 24)
+      );
       if (daysLeft <= 7 && daysLeft > 0) {
         priority = 'high';
         reason.push(`마감 ${daysLeft}일 남음`);
