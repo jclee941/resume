@@ -707,7 +707,21 @@
     "apps/portfolio/src/scripts/modules/timeline-interactions.js",
     "packages/shared/src/clients/elasticsearch/formatters.js",
     "packages/shared/src/clients/elasticsearch/index.js",
-    "packages/shared/src/retry/circuit-breaker.js"
+    "packages/shared/src/retry/circuit-breaker.js",
+    "apps/job-server/src/shared/config/config-validation.js",
+    "apps/job-server/src/shared/repositories/helpers/application-normalizer.js",
+    "apps/job-server/src/shared/services/ai/ai-service/service.js",
+    "apps/job-server/src/shared/services/apply/approval-processor.js",
+    "apps/job-server/src/shared/services/apply/approval-validation.js",
+    "apps/job-server/src/shared/services/ats/public-source-adapters.js",
+    "apps/job-server/src/shared/services/browser-pool/browser-lifecycle.js",
+    "apps/job-server/src/shared/services/cache.js",
+    "apps/job-server/src/shared/services/cache/cache-manager.js",
+    "apps/job-server/src/shared/services/cache/index.js",
+    "apps/job-server/src/shared/services/cache/tier-operations.js",
+    "apps/job-server/src/shared/services/cache/tier-operations/index.js",
+    "apps/job-server/src/shared/services/cache/tier-operations/read.js",
+    "apps/job-server/src/shared/services/cache/tier-operations/write.js"
   ],
   "exclude": ["packages/env/src/__tests__/**"]
 }

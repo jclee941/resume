@@ -1,11 +1,30 @@
 import { ensureD1Schema } from './d1-schema.js';
 
 /**
+ * @typedef {{
+ *   put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void | unknown>;
+ * }} KVNamespace
+ *
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       run(): Promise<unknown>;
+ *     };
+ *     run(): Promise<unknown>;
+ *   };
+ * }} D1Database
+ *
+ * @typedef {{
+ *   put(key: string, value: string, options?: { httpMetadata?: { contentType?: string }; customMetadata?: Record<string, string> }): Promise<unknown>;
+ * }} R2Bucket
+ */
+
+/**
  * Write to KV (hot tier).
  *
  * @param {KVNamespace} kv - KV namespace binding
  * @param {string} tieredKey - Full key with namespace prefix
- * @param {import('../index.js').CacheEnvelope} envelope - Cache envelope to store
+ * @param {import('../cache-manager.js').CacheEnvelope} envelope - Cache envelope to store
  * @param {number} ttlSeconds - TTL in seconds
  * @param {Pick<Console, 'warn'|'error'|'info'>} logger - Logger instance
  * @returns {Promise<void>}
@@ -20,7 +39,9 @@ async function writeHot(kv, tieredKey, envelope, ttlSeconds, logger) {
       expirationTtl: ttlSeconds,
     });
   } catch (error) {
-    logger.warn?.(`[CacheManager] hot write failed for ${tieredKey}: ${error.message}`);
+    logger.warn?.(
+      `[CacheManager] hot write failed for ${tieredKey}: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 }
 
@@ -29,7 +50,7 @@ async function writeHot(kv, tieredKey, envelope, ttlSeconds, logger) {
  *
  * @param {D1Database} d1 - D1 database binding
  * @param {string} tieredKey - Full key with namespace prefix
- * @param {import('../index.js').CacheEnvelope} envelope - Cache envelope to store
+ * @param {import('../cache-manager.js').CacheEnvelope} envelope - Cache envelope to store
  * @param {string} tableName - D1 table name
  * @param {Pick<Console, 'warn'|'error'|'info'>} logger - Logger instance
  * @returns {Promise<void>}
@@ -66,7 +87,9 @@ async function writeWarm(d1, tieredKey, envelope, tableName, logger) {
       )
       .run();
   } catch (error) {
-    logger.warn?.(`[CacheManager] warm write failed for ${tieredKey}: ${error.message}`);
+    logger.warn?.(
+      `[CacheManager] warm write failed for ${tieredKey}: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 }
 
@@ -75,7 +98,7 @@ async function writeWarm(d1, tieredKey, envelope, tableName, logger) {
  *
  * @param {R2Bucket} r2 - R2 bucket binding
  * @param {string} objectKey - Full R2 object key
- * @param {import('../index.js').CacheEnvelope} envelope - Cache envelope to store
+ * @param {import('../cache-manager.js').CacheEnvelope} envelope - Cache envelope to store
  * @param {Pick<Console, 'warn'|'error'|'info'>} logger - Logger instance
  * @returns {Promise<void>}
  */
@@ -94,7 +117,9 @@ async function writeCold(r2, objectKey, envelope, logger) {
       },
     });
   } catch (error) {
-    logger.warn?.(`[CacheManager] cold write failed for ${objectKey}: ${error.message}`);
+    logger.warn?.(
+      `[CacheManager] cold write failed for ${objectKey}: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 }
 

@@ -34,16 +34,64 @@ const DEFAULT_OPTIONS = {
  * @property {CacheTier} tier
  */
 
+/**
+ * @typedef {{
+ *   get(key: string, type?: string): Promise<unknown>;
+ *   put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void | unknown>;
+ *   delete(key: string): Promise<unknown>;
+ * }} CacheKvBinding
+ *
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       first(): Promise<Record<string, unknown> | null>;
+ *       run(): Promise<unknown>;
+ *     };
+ *     run(): Promise<unknown>;
+ *   };
+ * }} CacheD1Binding
+ *
+ * @typedef {{
+ *   get(key: string): Promise<{ json(): Promise<unknown> } | null>;
+ *   put(key: string, value: string, options?: { httpMetadata?: { contentType?: string }; customMetadata?: Record<string, string> }): Promise<unknown>;
+ *   delete(key: string): Promise<unknown>;
+ * }} CacheR2Binding
+ *
+ * @typedef {{
+ *   kv?: CacheKvBinding | null;
+ *   d1?: CacheD1Binding | null;
+ *   r2?: CacheR2Binding | null;
+ *   logger?: Pick<Console, 'warn'|'error'|'info'>;
+ *   namespace?: string;
+ *   defaultTtlSeconds?: number;
+ *   hotTtlThresholdSeconds?: number;
+ *   warmTtlThresholdSeconds?: number;
+ *   tableName?: string;
+ * }} CacheManagerOptions
+ */
+
 /** Tiered cache manager for Cloudflare KV (hot), D1 (warm), and R2 (cold). */
 export class CacheManager {
+  /**
+   * @param {CacheManagerOptions} [options]
+   */
   constructor(options = {}) {
-    this.kv = options.kv;
-    this.d1 = options.d1;
-    this.r2 = options.r2;
+    /** @type {CacheKvBinding} */
+    this.kv = /** @type {CacheKvBinding} */ (options.kv);
+    /** @type {CacheD1Binding} */
+    this.d1 = /** @type {CacheD1Binding} */ (options.d1);
+    /** @type {CacheR2Binding} */
+    this.r2 = /** @type {CacheR2Binding} */ (options.r2);
+    /** @type {Pick<Console, 'warn'|'error'|'info'>} */
     this.logger = options.logger || console;
+    /** @type {typeof DEFAULT_OPTIONS} */
     this.options = { ...DEFAULT_OPTIONS, ...options };
   }
 
+  /**
+   * @param {string} key
+   * @returns {Promise<unknown>}
+   */
   async get(key) {
     const now = Date.now();
     const tieredKey = this.makeTieredKey(key);
@@ -65,6 +113,12 @@ export class CacheManager {
     return null;
   }
 
+  /**
+   * @param {string} key
+   * @param {unknown} value
+   * @param {{ ttlSeconds?: number }} [options]
+   * @returns {Promise<{ tier: CacheTier; expiresAt: number }>}
+   */
   async set(key, value, options = {}) {
     const ttlSeconds = Math.max(
       1,
@@ -94,6 +148,10 @@ export class CacheManager {
     return { tier, expiresAt };
   }
 
+  /**
+   * @param {string} key
+   * @returns {Promise<void>}
+   */
   async delete(key) {
     const tieredKey = this.makeTieredKey(key);
     const objectKey = this.makeR2ObjectKey(key);
@@ -104,16 +162,34 @@ export class CacheManager {
     ]);
   }
 
+  /**
+   * @param {number} ttlSeconds
+   * @returns {CacheTier}
+   */
   selectTier(ttlSeconds) {
     if (ttlSeconds <= this.options.hotTtlThresholdSeconds) return HOT_TIER;
     if (ttlSeconds <= this.options.warmTtlThresholdSeconds) return WARM_TIER;
     return COLD_TIER;
   }
 
+  /**
+   * @param {unknown} value
+   * @param {CacheTier} tier
+   * @param {number} now
+   * @param {number} expiresAt
+   * @returns {CacheEnvelope}
+   */
   createEnvelope(value, tier, now, expiresAt) {
     return { value, tier, createdAt: now, updatedAt: now, lastAccessedAt: now, expiresAt };
   }
 
+  /**
+   * @param {CacheTier} sourceTier
+   * @param {string} key
+   * @param {CacheEnvelope} envelope
+   * @param {number} now
+   * @returns {Promise<void>}
+   */
   async promoteFrom(sourceTier, key, envelope, now) {
     const ttlSeconds = Math.max(1, Math.floor((envelope.expiresAt - now) / 1000));
     const nextTier = this.selectTier(ttlSeconds);
@@ -134,10 +210,18 @@ export class CacheManager {
     }
   }
 
+  /**
+   * @param {string} key
+   * @returns {string}
+   */
   makeTieredKey(key) {
     return `${this.options.namespace}:${key}`;
   }
 
+  /**
+   * @param {string} key
+   * @returns {string}
+   */
   makeR2ObjectKey(key) {
     return `${this.options.namespace}/${encodeURIComponent(key)}.json`;
   }

@@ -18,6 +18,61 @@ export const SORTABLE_STATUS_COLUMNS = new Set([
   'company',
 ]);
 
+/**
+ * @typedef {{
+ *   id?: string | null;
+ *   job_id?: string | null;
+ *   source?: string | null;
+ *   source_url?: string | null;
+ *   position?: string | null;
+ *   company?: string | null;
+ *   location?: string | null;
+ *   match_score?: number | null;
+ *   status?: string | null;
+ *   priority?: string | null;
+ *   resume_id?: string | null;
+ *   cover_letter?: string | null;
+ *   notes?: string | null;
+ *   created_at?: string | null;
+ *   updated_at?: string | null;
+ *   applied_at?: string | null;
+ *   workflow_id?: string | null;
+ *   approved_at?: string | null;
+ *   rejected_at?: string | null;
+ *   [key: string]: unknown;
+ * }} ApplicationCreateInput
+ */
+
+/**
+ * @typedef {{
+ *   id: string;
+ *   job_id: unknown;
+ *   source: unknown;
+ *   source_url: string | null;
+ *   canonical_url: string | null;
+ *   position: unknown;
+ *   company: unknown;
+ *   location: unknown;
+ *   match_score: number;
+ *   status: unknown;
+ *   priority: unknown;
+ *   resume_id: unknown;
+ *   cover_letter: unknown;
+ *   notes: unknown;
+ *   created_at: unknown;
+ *   updated_at: unknown;
+ *   applied_at: unknown;
+ *   workflow_id: unknown;
+ *   approved_at: unknown;
+ *   rejected_at: unknown;
+ * }} NormalizedApplicationRecord
+ */
+
+/**
+ * @param {ApplicationCreateInput} application
+ * @param {string} now
+ * @returns {NormalizedApplicationRecord}
+ */
 export function normalizeCreateInput(application, now) {
   if (!application || typeof application !== 'object') {
     throw new ValidationError('application payload is required', {
@@ -63,6 +118,12 @@ export function normalizeCreateInput(application, now) {
   };
 }
 
+/**
+ * @param {string} operation
+ * @param {unknown} error
+ * @param {Record<string, unknown>} [metadata]
+ * @returns {never}
+ */
 export function throwD1Error(operation, error, metadata = {}) {
   if (error instanceof AppError) {
     throw error;
@@ -73,6 +134,6 @@ export function throwD1Error(operation, error, metadata = {}) {
     code: ErrorCodes.EXTERNAL_API_ERROR,
     statusCode: 502,
     metadata,
-    cause: error,
+    cause: /** @type {Error | null} */ (error),
   });
 }

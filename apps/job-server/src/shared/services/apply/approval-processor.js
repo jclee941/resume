@@ -1,11 +1,46 @@
 import { ValidationError } from '../../errors/index.js';
 
+/**
+ * @typedef {import('./approval-notes.js').ApprovalNotesState} ApprovalNotesState
+ *
+ * @typedef {{
+ *   id: string;
+ *   job_id: string;
+ *   job_title: string;
+ *   company: string;
+ *   platform: string;
+ *   match_score: number;
+ *   status: string;
+ *   created_at: string;
+ *   notes?: string | null;
+ *   reviewed_by?: string | null;
+ *   reviewed_at?: string | null;
+ *   [key: string]: unknown;
+ * }} PendingApprovalRecord
+ *
+ * @typedef {{
+ *   applicationRepository: { d1Client: { query: (sql: string, ...params: unknown[]) => Promise<PendingApprovalRecord[]> } };
+ *   config: { approvalTimeoutHours: number; reminderIntervalHours: number; maxReminders: number };
+ *   notificationAdapter: { sendApprovalRequest: (job: unknown, matchScore: number, id: string) => Promise<{ sent?: boolean } | null | undefined> };
+ *   getApprovalRequestById: (applicationId: string) => Promise<PendingApprovalRecord | null>;
+ *   markTimedOut: (request: PendingApprovalRecord, now: string) => Promise<unknown>;
+ *   parseApprovalNotes: (notes?: string | null) => ApprovalNotesState;
+ *   shouldSendReminder: (notesState: ApprovalNotesState, nowMs: number) => boolean;
+ *   updateApprovalRequest: (applicationId: string, patch: Record<string, unknown>) => Promise<unknown>;
+ *   stringifyApprovalNotes: (notesState: ApprovalNotesState) => string;
+ * }} ApprovalContext
+ */
+
 const HOUR_MS = 60 * 60 * 1000;
 
 function toIso(value = Date.now()) {
   return new Date(value).toISOString();
 }
 
+/**
+ * @param {{ d1Client: { query: (sql: string, ...params: unknown[]) => Promise<PendingApprovalRecord[]> } }} applicationRepository
+ * @returns {Promise<PendingApprovalRecord[]>}
+ */
 export async function getPendingApprovals(applicationRepository) {
   return await applicationRepository.d1Client.query(
     `
@@ -23,6 +58,10 @@ export async function getPendingApprovals(applicationRepository) {
   );
 }
 
+/**
+ * @param {ApprovalContext} context
+ * @param {string} applicationId
+ */
 export async function checkApprovalStatus(context, applicationId) {
   if (!applicationId || typeof applicationId !== 'string') {
     throw new ValidationError('applicationId is required', {
@@ -54,6 +93,9 @@ export async function checkApprovalStatus(context, applicationId) {
   };
 }
 
+/**
+ * @param {ApprovalContext} context
+ */
 export async function processTimeouts(context) {
   const nowMs = Date.now();
   const now = toIso(nowMs);

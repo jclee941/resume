@@ -4,6 +4,28 @@
 
 import { generateFingerprint, applyStealthPatches } from '@resume/shared/browser';
 
+/**
+ * @typedef {import('@cloudflare/puppeteer').Page} CloudflarePage
+ *
+ * @typedef {{
+ *   close(): Promise<void>;
+ *   isConnected(): boolean;
+ *   on(event: string, handler: () => void): void;
+ *   newPage(): Promise<CloudflarePage>;
+ * }} BrowserInstance
+ *
+ * @typedef {{
+ *   browser: BrowserInstance;
+ *   page: CloudflarePage;
+ *   id: string;
+ *   inUse: boolean;
+ *   createdAt: Date;
+ *   lastUsedAt: Date;
+ *   useCount: number;
+ *   userAgent: string;
+ * }} BrowserPoolEntry
+ */
+
 const LAUNCH_ARGS = [
   '--no-sandbox',
   '--disable-setuid-sandbox',
@@ -18,8 +40,19 @@ const LAUNCH_ARGS = [
   '--window-size=1920,1080',
 ];
 
+/**
+ * @param {{
+ *   pool: Map<string, BrowserPoolEntry>;
+ *   rotateUA?: boolean;
+ *   onDisconnected: (id: string) => void;
+ * }} options
+ * @returns {Promise<BrowserPoolEntry>}
+ */
 export async function createBrowser({ pool, rotateUA = true, onDisconnected }) {
-  const puppeteer = await import('puppeteer').then((module) => module.default);
+  const puppeteer =
+    /** @type {{ launch(options?: { headless?: string | boolean; executablePath?: string; args?: string[] }): Promise<BrowserInstance> }} */ (
+      await import('puppeteer').then((module) => module.default)
+    );
 
   const browser = await puppeteer.launch({
     headless: 'new',
@@ -48,6 +81,16 @@ export async function createBrowser({ pool, rotateUA = true, onDisconnected }) {
   return entry;
 }
 
+/**
+ * @param {{
+ *   entry: BrowserPoolEntry;
+ *   pool: Map<string, BrowserPoolEntry>;
+ *   metrics: { closed: number };
+ *   emit: (event: string, payload: Record<string, unknown>) => void;
+ *   logger: { debug: (msg: string, ...args: unknown[]) => void };
+ * }} options
+ * @returns {Promise<void>}
+ */
 export async function closeBrowser({ entry, pool, metrics, emit, logger }) {
   pool.delete(entry.id);
 
@@ -56,10 +99,14 @@ export async function closeBrowser({ entry, pool, metrics, emit, logger }) {
     metrics.closed++;
     emit('closed:browser', { browserId: entry.id });
   } catch (error) {
-    logger.debug('Error closing browser:', error.message);
+    logger.debug('Error closing browser:', error instanceof Error ? error.message : String(error));
   }
 }
 
+/**
+ * @param {BrowserPoolEntry} entry
+ * @returns {Promise<boolean>}
+ */
 export async function isHealthy(entry) {
   try {
     if (!entry.browser.isConnected()) {
@@ -73,11 +120,19 @@ export async function isHealthy(entry) {
   }
 }
 
+/**
+ * @param {BrowserPoolEntry} entry
+ * @param {{ debug: (msg: string, ...args: unknown[]) => void }} logger
+ * @returns {Promise<void>}
+ */
 export async function resetPageState(entry, logger) {
   try {
     await entry.page.deleteCookie(...(await entry.page.cookies()));
     await entry.page.goto('about:blank');
   } catch (error) {
-    logger.debug('Failed to clear page state:', error.message);
+    logger.debug(
+      'Failed to clear page state:',
+      error instanceof Error ? error.message : String(error)
+    );
   }
 }
