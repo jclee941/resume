@@ -31,7 +31,10 @@ export function executeD1(sql, options = {}) {
       stdio: ['pipe', 'pipe', 'pipe'],
     });
   } catch (err) {
-    throw new Error(`D1 execution failed: ${err.stderr || err.message}`, { cause: err });
+    throw new Error(
+      `D1 execution failed: ${/** @type {Error & { stderr?: string | Buffer }} */ (err).stderr || /** @type {Error} */ (err).message}`,
+      { cause: err }
+    );
   }
 }
 
@@ -60,7 +63,10 @@ export function executeD1File(filePath, options = {}) {
       stdio: ['pipe', 'pipe', 'pipe'],
     });
   } catch (err) {
-    throw new Error(`D1 file execution failed: ${err.stderr || err.message}`, { cause: err });
+    throw new Error(
+      `D1 file execution failed: ${/** @type {Error & { stderr?: string | Buffer }} */ (err).stderr || /** @type {Error} */ (err).message}`,
+      { cause: err }
+    );
   }
 }
 
@@ -96,6 +102,7 @@ export function getAppliedMigrations(options) {
 
 /**
  * Get pending migration files (not yet applied).
+ * @param {string[]} applied
  * @returns {{ name: string, path: string }[]} Pending migrations
  */
 export function getPendingMigrations(applied) {

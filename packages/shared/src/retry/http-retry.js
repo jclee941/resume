@@ -1,15 +1,45 @@
 const DEFAULT_RETRYABLE_CODES = ['ETIMEDOUT', 'ETIMEOUT', 'ECONNRESET', 'ECONNREFUSED', 'EPIPE'];
 
+/**
+ * @param {number} ms
+ * @returns {Promise<void>}
+ */
 function sleep(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }
 
+/**
+ * @typedef {Object} HttpError
+ * @property {string} [name]
+ * @property {string} [code]
+ * @property {number} [status]
+ * @property {number|string} [retry_after]
+ * @property {{ retry_after?: number | string }} [parameters]
+ * @property {{
+ *   status?: number,
+ *   data?: {
+ *     retry_after?: number | string,
+ *     parameters?: {
+ *       retry_after?: number | string
+ *     }
+ *   }
+ * }} [response]
+ */
+
+/**
+ * @param {HttpError | null | undefined} error
+ * @returns {number | null}
+ */
 function getHttpStatus(error) {
   return error?.response?.status ?? error?.status ?? null;
 }
 
+/**
+ * @param {HttpError | null | undefined} error
+ * @returns {number | null}
+ */
 export function parseRetryAfter(error) {
   const retryAfter =
     error?.response?.data?.parameters?.retry_after ??
@@ -26,6 +56,11 @@ export function parseRetryAfter(error) {
   return seconds;
 }
 
+/**
+ * @param {HttpError | null | undefined} error
+ * @param {string[]} [retryableCodes]
+ * @returns {boolean}
+ */
 export function isRetryableHttpError(error, retryableCodes = DEFAULT_RETRYABLE_CODES) {
   if (!error) {
     return false;
@@ -41,11 +76,11 @@ export function isRetryableHttpError(error, retryableCodes = DEFAULT_RETRYABLE_C
     return true;
   }
 
-  if (status >= 500 && status < 600) {
+  if (status !== null && status >= 500 && status < 600) {
     return true;
   }
 
-  if (status >= 400 && status < 500) {
+  if (status !== null && status >= 400 && status < 500) {
     return false;
   }
 
@@ -60,6 +95,21 @@ export function isRetryableHttpError(error, retryableCodes = DEFAULT_RETRYABLE_C
   return false;
 }
 
+/**
+ * @typedef {Object} HttpRetryOptions
+ * @property {number} [maxRetries]
+ * @property {number} [baseDelay]
+ * @property {number} [maxDelay]
+ * @property {string[]} [retryableCodes]
+ * @property {(error: unknown) => boolean} [shouldRetry]
+ */
+
+/**
+ * @template T
+ * @param {() => Promise<T> | T} fn
+ * @param {HttpRetryOptions} [options]
+ * @returns {Promise<T>}
+ */
 export async function withHttpRetry(fn, options = {}) {
   const {
     maxRetries = 4,
@@ -79,7 +129,7 @@ export async function withHttpRetry(fn, options = {}) {
         throw error;
       }
 
-      if (!isRetryableHttpError(error, retryableCodes)) {
+      if (!isRetryableHttpError(/** @type {HttpError} */ (error), retryableCodes)) {
         throw error;
       }
 
@@ -91,7 +141,7 @@ export async function withHttpRetry(fn, options = {}) {
       const exponential = baseDelay * 2 ** attempt;
       let delay = Math.min(maxDelay, exponential + jitter);
 
-      const retryAfterSeconds = parseRetryAfter(error);
+      const retryAfterSeconds = parseRetryAfter(/** @type {HttpError} */ (error));
       if (retryAfterSeconds !== null) {
         delay = Math.min(maxDelay, Math.max(delay, retryAfterSeconds * 1000));
       }

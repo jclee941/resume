@@ -1,7 +1,75 @@
 /**
+ * @typedef {Object} WantedSkillTag
+ * @property {string} title
+ */
+
+/**
+ * @typedef {Object} WantedReward
+ * @property {string} [formatted_total]
+ */
+
+/**
+ * @typedef {Object} RawWantedCompanyRef
+ * @property {string|number} [id]
+ * @property {string} [name]
+ */
+
+/**
+ * @typedef {Object} RawWantedAddress
+ * @property {string} [location]
+ */
+
+/**
+ * @typedef {Object} RawWantedImage
+ * @property {string} [thumb]
+ */
+
+/**
+ * @typedef {Object} RawWantedJob
+ * @property {string|number} id
+ * @property {RawWantedCompanyRef} [company]
+ * @property {string} [company_name]
+ * @property {string|number} [company_id]
+ * @property {string} position
+ * @property {RawWantedAddress} [address]
+ * @property {string} [location]
+ * @property {number|null} [annual_from]
+ * @property {number|null} [annual_to]
+ * @property {WantedSkillTag[]} [skill_tags]
+ * @property {WantedReward} [reward]
+ * @property {RawWantedImage} [title_img]
+ * @property {boolean} [is_remote]
+ * @property {string|null} [employment_type]
+ * @property {string} [created_at]
+ * @property {string} [due_time]
+ */
+
+/**
+ * @typedef {RawWantedJob & {
+ *   main_tasks?: string,
+ *   position_description?: string,
+ *   requirements?: string,
+ *   preferred_points?: string,
+ *   benefits?: string,
+ *   category_tags?: WantedSkillTag[],
+ * }} RawWantedJobDetail
+ */
+
+/**
+ * @typedef {Object} RawWantedCompany
+ * @property {string|number} id
+ * @property {string} name
+ * @property {RawWantedImage} [logo_img]
+ * @property {string} [industry_name]
+ * @property {number} [employee_count]
+ * @property {string} [description]
+ * @property {string} [homepage_url]
+ */
+
+/**
  * @typedef {Object} WantedJob
  * @property {string|number} id
- * @property {string} company
+ * @property {string} [company]
  * @property {string|number} [companyId]
  * @property {string} position
  * @property {string} [location]
@@ -9,22 +77,22 @@
  * @property {number|null} experienceMax
  * @property {string[]} techStack
  * @property {string|null} salary
- * @property {Object} [reward]
+ * @property {WantedReward} [reward]
  * @property {string} [thumbnail]
  * @property {boolean} isRemote
  * @property {string|null} employmentType
  * @property {'wanted'} source
  * @property {string} sourceUrl
- * @property {string} createdAt
- * @property {string} due
+ * @property {string} [createdAt]
+ * @property {string} [due]
  */
 
 /**
  * @typedef {WantedJob & {
  *   description: string,
- *   requirements: string,
- *   preferredPoints: string,
- *   benefits: string,
+ *   requirements?: string,
+ *   preferredPoints?: string,
+ *   benefits?: string,
  *   skills: string[],
  *   category: string[],
  * }} WantedJobDetail
@@ -41,6 +109,10 @@
  * @property {string} [website]
  */
 
+/**
+ * @param {RawWantedJob} job
+ * @returns {WantedJob}
+ */
 export function normalizeJob(job) {
   return {
     id: job.id,
@@ -63,6 +135,10 @@ export function normalizeJob(job) {
   };
 }
 
+/**
+ * @param {RawWantedJobDetail} detail
+ * @returns {WantedJobDetail}
+ */
 export function normalizeJobDetail(detail) {
   return {
     ...normalizeJob(detail),
@@ -75,6 +151,10 @@ export function normalizeJobDetail(detail) {
   };
 }
 
+/**
+ * @param {RawWantedCompany} company
+ * @returns {WantedCompany}
+ */
 export function normalizeCompany(company) {
   return {
     id: company.id,

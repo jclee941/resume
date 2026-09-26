@@ -42,7 +42,12 @@ const REQUIRED_PERSONAL_FIELDS = ['name', 'email', 'phone'];
 
 const REQUIRED_CAREER_FIELDS = ['company', 'period'];
 
+/**
+ * @param {string} dir
+ * @returns {string[]}
+ */
 function listJsonVariants(dir) {
+  /** @type {string[]} */
   const results = [];
   if (!fs.existsSync(dir)) return results;
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -56,14 +61,28 @@ function listJsonVariants(dir) {
   return results;
 }
 
+/**
+ * @typedef {Record<string, unknown> & {
+ *   personal?: Record<string, unknown>,
+ *   careers?: Record<string, unknown>[],
+ *   skills?: Record<string, unknown>,
+ * }} ApplicationVariantData
+ */
+
+/**
+ * @param {string} filePath
+ * @returns {string[]}
+ */
 function validateVariant(filePath) {
+  /** @type {string[]} */
   const errors = [];
+  /** @type {ApplicationVariantData} */
   let data;
 
   try {
     data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
   } catch (err) {
-    return [`JSON parse error: ${err.message}`];
+    return [`JSON parse error: ${/** @type {Error} */ (err).message}`];
   }
 
   for (const key of REQUIRED_TOP_KEYS) {

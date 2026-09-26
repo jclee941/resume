@@ -1,12 +1,22 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
+/**
+ * @param {string} file
+ * @param {string} text
+ * @returns {string[]}
+ */
 function linkedFiles(file, text) {
   return [...text.matchAll(/!?\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g)].map((match) =>
     resolve(dirname(file), match[1].split('#', 1)[0])
   );
 }
 
+/**
+ * @param {string} text
+ * @param {string} heading
+ * @returns {string}
+ */
 function section(text, heading) {
   const marker = `## ${heading}`;
   const headingStart = text.indexOf(marker);
@@ -16,10 +26,31 @@ function section(text, heading) {
   return text.slice(contentStart, nextHeading < 0 ? undefined : nextHeading);
 }
 
+/**
+ * @typedef {Object} AdrEntry
+ * @property {string} id
+ * @property {string} absoluteFile
+ * @property {string} status
+ */
+
+/**
+ * @typedef {Object} AdrDiagnostic
+ * @property {string} code
+ * @property {string} file
+ * @property {string} message
+ */
+
+/**
+ * @param {string} root
+ * @param {AdrEntry[]} adrs
+ * @param {AdrDiagnostic[]} diagnostics
+ * @returns {void}
+ */
 export function validateIndex(root, adrs, diagnostics) {
   const file = join(root, 'docs/README.md');
   const text = readFileSync(file, 'utf8');
   const allLinks = linkedFiles(file, text);
+  /** @type {Record<string, string[]>} */
   const statusLinks = {
     Accepted: linkedFiles(file, section(text, 'Accepted')),
     Superseded: linkedFiles(file, section(text, 'Superseded')),

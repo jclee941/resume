@@ -343,7 +343,27 @@
     "apps/portfolio/lib/worker-preamble.js",
     "apps/portfolio/src/scripts/modules/contact-copy.js",
     "apps/portfolio/src/scripts/modules/project-architecture-renderer.js",
-    "apps/portfolio/src/scripts/modules/project-card-formatting.js"
+    "apps/portfolio/src/scripts/modules/project-card-formatting.js",
+    "apps/portfolio/src/scripts/modules/recruiter-role-proofs.js",
+    "packages/cli/src/commands/db-utils.js",
+    "packages/cli/src/commands/deploy.js",
+    "packages/data/resumes/archive/docs/worker.js",
+    "packages/shared/src/auth/hmac.js",
+    "packages/shared/src/clients/wanted/types.js",
+    "packages/shared/src/logger/transports/loki.js",
+    "packages/shared/src/retry/http-retry.js",
+    "packages/shared/src/retry/retry-service-config.js",
+    "packages/shared/src/retry/retry-service-stats.js",
+    "packages/shared/src/validation/resume.js",
+    "packages/types/src/wanted.js",
+    "tools/scripts/build/optimize-images.js",
+    "tools/scripts/utils/secure-directory.js",
+    "tools/scripts/utils/validate-application-variants.js",
+    "tools/scripts/verification/architecture-docs-index.mjs",
+    "tools/scripts/verification/audit-production-dependencies.mjs",
+    "tools/scripts/verification/check-agents-coverage.js",
+    "tools/scripts/verification/check-source-loc.mjs",
+    "tools/scripts/verification/validate-monorepo-naming.mjs"
   ],
   "exclude": ["packages/env/src/__tests__/**"]
 }

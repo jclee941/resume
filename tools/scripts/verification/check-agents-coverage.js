@@ -36,10 +36,10 @@ const RISK_PATTERNS = [
 const CODE_EXTENSIONS = ['.js', '.ts', '.tsx', '.go', '.py', '.rs'];
 const SKIP_DIRS = ['node_modules', '.git', 'dist', 'build', '.venv', 'vendor'];
 
-function _log(msg) {
-  if (VERBOSE) console.log(msg);
-}
-
+/**
+ * @param {string} filePath
+ * @returns {number}
+ */
 function countLines(filePath) {
   try {
     const content = readFileSync(filePath, 'utf-8');
@@ -49,10 +49,18 @@ function countLines(filePath) {
   }
 }
 
+/**
+ * @param {string} filePath
+ * @returns {boolean}
+ */
 function isRiskFile(filePath) {
   return RISK_PATTERNS.some((pattern) => pattern.test(filePath));
 }
 
+/**
+ * @param {string} filePath
+ * @returns {string | null}
+ */
 function findNearestAgentsMd(filePath) {
   let dir = dirname(filePath);
   while (dir.length >= ROOT.length) {
@@ -67,6 +75,10 @@ function findNearestAgentsMd(filePath) {
   return null;
 }
 
+/**
+ * @param {string} dir
+ * @returns {string[]}
+ */
 function getAllFiles(dir) {
   try {
     const entries = execSync(
@@ -132,6 +144,7 @@ function main() {
     console.log('');
   }
 
+  /** @type {Record<string, string[]>} */
   const byScope = {};
   for (const h of hotspots) {
     const scope = h.agentsMd || '(uncovered)';

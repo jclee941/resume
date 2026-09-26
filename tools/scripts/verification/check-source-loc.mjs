@@ -18,6 +18,8 @@ const NOT_SOURCE = [
 /**
  * Architecture-rules LOC: skip blank lines, comment-only lines, and the bodies
  * of multi-line template literals / Go raw strings (static string content).
+ * @param {string} source
+ * @returns {number}
  */
 export function countCodeLines(source) {
   let count = 0;
@@ -45,6 +47,18 @@ export function countCodeLines(source) {
   return count;
 }
 
+/**
+ * @typedef {Object} OversizedFile
+ * @property {string} file
+ * @property {number} codeLines
+ */
+
+/**
+ * @param {string[]} files
+ * @param {(file: string) => string} readSource
+ * @param {number} [limit]
+ * @returns {OversizedFile[]}
+ */
 export function findOversizedFiles(files, readSource, limit = MAX_CODE_LINES) {
   return files
     .filter((file) => SOURCE_FILE.test(file) && !NOT_SOURCE.some((pattern) => pattern.test(file)))

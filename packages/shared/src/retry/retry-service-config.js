@@ -11,10 +11,38 @@ export const RETRY = {
 
 export const CIRCUIT = { failureThreshold: 5, resetTimeout: 60000, halfOpenMaxCalls: 3 };
 
+/**
+ * @typedef {Object} RetryConfig
+ * @property {number} [maxRetries]
+ * @property {number} baseDelay
+ * @property {number} maxDelay
+ * @property {number} backoffMultiplier
+ * @property {boolean} [jitter]
+ * @property {(string | number)[]} retryableErrors
+ */
+
+/**
+ * @typedef {Object} RetryableError
+ * @property {string} [code]
+ * @property {number} [status]
+ * @property {number} [statusCode]
+ * @property {{ status?: number }} [response]
+ * @property {{ code?: string, status?: number, statusCode?: number }} [cause]
+ */
+
+/**
+ * @param {number} ms
+ * @returns {Promise<void>}
+ */
 export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const nowMs = () => Date.now();
 
+/**
+ * @param {RetryableError | null | undefined} error
+ * @param {RetryConfig} config
+ * @returns {boolean}
+ */
 export function retryable(error, config) {
   const values = new Set(config.retryableErrors);
   const code = error?.code ?? error?.cause?.code;
@@ -28,6 +56,11 @@ export function retryable(error, config) {
   ].some((status) => Number.isFinite(Number(status)) && values.has(Number(status)));
 }
 
+/**
+ * @param {number} attempt
+ * @param {RetryConfig} config
+ * @returns {number}
+ */
 export function delay(attempt, config) {
   const capped = Math.min(config.maxDelay, config.baseDelay * config.backoffMultiplier ** attempt);
   return Math.floor(config.jitter ? capped * (0.5 + Math.random()) : capped);
