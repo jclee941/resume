@@ -1,3 +1,20 @@
+/**
+ * @typedef {Object} WebVitalsRecord
+ * @property {number} [lcp]
+ * @property {number} [inp]
+ * @property {number} [cls]
+ * @property {number} [fcp]
+ * @property {number} [ttfb]
+ */
+
+/**
+ * @typedef {PerformanceEntry & { renderTime: number, loadTime: number }} LargestContentfulPaintEntry
+ * @typedef {PerformanceEntry & { interactionId?: number, duration: number }} EventTimingEntry
+ * @typedef {PerformanceEntry & { hadRecentInput?: boolean, value: number }} LayoutShiftEntry
+ * @typedef {PerformanceObserverInit & { durationThreshold?: number }} ExtendedPerformanceObserverInit
+ */
+
+/** @type {WebVitalsRecord} */
 const webVitals = {};
 let vitalsSent = false;
 
@@ -6,7 +23,7 @@ const observeLCP = () => {
   try {
     const po = new PerformanceObserver((entryList) => {
       const entries = entryList.getEntries();
-      const lastEntry = entries[entries.length - 1];
+      const lastEntry = /** @type {LargestContentfulPaintEntry} */ (entries[entries.length - 1]);
       webVitals.lcp = Math.round(lastEntry.renderTime || lastEntry.loadTime);
     });
     po.observe({ type: 'largest-contentful-paint', buffered: true });
@@ -23,7 +40,7 @@ const observeINP = () => {
     const interactions = new Map();
     let worstInp = 0;
     const po = new PerformanceObserver((entryList) => {
-      for (const entry of entryList.getEntries()) {
+      for (const entry of /** @type {EventTimingEntry[]} */ (entryList.getEntries())) {
         if (!entry.interactionId) continue;
         const previous = interactions.get(entry.interactionId) || 0;
         const duration = Math.max(previous, entry.duration);
@@ -34,7 +51,13 @@ const observeINP = () => {
         }
       }
     });
-    po.observe({ type: 'event', durationThreshold: 40, buffered: true });
+    po.observe(
+      /** @type {ExtendedPerformanceObserverInit} */ ({
+        type: 'event',
+        durationThreshold: 40,
+        buffered: true,
+      })
+    );
   } catch {
     // INP / event-timing not supported
   }
@@ -45,7 +68,7 @@ const observeCLS = () => {
   try {
     const po = new PerformanceObserver((entryList) => {
       let clsValue = 0;
-      for (const entry of entryList.getEntries()) {
+      for (const entry of /** @type {LayoutShiftEntry[]} */ (entryList.getEntries())) {
         if (!entry.hadRecentInput) {
           clsValue += entry.value;
         }
@@ -78,7 +101,9 @@ const observeFCP = () => {
 // Time to First Byte (TTFB)
 const observeTTFB = () => {
   try {
-    const navEntry = performance.getEntriesByType('navigation')[0];
+    const navEntry = /** @type {PerformanceNavigationTiming | undefined} */ (
+      performance.getEntriesByType('navigation')[0]
+    );
     if (navEntry) {
       webVitals.ttfb = Math.round(navEntry.responseStart - navEntry.requestStart);
     }

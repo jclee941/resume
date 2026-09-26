@@ -4,6 +4,10 @@ const { applyJapaneseReviewPacket } = require('./review-packet.js');
 const { applyJapaneseSections } = require('./sections.js');
 const { applyJapaneseSecurity } = require('./security.js');
 
+/**
+ * @param {string} html
+ * @returns {string}
+ */
 function buildJapaneseTemplate(html) {
   return [
     applyJapaneseMeta,

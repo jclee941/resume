@@ -1,6 +1,13 @@
 import { getEvidenceItems, getRoleProfiles } from './recruiter-enhancements-data.js';
 import { applyRoleProofCounts, roleProofCountText } from './recruiter-role-proofs.js';
 
+/**
+ * @template {keyof HTMLElementTagNameMap} K
+ * @param {K} tagName
+ * @param {string} [className]
+ * @param {string} [text]
+ * @returns {HTMLElementTagNameMap[K]}
+ */
 function createElement(tagName, className, text = '') {
   const element = document.createElement(tagName);
   if (className) element.className = className;
@@ -8,6 +15,11 @@ function createElement(tagName, className, text = '') {
   return element;
 }
 
+/**
+ * @param {HTMLElement} controls
+ * @param {ReturnType<typeof getRoleProfiles>[number]} role
+ * @param {string} countText
+ */
 function appendRoleChip(controls, role, countText) {
   const chip = createElement('button', 'role-chip');
   chip.type = 'button';
@@ -27,12 +39,21 @@ function appendRoleChip(controls, role, countText) {
   controls.appendChild(chip);
 }
 
+/**
+ * @param {string} locale
+ * @param {string} title
+ * @returns {string}
+ */
 function evidenceLinkText(locale, title) {
   if (locale === 'en') return `${title} evidence`;
   if (locale === 'ja') return `${title}の根拠を見る`;
   return `${title} 근거 보기`;
 }
 
+/**
+ * @param {Element} section
+ * @returns {Element}
+ */
 function ensureRoleStatus(section) {
   const status = section.querySelector('[data-role-status]');
   if (status) return status;
@@ -46,6 +67,10 @@ function ensureRoleStatus(section) {
   return createdStatus;
 }
 
+/**
+ * @param {ReturnType<import('./recruiter-enhancements-data.js').getRecruiterLabels>} labels
+ * @param {Map<string, number>} proofCounts
+ */
 export function renderRoleQuickPaths(labels, proofCounts) {
   const existingSection = document.querySelector('.role-quick-paths');
   if (existingSection) {
@@ -78,6 +103,9 @@ export function renderRoleQuickPaths(labels, proofCounts) {
   hero.appendChild(section);
 }
 
+/**
+ * @param {ReturnType<import('./recruiter-enhancements-data.js').getRecruiterLabels>} labels
+ */
 export function renderEvidenceMatrix(labels) {
   if (document.querySelector('.project-evidence-matrix')) return;
   const list = document.querySelector('#project-list');

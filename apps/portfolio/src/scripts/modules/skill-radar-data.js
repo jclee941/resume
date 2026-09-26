@@ -84,7 +84,14 @@ const SKILL_DATA_INJECTED =
     ? __SKILL_DATA__
     : SKILL_DATA_FALLBACK;
 
+/**
+ * @typedef {import('../../../lib/skill-radar-data.js').RadarSkillItem} RadarSkillItem
+ * @typedef {{ title: string, skills: RadarSkillItem[] }} LocaleRadarCategory
+ */
+
+/** @type {Record<string, number>} */
 const RADAR_LEVEL_MAP = { expert: 95, advanced: 80, intermediate: 60, beginner: 35 };
+/** @type {Record<'ko' | 'en' | 'ja', Record<string, string>>} */
 const RADAR_EVIDENCE_LABELS_BY_LOCALE = {
   ko: {
     expert: '주요 운영 경험',
@@ -116,8 +123,13 @@ function radarEvidenceLabels() {
   return RADAR_EVIDENCE_LABELS_BY_LOCALE.ko;
 }
 
+/**
+ * @param {Record<string, ResumeChatSkillCategory> | null | undefined} skills
+ * @returns {Record<string, LocaleRadarCategory> | null}
+ */
 function radarFromLocaleSkills(skills) {
   if (!skills || typeof skills !== 'object') return null;
+  /** @type {Record<string, LocaleRadarCategory>} */
   const out = {};
   for (const [category, data] of Object.entries(skills)) {
     if (!data || !Array.isArray(data.items) || data.items.length === 0) continue;
@@ -145,6 +157,7 @@ export function resolveSkillData() {
   return radarFromLocaleSkills(injected) || SKILL_DATA_INJECTED;
 }
 
+/** @type {Record<'ko' | 'en' | 'ja', Record<string, string>>} */
 const TIER_LABELS = {
   ko: { primary: '주력', applied: '실무 적용', working: '활용 가능' },
   en: { primary: 'Primary', applied: 'Applied', working: 'Working' },
@@ -157,12 +170,14 @@ const LEVELS = {
   working: { min: 50, key: 'working', color: 'var(--text-secondary)' },
 };
 
+/** @param {number} level */
 export function getLevelInfo(level) {
   if (level >= LEVELS.primary.min) return LEVELS.primary;
   if (level >= LEVELS.applied.min) return LEVELS.applied;
   return LEVELS.working;
 }
 
+/** @param {number} level */
 export function getTierLabel(level) {
   const lang = (document.documentElement.lang || 'ko').toLowerCase();
   const labels = lang.startsWith('en')
@@ -173,6 +188,7 @@ export function getTierLabel(level) {
   return labels[getLevelInfo(level).key];
 }
 
+/** @param {number} count */
 export function skillCountText(count) {
   const lang = (document.documentElement.lang || 'ko').toLowerCase();
   if (lang.startsWith('en')) return `${count} skill${count !== 1 ? 's' : ''}`;

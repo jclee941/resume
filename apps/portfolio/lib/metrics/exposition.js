@@ -1,17 +1,20 @@
 const { generateHistogramLines, initHistogramBuckets } = require('./histogram');
 
 /**
+ * @typedef {typeof globalThis & { __esLogFailures?: number, __esLogTotal?: number }} GlobalWithEsLog
+ */
+
+/**
  * Generate Prometheus metrics in exposition format.
  * Enhanced with Cloudflare metrics, Web Vitals, histograms, and geographic labels.
  * @param {import('./collector').WorkerMetrics} metrics
- * @param {Object} [requestInfo] - Current request info for labels.
+ * @param {Record<string, unknown>} [_requestInfo] - Current request info for labels.
  * @returns {string}
  */
 function generateMetrics(metrics, _requestInfo = {}) {
-  const avgResponseTime =
-    metrics.requests_total > 0
-      ? (metrics.response_time_sum / metrics.requests_total).toFixed(2)
-      : 0;
+  const avgResponseTime = /** @type {number} */ (
+    metrics.requests_total > 0 ? (metrics.response_time_sum / metrics.requests_total).toFixed(2) : 0
+  );
   const uptimeSeconds = Math.floor((Date.now() - metrics.worker_start_time) / 1000);
   const errorRate =
     metrics.requests_total > 0
@@ -138,11 +141,11 @@ worker_info{job="resume",version="${metrics.version || 'unknown'}",deployed_at="
 
 # HELP es_log_failures_total Cumulative count of Elasticsearch log writes that failed (P2-19)
 # TYPE es_log_failures_total counter
-es_log_failures_total{job="resume"} ${typeof globalThis.__esLogFailures === 'number' ? globalThis.__esLogFailures : 0}
+es_log_failures_total{job="resume"} ${typeof (/** @type {GlobalWithEsLog} */ (globalThis).__esLogFailures) === 'number' ? /** @type {GlobalWithEsLog} */ (globalThis).__esLogFailures : 0}
 
 # HELP es_log_total Cumulative count of successful Elasticsearch log writes
 # TYPE es_log_total counter
-es_log_total{job="resume"} ${typeof globalThis.__esLogTotal === 'number' ? globalThis.__esLogTotal : 0}
+es_log_total{job="resume"} ${typeof (/** @type {GlobalWithEsLog} */ (globalThis).__esLogTotal) === 'number' ? /** @type {GlobalWithEsLog} */ (globalThis).__esLogTotal : 0}
 
 # HELP http_requests_by_country HTTP requests by country
 # TYPE http_requests_by_country counter

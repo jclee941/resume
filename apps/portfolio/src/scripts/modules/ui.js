@@ -1,5 +1,9 @@
 import { initContactCopy } from './contact-copy.js';
 
+/**
+ * @typedef {Window & { gtag?: (command: string, action: string, params?: Record<string, unknown>) => void }} WindowWithGtag
+ */
+
 export function initUI() {
   initSmoothScroll();
   initNavScrollEffect();
@@ -29,11 +33,13 @@ function initSectionAnalytics() {
     (entries) => {
       entries.forEach((e) => {
         if (!e.isIntersecting) return;
-        if (typeof window.gtag !== 'function') return;
+        if (typeof (/** @type {WindowWithGtag} */ (window).gtag) !== 'function') return;
         const id = e.target.id || e.target.getAttribute('data-section');
         if (id && !tracked[id]) {
           tracked[id] = true;
-          window.gtag('event', 'section_view', { section: id, event_category: 'engagement' });
+          /** @type {NonNullable<WindowWithGtag['gtag']>} */ (
+            /** @type {WindowWithGtag} */ (window).gtag
+          )('event', 'section_view', { section: id, event_category: 'engagement' });
         }
       });
     },
@@ -44,18 +50,25 @@ function initSectionAnalytics() {
 
 function initSmoothScroll() {
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener('click', function (e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        const offset = 80;
-        const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
-        window.scrollTo({
-          top: targetPosition,
-          behavior: 'smooth',
-        });
+    anchor.addEventListener(
+      'click',
+      /**
+       * @this {Element}
+       * @param {Event} e
+       */
+      function (e) {
+        e.preventDefault();
+        const target = document.querySelector(/** @type {string} */ (this.getAttribute('href')));
+        if (target) {
+          const offset = 80;
+          const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth',
+          });
+        }
       }
-    });
+    );
   });
 }
 
@@ -74,6 +87,9 @@ function initNavScrollEffect() {
   });
 }
 
+/**
+ * @param {{ root?: Document | HTMLElement }} [options]
+ */
 export function initScrollReveal(options = {}) {
   const root = options.root || document;
   const revealElements = Array.from(root.querySelectorAll('.reveal'));
@@ -93,6 +109,7 @@ export function initScrollReveal(options = {}) {
   // failure/delay can no longer leave content stuck at opacity:0.
   if (typeof IntersectionObserver !== 'function') return;
 
+  /** @type {IntersectionObserver} */
   let observer;
   try {
     observer = new IntersectionObserver(
@@ -119,6 +136,7 @@ export function initScrollReveal(options = {}) {
   // Only NOW, with a working observer wired up, opt into the hidden state.
   document.documentElement.classList.add('reveal-ready');
 
+  /** @param {Element} el */
   const reveal = (el) => {
     el.classList.add('revealed');
     try {
@@ -197,7 +215,7 @@ function initBackToTop() {
 }
 
 function initMobileNav() {
-  const toggle = document.querySelector('.nav-toggle');
+  const toggle = /** @type {HTMLButtonElement | null} */ (document.querySelector('.nav-toggle'));
   if (!toggle) return;
   const navLinks = document.querySelector('.nav-links');
   if (!navLinks) return;
@@ -207,9 +225,13 @@ function initMobileNav() {
   const openLabel = toggle.getAttribute('data-nav-label-open');
   const closeLabel = toggle.getAttribute('data-nav-label-close');
 
+  /** @param {boolean} expanded */
   function setToggleLabel(expanded) {
     if (!openLabel || !closeLabel) return;
-    toggle.setAttribute('aria-label', expanded ? closeLabel : openLabel);
+    /** @type {NonNullable<typeof toggle>} */ (toggle).setAttribute(
+      'aria-label',
+      expanded ? closeLabel : openLabel
+    );
   }
 
   toggle.addEventListener('click', () => {

@@ -1,10 +1,18 @@
 import { getRoleProfiles } from './recruiter-enhancements-data.js';
 import { roleProofCountText } from './recruiter-role-proofs.js';
 
+/**
+ * @param {Element[]} cards
+ */
 function clearRoleFocus(cards) {
   cards.forEach((card) => card.classList.remove('is-role-match', 'is-role-dimmed'));
 }
 
+/**
+ * @param {{ id: string, label: string }} role
+ * @param {string} countText
+ * @returns {string}
+ */
 function selectedRoleStatusText(role, countText) {
   const lang = (document.documentElement.lang || 'ko').toLowerCase();
   if (lang.startsWith('en')) return `${role.label} selected: ${countText}.`;
@@ -12,6 +20,9 @@ function selectedRoleStatusText(role, countText) {
   return `${role.label} 선택됨: ${countText}`;
 }
 
+/**
+ * @param {{ id: string, label: string }} role
+ */
 function setRoleHistoryState(role) {
   if (!window.history?.pushState) {
     window.location.hash = 'projects';
@@ -33,8 +44,14 @@ function setRoleHistoryState(role) {
   );
 }
 
+/**
+ * @param {Element[]} cards
+ * @param {Map<string, number>} proofCounts
+ */
 export function bindRoleControls(cards, proofCounts) {
-  const buttons = Array.from(document.querySelectorAll('.role-chip'));
+  const buttons = /** @type {HTMLButtonElement[]} */ (
+    Array.from(document.querySelectorAll('.role-chip'))
+  );
   const roleProfiles = getRoleProfiles();
   const status = document.querySelector('[data-role-status]');
   buttons.forEach((button) => {
@@ -55,7 +72,7 @@ export function bindRoleControls(cards, proofCounts) {
         const visibleLabel =
           button.querySelector('.role-chip__label')?.textContent?.trim() || roleProfile.label;
         const selectedRole = { ...roleProfile, label: visibleLabel };
-        status.textContent = selectedRoleStatusText(
+        /** @type {NonNullable<typeof status>} */ (status).textContent = selectedRoleStatusText(
           selectedRole,
           roleProofCountText(proofCounts, role)
         );
@@ -68,7 +85,9 @@ export function bindRoleControls(cards, proofCounts) {
 }
 
 export function bindEvidenceLinks() {
-  document.querySelectorAll('[data-evidence-project]').forEach((link) => {
+  /** @type {NodeListOf<HTMLElement>} */ (
+    document.querySelectorAll('[data-evidence-project]')
+  ).forEach((link) => {
     if (link.dataset.evidenceLinkBound === 'true') return;
     link.dataset.evidenceLinkBound = 'true';
     link.addEventListener('click', (event) => {
@@ -79,7 +98,9 @@ export function bindEvidenceLinks() {
       );
       if (card) {
         const list = document.querySelector('#project-list');
-        const moreButton = document.querySelector('.project-more-btn');
+        const moreButton = /** @type {HTMLButtonElement | null} */ (
+          document.querySelector('.project-more-btn')
+        );
         if (
           card.classList.contains('project-item--collapsed') &&
           !list?.classList.contains('is-expanded')

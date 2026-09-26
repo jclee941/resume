@@ -1,6 +1,21 @@
 // Service Worker for PWA offline support
 // Version: 1.0.0
 
+/**
+ * @typedef {Window & typeof globalThis & {
+ *   skipWaiting(): Promise<void>;
+ *   clients: { claim(): Promise<void> };
+ *   registration: ServiceWorkerRegistration;
+ * }} ServiceWorkerGlobal
+ */
+
+/**
+ * @typedef {Event & { waitUntil(f: Promise<unknown>): void }} ExtendableEvent
+ * @typedef {Event & { request: Request, respondWith(r: Response | Promise<Response>): void }} FetchEvent
+ * @typedef {Event & { tag: string }} SyncEvent
+ * @typedef {Event & { data?: { text(): string, json(): unknown } | null }} PushEvent
+ */
+
 const CACHE_NAME = 'resume-pwa-v1';
 const RUNTIME_CACHE = 'resume-runtime-v1';
 
@@ -14,20 +29,20 @@ const PRECACHE_URLS = [
 
 // Install event - cache core resources
 self.addEventListener('install', (event) => {
-  event.waitUntil(
+  /** @type {ExtendableEvent} */ (event).waitUntil(
     caches
       .open(CACHE_NAME)
       .then((cache) => {
         console.log('[SW] Precaching core resources');
         return cache.addAll(PRECACHE_URLS);
       })
-      .then(() => self.skipWaiting())
+      .then(() => /** @type {ServiceWorkerGlobal} */ (self).skipWaiting())
   );
 });
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
+  /** @type {ExtendableEvent} */ (event).waitUntil(
     caches
       .keys()
       .then((cacheNames) => {
@@ -40,13 +55,13 @@ self.addEventListener('activate', (event) => {
             })
         );
       })
-      .then(() => self.clients.claim())
+      .then(() => /** @type {ServiceWorkerGlobal} */ (self).clients.claim())
   );
 });
 
 // Fetch event - network first, fallback to cache
 self.addEventListener('fetch', (event) => {
-  const { request } = event;
+  const { request } = /** @type {FetchEvent} */ (event);
 
   // Skip non-GET requests
   if (request.method !== 'GET') return;
@@ -58,7 +73,7 @@ self.addEventListener('fetch', (event) => {
   // Network-only for HTML — never cache HTML responses because they carry per-response
   // CSP nonces. Caching would create stale nonce mismatches that block inline scripts.
   if ((request.headers.get('accept') || '').includes('text/html')) {
-    event.respondWith(
+    /** @type {FetchEvent} */ (event).respondWith(
       fetch(request).catch(
         () =>
           new Response('Offline - please check your connection', {
@@ -77,7 +92,7 @@ self.addEventListener('fetch', (event) => {
     request.url.includes('fonts.gstatic.com') ||
     request.url.match(/\.(png|jpg|jpeg|svg|gif|webp|woff|woff2|ttf|eot)$/i)
   ) {
-    event.respondWith(
+    /** @type {FetchEvent} */ (event).respondWith(
       caches.match(request).then((cached) => {
         return (
           cached ||
@@ -97,12 +112,12 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Network-only for API calls and external resources
-  event.respondWith(fetch(request));
+  /** @type {FetchEvent} */ (event).respondWith(fetch(request));
 });
 
 // Background sync for Web Vitals (future enhancement)
 self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-vitals') {
+  if (/** @type {SyncEvent} */ (event).tag === 'sync-vitals') {
     console.log('[SW] Background sync: vitals');
     // Implementation for queued vitals data
   }
@@ -111,11 +126,18 @@ self.addEventListener('sync', (event) => {
 // Push notifications (future enhancement)
 self.addEventListener('push', (event) => {
   const options = {
-    body: event.data ? event.data.text() : 'New update available',
+    body: /** @type {PushEvent} */ (event).data
+      ? /** @type {NonNullable<PushEvent['data']>} */ (/** @type {PushEvent} */ (event).data).text()
+      : 'New update available',
     icon: '/icon-192.png',
     badge: '/icon-192.png',
     vibrate: [200, 100, 200],
   };
 
-  event.waitUntil(self.registration.showNotification('Resume Portfolio', options));
+  /** @type {ExtendableEvent} */ (event).waitUntil(
+    /** @type {ServiceWorkerGlobal} */ (self).registration.showNotification(
+      'Resume Portfolio',
+      options
+    )
+  );
 });
