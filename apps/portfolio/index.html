@@ -580,14 +580,7 @@
         }
       })();
     </script>
-    <script>
-      (function () {
-        var s = document.createElement('script');
-        s.src = '/main.js?v=<!-- BUILD_CACHE_KEY_PLACEHOLDER -->';
-        s.defer = true;
-        document.body.appendChild(s);
-      })();
-    </script>
+    <script src="/main.js?v=<!-- BUILD_CACHE_KEY_PLACEHOLDER -->" async></script>
     <script>
       (function () {
         document.querySelectorAll('.nav-link').forEach(function (link) {
@@ -617,8 +610,17 @@
         language: 'ko',
       });
       function loadAnalyticsScript() {
+        var src = 'https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L';
+        var policy =
+          window.trustedTypes &&
+          window.trustedTypes.createPolicy('resume-analytics', {
+            createScriptURL: function (value) {
+              if (value !== src) throw new TypeError('Unsupported analytics URL');
+              return value;
+            },
+          });
         var _gs = document.createElement('script');
-        _gs.src = 'https://www.googletagmanager.com/gtag/js?id=G-P9E8XY5K2L';
+        _gs.src = policy ? policy.createScriptURL(src) : src;
         _gs.async = true;
         document.head.appendChild(_gs);
       }

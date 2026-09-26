@@ -69,7 +69,8 @@ function generateSecurityHeaders(styleHashes, options = {}) {
 
   const cspReportOnly = [
     "require-trusted-types-for 'script'",
-    'trusted-types resume-script-url',
+    // resume-script-url: service worker (main.js); resume-analytics: deferred gtag loader.
+    'trusted-types resume-script-url resume-analytics',
     'report-to csp',
   ].join('; ');
 
