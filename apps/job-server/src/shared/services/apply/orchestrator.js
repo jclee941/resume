@@ -6,6 +6,41 @@ import {
 } from './orchestrator-results.js';
 import { searchApplySource } from './foreign-ats-search.js';
 
+/**
+ * @typedef {import('./foreign-ats-search.js').ApplySourceJob} ApplyJob
+ * @typedef {import('./foreign-ats-search.js').SearchApplySourceParams['crawler']} ApplyCrawler
+ * @typedef {import('./foreign-ats-search.js').SearchApplySourceOptions & { platforms?: string[] }} ApplySearchOptions
+ * @typedef {NonNullable<import('./foreign-ats-search.js').SearchApplySourceParams['foreignAtsRegistry']>} ApplyForeignAtsRegistry
+ *
+ * @typedef {{
+ *   applyToJob(job: ApplyJob): Promise<import('./orchestrator-results.js').ApplyResult & { error?: string }>;
+ *   initBrowser?: () => Promise<unknown>;
+ *   closeBrowser?: () => Promise<unknown>;
+ * }} ApplyApplier
+ *
+ * @typedef {{ listApplications(options?: { fromDate?: string }): Array<{ status?: string }> }} ApplyAppManager
+ *
+ * @typedef {{
+ *   foreignAtsRegistry?: ApplyForeignAtsRegistry;
+ *   logger?: { log(message: string): void; error(message: string, ...args: unknown[]): void };
+ *   maxDailyApplications?: number;
+ *   enabledPlatforms?: string[];
+ *   parallelSearch?: boolean;
+ *   delayBetweenApplies?: number;
+ *   locationTargets?: string | readonly string[];
+ * }} ApplyOrchestratorConfig
+ *
+ * @typedef {{
+ *   searched: number;
+ *   filtered: number;
+ *   applied: number;
+ *   skipped: number;
+ *   failed: number;
+ *   startTime: number | null;
+ *   endTime: number | null;
+ * }} ApplyOrchestratorStats
+ */
+
 export class ApplyOrchestrator {
   #crawler;
   #applier;
@@ -14,6 +49,12 @@ export class ApplyOrchestrator {
   #config;
   #stats;
 
+  /**
+   * @param {ApplyCrawler | undefined} crawler
+   * @param {ApplyApplier | undefined} applier
+   * @param {ApplyAppManager | undefined} appManager
+   * @param {ApplyOrchestratorConfig} [config]
+   */
   constructor(crawler, applier, appManager, config = {}) {
     this.#crawler = crawler;
     this.#applier = applier;
@@ -30,6 +71,7 @@ export class ApplyOrchestrator {
     this.#stats = this.#initStats();
   }
 
+  /** @returns {ApplyOrchestratorStats} */
   #initStats() {
     return {
       searched: 0,
@@ -42,6 +84,10 @@ export class ApplyOrchestrator {
     };
   }
 
+  /**
+   * @param {readonly string[]} keywords
+   * @param {ApplySearchOptions} [options]
+   */
   async searchJobs(keywords, options = {}) {
     this.#stats.startTime = Date.now();
     const jobs = [];
@@ -74,9 +120,15 @@ export class ApplyOrchestrator {
     return jobs;
   }
 
+  /**
+   * @param {string} platform
+   * @param {readonly string[]} keywords
+   * @param {ApplySearchOptions} options
+   */
   async #searchPlatform(platform, keywords, options) {
     return searchApplySource({
-      crawler: this.#crawler,
+      // Searching is only wired up for orchestrators built with a crawler.
+      crawler: /** @type {ApplyCrawler} */ (this.#crawler),
       foreignAtsRegistry: this.#foreignAtsRegistry,
       platform,
       keywords,
@@ -85,6 +137,10 @@ export class ApplyOrchestrator {
     });
   }
 
+  /**
+   * @param {ApplyJob[]} jobs
+   * @param {boolean} [dryRun]
+   */
   async applyToJobs(jobs, dryRun = true) {
     const results = [];
     const todayCount = this.#getTodayApplicationCount();
@@ -113,7 +169,7 @@ export class ApplyOrchestrator {
           applied: 0,
           failed: realApplyJobs.length,
           skipped: jobs.length - realApplyJobs.length,
-          error: `Browser init failed: ${error.message}`,
+          error: `Browser init failed: ${error instanceof Error ? error.message : String(error)}`,
         };
       }
     }
@@ -129,7 +185,8 @@ export class ApplyOrchestrator {
             this.logger.log(
               `  🎯 Applying to: ${job.company || job.title} (${job.source}) — ${job.sourceUrl}`
             );
-            const result = await this.#applier.applyToJob(job);
+            // Real submissions (non dry-run) require the applier the caller wired in.
+            const result = await /** @type {ApplyApplier} */ (this.#applier).applyToJob(job);
             results.push({ job, ...result });
 
             if (result.success && !result.skipped && result.applied !== false) {
@@ -144,8 +201,14 @@ export class ApplyOrchestrator {
             await this.#sleep(this.#config.delayBetweenApplies);
           }
         } catch (error) {
-          this.logger.error(`❌ Apply exception for ${job.company || job.title}: ${error.message}`);
-          results.push({ job, success: false, error: error.message });
+          this.logger.error(
+            `❌ Apply exception for ${job.company || job.title}: ${error instanceof Error ? error.message : String(error)}`
+          );
+          results.push({
+            job,
+            success: false,
+            error: error instanceof Error ? error.message : String(error),
+          });
           this.#stats.failed++;
         }
       }
@@ -177,6 +240,10 @@ export class ApplyOrchestrator {
     return apps.filter((a) => a.status === 'applied').length;
   }
 
+  /**
+   * @param {number} ms
+   * @returns {Promise<void>}
+   */
   #sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
@@ -184,7 +251,10 @@ export class ApplyOrchestrator {
   getStats() {
     return {
       ...this.#stats,
-      duration: this.#stats.endTime ? this.#stats.endTime - this.#stats.startTime : null,
+      // endTime is only stamped after a run that set startTime.
+      duration: this.#stats.endTime
+        ? this.#stats.endTime - /** @type {number} */ (this.#stats.startTime)
+        : null,
     };
   }
 
@@ -192,6 +262,9 @@ export class ApplyOrchestrator {
     this.#stats = this.#initStats();
   }
 
+  /**
+   * @param {Partial<ApplyOrchestratorConfig>} updates
+   */
   updateConfig(updates) {
     Object.assign(this.#config, updates);
   }

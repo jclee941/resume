@@ -1,12 +1,50 @@
 import { JobFilter } from './job-filter.js';
 import { ApplyOrchestrator } from './orchestrator.js';
 
+/**
+ * @typedef {import('./orchestrator.js').ApplyJob} ApplyJob
+ * @typedef {ConstructorParameters<typeof JobFilter>[0] & import('./orchestrator.js').ApplyOrchestratorConfig & {
+ *   reviewThreshold?: number;
+ *   autoApplyThreshold?: number;
+ *   minMatchScore?: number;
+ *   keywords?: string[];
+ *   excludeKeywords?: string[];
+ *   excludeCompanies?: string[];
+ *   preferredCompanies?: string[];
+ *   platformPriority?: string[];
+ *   notifications?: { email?: boolean };
+ *   useAI?: boolean;
+ *   resumePath?: string | null;
+ *   [key: string]: unknown;
+ * }} UnifiedApplyConfig
+ *
+ * @typedef {{
+ *   notifyAutoApplyResult?: (results: unknown, dryRun: boolean) => Promise<unknown>;
+ *   notifySearchResults?: (jobs: unknown[], keywords: string | undefined) => Promise<unknown>;
+ * }} UnifiedApplyNotifier
+ *
+ * @typedef {{
+ *   crawler?: import('./orchestrator.js').ApplyCrawler;
+ *   applier?: import('./orchestrator.js').ApplyApplier;
+ *   appManager?: import('./orchestrator.js').ApplyAppManager;
+ *   notifier?: UnifiedApplyNotifier;
+ *   config?: UnifiedApplyConfig;
+ *   logger?: { error(message: string, ...args: unknown[]): void };
+ * }} UnifiedApplyDependencies
+ *
+ * @typedef {Awaited<ReturnType<ApplyOrchestrator['applyToJobs']>>} ApplyPhaseResult
+ * @typedef {Awaited<ReturnType<JobFilter['filter']>>} FilterPhaseResult
+ */
+
 export class UnifiedApplySystem {
   #filter;
   #orchestrator;
   #notifier;
   #config;
 
+  /**
+   * @param {UnifiedApplyDependencies} [dependencies]
+   */
   constructor(dependencies = {}) {
     const { crawler, applier, appManager, notifier, config = {} } = dependencies;
 
@@ -42,6 +80,9 @@ export class UnifiedApplySystem {
     return { ...this.#config };
   }
 
+  /**
+   * @param {{ keywords?: string[]; dryRun?: boolean; notify?: boolean }} [options]
+   */
   async run(options = {}) {
     const { keywords = this.#config.keywords, dryRun = true, notify = true } = options;
 
@@ -56,11 +97,17 @@ export class UnifiedApplySystem {
     return this.#generateSummary(searchResult, filterResult, applyResult, dryRun);
   }
 
+  /**
+   * @param {string[]} keywords
+   */
   async #searchPhase(keywords) {
     const jobs = await this.#orchestrator.searchJobs(keywords);
     return { jobs, count: jobs.length };
   }
 
+  /**
+   * @param {ApplyJob[]} jobs
+   */
   async #filterPhase(jobs) {
     const existingIds = new Set();
     return this.#filter.filter(jobs, existingIds, {
@@ -69,10 +116,18 @@ export class UnifiedApplySystem {
     });
   }
 
+  /**
+   * @param {ApplyJob[]} jobs
+   * @param {boolean} dryRun
+   */
   async #applyPhase(jobs, dryRun) {
     return this.#orchestrator.applyToJobs(jobs, dryRun);
   }
 
+  /**
+   * @param {ApplyPhaseResult} applyResult
+   * @param {boolean} dryRun
+   */
   async #notifyPhase(applyResult, dryRun) {
     if (!this.#notifier) return;
 
@@ -83,6 +138,12 @@ export class UnifiedApplySystem {
     }
   }
 
+  /**
+   * @param {{ jobs: ApplyJob[]; count: number }} searchResult
+   * @param {FilterPhaseResult} filterResult
+   * @param {ApplyPhaseResult} applyResult
+   * @param {boolean} dryRun
+   */
   #generateSummary(searchResult, filterResult, applyResult, dryRun) {
     return {
       success: true,
@@ -102,6 +163,10 @@ export class UnifiedApplySystem {
     };
   }
 
+  /**
+   * @param {string[] | undefined} keywords
+   * @param {{ notify?: boolean }} [options]
+   */
   async searchOnly(keywords, options = {}) {
     const searchResult = await this.#searchPhase(keywords || this.#config.keywords);
     const filterResult = await this.#filterPhase(searchResult.jobs);
@@ -120,6 +185,9 @@ export class UnifiedApplySystem {
     return this.#orchestrator.getStats();
   }
 
+  /**
+   * @param {Partial<UnifiedApplyConfig>} updates
+   */
   updateConfig(updates) {
     Object.assign(this.#config, updates);
     this.#filter.updateConfig(updates);

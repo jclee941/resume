@@ -5,7 +5,7 @@ import { JobMatcher } from '../../../shared/services/matching/index.js';
  *   id?: string,
  *   source?: string,
  *   position?: string,
- *   company?: string,
+ *   company?: string | null,
  *   location?: string,
  *   url?: string,
  *   sourceUrl?: string,
