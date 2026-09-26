@@ -88,8 +88,14 @@ test('removes canonical URLs while preserving pre-existing job search and applic
       .get('legacy-application-1');
     const jobSearchResult = database.prepare('SELECT * FROM job_search_results').get();
 
-    assert.equal(applicationColumns.some(({ name }) => name === 'canonical_url'), false);
-    assert.equal(jobColumns.some(({ name }) => name === 'canonical_url'), false);
+    assert.equal(
+      applicationColumns.some(({ name }) => name === 'canonical_url'),
+      false
+    );
+    assert.equal(
+      jobColumns.some(({ name }) => name === 'canonical_url'),
+      false
+    );
     assert.deepEqual(
       { ...application },
       {

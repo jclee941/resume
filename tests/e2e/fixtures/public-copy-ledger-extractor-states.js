@@ -10,7 +10,15 @@ async function openReady(page, route, viewport) {
 
 async function dynamicStateDescriptors(page, routeInfo, viewport) {
   await openReady(page, routeInfo.route, viewport);
-  return page.evaluate(() => ({ capabilities: [...document.querySelectorAll('[data-capability-control]')].map((item) => item.dataset.capabilityControl), timelines: document.querySelectorAll('.timeline-node .timeline-expand-btn').length, domains: [...document.querySelectorAll('.skill-domain-card[data-domain]')].map((item) => item.dataset.domain) }));
+  return page.evaluate(() => ({
+    capabilities: [...document.querySelectorAll('[data-capability-control]')].map(
+      (item) => item.dataset.capabilityControl
+    ),
+    timelines: document.querySelectorAll('.timeline-node .timeline-expand-btn').length,
+    domains: [...document.querySelectorAll('.skill-domain-card[data-domain]')].map(
+      (item) => item.dataset.domain
+    ),
+  }));
 }
 
 module.exports = { dynamicStateDescriptors, openReady };

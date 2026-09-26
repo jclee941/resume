@@ -23,11 +23,7 @@ describe('auto-apply CLI process exits', () => {
   for (const [command, args, startedPattern] of [
     ['apply', ['--max=invalid'], /Auto Apply/],
     ['unified', ['--max=invalid'], /Unified Apply System/],
-    [
-      'apply_queue',
-      ['--queue=/does/not/exist.json', '--apply', '--max=invalid'],
-      /Queue Apply/,
-    ],
+    ['apply_queue', ['--queue=/does/not/exist.json', '--apply', '--max=invalid'], /Queue Apply/],
   ]) {
     it(`${command} rejects invalid --max before constructing its runtime`, () => {
       const result = runCli([command, ...args]);

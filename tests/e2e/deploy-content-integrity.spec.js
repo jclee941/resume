@@ -97,7 +97,9 @@ test.describe('@deploy-verify Content Integrity', () => {
     expect(ogImageResponse.headers()['content-type'] || '').toMatch(/^image\//);
   });
 
-  test('locale variant /en responds with English-oriented content', async ({ request }, testInfo) => {
+  test('locale variant /en responds with English-oriented content', async ({
+    request,
+  }, testInfo) => {
     const response = await request.get('/en', {
       failOnStatusCode: false,
       headers: withProbeHeaders(),

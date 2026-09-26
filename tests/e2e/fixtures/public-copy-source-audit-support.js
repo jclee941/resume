@@ -9,11 +9,22 @@ function hasControlCharacter(value) {
 }
 
 function isRepoRelative(value) {
-  return typeof value === 'string' && value && !value.startsWith('/') && !value.includes('\\') && !/^[A-Za-z]:\//.test(value) && !hasControlCharacter(value) && value.split('/').every((part) => part && part !== '.' && part !== '..');
+  return (
+    typeof value === 'string' &&
+    value &&
+    !value.startsWith('/') &&
+    !value.includes('\\') &&
+    !/^[A-Za-z]:\//.test(value) &&
+    !hasControlCharacter(value) &&
+    value.split('/').every((part) => part && part !== '.' && part !== '..')
+  );
 }
 
 function isSortedUnique(values) {
-  return new Set(values).size === values.length && JSON.stringify(values) === JSON.stringify([...values].sort());
+  return (
+    new Set(values).size === values.length &&
+    JSON.stringify(values) === JSON.stringify([...values].sort())
+  );
 }
 
 function resolvePointer(document, pointer) {

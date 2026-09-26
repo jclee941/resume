@@ -1,7 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 const { test, expect } = require('@playwright/test');
-const { extractPageOccurrences, installProductionResponseCache } = require('./fixtures/public-copy-ledger-extractor');
+const {
+  extractPageOccurrences,
+  installProductionResponseCache,
+} = require('./fixtures/public-copy-ledger-extractor');
 const { validateSourceMapBootstrap } = require('./fixtures/public-copy-source-audit');
 const {
   canonicalBaselineCommand,

@@ -24,7 +24,8 @@ test('preserves a pending proposal when destination publication rename fails', (
   try {
     // When
     assert.throws(
-      () => publishReviewedProposal({ proposal, targetDir, status: 'approved', rename: failRename }),
+      () =>
+        publishReviewedProposal({ proposal, targetDir, status: 'approved', rename: failRename }),
       /forced rename failure/
     );
 
@@ -96,7 +97,10 @@ test('merges compatible review destination evidence without losing the pending p
     // Then
     const published = JSON.parse(readFileSync(destinationPath, 'utf8'));
     assert.equal(existsSync(proposal.filePath), false);
-    assert.deepEqual(published.evidence, [{ text: 'existing evidence' }, { text: 'pending evidence' }]);
+    assert.deepEqual(published.evidence, [
+      { text: 'existing evidence' },
+      { text: 'pending evidence' },
+    ]);
     assert.deepEqual(published.sourceRefs, [{ jobId: 'existing-job' }, { jobId: 'pending-job' }]);
     assert.notEqual(published.proposalHash, existing.proposalHash);
   } finally {
@@ -124,7 +128,8 @@ test('restores a compatible destination when moving the pending proposal fails',
 
   try {
     assert.throws(
-      () => publishReviewedProposal({ proposal, targetDir, status: 'approved', rename: failRename }),
+      () =>
+        publishReviewedProposal({ proposal, targetDir, status: 'approved', rename: failRename }),
       /forced rename failure/
     );
     assert.equal(readFileSync(proposal.filePath, 'utf8'), pendingContent);

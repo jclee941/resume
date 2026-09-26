@@ -7,9 +7,7 @@ test.describe('Portfolio hiring copy', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     const hero = page.locator('#hero');
-    await expect(
-      hero.getByText('보안·인프라 엔지니어 면접 제안을 환영합니다.')
-    ).toBeVisible();
+    await expect(hero.getByText('보안·인프라 엔지니어 면접 제안을 환영합니다.')).toBeVisible();
     await expect(
       hero.getByText(
         '넥스트레이드 보안 인프라 구축과 SIEM 탐지·알림 경험, jclee-bot LLM 출력 검증, 공개 프로젝트를 정리했습니다.'

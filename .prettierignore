@@ -53,3 +53,10 @@ packages/data/resumes/archive/docs/worker.js
 # Archived HTML resume snapshots (historical, malformed for prettier)
 packages/data/resumes/archive/docs/index.html
 packages/data/resumes/archive/docs/platform-engineer.html
+
+# Machine-written resume data: proposal publication and the enrichment tools
+# write JSON.stringify(data, null, 2) / json.MarshalIndent output.
+packages/data/resumes/master/resume_data*.json
+
+# Generated resume variants (tools/scripts/build/resume-variant-config.js)
+packages/data/resumes/generated/

@@ -135,8 +135,8 @@ test('merges evidence for an equivalent skill proposal across a crawler batch', 
   // Then
   assert.equal(proposals.length, 1);
   assert.equal(proposals[0].evidence.length, 2);
-  assert.deepEqual(
-    proposals[0].sourceRefs.map((sourceRef) => sourceRef.jobId).sort(),
-    ['wanted-123', 'wanted-456']
-  );
+  assert.deepEqual(proposals[0].sourceRefs.map((sourceRef) => sourceRef.jobId).sort(), [
+    'wanted-123',
+    'wanted-456',
+  ]);
 });

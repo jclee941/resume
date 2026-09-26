@@ -14,10 +14,7 @@ const {
   resetApplications,
   waitForApplicationCount,
 } = require('./fixtures/mock-job-site');
-const {
-  SAMPLE_APPLICATION_DATA,
-  getSampleResumePath,
-} = require('./fixtures/mock-data');
+const { SAMPLE_APPLICATION_DATA, getSampleResumePath } = require('./fixtures/mock-data');
 
 const MOCK_SERVER_BASE_PORT = 9393;
 let mockServerPort = MOCK_SERVER_BASE_PORT;

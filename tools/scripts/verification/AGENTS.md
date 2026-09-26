@@ -13,18 +13,18 @@ operational tooling.
 
 ## WHERE TO LOOK
 
-| Task                   | Location                                                      | Notes                                          |
-| ---------------------- | ------------------------------------------------------------- | ---------------------------------------------- |
-| Worker topology        | `validate-worker-config.mjs`                                  | bindings, queues, Workflows, preview isolation |
-| Workspace dependencies | `validate-workspace-dependencies.mjs`                         | declared imports and `*` workspace links       |
-| Architecture docs      | `validate-architecture-docs.mjs`, `architecture-docs-*.mjs`   | current-state and ADR-link checks              |
-| Naming                 | `validate-monorepo-naming.mjs`                                | project naming and script-language rules       |
-| Source size            | `check-source-loc.mjs`                                        | 200 code-line rule (`npm run lint:loc`)        |
-| AGENTS hierarchy       | `verify-agents-compliance.go`, `check-agents-coverage.js`     | required guides and hotspot coverage           |
-| Production surface     | `verify-deployment/`, `smoke-test/`, `e2e-verify.go`          | remote health/content/security probes          |
-| Profile sync audit     | `verify-context-profile-sync/`                                | baseline audit for SSoT & profile sync         |
-| Deployment readiness   | `wait-for-deployment/`                                        | exact-version polling and tests                |
-| Lighthouse             | `run-lighthouse-ci.mjs`, `lighthouse-*.mjs`                   | profile, assertions, budgets                   |
+| Task                   | Location                                                    | Notes                                          |
+| ---------------------- | ----------------------------------------------------------- | ---------------------------------------------- |
+| Worker topology        | `validate-worker-config.mjs`                                | bindings, queues, Workflows, preview isolation |
+| Workspace dependencies | `validate-workspace-dependencies.mjs`                       | declared imports and `*` workspace links       |
+| Architecture docs      | `validate-architecture-docs.mjs`, `architecture-docs-*.mjs` | current-state and ADR-link checks              |
+| Naming                 | `validate-monorepo-naming.mjs`                              | project naming and script-language rules       |
+| Source size            | `check-source-loc.mjs`                                      | 200 code-line rule (`npm run lint:loc`)        |
+| AGENTS hierarchy       | `verify-agents-compliance.go`, `check-agents-coverage.js`   | required guides and hotspot coverage           |
+| Production surface     | `verify-deployment/`, `smoke-test/`, `e2e-verify.go`        | remote health/content/security probes          |
+| Profile sync audit     | `verify-context-profile-sync/`                              | baseline audit for SSoT & profile sync         |
+| Deployment readiness   | `wait-for-deployment/`                                      | exact-version polling and tests                |
+| Lighthouse             | `run-lighthouse-ci.mjs`, `lighthouse-*.mjs`                 | profile, assertions, budgets                   |
 
 ## CONVENTIONS
 

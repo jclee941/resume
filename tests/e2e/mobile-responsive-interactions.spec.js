@@ -25,7 +25,7 @@ test.describe('Mobile - Touch Interactions', () => {
     const aboutLink = page.locator('.nav-links a[href="#about"]');
     await expect(aboutLink).toBeVisible();
     await aboutLink.click();
-    
+
     await page.waitForTimeout(600);
     const aboutInView = await page.evaluate(() => {
       const about = document.getElementById('about');
