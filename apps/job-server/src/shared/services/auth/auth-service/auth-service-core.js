@@ -12,7 +12,7 @@ export class AuthService {
   #config;
   /** @type {import('./auth-typedefs.js').SessionStore} */
   #store;
-  /** @type {import('./auth-typedefs.js').PlatformSessionStore} */
+  /** @type {import('./auth-typedefs.js').AuthSessionStore} */
   #sessionStore;
 
   /**

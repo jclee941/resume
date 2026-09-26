@@ -1,14 +1,14 @@
 /**
  * @typedef {{
- *   timestamp: number;
- *   expiresAt?: string;
+ *   timestamp?: number;
+ *   expiresAt?: string | number | Date;
  *   [key: string]: unknown;
  * }} PlatformSessionData
  *
  * @typedef {{
  *   valid?: boolean;
  *   expiringSoon?: boolean;
- *   expiresAt?: string;
+ *   expiresAt?: string | Date | null;
  *   [key: string]: unknown;
  * }} PlatformHealthData
  *
@@ -22,7 +22,7 @@
  * Renew platform session through the existing CDP extraction script.
  * @param {SessionRenewalStore} sessionStore
  * @param {string} platform
- * @returns {Promise<{success: boolean, message?: string, error?: string, expiresAt?: string}>}
+ * @returns {Promise<{success: boolean, message?: string, error?: string, expiresAt?: string | number | Date | null}>}
  */
 export async function renewSession(sessionStore, platform) {
   const currentSession = sessionStore.load(platform);
@@ -67,7 +67,7 @@ export async function renewSession(sessionStore, platform) {
     });
 
     const newSession = sessionStore.load(platform);
-    if (newSession && newSession.timestamp > Date.now() - 60000) {
+    if (newSession && Number(newSession.timestamp) > Date.now() - 60000) {
       return {
         success: true,
         message: `Session renewed for ${platform}`,

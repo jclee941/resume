@@ -93,7 +93,7 @@ export class SessionManager {
 
   /**
    * @param {string} platform
-   * @param {import('./session-content-validation.js').SessionData} session
+   * @param {import('./session-expiration.js').SessionDataLike} session
    */
   static validateSessionContent(platform, session) {
     return SessionManager.#defaultInstance.validateSessionContent(platform, session);
