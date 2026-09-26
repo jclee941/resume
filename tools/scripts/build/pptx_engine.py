@@ -17,10 +17,8 @@ from typing import Callable, TypeAlias
 
 try:
     from pptx import Presentation
-except ImportError:
-    import sys
-    print("python-pptx required: pip install python-pptx")
-    sys.exit(1)
+except ImportError as exc:
+    raise ImportError("python-pptx required: pip install python-pptx") from exc
 
 from pptx.util import Pt
 from pptx.shapes.graphfrm import GraphicFrame

@@ -65,6 +65,8 @@ def set_cell_text(cell, text, field=None, max_len=None, font_size_pt=None):
         try:
             font_color = first_run.font.color.rgb
         except AttributeError:
+            # Colors without an RGB value (e.g. theme colors) cannot be copied;
+            # the new run keeps the template default instead.
             pass
 
     para_alignment = first_para.alignment
