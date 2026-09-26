@@ -14,7 +14,7 @@ export class CliproxyClient {
     return Boolean(this.baseUrl && this.apiKey);
   }
 
-  async searchJobs(keyword, { limit = 10 } = {}) {
+  async searchJobs(keyword, { limit = 10, profile } = {}) {
     if (!this.isConfigured()) {
       return { jobs: [] };
     }
@@ -39,7 +39,10 @@ export class CliproxyClient {
               keyword,
               limit,
               requiredFields: ['id', 'company', 'position', 'sourceUrl', 'companyScale'],
+              // Scoring inputs for calculateMatchScore (skills, experience, location, freshness).
+              optionalFields: ['description', 'experience', 'location', 'postedAt'],
               acceptedCompanyScale: ['large', 'enterprise'],
+              ...scoringRequest(profile),
             }),
           },
         ],
@@ -65,11 +68,14 @@ export class CliproxyClient {
         position: String(job.position || job.title || ''),
         sourceUrl: normalizeHttpUrl(job.sourceUrl || job.url),
         location: String(job.location || ''),
+        description: String(job.description || job.summary || ''),
+        experience: String(job.experience || ''),
+        postedAt: String(job.postedAt || job.postedDate || ''),
         companyScale: String(job.companyScale || job.scale || ''),
         companySize: Number(job.companySize || job.employeeCount || 0),
         isEnterprise: job.isEnterprise === true,
         isLargeCompany: job.isLargeCompany === true,
-        matchScore: Number.isFinite(job.matchScore) ? job.matchScore : undefined,
+        matchScore: parseMatchScore(job.matchScore),
         adapterBacked: true,
       }));
 
@@ -79,6 +85,25 @@ export class CliproxyClient {
       ),
     };
   }
+}
+
+// With a candidate profile the model also rates fit: discovered postings carry too
+// little text for the rule-based scorer to reach the auto-apply threshold on its own.
+function scoringRequest(profile) {
+  if (!profile) return {};
+  return {
+    candidateProfile: {
+      skills: profile.skills || [],
+      experienceYears: profile.experienceYears,
+      preferredLocations: profile.preferredLocations || [],
+    },
+    matchScore: 'integer 0-100: how well each posting fits candidateProfile',
+  };
+}
+
+function parseMatchScore(value) {
+  const score = typeof value === 'string' && value.trim() ? Number(value) : value;
+  return Number.isFinite(score) ? Math.min(100, Math.max(0, score)) : undefined;
 }
 
 export function normalizeBaseUrl(value) {
