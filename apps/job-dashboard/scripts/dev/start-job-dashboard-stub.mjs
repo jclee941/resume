@@ -88,6 +88,12 @@ async function readJson(req) {
   }
 }
 
+/**
+ * @typedef {import('../../src/handlers/auto-apply/db-helpers.js').D1DatabaseLike} StubDb
+ * @typedef {ReturnType<ReturnType<StubDb['prepare']>['bind']>} StubStatement
+ */
+
+/** @returns {StubDb} */
 function createMockDb() {
   return {
     /** @param {string} query */
@@ -104,10 +110,19 @@ function createMockDb() {
 }
 
 /**
- * @template T
- * @param {T} result
+ * Statement stub: implements only the method the routed query uses; the others
+ * reject like an unexpected call would.
+ * @param {Partial<StubStatement>} impl
+ * @returns {ReturnType<StubDb['prepare']>}
  */
-const stmt = (result) => ({ bind: () => result });
+const stmt = (impl) => ({
+  bind: () => ({ all: unexpectedCall, first: unexpectedCall, run: unexpectedCall, ...impl }),
+});
+
+/** @returns {Promise<never>} */
+async function unexpectedCall() {
+  throw new Error('Unexpected statement call');
+}
 const configRows = () => [
   { key: 'auto_apply_enabled', value: 'true' },
   { key: 'max_daily_applications', value: '5' },
