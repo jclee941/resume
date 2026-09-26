@@ -1,5 +1,3 @@
-import { getGlobalMetricsInstance } from './global-metrics.js';
-
 /**
  * Decorator for timing method calls
  * @param {string} [name] - Custom name (default: method name)
@@ -11,7 +9,7 @@ export function timed(name) {
     const metricName = name || propertyKey;
 
     descriptor.value = async function (...args) {
-      const metrics = this._metrics || getGlobalMetricsInstance();
+      const metrics = this._metrics;
       if (!metrics) {
         return originalMethod.apply(this, args);
       }

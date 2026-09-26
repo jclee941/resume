@@ -1,5 +1,5 @@
 export { AuthService } from './auth-service-core.js';
-export { createAuthService, getAuthService } from './factory.js';
+export { createAuthService } from './factory.js';
 export { verifyGoogleCredentialWithSession } from './google-auth-flow.js';
 export { clearPlatformAuth, getAuthStatus, savePlatformAuth } from './platform-auth.js';
 export { renewSession } from './session-renewal.js';

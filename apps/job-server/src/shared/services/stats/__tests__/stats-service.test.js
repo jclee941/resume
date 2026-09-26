@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { beforeEach, describe, it, mock } from 'node:test';
 
-import StatsService, { getStatsService } from '../stats-service.js';
+import StatsService from '../stats-service.js';
 
 describe('StatsService', () => {
   beforeEach(() => {
@@ -147,40 +147,5 @@ describe('StatsService', () => {
     assert.deepEqual(withoutDate, { date: 'today' });
     assert.deepEqual(generateDailyReport.mock.calls[0].arguments, ['2026-03-01']);
     assert.deepEqual(generateDailyReport.mock.calls[1].arguments, [undefined]);
-  });
-});
-
-describe('getStatsService singleton', () => {
-  beforeEach(() => {
-    mock.restoreAll();
-  });
-
-  it('returns null before initialization and keeps first instance thereafter', () => {
-    const initial = getStatsService();
-    assert.equal(initial, null);
-
-    const firstAppService = {
-      getManager: () => ({ getStats: () => ({}), generateDailyReport: () => ({}) }),
-      list: () => ({ applications: [] }),
-    };
-    const secondAppService = {
-      getManager: () => ({
-        getStats: () => ({ changed: true }),
-        generateDailyReport: () => ({ changed: true }),
-      }),
-      list: () => ({
-        applications: [
-          { createdAt: new Date().toISOString(), status: 'pending', source: 'wanted' },
-        ],
-      }),
-    };
-
-    const created = getStatsService(firstAppService);
-    const reusedWithDifferentService = getStatsService(secondAppService);
-    const reusedWithoutService = getStatsService();
-
-    assert.ok(created instanceof StatsService);
-    assert.equal(reusedWithDifferentService, created);
-    assert.equal(reusedWithoutService, created);
   });
 });

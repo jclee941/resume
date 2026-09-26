@@ -1,6 +1,6 @@
-import { getBrowserPool } from '../../browser-pool.js';
-import { getGlobalCache } from '../../cache.js';
-import { getMetrics } from '../../performance-metrics.js';
+import { createBrowserPool } from '../../browser-pool.js';
+import { createCache } from '../../cache.js';
+import { createGlobalMetrics } from '../../metrics/global-metrics.js';
 import {
   applyInBatchesWithStrategy,
   applySingleJobWithMetrics,
@@ -21,30 +21,33 @@ export class OptimizedApplyOrchestrator {
   #logger;
 
   constructor(crawler, applier, appManager, config = {}) {
+    const { browserPool, cache, metrics, ...settings } = config;
     this.#crawler = crawler;
     this.#applier = applier;
     this.#appManager = appManager;
-    this.#logger = config.logger ?? console;
+    this.#logger = settings.logger ?? console;
     this.#config = {
-      maxDailyApplications: config.maxDailyApplications || 20,
-      enabledPlatforms: config.enabledPlatforms || ['wanted'],
-      parallelSearch: config.parallelSearch !== false,
-      parallelApply: config.parallelApply !== false,
-      maxConcurrentApplies: config.maxConcurrentApplies || 2,
-      delayBetweenApplies: config.delayBetweenApplies || 3000,
-      useBrowserPool: config.useBrowserPool !== false,
-      useCache: config.useCache !== false,
-      ...config,
+      maxDailyApplications: settings.maxDailyApplications || 20,
+      enabledPlatforms: settings.enabledPlatforms || ['wanted'],
+      parallelSearch: settings.parallelSearch !== false,
+      parallelApply: settings.parallelApply !== false,
+      maxConcurrentApplies: settings.maxConcurrentApplies || 2,
+      delayBetweenApplies: settings.delayBetweenApplies || 3000,
+      useBrowserPool: settings.useBrowserPool !== false,
+      useCache: settings.useCache !== false,
+      ...settings,
     };
 
-    this.#browserPool = getBrowserPool({
-      maxBrowsers: config.maxBrowsers || 3,
-      maxUsesPerBrowser: config.maxUsesPerBrowser || 50,
-      logger: this.#logger,
-    });
+    this.#browserPool =
+      browserPool ??
+      createBrowserPool({
+        maxBrowsers: settings.maxBrowsers || 3,
+        maxUsesPerBrowser: settings.maxUsesPerBrowser || 50,
+        logger: this.#logger,
+      });
 
-    this.#cache = getGlobalCache();
-    this.#metrics = getMetrics({ logger: this.#logger });
+    this.#cache = cache ?? createCache();
+    this.#metrics = metrics ?? createGlobalMetrics({ logger: this.#logger });
     this.#stats = initOptimizedApplyStats();
 
     this.#metrics.startSampling(10000);

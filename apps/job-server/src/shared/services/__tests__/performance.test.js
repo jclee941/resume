@@ -5,11 +5,11 @@
  * and performance metrics.
  */
 
-import { describe, it, before, after } from 'node:test';
+import { describe, it } from 'node:test';
 import assert from 'node:assert';
-import { BrowserPool, resetBrowserPool } from '../browser-pool.js';
+import { BrowserPool } from '../browser-pool.js';
 import { LRUCache, TypedCache } from '../cache.js';
-import { PerformanceMetrics, resetMetrics } from '../performance-metrics.js';
+import { PerformanceMetrics } from '../performance-metrics.js';
 import { processInParallel, AsyncQueue, applyToJobsParallel } from '../parallel.js';
 import { LazyModule, LazyCrawlerRegistry } from '../lazy-loader.js';
 
@@ -107,14 +107,6 @@ describe('Performance Optimization', () => {
   });
 
   describe('PerformanceMetrics', () => {
-    before(() => {
-      resetMetrics();
-    });
-
-    after(() => {
-      resetMetrics();
-    });
-
     it('should record timing marks', () => {
       const metrics = new PerformanceMetrics();
       metrics.mark('test');
@@ -308,10 +300,6 @@ describe('Performance Optimization', () => {
   });
 
   describe('BrowserPool', () => {
-    after(async () => {
-      await resetBrowserPool();
-    });
-
     it('should create browser pool with config', () => {
       const pool = new BrowserPool({
         maxBrowsers: 3,

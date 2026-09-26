@@ -51,7 +51,7 @@
 
 ### Enhanced Services
 
-1. **`src/shared/services/apply/optimized-orchestrator.js`** (430 lines)
+1. **`src/shared/services/apply/optimized-orchestrator/core.js`**
    - Integrates all performance optimizations
    - Browser pool integration
    - Parallel application processing
@@ -150,9 +150,9 @@ All 25 performance tests pass:
 ```javascript
 import {
   OptimizedApplyOrchestrator,
-  getBrowserPool,
-  getGlobalCache,
-  getMetrics,
+  createBrowserPool,
+  createCache,
+  createGlobalMetrics,
 } from './shared/services/index.js';
 
 // Create optimized orchestrator

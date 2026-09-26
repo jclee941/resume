@@ -149,35 +149,4 @@ export class StatsService {
 export function createStatsService(config) {
   return new StatsService(config.appService);
 }
-
-// Deprecated singleton compatibility layer.
-// DEPRECATED: Prefer createStatsService() and pass the instance through constructors.
-// Singleton exports remain temporarily for existing imports and tests.
-// Migration: docs/architecture/MONOREPO_REVIEW_2026-04-29.md (singleton DI plan).
-const _instanceHolder = (() => {
-  let v = null;
-  return {
-    get: () => v,
-    set: (x) => {
-      v = x;
-    },
-    clear: () => {
-      v = null;
-    },
-  };
-})();
-
-/**
- * Get or create StatsService singleton
- * @deprecated Use createStatsService() and inject the returned instance through constructors.
- * @param {import('../applications/application-service.js').ApplicationService} appService
- * @returns {StatsService|null}
- */
-export function getStatsService(appService) {
-  if (!_instanceHolder.get() && appService) {
-    _instanceHolder.set(createStatsService({ appService }));
-  }
-  return _instanceHolder.get();
-}
-
 export default StatsService;

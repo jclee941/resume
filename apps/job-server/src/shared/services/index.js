@@ -5,26 +5,11 @@
  */
 
 // Performance optimization services
-export {
-  BrowserPool,
-  createBrowserPool,
-  getBrowserPool,
-  resetBrowserPool,
-} from './browser-pool.js';
-export {
-  LRUCache,
-  TypedCache,
-  createCache,
-  getGlobalCache,
-  setGlobalCache,
-  resetGlobalCache,
-} from './cache.js';
+export { BrowserPool, createBrowserPool } from './browser-pool.js';
+export { LRUCache, TypedCache, createCache } from './cache.js';
 export {
   PerformanceMetrics,
   createGlobalMetrics,
-  createMetrics,
-  getMetrics,
-  resetMetrics,
   timed,
   withTiming,
   logMemoryUsage,
@@ -43,9 +28,9 @@ export {
   ApplicationService,
   createApplicationService,
 } from './applications/application-service.js';
-export { AuthService, createAuthService, getAuthService } from './auth/auth-service.js';
+export { AuthService, createAuthService } from './auth/auth-service.js';
 export { JobFilter } from './apply/job-filter.js';
-export { StatsService, createStatsService, getStatsService } from './stats/stats-service.js';
+export { StatsService, createStatsService } from './stats/stats-service.js';
 export { UnifiedApplySystem } from './apply/unified-apply-system.js';
 
 // Lazy loading utilities
