@@ -5,7 +5,7 @@
 #             internal workspace dependencies (@resume/{shared,schemas,types,
 #             data,env})
 
-FROM node:22-alpine AS deps
+FROM node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402 AS deps
 
 WORKDIR /app
 
@@ -29,7 +29,7 @@ COPY packages/types/package.json packages/types/package.json
 RUN npm pkg delete scripts.prepare --workspace @resume/schemas \
 	&& npm ci --omit=dev --ignore-scripts
 
-FROM node:22-alpine AS runtime
+FROM node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402 AS runtime
 
 WORKDIR /app
 ENV NODE_ENV=production
