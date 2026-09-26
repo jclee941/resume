@@ -31,15 +31,54 @@ const CLIENT_UPDATE_COVER_LETTER_SQL = `
   WHERE job_id = ?
 `;
 
+/**
+ * @typedef {{
+ *   prepare(sql: string): {
+ *     bind(...params: unknown[]): {
+ *       first(): Promise<{ cover_letter?: string | null } | null | undefined>;
+ *       run(): Promise<unknown>;
+ *     };
+ *   };
+ * }} D1Database
+ *
+ * @typedef {{
+ *   query(sql: string, params?: unknown[]): Promise<Array<{ cover_letter?: string | null }>>;
+ * }} D1Client
+ *
+ * @typedef {{
+ *   warn(message: string, ...args: unknown[]): void;
+ * }} Logger
+ *
+ * @typedef {{
+ *   has(key: string): boolean;
+ *   get(key: string): string | null | undefined;
+ *   set(key: string, value: string): unknown;
+ * }} CacheStore
+ *
+ * @typedef {{
+ *   d1Client?: D1Client | null;
+ *   db?: D1Database | null;
+ *   logger?: Logger;
+ *   cacheStore?: CacheStore;
+ * }} CoverLetterCacheDependencies
+ */
+
 export class CoverLetterCache {
+  /** @type {D1Client | null} */
   #d1Client;
 
+  /** @type {D1Database | null} */
   #db;
 
+  /** @type {Logger} */
   #logger;
 
+  /** @type {CacheStore} */
   #store;
 
+  /**
+   * @param {CoverLetterCacheDependencies} [dependencies]
+   */
   constructor(dependencies = {}) {
     this.#d1Client = dependencies.d1Client ?? null;
     this.#db = dependencies.db ?? null;
@@ -47,13 +86,17 @@ export class CoverLetterCache {
     this.#store = dependencies.cacheStore ?? new Map();
   }
 
+  /**
+   * @param {string | number} jobId
+   * @returns {Promise<string | null>}
+   */
   async get(jobId) {
     const key = String(jobId);
 
     if (this.#store.has(key)) {
       const cached = this.#store.get(key);
       if (toSafeString(cached).trim()) {
-        return cached;
+        return /** @type {string} */ (cached);
       }
     }
 
@@ -66,6 +109,11 @@ export class CoverLetterCache {
     return null;
   }
 
+  /**
+   * @param {string | number} jobId
+   * @param {unknown} coverLetter
+   * @returns {Promise<{ cached: boolean; reason?: string; persisted?: boolean }>}
+   */
   async set(jobId, coverLetter) {
     const key = String(jobId);
     const value = toSafeString(coverLetter).trim();
@@ -83,6 +131,10 @@ export class CoverLetterCache {
     };
   }
 
+  /**
+   * @param {string} jobId
+   * @returns {Promise<string | null>}
+   */
   async #getFromApplicationsTable(jobId) {
     try {
       if (this.#db?.prepare) {
@@ -95,12 +147,20 @@ export class CoverLetterCache {
         return rows?.[0]?.cover_letter ? String(rows[0].cover_letter) : null;
       }
     } catch (error) {
-      this.#logger.warn('[CoverLetterService] Failed to read cover letter cache:', error?.message);
+      this.#logger.warn(
+        '[CoverLetterService] Failed to read cover letter cache:',
+        /** @type {{ message?: string }} */ (error)?.message
+      );
     }
 
     return null;
   }
 
+  /**
+   * @param {string} jobId
+   * @param {string} coverLetter
+   * @returns {Promise<boolean>}
+   */
   async #persistToApplicationsTable(jobId, coverLetter) {
     try {
       if (this.#db?.prepare) {
@@ -115,7 +175,7 @@ export class CoverLetterCache {
     } catch (error) {
       this.#logger.warn(
         '[CoverLetterService] Failed to persist cover letter cache:',
-        error?.message
+        /** @type {{ message?: string }} */ (error)?.message
       );
     }
 

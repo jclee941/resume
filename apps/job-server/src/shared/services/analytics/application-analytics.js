@@ -8,13 +8,91 @@
  * - Match score effectiveness
  */
 
+/**
+ * ApplicationAnalytics - Job application success rate analysis
+ *
+ * Provides insights on application outcomes by:
+ * - Company/industry patterns
+ * - Position type correlation
+ * - Time-based trends
+ * - Match score effectiveness
+ */
+
+/**
+ * @typedef {{
+ *   source?: string;
+ *   status?: string;
+ *   appliedAt?: string | number | Date;
+ *   job?: {
+ *     matchScore?: number;
+ *     company?: string;
+ *     position?: string;
+ *   };
+ * }} ApplicationItem
+ *
+ * @typedef {{
+ *   listApplications(): ApplicationItem[];
+ * }} ApplicationService
+ *
+ * @typedef {{
+ *   source: string;
+ *   total: number;
+ *   interviews: number;
+ *   offers: number;
+ *   rejections: number;
+ *   interviewRate: string | number;
+ *   offerRate: string | number;
+ * }} SourceStats
+ *
+ * @typedef {{
+ *   scoreRange: string;
+ *   total: number;
+ *   interviews: number;
+ *   offers: number;
+ *   successRate: string | number;
+ * }} ScoreStats
+ *
+ * @typedef {{
+ *   week: string;
+ *   weekStart: string;
+ *   applied: number;
+ *   interviews: number;
+ *   offers: number;
+ *   rejections: number;
+ * }} WeeklyStats
+ *
+ * @typedef {{
+ *   company: string;
+ *   total: number;
+ *   interviews: number;
+ *   offers: number;
+ *   responseRate: string | number;
+ * }} CompanyStats
+ *
+ * @typedef {{
+ *   positionType: string;
+ *   total: number;
+ *   interviews: number;
+ *   offers: number;
+ *   interviewRate: string | number;
+ * }} PositionTypeStats
+ */
+
 export class ApplicationAnalytics {
+  /**
+   * @param {{ applicationService: ApplicationService }} options
+   */
   constructor({ applicationService }) {
+    /** @type {ApplicationService} */
     this.appService = applicationService;
   }
 
+  /**
+   * @returns {Promise<SourceStats[]>}
+   */
   async getSuccessRateBySource() {
     const apps = this.appService.listApplications();
+    /** @type {Record<string, { total: number; interviews: number; offers: number; rejections: number }>} */
     const bySource = {};
 
     for (const app of apps) {
@@ -41,6 +119,9 @@ export class ApplicationAnalytics {
     }));
   }
 
+  /**
+   * @returns {Promise<ScoreStats[]>}
+   */
   async getSuccessRateByMatchScore() {
     const apps = this.appService.listApplications();
     const buckets = {
@@ -53,6 +134,7 @@ export class ApplicationAnalytics {
 
     for (const app of apps) {
       const score = app.job?.matchScore ?? 0;
+      /** @type {'90-100' | '80-89' | '70-79' | '60-69' | '<60'} */
       let bucket;
       if (score >= 90) bucket = '90-100';
       else if (score >= 80) bucket = '80-89';
@@ -78,6 +160,10 @@ export class ApplicationAnalytics {
     }));
   }
 
+  /**
+   * @param {number} [weeks=8]
+   * @returns {Promise<WeeklyStats[]>}
+   */
   async getWeeklyTrend(weeks = 8) {
     const apps = this.appService.listApplications();
     const now = new Date();
@@ -90,7 +176,7 @@ export class ApplicationAnalytics {
       weekStart.setDate(weekStart.getDate() - 7);
 
       const weekApps = apps.filter((a) => {
-        const d = new Date(a.appliedAt);
+        const d = new Date(/** @type {string | number | Date} */ (a.appliedAt));
         return d >= weekStart && d < weekEnd;
       });
 
@@ -107,8 +193,13 @@ export class ApplicationAnalytics {
     return weeklyData;
   }
 
+  /**
+   * @param {number} [limit=10]
+   * @returns {Promise<CompanyStats[]>}
+   */
   async getTopPerformingCompanies(limit = 10) {
     const apps = this.appService.listApplications();
+    /** @type {Record<string, { total: number; interviews: number; offers: number }>} */
     const byCompany = {};
 
     for (const app of apps) {
@@ -129,14 +220,19 @@ export class ApplicationAnalytics {
           ? (((stats.interviews + stats.offers) / stats.total) * 100).toFixed(1)
           : 0,
       }))
-      .sort((a, b) => parseFloat(b.responseRate) - parseFloat(a.responseRate))
+      .sort((a, b) => parseFloat(String(b.responseRate)) - parseFloat(String(a.responseRate)))
       .slice(0, limit);
   }
 
+  /**
+   * @returns {Promise<PositionTypeStats[]>}
+   */
   async getPositionTypeAnalysis() {
     const apps = this.appService.listApplications();
+    /** @type {Record<string, { total: number; interviews: number; offers: number }>} */
     const byType = {};
 
+    /** @param {string | undefined} position */
     const categorize = (position) => {
       const p = (position || '').toLowerCase();
       if (p.includes('devops') || p.includes('sre') || p.includes('platform')) return 'DevOps/SRE';
@@ -164,6 +260,18 @@ export class ApplicationAnalytics {
     }));
   }
 
+  /**
+   * @returns {Promise<{
+   *   generatedAt: string;
+   *   summary: { totalApplications: number; interviewRate: string; offerRate: string };
+   *   bySource: SourceStats[];
+   *   byMatchScore: ScoreStats[];
+   *   weeklyTrend: WeeklyStats[];
+   *   topCompanies: CompanyStats[];
+   *   byPositionType: PositionTypeStats[];
+   *   recommendations: string[];
+   * }>}
+   */
   async generateReport() {
     const [bySource, byScore, trend, topCompanies, byPosition] = await Promise.all([
       this.getSuccessRateBySource(),
@@ -194,13 +302,19 @@ export class ApplicationAnalytics {
     };
   }
 
+  /**
+   * @param {SourceStats[]} bySource
+   * @param {ScoreStats[]} byScore
+   * @param {PositionTypeStats[]} byPosition
+   * @returns {string[]}
+   */
   generateRecommendations(bySource, byScore, byPosition) {
     const recommendations = [];
 
     const bestSource = bySource.sort(
-      (a, b) => parseFloat(b.interviewRate) - parseFloat(a.interviewRate)
+      (a, b) => parseFloat(String(b.interviewRate)) - parseFloat(String(a.interviewRate))
     )[0];
-    if (bestSource && parseFloat(bestSource.interviewRate) > 0) {
+    if (bestSource && parseFloat(String(bestSource.interviewRate)) > 0) {
       recommendations.push(
         `Focus on ${bestSource.source}: ${bestSource.interviewRate}% interview rate`
       );
@@ -209,16 +323,16 @@ export class ApplicationAnalytics {
     const scoreEffective = byScore.find(
       (s) => s.scoreRange === '80-89' || s.scoreRange === '90-100'
     );
-    if (scoreEffective && parseFloat(scoreEffective.successRate) > 20) {
+    if (scoreEffective && parseFloat(String(scoreEffective.successRate)) > 20) {
       recommendations.push(
         `Match scores ${scoreEffective.scoreRange} have ${scoreEffective.successRate}% success - prioritize high-match jobs`
       );
     }
 
     const bestPosition = byPosition.sort(
-      (a, b) => parseFloat(b.interviewRate) - parseFloat(a.interviewRate)
+      (a, b) => parseFloat(String(b.interviewRate)) - parseFloat(String(a.interviewRate))
     )[0];
-    if (bestPosition && parseFloat(bestPosition.interviewRate) > 10) {
+    if (bestPosition && parseFloat(String(bestPosition.interviewRate)) > 10) {
       recommendations.push(
         `${bestPosition.positionType} roles show ${bestPosition.interviewRate}% interview rate`
       );
