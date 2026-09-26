@@ -35,6 +35,7 @@ export class JobQueue {
     this.logger = options.logger || console;
     this.now = options.now || (() => Date.now());
 
+    /** @type {Record<JobPriority, QueueJob[]>} */
     this.localQueues = {
       urgent: [],
       normal: [],
@@ -50,7 +51,7 @@ export class JobQueue {
    * @returns {Promise<QueueJob>}
    */
   async enqueue(job, options = {}) {
-    const priority = options.priority || 'normal';
+    const priority = /** @type {JobPriority} */ (options.priority || 'normal');
     if (!(priority in PRIORITY_ORDER)) {
       throw new Error(`Unsupported priority: ${priority}`);
     }
@@ -84,7 +85,7 @@ export class JobQueue {
   async dequeue() {
     const now = this.now();
 
-    for (const priority of ['urgent', 'normal', 'low']) {
+    for (const priority of /** @type {JobPriority[]} */ (['urgent', 'normal', 'low'])) {
       const queue = this.localQueues[priority];
       const index = queue.findIndex((job) => job.availableAt <= now);
       if (index !== -1) {

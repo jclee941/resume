@@ -605,7 +605,25 @@
     "apps/job-dashboard/src/handlers/stats.js",
     "apps/job-dashboard/src/handlers/sync/wanted-profile-changes.js",
     "apps/job-dashboard/src/queues/queue-consumer.js",
-    "apps/job-dashboard/src/services/auth.js"
+    "apps/job-dashboard/src/services/auth.js",
+    "apps/job-server/src/shared/services/ats/location-normalizer.js",
+    "apps/job-server/src/shared/services/cache/tier-manager.js",
+    "apps/job-server/src/shared/services/credential-manager.js",
+    "apps/job-server/src/shared/services/lazy-loader.js",
+    "apps/job-server/src/shared/services/lazy-loader/decorators.js",
+    "apps/job-server/src/shared/services/matching/job-matcher/ranking.js",
+    "apps/job-server/src/shared/services/metrics/global-metrics.js",
+    "apps/job-server/src/shared/services/metrics/index.js",
+    "apps/job-server/src/shared/services/metrics/performance-reporter.js",
+    "apps/job-server/src/shared/services/migration/index.js",
+    "apps/job-server/src/shared/services/migration/migration-runner.js",
+    "apps/job-server/src/shared/services/notifications/index.js",
+    "apps/job-server/src/shared/services/notifications/telegram-adapter/delivery.js",
+    "apps/job-server/src/shared/services/orchestrator/crawl-orchestrator/browser-pool.js",
+    "apps/job-server/src/shared/services/performance-metrics.js",
+    "apps/job-server/src/shared/services/queue/index.js",
+    "apps/job-server/src/shared/services/session/session-manager/session-expiration.js",
+    "apps/job-server/src/shared/services/session/session-manager/session-store-factory.js"
   ],
   "exclude": ["packages/env/src/__tests__/**"]
 }

@@ -15,7 +15,23 @@ const CREATE_MIGRATIONS_TABLE = `CREATE TABLE IF NOT EXISTS ${MIGRATIONS_TABLE} 
   execution_time_ms INTEGER NOT NULL DEFAULT 0
 );`;
 
+/**
+ * @typedef {import('./execution.js').ExecutionDatabase & import('./discovery.js').MigrationDatabase} RunnerDatabase
+ *
+ * @typedef {(...args: unknown[]) => void} RunnerLogger
+ *
+ * @typedef {object} MigrationRunnerOptions
+ * @property {RunnerDatabase} db
+ * @property {string} migrationsDir
+ * @property {string | null} [seedsDir]
+ * @property {boolean} [dryRun]
+ * @property {RunnerLogger} [logger]
+ */
+
 export class MigrationRunner {
+  /**
+   * @param {MigrationRunnerOptions} options
+   */
   constructor({ db, migrationsDir, seedsDir, dryRun = false, logger = console.log }) {
     this.db = db;
     this.migrationsDir = migrationsDir;
@@ -40,7 +56,9 @@ export class MigrationRunner {
     try {
       return await getAppliedMigrations(this.db);
     } catch (e) {
-      this.logger(`Failed to get applied migrations: ${e?.message || e}`);
+      this.logger(
+        `Failed to get applied migrations: ${/** @type {{ message?: string }} */ (e)?.message || e}`
+      );
       throw e;
     }
   }
@@ -93,7 +111,11 @@ export class MigrationRunner {
         });
         continue;
       }
-      results.push(await this._rollbackMigration(m));
+      results.push(
+        await this._rollbackMigration(
+          /** @type {import('./discovery.js').DiscoveredMigration & { downPath: string }} */ (m)
+        )
+      );
     }
     return results;
   }
@@ -156,10 +178,16 @@ export class MigrationRunner {
     return validate(this.migrationsDir, this.logger);
   }
 
+  /**
+   * @param {import('./discovery.js').DiscoveredMigration} m
+   */
   async _applyMigration(m) {
     return applyMigration(this.db, m, this.dryRun, this.logger);
   }
 
+  /**
+   * @param {import('./discovery.js').DiscoveredMigration & { downPath: string }} m
+   */
   async _rollbackMigration(m) {
     return rollbackMigration(this.db, m, this.dryRun, this.logger);
   }

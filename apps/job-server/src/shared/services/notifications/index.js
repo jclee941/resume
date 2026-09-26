@@ -6,6 +6,9 @@
 import { signWebhookPayload } from '../webhook/webhook-signer.js';
 
 class NotificationService {
+  /**
+   * @param {Record<string, string | undefined>} [env]
+   */
   constructor(env = process.env) {
     this.env = env;
     this.webhookUrl = env.AUTOMATION_WEBHOOK_URL || env.WEBHOOK_URL || null;
@@ -13,6 +16,11 @@ class NotificationService {
     this.enabled = !!this.webhookUrl;
   }
 
+  /**
+   * @param {string} event
+   * @param {unknown} data
+   * @returns {Promise<{ sent: boolean; event: string; reason?: string; status?: number }>}
+   */
   async postEvent(event, data) {
     if (!this.enabled) {
       console.log('Notifications disabled (AUTOMATION_WEBHOOK_URL not set)');
@@ -20,6 +28,7 @@ class NotificationService {
     }
 
     const payload = JSON.stringify({ event, data, timestamp: new Date().toISOString() });
+    /** @type {Record<string, string>} */
     const headers = {
       'Content-Type': 'application/json',
       'X-Webhook-Event': event,
@@ -30,7 +39,7 @@ class NotificationService {
       headers['X-Webhook-Signature'] = signature;
     }
 
-    const response = await fetch(this.webhookUrl, {
+    const response = await fetch(/** @type {string} */ (this.webhookUrl), {
       method: 'POST',
       headers,
       body: payload,
@@ -42,6 +51,10 @@ class NotificationService {
 
   /**
    * 입사지원 성공 알림
+   * @param {string} companyName
+   * @param {string} jobTitle
+   * @param {string} jobUrl
+   * @param {string} [platform]
    */
   async notifyApplySuccess(companyName, jobTitle, jobUrl, platform = 'wanted') {
     return this.postEvent('apply.success', { companyName, jobTitle, jobUrl, platform });
@@ -49,6 +62,11 @@ class NotificationService {
 
   /**
    * 입사지원 실패 알림
+   * @param {string} companyName
+   * @param {string} jobTitle
+   * @param {string} jobUrl
+   * @param {unknown} error
+   * @param {string} [platform]
    */
   async notifyApplyFailed(companyName, jobTitle, jobUrl, error, platform = 'wanted') {
     return this.postEvent('apply.failed', { companyName, jobTitle, jobUrl, error, platform });
@@ -56,6 +74,9 @@ class NotificationService {
 
   /**
    * 이력서 동기화 완료 알림
+   * @param {string} platform
+   * @param {string} resumeId
+   * @param {boolean} [success]
    */
   async notifyResumeSync(platform, resumeId, success = true) {
     return this.postEvent('resume.sync', { platform, resumeId, success });
@@ -63,6 +84,8 @@ class NotificationService {
 
   /**
    * 자동화 작업 시작 알림
+   * @param {string} jobType
+   * @param {Record<string, unknown>} [details]
    */
   async notifyJobStarted(jobType, details = {}) {
     return this.postEvent('job.started', { jobType, details });
@@ -70,6 +93,9 @@ class NotificationService {
 
   /**
    * 자동화 작업 완료 알림
+   * @param {string} jobType
+   * @param {unknown} [result]
+   * @param {number} [duration]
    */
   async notifyJobCompleted(jobType, result, duration) {
     return this.postEvent('job.completed', { jobType, result, duration });

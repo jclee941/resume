@@ -5,15 +5,44 @@
 import { ResourcePool } from '../resource-pool/resource-pool.js';
 
 /**
+ * @typedef {object} PooledBrowserContext
+ * @property {unknown} browser
+ * @property {unknown} page
+ * @property {boolean} closed
+ */
+
+/**
+ * @typedef {object} BrowserPoolOrchestrator
+ * @property {ResourcePool<PooledBrowserContext> | null} [_browserPool]
+ * @property {() => Promise<PooledBrowserContext>} _createBrowserContext
+ * @property {(ctx: PooledBrowserContext) => Promise<void>} _destroyBrowserContext
+ */
+
+/**
+ * @typedef {typeof ResourcePool & {
+ *   new (options: {
+ *     create: () => Promise<PooledBrowserContext>;
+ *     destroy: (ctx: PooledBrowserContext) => Promise<void>;
+ *     validate: (ctx: PooledBrowserContext) => boolean;
+ *     maxSize?: number;
+ *     minSize?: number;
+ *     acquireTimeoutMs?: number;
+ *     idleTimeoutMs?: number;
+ *     maxAge?: number;
+ *   }): ResourcePool<PooledBrowserContext>;
+ * }} BrowserResourcePoolConstructor
+ */
+
+/**
  * Lazily create the browser pool with stealth-browser-compatible placeholders.
  *
- * @param {object} orchestrator
- * @param {CrawlOrchestratorOptions} opts
+ * @param {BrowserPoolOrchestrator} orchestrator
+ * @param {import('./constants.js').CrawlOrchestratorOptions} opts
  */
 export function ensureBrowserPool(orchestrator, opts) {
   if (orchestrator._browserPool) return;
 
-  orchestrator._browserPool = new ResourcePool({
+  orchestrator._browserPool = new /** @type {BrowserResourcePoolConstructor} */ (ResourcePool)({
     create: () => orchestrator._createBrowserContext(),
     destroy: (ctx) => orchestrator._destroyBrowserContext(ctx),
     validate: (ctx) => ctx && !ctx.closed,
@@ -32,7 +61,7 @@ export function ensureBrowserPool(orchestrator, opts) {
  * placeholder that individual crawl tasks can fill per use, keeping lifecycle
  * ownership inside the stealth utility.
  *
- * @returns {Promise<{ browser: object|null, page: object|null, closed: boolean }>}
+ * @returns {Promise<PooledBrowserContext>}
  */
 export async function createBrowserContext() {
   return { browser: null, page: null, closed: false };
@@ -41,7 +70,8 @@ export async function createBrowserContext() {
 /**
  * Mark a pooled browser context as closed.
  *
- * @param {{ closed: boolean }} ctx
+ * @param {PooledBrowserContext} ctx
+ * @returns {Promise<void>}
  */
 export async function destroyBrowserContext(ctx) {
   ctx.closed = true;

@@ -1,5 +1,16 @@
 import { PerformanceMetricsCore } from './performance-core.js';
 
+/**
+ * @typedef {object} TimingStat
+ * @property {number} count
+ * @property {number} avg
+ * @property {number} min
+ * @property {number} max
+ * @property {number} p50
+ * @property {number} p95
+ * @property {number} p99
+ */
+
 export class PerformanceMetrics extends PerformanceMetricsCore {
   constructor(options = {}) {
     super(options);
@@ -26,11 +37,17 @@ export class PerformanceMetrics extends PerformanceMetricsCore {
     };
   }
 
+  /**
+   * @param {string | RegExp} namePattern
+   */
   getMeasures(namePattern) {
     const regex = new RegExp(namePattern);
     return this._measures.filter((m) => regex.test(m.name));
   }
 
+  /**
+   * @param {string | RegExp} namePattern
+   */
   getAverageDuration(namePattern) {
     const measures = this.getMeasures(namePattern);
     if (measures.length === 0) return 0;
@@ -39,6 +56,10 @@ export class PerformanceMetrics extends PerformanceMetricsCore {
     return total / measures.length;
   }
 
+  /**
+   * @param {string} name
+   * @param {number} percentile
+   */
   getPercentile(name, percentile) {
     const values = this._histograms.get(name);
     if (!values || values.length === 0) return 0;
@@ -73,18 +94,30 @@ export class PerformanceMetrics extends PerformanceMetricsCore {
   logSummary() {
     const summary = this.getSummary();
 
-    this._logger.info('=== Performance Summary ===');
-    this._logger.info(`Runtime: ${(summary.runtime / 1000).toFixed(2)}s`);
-    this._logger.info(`Memory: ${summary.memory.heapUsed}MB / ${summary.memory.heapTotal}MB`);
+    /** @type {Required<import('./performance-core.js').PerformanceLogger>} */ (this._logger).info(
+      '=== Performance Summary ==='
+    );
+    /** @type {Required<import('./performance-core.js').PerformanceLogger>} */ (this._logger).info(
+      `Runtime: ${(summary.runtime / 1000).toFixed(2)}s`
+    );
+    /** @type {Required<import('./performance-core.js').PerformanceLogger>} */ (this._logger).info(
+      `Memory: ${summary.memory.heapUsed}MB / ${summary.memory.heapTotal}MB`
+    );
 
     if (Object.keys(summary.counters).length > 0) {
-      this._logger.info('Counters:', summary.counters);
+      /** @type {Required<import('./performance-core.js').PerformanceLogger>} */ (
+        this._logger
+      ).info('Counters:', summary.counters);
     }
 
     if (Object.keys(summary.timings).length > 0) {
-      this._logger.info('Timings:');
+      /** @type {Required<import('./performance-core.js').PerformanceLogger>} */ (
+        this._logger
+      ).info('Timings:');
       for (const [name, stats] of Object.entries(summary.timings)) {
-        this._logger.info(
+        /** @type {Required<import('./performance-core.js').PerformanceLogger>} */ (
+          this._logger
+        ).info(
           `  ${name}: avg=${stats.avg.toFixed(2)}ms, min=${stats.min.toFixed(2)}ms, max=${stats.max.toFixed(2)}ms, count=${stats.count}`
         );
       }
@@ -92,15 +125,17 @@ export class PerformanceMetrics extends PerformanceMetricsCore {
   }
 
   #calculateTimingStats() {
+    /** @type {Map<string, number[]>} */
     const byName = new Map();
 
     for (const measure of this._measures) {
       if (!byName.has(measure.name)) {
         byName.set(measure.name, []);
       }
-      byName.get(measure.name).push(measure.duration);
+      /** @type {number[]} */ (byName.get(measure.name)).push(measure.duration);
     }
 
+    /** @type {Record<string, TimingStat>} */
     const stats = {};
     for (const [name, durations] of byName) {
       const sorted = durations.sort((a, b) => a - b);
@@ -121,6 +156,7 @@ export class PerformanceMetrics extends PerformanceMetricsCore {
   }
 
   #calculateHistogramStats() {
+    /** @type {Record<string, TimingStat>} */
     const stats = {};
 
     for (const [name, values] of this._histograms) {
