@@ -23,6 +23,50 @@ const DEFAULT_EXCLUDE_KEYWORDS = Object.freeze([
   'people manager',
 ]);
 
+/**
+ * @typedef {{
+ *   reviewThreshold?: number;
+ *   autoApplyThreshold?: number;
+ *   minMatchScore?: number;
+ *   excludeCompanies?: string[];
+ *   preferredCompanies?: string[];
+ *   keywords?: string[];
+ *   platformPriority?: string[];
+ *   aiBatchSize?: number;
+ *   aiCacheTtl?: number;
+ *   aiMinConfidence?: number;
+ *   excludeKeywords?: string[];
+ *   [key: string]: unknown;
+ * }} FilterConfigInput
+ *
+ * @typedef {{
+ *   reviewThreshold: number;
+ *   autoApplyThreshold: number;
+ *   minMatchScore: number;
+ *   excludeCompanies: string[];
+ *   preferredCompanies: string[];
+ *   keywords: string[];
+ *   platformPriority: string[];
+ *   aiBatchSize: number;
+ *   aiCacheTtl: number;
+ *   aiMinConfidence: number;
+ *   excludeKeywords: string[];
+ *   [key: string]: unknown;
+ * }} FilterConfig
+ *
+ * @typedef {{
+ *   company?: string;
+ *   position?: string;
+ *   description?: string;
+ *   matchScore?: number;
+ *   [key: string]: unknown;
+ * }} CriteriaJob
+ */
+
+/**
+ * @param {FilterConfigInput} [config]
+ * @returns {FilterConfig}
+ */
 export function createFilterConfig(config = {}) {
   return {
     reviewThreshold: config.reviewThreshold || 60,
@@ -58,12 +102,22 @@ export function createScoringStats() {
   };
 }
 
+/**
+ * @param {CriteriaJob} job
+ * @returns {string}
+ */
 export function generateJobKey(job) {
   const company = (job.company || '').toLowerCase().trim();
   const position = (job.position || '').toLowerCase().trim();
   return `${company}:${position}`;
 }
 
+/**
+ * @template {CriteriaJob} T
+ * @param {T[]} jobs
+ * @param {Iterable<string>} [existingJobIds]
+ * @returns {T[]}
+ */
 export function deduplicateJobs(jobs, existingJobIds) {
   const seen = new Set(existingJobIds);
   const result = [];
@@ -79,21 +133,42 @@ export function deduplicateJobs(jobs, existingJobIds) {
   return result;
 }
 
+/**
+ * @param {CriteriaJob} job
+ * @param {FilterConfig} config
+ * @returns {boolean}
+ */
 function matchesExcludeKeywords(job, config) {
   const text = `${job.position} ${job.description || ''}`.toLowerCase();
   return config.excludeKeywords.some((kw) => text.includes(kw.toLowerCase()));
 }
 
+/**
+ * @param {CriteriaJob} job
+ * @param {FilterConfig} config
+ * @returns {boolean}
+ */
 function isExcludedCompany(job, config) {
   const company = (job.company || '').toLowerCase();
   return config.excludeCompanies.some((c) => company.includes(c.toLowerCase()));
 }
 
+/**
+ * @param {CriteriaJob} job
+ * @param {FilterConfig} config
+ * @returns {boolean}
+ */
 export function isPreferredCompany(job, config) {
   const company = (job.company || '').toLowerCase();
   return config.preferredCompanies.some((c) => company.includes(c.toLowerCase()));
 }
 
+/**
+ * @template {CriteriaJob} T
+ * @param {T[]} jobs
+ * @param {FilterConfig} config
+ * @returns {T[]}
+ */
 export function applyJobFilters(jobs, config) {
   return jobs.filter((job) => {
     if (matchesExcludeKeywords(job, config)) return false;
@@ -102,6 +177,12 @@ export function applyJobFilters(jobs, config) {
   });
 }
 
+/**
+ * @template {CriteriaJob & { matchScore: number }} T
+ * @param {T[]} jobs
+ * @param {FilterConfig} config
+ * @returns {Array<T & { tier: string }>}
+ */
 export function sortFilteredJobs(jobs, config) {
   const { reviewThreshold, autoApplyThreshold } = config;
 

@@ -1,6 +1,36 @@
 import { existsSync, realpathSync } from 'node:fs';
 import { basename, dirname, resolve } from 'node:path';
 
+/**
+ * @typedef {{ kind: 'none' } | { kind: 'invalid' } | { kind: 'adr'; labelId: string; targetId: string }} AdrReference
+ */
+
+/**
+ * @typedef {{
+ *   id?: string;
+ *   status?: string;
+ *   rawStatus?: string;
+ *   text: string;
+ *   file: string;
+ *   absoluteFile: string;
+ *   [key: string]: unknown;
+ * }} AdrItem
+ */
+
+/**
+ * @typedef {{
+ *   code: string;
+ *   file: string;
+ *   message: string;
+ * }} AdrDiagnostic
+ */
+
+/**
+ * @param {string | undefined | null} value
+ * @param {string} sourceFile
+ * @param {string} adrDir
+ * @returns {AdrReference}
+ */
 function adrReference(value, sourceFile, adrDir) {
   const match = value?.match(/\[ADR[- ]?(\d{4})[^\]]*\]\(([^)]+)\)/i);
   if (!match) return { kind: 'none' };
@@ -24,6 +54,12 @@ function adrReference(value, sourceFile, adrDir) {
   return { kind: 'adr', labelId, targetId: targetName[1] };
 }
 
+/**
+ * @param {string} file
+ * @param {string} labelId
+ * @param {string} targetId
+ * @returns {AdrDiagnostic}
+ */
 function mismatchDiagnostic(file, labelId, targetId) {
   return {
     code: 'adr-link-label-mismatch',
@@ -32,11 +68,21 @@ function mismatchDiagnostic(file, labelId, targetId) {
   };
 }
 
+/**
+ * @param {string} text
+ * @returns {string | undefined}
+ */
 function supersedesValue(text) {
   const match = text.match(/^(?:- Supersedes:|\*\*Supersedes:\*\*)\s*(.+)$/im);
   return match?.[1]?.replace(/^\*\*(.*)\*\*$/, '$1').trim();
 }
 
+/**
+ * @param {AdrItem[]} adrs
+ * @param {string} adrDir
+ * @param {AdrDiagnostic[]} diagnostics
+ * @returns {void}
+ */
 export function validateAdrSupersession(adrs, adrDir, diagnostics) {
   const ids = new Set(adrs.map(({ id }) => id).filter(Boolean));
   for (const adr of adrs) {

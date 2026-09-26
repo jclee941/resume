@@ -1,5 +1,32 @@
 import { jaccardSimilarity, normalize, parseRequirements, toTokens } from './text-utils.js';
 
+/**
+ * @typedef {{
+ *   culture?: string | null;
+ *   benefits?: string | null;
+ *   description?: string | null;
+ *   requirements?: unknown;
+ *   [key: string]: unknown;
+ * }} SoftJobListing
+ *
+ * @typedef {{
+ *   summary?: { profileStatement?: string | null };
+ *   careers?: Array<{ description?: string | null }>;
+ *   [key: string]: unknown;
+ * }} SoftResumeData
+ *
+ * @typedef {{
+ *   experienceLevel: number;
+ *   location: number;
+ *   [key: string]: number;
+ * }} DetailedScore
+ */
+
+/**
+ * @param {SoftJobListing} jobListing
+ * @param {SoftResumeData} resumeData
+ * @returns {number}
+ */
 export function scoreCompanyCulture(jobListing, resumeData) {
   const cultureKeywords = [
     '협업',
@@ -38,6 +65,10 @@ export function scoreCompanyCulture(jobListing, resumeData) {
   return Math.round(jaccardSimilarity(jobTokens, resumeTokens) * 100);
 }
 
+/**
+ * @param {SoftJobListing} jobListing
+ * @returns {number}
+ */
 export function scoreBenefits(jobListing) {
   const benefitsText = normalize(
     [
@@ -72,6 +103,13 @@ export function scoreBenefits(jobListing) {
   return Math.min(100, 40 + matched * 12);
 }
 
+/**
+ * @param {number} score
+ * @param {string[]} gapKeywords
+ * @param {string[]} matchedSkills
+ * @param {DetailedScore} detailedScore
+ * @returns {string[]}
+ */
 export function buildRecommendations(score, gapKeywords, matchedSkills, detailedScore) {
   const recommendations = [];
 

@@ -1,6 +1,62 @@
 import assert from 'node:assert/strict';
 import { parse, printParseErrorCode } from 'jsonc-parser';
 
+/**
+ * @typedef {{
+ *   binding: string;
+ *   [key: string]: unknown;
+ * }} BindingItem
+ *
+ * @typedef {{
+ *   binding: string;
+ *   name: string;
+ *   class_name: string;
+ *   [key: string]: unknown;
+ * }} WorkflowItem
+ *
+ * @typedef {{
+ *   queue: string;
+ *   binding: string;
+ *   [key: string]: unknown;
+ * }} QueueProducer
+ *
+ * @typedef {{
+ *   queue: string;
+ *   dead_letter_queue: string;
+ *   [key: string]: unknown;
+ * }} QueueConsumer
+ *
+ * @typedef {{
+ *   producers?: QueueProducer[];
+ *   consumers?: QueueConsumer[];
+ *   [key: string]: unknown;
+ * }} QueuesConfig
+ *
+ * @typedef {{
+ *   name: string;
+ *   main: string;
+ *   compatibility_date: string;
+ *   assets: { directory: string; binding: string };
+ *   vars: Record<string, string>;
+ *   routes: unknown[];
+ *   triggers: { crons: string[] };
+ *   ai: { binding: string };
+ *   browser: { binding: string };
+ *   d1_databases: BindingItem[];
+ *   kv_namespaces: BindingItem[];
+ *   durable_objects: { bindings: Array<{ name: string; class_name: string }> };
+ *   migrations: Array<{ tag: string; new_classes: string[] }>;
+ *   workflows: WorkflowItem[];
+ *   queues: QueuesConfig;
+ *   env?: {
+ *     production?: unknown;
+ *     preview?: WorkerConfig;
+ *     [key: string]: unknown;
+ *   };
+ *   [key: string]: unknown;
+ * }} WorkerConfig
+ */
+
 const REQUIRED_WORKFLOWS = [
   ['APPLICATION_WORKFLOW', 'application-workflow', 'ApplicationWorkflow'],
   ['BACKUP_WORKFLOW', 'backup-workflow', 'BackupWorkflow'],
@@ -32,8 +88,13 @@ const PREVIEW_FORBIDDEN_KEYS = [
   'workflows',
 ];
 
+/**
+ * @param {string | WorkerConfig} input
+ * @returns {WorkerConfig}
+ */
 function parseConfiguration(input) {
   if (typeof input !== 'string') return input;
+  /** @type {import('jsonc-parser').ParseError[]} */
   const errors = [];
   const config = parse(input, errors, { allowTrailingComma: true });
   if (errors.length > 0) {
@@ -43,13 +104,23 @@ function parseConfiguration(input) {
   return config;
 }
 
+/**
+ * @param {WorkerConfig} config
+ * @param {string} key
+ * @param {string[]} expected
+ * @returns {void}
+ */
 function requireBindings(config, key, expected) {
-  const bindings = config[key];
+  const bindings = /** @type {BindingItem[]} */ (config[key]);
   assert.ok(Array.isArray(bindings), `${key} must be an array`);
   const actual = bindings.map(({ binding }) => binding).sort();
   assert.deepEqual(actual, [...expected].sort(), `${key} binding inventory mismatch`);
 }
 
+/**
+ * @param {QueuesConfig | undefined} queues
+ * @returns {void}
+ */
 function requireQueueTopology(queues) {
   assert.ok(queues && typeof queues === 'object', 'queues must be explicit');
   assert.deepEqual(
@@ -64,6 +135,10 @@ function requireQueueTopology(queues) {
   );
 }
 
+/**
+ * @param {string | WorkerConfig} input
+ * @returns {Record<string, unknown>}
+ */
 export function validateWorkerConfiguration(input) {
   const config = parseConfiguration(input);
   assert.equal(config.name, 'resume', 'production Worker name must be resume');

@@ -1,3 +1,23 @@
+/**
+ * @typedef {Object} RateLimitPolicy
+ * @property {number} limit
+ * @property {number} windowSec
+ */
+
+/**
+ * @typedef {Object} RateLimitKvNamespace
+ * @property {(key: string, options?: { type?: string }) => Promise<{ until?: number, count?: number } | null>} get
+ * @property {(key: string, value: string, options?: { expirationTtl?: number }) => Promise<void>} put
+ */
+
+/**
+ * @typedef {Object} KvSlidingWindowOptions
+ * @property {RateLimitKvNamespace} [kv]
+ * @property {Record<string, RateLimitPolicy>} [policies]
+ * @property {number} [strikeTtlSec]
+ * @property {number} [blockTtlSec]
+ */
+
 const DEFAULT_POLICIES = {
   auth: { limit: 10, windowSec: 60 },
   webhook: { limit: 20, windowSec: 60 },
@@ -8,6 +28,10 @@ const DEFAULT_POLICIES = {
 const DEFAULT_STRIKE_TTL_SEC = 300;
 const DEFAULT_BLOCK_TTL_SEC = 60;
 
+/**
+ * @param {Request} request
+ * @returns {string}
+ */
 function getClientIp(request) {
   return (
     request.headers.get('cf-connecting-ip') ||
@@ -16,18 +40,33 @@ function getClientIp(request) {
   );
 }
 
+/**
+ * @param {string} pathname
+ * @param {Record<string, RateLimitPolicy>} policies
+ * @returns {[string, RateLimitPolicy]}
+ */
 function getPolicy(pathname, policies) {
   if (pathname.startsWith('/api/auth')) return ['auth', policies.auth];
   if (pathname.startsWith('/api/')) return ['api', policies.api];
   return ['dashboard', policies.dashboard];
 }
 
+/**
+ * @param {string} pathname
+ * @returns {string}
+ */
 function normalizeEndpoint(pathname) {
   return (
     pathname.replace(/[0-9a-f]{8}-[0-9a-f-]{27,}/gi, ':id').replace(/\/\d+(?=\/|$)/g, '/:id') || '/'
   );
 }
 
+/**
+ * @param {RateLimitPolicy} policy
+ * @param {number} remaining
+ * @param {number} resetAt
+ * @returns {Record<string, string>}
+ */
 function getHeaderSet(policy, remaining, resetAt) {
   return {
     'X-RateLimit-Limit': String(policy.limit),
@@ -39,6 +78,11 @@ function getHeaderSet(policy, remaining, resetAt) {
 /**
  * Best-effort Cloudflare KV fixed-window limiter with strike and block state.
  * KV reads/writes are not atomic; use Cloudflare native rate limiting for hard enforcement.
+ *
+ * @param {Request} request
+ * @param {string} pathname
+ * @param {{ RATE_LIMIT_KV?: RateLimitKvNamespace }} [env]
+ * @param {KvSlidingWindowOptions} [options]
  */
 export async function checkKvSlidingWindowRateLimit(request, pathname, env, options = {}) {
   const kv = options.kv || env?.RATE_LIMIT_KV;
@@ -101,6 +145,11 @@ export async function checkKvSlidingWindowRateLimit(request, pathname, env, opti
   }
 }
 
+/**
+ * @param {RateLimitPolicy} policy
+ * @param {number} resetAt
+ * @param {number} retryAfter
+ */
 function tooMany(policy, resetAt, retryAfter) {
   return {
     ok: false,
@@ -114,6 +163,11 @@ function tooMany(policy, resetAt, retryAfter) {
   };
 }
 
+/**
+ * @param {RateLimitPolicy} policy
+ * @param {number} resetAt
+ * @param {number} retryAfter
+ */
 function blocked(policy, resetAt, retryAfter) {
   return {
     ok: false,
@@ -128,6 +182,11 @@ function blocked(policy, resetAt, retryAfter) {
   };
 }
 
+/**
+ * @param {Response} response
+ * @param {Record<string, string>} [headers]
+ * @returns {Response}
+ */
 export function addRateLimitHeaders(response, headers) {
   if (!headers) return response;
   const newHeaders = new Headers(response.headers);

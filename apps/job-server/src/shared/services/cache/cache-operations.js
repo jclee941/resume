@@ -2,19 +2,35 @@
  * Basic LRU cache operations with TTL support.
  *
  * @typedef {Object} CacheEntry
- * @property {*} value
+ * @property {unknown} value
  * @property {number} expiresAt - Timestamp (0 = no expiration)
  * @property {number} lastAccessed
  * @property {number} accessCount
+ *
+ * @typedef {Object} CacheStats
+ * @property {number} hits
+ * @property {number} misses
+ * @property {number} evictions
+ * @property {number} expirations
+ *
+ * @typedef {Object} CacheState
+ * @property {Map<string, CacheEntry>} cache
+ * @property {CacheStats} stats
+ * @property {number} maxSize
+ * @property {number} defaultTTL
+ *
+ * @typedef {Object} CacheOwner
+ * @property {(key: string) => unknown} get
+ * @property {(key: string, value: unknown, ttl?: number) => void} set
  */
 
 import { evictLRU } from './eviction-policy.js';
 
 /**
  * Get value from cache.
- * @param {Object} state
+ * @param {CacheState} state
  * @param {string} key
- * @returns {*} Value or undefined
+ * @returns {unknown} Value or undefined
  */
 export function getValue(state, key) {
   const entry = state.cache.get(key);
@@ -43,9 +59,9 @@ export function getValue(state, key) {
 
 /**
  * Set value in cache.
- * @param {Object} state
+ * @param {CacheState} state
  * @param {string} key
- * @param {*} value
+ * @param {unknown} value
  * @param {number} [ttl] - TTL in ms (overrides default)
  */
 export function setValue(state, key, value, ttl) {
@@ -70,7 +86,7 @@ export function setValue(state, key, value, ttl) {
 
 /**
  * Check if key exists and is not expired.
- * @param {Object} state
+ * @param {CacheState} state
  * @param {string} key
  * @returns {boolean}
  */
@@ -92,7 +108,7 @@ export function hasValue(state, key) {
 
 /**
  * Delete key from cache.
- * @param {Object} state
+ * @param {CacheState} state
  * @param {string} key
  * @returns {boolean} True if deleted
  */
@@ -102,7 +118,7 @@ export function deleteValue(state, key) {
 
 /**
  * Clear all entries and reset statistics.
- * @param {Object} state
+ * @param {CacheState} state
  */
 export function clearValues(state) {
   state.cache.clear();
@@ -114,11 +130,12 @@ export function clearValues(state) {
 
 /**
  * Get or compute value.
- * @param {Object} owner
+ * @template T
+ * @param {CacheOwner} owner
  * @param {string} key
- * @param {Function} factory - Async factory function
+ * @param {() => Promise<T> | T} factory - Async factory function
  * @param {number} [ttl] - TTL in ms
- * @returns {Promise<*>}
+ * @returns {Promise<unknown>}
  */
 export async function getOrSetValue(owner, key, factory, ttl) {
   const cached = owner.get(key);

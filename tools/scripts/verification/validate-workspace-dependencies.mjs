@@ -24,6 +24,25 @@ const EXCLUDED_DIRECTORIES = new Set([
 ]);
 const EXCLUDED_FILE_PATTERN = /(?:^|\.)(?:config|spec|test)\.(?:cjs|js|mjs)$/u;
 
+/**
+ * @typedef {{
+ *   dependencies?: Record<string, string>;
+ *   optionalDependencies?: Record<string, string>;
+ *   [key: string]: unknown;
+ * }} PackageManifest
+ *
+ * @typedef {{
+ *   workspace: string;
+ *   dependency: string;
+ *   importers: string[];
+ * }} WorkspaceInventoryItem
+ */
+
+/**
+ * @param {string} workspaceRoot
+ * @param {string} workspace
+ * @returns {PackageManifest}
+ */
 function readManifest(workspaceRoot, workspace) {
   const manifestPath = path.join(workspaceRoot, 'package.json');
   let manifest;
@@ -44,6 +63,12 @@ function readManifest(workspaceRoot, workspace) {
   return manifest;
 }
 
+/**
+ * @param {string} target
+ * @param {string} workspaceRoot
+ * @param {string[]} files
+ * @returns {void}
+ */
 function collectProductionFiles(target, workspaceRoot, files) {
   if (!existsSync(target)) return;
   const relative = path.relative(workspaceRoot, target);
@@ -65,6 +90,11 @@ function collectProductionFiles(target, workspaceRoot, files) {
   }
 }
 
+/**
+ * @param {string} source
+ * @param {string} fileName
+ * @returns {string[]}
+ */
 function importedSpecifiers(source, fileName) {
   const sourceFile = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, false);
   return sourceFile.statements.flatMap((statement) => {
@@ -74,7 +104,13 @@ function importedSpecifiers(source, fileName) {
   });
 }
 
+/**
+ * @param {string} workspaceRoot
+ * @param {string} dependency
+ * @returns {string[]}
+ */
 function findImporters(workspaceRoot, dependency) {
+  /** @type {string[]} */
   const files = [];
   collectProductionFiles(workspaceRoot, workspaceRoot, files);
   return files.filter((relative) =>
@@ -84,6 +120,11 @@ function findImporters(workspaceRoot, dependency) {
   );
 }
 
+/**
+ * @param {PackageManifest} manifest
+ * @param {string} dependency
+ * @returns {boolean}
+ */
 function hasRuntimeOwnership(manifest, dependency) {
   return Boolean(
     Object.prototype.hasOwnProperty.call(manifest.dependencies ?? {}, dependency) ||
@@ -91,8 +132,14 @@ function hasRuntimeOwnership(manifest, dependency) {
   );
 }
 
+/**
+ * @param {string} repositoryRoot
+ * @returns {WorkspaceInventoryItem[]}
+ */
 export function validateWorkspaceDependencies(repositoryRoot) {
+  /** @type {WorkspaceInventoryItem[]} */
   const inventory = [];
+  /** @type {string[]} */
   const failures = [];
   for (const { workspace, dependency } of AUDITED_PAIRS) {
     const workspaceRoot = path.join(repositoryRoot, workspace);

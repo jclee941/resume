@@ -25,12 +25,72 @@ export const UNIFIED_PROFILE_SCHEMA = {
   },
 };
 
+/**
+ * @typedef {{
+ *   load(platform: string): unknown;
+ * }} SessionStore
+ *
+ * @typedef {{
+ *   company: string;
+ *   startDate?: string;
+ *   [key: string]: unknown;
+ * }} SourceCareer
+ *
+ * @typedef {{
+ *   name: string;
+ *   [key: string]: unknown;
+ * }} SourceSkill
+ *
+ * @typedef {{
+ *   name?: string | null;
+ *   email?: string | null;
+ *   headline?: string | null;
+ *   avatar?: string | null;
+ *   careers?: SourceCareer[];
+ *   skills?: SourceSkill[];
+ *   [key: string]: unknown;
+ * }} SourceProfile
+ *
+ * @typedef {{
+ *   getProfile?: () => Promise<{ success: boolean; profile: SourceProfile; status?: string; error?: unknown; reason?: unknown }>;
+ *   [key: string]: unknown;
+ * }} CrawlerInstance
+ *
+ * @typedef {{
+ *   basic: {
+ *     name: string | null;
+ *     email: string | null;
+ *     phone: string | null;
+ *     avatar: string | null;
+ *     headline: string | null;
+ *     summary: string | null;
+ *     currentStatus: string | null;
+ *   };
+ *   careers: Array<SourceCareer & { platform: string }>;
+ *   education: unknown[];
+ *   skills: Array<SourceSkill & { platform: string }>;
+ *   meta: {
+ *     lastUpdated: string;
+ *     sources: string[];
+ *     syncStatus: Record<string, { status: string; lastSync?: string | null; error?: unknown }>;
+ *   };
+ * }} UnifiedProfile
+ */
+
 export class ProfileAggregator {
+  /**
+   * @param {Record<string, CrawlerInstance>} crawlers
+   * @param {{ sessionStore?: SessionStore }} [dependencies]
+   */
   constructor(crawlers, dependencies = {}) {
     this.crawlers = crawlers;
     this.sessionStore = dependencies.sessionStore;
   }
 
+  /**
+   * @param {string} platform
+   * @returns {unknown}
+   */
   loadSession(platform) {
     if (!this.sessionStore || typeof this.sessionStore.load !== 'function') {
       throw new Error('ProfileAggregator requires a sessionStore with load(platform)');
@@ -39,7 +99,11 @@ export class ProfileAggregator {
     return this.sessionStore.load(platform);
   }
 
+  /**
+   * @returns {Promise<UnifiedProfile>}
+   */
   async fetchUnifiedProfile() {
+    /** @type {UnifiedProfile} */
     const unified = JSON.parse(JSON.stringify(UNIFIED_PROFILE_SCHEMA));
     const platforms = ['wanted', 'saramin', 'jobkorea', 'linkedin'];
 
@@ -82,7 +146,7 @@ export class ProfileAggregator {
         } catch (e) {
           unified.meta.syncStatus[platform] = {
             status: 'error',
-            error: e.message,
+            error: e instanceof Error ? e.message : String(e),
           };
         }
       })
@@ -92,6 +156,11 @@ export class ProfileAggregator {
     return unified;
   }
 
+  /**
+   * @param {UnifiedProfile} unified
+   * @param {SourceProfile} sourceProfile
+   * @param {string} platform
+   */
   mergeProfile(unified, sourceProfile, platform) {
     if (platform === 'wanted' || (platform === 'linkedin' && !unified.basic.name)) {
       unified.basic.name = sourceProfile.name || unified.basic.name;

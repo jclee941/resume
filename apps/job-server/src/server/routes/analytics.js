@@ -1,3 +1,23 @@
+/**
+ * @typedef {{
+ *   generateReport(): Promise<unknown>;
+ *   getSuccessRateBySource(): Promise<unknown>;
+ *   getSuccessRateByMatchScore(): Promise<unknown>;
+ *   getWeeklyTrend(weeks: number): Promise<unknown>;
+ *   getTopPerformingCompanies(limit: number): Promise<unknown>;
+ *   getPositionTypeAnalysis(): Promise<unknown>;
+ * }} ApplicationAnalytics
+ */
+
+/**
+ * @typedef {import('fastify').FastifyInstance & {
+ *   applicationAnalytics: ApplicationAnalytics;
+ * }} AnalyticsFastifyInstance
+ */
+
+/**
+ * @param {AnalyticsFastifyInstance} fastify
+ */
 export default async function analyticsRoutes(fastify) {
   const analytics = fastify.applicationAnalytics;
 
@@ -16,17 +36,31 @@ export default async function analyticsRoutes(fastify) {
     return { data };
   });
 
-  fastify.get('/api/analytics/trend/weekly', async (request, _reply) => {
-    const weeks = parseInt(request.query.weeks) || 8;
-    const data = await analytics.getWeeklyTrend(weeks);
-    return { data };
-  });
+  fastify.get(
+    '/api/analytics/trend/weekly',
+    /**
+     * @param {import('fastify').FastifyRequest<{ Querystring: { weeks: string } }>} request
+     * @param {import('fastify').FastifyReply} _reply
+     */
+    async (request, _reply) => {
+      const weeks = parseInt(request.query.weeks) || 8;
+      const data = await analytics.getWeeklyTrend(weeks);
+      return { data };
+    }
+  );
 
-  fastify.get('/api/analytics/companies/top', async (request, _reply) => {
-    const limit = parseInt(request.query.limit) || 10;
-    const data = await analytics.getTopPerformingCompanies(limit);
-    return { data };
-  });
+  fastify.get(
+    '/api/analytics/companies/top',
+    /**
+     * @param {import('fastify').FastifyRequest<{ Querystring: { limit: string } }>} request
+     * @param {import('fastify').FastifyReply} _reply
+     */
+    async (request, _reply) => {
+      const limit = parseInt(request.query.limit) || 10;
+      const data = await analytics.getTopPerformingCompanies(limit);
+      return { data };
+    }
+  );
 
   fastify.get('/api/analytics/position-types', async (_request, _reply) => {
     const data = await analytics.getPositionTypeAnalysis();

@@ -1,3 +1,45 @@
+/**
+ * @typedef {{
+ *   get(path: string, handler: (req: Request) => Promise<Response> | Response): void;
+ *   post(path: string, handler: (req: Request) => Promise<Response> | Response): void;
+ *   put(path: string, handler: (req: Request) => Promise<Response> | Response): void;
+ *   delete(path: string, handler: (req: Request) => Promise<Response> | Response): void;
+ * }} RouterShape
+ *
+ * @typedef {{
+ *   triggerJobSearch(req: Request): Promise<Response> | Response;
+ *   triggerAutoApply(req: Request): Promise<Response> | Response;
+ *   triggerDailyReport(req: Request): Promise<Response> | Response;
+ *   triggerResumeSync(req: Request): Promise<Response> | Response;
+ *   triggerProfileSync(req: Request): Promise<Response> | Response;
+ *   getProfileSyncStatus(req: Request): Promise<Response> | Response;
+ *   updateProfileSyncStatus(req: Request): Promise<Response> | Response;
+ *   testChaosResumes(req: Request): Promise<Response> | Response;
+ * }} AutomationWebhooks
+ *
+ * @typedef {{
+ *   status(req: Request): Promise<Response> | Response;
+ *   run(req: Request): Promise<Response> | Response;
+ *   configure(req: Request): Promise<Response> | Response;
+ * }} AutomationAutoApply
+ *
+ * @typedef {{
+ *   listResumeSyncHistory(req: Request): Promise<Response> | Response;
+ *   getMasterResume(req: Request): Promise<Response> | Response;
+ *   uploadMasterResume(req: Request): Promise<Response> | Response;
+ * }} AutomationResumeMaster
+ *
+ * @typedef {{
+ *   webhooks: AutomationWebhooks;
+ *   autoApply: AutomationAutoApply;
+ *   resumeMaster: AutomationResumeMaster;
+ * }} AutomationContext
+ */
+
+/**
+ * @param {RouterShape} router
+ * @param {AutomationContext} ctx
+ */
 export function registerAutomationRoutes(router, ctx) {
   const { webhooks, autoApply, resumeMaster } = ctx;
 

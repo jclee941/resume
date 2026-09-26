@@ -1,3 +1,8 @@
+/**
+ * @this {{ page: import('playwright').Page }}
+ * @param {{ name: string, email: string, phone: string }} personal
+ * @returns {Promise<void>}
+ */
 export async function fillPersonalInfo(personal) {
   const nameInput = await this.page.$(
     'input[name="name"], input[id*="name"], input[placeholder*="이름"]'
@@ -21,6 +26,11 @@ export async function fillPersonalInfo(personal) {
   }
 }
 
+/**
+ * @this {{ page: import('playwright').Page }}
+ * @param {Array<{ company: string, role: string }>} careers
+ * @returns {Promise<void>}
+ */
 export async function fillCareers(careers) {
   const careerSection = await this.page.$('[class*="career"], [id*="career"], [class*="경력"]');
   if (!careerSection) return;
@@ -52,6 +62,11 @@ export async function fillCareers(careers) {
   }
 }
 
+/**
+ * @this {{ page: import('playwright').Page }}
+ * @param {{ school: string, major: string, status?: string | null }} education
+ * @returns {Promise<void>}
+ */
 export async function fillEducation(education) {
   const schoolInput = await this.page.$(
     'input[name*="school"], input[placeholder*="학교"], input[placeholder*="학교명"]'
@@ -84,6 +99,11 @@ export async function fillEducation(education) {
   }
 }
 
+/**
+ * @this {{ page: import('playwright').Page }}
+ * @param {Array<{ name: string, issuer?: string | null, date?: string | null }>} certifications
+ * @returns {Promise<void>}
+ */
 export async function fillCertifications(certifications) {
   for (const cert of certifications.slice(0, 6)) {
     const addBtn = await this.page.$(
@@ -124,6 +144,10 @@ export async function fillCertifications(certifications) {
   }
 }
 
+/**
+ * @this {{ page: import('playwright').Page }}
+ * @returns {Promise<void>}
+ */
 export async function saveResume() {
   const saveBtn = await this.page.$(
     'button:has-text("저장"), button[type="submit"], button[class*="save"]'

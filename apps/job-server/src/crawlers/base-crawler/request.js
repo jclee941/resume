@@ -1,3 +1,61 @@
+/**
+ * @typedef {{
+ *   maxRetries: number;
+ *   [key: string]: unknown;
+ * }} RetryConfig
+ */
+
+/**
+ * @typedef {RequestInit & {
+ *   retry?: Record<string, unknown>;
+ * }} RequestOptions
+ */
+
+/**
+ * @typedef {{
+ *   timer: { wait(): Promise<void> };
+ *   lastRequestTime: number;
+ *   retryConfig: RetryConfig;
+ *   cookieJar: {
+ *     getCookieHeader(url: string | URL): string;
+ *     setCookiesFromHeader(header: string, url: string | URL): void;
+ *   };
+ *   cookies: string;
+ *   proxyRotator: {
+ *     getNext(opts: { excludeRecent?: string | null }): string | null;
+ *     markSuccess(proxy: string, duration: number): void;
+ *     markFailure(proxy: string, err: unknown): void;
+ *   };
+ *   currentProxy: string | null;
+ *   _resolveFingerprint(proxyUrl: string | null): { userAgent?: string } | null;
+ *   _resolveDispatcher(proxyUrl: string | null, fingerprint: unknown): Promise<unknown>;
+ *   headers: Record<string, string>;
+ *   timeout: number;
+ *   retryMetrics: {
+ *     successAfterRetry: number;
+ *     nonRetryableFailures: number;
+ *     totalRetries: number;
+ *     lastRetryAt: Date | null;
+ *     exhaustedRetries: number;
+ *   };
+ *   emit(event: string, data?: unknown): boolean;
+ *   name: string;
+ *   captchaDetector: {
+ *     detectFromStatusCode(status: number, headers: Headers, url: string | URL): unknown;
+ *     shouldPause(): boolean;
+ *   };
+ *   sleep(ms: number): Promise<void>;
+ *   _isRetryable(statusCode: number | null, config: unknown): boolean;
+ *   _calculateBackoff(attempt: number, config: unknown): number;
+ * }} RequestCrawlerContext
+ */
+
+/**
+ * @this {RequestCrawlerContext}
+ * @param {string | URL} url
+ * @param {RequestOptions} [options]
+ * @returns {Promise<Response>}
+ */
 export async function rateLimitedFetch(url, options = {}) {
   await this.timer.wait();
   this.lastRequestTime = Date.now();
@@ -25,6 +83,7 @@ export async function rateLimitedFetch(url, options = {}) {
   };
 
   const requestStart = Date.now();
+  /** @type {Error & { statusCode?: number; retryAfter?: number } | undefined} */
   let lastError;
 
   for (let attempt = 1; attempt <= retryConfig.maxRetries; attempt++) {
@@ -32,7 +91,9 @@ export async function rateLimitedFetch(url, options = {}) {
       const response = await fetch(url, fetchOptions);
 
       if (!response.ok) {
-        const error = new Error(`HTTP ${response.status}: ${response.statusText}`);
+        const error = /** @type {Error & { statusCode?: number; retryAfter?: number }} */ (
+          new Error(`HTTP ${response.status}: ${response.statusText}`)
+        );
         error.statusCode = response.status;
 
         if (response.status === 429) {
@@ -82,8 +143,8 @@ export async function rateLimitedFetch(url, options = {}) {
 
       return response;
     } catch (error) {
-      lastError = error;
-      const statusCode = error.statusCode || null;
+      lastError = /** @type {Error & { statusCode?: number; retryAfter?: number }} */ (error);
+      const statusCode = /** @type {Error & { statusCode?: number }} */ (error).statusCode || null;
 
       if (proxyUrl) {
         this.proxyRotator.markFailure(proxyUrl, error);
@@ -96,7 +157,7 @@ export async function rateLimitedFetch(url, options = {}) {
           attempt,
           maxRetries: retryConfig.maxRetries,
           statusCode,
-          error: error.message,
+          error: /** @type {Error} */ (error).message,
           crawler: this.name,
         });
         throw error;
@@ -105,14 +166,16 @@ export async function rateLimitedFetch(url, options = {}) {
       this.retryMetrics.totalRetries++;
       this.retryMetrics.lastRetryAt = new Date();
 
-      const delay = error.retryAfter || this._calculateBackoff(attempt, retryConfig);
+      const delay =
+        /** @type {{ retryAfter?: number }} */ (error).retryAfter ||
+        this._calculateBackoff(attempt, retryConfig);
       this.emit('retry', {
         url,
         attempt,
         maxRetries: retryConfig.maxRetries,
         delay,
         statusCode,
-        error: error.message,
+        error: /** @type {Error} */ (error).message,
         crawler: this.name,
       });
 
@@ -126,7 +189,7 @@ export async function rateLimitedFetch(url, options = {}) {
   this.emit('retry:exhausted', {
     url,
     maxRetries: retryConfig.maxRetries,
-    error: lastError.message,
+    error: /** @type {Error} */ (lastError).message,
     crawler: this.name,
   });
 

@@ -4,8 +4,18 @@ import { chromium } from 'playwright';
 import { CONFIG, PLATFORMS } from './config.js';
 import { computeDiff, log } from './common.js';
 
+/**
+ * @typedef {keyof typeof PLATFORMS} PlatformKey
+ */
+
+/**
+ * @param {import('playwright').Page} page
+ * @param {PlatformKey} platform
+ * @returns {Promise<Record<string, string> | null>}
+ */
 export async function getCurrentProfile(page, platform) {
   const config = PLATFORMS[platform];
+  /** @type {Record<string, string>} */
   const profile = {};
 
   try {
@@ -56,11 +66,18 @@ export async function getCurrentProfile(page, platform) {
     log(`Current profile: ${JSON.stringify(profile)}`, 'info', platform);
     return profile;
   } catch (error) {
-    log(`Failed to get profile: ${error.message}`, 'error', platform);
+    const message = error instanceof Error ? error.message : String(error);
+    log(`Failed to get profile: ${message}`, 'error', platform);
     return null;
   }
 }
 
+/**
+ * @param {import('playwright').Page} page
+ * @param {PlatformKey} platform
+ * @param {Array<{field: string, from: string, to: string}>} changes
+ * @returns {Promise<boolean>}
+ */
 export async function applyChanges(page, platform, changes) {
   if (changes.length === 0) {
     log('No changes to apply', 'success', platform);
@@ -75,7 +92,7 @@ export async function applyChanges(page, platform, changes) {
     for (const change of changes) {
       log(`Applying: ${change.field} = ${change.to}`, 'info', platform);
 
-      const selector = config.selectors[change.field];
+      const selector = /** @type {Record<string, string>} */ (config.selectors)[change.field];
       if (!selector) {
         log(`No selector for field: ${change.field}`, 'warn', platform);
         continue;
@@ -105,11 +122,17 @@ export async function applyChanges(page, platform, changes) {
 
     return true;
   } catch (error) {
-    log(`Failed to apply changes: ${error.message}`, 'error', platform);
+    const message = error instanceof Error ? error.message : String(error);
+    log(`Failed to apply changes: ${message}`, 'error', platform);
     return false;
   }
 }
 
+/**
+ * @param {PlatformKey} platformKey
+ * @param {import('./config.js').SsotResume} ssot
+ * @returns {Promise<{ success: boolean, changes: Array<{field: string, from: string, to: string}>, dryRun?: boolean, error?: string }>}
+ */
 export async function syncPlatformViaBrowser(platformKey, ssot) {
   const config = PLATFORMS[platformKey];
 
@@ -136,7 +159,7 @@ export async function syncPlatformViaBrowser(platformKey, ssot) {
       return { success: false, changes: [] };
     }
 
-    const target = config.mapData(ssot);
+    const target = /** @type {Record<string, string>} */ (config.mapData(ssot));
     const changes = computeDiff(current, target);
 
     if (changes.length === 0) {
@@ -159,8 +182,9 @@ export async function syncPlatformViaBrowser(platformKey, ssot) {
     await browser.close();
     return { success: true, changes, dryRun: true };
   } catch (error) {
-    log(`Sync failed: ${error.message}`, 'error', platformKey);
+    const message = error instanceof Error ? error.message : String(error);
+    log(`Sync failed: ${message}`, 'error', platformKey);
     await browser.close();
-    return { success: false, changes: [], error: error.message };
+    return { success: false, changes: [], error: message };
   }
 }

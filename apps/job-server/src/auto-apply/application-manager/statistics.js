@@ -1,5 +1,30 @@
 import { APPLICATION_STATUS } from './status.js';
 
+/**
+ * @typedef {{
+ *   totalApplications: number;
+ *   byStatus: Record<string, number>;
+ *   bySource: Record<string, number>;
+ *   byCompany: Record<string, number>;
+ *   byDate: Record<string, number>;
+ *   lastUpdated: string | null;
+ * }} ApplicationStats
+ */
+
+/**
+ * @typedef {{
+ *   status: string;
+ *   source: string;
+ *   company: string;
+ *   createdAt: string;
+ *   appliedAt?: string | null;
+ *   timeline: Array<{ status: string; timestamp: string }>;
+ * }} ApplicationItem
+ */
+
+/**
+ * @returns {ApplicationStats}
+ */
 export function initStats() {
   return {
     totalApplications: 0,
@@ -11,6 +36,10 @@ export function initStats() {
   };
 }
 
+/**
+ * @param {ApplicationItem[]} applications
+ * @returns {ApplicationStats}
+ */
 export function buildStats(applications) {
   const stats = initStats();
   stats.totalApplications = applications.length;
@@ -28,6 +57,10 @@ export function buildStats(applications) {
   return stats;
 }
 
+/**
+ * @param {ApplicationItem[]} applications
+ * @returns {number}
+ */
 export function calculateSuccessRate(applications) {
   const completed = applications.filter((application) =>
     [APPLICATION_STATUS.OFFER, APPLICATION_STATUS.REJECTED].includes(application.status)
@@ -41,6 +74,10 @@ export function calculateSuccessRate(applications) {
   return Math.round((offers / completed.length) * 100);
 }
 
+/**
+ * @param {ApplicationItem[]} applications
+ * @returns {number}
+ */
 export function calculateResponseRate(applications) {
   const applied = applications.filter((application) => application.appliedAt);
   if (applied.length === 0) return 0;
@@ -53,6 +90,10 @@ export function calculateResponseRate(applications) {
   return Math.round((responded / applied.length) * 100);
 }
 
+/**
+ * @param {ApplicationItem[]} applications
+ * @returns {number | null}
+ */
 export function calculateAverageResponseTime(applications) {
   const responded = applications.filter((application) => {
     if (!application.appliedAt) return false;
@@ -63,9 +104,13 @@ export function calculateAverageResponseTime(applications) {
   if (responded.length === 0) return null;
 
   const totalDays = responded.reduce((sum, application) => {
-    const appliedDate = new Date(application.appliedAt);
+    const appliedDate = /** @type {Date & number} */ (
+      new Date(/** @type {string} */ (application.appliedAt))
+    );
     const responseEvent = findResponseEvent(application);
-    const responseDate = new Date(responseEvent.timestamp);
+    const responseDate = /** @type {Date & number} */ (
+      new Date(/** @type {{ timestamp: string }} */ (responseEvent).timestamp)
+    );
     const days = (responseDate - appliedDate) / (1000 * 60 * 60 * 24);
     return sum + days;
   }, 0);
@@ -73,6 +118,15 @@ export function calculateAverageResponseTime(applications) {
   return Math.round(totalDays / responded.length);
 }
 
+/**
+ * @param {ApplicationStats} stats
+ * @param {ApplicationItem[]} applications
+ * @returns {ApplicationStats & {
+ *   successRate: number;
+ *   responseRate: number;
+ *   averageResponseTime: number | null;
+ * }}
+ */
 export function withCalculatedStats(stats, applications) {
   return {
     ...stats,
@@ -82,6 +136,10 @@ export function withCalculatedStats(stats, applications) {
   };
 }
 
+/**
+ * @param {ApplicationItem} application
+ * @returns {{ status: string; timestamp: string } | undefined}
+ */
 function findResponseEvent(application) {
   return application.timeline.find(
     (timelineItem) =>

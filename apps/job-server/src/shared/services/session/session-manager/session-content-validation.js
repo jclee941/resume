@@ -1,3 +1,26 @@
+/**
+ * @typedef {{
+ *   name: string;
+ *   value: string;
+ * }} SessionCookie
+ *
+ * @typedef {{
+ *   token?: string | null;
+ *   cookies?: SessionCookie[] | string | null;
+ *   cookieString?: string | null;
+ *   [key: string]: unknown;
+ * }} SessionData
+ *
+ * @typedef {{
+ *   valid: boolean;
+ *   reason: string | null;
+ * }} SessionValidationResult
+ */
+
+/**
+ * @param {unknown} value
+ * @returns {value is string}
+ */
 function hasValue(value) {
   return typeof value === 'string' && value.trim().length > 0;
 }
@@ -6,6 +29,10 @@ const WANTED_AUTH_COOKIE_NAMES = new Set(['WWW_ONEID_ACCESS_TOKEN', 'ONEID_SESSI
 const JWT_EXPIRY_SKEW_MS = 60_000;
 const BASE64URL_SEGMENT = /^[A-Za-z0-9_-]+$/;
 
+/**
+ * @param {unknown} cookieString
+ * @returns {SessionCookie[]}
+ */
 function parseCookieString(cookieString) {
   if (!hasValue(cookieString)) return [];
 
@@ -22,8 +49,14 @@ function parseCookieString(cookieString) {
     });
 }
 
+/**
+ * @param {SessionData} session
+ * @returns {SessionCookie[]}
+ */
 function getCookies(session) {
-  const cookies = Array.isArray(session.cookies) ? session.cookies : parseCookieString(session.cookies);
+  const cookies = Array.isArray(session.cookies)
+    ? session.cookies
+    : parseCookieString(session.cookies);
   return [...cookies, ...parseCookieString(session.cookieString)].filter(
     (cookie) =>
       cookie !== null &&
@@ -33,6 +66,10 @@ function getCookies(session) {
   );
 }
 
+/**
+ * @param {unknown} value
+ * @returns {string}
+ */
 function decode(value) {
   if (typeof value !== 'string') return '';
   try {
@@ -42,10 +79,18 @@ function decode(value) {
   }
 }
 
+/**
+ * @param {SessionCookie} cookie
+ * @returns {string}
+ */
 function normalizedName(cookie) {
   return decode(cookie.name).toUpperCase();
 }
 
+/**
+ * @param {unknown} value
+ * @returns {boolean}
+ */
 function hasValidJkat(value) {
   if (!hasValue(value)) return false;
   const segments = value.split('.');
@@ -68,18 +113,24 @@ function hasValidJkat(value) {
   }
 }
 
+/**
+ * @param {SessionCookie[]} cookies
+ * @returns {SessionValidationResult | null}
+ */
 function validateEmptyCriticalCookie(cookies) {
   for (const cookie of cookies) {
-    if (
-      !hasValue(cookie.value) &&
-      ['uid', 'user'].includes(String(cookie.name).toLowerCase())
-    ) {
+    if (!hasValue(cookie.value) && ['uid', 'user'].includes(String(cookie.name).toLowerCase())) {
       return { valid: false, reason: `empty_${cookie.name}` };
     }
   }
   return null;
 }
 
+/**
+ * @param {SessionData} session
+ * @param {SessionCookie[]} cookies
+ * @returns {SessionValidationResult | null}
+ */
 function validateJobKoreaSession(session, cookies) {
   let authenticated = hasValue(session.token);
 
@@ -110,6 +161,11 @@ function validateJobKoreaSession(session, cookies) {
   return authenticated ? null : { valid: false, reason: 'no_jobkorea_auth' };
 }
 
+/**
+ * @param {SessionData} session
+ * @param {SessionCookie[]} cookies
+ * @returns {SessionValidationResult | null}
+ */
 function validateWantedSession(session, cookies) {
   const authenticated =
     hasValue(session.token) ||
@@ -119,18 +175,27 @@ function validateWantedSession(session, cookies) {
   return authenticated ? null : { valid: false, reason: 'no_wanted_cookies' };
 }
 
+/**
+ * @param {SessionData} session
+ * @param {SessionCookie[]} cookies
+ * @returns {SessionValidationResult | null}
+ */
 function validateSaraminSession(session, cookies) {
   const authenticated =
     hasValue(session.token) ||
     cookies.some(
       (cookie) =>
-        ['PHPSESSID', '_SARAMIN_SESSION'].includes(normalizedName(cookie)) &&
-        hasValue(cookie.value)
+        ['PHPSESSID', '_SARAMIN_SESSION'].includes(normalizedName(cookie)) && hasValue(cookie.value)
     );
   return authenticated ? null : { valid: false, reason: 'no_saramin_auth' };
 }
 
 export const sessionContentValidationMethods = {
+  /**
+   * @param {string} platform
+   * @param {SessionData} session
+   * @returns {SessionValidationResult}
+   */
   validateSessionContent(platform, session) {
     const cookies = getCookies(session);
     const emptyCriticalCookie = validateEmptyCriticalCookie(cookies);

@@ -5,6 +5,16 @@
 export { getRandomViewport, generateFingerprint, humanDelay } from './stealth-fingerprint.js';
 
 /**
+ * @typedef {Object} ChromeRuntime
+ * @property {Record<string, string>} [PlatformOs]
+ *
+ * @typedef {Object} ChromeObject
+ * @property {ChromeRuntime} [runtime]
+ *
+ * @typedef {Window & { chrome?: ChromeObject }} WindowWithChrome
+ */
+
+/**
  * Apply anti-fingerprinting patches before document scripts run.
  *
  * @param {import('@cloudflare/puppeteer').Page} page
@@ -22,6 +32,12 @@ export async function applyStealthPatches(page, fingerprint) {
   }
 
   await page.evaluateOnNewDocument(() => {
+    /**
+     * @template T
+     * @param {T} obj
+     * @param {string} key
+     * @param {() => unknown} getter
+     */
     const patchProperty = (obj, key, getter) => {
       Object.defineProperty(obj, key, {
         configurable: true,
@@ -39,8 +55,9 @@ export async function applyStealthPatches(page, fingerprint) {
         { name: 'Native Client', filename: 'internal-nacl-plugin' },
       ];
       return Object.assign(plugins, {
-        item: (index) => plugins[index] || null,
-        namedItem: (name) => plugins.find((plugin) => plugin.name === name) || null,
+        item: (/** @type {number} */ index) => plugins[index] || null,
+        namedItem: (/** @type {string} */ name) =>
+          plugins.find((plugin) => plugin.name === name) || null,
         refresh: () => undefined,
       });
     });
@@ -60,17 +77,26 @@ export async function applyStealthPatches(page, fingerprint) {
       ];
 
       return Object.assign(mimeTypes, {
-        item: (index) => mimeTypes[index] || null,
-        namedItem: (type) => mimeTypes.find((entry) => entry.type === type) || null,
+        item: (/** @type {number} */ index) => mimeTypes[index] || null,
+        namedItem: (/** @type {string} */ type) =>
+          mimeTypes.find((entry) => entry.type === type) || null,
       });
     });
 
-    if (!window.chrome) {
-      window.chrome = {};
+    if (!(/** @type {Window & { chrome?: ChromeObject }} */ (window).chrome)) {
+      /** @type {Window & { chrome?: ChromeObject }} */ (window).chrome = {};
     }
 
-    if (!window.chrome.runtime) {
-      window.chrome.runtime = {
+    if (
+      !(
+        /** @type {ChromeObject} */ (
+          /** @type {Window & { chrome?: ChromeObject }} */ (window).chrome
+        ).runtime
+      )
+    ) {
+      /** @type {ChromeObject} */ (
+        /** @type {Window & { chrome?: ChromeObject }} */ (window).chrome
+      ).runtime = {
         PlatformOs: {
           MAC: 'mac',
           WIN: 'win',
@@ -84,19 +110,26 @@ export async function applyStealthPatches(page, fingerprint) {
 
     const originalQuery = window.navigator.permissions?.query;
     if (typeof originalQuery === 'function') {
-      window.navigator.permissions.query = (parameters) => {
-        if (parameters && parameters.name === 'notifications') {
-          return Promise.resolve({
-            state: Notification.permission,
-            onchange: null,
-          });
-        }
-        return originalQuery.call(window.navigator.permissions, parameters);
-      };
+      window.navigator.permissions.query =
+        /** @type {typeof window.navigator.permissions.query} */ (
+          (parameters) => {
+            if (parameters && parameters.name === 'notifications') {
+              return /** @type {Promise<PermissionStatus>} */ (
+                Promise.resolve({
+                  state: Notification.permission,
+                  onchange: null,
+                })
+              );
+            }
+            return originalQuery.call(window.navigator.permissions, parameters);
+          }
+        );
     }
 
     const getParameter = WebGLRenderingContext.prototype.getParameter;
-    WebGLRenderingContext.prototype.getParameter = function patchedGetParameter(parameter) {
+    WebGLRenderingContext.prototype.getParameter = function patchedGetParameter(
+      /** @type {number} */ parameter
+    ) {
       if (parameter === 37445) {
         return 'Intel Inc.';
       }
@@ -108,7 +141,9 @@ export async function applyStealthPatches(page, fingerprint) {
 
     if (typeof WebGL2RenderingContext !== 'undefined') {
       const getParameter2 = WebGL2RenderingContext.prototype.getParameter;
-      WebGL2RenderingContext.prototype.getParameter = function patchedGetParameter2(parameter) {
+      WebGL2RenderingContext.prototype.getParameter = function patchedGetParameter2(
+        /** @type {number} */ parameter
+      ) {
         if (parameter === 37445) {
           return 'Intel Inc.';
         }
@@ -120,7 +155,9 @@ export async function applyStealthPatches(page, fingerprint) {
     }
 
     const originalToDataURL = HTMLCanvasElement.prototype.toDataURL;
-    HTMLCanvasElement.prototype.toDataURL = function patchedToDataURL(...args) {
+    HTMLCanvasElement.prototype.toDataURL = function patchedToDataURL(
+      /** @type {[type?: string, quality?: number]} */ ...args
+    ) {
       const context = this.getContext('2d');
       if (context) {
         const shift = {
@@ -139,11 +176,13 @@ export async function applyStealthPatches(page, fingerprint) {
         }
         context.putImageData(imageData, 0, 0);
       }
-      return originalToDataURL.apply(this, args);
+      return originalToDataURL.apply(this, /** @type {[type?: string, quality?: number]} */ (args));
     };
 
     const originalGetChannelData = AudioBuffer.prototype.getChannelData;
-    AudioBuffer.prototype.getChannelData = function patchedGetChannelData(channel) {
+    AudioBuffer.prototype.getChannelData = function patchedGetChannelData(
+      /** @type {number} */ channel
+    ) {
       const data = originalGetChannelData.call(this, channel);
       if (!data || data.length === 0) {
         return data;
@@ -161,6 +200,12 @@ export async function applyStealthPatches(page, fingerprint) {
   // Fingerprint consistency patches - navigator/screen properties
   if (fingerprint) {
     await page.evaluateOnNewDocument((fp) => {
+      /**
+       * @template T
+       * @param {T} obj
+       * @param {string} key
+       * @param {() => unknown} getter
+       */
       const patchProp = (obj, key, getter) => {
         Object.defineProperty(obj, key, {
           configurable: true,
@@ -179,8 +224,16 @@ export async function applyStealthPatches(page, fingerprint) {
         patchProp(navigator, 'deviceMemory', () => fp.deviceMemory);
       }
       if (fp.screenResolution) {
-        patchProp(screen, 'width', () => fp.screenResolution.width);
-        patchProp(screen, 'height', () => fp.screenResolution.height);
+        patchProp(
+          screen,
+          'width',
+          () => /** @type {{ width: number, height: number }} */ (fp.screenResolution).width
+        );
+        patchProp(
+          screen,
+          'height',
+          () => /** @type {{ width: number, height: number }} */ (fp.screenResolution).height
+        );
       }
       if (fp.colorDepth) {
         patchProp(screen, 'colorDepth', () => fp.colorDepth);

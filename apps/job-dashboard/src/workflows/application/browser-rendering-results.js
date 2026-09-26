@@ -1,3 +1,21 @@
+/**
+ * @typedef {Object} RenderControl
+ * @property {boolean} [disabled]
+ * @property {string} text
+ */
+
+/**
+ * @typedef {Object} PageState
+ * @property {RenderControl[]} controls
+ * @property {string} [visibleAction]
+ * @property {boolean} [networkWrite]
+ */
+
+/**
+ * @typedef {Object} ResponseLike
+ * @property {() => number} [status]
+ */
+
 const APPLY_TEXT_PATTERN = /(즉시지원|입사지원|지원하기|apply|easy apply)/i;
 const ALREADY_APPLIED_PATTERN = /(지원완료|이미\s*지원|입사지원\s*완료|already\s+applied)/i;
 const COMPLETE_TEXT_PATTERN =
@@ -6,6 +24,9 @@ const CONFIRM_TEXT_PATTERN = /(제출|최종지원|입사지원|지원하기|확
 const CANCEL_TEXT_PATTERN = /(취소|닫기|close|cancel)/i;
 const LOGIN_TEXT_PATTERN = /(로그인|sign\s*in|log\s*in)/i;
 
+/**
+ * @param {string} [bodyText]
+ */
 export function detectCompletion(bodyText = '') {
   if (ALREADY_APPLIED_PATTERN.test(bodyText)) {
     return { complete: true, alreadyApplied: true, status: 'already_applied' };
@@ -16,12 +37,20 @@ export function detectCompletion(bodyText = '') {
   return { complete: false, alreadyApplied: false, status: 'unconfirmed' };
 }
 
+/**
+ * @param {PageState} pageState
+ * @returns {RenderControl | undefined}
+ */
 export function findApplyControl(pageState) {
   return pageState.controls.find(
     (control) => !control.disabled && APPLY_TEXT_PATTERN.test(control.text)
   );
 }
 
+/**
+ * @param {PageState} pageState
+ * @returns {RenderControl | undefined}
+ */
 export function findConfirmControl(pageState) {
   return pageState.controls.find(
     (control) =>
@@ -31,6 +60,10 @@ export function findConfirmControl(pageState) {
   );
 }
 
+/**
+ * @param {string} status
+ * @param {Record<string, unknown>} details
+ */
 export function completedResult(status, details) {
   return {
     ...details,
@@ -45,6 +78,15 @@ export function completedResult(status, details) {
   };
 }
 
+/**
+ * @param {string} platform
+ * @param {string} targetUrl
+ * @param {string} finalUrl
+ * @param {string} title
+ * @param {ResponseLike | null | undefined} response
+ * @param {number} cookieCount
+ * @param {PageState} pageState
+ */
 export function renderedReviewResult(
   platform,
   targetUrl,

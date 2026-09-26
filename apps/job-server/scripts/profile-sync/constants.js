@@ -17,8 +17,26 @@ export const CONFIG = {
 };
 
 /**
+ * @typedef {object} SsotResume
+ * @property {{ name: string, email: string, phone: string, github?: string, portfolio?: string }} personal
+ * @property {{ profileStatement?: string, totalExperience?: string, expertise: string[] }} summary
+ * @property {{ wanted?: { headline?: string } }} [platformVariants]
+ * @property {{ position?: string }} [current]
+ * @property {Array<{ role?: string }>} [careers]
+ */
+
+/**
+ * @typedef {object} PlatformConfig
+ * @property {string} name
+ * @property {string} profileUrl
+ * @property {string} editUrl
+ * @property {Record<string, string>} [selectors]
+ * @property {((ssot: SsotResume) => Record<string, unknown>)} [mapData]
+ */
+
+/**
  * Platform configuration.
- * @type {Record<string, {name: string, profileUrl: string, editUrl: string, selectors: Record<string, string>, mapData: (ssot: Object) => Object}>}
+ * @type {Record<string, PlatformConfig>}
  */
 export const PLATFORMS = {
   wanted: {
@@ -32,6 +50,7 @@ export const PLATFORMS = {
       headline: 'textarea[name="introduction"]',
       skills: '[data-testid="skills-section"]',
     },
+    /** @param {SsotResume} ssot */
     mapData: (ssot) => {
       const intro = ssot.platformVariants?.wanted?.headline || ssot.summary.profileStatement || '';
       return {
@@ -63,6 +82,7 @@ export const PLATFORMS = {
       headline: '#selfIntro',
       skills: '.skill-list',
     },
+    /** @param {SsotResume} ssot */
     mapData: (ssot) => ({
       name: ssot.personal.name,
       email: ssot.personal.email,

@@ -1,7 +1,29 @@
+/**
+ * @typedef {{
+ *   prepare(query: string): {
+ *     first(): Promise<Record<string, number | null> | null>;
+ *     all(): Promise<{ results?: Array<{ platform: string; count: number; success: number }> }>;
+ *   };
+ * }} D1DatabaseLike
+ */
+
+/**
+ * @typedef {Object} DailyReportEnv
+ * @property {D1DatabaseLike} JOB_DB
+ */
+
+/**
+ * @param {string} [type]
+ * @returns {string}
+ */
 function getReportDateFilter(type) {
   return type === 'weekly' ? "date('now', '-7 days')" : "date('now', '-1 day')";
 }
 
+/**
+ * @param {DailyReportEnv} env
+ * @param {string} [type]
+ */
 export async function getApplicationStats(env, type) {
   const dateFilter = getReportDateFilter(type);
 
@@ -39,6 +61,11 @@ export async function getApplicationStats(env, type) {
   };
 }
 
+/**
+ * @param {DailyReportEnv} env
+ * @param {string} [type]
+ * @returns {Promise<Record<string, { count: number; success: number; rate: string | number }>>}
+ */
 export async function getPlatformStats(env, type) {
   const dateFilter = getReportDateFilter(type);
 
@@ -55,6 +82,7 @@ export async function getPlatformStats(env, type) {
     `
   ).all();
 
+  /** @type {Record<string, { count: number; success: number; rate: string | number }>} */
   const platforms = {};
   for (const row of results.results || []) {
     platforms[row.platform] = {
@@ -67,6 +95,10 @@ export async function getPlatformStats(env, type) {
   return platforms;
 }
 
+/**
+ * @param {DailyReportEnv} env
+ * @param {string} [type]
+ */
 export async function getSearchStats(env, type) {
   const dateFilter = getReportDateFilter(type);
 
@@ -88,6 +120,11 @@ export async function getSearchStats(env, type) {
   };
 }
 
+/**
+ * @param {DailyReportEnv} env
+ * @param {{ total: number }} currentStats
+ * @param {string} [type]
+ */
 export async function calculateTrends(env, currentStats, type) {
   const prevFilter =
     type === 'weekly'

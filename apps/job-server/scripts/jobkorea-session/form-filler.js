@@ -1,16 +1,41 @@
 import { sleep } from './page-utils.js';
 
+/**
+ * @typedef {{
+ *   click(options?: { clickCount?: number, count?: number }): Promise<void>,
+ *   type(text: string, options?: { delay?: number }): Promise<void>
+ * }} InputElementHandle
+ */
+
+/**
+ * @param {import('puppeteer').Page} page
+ * @param {string[]} selectors
+ * @returns {Promise<InputElementHandle | null>}
+ */
 export async function resolveInput(page, selectors) {
   for (const selector of selectors) {
     const input = await page.$(selector);
     if (input) {
-      return input;
+      return /** @type {InputElementHandle} */ (input);
     }
   }
 
   return null;
 }
 
+/**
+ * @typedef {{
+ *   email: string,
+ *   password: string,
+ *   log: (msg: string) => void
+ * }} LoginCredentials
+ */
+
+/**
+ * @param {import('puppeteer').Page} page
+ * @param {LoginCredentials} param1
+ * @returns {Promise<void>}
+ */
 export async function fillLoginForm(page, { email, password, log }) {
   const emailInput = await resolveInput(page, [
     'input[name="M_ID"]',
@@ -37,10 +62,15 @@ export async function fillLoginForm(page, { email, password, log }) {
   await sleep(500);
 }
 
+/**
+ * @param {import('puppeteer').Page} page
+ * @param {{ log: (msg: string) => void }} param1
+ * @returns {Promise<void>}
+ */
 export async function clickVisibleSubmit(page, { log }) {
   const candidates = await page.$$('button[type="submit"], input[type="submit"]');
   for (const candidate of candidates) {
-    const visible = await candidate.evaluate((element) => {
+    const visible = await candidate.evaluate((/** @type {Element} */ element) => {
       const style = window.getComputedStyle(element);
       const rect = element.getBoundingClientRect();
       return (

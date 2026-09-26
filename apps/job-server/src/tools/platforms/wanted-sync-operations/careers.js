@@ -3,6 +3,77 @@ import { normalizeCompanyName } from '@resume/shared/normalize';
 import { isStrictSyncEnabled } from './strict-sync.js';
 import { normalizeText, truncateWantedProjectDescription } from './text-formatting.js';
 
+/**
+ * @typedef {Object} CareerProject
+ * @property {string} [period]
+ * @property {string[]} [techStack]
+ * @property {string[]} [achievements]
+ * @property {string} [description]
+ * @property {string} [name]
+ * @property {string} [title]
+ */
+
+/**
+ * @typedef {Object} NormalizedProject
+ * @property {string} title
+ * @property {string} description
+ */
+
+/**
+ * @typedef {Object} RemoteProject
+ * @property {string | number} id
+ * @property {string} title
+ * @property {string} [description]
+ */
+
+/**
+ * @typedef {Object} CompanyInfo
+ * @property {string} [name]
+ */
+
+/**
+ * @typedef {Object} SsotCareer
+ * @property {CareerProject[]} [projects]
+ * @property {string} [project]
+ * @property {string} [description]
+ * @property {CompanyInfo} [company]
+ * @property {string} [company_name]
+ */
+
+/**
+ * @typedef {Object} LocalCareer
+ * @property {CompanyInfo} [company]
+ * @property {string} [company_name]
+ * @property {string | number} [id]
+ */
+
+/**
+ * @typedef {Object} RemoteCareer
+ * @property {string | number} id
+ * @property {CompanyInfo} [company]
+ * @property {string} [company_name]
+ * @property {RemoteProject[]} [projects]
+ */
+
+/**
+ * @typedef {Object} WantedCareerApi
+ * @property {(resumeId: string | number, careerId: string | number, projectId: string | number, project: NormalizedProject) => Promise<unknown>} [updateProject]
+ * @property {(resumeId: string | number, careerId: string | number, projectId: string | number) => Promise<unknown>} deleteProject
+ * @property {(resumeId: string | number, careerId: string | number, project: NormalizedProject) => Promise<unknown>} addProject
+ * @property {(resumeId: string | number, careerId: string | number, career: LocalCareer) => Promise<unknown>} update
+ * @property {(resumeId: string | number, career: LocalCareer) => Promise<{ id?: string | number, data?: { id?: string | number } }>} add
+ * @property {(resumeId: string | number, careerId: string | number) => Promise<unknown>} delete
+ */
+
+/**
+ * @typedef {Object} WantedCareersApiClient
+ * @property {WantedCareerApi} resumeCareer
+ */
+
+/**
+ * @param {CareerProject} [project]
+ * @returns {string}
+ */
 function composeCareerProjectDescription(project = {}) {
   const period = normalizeText(project.period);
   const techStack = Array.isArray(project.techStack)
@@ -27,27 +98,33 @@ function composeCareerProjectDescription(project = {}) {
   return truncateWantedProjectDescription(normalizeText(project.description));
 }
 
+/**
+ * @param {SsotCareer} [ssotCareer]
+ * @returns {NormalizedProject[]}
+ */
 function normalizeCareerProjects(ssotCareer = {}) {
   if (Array.isArray(ssotCareer.projects)) {
-    return ssotCareer.projects
-      .map((project) => {
-        if (!project || typeof project !== 'object') {
-          return null;
-        }
+    return /** @type {NormalizedProject[]} */ (
+      ssotCareer.projects
+        .map((project) => {
+          if (!project || typeof project !== 'object') {
+            return null;
+          }
 
-        const title =
-          normalizeText(project.name) ||
-          normalizeText(project.title) ||
-          normalizeText(ssotCareer.project);
-        const description = composeCareerProjectDescription(project);
+          const title =
+            normalizeText(project.name) ||
+            normalizeText(project.title) ||
+            normalizeText(ssotCareer.project);
+          const description = composeCareerProjectDescription(project);
 
-        if (!title || !description) {
-          return null;
-        }
+          if (!title || !description) {
+            return null;
+          }
 
-        return { title, description };
-      })
-      .filter(Boolean);
+          return { title, description };
+        })
+        .filter(Boolean)
+    );
   }
   if (ssotCareer.project && ssotCareer.description) {
     return [
@@ -79,6 +156,14 @@ function normalizeCareerProjects(ssotCareer = {}) {
   return [];
 }
 
+/**
+ * @param {WantedCareersApiClient} api
+ * @param {string | number} resume_id
+ * @param {string | number} careerId
+ * @param {SsotCareer} [ssotCareer]
+ * @param {RemoteProject[]} [remoteProjects]
+ * @returns {Promise<void>}
+ */
 async function syncCareerProjects(api, resume_id, careerId, ssotCareer = {}, remoteProjects = []) {
   const strictSync = isStrictSyncEnabled();
   const localProjects = normalizeCareerProjects(ssotCareer);
@@ -115,12 +200,20 @@ async function syncCareerProjects(api, resume_id, careerId, ssotCareer = {}, rem
   }
 }
 
+/**
+ * @param {WantedCareersApiClient} api
+ * @param {string | number} resume_id
+ * @param {LocalCareer[]} localCareers
+ * @param {RemoteCareer[]} remoteCareers
+ * @param {SsotCareer[]} ssotCareers
+ * @returns {Promise<void>}
+ */
 export async function syncCareers(api, resume_id, localCareers, remoteCareers, ssotCareers) {
   const matchedIds = new Set();
   for (let i = 0; i < localCareers.length; i++) {
     const career = localCareers[i];
     const ssotCareer = ssotCareers[i] || {};
-    const companyName = career.company?.name || career.company || '';
+    const companyName = /** @type {string} */ (career.company?.name || career.company || '');
     const normalizedName = normalizeCompanyName(companyName);
     const matchedCareer = remoteCareers.find(
       (rc) => normalizeCompanyName(rc.company?.name || rc.company_name) === normalizedName

@@ -8,6 +8,10 @@ const SECTION_HEADERS = {
 const NEXT_SECTION =
   /^(기본정보|인적사항|경력|경력사항|학력|학력사항|스킬|기술|보유기술|자격증|자격|career|work experience|education|skills|tech stack|certifications?|licenses?)$/i;
 
+/**
+ * @param {string} [value]
+ * @returns {string}
+ */
 function decodeEntities(value = '') {
   return value
     .replace(/&nbsp;/gi, ' ')
@@ -19,12 +23,20 @@ function decodeEntities(value = '') {
     .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)));
 }
 
+/**
+ * @param {string} [html]
+ * @returns {string}
+ */
 function stripTags(html = '') {
   return decodeEntities(html.replace(/<[^>]+>/g, ' '))
     .replace(/\s+/g, ' ')
     .trim();
 }
 
+/**
+ * @param {string} [html]
+ * @returns {string[]}
+ */
 function visibleTextLines(html = '') {
   const text = decodeEntities(
     html
@@ -41,6 +53,11 @@ function visibleTextLines(html = '') {
     .filter(Boolean);
 }
 
+/**
+ * @param {string} html
+ * @param {string} attrPattern
+ * @returns {string}
+ */
 function matchAttrBlock(html, attrPattern) {
   const blockPattern = new RegExp(
     `<(?<tag>[a-z0-9]+)[^>]*(?:class|id|data-[^=]+)=["'][^"']*(?:${attrPattern})[^"']*["'][^>]*>(?<body>[\\s\\S]*?)<\\/\\k<tag>>`,
@@ -49,10 +66,20 @@ function matchAttrBlock(html, attrPattern) {
   return html.match(blockPattern)?.groups?.body || '';
 }
 
+/**
+ * @param {string} html
+ * @param {string} attrPattern
+ * @returns {string}
+ */
 function matchAttrText(html, attrPattern) {
   return stripTags(matchAttrBlock(html, attrPattern));
 }
 
+/**
+ * @param {string} text
+ * @param {RegExp[]} patterns
+ * @returns {string}
+ */
 function firstMatch(text, patterns) {
   for (const pattern of patterns) {
     const match = text.match(pattern);
@@ -62,6 +89,11 @@ function firstMatch(text, patterns) {
   return '';
 }
 
+/**
+ * @param {string[]} lines
+ * @param {RegExp} headerPattern
+ * @returns {string[]}
+ */
 function sectionLines(lines, headerPattern) {
   const start = lines.findIndex((line) => headerPattern.test(line));
   if (start === -1) return [];
@@ -74,6 +106,10 @@ function sectionLines(lines, headerPattern) {
   return result;
 }
 
+/**
+ * @param {string} html
+ * @param {string[]} lines
+ */
 function parseBasic(html, lines) {
   const allText = lines.join('\n');
   const semanticName = matchAttrText(html, '(?:user-)?name|resume-name|profile-name');
@@ -107,12 +143,19 @@ function parseBasic(html, lines) {
   };
 }
 
+/**
+ * @param {string} html
+ * @param {string} attrPattern
+ * @param {string[]} fallbackLines
+ * @returns {string[][]}
+ */
 function groupSectionRows(html, attrPattern, fallbackLines) {
   const semanticBlock = matchAttrBlock(html, attrPattern);
   if (!semanticBlock) return fallbackLines.length ? [fallbackLines] : [];
 
   const rowPattern =
     /<(li|tr|article|section|div)[^>]*(?:class|data-[^=]+)=["'][^"']*(?:item|row|career|education|certificate|license)[^"']*["'][^>]*>([\s\S]*?)<\/\1>/gi;
+  /** @type {string[][]} */
   const rows = [];
   for (const match of semanticBlock.matchAll(rowPattern)) {
     const rowLines = visibleTextLines(match[2]);
@@ -123,6 +166,9 @@ function groupSectionRows(html, attrPattern, fallbackLines) {
   return rows.length ? rows : blockLines.length ? [blockLines] : [];
 }
 
+/**
+ * @param {string[]} lines
+ */
 function parseCareerRow(lines) {
   const joined = lines.join(' ');
   const period = firstMatch(joined, [
@@ -152,6 +198,10 @@ function parseCareerRow(lines) {
   };
 }
 
+/**
+ * @param {string} html
+ * @param {string[]} lines
+ */
 function parseCareers(html, lines) {
   const fallbackLines = sectionLines(lines, SECTION_HEADERS.careers);
   return groupSectionRows(html, 'career|work|experience', fallbackLines)
@@ -159,6 +209,10 @@ function parseCareers(html, lines) {
     .filter((career) => career.company || career.role || career.description);
 }
 
+/**
+ * @param {string} html
+ * @param {string[]} lines
+ */
 function parseEducation(html, lines) {
   const fallbackLines = sectionLines(lines, SECTION_HEADERS.education);
   const rows = groupSectionRows(html, 'education|school|univ|학력', fallbackLines);
@@ -180,6 +234,11 @@ function parseEducation(html, lines) {
   };
 }
 
+/**
+ * @param {string} html
+ * @param {string[]} lines
+ * @returns {string[]}
+ */
 function parseSkills(html, lines) {
   const semantic = matchAttrText(html, 'skill|tech-stack|technology');
   const source = semantic || sectionLines(lines, SECTION_HEADERS.skills).join(', ');
@@ -193,6 +252,9 @@ function parseSkills(html, lines) {
   ];
 }
 
+/**
+ * @param {string[]} lines
+ */
 function parseCertificationRow(lines) {
   const joined = lines.join(' ');
   return {
@@ -202,6 +264,10 @@ function parseCertificationRow(lines) {
   };
 }
 
+/**
+ * @param {string} html
+ * @param {string[]} lines
+ */
 function parseCertifications(html, lines) {
   const fallbackLines = sectionLines(lines, SECTION_HEADERS.certifications);
   return groupSectionRows(html, 'cert|license|자격', fallbackLines)
@@ -209,6 +275,10 @@ function parseCertifications(html, lines) {
     .filter((certification) => certification.name);
 }
 
+/**
+ * @param {string} [html]
+ * @param {{ sourceUrl?: string; resumeNo?: string | number }} [options]
+ */
 export function parseJobKoreaProfile(html = '', { sourceUrl = '', resumeNo = '' } = {}) {
   const lines = visibleTextLines(html);
 

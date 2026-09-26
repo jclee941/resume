@@ -2,6 +2,10 @@ const { buildLanguageLink } = require('./nav.js');
 
 const LANGUAGE_LINK_RE = /<a\b([^>]*\bhreflang="(ko|en|ja)"[^>]*)>\s*(KO|EN|JA)\s*<\/a\s*>/g;
 
+/**
+ * @param {string} html
+ * @returns {string}
+ */
 function applyJapaneseMeta(html) {
   return html
     .replace(/<html lang="ko"/i, '<html lang="ja"')
@@ -86,8 +90,16 @@ function applyJapaneseMeta(html) {
       /"description": "[^"]*"/g,
       '"description": "イ・ジェチョル - Security & Infrastructure Engineer ポートフォリオ"'
     )
-    .replace(LANGUAGE_LINK_RE, (_match, attrs, lang, label) =>
-      buildLanguageLink(attrs, lang, label)
+    .replace(
+      LANGUAGE_LINK_RE,
+      /**
+       * @param {string} _match
+       * @param {string} attrs
+       * @param {string} lang
+       * @param {string} label
+       * @returns {string}
+       */
+      (_match, attrs, lang, label) => buildLanguageLink(attrs, lang, label)
     );
 }
 

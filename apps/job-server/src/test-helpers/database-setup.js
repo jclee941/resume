@@ -3,9 +3,45 @@
 // ========================
 
 /**
+ * @typedef {Object} D1ClientLike
+ * @property {(sql: string, params?: unknown[]) => Promise<unknown>} query
+ */
+
+/**
+ * @typedef {Object} ApplicationRecord
+ * @property {string} id
+ * @property {string} job_id
+ * @property {string} source
+ * @property {string} [source_url]
+ * @property {string} position
+ * @property {string} company
+ * @property {string} [location]
+ * @property {number} [match_score]
+ * @property {string} [status]
+ * @property {string} [priority]
+ * @property {string} [resume_id]
+ * @property {string} [cover_letter]
+ * @property {string} [notes]
+ * @property {string} [created_at]
+ * @property {string} [updated_at]
+ * @property {string} [applied_at]
+ * @property {string} [workflow_id]
+ * @property {string} [approved_at]
+ * @property {string} [rejected_at]
+ */
+
+/**
+ * @typedef {Object} TestDatabaseSetup
+ * @property {() => Promise<void>} createTables
+ * @property {() => Promise<void>} dropTables
+ * @property {() => Promise<void>} resetTables
+ * @property {(applications: ApplicationRecord[]) => Promise<void>} seedApplications
+ */
+
+/**
  * Setup and cleanup D1 tables for testing
- * @param {Object} d1Client
- * @returns {Object} Database setup utilities
+ * @param {D1ClientLike} d1Client
+ * @returns {TestDatabaseSetup} Database setup utilities
  */
 export function setupTestDatabase(d1Client) {
   const setup = {
@@ -83,7 +119,7 @@ export function setupTestDatabase(d1Client) {
 
     /**
      * Seed applications
-     * @param {Array} applications
+     * @param {ApplicationRecord[]} applications
      * @returns {Promise<void>}
      */
     async seedApplications(applications) {

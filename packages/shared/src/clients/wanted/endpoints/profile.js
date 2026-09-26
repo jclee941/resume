@@ -1,6 +1,27 @@
+/**
+ * @typedef {import('../http-client.js').HttpClient} HttpClient
+ */
+
+/**
+ * @typedef {Object} ApplicationListOptions
+ * @property {number | string} [limit]
+ * @property {number | string} [offset]
+ * @property {string} [status]
+ */
+
+/**
+ * @typedef {Object} BookmarkListOptions
+ * @property {number | string} [limit]
+ * @property {number | string} [offset]
+ */
+
 export class ProfileEndpoint {
+  /** @type {HttpClient} */
   #client;
 
+  /**
+   * @param {HttpClient} httpClient
+   */
   constructor(httpClient) {
     this.#client = httpClient;
   }
@@ -17,6 +38,9 @@ export class ProfileEndpoint {
     return response;
   }
 
+  /**
+   * @param {Record<string, unknown>} profileData
+   */
   async update(profileData) {
     const response = await this.#client.snsProfileRequest('/profile', {
       method: 'PATCH',
@@ -25,20 +49,26 @@ export class ProfileEndpoint {
     return response;
   }
 
+  /**
+   * @param {ApplicationListOptions} [options]
+   */
   async getApplications(options = {}) {
     const params = new URLSearchParams();
-    params.append('limit', options.limit || 20);
-    params.append('offset', options.offset || 0);
-    if (options.status) params.append('status', options.status);
+    params.append('limit', String(options.limit || 20));
+    params.append('offset', String(options.offset || 0));
+    if (options.status) params.append('status', String(options.status));
 
     const response = await this.#client.request(`/applications?${params}`);
     return response.data || response;
   }
 
+  /**
+   * @param {BookmarkListOptions} [options]
+   */
   async getBookmarks(options = {}) {
     const params = new URLSearchParams();
-    params.append('limit', options.limit || 20);
-    params.append('offset', options.offset || 0);
+    params.append('limit', String(options.limit || 20));
+    params.append('offset', String(options.offset || 0));
 
     const response = await this.#client.request(`/bookmarks?${params}`);
     return response.data || response;
@@ -51,12 +81,19 @@ export class ProfileEndpoint {
 }
 
 export class ExperienceEndpoint {
+  /** @type {HttpClient} */
   #client;
 
+  /**
+   * @param {HttpClient} httpClient
+   */
   constructor(httpClient) {
     this.#client = httpClient;
   }
 
+  /**
+   * @param {Record<string, unknown>} experienceData
+   */
   async add(experienceData) {
     const response = await this.#client.snsRequest('/user/experiences', {
       method: 'POST',
@@ -65,6 +102,10 @@ export class ExperienceEndpoint {
     return response;
   }
 
+  /**
+   * @param {string | number} experienceId
+   * @param {Record<string, unknown>} experienceData
+   */
   async update(experienceId, experienceData) {
     const response = await this.#client.snsRequest(`/user/experiences/${experienceId}`, {
       method: 'PUT',
@@ -73,6 +114,9 @@ export class ExperienceEndpoint {
     return response;
   }
 
+  /**
+   * @param {string | number} experienceId
+   */
   async delete(experienceId) {
     const response = await this.#client.snsRequest(`/user/experiences/${experienceId}`, {
       method: 'DELETE',
@@ -82,12 +126,19 @@ export class ExperienceEndpoint {
 }
 
 export class EducationEndpoint {
+  /** @type {HttpClient} */
   #client;
 
+  /**
+   * @param {HttpClient} httpClient
+   */
   constructor(httpClient) {
     this.#client = httpClient;
   }
 
+  /**
+   * @param {Record<string, unknown>} educationData
+   */
   async add(educationData) {
     const response = await this.#client.snsRequest('/user/educations', {
       method: 'POST',
@@ -96,6 +147,10 @@ export class EducationEndpoint {
     return response;
   }
 
+  /**
+   * @param {string | number} educationId
+   * @param {Record<string, unknown>} educationData
+   */
   async update(educationId, educationData) {
     const response = await this.#client.snsRequest(`/user/educations/${educationId}`, {
       method: 'PUT',
@@ -104,6 +159,9 @@ export class EducationEndpoint {
     return response;
   }
 
+  /**
+   * @param {string | number} educationId
+   */
   async delete(educationId) {
     const response = await this.#client.snsRequest(`/user/educations/${educationId}`, {
       method: 'DELETE',
@@ -113,12 +171,19 @@ export class EducationEndpoint {
 }
 
 export class SkillsEndpoint {
+  /** @type {HttpClient} */
   #client;
 
+  /**
+   * @param {HttpClient} httpClient
+   */
   constructor(httpClient) {
     this.#client = httpClient;
   }
 
+  /**
+   * @param {Record<string, unknown>} skillData
+   */
   async add(skillData) {
     const response = await this.#client.snsRequest('/user/skills', {
       method: 'POST',
@@ -127,6 +192,9 @@ export class SkillsEndpoint {
     return response;
   }
 
+  /**
+   * @param {string | number} skillId
+   */
   async remove(skillId) {
     const response = await this.#client.snsRequest(`/user/skills/${skillId}`, {
       method: 'DELETE',

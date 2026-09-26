@@ -2,6 +2,13 @@ const DEFAULT_BASE_URL = 'https://infisical.jclee.me/api/v3';
 const CACHE_TTL_MS = 5 * 60 * 1000;
 
 export class SecretsClient {
+  /**
+   * @param {string} [token]
+   * @param {string} [environment]
+   * @param {string} [projectID]
+   * @param {string|null} [baseURL]
+   * @param {{ warn(msg: string, ...args: unknown[]): void }|null} [logger]
+   */
   constructor(token, environment, projectID, baseURL = null, logger = null) {
     this.token = token;
     this.environment = environment;
@@ -11,6 +18,10 @@ export class SecretsClient {
     this.logger = logger ?? console;
   }
 
+  /**
+   * @param {{ warn(msg: string, ...args: unknown[]): void }|null} [logger]
+   * @returns {SecretsClient|FallbackSecretsClient}
+   */
   static fromEnv(logger = null) {
     const log = logger ?? console;
     const token = process.env.INFISICAL_TOKEN;
@@ -28,6 +39,10 @@ export class SecretsClient {
     return new SecretsClient(token, environment, projectID, null, logger);
   }
 
+  /**
+   * @param {string} key
+   * @returns {Promise<string|null>}
+   */
   async get(key) {
     const cached = this.cache.get(key);
     if (cached && Date.now() < cached.expiresAt) {
@@ -48,12 +63,17 @@ export class SecretsClient {
         return result.value;
       }
     } catch (err) {
-      this.logger.warn(`[SecretsClient] Infisical fetch failed: ${err.message}`);
+      this.logger.warn(
+        `[SecretsClient] Infisical fetch failed: ${err instanceof Error ? err.message : String(err)}`
+      );
     }
 
     return this.fallbackToEnv(key);
   }
 
+  /**
+   * @returns {Promise<Array<{ secretKey: string; secretValue: string }>>}
+   */
   async fetchSecrets() {
     const url = `${this.baseURL}/secrets?environment=${this.environment}&workspaceId=${this.projectID}`;
 
@@ -69,10 +89,16 @@ export class SecretsClient {
       throw new Error(`Infisical API error: ${resp.status} ${body}`);
     }
 
-    const data = await resp.json();
+    const data = /** @type {{ secrets?: Array<{ secretKey: string; secretValue: string }> }} */ (
+      await resp.json()
+    );
     return data.secrets || [];
   }
 
+  /**
+   * @param {string} key
+   * @returns {string|null}
+   */
   fallbackToEnv(key) {
     const value = process.env[key];
     if (value) {
@@ -81,6 +107,10 @@ export class SecretsClient {
     return null;
   }
 
+  /**
+   * @param {string} key
+   * @returns {Promise<string>}
+   */
   async mustGet(key) {
     const value = await this.get(key);
     if (!value) {
@@ -89,6 +119,11 @@ export class SecretsClient {
     return value;
   }
 
+  /**
+   * @param {string} key
+   * @param {string} defaultVal
+   * @returns {Promise<string>}
+   */
   async getWithDefault(key, defaultVal) {
     const value = await this.get(key);
     return value || defaultVal;
@@ -119,10 +154,18 @@ export class SecretsClient {
 }
 
 class FallbackSecretsClient {
+  /**
+   * @param {string} key
+   * @returns {Promise<string|null>}
+   */
   async get(key) {
     return process.env[key] || null;
   }
 
+  /**
+   * @param {string} key
+   * @returns {Promise<string>}
+   */
   async mustGet(key) {
     const value = process.env[key];
     if (!value) {
@@ -131,6 +174,11 @@ class FallbackSecretsClient {
     return value;
   }
 
+  /**
+   * @param {string} key
+   * @param {string} defaultVal
+   * @returns {Promise<string>}
+   */
   async getWithDefault(key, defaultVal) {
     return process.env[key] || defaultVal;
   }

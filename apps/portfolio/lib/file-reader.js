@@ -12,7 +12,7 @@ const { buildSkillRadarData } = require('./skill-radar-data');
 /**
  * Build configuration for source files loaded by the generator.
  * @param {string} baseDir - Portfolio worker directory.
- * @returns {Array<{path: string, encoding: string|null, name: string}>} File list.
+ * @returns {Array<{path: string, encoding: BufferEncoding|null, name: string, optional?: boolean}>} File list.
  */
 function getFilesToRead(baseDir) {
   return [
@@ -118,6 +118,7 @@ function getFilesToRead(baseDir) {
 /**
  * Bundle main.js using esbuild and escape for template literal embedding.
  * @param {string} baseDir - Portfolio worker directory.
+ * @param {Record<string, string>} [defines]
  * @returns {Promise<string>} Bundled and escaped JavaScript source.
  */
 async function bundleMainScript(baseDir, defines = {}) {
@@ -157,8 +158,8 @@ async function bundleCss(baseDir) {
 
 /**
  * Read all build input files and bundle dependent assets.
- * @param {{baseDir: string, logger: {log: Function}}} options - Build options.
- * @returns {Promise<Object>} Raw source payload.
+ * @param {{baseDir: string, logger: {log: (msg: string) => void, warn: (msg: string) => void}}} options - Build options.
+ * @returns {Promise<Object.<string, unknown>>} Raw source payload.
  */
 async function readBuildInputs({ baseDir, logger }) {
   logger.log('📂 Reading source files...');
@@ -168,14 +169,17 @@ async function readBuildInputs({ baseDir, logger }) {
   logger.log('📦 Bundling main.js...');
   // Inject real skills from data.json into the client skill-radar widget via
   // esbuild `define`, replacing the module's stale hardcoded fallback.
+  /** @type {Record<string, string>} */
   let skillRadarDefine = {};
   try {
-    const projectData = JSON.parse(fileContents.projectDataRaw || '{}');
+    const projectData = JSON.parse(/** @type {string} */ (fileContents.projectDataRaw) || '{}');
     const radarData = buildSkillRadarData(projectData.skills);
     skillRadarDefine = { __SKILL_DATA__: JSON.stringify(radarData) };
     logger.log(`✓ Injected ${Object.keys(radarData).length} skill categories into radar`);
   } catch (err) {
-    logger.warn(`⚠ Skill radar injection skipped: ${err.message}`);
+    logger.warn(
+      `⚠ Skill radar injection skipped: ${err instanceof Error ? err.message : String(err)}`
+    );
   }
   const mainJs = await bundleMainScript(baseDir, skillRadarDefine);
 

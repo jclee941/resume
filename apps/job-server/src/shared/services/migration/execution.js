@@ -5,6 +5,36 @@
 import { readFile } from 'node:fs/promises';
 import { computeChecksum, splitStatements, MIGRATIONS_TABLE } from './discovery.js';
 
+/**
+ * @typedef {import('./discovery.js').DiscoveredMigration} DiscoveredMigration
+ *
+ * @typedef {{
+ *   exec(sql: string): Promise<unknown>;
+ *   prepare(sql: string): {
+ *     bind(...args: (string | number | null | undefined)[]): {
+ *       run(): Promise<unknown>;
+ *     };
+ *   };
+ * }} ExecutionDatabase
+ *
+ * @typedef {(message: string) => void} MigrationLogger
+ *
+ * @typedef {{
+ *   version: string;
+ *   name: string;
+ *   status: string;
+ *   execution_time_ms: number;
+ *   statements?: string[];
+ * }} MigrationResult
+ */
+
+/**
+ * @param {ExecutionDatabase} db
+ * @param {DiscoveredMigration} migration
+ * @param {boolean} dryRun
+ * @param {MigrationLogger} logger
+ * @returns {Promise<MigrationResult>}
+ */
 export async function applyMigration(db, migration, dryRun, logger) {
   const sql = await readFile(migration.upPath, 'utf-8');
   const stmts = splitStatements(sql);
@@ -38,6 +68,13 @@ export async function applyMigration(db, migration, dryRun, logger) {
   };
 }
 
+/**
+ * @param {ExecutionDatabase} db
+ * @param {DiscoveredMigration & { downPath: string }} migration
+ * @param {boolean} dryRun
+ * @param {MigrationLogger} logger
+ * @returns {Promise<MigrationResult>}
+ */
 export async function rollbackMigration(db, migration, dryRun, logger) {
   const sql = await readFile(migration.downPath, 'utf-8');
   const stmts = splitStatements(sql);

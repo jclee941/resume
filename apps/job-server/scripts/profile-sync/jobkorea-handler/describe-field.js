@@ -1,8 +1,13 @@
+/**
+ * @param {string} name
+ * @returns {string}
+ */
 export function describeJobKoreaField(name) {
   let match = name.match(
     /^Career\[([^\]]+)\]\.(C_Name|C_Part|CSYM|CEYM|M_MainJob_Jikwi|RetireSt|M_MainField|Co_Code|CName_Code|Biz_No|Job_Type_Code|M_MainJob|Job_Field_Direct|M_MainPay_User|Retire_Rsn_Code|NHIS_LINKED_STAT|CNameHold|OpenStat|Prfm_Prt|C_Client|C_TeamSize|C_MyRole|C_WorkType)$/
   );
   if (match) {
+    /** @type {Record<string, string>} */
     const map = {
       C_Name: 'company',
       C_Part: 'department',
@@ -33,6 +38,7 @@ export function describeJobKoreaField(name) {
 
   match = name.match(/^Career\[([^\]]+)\]\.Project\[([^\]]+)\]\.(P_Name|P_Cntnt)$/);
   if (match) {
+    /** @type {Record<string, string>} */
     const map = {
       P_Name: 'name',
       P_Cntnt: 'description',
@@ -44,6 +50,7 @@ export function describeJobKoreaField(name) {
     /^UnivSchool\[([^\]]+)\]\.(Schl_Name|Entc_YM|Grad_YM|Grad_Type_Code|Schl_Type_Code)$/
   );
   if (match) {
+    /** @type {Record<string, string>} */
     const map = {
       Schl_Name: 'school',
       Entc_YM: 'start',
@@ -56,6 +63,7 @@ export function describeJobKoreaField(name) {
 
   match = name.match(/^HighSchool\[([^\]]+)\]\.(Schl_Name|Entc_YM|Grad_YM|Grad_Type_Code)$/);
   if (match) {
+    /** @type {Record<string, string>} */
     const map = {
       Schl_Name: 'school',
       Entc_YM: 'start',
@@ -77,6 +85,7 @@ export function describeJobKoreaField(name) {
     /^License\[([^\]]+)\]\.(Lc_Name|Lc_Pub|Lc_YYMM|Lc_Code|Naver_Lcns_Linked_Stat|Lc_Exp|Lc_CredId|Lc_CredUrl|Lc_Status|Lc_Note)$/
   );
   if (match) {
+    /** @type {Record<string, string>} */
     const map = {
       Lc_Name: 'name',
       Lc_Pub: 'issuer',
@@ -94,6 +103,7 @@ export function describeJobKoreaField(name) {
 
   match = name.match(/^Skill\[([^\]]+)\]\.(Skill_Name|Skill_Level)$/);
   if (match) {
+    /** @type {Record<string, string>} */
     const map = {
       Skill_Name: 'name',
       Skill_Level: 'level',
@@ -103,6 +113,7 @@ export function describeJobKoreaField(name) {
 
   match = name.match(/^ResumeProfile\[([^\]]+)\]\.(Header|Contents)$/);
   if (match) {
+    /** @type {Record<string, string>} */
     const map = {
       Header: 'title',
       Contents: 'contents',
@@ -112,6 +123,7 @@ export function describeJobKoreaField(name) {
 
   match = name.match(/^UserResume\.(M_Resume_Title|M_Career_Text|M_Career_Text_Stat)$/);
   if (match) {
+    /** @type {Record<string, string>} */
     const map = {
       M_Resume_Title: 'resume title',
       M_Career_Text: 'career statement',
@@ -122,6 +134,7 @@ export function describeJobKoreaField(name) {
 
   match = name.match(/^Language\[([^\]]+)\]\.(Lang1_Name|Lang1_Stat)$/);
   if (match) {
+    /** @type {Record<string, string>} */
     const map = {
       Lang1_Name: 'name',
       Lang1_Stat: 'level',
@@ -131,6 +144,7 @@ export function describeJobKoreaField(name) {
 
   match = name.match(/^Project\[([^\]]+)\]\.(P_Name|P_Cntnt|P_Url)$/);
   if (match) {
+    /** @type {Record<string, string>} */
     const map = {
       P_Name: 'name',
       P_Cntnt: 'description',
@@ -141,6 +155,7 @@ export function describeJobKoreaField(name) {
 
   match = name.match(/^Award\[([^\]]+)\]\.(Award_Name|Award_Inst_Name|Award_Year|Award_Cntnt)$/);
   if (match) {
+    /** @type {Record<string, string>} */
     const map = {
       Award_Name: 'name',
       Award_Inst_Name: 'organization',

@@ -11,27 +11,55 @@
  */
 
 /**
+ * @typedef {Object} AppErrorOptions
+ * @property {string} [errorCode] - Machine-readable code
+ * @property {boolean} [isOperational] - Expected (true) vs programmer error (false)
+ * @property {Record<string, unknown> & { details?: unknown }} [context] - Structured debug data
+ * @property {Error} [cause] - Original error (Error.cause chaining)
+ */
+
+/**
+ * @typedef {AppErrorOptions & { details?: unknown }} HttpErrorOptions
+ */
+
+/**
+ * @typedef {AppErrorOptions & { platform?: string, step?: string }} CrawlerErrorOptions
+ */
+
+/**
+ * @typedef {AppErrorOptions & { provider?: string }} AuthErrorOptions
+ */
+
+/**
+ * @typedef {AppErrorOptions & { errors?: Array<{field: string, message: string}> }} ValidationErrorOptions
+ */
+
+/**
+ * @typedef {AppErrorOptions & { service?: string, statusCode?: number }} ExternalServiceErrorOptions
+ */
+
+/**
  * Base application error. All custom errors extend this.
  */
 export class AppError extends Error {
   /**
    * @param {string} message - Human-readable error description
-   * @param {object} [options]
-   * @param {string} [options.errorCode='INTERNAL_ERROR'] - Machine-readable code
-   * @param {boolean} [options.isOperational=true] - Expected (true) vs programmer error (false)
-   * @param {object} [options.context={}] - Structured debug data
-   * @param {Error} [options.cause] - Original error (Error.cause chaining)
+   * @param {AppErrorOptions} [options]
    */
   constructor(message, options = {}) {
     super(message, { cause: options.cause });
     this.name = 'AppError';
     this.errorCode = options.errorCode || 'INTERNAL_ERROR';
     this.isOperational = options.isOperational !== false;
+    /** @type {Record<string, unknown> & { details?: unknown }} */
     this.context = options.context || {};
     this.timestamp = new Date().toISOString();
   }
 
-  /** Serialize for structured logging (ECS-compatible) */
+  /**
+   * Serialize for structured logging (ECS-compatible)
+   * @returns {Record<string, unknown>}
+   */
   toJSON() {
     return {
       name: this.name,
@@ -41,12 +69,17 @@ export class AppError extends Error {
       context: this.context,
       timestamp: this.timestamp,
       stack: this.stack?.substring(0, 2000),
-      ...(this.cause && {
-        cause:
-          this.cause instanceof AppError
-            ? this.cause.toJSON()
-            : { message: this.cause.message, name: this.cause.name },
-      }),
+      .../** @type {Record<string, unknown>} */ (
+        this.cause && {
+          cause:
+            this.cause instanceof AppError
+              ? this.cause.toJSON()
+              : {
+                  message: /** @type {Error} */ (this.cause).message,
+                  name: /** @type {Error} */ (this.cause).name,
+                },
+        }
+      ),
     };
   }
 }
@@ -59,7 +92,7 @@ export class HttpError extends AppError {
   /**
    * @param {number} statusCode - HTTP status code
    * @param {string} message
-   * @param {object} [options]
+   * @param {HttpErrorOptions} [options]
    */
   constructor(statusCode, message, options = {}) {
     super(message, {
@@ -70,13 +103,18 @@ export class HttpError extends AppError {
     this.statusCode = statusCode;
   }
 
-  /** Generate JSON error response for Workers */
+  /**
+   * Generate JSON error response for Workers
+   * @param {Record<string, string>} [headers]
+   */
   toResponse(headers = {}) {
     return new Response(
       JSON.stringify({
         error: this.message,
         errorCode: this.errorCode,
-        ...(this.context.details && { details: this.context.details }),
+        .../** @type {Record<string, unknown>} */ (
+          this.context.details && { details: this.context.details }
+        ),
       }),
       {
         status: this.statusCode,
@@ -128,9 +166,7 @@ export class RateLimitError extends HttpError {
 export class CrawlerError extends AppError {
   /**
    * @param {string} message
-   * @param {object} [options]
-   * @param {string} [options.platform] - Target platform (wanted, saramin, etc.)
-   * @param {string} [options.step] - Crawl step that failed (login, search, apply)
+   * @param {CrawlerErrorOptions} [options]
    */
   constructor(message, options = {}) {
     super(message, {
@@ -157,8 +193,7 @@ export class CrawlerError extends AppError {
 export class AuthError extends AppError {
   /**
    * @param {string} message
-   * @param {object} [options]
-   * @param {string} [options.provider] - Auth provider (wanted, google, etc.)
+   * @param {AuthErrorOptions} [options]
    */
   constructor(message, options = {}) {
     super(message, {
@@ -183,8 +218,7 @@ export class AuthError extends AppError {
 export class ValidationError extends AppError {
   /**
    * @param {string} message
-   * @param {object} [options]
-   * @param {Array<{field: string, message: string}>} [options.errors] - Field-level errors
+   * @param {ValidationErrorOptions} [options]
    */
   constructor(message, options = {}) {
     super(message, {
@@ -209,9 +243,7 @@ export class ValidationError extends AppError {
 export class ExternalServiceError extends AppError {
   /**
    * @param {string} message
-   * @param {object} [options]
-   * @param {string} [options.service] - Service name (elasticsearch, slack, d1, kv)
-   * @param {number} [options.statusCode] - HTTP status from external service
+   * @param {ExternalServiceErrorOptions} [options]
    */
   constructor(message, options = {}) {
     super(message, {
@@ -238,7 +270,7 @@ export class ExternalServiceError extends AppError {
  * Handles: Error instances, strings, objects, null/undefined.
  *
  * @param {unknown} err - The caught value
- * @param {object} [context={}] - Additional context
+ * @param {Record<string, unknown>} [context={}] - Additional context
  * @returns {AppError}
  */
 export function normalizeError(err, context = {}) {

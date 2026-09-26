@@ -6,12 +6,57 @@ const AUTH_TAG_LENGTH_BYTES = 16;
 const DEFAULT_TTL_MS = 24 * 60 * 60 * 1000;
 const DEFAULT_CREDENTIAL_SECRET = 'default-dev-key-change-in-production';
 
+/**
+ * @typedef {Object} DeriveKeyOptions
+ * @property {string} [defaultSecret]
+ */
+
+/**
+ * @typedef {Object} EncryptOptions
+ * @property {Buffer} [key]
+ * @property {string} [secret]
+ * @property {Buffer} [iv]
+ * @property {number} [ivLengthBytes]
+ * @property {string} [defaultSecret]
+ */
+
+/**
+ * @typedef {Object} EncryptedEntry
+ * @property {Buffer} encrypted
+ * @property {Buffer} iv
+ * @property {Buffer} tag
+ */
+
+/**
+ * @typedef {Object} DecryptOptions
+ * @property {Buffer} [key]
+ * @property {string} [secret]
+ * @property {string} [defaultSecret]
+ */
+
+/**
+ * @typedef {Object} EncryptionServiceOptions
+ * @property {number} [ttlMs]
+ * @property {() => number} [now]
+ * @property {string} [key]
+ */
+
+/**
+ * @param {string} [secret]
+ * @param {DeriveKeyOptions} [options]
+ * @returns {Buffer}
+ */
 export function deriveAes256GcmKey(secret, options = {}) {
   const raw =
     secret || process.env.ENCRYPTION_KEY || options.defaultSecret || DEFAULT_CREDENTIAL_SECRET;
   return createHash('sha256').update(raw).digest();
 }
 
+/**
+ * @param {string | Buffer} plaintext
+ * @param {EncryptOptions} [options]
+ * @returns {EncryptedEntry}
+ */
 export function encryptAes256Gcm(plaintext, options = {}) {
   const key = options.key ?? deriveAes256GcmKey(options.secret, options);
   const iv = options.iv ?? randomBytes(options.ivLengthBytes ?? IV_LENGTH_BYTES);
@@ -20,6 +65,11 @@ export function encryptAes256Gcm(plaintext, options = {}) {
   return { encrypted, iv, tag: cipher.getAuthTag() };
 }
 
+/**
+ * @param {EncryptedEntry} entry
+ * @param {DecryptOptions} [options]
+ * @returns {string}
+ */
 export function decryptAes256Gcm(entry, options = {}) {
   const key = options.key ?? deriveAes256GcmKey(options.secret, options);
   const decipher = createDecipheriv(ALGORITHM, key, entry.iv);
@@ -28,6 +78,9 @@ export function decryptAes256Gcm(entry, options = {}) {
 }
 
 export class EncryptionService {
+  /**
+   * @param {EncryptionServiceOptions} [options]
+   */
   constructor(options = {}) {
     this.ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
     this.now = options.now ?? (() => Date.now());
@@ -35,6 +88,9 @@ export class EncryptionService {
     this.key = this.#parseKey(this.keyHex);
   }
 
+  /**
+   * @param {Record<string, unknown>} data
+   */
   encrypt(data) {
     if (!data || typeof data !== 'object' || Array.isArray(data)) {
       throw new TypeError('EncryptionService.encrypt expects a plain object');
@@ -53,6 +109,9 @@ export class EncryptionService {
     return Buffer.concat([iv, authTag, ciphertext]).toString('base64');
   }
 
+  /**
+   * @param {string} encryptedBase64
+   */
   decrypt(encryptedBase64) {
     const payload = this.#decryptPayload(encryptedBase64);
     if (this.#isTimestampExpired(payload.timestamp)) {
@@ -61,11 +120,17 @@ export class EncryptionService {
     return payload.data;
   }
 
+  /**
+   * @param {string} encryptedBase64
+   */
   isExpired(encryptedBase64) {
     const payload = this.#decryptPayload(encryptedBase64);
     return this.#isTimestampExpired(payload.timestamp);
   }
 
+  /**
+   * @param {string} encryptedBase64
+   */
   #decryptPayload(encryptedBase64) {
     if (!encryptedBase64 || typeof encryptedBase64 !== 'string') {
       throw new TypeError('Encrypted payload must be a base64 string');
@@ -104,10 +169,16 @@ export class EncryptionService {
     return payload;
   }
 
+  /**
+   * @param {number} timestamp
+   */
   #isTimestampExpired(timestamp) {
     return this.now() - timestamp >= this.ttlMs;
   }
 
+  /**
+   * @param {string | undefined} keyHex
+   */
   #parseKey(keyHex) {
     if (typeof keyHex !== 'string' || !/^[0-9a-fA-F]{64}$/.test(keyHex)) {
       throw new Error('SESSION_ENCRYPTION_KEY must be a 64-character hex string');

@@ -1,9 +1,35 @@
 const { escapeHtml } = require('../template-sanitizer');
 
 /**
+ * @typedef {Object} HeroData
+ * @property {string} titleEn
+ * @property {string} subtitle
+ * @property {string} [email]
+ */
+
+/**
+ * @typedef {Object} InfraItem
+ * @property {string} icon
+ * @property {string} title
+ * @property {string} description
+ * @property {string} status
+ * @property {string} [url]
+ */
+
+/**
+ * @typedef {Object} ContactData
+ * @property {string} [velog]
+ * @property {string} [githubBot]
+ * @property {string} github
+ * @property {string} linkedin
+ * @property {string} email
+ * @property {string} website
+ */
+
+/**
  * Generate hero section HTML from data
  * ✅ FIXED: Added aria-label to email link for accessibility
- * @param {Object} heroData - Hero section data
+ * @param {HeroData} heroData - Hero section data
  * @returns {string} HTML string for hero section
  */
 function generateHeroContent(heroData) {
@@ -18,7 +44,7 @@ function generateHeroContent(heroData) {
 
 /**
  * Generate infrastructure cards HTML from data
- * @param {Array} infraData - Array of infrastructure objects with {icon, title, description, status, url?}
+ * @param {InfraItem[]} infraData - Array of infrastructure objects with {icon, title, description, status, url?}
  * @returns {string} HTML string for infrastructure cards
  */
 function generateInfrastructureCards(infraData) {
@@ -49,7 +75,7 @@ function generateInfrastructureCards(infraData) {
  * Generate contact grid HTML from data
  * ✅ FIXED: Added aria-labels to all links for accessibility
  * ✅ FIXED: Added target="_blank" and rel to website link
- * @param {Object} contactData - Contact information object
+ * @param {ContactData} contactData - Contact information object
  * @returns {string} HTML string with accessible footer links
  */
 function generateContactGrid(contactData) {

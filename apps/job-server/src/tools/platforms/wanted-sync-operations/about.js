@@ -1,6 +1,50 @@
 import { WANTED_ABOUT_LIMIT } from './constants.js';
 import { normalizeText, truncateWantedAbout } from './text-formatting.js';
 
+/**
+ * @typedef {Object} PersonalProject
+ * @property {string[]} [technologies]
+ * @property {string} [description]
+ * @property {string} [tagline]
+ * @property {string} [name]
+ */
+
+/**
+ * @typedef {Object} WantedPlatformVariant
+ * @property {string} [about]
+ */
+
+/**
+ * @typedef {Object} PlatformVariants
+ * @property {WantedPlatformVariant} [wanted]
+ */
+
+/**
+ * @typedef {Object} ResumeSummary
+ * @property {string} [profileStatement]
+ */
+
+/**
+ * @typedef {Object} WantedAboutSourceData
+ * @property {PlatformVariants} [platformVariants]
+ * @property {ResumeSummary} [summary]
+ * @property {PersonalProject[]} [personalProjects]
+ */
+
+/**
+ * @typedef {Object} WantedResumeApi
+ * @property {(resumeId: string | number, payload: { about: string }) => Promise<unknown>} save
+ */
+
+/**
+ * @typedef {Object} WantedApiClient
+ * @property {WantedResumeApi} resume
+ */
+
+/**
+ * @param {PersonalProject} [project]
+ * @returns {string}
+ */
 function composePersonalProjectSummary(project = {}) {
   const technologies = Array.isArray(project.technologies)
     ? project.technologies
@@ -20,6 +64,10 @@ function composePersonalProjectSummary(project = {}) {
   return `- ${projectName} (${technologies}): ${summary}`;
 }
 
+/**
+ * @param {WantedAboutSourceData} [sourceData]
+ * @returns {string}
+ */
 export function composeWantedAbout(sourceData = {}) {
   const manualAbout = normalizeText(sourceData.platformVariants?.wanted?.about);
   if (manualAbout) {
@@ -67,6 +115,13 @@ export function composeWantedAbout(sourceData = {}) {
   return about;
 }
 
+/**
+ * @param {WantedApiClient} api
+ * @param {string | number} resume_id
+ * @param {WantedAboutSourceData} [sourceData]
+ * @param {string | null} [currentAbout]
+ * @returns {Promise<void>}
+ */
 export async function syncAbout(api, resume_id, sourceData, currentAbout) {
   const nextAbout = composeWantedAbout(sourceData);
   if (!nextAbout) {

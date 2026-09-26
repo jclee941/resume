@@ -1,3 +1,42 @@
+/**
+ * @typedef {Record<string, unknown> & {
+ *   company_name?: string;
+ *   company?: string;
+ *   title?: string;
+ *   school_name?: string;
+ *   major?: string;
+ *   text?: string;
+ *   name?: string;
+ *   id?: string | number;
+ * }} ResumeItem
+ */
+
+/**
+ * @typedef {Object} DiffAddition
+ * @property {string} section
+ * @property {ResumeItem} item
+ */
+
+/**
+ * @typedef {Object} DiffUpdate
+ * @property {string} section
+ * @property {ResumeItem} item
+ * @property {ResumeItem} existing
+ */
+
+/**
+ * @typedef {Object} DiffDeletion
+ * @property {string} section
+ * @property {ResumeItem} item
+ */
+
+/**
+ * @typedef {Object} ResumeDiff
+ * @property {DiffAddition[]} additions
+ * @property {DiffUpdate[]} updates
+ * @property {DiffDeletion[]} deletions
+ */
+
 const DEFAULT_COMPARE_SECTIONS = [
   'careers',
   'educations',
@@ -6,7 +45,14 @@ const DEFAULT_COMPARE_SECTIONS = [
   'language_certs',
 ];
 
+/**
+ * @param {Record<string, ResumeItem[]>} master
+ * @param {Record<string, ResumeItem[]>} platform
+ * @param {string[]} [sections]
+ * @returns {ResumeDiff}
+ */
 export function calculateDiff(master, platform, sections = []) {
+  /** @type {ResumeDiff} */
   const diff = {
     additions: [],
     updates: [],
@@ -43,6 +89,11 @@ export function calculateDiff(master, platform, sections = []) {
   return diff;
 }
 
+/**
+ * @param {string} section
+ * @param {ResumeItem} item
+ * @returns {string | number | undefined}
+ */
 export function getItemKey(section, item) {
   switch (section) {
     case 'careers':
@@ -56,6 +107,11 @@ export function getItemKey(section, item) {
   }
 }
 
+/**
+ * @param {unknown} a
+ * @param {unknown} b
+ * @returns {boolean}
+ */
 export function itemsEqual(a, b) {
   return JSON.stringify(a) === JSON.stringify(b);
 }

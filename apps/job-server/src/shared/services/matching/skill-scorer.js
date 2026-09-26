@@ -10,9 +10,31 @@ export const SKILL_ALIASES = {
   observability: ['observability', 'monitoring'],
 };
 
+/**
+ * @typedef {{
+ *   title?: string | null;
+ *   description?: string | null;
+ *   requirements?: unknown;
+ *   [key: string]: unknown;
+ * }} JobSkillListing
+ *
+ * @typedef {{
+ *   score: number;
+ *   matchedSkills: string[];
+ *   matchedKeywords: string[];
+ *   gapKeywords: string[];
+ *   requiredSkills: string[];
+ *   hasHardSkillGap: boolean;
+ * }} SkillScoreResult
+ */
+
 export const DOMAIN_SKILL_PATTERN =
   /(보안|security|devsecops|devops|sre|infra|infrastructure|cloud|aws|docker|kubernetes|terraform|ansible|prometheus|grafana|fortigate|splunk|siem|iac|ci\/cd|cicd|isms|iso ?27001)/;
 
+/**
+ * @param {unknown} value
+ * @returns {string}
+ */
 export function normalizeSkillPhrase(value) {
   let text = normalize(value);
   for (const [canonical, aliases] of Object.entries(SKILL_ALIASES)) {
@@ -23,6 +45,10 @@ export function normalizeSkillPhrase(value) {
   return text;
 }
 
+/**
+ * @param {unknown} value
+ * @returns {string}
+ */
 export function canonicalizeSkill(value) {
   const normalized = normalizeSkillPhrase(value);
   for (const [canonical, aliases] of Object.entries(SKILL_ALIASES)) {
@@ -36,12 +62,21 @@ export function canonicalizeSkill(value) {
   return normalized;
 }
 
+/**
+ * @param {string} skill
+ * @returns {number}
+ */
 export function getSkillWeight(skill) {
   return DOMAIN_SKILL_PATTERN.test(skill) ? 1.5 : 1;
 }
 
+/**
+ * @param {unknown} text
+ * @returns {string[]}
+ */
 export function extractSkillCandidates(text) {
   const segments = normalizeSkillPhrase(text).split(/[\n,;|]+/);
+  /** @type {Set<string>} */
   const candidates = new Set();
   for (const segment of segments) {
     const tokens = toTokens(segment);
@@ -61,6 +96,11 @@ export function extractSkillCandidates(text) {
   return [...candidates];
 }
 
+/**
+ * @param {string[]} resumeSkills
+ * @param {JobSkillListing} jobListing
+ * @returns {SkillScoreResult}
+ */
 export function scoreTechnicalSkills(resumeSkills, jobListing) {
   const jobText = [
     jobListing.title || '',
@@ -86,8 +126,11 @@ export function scoreTechnicalSkills(resumeSkills, jobListing) {
     tokens: toTokens(skill),
   }));
 
+  /** @type {string[]} */
   const matchedSkills = [];
+  /** @type {Set<string>} */
   const matchedKeywords = new Set();
+  /** @type {string[]} */
   const gapKeywords = [];
   let matchedWeight = 0;
   let totalWeight = 0;

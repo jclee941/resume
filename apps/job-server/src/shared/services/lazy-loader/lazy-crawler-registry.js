@@ -9,6 +9,9 @@ export class LazyCrawlerRegistry extends EventEmitter {
   #factories = new Map();
   #logger;
 
+  /**
+   * @param {{ logger?: { info: (...args: unknown[]) => void; error: (...args: unknown[]) => void } }} [_options]
+   */
   constructor(_options = {}) {
     super();
     this.#logger = _options.logger || console;

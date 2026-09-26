@@ -1,7 +1,59 @@
+/**
+ * @typedef {{
+ *   query(sql: string, params?: unknown[]): Promise<unknown[]>;
+ * }} D1QueryClient
+ *
+ * @typedef {{
+ *   d1Client: D1QueryClient;
+ *   updateStatus(id: string, status: string, note?: string): Promise<unknown>;
+ *   update(id: string, patch: Record<string, unknown>): Promise<unknown>;
+ * }} ApplicationRepository
+ *
+ * @typedef {{
+ *   id: string;
+ *   workflowId?: string | null;
+ *   jobId?: string | null;
+ *   jobTitle?: string | null;
+ *   company?: string | null;
+ *   platform?: string | null;
+ *   matchScore?: number | null;
+ *   notes?: string | null;
+ *   now: string;
+ * }} UpsertApprovalParams
+ *
+ * @typedef {{
+ *   status?: string;
+ *   reviewed_by?: string | null;
+ *   reviewed_at?: string | null;
+ *   notes?: string | null;
+ *   updated_at?: string;
+ * }} ApprovalPatch
+ *
+ * @typedef {{
+ *   id: string;
+ *   notes?: string | null;
+ * }} ApprovalRequest
+ *
+ * @typedef {{
+ *   reason?: string;
+ *   events: Array<{ type: string; at: string }>;
+ *   [key: string]: unknown;
+ * }} NotesState
+ */
+
+/**
+ * @param {number} [value]
+ * @returns {string}
+ */
 function toIso(value = Date.now()) {
   return new Date(value).toISOString();
 }
 
+/**
+ * @param {ApplicationRepository} applicationRepository
+ * @param {UpsertApprovalParams} params
+ * @returns {Promise<void>}
+ */
 export async function upsertApprovalRequest(
   applicationRepository,
   { id, workflowId, jobId, jobTitle, company, platform, matchScore, notes, now }
@@ -29,6 +81,11 @@ export async function upsertApprovalRequest(
   );
 }
 
+/**
+ * @param {ApplicationRepository} applicationRepository
+ * @param {string} applicationId
+ * @returns {Promise<unknown>}
+ */
 export async function getApprovalRequestById(applicationRepository, applicationId) {
   const rows = await applicationRepository.d1Client.query(
     'SELECT * FROM approval_requests WHERE id = ? LIMIT 1',
@@ -38,6 +95,12 @@ export async function getApprovalRequestById(applicationRepository, applicationI
   return rows[0] || null;
 }
 
+/**
+ * @param {ApplicationRepository} applicationRepository
+ * @param {string} applicationId
+ * @param {ApprovalPatch} patch
+ * @returns {Promise<void>}
+ */
 export async function updateApprovalRequest(applicationRepository, applicationId, patch) {
   const allowedFields = {
     status: patch.status,
@@ -62,6 +125,15 @@ export async function updateApprovalRequest(applicationRepository, applicationId
   );
 }
 
+/**
+ * @param {ApplicationRepository} applicationRepository
+ * @param {ApprovalRequest} request
+ * @param {string} now
+ * @param {number} timeoutHours
+ * @param {(notes?: string | null) => NotesState} parseNotes
+ * @param {(state: NotesState) => string} stringifyNotes
+ * @returns {Promise<void>}
+ */
 export async function markTimedOut(
   applicationRepository,
   request,

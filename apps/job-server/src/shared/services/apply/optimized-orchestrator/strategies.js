@@ -1,3 +1,72 @@
+/**
+ * @typedef {{
+ *   searchResults(): {
+ *     get(key: string): unknown[] | null | undefined;
+ *     set(key: string, value: unknown[]): void;
+ *   };
+ * }} StrategyCache
+ *
+ * @typedef {{
+ *   useCache?: boolean;
+ *   parallelSearch?: boolean;
+ *   enabledPlatforms: string[];
+ *   [key: string]: unknown;
+ * }} StrategyConfig
+ *
+ * @typedef {{
+ *   search(platform: string, keywords: string[], options: unknown): Promise<unknown[]>;
+ * }} StrategyCrawler
+ *
+ * @typedef {{
+ *   info(message: string, ...args: unknown[]): void;
+ *   error(message: string, ...args: unknown[]): void;
+ *   [key: string]: unknown;
+ * }} StrategyLogger
+ *
+ * @typedef {{
+ *   mark(name: string): void;
+ *   measure(name: string, meta?: Record<string, unknown>): void;
+ *   increment(name: string): void;
+ * }} StrategyMetrics
+ *
+ * @typedef {{
+ *   platforms?: string[];
+ *   [key: string]: unknown;
+ * }} StrategyOptions
+ *
+ * @typedef {{
+ *   startTime?: number;
+ *   cached: number;
+ *   searched: number;
+ *   [key: string]: unknown;
+ * }} StrategyStats
+ *
+ * @typedef {{
+ *   cache: StrategyCache;
+ *   config: StrategyConfig;
+ *   crawler: StrategyCrawler;
+ *   keywords: string[];
+ *   logger: StrategyLogger;
+ *   metrics: StrategyMetrics;
+ *   options: StrategyOptions;
+ *   stats: StrategyStats;
+ * }} SearchJobsParams
+ *
+ * @typedef {{
+ *   crawler: StrategyCrawler;
+ *   jobs: unknown[];
+ *   keywords: string[];
+ *   logger: StrategyLogger;
+ *   metrics: StrategyMetrics;
+ *   options: StrategyOptions;
+ *   platforms: string[];
+ * }} SearchPlatformsParams
+ */
+
+/**
+ * @param {SearchJobsParams} params
+ * @returns {Promise<unknown[]>}
+ */
 export async function searchJobsWithStrategy({
   cache,
   config,
@@ -24,6 +93,7 @@ export async function searchJobsWithStrategy({
     metrics.increment('cache.search.miss');
   }
 
+  /** @type {unknown[]} */
   const jobs = [];
   const platforms = options.platforms || config.enabledPlatforms;
 
@@ -59,6 +129,9 @@ export async function searchJobsWithStrategy({
   return jobs;
 }
 
+/**
+ * @param {SearchPlatformsParams} params
+ */
 async function searchPlatformsInParallel({
   crawler,
   jobs,
@@ -79,7 +152,7 @@ async function searchPlatformsInParallel({
         metrics.measure(`search:${platform}`, {
           platform,
           success: false,
-          error: error.message,
+          error: error instanceof Error ? error.message : String(error),
         });
         throw error;
       }
@@ -97,6 +170,9 @@ async function searchPlatformsInParallel({
   }
 }
 
+/**
+ * @param {SearchPlatformsParams} params
+ */
 async function searchPlatformsSequentially({
   crawler,
   jobs,

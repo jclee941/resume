@@ -1,7 +1,23 @@
 import { jsonResponse } from '../middleware/cors.js';
 
+/**
+ * @typedef {{
+ *   prepare(query: string): {
+ *     all(): Promise<{ results: { key: string; value: string }[] }>;
+ *     bind(...values: unknown[]): {
+ *       run(): Promise<unknown>;
+ *     };
+ *   };
+ * }} ConfigDatabase
+ */
+
+/**
+ * @param {ConfigDatabase} db
+ * @returns {Promise<Response>}
+ */
 export async function getConfig(db) {
   const result = await db.prepare('SELECT key, value FROM config').all();
+  /** @type {Record<string, unknown>} */
   const config = {};
   for (const row of result.results) {
     try {
@@ -13,8 +29,13 @@ export async function getConfig(db) {
   return jsonResponse(config);
 }
 
+/**
+ * @param {Request} request
+ * @param {ConfigDatabase} db
+ * @returns {Promise<Response>}
+ */
 export async function saveConfig(request, db) {
-  const body = await request.json();
+  const body = /** @type {Record<string, unknown>} */ (await request.json());
   const now = new Date().toISOString();
 
   for (const [key, value] of Object.entries(body)) {

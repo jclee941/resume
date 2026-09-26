@@ -1,5 +1,77 @@
 import { APPLICATION_STATUS } from './status.js';
 
+/**
+ * @typedef {{
+ *   status: string;
+ *   timestamp: string;
+ *   note?: string;
+ * }} ApplicationTimelineEntry
+ */
+
+/**
+ * @typedef {{
+ *   id: string;
+ *   jobId: string;
+ *   source: string;
+ *   sourceUrl?: string;
+ *   position: string;
+ *   company: string;
+ *   location?: string;
+ *   matchScore: number;
+ *   status: string;
+ *   priority: string;
+ *   resumeId: string | null;
+ *   coverLetter: string | null;
+ *   notes: string;
+ *   createdAt: string;
+ *   updatedAt: string;
+ *   appliedAt: string | null;
+ *   timeline: ApplicationTimelineEntry[];
+ *   [key: string]: string | number | null | undefined | ApplicationTimelineEntry[];
+ * }} ApplicationRecord
+ */
+
+/**
+ * @typedef {{
+ *   id: string;
+ *   source: string;
+ *   sourceUrl?: string;
+ *   position: string;
+ *   company: string;
+ *   location?: string;
+ *   matchPercentage?: number;
+ *   matchScore?: number;
+ *   applicationPriority?: string;
+ * }} JobInput
+ */
+
+/**
+ * @typedef {{
+ *   resumeId?: string | null;
+ *   coverLetter?: string | null;
+ *   notes?: string;
+ * }} CreateApplicationOptions
+ */
+
+/**
+ * @typedef {{
+ *   status?: string;
+ *   source?: string;
+ *   company?: string;
+ *   fromDate?: string | Date;
+ *   toDate?: string | Date;
+ *   sortBy?: string;
+ *   sortOrder?: 'asc' | 'desc' | string;
+ *   limit?: number;
+ *   offset?: number;
+ * }} ApplicationFilters
+ */
+
+/**
+ * @param {JobInput} job
+ * @param {CreateApplicationOptions} [options]
+ * @returns {ApplicationRecord}
+ */
 export function createApplicationRecord(job, options = {}) {
   const now = new Date().toISOString();
 
@@ -30,6 +102,11 @@ export function createApplicationRecord(job, options = {}) {
   };
 }
 
+/**
+ * @param {ApplicationRecord[]} applications
+ * @param {ApplicationFilters} [filters]
+ * @returns {ApplicationRecord[]}
+ */
 export function filterApplications(applications, filters = {}) {
   let result = [...applications];
 
@@ -43,7 +120,9 @@ export function filterApplications(applications, filters = {}) {
 
   if (filters.company) {
     result = result.filter((application) =>
-      application.company.toLowerCase().includes(filters.company.toLowerCase())
+      application.company
+        .toLowerCase()
+        .includes(/** @type {string} */ (filters.company).toLowerCase())
     );
   }
 
@@ -60,8 +139,8 @@ export function filterApplications(applications, filters = {}) {
   const sortBy = filters.sortBy || 'createdAt';
   const sortOrder = filters.sortOrder || 'desc';
   result.sort((a, b) => {
-    const aVal = a[sortBy];
-    const bVal = b[sortBy];
+    const aVal = /** @type {string | number} */ (a[sortBy]);
+    const bVal = /** @type {string | number} */ (b[sortBy]);
     const comparison = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
     return sortOrder === 'desc' ? -comparison : comparison;
   });
@@ -74,6 +153,10 @@ export function filterApplications(applications, filters = {}) {
   return result;
 }
 
+/**
+ * @param {ApplicationRecord[]} applications
+ * @returns {ApplicationRecord[]}
+ */
 export function getActiveApplications(applications) {
   const activeStatuses = [
     APPLICATION_STATUS.APPLIED,

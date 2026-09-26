@@ -1,5 +1,69 @@
 import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
 
+/**
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       run(): Promise<unknown>;
+ *       first(): Promise<{ [key: string]: unknown; status?: string; count?: number } | null>;
+ *     };
+ *   };
+ * }} D1DatabaseLike
+ */
+
+/**
+ * @typedef {Object} WorkflowContext
+ * @property {{ JOB_DB: D1DatabaseLike }} env
+ */
+
+/**
+ * @typedef {Object} WorkflowState
+ * @property {string} id
+ * @property {string} status
+ * @property {string} [triggerType]
+ * @property {{ jobsFound: number; jobsApproved: number; jobsApplied: number; jobsFailed: number }} stats
+ * @property {string} startedAt
+ * @property {string | null} [completedAt]
+ * @property {unknown} [steps]
+ * @property {unknown} [errors]
+ */
+
+/**
+ * @typedef {Object} ApplicationJob
+ * @property {string} id
+ * @property {string} position
+ * @property {string} company
+ * @property {string} source
+ */
+
+/**
+ * @typedef {Object} ApprovalRequestParams
+ * @property {string} requestId
+ * @property {string} workflowId
+ * @property {ApplicationJob} job
+ * @property {string} status
+ * @property {number} matchScore
+ * @property {string | null} metadataJson
+ */
+
+/**
+ * @typedef {Object} ApplicationRecord
+ * @property {string} workflowId
+ * @property {string} jobId
+ * @property {string} platform
+ * @property {string} sourceUrl
+ * @property {string} company
+ * @property {string} position
+ * @property {string | null} resumeId
+ * @property {string | null} coverLetter
+ * @property {number} matchScore
+ */
+
+/**
+ * @param {WorkflowContext} ctx
+ * @param {WorkflowState} workflow
+ * @returns {Promise<void>}
+ */
 export async function saveWorkflowState(ctx, workflow) {
   await ctx.env.JOB_DB.prepare(
     `
@@ -33,6 +97,14 @@ export async function saveWorkflowState(ctx, workflow) {
     .run();
 }
 
+/**
+ * @param {WorkflowContext} ctx
+ * @param {string} workflowId
+ * @param {string} stepName
+ * @param {string} status
+ * @param {Record<string, unknown>} [details]
+ * @returns {Promise<void>}
+ */
 export async function logWorkflowStep(ctx, workflowId, stepName, status, details = {}) {
   await ctx.env.JOB_DB.prepare(
     `
@@ -51,6 +123,15 @@ export async function logWorkflowStep(ctx, workflowId, stepName, status, details
     .run();
 }
 
+/**
+ * @param {WorkflowContext} ctx
+ * @param {string} workflowId
+ * @param {ApplicationJob} job
+ * @param {string} status
+ * @param {number} matchScore
+ * @param {Record<string, unknown> | null} [approvalMetadata]
+ * @returns {Promise<string>}
+ */
 export async function createApprovalRequest(
   ctx,
   workflowId,
@@ -74,6 +155,11 @@ export async function createApprovalRequest(
   return requestId;
 }
 
+/**
+ * @param {WorkflowContext} ctx
+ * @param {ApprovalRequestParams} params
+ * @returns {Promise<void>}
+ */
 async function insertApprovalRequest(ctx, params) {
   await ctx.env.JOB_DB.prepare(
     `
@@ -91,6 +177,10 @@ async function insertApprovalRequest(ctx, params) {
     .run();
 }
 
+/**
+ * @param {ApprovalRequestParams} params
+ * @returns {unknown[]}
+ */
 function approvalRequestParams({ requestId, workflowId, job, status, matchScore, metadataJson }) {
   return [
     requestId,
@@ -105,6 +195,11 @@ function approvalRequestParams({ requestId, workflowId, job, status, matchScore,
   ];
 }
 
+/**
+ * @param {WorkflowContext} ctx
+ * @param {string} requestId
+ * @returns {Promise<string>}
+ */
 export async function getApprovalStatus(ctx, requestId) {
   const result = await ctx.env.JOB_DB.prepare('SELECT status FROM approval_requests WHERE id = ?')
     .bind(requestId)
@@ -113,6 +208,11 @@ export async function getApprovalStatus(ctx, requestId) {
   return result?.status || 'pending';
 }
 
+/**
+ * @param {WorkflowContext} ctx
+ * @param {ApplicationRecord} record
+ * @returns {Promise<void>}
+ */
 export async function recordApplication(
   ctx,
   { workflowId, jobId, platform, sourceUrl, company, position, resumeId, coverLetter, matchScore }
@@ -144,6 +244,11 @@ export async function recordApplication(
     .run();
 }
 
+/**
+ * @param {WorkflowContext} ctx
+ * @param {string} date
+ * @returns {Promise<number>}
+ */
 export async function getDailyApplicationCount(ctx, date) {
   const result = await ctx.env.JOB_DB.prepare(
     `

@@ -3,11 +3,23 @@ const { HERO_CONTENT } = require('./hero-content-data');
 const CONTACT_EMAIL = 'qws941@kakao.com';
 const RESUME_PDF_PATH = '/resume.pdf';
 
+/**
+ * @typedef {'ko' | 'en' | 'ja'} HeroLocale
+ */
+
+/**
+ * @typedef {typeof HERO_CONTENT[HeroLocale] & { srTitle?: string }} HeroContent
+ */
+
+/**
+ * @param {unknown} value
+ * @returns {string}
+ */
 function escapeHtml(value) {
   return String(value).replace(
     /[&<>"']/g,
     (character) =>
-      ({
+      /** @type {Record<string, string>} */ ({
         '&': '&amp;',
         '<': '&lt;',
         '>': '&gt;',
@@ -17,16 +29,28 @@ function escapeHtml(value) {
   );
 }
 
+/**
+ * @param {HeroContent} content
+ * @returns {string}
+ */
 function renderHeroTitle(content) {
   const srTitle = content.srTitle ? `<span class="sr-only"> ${content.srTitle}</span>` : '';
   return `<h1 class="hero-title" role="heading" aria-level="1">${content.title}${srTitle}</h1>`;
 }
 
+/**
+ * @param {HeroContent} content
+ * @returns {string}
+ */
 function renderProofList(content) {
   const items = content.proofItems.map((item) => `<li>${escapeHtml(item)}</li>`).join('');
   return `<ul class="hero-proof-list" aria-label="${content.proofLabel}">${items}</ul>`;
 }
 
+/**
+ * @param {HeroContent} content
+ * @returns {string}
+ */
 function renderPublicProofLinks(content) {
   const links = content.publicProofLinks
     .map(
@@ -42,6 +66,10 @@ function renderPublicProofLinks(content) {
   );
 }
 
+/**
+ * @param {HeroContent} content
+ * @returns {string}
+ */
 function renderReviewPath(content) {
   const links = content.reviewLinks
     .map(
@@ -52,6 +80,10 @@ function renderReviewPath(content) {
   return `<nav class="hero-review-path" aria-label="${content.reviewLabel}">${links}</nav>`;
 }
 
+/**
+ * @param {HeroContent} content
+ * @returns {string}
+ */
 function renderReviewPacket(content) {
   const items = content.packetItems
     .map(([term, description], index) => {
@@ -73,6 +105,10 @@ function renderReviewPacket(content) {
   );
 }
 
+/**
+ * @param {HeroContent} content
+ * @returns {string}
+ */
 function renderRoleQuickPaths(content) {
   const roles = content.quickRoles
     .map(([id, label, proof]) => {
@@ -98,6 +134,10 @@ function renderRoleQuickPaths(content) {
   );
 }
 
+/**
+ * @param {HeroContent} content
+ * @returns {string}
+ */
 function renderActions(content) {
   const [contact, resume, projects, pdf] = content.actions;
   return (
@@ -110,8 +150,12 @@ function renderActions(content) {
   );
 }
 
+/**
+ * @param {string} [locale]
+ * @returns {string}
+ */
 function buildHeroContent(locale) {
-  const content = HERO_CONTENT[locale] || HERO_CONTENT.ko;
+  const content = HERO_CONTENT[/** @type {HeroLocale} */ (locale)] || HERO_CONTENT.ko;
   return [
     '<div class="hero-intro"><header class="hero-identity">',
     renderHeroTitle(content),

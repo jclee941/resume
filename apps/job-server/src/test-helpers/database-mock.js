@@ -8,17 +8,32 @@
 // ========================
 
 /**
+ * @typedef {Object} MockD1QueryResult
+ * @property {Record<string, unknown>[]} results
+ */
+
+/**
+ * @typedef {Object} MockD1Client
+ * @property {Map<string, Array<Record<string, unknown>>>} tables
+ * @property {Array<{ sql: string, params: unknown[] }>} queries
+ * @property {(sql: string, params?: unknown[]) => Promise<MockD1QueryResult>} query
+ * @property {(table: string) => Array<Record<string, unknown>>} getTable
+ * @property {() => void} reset
+ * @property {(table: string, data: Array<Record<string, unknown>>) => void} seed
+ */
+
+/**
  * Create an in-memory D1 mock client
- * @returns {Object} Mock D1 client
+ * @returns {MockD1Client} Mock D1 client
  */
 export function createMockD1Client() {
-  /** @type {Map<string, Array<Object>>} */
+  /** @type {Map<string, Array<Record<string, unknown>>>} */
   const tables = new Map();
   tables.set('applications', []);
   tables.set('application_timeline', []);
   tables.set('approval_requests', []);
 
-  /** @type {Array<Object>} */
+  /** @type {Array<{ sql: string, params: unknown[] }>} */
   const queries = [];
 
   return {
@@ -27,8 +42,8 @@ export function createMockD1Client() {
 
     /**
      * @param {string} sql
-     * @param {Array} [params]
-     * @returns {Promise<Array>}
+     * @param {unknown[]} [params]
+     * @returns {Promise<MockD1QueryResult>}
      */
     async query(sql, params = []) {
       queries.push({ sql, params });
@@ -56,7 +71,7 @@ export function createMockD1Client() {
           approved_at: params[17],
           rejected_at: params[18],
         };
-        tables.get('applications').push(row);
+        /** @type {Record<string, unknown>[]} */ (tables.get('applications')).push(row);
         return { results: [] };
       }
 
@@ -69,22 +84,26 @@ export function createMockD1Client() {
           note: params[3],
           timestamp: params[4],
         };
-        tables.get('application_timeline').push(row);
+        /** @type {Record<string, unknown>[]} */ (tables.get('application_timeline')).push(row);
         return { results: [] };
       }
 
       if (normalized.startsWith('select * from applications')) {
-        const rows = tables.get('applications');
+        const rows = /** @type {Record<string, unknown>[]} */ (tables.get('applications'));
         return { results: rows };
       }
 
       if (normalized.startsWith('select * from application_timeline')) {
         const appIdMatch = sql.match(/application_id\s*=\s*@?(\?|\$[0-9]+)/i);
         if (appIdMatch) {
-          const rows = tables.get('application_timeline');
+          const rows = /** @type {Record<string, unknown>[]} */ (
+            tables.get('application_timeline')
+          );
           return { results: rows };
         }
-        return { results: tables.get('application_timeline') };
+        return {
+          results: /** @type {Record<string, unknown>[]} */ (tables.get('application_timeline')),
+        };
       }
 
       return { results: [] };
@@ -92,7 +111,7 @@ export function createMockD1Client() {
 
     /**
      * @param {string} table
-     * @returns {Array}
+     * @returns {Array<Record<string, unknown>>}
      */
     getTable(table) {
       return tables.get(table) || [];
@@ -102,16 +121,16 @@ export function createMockD1Client() {
      * Reset all tables
      */
     reset() {
-      tables.get('applications').length = 0;
-      tables.get('application_timeline').length = 0;
-      tables.get('approval_requests').length = 0;
+      /** @type {Record<string, unknown>[]} */ (tables.get('applications')).length = 0;
+      /** @type {Record<string, unknown>[]} */ (tables.get('application_timeline')).length = 0;
+      /** @type {Record<string, unknown>[]} */ (tables.get('approval_requests')).length = 0;
       queries.length = 0;
     },
 
     /**
      * Seed table with data
      * @param {string} table
-     * @param {Array} data
+     * @param {Array<Record<string, unknown>>} data
      */
     seed(table, data) {
       tables.set(table, [...data]);

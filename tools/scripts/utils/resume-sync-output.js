@@ -3,6 +3,15 @@ const path = require('node:path');
 
 const secureDirectory = require('./secure-directory.js');
 
+/**
+ * @typedef {import('./secure-directory.js').PinnedDirectoryBinding} PinnedDirectoryBinding
+ * @typedef {{ binding: PinnedDirectoryBinding; outputName: string }} WrittenSnapshot
+ */
+
+/**
+ * @param {string} directoryPath
+ * @returns {void}
+ */
 function assertNoSymbolicLinkTraversal(directoryPath) {
   const absolute = path.resolve(directoryPath);
   const { root } = path.parse(absolute);
@@ -16,11 +25,16 @@ function assertNoSymbolicLinkTraversal(directoryPath) {
   }
 }
 
+/**
+ * @param {string[]} outputPaths
+ * @returns {Map<string, PinnedDirectoryBinding>}
+ */
 function prepareOutputDirectories(outputPaths) {
   secureDirectory.requireFdRelativeSupport();
   const directories = [
     ...new Set(outputPaths.map((outputPath) => path.resolve(path.dirname(outputPath)))),
   ];
+  /** @type {Map<string, PinnedDirectoryBinding>} */
   const bindings = new Map();
   try {
     for (const directory of directories) assertNoSymbolicLinkTraversal(directory);
@@ -32,10 +46,15 @@ function prepareOutputDirectories(outputPaths) {
     return bindings;
   } catch (error) {
     closeOutputDirectories(bindings);
-    throw new Error(error.message, { cause: error });
+    throw new Error(error instanceof Error ? error.message : String(error), { cause: error });
   }
 }
 
+/**
+ * @param {Map<string, PinnedDirectoryBinding>} bindings
+ * @param {string} outputPath
+ * @returns {PinnedDirectoryBinding}
+ */
 function bindingForOutput(bindings, outputPath) {
   const directory = path.resolve(path.dirname(outputPath));
   const binding = bindings.get(directory);
@@ -43,6 +62,12 @@ function bindingForOutput(bindings, outputPath) {
   return binding;
 }
 
+/**
+ * @param {PinnedDirectoryBinding} binding
+ * @param {string} outputName
+ * @param {string | NodeJS.ArrayBufferView} data
+ * @returns {void}
+ */
 function writeGeneratedSnapshot(binding, outputName, data) {
   let descriptor;
   try {
@@ -66,6 +91,10 @@ function writeGeneratedSnapshot(binding, outputName, data) {
   }
 }
 
+/**
+ * @param {Map<string, PinnedDirectoryBinding>} bindings
+ * @returns {void}
+ */
 function assertOutputDirectoriesCurrent(bindings) {
   for (const binding of bindings.values()) {
     if (!secureDirectory.matchesOriginal(binding)) {
@@ -76,6 +105,10 @@ function assertOutputDirectoriesCurrent(bindings) {
   }
 }
 
+/**
+ * @param {Iterable<WrittenSnapshot>} written
+ * @returns {void}
+ */
 function cleanupWrittenSnapshots(written) {
   for (const { binding, outputName } of written) {
     try {
@@ -86,6 +119,10 @@ function cleanupWrittenSnapshots(written) {
   }
 }
 
+/**
+ * @param {Map<string, PinnedDirectoryBinding>} bindings
+ * @returns {void}
+ */
 function closeOutputDirectories(bindings) {
   for (const binding of bindings.values()) secureDirectory.closePinnedDirectory(binding);
 }

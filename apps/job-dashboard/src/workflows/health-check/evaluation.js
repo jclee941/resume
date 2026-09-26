@@ -1,5 +1,36 @@
+/**
+ * @typedef {Object} ServiceResult
+ * @property {string} [name]
+ * @property {boolean} healthy
+ * @property {number} latencyMs
+ * @property {string} [error]
+ * @property {number} [status]
+ */
+
+/**
+ * @typedef {Object} BindingHealth
+ * @property {boolean} healthy
+ */
+
+/**
+ * @typedef {Object} BindingResults
+ * @property {BindingHealth} d1
+ * @property {BindingHealth} kv
+ */
+
+/**
+ * @typedef {Object} HealthStatusFlags
+ * @property {boolean} hasDown
+ * @property {boolean} hasBindingFailure
+ * @property {boolean} hasDegraded
+ */
+
 const DEGRADED_LATENCY_MS = 2000;
 
+/**
+ * @param {ServiceResult[]} serviceResults
+ * @param {BindingResults} bindingResults
+ */
 export function evaluateHealth(serviceResults, bindingResults) {
   const services = serviceResults.map((result) => ({
     ...result,
@@ -22,6 +53,10 @@ export function evaluateHealth(serviceResults, bindingResults) {
   };
 }
 
+/**
+ * @param {HealthStatusFlags} params
+ * @returns {'critical' | 'degraded' | 'healthy'}
+ */
 function getOverallHealth({ hasDown, hasBindingFailure, hasDegraded }) {
   if (hasDown || hasBindingFailure) {
     return 'critical';
@@ -34,6 +69,10 @@ function getOverallHealth({ hasDown, hasBindingFailure, hasDegraded }) {
   return 'healthy';
 }
 
+/**
+ * @param {ServiceResult} result
+ * @returns {string}
+ */
 export function getStatusLabel(result) {
   if (!result.healthy) {
     return result.error ? `down (${result.error})` : `error (${result.status})`;
@@ -46,6 +85,10 @@ export function getStatusLabel(result) {
   return 'healthy';
 }
 
+/**
+ * @param {number} consecutiveFailures
+ * @returns {'emergency' | 'critical' | 'warning' | 'none'}
+ */
 export function getEscalationLevel(consecutiveFailures) {
   if (consecutiveFailures >= 6) return 'emergency';
   if (consecutiveFailures >= 3) return 'critical';
@@ -53,6 +96,10 @@ export function getEscalationLevel(consecutiveFailures) {
   return 'none';
 }
 
+/**
+ * @param {ServiceResult} service
+ * @returns {boolean}
+ */
 export function isServiceAffected(service) {
   return !service.healthy || service.latencyMs > DEGRADED_LATENCY_MS;
 }
