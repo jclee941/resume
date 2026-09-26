@@ -26,7 +26,6 @@ const config = {
   },
 
   paths: {
-    public: new URL('../../dashboard/public', import.meta.url).pathname,
     data: process.env.DATA_DIR || new URL('../../../../', import.meta.url).pathname,
     resume:
       process.env.RESUME_PATH ||
