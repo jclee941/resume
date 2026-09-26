@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"os/exec"
@@ -11,103 +10,81 @@ import (
 
 // ─── Claim C: Profile sync is one-way ──────────────────────────────────────
 
+// The reverse direction is proposal-first by design (context-profile-sync-plan
+// Gap 2): crawlers emit proposals, a human reviews them, and sync:proposals
+// applies approved ones to the SSoT. Nothing writes resume_data.json directly.
 func checkSyncDirection(repoRoot string) claim {
 	crawlerDir := filepath.Join(repoRoot, "apps", "job-server", "src", "crawlers")
-	ssotPath := "packages/data/resumes/master/resume_data.json"
+	crawlerOut, _ := exec.Command("grep", "-rl", "generateProposalsFromCrawlerResult", crawlerDir).Output()
+	crawlerProposals := strings.TrimSpace(string(crawlerOut)) != ""
 
-	crawlerOut, _ := exec.Command("grep", "-r", ssotPath, crawlerDir).Output()
-	crawlerWrites := strings.TrimSpace(string(crawlerOut)) != ""
+	reviewCLI := fileExists(filepath.Join(repoRoot, "apps", "job-server", "src", "sync", "proposal-review-cli.js"))
+	appliesToSSoT := fileContains(filepath.Join(repoRoot, "tools", "scripts", "sync", "apply-proposals.go"), "resume_data.json")
+	readsFromSSoT := fileContains(
+		filepath.Join(repoRoot, "apps", "job-server", "src", "tools", "unified-resume-sync.js"), "resume_data.json")
 
-	// Check unified-resume-sync direction
-	syncFile := filepath.Join(repoRoot, "apps", "job-server", "src", "tools", "unified-resume-sync.js")
-	syncContent, _ := os.ReadFile(syncFile)
-	syncsToPlatforms := strings.Contains(string(syncContent), "syncTo")
-	readsFromSSoT := strings.Contains(string(syncContent), "resume_data.json")
+	details := fmt.Sprintf("    SSoT → platforms (unified-resume-sync reads SSoT): %v\n", readsFromSSoT)
+	details += fmt.Sprintf("    Crawlers emit SSoT proposals: %v\n", crawlerProposals)
+	details += fmt.Sprintf("    Proposal review CLI: %v\n", reviewCLI)
+	details += fmt.Sprintf("    Approved proposals applied to SSoT (sync:proposals): %v\n", appliesToSSoT)
 
-	// Check git history for resume_data.json
-	history := gitFileHistory(filepath.Join(repoRoot, ssotPath), 5)
-	hasCrawlerCommits := false
-	for _, h := range history {
-		if strings.Contains(strings.ToLower(h), "crawler") || strings.Contains(strings.ToLower(h), "sync") {
-			hasCrawlerCommits = true
-		}
-	}
-
-	details := fmt.Sprintf("    Crawlers write to SSoT: %v\n", crawlerWrites)
-	details += fmt.Sprintf("    unified-resume-sync reads SSoT: %v\n", readsFromSSoT)
-	details += fmt.Sprintf("    unified-resume-sync pushes TO platforms: %v\n", syncsToPlatforms)
-	details += fmt.Sprintf("    Git history shows crawler commits: %v\n", hasCrawlerCommits)
-	if len(history) > 0 {
-		details += fmt.Sprintf("    Recent commits on resume_data.json:\n")
-		for _, h := range history {
-			details += fmt.Sprintf("      - %s\n", h)
-		}
-	}
-
-	if !crawlerWrites && !hasCrawlerCommits {
+	if crawlerProposals && reviewCLI && appliesToSSoT {
 		return claim{
 			name:    "C: Profile sync directionality",
-			status:  "FAIL — One-way only",
-			details: details + "    → SSoT → platforms exists, but crawlers don't enrich SSoT.\n    → Action: Add reverse sync pipeline (crawler → SSoT).",
+			status:  "STALE — Bidirectional",
+			details: details + "    → Crawler data reaches the SSoT through reviewed proposals.",
 		}
 	}
 	return claim{
 		name:    "C: Profile sync directionality",
-		status:  "STALE — Bidirectional",
-		details: details + "    → Bidirectional sync confirmed.",
+		status:  "FAIL — One-way only",
+		details: details + "    → Action: Restore the crawler → proposal → review → apply pipeline.",
 	}
 }
 
 // ─── Claim D: No external profile enrichment ───────────────────────────────
 
 func checkExternalEnrichment(repoRoot string) claim {
-	// Check for GitHub API integration
-	githubOut, _ := exec.Command("grep", "-riE", `--exclude-dir=node_modules`, `--exclude-dir=.wrangler`, `api\.github\.com|github\.com/api|octokit`, filepath.Join(repoRoot, "apps")).Output()
-	githubLines := strings.Split(string(githubOut), "\n")
-	hasGitHubAPI := false
-	for _, line := range githubLines {
-		if strings.TrimSpace(line) != "" && !strings.Contains(strings.ToLower(line), "test") && !strings.Contains(strings.ToLower(line), "spec") {
-			hasGitHubAPI = true
-			break
+	enrichDir := filepath.Join(repoRoot, "tools", "scripts", "enrichment")
+	providers := []struct {
+		label string
+		ok    bool
+	}{
+		{"GitHub repositories → project proposals", fileContains(filepath.Join(enrichDir, "github", "main.go"), "api.github.com")},
+		{"Application history → skill proposals", fileExists(filepath.Join(enrichDir, "skills", "main.go"))},
+		{"LLM analysis → content proposals", fileExists(filepath.Join(enrichDir, "ai", "main.go"))},
+	}
+	writesProposals := fileContains(filepath.Join(enrichDir, "lib", "common.go"), "func WriteProposal")
+
+	details := ""
+	found := 0
+	for _, provider := range providers {
+		details += fmt.Sprintf("    %s: %v\n", provider.label, provider.ok)
+		if provider.ok {
+			found++
 		}
 	}
+	details += fmt.Sprintf("    Providers write proposals, never the SSoT: %v\n", writesProposals)
 
-	// Check for LinkedIn profile sync (not job application)
-	linkedinOut, _ := exec.Command("grep", "-riE", "linkedin.*profile|linkedin.*enrich", filepath.Join(repoRoot, "apps")).Output()
-	hasLinkedInEnrich := strings.TrimSpace(string(linkedinOut)) != ""
-
-	// Check for AI parser that updates resume
-	aiOut, _ := exec.Command("grep", "-riE", "openai|gpt-|ai.*pars|llm.*resume", filepath.Join(repoRoot, "apps", "job-server", "src")).Output()
-	hasAIParser := strings.TrimSpace(string(aiOut)) != ""
-
-	// Check if AI is used for resume/profile enrichment specifically
-	aiResumeEnrich := false
-	if hasAIParser {
-		aiLines := strings.Split(string(aiOut), "\n")
-		for _, line := range aiLines {
-			if strings.Contains(strings.ToLower(line), "resume") || strings.Contains(strings.ToLower(line), "profile") {
-				aiResumeEnrich = true
-				break
-			}
+	switch {
+	case found == len(providers) && writesProposals:
+		return claim{
+			name:    "D: External profile enrichment",
+			status:  "STALE — Enrichment in place",
+			details: details + "    → npm run enrich:all feeds the same reviewed proposal queue.",
 		}
-	}
-
-	details := fmt.Sprintf("    GitHub API for portfolio: %v\n", hasGitHubAPI)
-	details += fmt.Sprintf("    LinkedIn profile enrichment: %v\n", hasLinkedInEnrich)
-	details += fmt.Sprintf("    AI resume parser: %v\n", hasAIParser)
-	details += fmt.Sprintf("    AI used for resume/profile enrichment: %v\n", aiResumeEnrich)
-
-	if !hasGitHubAPI && !hasLinkedInEnrich && !aiResumeEnrich {
+	case found > 0:
+		return claim{
+			name:    "D: External profile enrichment",
+			status:  "PARTIAL — Providers missing",
+			details: details + "    → Action: Restore the missing enrichment providers under tools/scripts/enrichment.",
+		}
+	default:
 		return claim{
 			name:    "D: External profile enrichment",
 			status:  "FAIL — None found",
-			details: details + "    → No GitHub API, LinkedIn enrichment, or AI parser detected for resume updates.\n    → Action: Add enrichment providers (GitHub → projects, job history → skills).",
+			details: details + "    → Action: Add enrichment providers that emit proposals (GitHub, skills, LLM).",
 		}
-	}
-	return claim{
-		name:    "D: External profile enrichment",
-		status:  "PARTIAL — Job-only integrations",
-		details: details + "    → LinkedIn/GitHub/AI exist for job application sync, not portfolio enrichment.\n    → Action: Add portfolio-focused enrichment pipeline.",
 	}
 }
 
@@ -124,7 +101,7 @@ func checkBuildFreshness(repoRoot string) claim {
 		return claim{
 			name:    "E: Build pipeline freshness",
 			status:  "FAIL — Files missing",
-			details: fmt.Sprintf("    worker.js: %v\n    resume_data.json: %v", workerErr, dataErr),
+			details: fmt.Sprintf("    worker.js: %v\n    resume_data.json: %v\n    → Action: Run npm run build.", workerErr, dataErr),
 		}
 	}
 
@@ -144,23 +121,16 @@ func checkBuildFreshness(repoRoot string) claim {
 	return claim{
 		name:    "E: Build pipeline freshness",
 		status:  "FAIL — Stale build",
-		details: details + "    → resume_data.json is newer than worker.js. Portfolio needs rebuild.",
+		details: details + "    → Action: resume_data.json is newer than worker.js; run npm run build.",
 	}
 }
 
-func gitFileHistory(path string, maxCount int) []string {
-	cmd := exec.Command("git", "log", "--oneline", fmt.Sprintf("-n %d", maxCount), "--", path)
-	out, err := cmd.Output()
-	if err != nil {
-		return []string{fmt.Sprintf("git log error: %v", err)}
-	}
-	var lines []string
-	scanner := bufio.NewScanner(strings.NewReader(string(out)))
-	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
-	}
-	if len(lines) == 0 {
-		lines = append(lines, "(no history)")
-	}
-	return lines
+func fileExists(path string) bool {
+	info, err := os.Stat(path)
+	return err == nil && !info.IsDir()
+}
+
+func fileContains(path, needle string) bool {
+	content, err := os.ReadFile(path)
+	return err == nil && strings.Contains(string(content), needle)
 }
