@@ -1,9 +1,13 @@
 import { ApplicationManager, APPLICATION_STATUS } from '../../application-manager.js';
 import { getStatusEmoji } from '../status-emoji.js';
 
+/**
+ * @param {string[]} args
+ * @returns {Promise<void>}
+ */
 export async function listApplications(args) {
   const status = args.find((a) => a.startsWith('--status='))?.split('=')[1];
-  const limit = parseInt(args.find((a) => a.startsWith('--limit='))?.split('=')[1]) || 20;
+  const limit = parseInt(String(args.find((a) => a.startsWith('--limit='))?.split('=')[1])) || 20;
 
   const manager = new ApplicationManager();
   const apps = manager.listApplications({ status, limit });
@@ -25,6 +29,9 @@ export async function listApplications(args) {
   }
 }
 
+/**
+ * @returns {Promise<void>}
+ */
 export async function showStats() {
   const manager = new ApplicationManager();
   const stats = manager.getStats();
@@ -46,6 +53,10 @@ export async function showStats() {
   }
 }
 
+/**
+ * @param {string} [date]
+ * @returns {Promise<void>}
+ */
 export async function showReport(date) {
   const manager = new ApplicationManager();
   const report = manager.generateDailyReport(date);
@@ -59,6 +70,10 @@ export async function showReport(date) {
   console.log(`Total: ${report.total}`);
 }
 
+/**
+ * @param {string[]} args
+ * @returns {Promise<void>}
+ */
 export async function updateStatus(args) {
   const appId = args[0];
   const newStatus = args[1];

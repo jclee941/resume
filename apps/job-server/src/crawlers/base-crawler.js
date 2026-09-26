@@ -23,7 +23,44 @@ import {
 } from './base-crawler/schema.js';
 import { loadUndici, resolveDispatcher, resolveFingerprint } from './base-crawler/tls.js';
 
+/**
+ * @typedef {import('./base-crawler/tls.js').TlsFingerprint} TlsFingerprint
+ * @typedef {import('./base-crawler/schema.js').RetryConfig} RetryConfig
+ * @typedef {import('./base-crawler/schema.js').RetryMetrics} RetryMetrics
+ * @typedef {import('./base-crawler/request.js').RequestOptions} RequestOptions
+ * @typedef {import('../shared/services/stealth/proxy-rotator.js').ProxyConfig} ProxyConfig
+ * @typedef {import('../shared/services/stealth/timing.js').TimingConfig} TimingConfig
+ * @typedef {import('../shared/services/stealth/captcha-detector.js').CaptchaDetectorOptions} CaptchaDetectorOptions
+ * @typedef {import('../shared/services/stealth/tls-fingerprint.js').TLSFingerprintManager} TLSFingerprintManagerType
+ *
+ * @typedef {{
+ *   baseUrl?: string;
+ *   rateLimit?: number;
+ *   maxRetries?: number;
+ *   timeout?: number;
+ *   headers?: Record<string, string>;
+ *   cookies?: string;
+ *   userAgent?: string;
+ *   retry?: Partial<RetryConfig>;
+ *   timing?: Partial<TimingConfig>;
+ *   captcha?: Partial<CaptchaDetectorOptions>;
+ *   proxies?: ProxyConfig[];
+ *   proxyRotator?: import('../shared/services/stealth/proxy-rotator.js').ProxyRotator;
+ *   tlsFingerprintManager?: TLSFingerprintManagerType;
+ *   tlsFingerprint?: {
+ *     enabled?: boolean;
+ *     rotatePerRequest?: boolean;
+ *     platform?: string;
+ *     browser?: string;
+ *   };
+ * }} BaseCrawlerOptions
+ */
+
 export class BaseCrawler extends EventEmitter {
+  /**
+   * @param {string} name
+   * @param {BaseCrawlerOptions} [options]
+   */
   constructor(name, options = {}) {
     super();
     this.setMaxListeners(15);
@@ -59,6 +96,7 @@ export class BaseCrawler extends EventEmitter {
       platform: options.tlsFingerprint?.platform,
       browser: options.tlsFingerprint?.browser,
     };
+    /** @type {string | null} */
     this.currentProxy = null;
     this.currentFingerprint = this.tlsFingerprintManager.getRandomFingerprint({
       platform: this.tlsOptions.platform,
@@ -70,6 +108,7 @@ export class BaseCrawler extends EventEmitter {
     }
 
     this._dispatchers = new Map();
+    /** @type {typeof import('undici') | null} */
     this._undici = null;
     this._undiciLoadFailed = false;
   }
@@ -85,29 +124,66 @@ export class BaseCrawler extends EventEmitter {
   }
 
   async _loadUndici() {
-    return loadUndici.call(this);
+    return /** @type {typeof loadUndici & { call(thisArg: unknown): Promise<typeof import('undici') | null | undefined> }} */ (
+      loadUndici
+    ).call(this);
   }
 
+  /**
+   * @param {string | null} proxyUrl
+   * @returns {TlsFingerprint | null}
+   */
   _resolveFingerprint(proxyUrl) {
-    return resolveFingerprint.call(this, proxyUrl);
+    return /** @type {typeof resolveFingerprint & { call(thisArg: unknown, proxyUrl: string | null): TlsFingerprint | null }} */ (
+      resolveFingerprint
+    ).call(this, proxyUrl);
   }
 
+  /**
+   * @param {string | null} proxyUrl
+   * @param {TlsFingerprint | null} fingerprint
+   * @returns {Promise<unknown>}
+   */
   async _resolveDispatcher(proxyUrl, fingerprint) {
-    return resolveDispatcher.call(this, proxyUrl, fingerprint);
+    return /** @type {typeof resolveDispatcher & { call(thisArg: unknown, proxyUrl: string | null, fingerprint: TlsFingerprint | null): Promise<unknown> }} */ (
+      resolveDispatcher
+    ).call(this, proxyUrl, fingerprint);
   }
 
+  /**
+   * @param {number} attempt
+   * @param {RetryConfig} config
+   * @returns {number}
+   */
   _calculateBackoff(attempt, config) {
     return calculateBackoff(attempt, config);
   }
 
+  /**
+   * @param {number | null} statusCode
+   * @param {RetryConfig} config
+   * @returns {boolean}
+   */
   _isRetryable(statusCode, config) {
     return isRetryable(statusCode, config);
   }
 
+  /**
+   * @param {string | URL} url
+   * @param {RequestOptions} [options]
+   * @returns {Promise<Response>}
+   */
   async rateLimitedFetch(url, options = {}) {
-    return executeRateLimitedFetch.call(this, url, options);
+    return /** @type {typeof executeRateLimitedFetch & { call(thisArg: unknown, url: string | URL, options?: RequestOptions): Promise<Response> }} */ (
+      executeRateLimitedFetch
+    ).call(this, url, options);
   }
 
+  /**
+   * @param {string | URL} url
+   * @param {RequestOptions} [options]
+   * @returns {Promise<unknown>}
+   */
   async fetchJSON(url, options = {}) {
     const response = await this.rateLimitedFetch(url, {
       ...options,
@@ -120,6 +196,11 @@ export class BaseCrawler extends EventEmitter {
     return response.json();
   }
 
+  /**
+   * @param {string | URL} url
+   * @param {RequestOptions} [options]
+   * @returns {Promise<string>}
+   */
   async fetchHTML(url, options = {}) {
     const response = await this.rateLimitedFetch(url, {
       ...options,
@@ -132,6 +213,10 @@ export class BaseCrawler extends EventEmitter {
     return response.text();
   }
 
+  /**
+   * @param {number} ms
+   * @returns {Promise<void>}
+   */
   sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
@@ -140,26 +225,50 @@ export class BaseCrawler extends EventEmitter {
     return { ...this.retryMetrics };
   }
 
+  /**
+   * @param {Record<string, unknown>} _params
+   * @returns {string}
+   */
   buildSearchQuery(_params) {
     throw new Error('buildSearchQuery must be implemented by subclass');
   }
 
+  /**
+   * @param {Record<string, unknown>} [_params]
+   * @returns {Promise<unknown>}
+   */
   async searchJobs(_params) {
     throw new Error('searchJobs must be implemented by subclass');
   }
 
+  /**
+   * @param {string | number} _jobId
+   * @returns {Promise<unknown>}
+   */
   async getJobDetail(_jobId) {
     throw new Error('getJobDetail must be implemented by subclass');
   }
 
+  /**
+   * @param {Record<string, unknown>} _rawJob
+   * @returns {unknown}
+   */
   normalizeJob(_rawJob) {
     throw new Error('normalizeJob must be implemented by subclass');
   }
 
+  /**
+   * @returns {Promise<{ authenticated: boolean; [key: string]: unknown }>}
+   */
   async checkAuth() {
     return { authenticated: false };
   }
 
+  /**
+   * @param {string | number} _jobId
+   * @param {Record<string, unknown>} _applicationData
+   * @returns {Promise<unknown>}
+   */
   async applyToJob(_jobId, _applicationData) {
     throw new Error('applyToJob must be implemented by subclass');
   }

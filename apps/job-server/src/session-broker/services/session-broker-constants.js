@@ -15,6 +15,10 @@ export const SESSION_STATES = Object.freeze({
 
 export const SUPPORTED_SESSION_BROKER_PLATFORMS = Object.freeze(['wanted']);
 
+/**
+ * @param {string} platform
+ * @returns {string}
+ */
 export function normalizePlatform(platform) {
   if (typeof platform !== 'string' || platform.trim().length === 0) {
     throw new TypeError('platform must be a non-empty string');
@@ -23,6 +27,10 @@ export function normalizePlatform(platform) {
   return platform.trim().toLowerCase();
 }
 
+/**
+ * @param {number} ms
+ * @returns {Promise<void>}
+ */
 export function defaultSleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

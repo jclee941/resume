@@ -1,6 +1,27 @@
 import { CONFIG } from '../constants.js';
 import { log } from '../sync-logger.js';
 
+/**
+ * @typedef {import('../../skill-tag-map.js').WantedSkillItem} WantedSkillItem
+ * @typedef {import('../../skill-tag-map.js').SkillToAdd} SkillToAdd
+ * @typedef {ReturnType<typeof import('../../skill-tag-map.js').diffSkills>} SkillsDiff
+ */
+
+/**
+ * @typedef {{
+ *   getResumeList(): Promise<Array<{ key?: string }> | null>;
+ *   resumeSkills: {
+ *     add(resumeId: string, payload: { tag_type_id: number }): Promise<unknown>;
+ *     delete(resumeId: string, skillId: number | undefined): Promise<unknown>;
+ *   };
+ * }} WantedSkillsApi
+ */
+
+/**
+ * @param {{ skills?: Parameters<typeof import('../../skill-tag-map.js').flattenSkills>[0] }} ssot
+ * @param {{ skills?: WantedSkillItem[] }} profile
+ * @returns {Promise<SkillsDiff>}
+ */
 async function getSkillsDiff(ssot, profile) {
   const { flattenSkills, diffSkills } = await import('../../skill-tag-map.js');
   const ssotSkills = flattenSkills(ssot.skills);
@@ -8,12 +29,21 @@ async function getSkillsDiff(ssot, profile) {
   return diffSkills(ssotSkills, wantedSkills);
 }
 
+/**
+ * @param {SkillsDiff} diff
+ * @returns {void}
+ */
 function reportSkillDiff(diff) {
   for (const skill of diff.toAdd) console.log(`  + ${skill.name} (tagTypeId: ${skill.tagTypeId})`);
   for (const skill of diff.toDelete) console.log(`  - ${skill.name} (id: ${skill.id})`);
 }
 
-/** @param {Object} api @param {Object} ssot @param {Object} profile @returns {Promise<Object>} */
+/**
+ * @param {WantedSkillsApi} api
+ * @param {{ skills?: Parameters<typeof import('../../skill-tag-map.js').flattenSkills>[0] }} ssot
+ * @param {{ skills?: WantedSkillItem[] }} profile
+ * @returns {Promise<{ changes: number, added: number, deleted: number, dryRun?: boolean }>}
+ */
 export async function syncWantedSkills(api, ssot, profile) {
   const diff = await getSkillsDiff(ssot, profile);
 
@@ -48,6 +78,12 @@ export async function syncWantedSkills(api, ssot, profile) {
   return { changes: added + deleted, added, deleted };
 }
 
+/**
+ * @param {WantedSkillsApi} api
+ * @param {string} resumeId
+ * @param {SkillToAdd[]} skills
+ * @returns {Promise<number>}
+ */
 async function addSkills(api, resumeId, skills) {
   let added = 0;
   for (const skill of skills) {
@@ -56,12 +92,22 @@ async function addSkills(api, resumeId, skills) {
       log(`Added skill: ${skill.name}`, 'success', 'wanted');
       added++;
     } catch (e) {
-      log(`Failed to add ${skill.name}: ${e.message}`, 'error', 'wanted');
+      log(
+        `Failed to add ${skill.name}: ${e instanceof Error ? e.message : String(e)}`,
+        'error',
+        'wanted'
+      );
     }
   }
   return added;
 }
 
+/**
+ * @param {WantedSkillsApi} api
+ * @param {string} resumeId
+ * @param {WantedSkillItem[]} skills
+ * @returns {Promise<number>}
+ */
 async function deleteSkills(api, resumeId, skills) {
   let deleted = 0;
   for (const skill of skills) {
@@ -70,7 +116,11 @@ async function deleteSkills(api, resumeId, skills) {
       log(`Deleted skill: ${skill.name}`, 'success', 'wanted');
       deleted++;
     } catch (e) {
-      log(`Failed to delete ${skill.name}: ${e.message}`, 'error', 'wanted');
+      log(
+        `Failed to delete ${skill.name}: ${e instanceof Error ? e.message : String(e)}`,
+        'error',
+        'wanted'
+      );
     }
   }
   return deleted;

@@ -1,11 +1,36 @@
 import { SARAMIN_URLS } from './constants.js';
 import { parseProfileSections, validateExtractedData } from './profile-helpers.js';
 
+/**
+ * @typedef {Object} SaraminNavigationContext
+ * @property {import('playwright').Page} page
+ * @property {number} timeout
+ * @property {{ sleep(ms: number): Promise<void> }} baseCrawler
+ * @property {(...args: unknown[]) => void} log
+ * @property {(min?: number, max?: number) => Promise<void>} humanDelay
+ * @property {() => Promise<void>} randomMouseMovement
+ * @property {() => Promise<void>} humanScroll
+ * @property {(url: string) => Promise<{ success: boolean, status?: number, code?: string, message?: string }>} navigateWithRetry
+ * @property {() => Promise<{ success: boolean, code?: string, message?: string }>} detectAuthMaintenanceCaptcha
+ * @property {() => Promise<void>} selectActiveResumeIfNeeded
+ * @property {() => Promise<Record<string, unknown>>} extractProfileSnapshot
+ */
+
+/**
+ * @this {SaraminNavigationContext}
+ * @param {number} [min]
+ * @param {number} [max]
+ * @returns {Promise<void>}
+ */
 export async function humanDelay(min = 1000, max = 3000) {
   const delay = Math.floor(Math.random() * (max - min + 1)) + min;
   await this.baseCrawler.sleep(delay);
 }
 
+/**
+ * @this {SaraminNavigationContext}
+ * @returns {Promise<void>}
+ */
 export async function randomMouseMovement() {
   if (!this.page) return;
 
@@ -20,6 +45,10 @@ export async function randomMouseMovement() {
   }
 }
 
+/**
+ * @this {SaraminNavigationContext}
+ * @returns {Promise<void>}
+ */
 export async function humanScroll() {
   if (!this.page) return;
 
@@ -34,7 +63,13 @@ export async function humanScroll() {
   });
 }
 
+/**
+ * @this {SaraminNavigationContext}
+ * @param {string} url
+ * @returns {Promise<{ success: boolean, status?: number, code?: string, message?: string }>}
+ */
 export async function navigateWithRetry(url) {
+  /** @type {Error | undefined} */
   let lastError;
 
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -53,9 +88,11 @@ export async function navigateWithRetry(url) {
       await this.humanDelay(1000, 3000);
       return { success: true, status };
     } catch (error) {
-      lastError = error;
+      lastError = /** @type {Error} */ (error);
       const backoff = Math.min(1000 * 2 ** (attempt - 1), 8000) + Math.floor(Math.random() * 300);
-      this.log(`Navigation failed: ${error.message}; backoff=${backoff}ms`);
+      this.log(
+        `Navigation failed: ${error instanceof Error ? error.message : String(error)}; backoff=${backoff}ms`
+      );
       if (attempt < 3) {
         await this.baseCrawler.sleep(backoff);
       }
@@ -69,6 +106,10 @@ export async function navigateWithRetry(url) {
   };
 }
 
+/**
+ * @this {SaraminNavigationContext}
+ * @returns {Promise<{ success: boolean, code?: string, message?: string }>}
+ */
 export async function detectAuthMaintenanceCaptcha() {
   const url = this.page.url();
   const pageText = await this.page.evaluate(() => document.body?.innerText || '').catch(() => '');
@@ -109,6 +150,10 @@ export async function detectAuthMaintenanceCaptcha() {
   return { success: true };
 }
 
+/**
+ * @this {SaraminNavigationContext}
+ * @returns {Promise<void>}
+ */
 export async function selectActiveResumeIfNeeded() {
   const activeResumeLink = await this.page
     .locator('a[href*="resume"], a[href*="resumemanage"]')
@@ -128,6 +173,10 @@ export async function selectActiveResumeIfNeeded() {
   }
 }
 
+/**
+ * @this {SaraminNavigationContext}
+ * @returns {Promise<{ success: boolean, code?: string, data?: unknown, message?: string }>}
+ */
 export async function getProfile() {
   if (!this.page) {
     return {

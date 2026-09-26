@@ -1,7 +1,51 @@
 import { AppError } from './app-error.js';
 import { ErrorCodes } from './error-codes.js';
 
+/**
+ * @typedef {{
+ *   code?: string;
+ *   statusCode?: number;
+ *   metadata?: Record<string, unknown>;
+ *   cause?: unknown;
+ *   retryable?: boolean;
+ *   platform?: string | null;
+ * }} ApplyErrorOptions
+ */
+
+/**
+ * @typedef {{
+ *   metadata?: Record<string, unknown>;
+ *   cause?: unknown;
+ *   platform?: string | null;
+ * }} SubApplyErrorOptions
+ */
+
+/**
+ * @typedef {SubApplyErrorOptions & {
+ *   retryAfterMs?: number | null;
+ * }} RateLimitErrorOptions
+ */
+
+/**
+ * @typedef {{
+ *   message?: string;
+ *   code?: unknown;
+ *   statusCode?: number | string;
+ *   status?: number | string;
+ *   retryAfterMs?: number | string;
+ *   retryAfter?: number | string;
+ *   name?: string;
+ *   cause?: { code?: unknown; [key: string]: unknown } | null;
+ *   retryable?: boolean;
+ *   [key: string]: unknown;
+ * }} ErrorLike
+ */
+
 export class ApplyError extends AppError {
+  /**
+   * @param {string} [message]
+   * @param {ApplyErrorOptions} [options]
+   */
   constructor(message = 'Apply flow failed', options = {}) {
     const {
       code = ErrorCodes.PLATFORM_APPLY_FAILED,
@@ -12,13 +56,24 @@ export class ApplyError extends AppError {
       platform = null,
     } = options;
 
-    super(message, code, statusCode, { ...metadata, platform, retryable }, cause);
+    super(
+      message,
+      code,
+      statusCode,
+      { ...metadata, platform, retryable },
+      /** @type {Error | null} */ (cause)
+    );
     this.name = 'ApplyError';
+    /** @type {boolean} */
     this.retryable = retryable;
   }
 }
 
 export class NetworkError extends ApplyError {
+  /**
+   * @param {string} [message]
+   * @param {SubApplyErrorOptions} [options]
+   */
   constructor(message = 'Network request failed during apply flow', options = {}) {
     const { metadata = {}, cause = null, platform = null } = options;
     super(message, {
@@ -34,6 +89,10 @@ export class NetworkError extends ApplyError {
 }
 
 export class AuthError extends ApplyError {
+  /**
+   * @param {string} [message]
+   * @param {SubApplyErrorOptions} [options]
+   */
   constructor(message = 'Authentication failed during apply flow', options = {}) {
     const { metadata = {}, cause = null, platform = null } = options;
     super(message, {
@@ -49,6 +108,10 @@ export class AuthError extends ApplyError {
 }
 
 export class RateLimitError extends ApplyError {
+  /**
+   * @param {string} [message]
+   * @param {RateLimitErrorOptions} [options]
+   */
   constructor(message = 'Rate limited during apply flow', options = {}) {
     const { retryAfterMs = null, metadata = {}, cause = null, platform = null } = options;
     super(message, {
@@ -60,11 +123,16 @@ export class RateLimitError extends ApplyError {
       platform,
     });
     this.name = 'RateLimitError';
+    /** @type {number | null} */
     this.retryAfterMs = retryAfterMs;
   }
 }
 
 export class CaptchaError extends ApplyError {
+  /**
+   * @param {string} [message]
+   * @param {SubApplyErrorOptions} [options]
+   */
   constructor(message = 'Captcha challenge detected', options = {}) {
     const { metadata = {}, cause = null, platform = null } = options;
     super(message, {
@@ -80,6 +148,10 @@ export class CaptchaError extends ApplyError {
 }
 
 export class ValidationError extends ApplyError {
+  /**
+   * @param {string} [message]
+   * @param {SubApplyErrorOptions} [options]
+   */
   constructor(message = 'Apply validation failed', options = {}) {
     const { metadata = {}, cause = null, platform = null } = options;
     super(message, {
@@ -95,6 +167,10 @@ export class ValidationError extends ApplyError {
 }
 
 export class CircuitOpenError extends ApplyError {
+  /**
+   * @param {string} [message]
+   * @param {SubApplyErrorOptions} [options]
+   */
   constructor(message = 'Apply circuit breaker is open', options = {}) {
     const { metadata = {}, cause = null, platform = null } = options;
     super(message, {
@@ -109,6 +185,11 @@ export class CircuitOpenError extends ApplyError {
   }
 }
 
+/**
+ * @param {ErrorLike | null | undefined} error
+ * @param {string[]} codes
+ * @returns {boolean}
+ */
 function hasCode(error, codes) {
   if (!error || typeof error !== 'object') {
     return false;
@@ -122,6 +203,11 @@ function hasCode(error, codes) {
   return codes.includes(code);
 }
 
+/**
+ * @param {ErrorLike | null | undefined} [error]
+ * @param {{ platform?: string | null }} [options]
+ * @returns {ApplyError}
+ */
 export function classifyApplyError(error, options = {}) {
   const { platform = null } = options;
 
@@ -178,6 +264,10 @@ export function classifyApplyError(error, options = {}) {
   return new ValidationError(message, { cause: error, platform });
 }
 
+/**
+ * @param {ErrorLike | null | undefined} [error]
+ * @returns {boolean}
+ */
 export function isRetryableApplyError(error) {
   const classified = classifyApplyError(error);
   return Boolean(classified?.retryable);

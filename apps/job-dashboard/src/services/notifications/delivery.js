@@ -1,10 +1,19 @@
 import { MAX_RETRIES, RETRY_DELAYS, TELEGRAM_TIMEOUT_MS, WEBHOOK_TIMEOUT_MS } from './constants.js';
 import { formatNotificationText, sanitizeData } from './formatters.js';
 
+/**
+ * @param {number} ms
+ * @returns {Promise<void>}
+ */
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/**
+ * @param {{ name?: string, code?: string }} error
+ * @param {number} [status]
+ * @returns {boolean}
+ */
 function isRetryableError(error, status) {
   if (
     error.name === 'TypeError' ||
@@ -15,13 +24,32 @@ function isRetryableError(error, status) {
     return true;
   }
 
-  if (status === 429 || status >= 500) {
+  if (status === 429 || /** @type {number} */ (status) >= 500) {
     return true;
   }
 
   return false;
 }
 
+/**
+ * @typedef {Object} RateLimiterLike
+ * @property {(chatId: string | number) => Promise<{ allowed: boolean, remaining: number, resetTime: number }>} checkLimit
+ * @property {(chatId: string | number, count: number) => Promise<unknown>} consume
+ */
+
+/**
+ * @typedef {Object} DeliveryServiceContext
+ * @property {RateLimiterLike} [rateLimiter]
+ * @property {string} [telegramToken]
+ * @property {string | number} [telegramChatId]
+ * @property {string} [automationWebhookUrl]
+ */
+
+/**
+ * @param {{ rateLimiter: RateLimiterLike }} service
+ * @param {string | number} chatId
+ * @returns {Promise<{ allowed: boolean, remaining: number, resetTime: number }>}
+ */
 export async function checkRateLimit(service, chatId) {
   const result = await service.rateLimiter.checkLimit(chatId);
   return {
@@ -31,10 +59,28 @@ export async function checkRateLimit(service, chatId) {
   };
 }
 
+/**
+ * @param {{ rateLimiter: RateLimiterLike }} service
+ * @param {string | number} chatId
+ * @returns {Promise<void>}
+ */
 export async function recordMessageSent(service, chatId) {
   await service.rateLimiter.consume(chatId, 1);
 }
 
+/**
+ * @typedef {Object} TelegramNotificationOptions
+ * @property {string} [parse_mode]
+ * @property {string} [text]
+ * @property {unknown} [reply_markup]
+ */
+
+/**
+ * @param {{ telegramToken?: string, telegramChatId?: string | number, rateLimiter: RateLimiterLike }} service
+ * @param {string | { text?: string, reply_markup?: unknown, [key: string]: unknown }} data
+ * @param {TelegramNotificationOptions} [options]
+ * @returns {Promise<{ sent: boolean, reason?: string, waitTime?: number, resetTime?: number, status?: number, error?: string, attempts?: number, messageId?: string | number }>}
+ */
 export async function sendTelegramNotification(service, data, options = {}) {
   if (!service.telegramToken || !service.telegramChatId) {
     console.log('[NotificationService] Telegram not configured');
@@ -49,6 +95,7 @@ export async function sendTelegramNotification(service, data, options = {}) {
   }
 
   const endpoint = `https://api.telegram.org/bot${service.telegramToken}/sendMessage`;
+  /** @type {{ chat_id: string | number | undefined, parse_mode: string, disable_web_page_preview: boolean, text?: string, reply_markup?: unknown }} */
   const body = {
     chat_id: service.telegramChatId,
     parse_mode: options.parse_mode || 'HTML',
@@ -63,10 +110,12 @@ export async function sendTelegramNotification(service, data, options = {}) {
     body.text = formatNotificationText(data);
   }
 
-  if (options.reply_markup || data.reply_markup) {
-    body.reply_markup = options.reply_markup || data.reply_markup;
+  if (options.reply_markup || /** @type {Record<string, unknown>} */ (data).reply_markup) {
+    body.reply_markup =
+      options.reply_markup || /** @type {Record<string, unknown>} */ (data).reply_markup;
   }
 
+  /** @type {Error | null} */
   let lastError = null;
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
@@ -113,9 +162,9 @@ export async function sendTelegramNotification(service, data, options = {}) {
       };
     } catch (error) {
       clearTimeout(timeoutId);
-      lastError = error;
+      lastError = /** @type {Error} */ (error);
 
-      if (attempt < MAX_RETRIES && isRetryableError(error)) {
+      if (attempt < MAX_RETRIES && isRetryableError(/** @type {Error} */ (error))) {
         console.warn(
           `[NotificationService] Telegram network error, retrying (${attempt + 1}/${MAX_RETRIES})...`
         );
@@ -123,11 +172,14 @@ export async function sendTelegramNotification(service, data, options = {}) {
         continue;
       }
 
-      console.error('[NotificationService] Telegram error:', error.message);
+      console.error(
+        '[NotificationService] Telegram error:',
+        error instanceof Error ? error.message : String(error)
+      );
       return {
         sent: false,
-        reason: error.name === 'AbortError' ? 'timeout' : 'fetch_error',
-        error: error.message,
+        reason: /** @type {Error} */ (error).name === 'AbortError' ? 'timeout' : 'fetch_error',
+        error: error instanceof Error ? error.message : String(error),
         attempts: attempt + 1,
       };
     }
@@ -141,6 +193,12 @@ export async function sendTelegramNotification(service, data, options = {}) {
   };
 }
 
+/**
+ * @param {{ automationWebhookUrl?: string }} service
+ * @param {string} event
+ * @param {Record<string, unknown> | null | undefined} [data]
+ * @returns {Promise<{ sent: boolean, reason?: string, status?: number, error?: string }>}
+ */
 export async function triggerAutomationWebhook(service, event, data) {
   if (!service.automationWebhookUrl) {
     console.log('[NotificationService] automation webhook not configured');
@@ -187,15 +245,24 @@ export async function triggerAutomationWebhook(service, event, data) {
     };
   } catch (error) {
     clearTimeout(timeoutId);
-    console.warn('[NotificationService] automation webhook error:', error.message);
+    console.warn(
+      '[NotificationService] automation webhook error:',
+      error instanceof Error ? error.message : String(error)
+    );
     return {
       sent: false,
-      reason: error.name === 'AbortError' ? 'timeout' : 'network_error',
-      error: error.message,
+      reason: /** @type {Error} */ (error).name === 'AbortError' ? 'timeout' : 'network_error',
+      error: error instanceof Error ? error.message : String(error),
     };
   }
 }
 
+/**
+ * @param {{ telegramToken?: string }} service
+ * @param {string} callbackQueryId
+ * @param {string} [text]
+ * @returns {Promise<void>}
+ */
 export async function answerCallbackQuery(service, callbackQueryId, text) {
   if (!service.telegramToken) return;
 

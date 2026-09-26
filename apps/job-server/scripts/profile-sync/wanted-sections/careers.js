@@ -4,10 +4,56 @@ import { normalizeCompanyName } from '@resume/shared/normalize';
 import { collectCareerProjects, syncCareerProjects } from './career-projects.js';
 import { mapCareerToWanted } from './field-mappings.js';
 
+/**
+ * @typedef {import('./field-mappings.js').SSoTCareer & import('./career-projects.js').SsotCareer} FullSsotCareer
+ * @typedef {import('./field-mappings.js').WantedCareerFormat} WantedCareerFormat
+ * @typedef {import('./career-projects.js').ExistingWantedProject} ExistingWantedProject
+ * @typedef {{
+ *   id: number | string;
+ *   company?: { name?: string; type?: string };
+ *   company_name?: string;
+ *   job_role?: string;
+ *   start_time?: string;
+ *   end_time?: string | null;
+ *   served?: boolean;
+ *   employment_type?: string;
+ *   projects?: ExistingWantedProject[];
+ * }} WantedCareer
+ *
+ * @typedef {{
+ *   id: number | string;
+ *   data: WantedCareerFormat;
+ *   ssot: FullSsotCareer;
+ *   existingProjects: ExistingWantedProject[];
+ * }} CareerToUpdate
+ *
+ * @typedef {{
+ *   data: WantedCareerFormat;
+ *   ssot: FullSsotCareer;
+ * }} CareerToAdd
+ *
+ * @typedef {import('./career-projects.js').WantedClient & {
+ *   getResumeDetail(resumeId: string): Promise<{ careers?: WantedCareer[] } | null>;
+ *   updateCareer(resumeId: string, careerId: number | string, data: WantedCareerFormat): Promise<unknown>;
+ *   addCareer(resumeId: string, data: WantedCareerFormat): Promise<{ data?: { id?: number | string }; id?: number | string }>;
+ *   deleteCareer(resumeId: string, careerId: number | string): Promise<unknown>;
+ * }} WantedCareersClient
+ */
+
+/**
+ * @param {unknown} [left]
+ * @param {unknown} [right]
+ * @returns {boolean}
+ */
 function sameValue(left, right) {
   return String(left ?? '') === String(right ?? '');
 }
 
+/**
+ * @param {FullSsotCareer} ssotCareer
+ * @param {WantedCareer} wantedCareer
+ * @returns {boolean}
+ */
 function projectsMatch(ssotCareer, wantedCareer) {
   const desired = collectCareerProjects(ssotCareer);
   const existing = Array.isArray(wantedCareer.projects) ? wantedCareer.projects : [];
@@ -21,6 +67,12 @@ function projectsMatch(ssotCareer, wantedCareer) {
   );
 }
 
+/**
+ * @param {WantedCareerFormat} mapped
+ * @param {WantedCareer} wantedCareer
+ * @param {FullSsotCareer} ssotCareer
+ * @returns {boolean}
+ */
 function careerMatches(mapped, wantedCareer, ssotCareer) {
   return (
     sameValue(
@@ -37,8 +89,15 @@ function careerMatches(mapped, wantedCareer, ssotCareer) {
   );
 }
 
+/**
+ * @param {FullSsotCareer[]} ssotCareers
+ * @param {WantedCareer[]} wantedCareers
+ * @returns {{ toUpdate: CareerToUpdate[]; toAdd: CareerToAdd[]; toDelete: WantedCareer[] }}
+ */
 function planCareerSync(ssotCareers, wantedCareers) {
+  /** @type {CareerToUpdate[]} */
   const toUpdate = [];
+  /** @type {CareerToAdd[]} */
   const toAdd = [];
   const matched = new Set();
 
@@ -66,6 +125,12 @@ function planCareerSync(ssotCareers, wantedCareers) {
   return { toUpdate, toAdd, toDelete: wantedCareers.filter((w) => !matched.has(w.id)) };
 }
 
+/**
+ * @param {CareerToUpdate[]} toUpdate
+ * @param {CareerToAdd[]} toAdd
+ * @param {WantedCareer[]} toDelete
+ * @returns {void}
+ */
 function reportCareerDiff(toUpdate, toAdd, toDelete) {
   for (const item of toUpdate) console.log(`  ~ ${item.ssot.company}: ${item.ssot.role}`);
   for (const item of toAdd) console.log(`  + ${item.ssot.company}: ${item.ssot.role}`);
@@ -75,7 +140,13 @@ function reportCareerDiff(toUpdate, toAdd, toDelete) {
     );
 }
 
-/** @param {Object} client @param {Object} ssot @param {Object} profile @param {string} resumeId @returns {Promise<Object>} */
+/**
+ * @param {WantedCareersClient} client
+ * @param {{ careers?: FullSsotCareer[] }} ssot
+ * @param {unknown} _profile
+ * @param {string} resumeId
+ * @returns {Promise<{ changes: number; updated: number; added: number; deleted: number; dryRun?: boolean }>}
+ */
 export async function syncWantedCareers(client, ssot, _profile, resumeId) {
   const ssotCareers = ssot.careers || [];
   const resumeDetail = await client.getResumeDetail(resumeId);
@@ -111,6 +182,12 @@ export async function syncWantedCareers(client, ssot, _profile, resumeId) {
   return { changes: updated + added + deleted, updated, added, deleted };
 }
 
+/**
+ * @param {WantedCareersClient} client
+ * @param {string} resumeId
+ * @param {CareerToUpdate[]} toUpdate
+ * @returns {Promise<number>}
+ */
 async function updateCareers(client, resumeId, toUpdate) {
   let updated = 0;
   for (const item of toUpdate) {
@@ -120,12 +197,22 @@ async function updateCareers(client, resumeId, toUpdate) {
       log(`Updated career: ${item.ssot.company}`, 'success', 'wanted');
       updated++;
     } catch (e) {
-      log(`Failed to update ${item.ssot.company}: ${e.message}`, 'error', 'wanted');
+      log(
+        `Failed to update ${item.ssot.company}: ${e instanceof Error ? e.message : String(e)}`,
+        'error',
+        'wanted'
+      );
     }
   }
   return updated;
 }
 
+/**
+ * @param {WantedCareersClient} client
+ * @param {string} resumeId
+ * @param {CareerToAdd[]} toAdd
+ * @returns {Promise<number>}
+ */
 async function addCareers(client, resumeId, toAdd) {
   let added = 0;
   for (const item of toAdd) {
@@ -136,12 +223,22 @@ async function addCareers(client, resumeId, toAdd) {
       log(`Added career: ${item.ssot.company}`, 'success', 'wanted');
       added++;
     } catch (e) {
-      log(`Failed to add ${item.ssot.company}: ${e.message}`, 'error', 'wanted');
+      log(
+        `Failed to add ${item.ssot.company}: ${e instanceof Error ? e.message : String(e)}`,
+        'error',
+        'wanted'
+      );
     }
   }
   return added;
 }
 
+/**
+ * @param {WantedCareersClient} client
+ * @param {string} resumeId
+ * @param {WantedCareer[]} toDelete
+ * @returns {Promise<number>}
+ */
 async function deleteCareers(client, resumeId, toDelete) {
   let deleted = 0;
   for (const career of toDelete) {
@@ -151,7 +248,7 @@ async function deleteCareers(client, resumeId, toDelete) {
       deleted++;
     } catch (e) {
       log(
-        `Failed to delete career ${career.company?.name || 'Unknown'}: ${e.message}`,
+        `Failed to delete career ${career.company?.name || 'Unknown'}: ${e instanceof Error ? e.message : String(e)}`,
         'error',
         'wanted'
       );
