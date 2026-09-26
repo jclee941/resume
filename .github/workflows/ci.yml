@@ -29,19 +29,31 @@ jobs:
           node-version: 22
           cache: npm
 
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: tools/scripts/go.mod
+          cache: false
+
       - name: Install dependencies
         run: npm ci
+
+      - name: Audit production dependencies
+        run: npm run security:audit
 
       - name: Build generated Worker inputs
         run: npm run build
 
       - name: Lint
-        run: npm run lint
+        run: |
+          npm run lint
+          npm run lint:loc
+          npm run lint:agents
 
       - name: Typecheck
         run: npm run typecheck
 
-      - name: Test JavaScript workspaces
+      - name: Test workspaces
         run: |
           npm run test:jest
           npm run test:node
@@ -50,6 +62,7 @@ jobs:
           npm run test:shared
           npm run test:tools
           npm run test:cli
+          npm run test:go
 
       - name: Verify architecture contracts
         run: npm run verify:architecture-hardening:core
