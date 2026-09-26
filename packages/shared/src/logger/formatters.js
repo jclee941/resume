@@ -1,5 +1,31 @@
 import { HttpError } from '../errors/index.js';
 
+/**
+ * @typedef {Object} ErrorDetails
+ * @property {string} type
+ * @property {string} message
+ * @property {string | undefined} [stack_trace]
+ * @property {string} [code]
+ * @property {Record<string, unknown>} [context]
+ */
+
+/**
+ * @typedef {Object} HttpErrorDetails
+ * @property {{ status_code: number }} [response]
+ */
+
+/**
+ * @typedef {Record<string, unknown> & {
+ *   error: ErrorDetails;
+ *   http?: HttpErrorDetails;
+ *   event: { kind: string; category: string[]; type: string[]; severity?: number };
+ * }} LogLabels
+ */
+
+/**
+ * @param {string | null | undefined | unknown} traceparent
+ * @returns {string | null}
+ */
 function parseTraceId(traceparent) {
   if (typeof traceparent !== 'string') return null;
 
@@ -11,11 +37,12 @@ function parseTraceId(traceparent) {
 }
 
 /**
- * @param {Object} labels
- * @param {import('../errors/index.js').AppError|Error} normalized
- * @returns {Object}
+ * @param {Record<string, unknown>} labels
+ * @param {import('../errors/index.js').AppError} normalized
+ * @returns {LogLabels}
  */
 function buildErrorLabels(labels, normalized) {
+  /** @type {LogLabels} */
   const errorLabels = {
     ...labels,
     error: {
@@ -42,9 +69,9 @@ function buildErrorLabels(labels, normalized) {
 }
 
 /**
- * @param {Object} labels
- * @param {import('../errors/index.js').AppError|Error} normalized
- * @returns {Object}
+ * @param {Record<string, unknown>} labels
+ * @param {import('../errors/index.js').AppError} normalized
+ * @returns {LogLabels}
  */
 function buildFatalLabels(labels, normalized) {
   return {
@@ -67,7 +94,7 @@ function buildFatalLabels(labels, normalized) {
 /**
  * @param {number} status
  * @param {number} duration
- * @returns {Object}
+ * @returns {Record<string, unknown>}
  */
 function buildResponseLabels(status, duration) {
   return {

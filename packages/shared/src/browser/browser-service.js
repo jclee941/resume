@@ -19,12 +19,25 @@ import { generateFingerprint, applyStealthPatches, humanDelay } from './stealth-
  */
 
 /**
+ * @typedef {Object} BrowserServiceInternalConfig
+ * @property {number} sessionTtlMs
+ * @property {number} pageTimeoutMs
+ * @property {boolean} stealth
+ * @property {string} [acceptLanguage]
+ */
+
+/**
+ * @typedef {{ MYBROWSER: import('@cloudflare/puppeteer').BrowserWorker }} BrowserEnv
+ */
+
+/**
  * @typedef {Object} BrowseResult
  * @property {string} content - Page HTML content
  * @property {number} status - HTTP status code
  * @property {string} url - Final URL after redirects
  * @property {Object.<string, string>} cookies - Response cookies
  * @property {number} durationMs - Total browse time in ms
+ * @property {Buffer} [screenshot] - Screenshot buffer if requested
  */
 
 /**
@@ -38,14 +51,14 @@ export class BrowserService {
   /** @type {ReturnType<typeof generateFingerprint> | null} */
   #fingerprint = null;
 
-  /** @type {BrowserServiceConfig} */
+  /** @type {BrowserServiceInternalConfig} */
   #config;
 
-  /** @type {Object} CF Worker env bindings */
+  /** @type {BrowserEnv} CF Worker env bindings */
   #env;
 
   /**
-   * @param {Object} env - Cloudflare Worker environment bindings (must include BROWSER)
+   * @param {BrowserEnv} env - Cloudflare Worker environment bindings (must include BROWSER)
    * @param {BrowserServiceConfig} [config={}]
    */
   constructor(env, config = {}) {
@@ -90,7 +103,10 @@ export class BrowserService {
     page.setDefaultTimeout(this.#config.pageTimeoutMs);
 
     if (this.#config.stealth) {
-      await applyStealthPatches(page, this.#fingerprint);
+      await applyStealthPatches(
+        page,
+        /** @type {ReturnType<typeof generateFingerprint>} */ (this.#fingerprint)
+      );
     }
 
     return page;
@@ -123,13 +139,19 @@ export class BrowserService {
       }
 
       if (options.waitMs) {
-        await humanDelay(page, options.waitMs, options.waitMs + 500);
+        await humanDelay(
+          /** @type {import('@cloudflare/puppeteer').Page & { waitForTimeout(delay: number): Promise<unknown> }} */ (
+            page
+          ),
+          options.waitMs,
+          options.waitMs + 500
+        );
       }
 
       const content = await page.content();
       const cookies = await page.cookies();
 
-      /** @type {BrowseResult} */
+      /** @type {BrowseResult & { screenshot?: Buffer }} */
       const result = {
         content,
         status: response?.status() ?? 0,

@@ -1,5 +1,26 @@
 import { createIconElement } from './project-card-formatting.js';
 
+/**
+ * @typedef {'운영' | '구축' | '자동화' | '안정화' | '기초'} TimelinePhase
+ */
+
+/**
+ * @typedef {Object} TimelineCareer
+ * @property {string} company
+ * @property {string} [companyUrl]
+ * @property {string} period
+ * @property {string} role
+ * @property {string} myRole
+ * @property {TimelinePhase} phase
+ * @property {'active' | 'completed' | string} status
+ * @property {string[]} [achievements]
+ * @property {string} [description]
+ */
+
+/**
+ * @typedef {ReturnType<typeof createTimelineViewModel>} TimelineViewModel
+ */
+
 const TIMELINE_LABELS = {
   ko: {
     period: '근무 기간',
@@ -61,6 +82,10 @@ export function getTimelineLabels() {
   return TIMELINE_LABELS[timelineLang()] || TIMELINE_LABELS.ko;
 }
 
+/**
+ * @param {TimelineCareer} career
+ * @returns {string}
+ */
 function impactTextFor(career) {
   const achievements = career.achievements || [];
   if (achievements.length > 0) return achievements.map((item) => `• ${item}`).join('\n');
@@ -68,6 +93,10 @@ function impactTextFor(career) {
   return description ? `${description.substring(0, 80)}...` : '';
 }
 
+/**
+ * @param {TimelineCareer} career
+ * @param {number} index
+ */
 export function createTimelineViewModel(career, index) {
   const phaseInfo = PHASE_STAGES[career.phase] || PHASE_STAGES['기초'];
   const labels = getTimelineLabels();
@@ -86,6 +115,13 @@ export function createTimelineViewModel(career, index) {
   };
 }
 
+/**
+ * @template {keyof HTMLElementTagNameMap} K
+ * @param {K} tag
+ * @param {string} [className]
+ * @param {string} [text]
+ * @returns {HTMLElementTagNameMap[K]}
+ */
 function el(tag, className, text) {
   const node = document.createElement(tag);
   if (className) node.className = className;
@@ -93,6 +129,10 @@ function el(tag, className, text) {
   return node;
 }
 
+/**
+ * @param {TimelineViewModel} model
+ * @returns {HTMLElement}
+ */
 function companyElement(model) {
   if (!model.companyUrl) return el('span', 'company-link company-link--text', model.company);
   const link = el('a', 'company-link', model.company);
@@ -119,6 +159,11 @@ function createExpandIcon() {
   return svg;
 }
 
+/**
+ * @param {TimelineCareer} career
+ * @param {number} index
+ * @returns {HTMLLIElement}
+ */
 export function createTimelineNode(career, index) {
   const model = createTimelineViewModel(career, index);
   const node = el('li', `timeline-node${model.isActive ? ' timeline-node--active' : ''}`);

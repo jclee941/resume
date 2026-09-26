@@ -5,9 +5,39 @@ const BATCH_SIZE = 10;
 const BATCH_FLUSH_MS = 1000;
 const MAX_QUEUE_SIZE = 1000;
 
+/**
+ * @typedef {Record<string, unknown>} EcsDocument
+ */
+
+/**
+ * @typedef {Object} ElasticsearchEnv
+ * @property {string} [CF_ACCESS_CLIENT_ID]
+ * @property {string} [CF_ACCESS_CLIENT_SECRET]
+ * @property {string} [ELASTICSEARCH_URL]
+ * @property {string} [ELASTICSEARCH_API_KEY]
+ * @property {string} [ELASTICSEARCH_INDEX]
+ */
+
+/**
+ * @typedef {Object} ElasticsearchLogOptions
+ * @property {string} [job]
+ * @property {string} [index]
+ * @property {boolean} [immediate]
+ * @property {number} [timeout]
+ */
+
+/** @type {EcsDocument[]} */
 const logQueue = [];
+/** @type {ReturnType<typeof setTimeout> | null} */
 let flushTimer = null;
 
+/**
+ * @param {string} message
+ * @param {string} level
+ * @param {Record<string, unknown>} labels
+ * @param {string} job
+ * @returns {EcsDocument}
+ */
 function buildEcsDocument(message, level, labels, job) {
   const now = new Date();
   return {
@@ -20,7 +50,13 @@ function buildEcsDocument(message, level, labels, job) {
   };
 }
 
+/**
+ * @param {ElasticsearchEnv} env
+ * @param {string} [contentType='application/json']
+ * @returns {Record<string, string>}
+ */
 function buildHeaders(env, contentType = 'application/json') {
+  /** @type {Record<string, string>} */
   const headers = { 'Content-Type': contentType };
   const cfId = env?.CF_ACCESS_CLIENT_ID;
   const cfSecret = env?.CF_ACCESS_CLIENT_SECRET;
@@ -31,6 +67,11 @@ function buildHeaders(env, contentType = 'application/json') {
   return headers;
 }
 
+/**
+ * @param {ElasticsearchEnv} env
+ * @param {string} index
+ * @returns {Promise<void>}
+ */
 async function flushLogs(env, index) {
   if (logQueue.length === 0) return;
 
@@ -70,6 +111,14 @@ async function flushLogs(env, index) {
   }
 }
 
+/**
+ * @param {ElasticsearchEnv} env
+ * @param {string} message
+ * @param {string} [level='INFO']
+ * @param {Record<string, unknown> & { job?: string }} [labels={}]
+ * @param {ElasticsearchLogOptions} [options={}]
+ * @returns {Promise<void>}
+ */
 export async function logToElasticsearch(env, message, level = 'INFO', labels = {}, options = {}) {
   const job = options.job || labels.job || 'default';
   const index = options.index || env?.ELASTICSEARCH_INDEX || `logs-${job}`;
@@ -121,6 +170,11 @@ export async function logToElasticsearch(env, message, level = 'INFO', labels = 
   }
 }
 
+/**
+ * @param {ElasticsearchEnv} env
+ * @param {ElasticsearchLogOptions} [options={}]
+ * @returns {Promise<void>}
+ */
 export async function flush(env, options = {}) {
   if (flushTimer) {
     clearTimeout(flushTimer);
