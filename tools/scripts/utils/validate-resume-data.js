@@ -11,6 +11,35 @@ const { JsonSchemaLiteValidator } = require('./json-schema-lite-validator.js');
 
 class SimpleValidator extends JsonSchemaLiteValidator {}
 
+/**
+ * @typedef {Object} ResumeValidationError
+ * @property {string} path
+ * @property {string} message
+ * @property {string} [file]
+ * @property {string | null} [sourceFile]
+ * @property {string} [jsonPointer]
+ * @property {number | null} [arrayIndex]
+ * @property {unknown} [expected]
+ * @property {string | null} [expectedFormat]
+ * @property {unknown} [allowed]
+ * @property {string} [type]
+ * @property {string} [code]
+ */
+
+/**
+ * @typedef {Object} ValidationResult
+ * @property {boolean} valid
+ * @property {ResumeValidationError[] | null} errors
+ */
+
+/**
+ * @typedef {ValidationResult & { data: unknown }} FileValidationResult
+ */
+
+/**
+ * @param {Record<string, unknown> | null | undefined} [schema]
+ * @returns {schema is import('./json-schema-lite-primitives.js').SchemaObject}
+ */
 function isUsableSchema(schema) {
   return (
     schema !== null &&
@@ -23,6 +52,10 @@ function isUsableSchema(schema) {
   );
 }
 
+/**
+ * @param {string} [sourceFile]
+ * @returns {ResumeValidationError}
+ */
 function schemaUnavailableError(sourceFile) {
   return {
     path: '(schema)',
@@ -41,9 +74,10 @@ function schemaUnavailableError(sourceFile) {
 
 /**
  * Validate resume data against schema
- * @param {Object} data - Resume data to validate
- * @param {Object} schema - JSON Schema
- * @returns {Object} - { valid: boolean, errors: Array|null }
+ * @param {unknown} data - Resume data to validate
+ * @param {Record<string, unknown> | null | undefined} schema - JSON Schema
+ * @param {string} [sourceFile]
+ * @returns {ValidationResult} - { valid: boolean, errors: ResumeValidationError[]|null }
  */
 function validateResumeData(data, schema, sourceFile) {
   if (!isUsableSchema(schema)) {
@@ -57,7 +91,7 @@ function validateResumeData(data, schema, sourceFile) {
  * Load and validate resume data from file
  * @param {string} filePath - Path to resume_data.json
  * @param {string} schemaPath - Path to resume_schema.json
- * @returns {Object} - { valid: boolean, errors: Array|null, data: Object|null }
+ * @returns {FileValidationResult} - { valid: boolean, errors: ResumeValidationError[]|null, data: unknown }
  */
 function validateResumeDataFile(filePath, schemaPath) {
   try {
@@ -103,12 +137,18 @@ function validateResumeDataFile(filePath, schemaPath) {
   } catch (e) {
     return {
       valid: false,
-      errors: [fileError('file_error', e.message, filePath)],
+      errors: [fileError('file_error', e instanceof Error ? e.message : String(e), filePath)],
       data: null,
     };
   }
 }
 
+/**
+ * @param {string} type
+ * @param {string} detail
+ * @param {string} [sourceFile]
+ * @returns {ResumeValidationError}
+ */
 function fileError(type, detail, sourceFile) {
   return {
     path: '(root)',
@@ -127,7 +167,7 @@ function fileError(type, detail, sourceFile) {
 
 /**
  * Format validation errors for console output
- * @param {Array} errors - Array of error objects
+ * @param {ResumeValidationError[] | null | undefined} errors - Array of error objects
  * @returns {string} - Formatted error message
  */
 function formatErrors(errors) {
@@ -156,6 +196,10 @@ function formatErrors(errors) {
   return output;
 }
 
+/**
+ * @param {unknown} value
+ * @returns {string}
+ */
 function formatValue(value) {
   return value === undefined ? 'n/a' : JSON.stringify(value);
 }

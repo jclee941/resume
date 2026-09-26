@@ -12,15 +12,45 @@ import { RETRY, CIRCUIT, sleep, nowMs, retryable, delay } from './retry-service-
 
 export { CircuitState };
 
+/**
+ * @typedef {Object} RetryServiceConfig
+ * @property {Partial<import('./retry-service-config.js').RetryConfig>} [retry]
+ * @property {Partial<import('./retry-service-circuit.js').CircuitConfig>} [circuit]
+ * @property {() => number} [now]
+ * @property {(ms: number) => Promise<void>} [sleep]
+ */
+
+/**
+ * @typedef {Object} ExecuteOptions
+ * @property {string} [serviceName]
+ * @property {string} [platform]
+ * @property {Partial<import('./retry-service-config.js').RetryConfig>} [retry]
+ * @property {Partial<import('./retry-service-circuit.js').CircuitConfig>} [circuit]
+ */
+
+/**
+ * @typedef {Error & import('./retry-service-config.js').RetryableError} RetryServiceError
+ */
+
 export class RetryService extends EventEmitter {
+  /** @type {import('./retry-service-config.js').RetryConfig & { maxRetries: number }} */
   #retryConfig;
+  /** @type {import('./retry-service-circuit.js').CircuitConfig} */
   #circuitConfig;
+  /** @type {() => number} */
   #clock;
+  /** @type {(ms: number) => Promise<void>} */
   #sleeper;
+  /** @type {Map<string, import('./retry-service-circuit.js').Circuit>} */
   #circuits;
+  /** @type {import('./retry-service-stats.js').StatsState} */
   #stats;
+  /** @type {Map<string, Promise<unknown>>} */
   #locks;
 
+  /**
+   * @param {RetryServiceConfig} [config]
+   */
   constructor(config = {}) {
     super();
     this.#retryConfig = { ...RETRY, ...(config.retry ?? {}) };
@@ -32,6 +62,12 @@ export class RetryService extends EventEmitter {
     this.#locks = new Map();
   }
 
+  /**
+   * @template T
+   * @param {() => Promise<T> | T} operation
+   * @param {ExecuteOptions} [options]
+   * @returns {Promise<T>}
+   */
   async execute(operation, options = {}) {
     if (typeof operation !== 'function') {
       throw new TypeError('operation must be a function that returns a promise');
@@ -42,6 +78,7 @@ export class RetryService extends EventEmitter {
     const start = this.#clock();
     let attempt = 0;
 
+    /** @type {(event: string, payload: import('./retry-service-circuit.js').CircuitEventPayload) => boolean} */
     const emit = (event, payload) => this.emit(event, payload);
 
     while (attempt <= retryConfig.maxRetries) {
@@ -76,7 +113,9 @@ export class RetryService extends EventEmitter {
         return result;
       } catch (error) {
         const latencyMs = this.#clock() - attemptStart;
-        const canRetry = retryable(error, retryConfig) && attempt < retryConfig.maxRetries;
+        const canRetry =
+          retryable(/** @type {RetryServiceError} */ (error), retryConfig) &&
+          attempt < retryConfig.maxRetries;
         await this.#locked(serviceName, () =>
           recordCircuitFailure(
             this.#circuits,
@@ -84,7 +123,7 @@ export class RetryService extends EventEmitter {
             circuitConfig,
             gate,
             latencyMs,
-            error,
+            /** @type {RetryServiceError} */ (error),
             this.#stats,
             this.#clock,
             emit
@@ -110,6 +149,10 @@ export class RetryService extends EventEmitter {
     throw new Error(`Retry execution exhausted for service: ${serviceName}`);
   }
 
+  /**
+   * @param {string} serviceName
+   * @returns {{ serviceName: string } & import('./retry-service-circuit.js').Circuit}
+   */
   getCircuitState(serviceName) {
     return { serviceName, ...getCircuit(this.#circuits, serviceName) };
   }
@@ -118,8 +161,15 @@ export class RetryService extends EventEmitter {
     return formatOverallStats(this.#stats);
   }
 
+  /**
+   * @template T
+   * @param {string} name
+   * @param {() => Promise<T> | T} fn
+   * @returns {Promise<T>}
+   */
   async #locked(name, fn) {
     const previous = this.#locks.get(name) ?? Promise.resolve();
+    /** @type {((value?: unknown) => void) | undefined} */
     let release;
     const next = new Promise((resolve) => {
       release = resolve;
@@ -132,7 +182,7 @@ export class RetryService extends EventEmitter {
     try {
       return await fn();
     } finally {
-      release();
+      /** @type {(value?: unknown) => void} */ (release)();
     }
   }
 }

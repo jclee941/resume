@@ -5,6 +5,19 @@ import path from 'node:path';
 import process from 'node:process';
 import { runLighthouseProfile } from './lighthouse-profile.mjs';
 
+/**
+ * @typedef {Object} ProfileResult
+ * @property {string} profileName
+ * @property {number} runs
+ * @property {import('./lighthouse-assertions.mjs').CategoryScores} scores
+ * @property {string[]} failures
+ * @property {string[]} warnings
+ */
+
+/**
+ * @param {string[]} argv
+ * @returns {Map<string, string>}
+ */
 function parseArgs(argv) {
   const args = new Map();
   for (const part of argv.slice(2)) {
@@ -15,11 +28,20 @@ function parseArgs(argv) {
   return args;
 }
 
+/**
+ * @param {string} name
+ * @param {number | null | undefined} value
+ * @returns {string}
+ */
 function printScore(name, value) {
   if (typeof value !== 'number') return `${name}=n/a`;
   return `${name}=${(value * 100).toFixed(0)}`;
 }
 
+/**
+ * @param {ProfileResult} result
+ * @returns {void}
+ */
 function printProfile(result) {
   console.log(
     `[${result.profileName}] runs=${result.runs} ${printScore('perf', result.scores.performance)} ${printScore('a11y', result.scores.accessibility)} ${printScore('bp', result.scores.bestPractices)} ${printScore('seo', result.scores.seo)}`
