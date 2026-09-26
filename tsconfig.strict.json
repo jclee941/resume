@@ -739,7 +739,8 @@
     "apps/portfolio/src/scripts/modules/skill-radar-search.js",
     "apps/job-dashboard/src/workflows/application/application-submission-gates.js",
     "apps/job-dashboard/src/workflows/application/application-submissions.js",
-    "apps/job-dashboard/src/workflows/application/job-search-and-scoring.js"
+    "apps/job-dashboard/src/workflows/application/job-search-and-scoring.js",
+    "apps/job-server/platforms/remember/remember-browser-scraper.js"
   ],
   "exclude": ["packages/env/src/__tests__/**"]
 }

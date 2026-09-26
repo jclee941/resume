@@ -3,6 +3,40 @@ import SessionManager from '../../shared/services/session/index.js';
 
 export const WANTED_PLATFORM = 'wanted';
 
+/**
+ * @typedef {{
+ *   email?: string,
+ *   username?: string,
+ *   mobile?: string,
+ *   [key: string]: unknown,
+ * }} WantedSession
+ *
+ * @typedef {{
+ *   id?: string | number,
+ *   [key: string]: unknown,
+ * }} WantedJob
+ *
+ * @typedef {{
+ *   email?: string,
+ *   username?: string,
+ *   mobile?: string,
+ *   nationality_code?: string,
+ *   visa?: string | null,
+ *   extraPayload?: Record<string, unknown>,
+ *   [key: string]: unknown,
+ * }} WantedApplyOptions
+ *
+ * @typedef {{
+ *   name?: string,
+ *   mobile?: string,
+ *   [key: string]: unknown,
+ * }} WantedProfileData
+ */
+
+/**
+ * @param {string | number | null | undefined} jobId
+ * @returns {number | null}
+ */
 export function parseWantedJobId(jobId) {
   if (typeof jobId === 'number') {
     return Number.isSafeInteger(jobId) && jobId > 0 ? jobId : null;
@@ -21,6 +55,10 @@ export function parseWantedJobId(jobId) {
   return Number.isSafeInteger(numericJobId) && numericJobId > 0 ? numericJobId : null;
 }
 
+/**
+ * @param {string | number | null | undefined} jobId
+ * @returns {string | null}
+ */
 export function buildWantedJobUrl(jobId) {
   const numericJobId = parseWantedJobId(jobId);
   if (numericJobId === null) {
@@ -29,6 +67,13 @@ export function buildWantedJobUrl(jobId) {
   return `https://www.wanted.co.kr/wd/${numericJobId}`;
 }
 
+/**
+ * @param {WantedJob} job
+ * @param {WantedApplyOptions} options
+ * @param {string | number | null | undefined} [resumeKey]
+ * @param {WantedProfileData} [profileData]
+ * @returns {Record<string, unknown>}
+ */
 export function buildApplicationPayload(job, options, resumeKey, profileData = {}) {
   const numericJobId = parseWantedJobId(job.id);
   if (numericJobId === null) {
@@ -41,7 +86,10 @@ export function buildApplicationPayload(job, options, resumeKey, profileData = {
     );
   }
 
-  const session = SessionManager.load(WANTED_PLATFORM) || {};
+  const session =
+    /** @type {(platform?: string | null) => WantedSession | null} */ (SessionManager.load)(
+      WANTED_PLATFORM
+    ) || {};
   const extraPayload = options.extraPayload ? { ...options.extraPayload } : {};
 
   return {

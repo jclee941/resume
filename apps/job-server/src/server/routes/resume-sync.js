@@ -1,25 +1,45 @@
 import { unifiedResumeSyncTool } from '../../tools/unified-resume-sync.js';
 
+/**
+ * @typedef {{
+ *   platforms?: string[];
+ *   resume_id?: string;
+ *   dry_run?: boolean;
+ * }} ResumeSyncBody
+ *
+ * @typedef {import('fastify').FastifyRequest<{ Body: ResumeSyncBody }>} SyncRequest
+ * @typedef {import('fastify').FastifyReply} FastifyReply
+ * @typedef {import('fastify').FastifyInstance} FastifyInstance
+ */
+
+/**
+ * @param {FastifyInstance} fastify
+ */
 export default async function resumeSyncRoutes(fastify) {
   // POST /sync — trigger full resume sync to Wanted
   fastify.post('/sync', {
     config: { public: false },
-    handler: async (request, reply) => {
-      const { platforms = ['wanted'], resume_id, dry_run = false } = request.body || {};
+    handler:
+      /**
+       * @param {SyncRequest} request
+       * @param {FastifyReply} reply
+       */
+      async (request, reply) => {
+        const { platforms = ['wanted'], resume_id, dry_run = false } = request.body || {};
 
-      if (!resume_id) {
-        return reply.status(400).send({ error: 'resume_id is required' });
-      }
+        if (!resume_id) {
+          return reply.status(400).send({ error: 'resume_id is required' });
+        }
 
-      const result = await unifiedResumeSyncTool.execute({
-        action: 'sync',
-        platforms,
-        resume_id,
-        dry_run,
-      });
+        const result = await unifiedResumeSyncTool.execute({
+          action: 'sync',
+          platforms,
+          resume_id,
+          dry_run,
+        });
 
-      return result;
-    },
+        return result;
+      },
   });
 
   // GET /status — check sync status for all platforms
@@ -31,28 +51,35 @@ export default async function resumeSyncRoutes(fastify) {
 
   // POST /preview — preview changes without applying
   fastify.post('/preview', {
-    handler: async (request) => {
-      const { platforms = ['wanted'], resume_id } = request.body || {};
-      return unifiedResumeSyncTool.execute({
-        action: 'preview',
-        platforms,
-        resume_id,
-      });
-    },
+    handler:
+      /** @param {SyncRequest} request */
+      async (request) => {
+        const { platforms = ['wanted'], resume_id } = request.body || {};
+        return unifiedResumeSyncTool.execute({
+          action: 'preview',
+          platforms,
+          resume_id,
+        });
+      },
   });
 
   // POST /diff — compare local vs remote
   fastify.post('/diff', {
-    handler: async (request, reply) => {
-      const { platforms = ['wanted'], resume_id } = request.body || {};
-      if (!resume_id) {
-        return reply.status(400).send({ error: 'resume_id is required' });
-      }
-      return unifiedResumeSyncTool.execute({
-        action: 'diff',
-        platforms,
-        resume_id,
-      });
-    },
+    handler:
+      /**
+       * @param {SyncRequest} request
+       * @param {FastifyReply} reply
+       */
+      async (request, reply) => {
+        const { platforms = ['wanted'], resume_id } = request.body || {};
+        if (!resume_id) {
+          return reply.status(400).send({ error: 'resume_id is required' });
+        }
+        return unifiedResumeSyncTool.execute({
+          action: 'diff',
+          platforms,
+          resume_id,
+        });
+      },
   });
 }
