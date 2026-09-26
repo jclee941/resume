@@ -13,7 +13,7 @@ generation. It is not an npm workspace package.
 
 ```text
 ta/
-├── inspect.py        # PPTX overflow/data inspection
+├── inspect_overflow.py # PPTX overflow/data inspection
 ├── improve_visual.py # PPTX visual adjustment script
 ├── verify.py         # PPTX verification/report extraction
 ├── output/           # generated verification reports and PPTX outputs

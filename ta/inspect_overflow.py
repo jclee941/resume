@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """ta.pptx 오버플로우 + 데이터 점검 스크립트"""
+from pathlib import Path
+
 from pptx import Presentation
-from pptx.util import Inches, Pt, Emu
 import re
 
-prs = Presentation("/home/jclee/dev/ta/output/ta.pptx")
+prs = Presentation(str(Path(__file__).resolve().parent / "output" / "ta.pptx"))
 
 print("=" * 90)
 print("슬라이드 크기:", round(prs.slide_width / 914400, 2), "x", round(prs.slide_height / 914400, 2), "inches")
@@ -127,7 +128,7 @@ for si, slide in enumerate(prs.slides, 1):
                 # 데이터 덤프
                 data_dump.append(f"  [{ri},{ci}] gs={grid_span} rs={row_span} font={max_font}pt w={actual_w}in | {txt[:80]}")
 
-        print(f"\n  --- 셀 데이터 ---")
+        print("\n  --- 셀 데이터 ---")
         for d in data_dump:
             print(d)
 
@@ -138,7 +139,7 @@ for si, slide in enumerate(prs.slides, 1):
                       f"텍스트={ov['est_width']}in > 셀={ov['cell_width']}in "
                       f"(+{ov['overflow_pct']}%) | {ov['text']}")
         else:
-            print(f"\n  ✅ 오버플로우 없음")
+            print("\n  ✅ 오버플로우 없음")
 
 print(f"\n\n{'='*90}")
 print("점검 완료")
