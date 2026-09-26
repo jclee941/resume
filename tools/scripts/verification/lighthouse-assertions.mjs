@@ -50,7 +50,7 @@ export function getAssertionValue(lhr, key, options) {
   return typeof audit.score === 'number' ? audit.score : null;
 }
 
-export function evaluateAssertion(key, assertion, value, profileName) {
+function evaluateAssertion(key, assertion, value, profileName) {
   const failures = [];
   const warnings = [];
 

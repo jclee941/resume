@@ -114,10 +114,4 @@ async function tryStartInitializedMCP() {
   }
 }
 
-module.exports = {
-  hasExternalWantedMcpEnv,
-  initializeMCP,
-  startInitializedMCP,
-  startMCPServer,
-  tryStartInitializedMCP,
-};
+module.exports = { hasExternalWantedMcpEnv, tryStartInitializedMCP };

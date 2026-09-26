@@ -2,7 +2,6 @@ import { EventEmitter } from 'node:events';
 import {
   CircuitState,
   getCircuit,
-  closeCircuit,
   enterCircuit,
   createCircuitRejection,
   recordCircuitSuccess,
@@ -113,15 +112,6 @@ export class RetryService extends EventEmitter {
 
   getCircuitState(serviceName) {
     return { serviceName, ...getCircuit(this.#circuits, serviceName) };
-  }
-
-  async resetCircuit(serviceName) {
-    await this.#locked(serviceName, () => closeCircuit(getCircuit(this.#circuits, serviceName)));
-    this.emit('circuit:closed', {
-      serviceName,
-      reason: 'manual_reset',
-      state: CircuitState.CLOSED,
-    });
   }
 
   getStats() {

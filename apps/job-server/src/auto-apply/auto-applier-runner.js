@@ -1,4 +1,4 @@
-export function createRunResults() {
+function createRunResults() {
   return {
     searched: 0,
     matched: 0,
@@ -110,7 +110,7 @@ export async function runAutoApply(options = {}) {
   }
 }
 
-export function recordProcessResult(results, processResult) {
+function recordProcessResult(results, processResult) {
   results.applications.push(processResult);
 
   if (processResult.applied) {

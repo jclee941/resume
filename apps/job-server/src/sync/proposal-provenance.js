@@ -43,7 +43,7 @@ export function buildProposalProvenance(proposal, resume) {
   });
 }
 
-export function refreshProposalHash(proposal) {
+function refreshProposalHash(proposal) {
   return {
     ...proposal,
     proposalHash: hashValue(hashPayload(proposal)),
@@ -70,7 +70,7 @@ export function mergeEquivalentProposals(existing, incoming) {
   });
 }
 
-export function hashValue(value) {
+function hashValue(value) {
   return createHash('sha256').update(stableJson(value)).digest('hex');
 }
 

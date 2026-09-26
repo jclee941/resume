@@ -10,7 +10,7 @@ export async function previewSync(sourceData, platforms) {
   }
 }
 
-export async function mapToPlatform(source, platform) {
+async function mapToPlatform(source, platform) {
   switch (platform) {
     case 'wanted':
       return {
@@ -44,7 +44,8 @@ export async function mapToPlatform(source, platform) {
     }
 
     case 'programmers': {
-      const { mapToProgrammersFormat } = await import('../../src/tools/platforms/programmers-sync.js');
+      const { mapToProgrammersFormat } =
+        await import('../../src/tools/platforms/programmers-sync.js');
       return mapToProgrammersFormat(source);
     }
 
@@ -54,7 +55,8 @@ export async function mapToPlatform(source, platform) {
     }
 
     case 'rocketpunch': {
-      const { mapToRocketPunchFormat } = await import('../../src/tools/platforms/rocketpunch-sync.js');
+      const { mapToRocketPunchFormat } =
+        await import('../../src/tools/platforms/rocketpunch-sync.js');
       return mapToRocketPunchFormat(source);
     }
 

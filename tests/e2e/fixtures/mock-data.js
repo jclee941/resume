@@ -104,16 +104,6 @@ function getSampleResumePath() {
 }
 
 /**
- * Get sample PDF resume path (for testing actual PDF upload)
- * @returns {string} Path to sample PDF resume
- */
-function getSamplePdfResumePath() {
-  // For actual PDF upload testing, we'd need a real PDF
-  // For now, return the text file path which can be used for upload testing
-  return getSampleResumePath();
-}
-
-/**
  * Generate random delay for human-like behavior
  * @param {number} minMs - Minimum delay in ms
  * @param {number} maxMs - Maximum delay in ms
@@ -141,60 +131,9 @@ function isRealisticUserAgent(userAgent) {
   return realisticPatterns.some((pattern) => pattern.test(userAgent));
 }
 
-/**
- * Cookie jar for session persistence testing
- */
-class MockCookieJar {
-  constructor() {
-    this.cookies = new Map();
-  }
-
-  set(name, value, options = {}) {
-    this.cookies.set(name, { value, ...options });
-  }
-
-  get(name) {
-    return this.cookies.get(name);
-  }
-
-  getAll() {
-    return Object.fromEntries(this.cookies);
-  }
-
-  clear() {
-    this.cookies.clear();
-  }
-
-  toHeaderString() {
-    return Array.from(this.cookies.entries())
-      .map(([name, data]) => `${name}=${data.value}`)
-      .join('; ');
-  }
-}
-
-/**
- * Mock file upload handler results
- */
-function createMockUploadResult(filename = 'sample-resume.txt', size = 1024) {
-  return {
-    success: true,
-    file: {
-      name: filename,
-      size,
-      type: filename.endsWith('.pdf') ? 'application/pdf' : 'text/plain',
-      uploadedAt: new Date().toISOString(),
-    },
-    fileId: `file-${Date.now()}`,
-  };
-}
-
 module.exports = {
   SAMPLE_APPLICATION_DATA,
-  SAMPLE_RESUME_CONTENT,
   getSampleResumePath,
-  getSamplePdfResumePath,
   randomDelay,
   isRealisticUserAgent,
-  MockCookieJar,
-  createMockUploadResult,
 };

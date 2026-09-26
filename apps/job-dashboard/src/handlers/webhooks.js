@@ -62,43 +62,6 @@ export class WebhookHandler {
   testChaosResumes(request) {
     return this.test.testChaosResumes(request);
   }
-
-  // Telegram webhook handlers
-  handleTelegramWebhook(request) {
-    return this.telegram.handleWebhook(request);
-  }
-
-  async setupTelegramWebhook(request) {
-    try {
-      const { webhookUrl } = await request.json();
-      if (!webhookUrl) {
-        return this.jsonResponse({ error: 'webhookUrl required' }, 400);
-      }
-
-      const result = await this.telegram.setWebhook(webhookUrl);
-      return this.jsonResponse({ success: true, result });
-    } catch (error) {
-      return this.jsonResponse({ error: error.message }, 500);
-    }
-  }
-
-  async deleteTelegramWebhook() {
-    try {
-      const result = await this.telegram.deleteWebhook();
-      return this.jsonResponse({ success: true, result });
-    } catch (error) {
-      return this.jsonResponse({ error: error.message }, 500);
-    }
-  }
-
-  async getTelegramWebhookInfo() {
-    try {
-      const result = await this.telegram.getWebhookInfo();
-      return this.jsonResponse({ success: true, result });
-    } catch (error) {
-      return this.jsonResponse({ error: error.message }, 500);
-    }
-  }
 }
 
 export default WebhookHandler;

@@ -122,7 +122,7 @@ export function normalizeApiKey(value) {
   return typeof value === 'string' ? value.trim() : '';
 }
 
-export function normalizeHttpUrl(value) {
+function normalizeHttpUrl(value) {
   const raw = typeof value === 'string' ? value.trim() : '';
   if (!raw) return '';
   try {
@@ -133,7 +133,7 @@ export function normalizeHttpUrl(value) {
   }
 }
 
-export function isLargeCompany(job) {
+function isLargeCompany(job) {
   const scale = normalizeScale(job?.companyScale);
   if (scale === 'large' || scale === 'enterprise') return true;
   if (job?.isEnterprise === true || job?.isLargeCompany === true) return true;

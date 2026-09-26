@@ -21,7 +21,7 @@ export const NotificationChannel = {
   BOTH: 'both',
 };
 
-export const DEFAULT_NOTIFICATION_PREFERENCES = {
+const DEFAULT_NOTIFICATION_PREFERENCES = {
   approval_required: { channels: [NotificationChannel.BOTH], enabled: true },
   application_success: { channels: [NotificationChannel.BOTH], enabled: true },
   application_failed: { channels: [NotificationChannel.BOTH], enabled: true },

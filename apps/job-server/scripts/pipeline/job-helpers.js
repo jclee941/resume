@@ -10,7 +10,7 @@ export function isObjectLike(value) {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
-export function toText(value) {
+function toText(value) {
   if (Array.isArray(value)) {
     return value
       .map((entry) => String(entry || '').trim())
@@ -28,7 +28,7 @@ export function joinSections(...sections) {
     .join('\n\n');
 }
 
-export function normalizeTitle(title) {
+function normalizeTitle(title) {
   return String(title || '').toLowerCase();
 }
 
@@ -37,7 +37,7 @@ export function titleMatchesRelevantKeywords(title) {
   return TITLE_KEYWORDS.some((keyword) => normalized.includes(keyword));
 }
 
-export function isProfileMismatch(job) {
+function isProfileMismatch(job) {
   const title = normalizeTitle(job.title || job.position || '');
   const location = (job.location || job.fullLocation || '').toLowerCase();
 
@@ -58,7 +58,7 @@ export function extractJobArray(payload) {
   return [];
 }
 
-export function normalizeApplications(response) {
+function normalizeApplications(response) {
   const candidates = [
     response?.applications,
     response?.results,

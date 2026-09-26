@@ -6,7 +6,7 @@ export const CircuitState = Object.freeze({
   HALF_OPEN: 'HALF_OPEN',
 });
 
-export function createCircuit() {
+function createCircuit() {
   return {
     state: CircuitState.CLOSED,
     failureCount: 0,

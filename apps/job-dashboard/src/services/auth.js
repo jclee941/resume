@@ -44,7 +44,7 @@ export function requiresWebhookSignature(pathname) {
   return WEBHOOK_ROUTES.some((route) => pathname.startsWith(route));
 }
 
-export function constantTimeCompare(a, b) {
+function constantTimeCompare(a, b) {
   if (typeof a !== 'string' || typeof b !== 'string') {
     return false;
   }
@@ -65,7 +65,7 @@ export function verifySecret(provided, expected) {
   return constantTimeCompare(provided, expected);
 }
 
-export function getLegacyBearerToken(request) {
+function getLegacyBearerToken(request) {
   const authHeader = request.headers.get('Authorization');
   if (!authHeader?.startsWith(BEARER_PREFIX)) {
     return null;
@@ -76,7 +76,7 @@ export function getLegacyBearerToken(request) {
 /**
  * Extract admin session token from HttpOnly cookie.
  */
-export function getSessionTokenFromCookie(request) {
+function getSessionTokenFromCookie(request) {
   return getCookie(request, ADMIN_SESSION_COOKIE);
 }
 

@@ -15,7 +15,7 @@ export const VIEWPORTS = [
   { width: 412, height: 915, isMobile: true, deviceScaleFactor: 2.625 },
 ];
 
-export function randomInt(min, max) {
+function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 

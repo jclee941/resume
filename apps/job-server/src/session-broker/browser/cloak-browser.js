@@ -1,8 +1,8 @@
 import { mkdirSync } from 'node:fs';
 
-export const DEFAULT_CLOAK_BROWSER_ENDPOINT = 'http://localhost:8080';
+const DEFAULT_CLOAK_BROWSER_ENDPOINT = 'http://localhost:8080';
 
-export const DEFAULT_CLOAK_BROWSER_OPTIONS = Object.freeze({
+const DEFAULT_CLOAK_BROWSER_OPTIONS = Object.freeze({
   proxy: null,
   geoip: true,
   humanize: true,
@@ -154,10 +154,6 @@ export class CloakBrowser {
 
     return payload;
   }
-}
-
-export function createCloakBrowser(options) {
-  return new CloakBrowser(options);
 }
 
 export default CloakBrowser;

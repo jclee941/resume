@@ -144,10 +144,6 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
     };
   }
 
-  async sendReport(content, _type) {
-    await sendTelegramNotification(this.env, content);
-  }
-
   async sendNotification(message) {
     await sendTelegramNotification(this.env, message);
   }

@@ -1,4 +1,4 @@
-export const DEFAULT_EXCLUDE_KEYWORDS = Object.freeze([
+const DEFAULT_EXCLUDE_KEYWORDS = Object.freeze([
   '팀장',
   '팀 리드',
   '테크 리드',
@@ -79,12 +79,12 @@ export function deduplicateJobs(jobs, existingJobIds) {
   return result;
 }
 
-export function matchesExcludeKeywords(job, config) {
+function matchesExcludeKeywords(job, config) {
   const text = `${job.position} ${job.description || ''}`.toLowerCase();
   return config.excludeKeywords.some((kw) => text.includes(kw.toLowerCase()));
 }
 
-export function isExcludedCompany(job, config) {
+function isExcludedCompany(job, config) {
   const company = (job.company || '').toLowerCase();
   return config.excludeCompanies.some((c) => company.includes(c.toLowerCase()));
 }

@@ -1,7 +1,7 @@
 import { MODEL_CATALOG } from '../providers.js';
 
 /** Token threshold for auto-routing: messages above this use quality models. */
-export const COMPLEXITY_THRESHOLD = 500;
+const COMPLEXITY_THRESHOLD = 500;
 
 /** Auto-route based on message complexity. */
 export function autoRoute(messages) {

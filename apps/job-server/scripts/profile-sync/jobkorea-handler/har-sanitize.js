@@ -153,7 +153,7 @@ export function sanitizePostData(postData) {
   return next;
 }
 
-export function sanitizeHarEntry(entry, options = {}) {
+function sanitizeHarEntry(entry, options = {}) {
   const next = cloneJson(entry);
   if (!next?.request) return next;
 

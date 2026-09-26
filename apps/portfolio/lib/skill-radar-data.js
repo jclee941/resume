@@ -83,4 +83,4 @@ function buildSkillRadarData(skills) {
   return out;
 }
 
-module.exports = { buildSkillRadarData, LEVEL_MAP, ICON_SVG };
+module.exports = { buildSkillRadarData, LEVEL_MAP };

@@ -91,18 +91,6 @@ export class PerformanceMetricsCore extends EventEmitter {
     }
   }
 
-  timeSync(name, fn, context, ...args) {
-    this.mark(name);
-    try {
-      const result = fn.apply(context, args);
-      this.measure(name, { success: true });
-      return result;
-    } catch (error) {
-      this.measure(name, { success: false, error: error.message });
-      throw error;
-    }
-  }
-
   increment(name, value = 1) {
     if (!this._enabled) return;
 

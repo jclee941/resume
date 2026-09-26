@@ -32,7 +32,7 @@ function saveResultFrom(response) {
   );
 }
 
-export class JobKoreaAPIError extends Error {
+class JobKoreaAPIError extends Error {
   constructor(message, options = {}) {
     super(message || 'JobKorea API request failed');
     this.name = 'JobKoreaAPIError';

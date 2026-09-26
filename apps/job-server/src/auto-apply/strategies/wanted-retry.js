@@ -55,7 +55,7 @@ export function isAlreadyAppliedWantedError(error) {
   );
 }
 
-export function resolveDelayMs(ctx, options = {}) {
+function resolveDelayMs(ctx, options = {}) {
   const configured =
     options.delayBetweenSubmissionsMs ??
     options.delayBetweenSubmissions ??

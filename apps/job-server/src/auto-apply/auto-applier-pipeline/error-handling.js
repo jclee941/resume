@@ -1,4 +1,4 @@
-export async function persistFailureState(autoApplier, applicationId, error) {
+async function persistFailureState(autoApplier, applicationId, error) {
   try {
     await autoApplier.repository.updateStatus(applicationId, 'failed', error.message);
     await autoApplier.tracker.recordCompletion(applicationId, 'failed', error.message);
@@ -9,7 +9,7 @@ export async function persistFailureState(autoApplier, applicationId, error) {
   }
 }
 
-export async function notifyApplicationFailure(autoApplier, job, applicationId, error) {
+async function notifyApplicationFailure(autoApplier, job, applicationId, error) {
   try {
     await autoApplier.retryService.execute(
       async () =>

@@ -73,10 +73,6 @@ export class RememberClient {
     }
   }
 
-  async searchCurated(tab = 'STEP_UP', options = {}) {
-    return this.searchJobs(null, { ...options, tab });
-  }
-
   async getJobDetail(jobId) {
     try {
       const response = await fetch(`${this.apiBaseUrl}/job_postings/${jobId}`, {

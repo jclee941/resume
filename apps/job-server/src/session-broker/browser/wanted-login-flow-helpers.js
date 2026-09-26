@@ -3,7 +3,7 @@ export const WANTED_LOGIN_URL = 'https://www.wanted.co.kr/login';
 export const WANTED_PROFILE_API_URL = 'https://www.wanted.co.kr/sns-api/profile';
 export const DEFAULT_PROFILE_DIR = '/tmp/cloak-wanted-profile';
 export const DEFAULT_BACKOFF_MS = 1000;
-export const AUTH_COOKIE_PATTERNS = [/wanted.*token/i, /^oneid/i, /wmw/i, /session/i];
+const AUTH_COOKIE_PATTERNS = [/wanted.*token/i, /^oneid/i, /wmw/i, /session/i];
 
 export const WANTED_LOGIN_ERRORS = Object.freeze({
   CAPTCHA_DETECTED: 'ERR_WANTED_CAPTCHA_DETECTED',
