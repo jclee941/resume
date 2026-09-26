@@ -1,6 +1,49 @@
 import { exportFromPlatform } from './resume-sync-data.js';
 import { calculateDiff } from './resume-sync-diff.js';
 
+/**
+ * @typedef {{
+ *   put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
+ * }} KvNamespaceLike
+ */
+
+/**
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       run(): Promise<unknown>;
+ *     };
+ *   };
+ * }} D1DatabaseLike
+ */
+
+/**
+ * @typedef {{
+ *   SESSIONS: KvNamespaceLike;
+ *   JOB_DB: D1DatabaseLike;
+ * }} ResumeSyncEnv
+ */
+
+/**
+ * @typedef {{
+ *   status?: string;
+ *   [key: string]: unknown;
+ * }} PlatformSyncResult
+ */
+
+/**
+ * @typedef {{
+ *   verified: boolean;
+ *   reason?: string;
+ *   remainingDiff?: import('./resume-sync-diff.js').ResumeDiff;
+ * }} PlatformVerification
+ */
+
+/**
+ * @param {ResumeSyncEnv} env
+ * @param {Record<string, unknown>} platformStates
+ * @returns {Promise<{ backupId: string }>}
+ */
 export async function createResumeBackup(env, platformStates) {
   const backupId = `backup-${Date.now()}`;
   await env.SESSIONS.put(
@@ -11,10 +54,22 @@ export async function createResumeBackup(env, platformStates) {
   return { backupId };
 }
 
+/**
+ * @param {ResumeSyncEnv} env
+ * @param {{
+ *   platforms: string[];
+ *   syncResults: Record<string, PlatformSyncResult>;
+ *   masterData: Record<string, import('./resume-sync-diff.js').ResumeItem[]>;
+ *   platformResumeId?: string | null;
+ *   sections?: string[];
+ * }} options
+ * @returns {Promise<Record<string, PlatformVerification>>}
+ */
 export async function verifyPlatformSync(
   env,
   { platforms, syncResults, masterData, platformResumeId, sections }
 ) {
+  /** @type {Record<string, PlatformVerification>} */
   const results = {};
   for (const platform of platforms) {
     if (syncResults[platform].status === 'no-changes') {
@@ -36,6 +91,17 @@ export async function verifyPlatformSync(
   return results;
 }
 
+/**
+ * @param {ResumeSyncEnv} env
+ * @param {{
+ *   syncId: string;
+ *   resumeId: string;
+ *   platforms: string[];
+ *   changes: unknown;
+ *   backupId: string;
+ * }} options
+ * @returns {Promise<void>}
+ */
 export async function recordSyncHistory(env, { syncId, resumeId, platforms, changes, backupId }) {
   await env.JOB_DB.prepare(
     `

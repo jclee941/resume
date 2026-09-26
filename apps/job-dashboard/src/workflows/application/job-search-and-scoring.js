@@ -2,6 +2,53 @@ import { calculateMatchScore } from '../../handlers/auto-apply/match-scoring.js'
 import { isAtsDryRunPlatform } from './platforms.js';
 import { averageScore } from './workflow-records.js';
 
+/**
+ * @typedef {{
+ *   saveWorkflowState(workflow: import('./workflow-records.js').WorkflowRecord): Promise<unknown>;
+ *   logWorkflowStep(workflowId: string, stepName: string, status: string, data?: Record<string, unknown>): Promise<unknown>;
+ *   getDailyApplicationCount(date: string): Promise<number>;
+ *   searchJobs(platform: string, searchCriteria?: Record<string, unknown>): Promise<Array<Record<string, unknown>>>;
+ *   getMatchingConfig(): Promise<import('../../handlers/auto-apply/match-scoring.js').MatchScoringConfig>;
+ * }} ApplicationWorkflowContext
+ */
+
+/**
+ * @typedef {{
+ *   do<T>(name: string, options: { retries?: { limit?: number; delay?: string; backoff?: string }; timeout?: string }, fn: () => Promise<T>): Promise<T>;
+ *   sleep(name: string, duration: string): Promise<void>;
+ * }} WorkflowStepContext
+ */
+
+/**
+ * @typedef {{
+ *   remaining: number;
+ *   alreadyApplied: number;
+ * }} DailyLimitCheckResult
+ */
+
+/**
+ * @typedef {import('../../handlers/auto-apply/match-scoring.js').ScorableJob & Record<string, unknown> & {
+ *   source?: string;
+ *   matchScore?: number;
+ *   matchPercentage?: number | string;
+ *   atsStub?: boolean;
+ * }} JobSearchRecord
+ */
+
+/**
+ * @typedef {JobSearchRecord & {
+ *   matchScore: number;
+ * }} ScoredWorkflowJob
+ */
+
+/**
+ * @param {ApplicationWorkflowContext} ctx
+ * @param {WorkflowStepContext} step
+ * @param {import('./workflow-records.js').WorkflowRecord} workflow
+ * @param {string} triggerType
+ * @param {string[]} platforms
+ * @returns {Promise<void>}
+ */
 export async function initializeWorkflow(ctx, step, workflow, triggerType, platforms) {
   await step.do(
     'initialize-workflow',
@@ -19,6 +66,13 @@ export async function initializeWorkflow(ctx, step, workflow, triggerType, platf
   workflow.steps.push({ step: 'initialize', status: 'completed' });
 }
 
+/**
+ * @param {ApplicationWorkflowContext} ctx
+ * @param {WorkflowStepContext} step
+ * @param {import('./workflow-records.js').WorkflowRecord} workflow
+ * @param {number} maxDailyApplications
+ * @returns {Promise<DailyLimitCheckResult>}
+ */
 export async function checkDailyLimits(ctx, step, workflow, maxDailyApplications) {
   const dailyCheck = await step.do(
     'check-daily-limits',
@@ -48,6 +102,14 @@ export async function checkDailyLimits(ctx, step, workflow, maxDailyApplications
   return dailyCheck;
 }
 
+/**
+ * @param {ApplicationWorkflowContext} ctx
+ * @param {WorkflowStepContext} step
+ * @param {import('./workflow-records.js').WorkflowRecord} workflow
+ * @param {string[]} platforms
+ * @param {Record<string, unknown>} [searchCriteria]
+ * @returns {Promise<JobSearchRecord[]>}
+ */
 export async function searchWorkflowJobs(ctx, step, workflow, platforms, searchCriteria) {
   const jobsFound = await step.do(
     'search-jobs',
@@ -56,6 +118,7 @@ export async function searchWorkflowJobs(ctx, step, workflow, platforms, searchC
       timeout: '5 minutes',
     },
     async () => {
+      /** @type {JobSearchRecord[]} */
       const allJobs = [];
 
       for (const platform of platforms) {
@@ -67,8 +130,14 @@ export async function searchWorkflowJobs(ctx, step, workflow, platforms, searchC
             await step.sleep(`pause-after-${platform}`, '10 seconds');
           }
         } catch (error) {
-          workflow.errors.push({ platform, error: error.message });
-          console.error(`Failed to search ${platform}:`, error.message);
+          workflow.errors.push({
+            platform,
+            error: error instanceof Error ? error.message : String(error),
+          });
+          console.error(
+            `Failed to search ${platform}:`,
+            error instanceof Error ? error.message : String(error)
+          );
         }
       }
 
@@ -83,6 +152,15 @@ export async function searchWorkflowJobs(ctx, step, workflow, platforms, searchC
   return jobsFound;
 }
 
+/**
+ * @param {ApplicationWorkflowContext} ctx
+ * @param {WorkflowStepContext} step
+ * @param {import('./workflow-records.js').WorkflowRecord} workflow
+ * @param {JobSearchRecord[]} jobsFound
+ * @param {number} minMatchScore
+ * @param {DailyLimitCheckResult} dailyCheck
+ * @returns {Promise<ScoredWorkflowJob[]>}
+ */
 export async function scoreWorkflowJobs(ctx, step, workflow, jobsFound, minMatchScore, dailyCheck) {
   const scoredJobs = await step.do(
     'score-jobs',
@@ -111,13 +189,18 @@ export async function scoreWorkflowJobs(ctx, step, workflow, jobsFound, minMatch
   return scoredJobs;
 }
 
+/**
+ * @param {JobSearchRecord} job
+ * @param {import('../../handlers/auto-apply/match-scoring.js').MatchScoringConfig} config
+ * @returns {ScoredWorkflowJob}
+ */
 function scoreJob(job, config) {
   const explicitScore = normalizedExplicitScore(job);
   const matchScore =
     explicitScore !== null
       ? explicitScore
       : hasDeterministicAtsDryRunScore(job)
-        ? job.matchScore
+        ? /** @type {number} */ (job.matchScore)
         : calculateMatchScore(job, config);
   const scoredJob = { ...job, matchScore };
 
@@ -131,20 +214,36 @@ function scoreJob(job, config) {
   };
 }
 
+/**
+ * @param {JobSearchRecord} [job]
+ * @returns {number | null}
+ */
 function normalizedExplicitScore(job) {
   return normalizeScore(job?.matchPercentage) ?? normalizeScore(job?.matchScore);
 }
 
+/**
+ * @param {unknown} [value]
+ * @returns {number | null}
+ */
 function normalizeScore(value) {
   if (value === null || value === undefined || value === '') return null;
   const score = Number(value);
   return Number.isFinite(score) && score >= 0 && score <= 100 ? score : null;
 }
 
+/**
+ * @param {JobSearchRecord} job
+ * @returns {boolean}
+ */
 function hasDeterministicAtsDryRunScore(job) {
   return isAtsDryRunJob(job) && Number.isFinite(job.matchScore);
 }
 
+/**
+ * @param {JobSearchRecord} [job]
+ * @returns {boolean}
+ */
 function isAtsDryRunJob(job) {
   return job?.atsStub === true && isAtsDryRunPlatform(job.source);
 }

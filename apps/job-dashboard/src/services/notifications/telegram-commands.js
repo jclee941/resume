@@ -6,6 +6,53 @@ import {
 import { answerCallbackQuery, sendTelegramNotification } from './delivery.js';
 import { AUTO_APPLY_PAUSED_KEY } from '../auto-apply-pause.js';
 
+/**
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       run(): Promise<{ meta?: { changes?: number } }>;
+ *       first(): Promise<Record<string, unknown> | null>;
+ *     };
+ *   };
+ * }} D1DatabaseLike
+ */
+
+/**
+ * @typedef {{
+ *   put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
+ * }} KvNamespaceLike
+ */
+
+/**
+ * @typedef {Object} NotificationCommandService
+ * @property {{ JOB_DB: D1DatabaseLike; SESSIONS: KvNamespaceLike }} env
+ * @property {string} [telegramToken]
+ * @property {string | number} [telegramChatId]
+ * @property {{ checkLimit(id: string | number): Promise<{ allowed: boolean; remaining?: number; resetTime?: number }>; consume(id: string | number, count?: number): Promise<unknown> }} [rateLimiter]
+ */
+
+/**
+ * @typedef {{
+ *   id: string;
+ *   data: string;
+ *   [key: string]: unknown;
+ * }} TelegramCallbackQuery
+ */
+
+/**
+ * @typedef {{
+ *   chat?: { id?: string | number };
+ *   [key: string]: unknown;
+ * }} TelegramMessage
+ */
+
+/**
+ * @param {NotificationCommandService} service
+ * @param {string} command
+ * @param {string[]} args
+ * @param {TelegramMessage} message
+ * @returns {Promise<unknown>}
+ */
 export async function handleTelegramCommand(service, command, args, message) {
   const chatId = message.chat?.id;
 
@@ -29,6 +76,11 @@ export async function handleTelegramCommand(service, command, args, message) {
   }
 }
 
+/**
+ * @param {NotificationCommandService} service
+ * @param {TelegramCallbackQuery} query
+ * @returns {Promise<unknown>}
+ */
 export async function handleTelegramCallback(service, query) {
   const { data } = query;
   const [action, applicationId] = data.split(':');
@@ -57,6 +109,11 @@ export async function handleTelegramCallback(service, query) {
   return { handled: true, action, applicationId, result };
 }
 
+/**
+ * @param {NotificationCommandService} service
+ * @param {string | number | undefined} [_chatId]
+ * @returns {Promise<unknown>}
+ */
 export async function handleStatusCommand(service, _chatId) {
   try {
     const today = new Date().toISOString().split('T')[0];
@@ -91,7 +148,14 @@ export async function handleStatusCommand(service, _chatId) {
   }
 }
 
+/**
+ * @param {NotificationCommandService} service
+ * @param {string | number | undefined} chatId
+ * @param {string[]} args
+ * @returns {Promise<unknown>}
+ */
 export async function handleApproveCommand(service, chatId, args) {
+  /** @type {string | (typeof chatId & never)} */
   const applicationId = args[0];
   if (!applicationId) {
     return sendTelegramNotification(service, {
@@ -103,7 +167,14 @@ export async function handleApproveCommand(service, chatId, args) {
   return sendTelegramNotification(service, { text: result.message });
 }
 
+/**
+ * @param {NotificationCommandService} service
+ * @param {string | number | undefined} chatId
+ * @param {string[]} args
+ * @returns {Promise<unknown>}
+ */
 export async function handleRejectCommand(service, chatId, args) {
+  /** @type {string | (typeof chatId & never)} */
   const applicationId = args[0];
   if (!applicationId) {
     return sendTelegramNotification(service, {
@@ -115,6 +186,11 @@ export async function handleRejectCommand(service, chatId, args) {
   return sendTelegramNotification(service, { text: result.message });
 }
 
+/**
+ * @param {NotificationCommandService} service
+ * @param {string | number | undefined} [_chatId]
+ * @returns {Promise<unknown>}
+ */
 export async function handlePauseCommand(service, _chatId) {
   await service.env.SESSIONS.put(AUTO_APPLY_PAUSED_KEY, 'true', { expirationTtl: 86400 });
   return sendTelegramNotification(service, {
@@ -122,6 +198,11 @@ export async function handlePauseCommand(service, _chatId) {
   });
 }
 
+/**
+ * @param {NotificationCommandService} service
+ * @param {string | number | undefined} [_chatId]
+ * @returns {Promise<unknown>}
+ */
 export async function handleResumeCommand(service, _chatId) {
   await service.env.SESSIONS.put(AUTO_APPLY_PAUSED_KEY, 'false', { expirationTtl: 86400 });
   return sendTelegramNotification(service, {
@@ -129,6 +210,11 @@ export async function handleResumeCommand(service, _chatId) {
   });
 }
 
+/**
+ * @param {NotificationCommandService} service
+ * @param {string | number | undefined} [_chatId]
+ * @returns {Promise<unknown>}
+ */
 export async function handleHelpCommand(service, _chatId) {
   const text =
     '🤖 <b>Job Automation Bot Commands</b>\n\n' +

@@ -7,8 +7,52 @@ import {
   updateProfileSyncStatusResponse,
 } from './sync/profile-sync-status.js';
 
+/**
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       first(): Promise<{ data?: string; target_resume_id?: string | null; id?: string; platforms?: string; status?: string; dry_run?: number; result?: string; created_at?: string; updated_at?: string } | null>;
+ *       run(): Promise<unknown>;
+ *     };
+ *   };
+ * }} ProfileSyncDb
+ */
+
+/**
+ * @typedef {{
+ *   DB?: ProfileSyncDb;
+ *   [key: string]: unknown;
+ * }} ProfileSyncEnv
+ */
+
+/**
+ * @typedef {{
+ *   getCookies(platform: string): Promise<string | null>;
+ *   [key: string]: unknown;
+ * }} ProfileSyncAuth
+ */
+
+/**
+ * @typedef {{
+ *   error?: unknown;
+ *   authenticated?: boolean;
+ *   method?: string;
+ *   dispatched?: boolean;
+ *   syncResults?: { failed?: unknown[] };
+ *   [key: string]: unknown;
+ * }} ProfileSyncPlatformResult
+ */
+
+/**
+ * @extends {BaseHandler<ProfileSyncEnv, ProfileSyncAuth>}
+ */
 export class ProfileSyncHandler extends BaseHandler {
+  /**
+   * @param {Request} request
+   * @returns {Promise<Response>}
+   */
   async triggerProfileSync(request) {
+    /** @type {{ resumeId?: string; targetResumeId?: string | null; ssotData?: { personal?: Record<string, unknown>; [key: string]: unknown } | null; platforms?: string[]; dryRun?: boolean; callbackUrl?: string }} */
     const body = await request.json().catch(() => ({}));
     const logicalResumeId = body.resumeId || 'master';
     let targetResumeId = body.targetResumeId || null;
@@ -67,10 +111,14 @@ export class ProfileSyncHandler extends BaseHandler {
           now
         )
         .run()
-        .catch((e) => {
-          console.error('[ProfileSync] Failed to create sync record:', normalizeError(e).message);
-        });
+        .catch(
+          /** @param {unknown} e */
+          (e) => {
+            console.error('[ProfileSync] Failed to create sync record:', normalizeError(e).message);
+          }
+        );
 
+      /** @type {Record<string, ProfileSyncPlatformResult>} */
       const results = {};
 
       if (platforms.includes('wanted')) {
@@ -87,6 +135,7 @@ export class ProfileSyncHandler extends BaseHandler {
 
       const otherPlatforms = platforms.filter((platform) => platform !== 'wanted');
       if (otherPlatforms.length > 0 && callbackUrl) {
+        /** @type {{ syncId: string; platforms: string[]; profileData: unknown; dryRun: boolean; timestamp: string; platformAuth?: Record<string, { authenticated: boolean }> }} */
         const callbackPayload = {
           syncId,
           platforms: otherPlatforms,
@@ -95,13 +144,15 @@ export class ProfileSyncHandler extends BaseHandler {
           timestamp: now,
         };
 
+        /** @type {Record<string, { authenticated: boolean }>} */
         const platformAuth = {};
         for (const platform of otherPlatforms) {
-          const cookies = await this.auth.getCookies(platform);
+          const cookies = await /** @type {ProfileSyncAuth} */ (this.auth).getCookies(platform);
           platformAuth[platform] = { authenticated: !!cookies };
         }
         callbackPayload.platformAuth = platformAuth;
 
+        /** @type {(Response & { error?: string }) | { ok: false; error: string; status?: number }} */
         const callbackResponse = await fetch(callbackUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -127,7 +178,7 @@ export class ProfileSyncHandler extends BaseHandler {
         }
       } else {
         for (const platform of otherPlatforms) {
-          const cookies = await this.auth.getCookies(platform);
+          const cookies = await /** @type {ProfileSyncAuth} */ (this.auth).getCookies(platform);
           results[platform] = {
             method: 'callback_required',
             authenticated: !!cookies,
@@ -157,9 +208,12 @@ export class ProfileSyncHandler extends BaseHandler {
         .prepare('UPDATE profile_syncs SET status = ?, result = ?, updated_at = ? WHERE id = ?')
         .bind(status, JSON.stringify(results), now, syncId)
         .run()
-        .catch((e) => {
-          console.error('[ProfileSync] Failed to update sync status:', normalizeError(e).message);
-        });
+        .catch(
+          /** @param {unknown} e */
+          (e) => {
+            console.error('[ProfileSync] Failed to update sync status:', normalizeError(e).message);
+          }
+        );
 
       return this.jsonResponse({
         success,
@@ -188,10 +242,18 @@ export class ProfileSyncHandler extends BaseHandler {
     }
   }
 
+  /**
+   * @param {Request} request
+   * @returns {Promise<Response>}
+   */
   async getProfileSyncStatus(request) {
     return getProfileSyncStatusResponse(this, request);
   }
 
+  /**
+   * @param {Request} request
+   * @returns {Promise<Response>}
+   */
   async updateProfileSyncStatus(request) {
     return updateProfileSyncStatusResponse(this, request);
   }
