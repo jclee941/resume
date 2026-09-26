@@ -80,13 +80,6 @@ export function getSessionTokenFromCookie(request) {
   return getCookie(request, ADMIN_SESSION_COOKIE);
 }
 
-/**
- * @deprecated Prefer `getSessionTokenFromCookie(request)`. This alias remains
- * for older dashboard integrations while callers migrate to the explicit
- * session-token naming.
- */
-export const getTokenFromCookie = getSessionTokenFromCookie;
-
 export async function verifyAdminAuth(request, env) {
   if (!env?.ADMIN_TOKEN) {
     return { ok: false, status: 503, error: 'Service misconfigured' };
