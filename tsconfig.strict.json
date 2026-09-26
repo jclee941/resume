@@ -534,7 +534,6 @@
     "apps/job-server/src/shared/services/apply/tracker-analytics.js",
     "apps/job-server/src/shared/services/ats/public-source-fetchers.js",
     "apps/job-server/src/shared/services/cache/lru-cache.js",
-    "apps/job-server/src/shared/services/lazy-loader/registry.js",
     "apps/job-server/src/shared/services/matching/job-matcher/scoring.js",
     "apps/job-server/src/shared/services/metrics/performance-core.js",
     "apps/job-server/src/shared/services/session/session-constants.js",
