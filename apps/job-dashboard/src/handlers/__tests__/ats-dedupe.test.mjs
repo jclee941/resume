@@ -41,12 +41,13 @@ class MemoryStatement {
   }
 
   async run() {
-    assert.equal(this.params.length, 15);
+    assert.equal(this.params.length, 16);
     const [
       id,
       job_id,
       source,
       source_url,
+      canonical_url,
       position,
       company,
       location,
@@ -64,6 +65,7 @@ class MemoryStatement {
       job_id,
       source,
       source_url,
+      canonical_url,
       position,
       company,
       location,
