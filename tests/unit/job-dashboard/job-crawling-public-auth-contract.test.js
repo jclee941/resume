@@ -9,14 +9,16 @@ const cloudflareWorkersStub = `data:text/javascript,${encodeURIComponent(`
   }
 `)}`;
 
-registerHooks({
-  resolve(specifier, context, nextResolve) {
-    if (specifier === 'cloudflare:workers') {
-      return { shortCircuit: true, url: cloudflareWorkersStub };
-    }
-    return nextResolve(specifier, context);
-  },
-});
+if (typeof jest === 'undefined') {
+  registerHooks({
+    resolve(specifier, context, nextResolve) {
+      if (specifier === 'cloudflare:workers') {
+        return { shortCircuit: true, url: cloudflareWorkersStub };
+      }
+      return nextResolve(specifier, context);
+    },
+  });
+}
 
 if (typeof jest !== 'undefined') {
   jest.unstable_mockModule(
