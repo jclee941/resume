@@ -55,6 +55,25 @@ test.describe('Declutter — consolidated operated section + regression', () => 
       });
       expect(koRuns).toEqual([]);
     });
+
+    test(`S6: ${loc} accessible-name attributes have no Korean leakage`, async ({ page }) => {
+      await go(page, loc);
+      const koAttrs = await page.evaluate(() => {
+        const hangul = /[\uac00-\ud7a3]{2,}/;
+        const names = ['aria-label', 'title', 'alt', 'placeholder'];
+        const hits = [];
+        for (const el of document.body.querySelectorAll(
+          '[aria-label], [title], [alt], [placeholder]'
+        )) {
+          for (const name of names) {
+            const value = el.getAttribute(name);
+            if (value && hangul.test(value)) hits.push(`${name}=${value.slice(0, 60)}`);
+          }
+        }
+        return hits;
+      });
+      expect(koAttrs).toEqual([]);
+    });
   }
 
   test('S6: timeline phase badges are distinct per locale (no fallback collapse)', async ({
