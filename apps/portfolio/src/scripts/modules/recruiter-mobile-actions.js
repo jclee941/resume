@@ -1,18 +1,14 @@
 import { getHiringActions } from './recruiter-enhancements-data.js';
-import { renderIcon } from './project-card-formatting.js';
+import { createIconElement } from './project-card-formatting.js';
 
-function escapeHtml(value) {
-  return String(value).replace(
-    /[&<>"']/g,
-    (character) =>
-      ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;',
-      })[character]
-  );
+// DOM construction instead of innerHTML keeps this module Trusted-Types clean.
+function createActionLink(href, label, download) {
+  const link = document.createElement('a');
+  link.className = 'recruiter-action-bar__link';
+  link.href = href;
+  if (download) link.setAttribute('download', download);
+  link.textContent = label;
+  return link;
 }
 
 function observeVisibilityBlocker(selector, rootMargin, setInView) {
@@ -33,13 +29,18 @@ export function renderMobileActionBar(labels) {
   const bar = document.createElement('aside');
   bar.className = 'recruiter-action-bar';
   bar.setAttribute('aria-label', 'Recruiter actions');
-  bar.innerHTML = `
-    <a class="recruiter-action-bar__link" href="${escapeHtml(actions.mail)}">${escapeHtml(labels.contact)}</a>
-    <a class="recruiter-action-bar__link" href="#projects">${escapeHtml(labels.projects)}</a>
-    <a class="recruiter-action-bar__link" href="/resume.pdf" download="${escapeHtml(actions.downloadName)}">${escapeHtml(labels.pdf)}</a>
-    <button type="button" class="recruiter-action-bar__dismiss" aria-label="${escapeHtml(labels.dismiss)}">${renderIcon('x', 'recruiter-action-bar__dismiss-icon')}</button>
-  `;
-  bar.querySelector('button')?.addEventListener('click', () => {
+  const dismiss = document.createElement('button');
+  dismiss.type = 'button';
+  dismiss.className = 'recruiter-action-bar__dismiss';
+  dismiss.setAttribute('aria-label', labels.dismiss);
+  dismiss.appendChild(createIconElement('x', 'recruiter-action-bar__dismiss-icon'));
+  bar.append(
+    createActionLink(actions.mail, labels.contact),
+    createActionLink('#projects', labels.projects),
+    createActionLink('/resume.pdf', labels.pdf, actions.downloadName),
+    dismiss
+  );
+  dismiss.addEventListener('click', () => {
     bar.hidden = true;
     bar.classList.remove('is-visible');
   });
