@@ -5,6 +5,8 @@ import { syncBuiltinESMExports } from 'node:module';
 
 const JOB_MATCHER_URL = new URL('../job-matcher.js', import.meta.url);
 
+// Call before mocking fs: Node 24's synchronous ESM loader reads module source
+// through fs.readFileSync, so a pre-installed mock would be parsed as the module.
 async function importJobMatcherFresh() {
   const stamp = `${Date.now()}-${Math.random()}`;
   return import(`${JOB_MATCHER_URL.href}?v=${stamp}`);
@@ -21,11 +23,10 @@ describe('job-matcher', { concurrency: 1 }, () => {
   });
 
   it('loadResume reads provided path and uses default path', async () => {
+    const jm = await importJobMatcherFresh();
     mock.method(fs, 'existsSync', () => true);
     mock.method(fs, 'readFileSync', (path) => `resume:${path}`);
     syncBuiltinESMExports();
-
-    const jm = await importJobMatcherFresh();
 
     const explicit = jm.loadResume('/tmp/resume.md');
     const implicit = jm.loadResume();
@@ -36,10 +37,9 @@ describe('job-matcher', { concurrency: 1 }, () => {
   });
 
   it('loadResume throws when file does not exist', async () => {
+    const jm = await importJobMatcherFresh();
     mock.method(fs, 'existsSync', () => false);
     syncBuiltinESMExports();
-
-    const jm = await importJobMatcherFresh();
 
     assert.throws(() => jm.loadResume('/missing.md'), /Resume not found/);
   });
@@ -160,11 +160,11 @@ describe('job-matcher', { concurrency: 1 }, () => {
 
   it('filterAndRankJobs ranks, filters, excludes, and returns resume analysis', async () => {
     const resumeText = '총 경력: 8년 0개월 보안 security aws kubernetes devops 자동화 금융 ai';
+    const jm = await importJobMatcherFresh();
     mock.method(fs, 'existsSync', () => true);
     mock.method(fs, 'readFileSync', () => resumeText);
     syncBuiltinESMExports();
 
-    const jm = await importJobMatcherFresh();
     const jobs = [
       {
         company: 'BadCorp Security',
