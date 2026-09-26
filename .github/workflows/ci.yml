@@ -61,7 +61,9 @@ jobs:
           npm run lint:agents
 
       - name: Typecheck
-        run: npm run typecheck
+        run: |
+          npm run typecheck
+          npm run typecheck:strict
 
       - name: Test workspaces
         run: |
