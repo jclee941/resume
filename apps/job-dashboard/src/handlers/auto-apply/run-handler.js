@@ -4,6 +4,7 @@ import {
   normalizeApplicationPlatforms,
   supportedApplicationPlatforms,
 } from '../../workflows/application/platforms.js';
+import { loadMatchingConfig } from '../../workflows/application/matching-config.js';
 import {
   getConfig,
   getTodayApplicationCount,
@@ -110,13 +111,15 @@ export async function runAutoApply({ request, env, clients }) {
       await primeWantedSession({ env, clients, getWantedSession });
     }
 
+    const profile = await loadMatchingConfig(env);
     const allJobs = explicitCandidates.hasExplicitCandidates
       ? explicitCandidates.jobs
-      : await collectPlatformJobs({
+      : await searchPlatformJobs({
           clients,
           activePlatforms: searchablePlatforms,
           searchKeywords,
           searchResults,
+          profile,
         });
     if (isFailedDiscoveryRun(explicitCandidates, allJobs, searchResults)) {
       return jsonResponse(
@@ -132,7 +135,7 @@ export async function runAutoApply({ request, env, clients }) {
         500
       );
     }
-    const matchedJobs = selectMatchedJobs({ allJobs, searchKeywords, minScore, searchResults });
+    const matchedJobs = selectMatchedJobs({ allJobs, profile, minScore, searchResults });
     await applyMatchedJobs({
       env,
       clients,
@@ -172,15 +175,6 @@ export async function runAutoApply({ request, env, clients }) {
       500
     );
   }
-}
-
-async function collectPlatformJobs({ clients, activePlatforms, searchKeywords, searchResults }) {
-  return searchPlatformJobs({
-    clients,
-    activePlatforms,
-    searchKeywords,
-    searchResults,
-  });
 }
 
 function canSearchPlatform(clients, platform) {
