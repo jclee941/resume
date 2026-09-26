@@ -42,6 +42,21 @@ export {
   BrowserSessionDO,
 };
 
+/**
+ * The merged Worker hands every binding to the in-process dashboard, so entry
+ * handlers take the same env/ctx the dashboard handlers declare.
+ * @typedef {Parameters<typeof jobWorker.fetch>[1]} EntryEnv
+ * @typedef {Parameters<typeof jobWorker.fetch>[2]} EntryContext
+ * @typedef {{ message?: unknown } | null | undefined} ErrLike
+ */
+
+/**
+ * @param {Request} request
+ * @param {EntryEnv} env
+ * @param {EntryContext} ctx
+ * @param {string} pathname
+ * @returns {Promise<Response>}
+ */
 async function fetchJobHandlerResponse(request, env, ctx, pathname) {
   // Job dashboard runs in-process (merged worker — no Service Binding needed).
   // The job worker's internal router strips the /job prefix itself.
@@ -51,6 +66,10 @@ async function fetchJobHandlerResponse(request, env, ctx, pathname) {
   });
 }
 
+/**
+ * @param {Request} request
+ * @returns {boolean}
+ */
 function isFreshSitemapRequest(request) {
   if (request.headers.get('if-none-match') === SITEMAP_ETAG) {
     return true;
@@ -71,6 +90,12 @@ function isFreshSitemapRequest(request) {
 }
 
 export default {
+  /**
+   * @param {Request} request
+   * @param {EntryEnv} env
+   * @param {EntryContext} ctx
+   * @returns {Promise<Response>}
+   */
   async fetch(request, env, ctx) {
     const startTime = Date.now();
     const url = new URL(request.url);
@@ -157,11 +182,13 @@ export default {
         });
       }
     } catch (error) {
-      console.error('[entry] Unhandled error:', error?.message || error);
+      console.error('[entry] Unhandled error:', /** @type {ErrLike} */ (error)?.message || error);
       ctx.waitUntil(
         logError(
           env,
-          error instanceof Error ? error : new Error(String(error?.message || error)),
+          error instanceof Error
+            ? error
+            : new Error(String(/** @type {ErrLike} */ (error)?.message || error)),
           {
             url: { path: url.pathname },
           },
@@ -188,10 +215,20 @@ export default {
   },
 
   // Queue handler — delegate to job worker (it handles crawl-tasks + notifications queues).
+  /**
+   * @param {Parameters<typeof jobWorker.queue>[0]} batch
+   * @param {Parameters<typeof jobWorker.queue>[1]} env
+   * @param {Parameters<typeof jobWorker.queue>[2]} ctx
+   */
   async queue(batch, env, ctx) {
     return jobWorker.queue(batch, env, ctx);
   },
 
+  /**
+   * @param {Parameters<typeof jobWorker.scheduled>[0]} controller
+   * @param {Parameters<typeof jobWorker.scheduled>[1]} env
+   * @param {Parameters<typeof jobWorker.scheduled>[2]} ctx
+   */
   async scheduled(controller, env, ctx) {
     return jobWorker.scheduled(controller, env, ctx);
   },

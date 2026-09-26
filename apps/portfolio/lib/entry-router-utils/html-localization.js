@@ -10,6 +10,12 @@ const CANONICAL_BY_PATH = new Map([
   ['/ja/', 'https://resume.jclee.me/ja/'],
 ]);
 
+/**
+ * @param {string} html
+ * @param {string} language
+ * @param {string | null} [requestPath]
+ * @returns {string}
+ */
 function localizeHtmlDocument(html, language, requestPath = null) {
   const localized = SUPPORTED_LANGUAGES.includes(language) ? language : DEFAULT_LANGUAGE;
   const htmlWithLang = /<html[^>]*\slang=["'][^"']*["'][^>]*>/i.test(html)
@@ -48,11 +54,18 @@ function localizeHtmlDocument(html, language, requestPath = null) {
   return htmlWithoutAlternates;
 }
 
+/** @param {Response} response */
 function isHtmlResponse(response) {
   const contentType = response.headers.get('Content-Type') || '';
   return contentType.includes('text/html');
 }
 
+/**
+ * @param {Response} response
+ * @param {string} language
+ * @param {string | null} [requestPath]
+ * @returns {Promise<Response>}
+ */
 async function localizeHtmlResponse(response, language, requestPath = null) {
   const html = await response.text();
   const headers = new Headers(response.headers);

@@ -11,11 +11,18 @@ const { buildAndWriteWorker } = require('./worker-writer');
 const { escapeForTemplateLiteral } = require('./html-transformer');
 const { resolveContentLastmod } = require('./content-lastmod');
 
+/**
+ * @typedef {{ log: (message: string) => void, warn: (message: string) => void, error: (message: string) => void, debug: (message: string) => void }} BuildLogger
+ * @typedef {import('./file-reader').BuildInputs} BuildInputs
+ */
+
+/** @type {Array<{ source: string, asset: string, buffer: 'resumePdfBuffer' | 'resumeFullPdfBuffer' }>} */
 const RESUME_PDFS = [
   { source: 'resume_final.pdf', asset: 'resume.pdf', buffer: 'resumePdfBuffer' },
   { source: 'resume_full.pdf', asset: 'resume-full.pdf', buffer: 'resumeFullPdfBuffer' },
 ];
 
+/** @param {BuildLogger} logger */
 function copyResumePdfs(logger) {
   for (const pdf of RESUME_PDFS) {
     const source = path.resolve(__dirname, '../../../packages/data/resumes/master', pdf.source);
@@ -29,6 +36,10 @@ function copyResumePdfs(logger) {
   }
 }
 
+/**
+ * @param {BuildInputs} inputs
+ * @param {BuildLogger} logger
+ */
 function assertResumePdfsAvailable(inputs, logger) {
   for (const pdf of RESUME_PDFS) {
     const buffer = inputs[pdf.buffer];
@@ -43,6 +54,7 @@ function assertResumePdfsAvailable(inputs, logger) {
   }
 }
 
+/** @param {{ version: string, deployedAt: string }} options */
 function buildInitialMetrics({ version, deployedAt }) {
   return {
     requests_total: 0,
@@ -62,6 +74,9 @@ function buildInitialMetrics({ version, deployedAt }) {
   };
 }
 
+/**
+ * @param {{ logger: BuildLogger, indexHtmlRaw: string, cssContent: string, projectData: { resume: unknown[], projects: unknown[] }, manifestJson: string, manifestEnJson: string }} summary
+ */
 function logInputSummary({
   logger,
   indexHtmlRaw,
@@ -80,6 +95,9 @@ function logInputSummary({
   logger.log('✓ Source files loaded\n');
 }
 
+/**
+ * @param {{ logger: BuildLogger, buildTime: string, workerSizeKB: string, styleHashes: string[], projectData: { resume: unknown[], projects: unknown[] }, deployedAt: string, gitSha: string, contentLastmod: string }} stats
+ */
 function logBuildStats({
   logger,
   buildTime,
@@ -104,6 +122,10 @@ function logBuildStats({
   logger.log(`   - Content lastmod: ${contentLastmod}`);
 }
 
+/**
+ * @param {{ baseDir: string, version: string, gitSha?: string, allowedEmails?: string[], logger: BuildLogger }} options
+ * @returns {Promise<void>}
+ */
 async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEmails, logger }) {
   const buildStartTime = Date.now();
   const inputs = await readBuildInputs({ baseDir, logger });
@@ -130,11 +152,7 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
     indexHtmlRaw: inputs.indexHtmlRaw,
     indexEnHtmlRaw: inputs.indexEnHtmlRaw,
     cssContent: inputs.cssContent,
-    projectData,
-    projectDataEnRaw: inputs.projectDataEnRaw,
-    projectDataJaRaw: inputs.projectDataJaRaw,
     templates,
-    logger,
     version,
     buildDeployedAt,
     buildDeployedDate,

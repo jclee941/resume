@@ -1,5 +1,9 @@
 import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES } from './constants.js';
 
+/**
+ * @param {string} pathname
+ * @returns {string | null}
+ */
 function getLocaleFromPath(pathname) {
   const segment = pathname.split('/').filter(Boolean)[0];
   if (!segment) {
@@ -9,46 +13,51 @@ function getLocaleFromPath(pathname) {
   return SUPPORTED_LANGUAGES.includes(segment) ? segment : null;
 }
 
+/**
+ * @param {string | null | undefined} headerValue
+ * @returns {string | null}
+ */
 function parseAcceptLanguageHeader(headerValue) {
   if (!headerValue) {
     return null;
   }
 
-  const ranked = headerValue
-    .split(',')
-    .map((entry, index) => {
-      const [rawRange, ...params] = entry.trim().split(';');
-      if (!rawRange) {
-        return null;
-      }
-
-      let quality = 1;
-      for (const param of params) {
-        const trimmed = param.trim();
-        if (!trimmed.startsWith('q=')) {
-          continue;
+  const ranked = /** @type {Array<{ index: number, quality: number, code: string }>} */ (
+    headerValue
+      .split(',')
+      .map((entry, index) => {
+        const [rawRange, ...params] = entry.trim().split(';');
+        if (!rawRange) {
+          return null;
         }
 
-        const parsed = Number.parseFloat(trimmed.slice(2));
-        if (Number.isFinite(parsed)) {
-          quality = parsed;
+        let quality = 1;
+        for (const param of params) {
+          const trimmed = param.trim();
+          if (!trimmed.startsWith('q=')) {
+            continue;
+          }
+
+          const parsed = Number.parseFloat(trimmed.slice(2));
+          if (Number.isFinite(parsed)) {
+            quality = parsed;
+          }
         }
-      }
 
-      return {
-        index,
-        quality,
-        code: rawRange.toLowerCase(),
-      };
-    })
-    .filter((item) => item && item.quality > 0)
-    .sort((a, b) => {
-      if (b.quality !== a.quality) {
-        return b.quality - a.quality;
-      }
+        return {
+          index,
+          quality,
+          code: rawRange.toLowerCase(),
+        };
+      })
+      .filter((item) => item && item.quality > 0)
+  ).sort((a, b) => {
+    if (b.quality !== a.quality) {
+      return b.quality - a.quality;
+    }
 
-      return a.index - b.index;
-    });
+    return a.index - b.index;
+  });
 
   for (const candidate of ranked) {
     const [baseCode] = candidate.code.split('-');
@@ -60,6 +69,11 @@ function parseAcceptLanguageHeader(headerValue) {
   return null;
 }
 
+/**
+ * @param {Request} request
+ * @param {string} pathname
+ * @returns {{ language: string, source: 'path' | 'accept-language' | 'default' }}
+ */
 function detectRequestLanguage(request, pathname) {
   const pathLanguage = getLocaleFromPath(pathname);
   if (pathLanguage) {

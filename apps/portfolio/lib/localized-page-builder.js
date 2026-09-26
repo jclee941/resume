@@ -5,6 +5,20 @@ const {
 } = require('./html-transformer');
 const { buildHeroContent } = require('./hero-content');
 
+/**
+ * @typedef {Object} PortfolioPageOptions
+ * @property {string} indexHtmlRaw
+ * @property {string} indexEnHtmlRaw
+ * @property {string} cssContent
+ * @property {Record<string, string>} templates
+ * @property {string} version
+ * @property {string} buildDeployedAt
+ * @property {string} buildDeployedDate
+ *
+ * @typedef {{ indexHtml: string, indexEnHtml: string, indexJaHtml: string }} PortfolioPages
+ */
+
+/** @param {PortfolioPageOptions} options */
 function sharedPageOptions({ cssContent, templates, version, buildDeployedAt, buildDeployedDate }) {
   return {
     cssContent,
@@ -15,6 +29,10 @@ function sharedPageOptions({ cssContent, templates, version, buildDeployedAt, bu
   };
 }
 
+/**
+ * @param {Record<string, string>} templates
+ * @param {'ko' | 'en' | 'ja'} locale
+ */
 function contentOptions(templates, locale) {
   const suffix = locale === 'ko' ? '' : locale[0].toUpperCase() + locale.slice(1);
   return {
@@ -32,6 +50,11 @@ function contentOptions(templates, locale) {
   };
 }
 
+/**
+ * @param {string | undefined} html
+ * @param {string} locale
+ * @returns {string}
+ */
 function localizeProjectSchemas(html, locale) {
   if (!html) return '';
 
@@ -55,6 +78,10 @@ function localizeProjectSchemas(html, locale) {
   return html;
 }
 
+/**
+ * @param {PortfolioPageOptions} options
+ * @returns {Promise<PortfolioPages>}
+ */
 async function buildPortfolioPages(options) {
   const { indexHtmlRaw, indexEnHtmlRaw } = options;
   const shared = sharedPageOptions(options);
@@ -78,6 +105,11 @@ async function buildPortfolioPages(options) {
   return { indexHtml, indexEnHtml, indexJaHtml };
 }
 
+/**
+ * @param {PortfolioPages} pages
+ * @param {Parameters<typeof escapeForTemplateLiteral>[1]} escapePatterns
+ * @returns {PortfolioPages}
+ */
 function escapePortfolioPages(pages, escapePatterns) {
   return {
     indexHtml: escapeForTemplateLiteral(pages.indexHtml, escapePatterns),
