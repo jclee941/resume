@@ -1,8 +1,57 @@
+/**
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       first(): Promise<{ count: number }>;
+ *       all(): Promise<{ results: Array<{ created_at: string; status: string; source: string; [key: string]: unknown }> }>;
+ *     };
+ *     first(): Promise<{ count: number }>;
+ *     all(): Promise<{ results: Array<{ status: string; source: string; count: number; [key: string]: unknown }> }>;
+ *   };
+ * }} StatsDb
+ *
+ * @typedef {{
+ *   query: { date?: string };
+ *   [key: string]: unknown;
+ * }} StatsRequest
+ *
+ * @typedef {{
+ *   total: number;
+ *   byDay?: Record<string, number>;
+ *   byStatus?: Record<string, number>;
+ *   bySource?: Record<string, number>;
+ *   period?: { start: string; end: string };
+ * }} WeeklyStatsData
+ *
+ * @typedef {{
+ *   totalApplications?: number;
+ *   byStatus?: Record<string, number>;
+ *   bySource?: Record<string, number>;
+ *   successRate?: number;
+ *   responseRate: number;
+ *   lastUpdated?: string;
+ * }} AllStatsData
+ *
+ * @typedef {{
+ *   type: string;
+ *   message: string;
+ * }} Recommendation
+ */
+
 export class StatsHandler {
+  /**
+   * @param {StatsDb} db
+   */
   constructor(db) {
+    /** @type {StatsDb} */
     this.db = db;
   }
 
+  /**
+   * @param {unknown} data
+   * @param {number} [status]
+   * @returns {Response}
+   */
   jsonResponse(data, status = 200) {
     return new Response(JSON.stringify(data), {
       status,
@@ -10,6 +59,10 @@ export class StatsHandler {
     });
   }
 
+  /**
+   * @param {unknown} [_request]
+   * @returns {Promise<Response>}
+   */
   async getStats(_request) {
     const total = await this.db.prepare('SELECT COUNT(*) as count FROM applications').first();
 
@@ -21,11 +74,13 @@ export class StatsHandler {
       .prepare('SELECT source, COUNT(*) as count FROM applications GROUP BY source')
       .all();
 
+    /** @type {Record<string, number>} */
     const statusMap = {};
     for (const row of byStatus.results) {
       statusMap[row.status] = row.count;
     }
 
+    /** @type {Record<string, number>} */
     const sourceMap = {};
     for (const row of bySource.results) {
       sourceMap[row.source] = row.count;
@@ -59,6 +114,10 @@ export class StatsHandler {
     });
   }
 
+  /**
+   * @param {unknown} [_request]
+   * @returns {Promise<Response>}
+   */
   async getWeeklyStats(_request) {
     const now = new Date();
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -68,8 +127,11 @@ export class StatsHandler {
       .bind(weekAgo.toISOString())
       .all();
 
+    /** @type {Record<string, number>} */
     const byDay = {};
+    /** @type {Record<string, number>} */
     const byStatus = {};
+    /** @type {Record<string, number>} */
     const bySource = {};
 
     for (let i = 0; i < 7; i++) {
@@ -93,6 +155,10 @@ export class StatsHandler {
     });
   }
 
+  /**
+   * @param {StatsRequest} request
+   * @returns {Promise<Response>}
+   */
   async getDailyReport(request) {
     const date = request.query.date || new Date().toISOString().split('T')[0];
 
@@ -128,11 +194,17 @@ export class StatsHandler {
     });
   }
 
+  /**
+   * @param {StatsRequest} request
+   * @returns {Promise<Response>}
+   */
   async getWeeklyReport(request) {
     const weeklyStats = await this.getWeeklyStats(request);
+    /** @type {WeeklyStatsData} */
     const statsData = JSON.parse(await weeklyStats.text());
 
     const allStats = await this.getStats(request);
+    /** @type {AllStatsData} */
     const allStatsData = JSON.parse(await allStats.text());
 
     return this.jsonResponse({
@@ -143,6 +215,11 @@ export class StatsHandler {
     });
   }
 
+  /**
+   * @param {WeeklyStatsData} weeklyStats
+   * @param {AllStatsData} allStats
+   * @returns {Recommendation[]}
+   */
   generateRecommendations(weeklyStats, allStats) {
     const recommendations = [];
 

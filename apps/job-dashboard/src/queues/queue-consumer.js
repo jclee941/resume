@@ -6,14 +6,31 @@ import { QueueWorkflowDispatcher } from './queue-workflow-dispatcher.js';
 /** @typedef {import('@resume/types').QueueStats} QueueStats */
 
 /**
+ * @typedef {{
+ *   info(message: string, meta?: Record<string, unknown>): void;
+ *   warn(message: string, meta?: Record<string, unknown>): void;
+ *   error(message: string, error?: unknown): void;
+ * }} QueueLogger
+ *
+ * @typedef {{
+ *   queue: string;
+ *   messages: readonly import('./queue-message-processor.js').QueueMessageItem[];
+ * }} QueueBatch
+ *
+ * @typedef {{
+ *   waitUntil(promise: Promise<unknown>): void;
+ * }} QueueExecutionContext
+ */
+
+/**
  * Cloudflare Queue consumer for job automation tasks.
  * Processes batches of messages with priority sorting, per-message error handling,
  * and workflow dispatching.
  */
 export class QueueConsumer {
   /**
-   * @param {Object} env - Cloudflare Worker environment bindings
-   * @param {Object} logger - Logger instance
+   * @param {import('./queue-workflow-dispatcher.js').DispatcherEnv & { JOB_DB?: import('./queue-metrics-recorder.js').D1Database }} env - Cloudflare Worker environment bindings
+   * @param {QueueLogger} logger - Logger instance
    */
   constructor(env, logger) {
     this.logger = logger;
@@ -21,7 +38,11 @@ export class QueueConsumer {
     this.stats = { processed: 0, succeeded: 0, failed: 0, retried: 0 };
 
     const dispatcher = new QueueWorkflowDispatcher(env, logger);
-    this.processor = new QueueMessageProcessor(logger, dispatcher, this.stats);
+    this.processor = new QueueMessageProcessor(
+      logger,
+      /** @type {import('./queue-message-processor.js').MessageDispatcher} */ (dispatcher),
+      this.stats
+    );
     this.metrics = new QueueMetricsRecorder(env, logger, this.stats);
   }
 
@@ -29,8 +50,8 @@ export class QueueConsumer {
    * Process a batch of queue messages.
    * Messages are sorted by priority (urgent first), then processed sequentially.
    *
-   * @param {import('@cloudflare/workers-types').MessageBatch} batch
-   * @param {import('@cloudflare/workers-types').ExecutionContext} ctx
+   * @param {QueueBatch} batch
+   * @param {QueueExecutionContext} ctx
    */
   async processBatch(batch, ctx) {
     const startTime = Date.now();

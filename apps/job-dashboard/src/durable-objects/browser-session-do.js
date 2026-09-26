@@ -19,6 +19,30 @@
 import puppeteer from '@cloudflare/puppeteer';
 import { acquireSession, staleLocks, DEFAULT_KEEP_ALIVE_MS } from './browser-session-broker.js';
 
+/**
+ * @typedef {{
+ *   code?: string;
+ *   message: string;
+ * }} SessionError
+ *
+ * @typedef {{
+ *   get(key: string): Promise<[string, { requestId: string; lockedAt: number }][] | undefined>;
+ *   put(key: string, value: unknown): Promise<void>;
+ *   setAlarm(scheduledTime: number): Promise<void>;
+ *   deleteAll(): Promise<void>;
+ * }} DurableObjectStorage
+ *
+ * @typedef {{
+ *   storage: DurableObjectStorage;
+ *   blockConcurrencyWhile<T>(callback: () => Promise<T>): Promise<T>;
+ * }} DurableObjectState
+ *
+ * @typedef {{
+ *   MYBROWSER: import('@cloudflare/puppeteer').BrowserWorker;
+ *   [key: string]: unknown;
+ * }} BrowserSessionDOEnv
+ */
+
 const LOCKED_KEY = 'locked';
 
 export class BrowserSessionDO {
@@ -31,10 +55,11 @@ export class BrowserSessionDO {
 
   /**
    * @param {DurableObjectState} state
-   * @param {Record<string, unknown>} env
+   * @param {BrowserSessionDOEnv} env
    */
   constructor(state, env) {
     this.#state = state;
+    /** @type {BrowserSessionDOEnv} */
     this.env = env;
     this.#ready = state.blockConcurrencyWhile(async () => {
       const stored = await state.storage.get(LOCKED_KEY);
@@ -65,9 +90,16 @@ export class BrowserSessionDO {
           return Response.json({ error: 'Unknown action' }, { status: 400 });
       }
     } catch (err) {
-      const status = err.code === 'NO_CAPACITY' ? 429 : 500;
+      const status = /** @type {SessionError} */ (err).code === 'NO_CAPACITY' ? 429 : 500;
       return Response.json(
-        { error: err.message, ...(err.code ? { code: err.code } : {}) },
+        {
+          error: /** @type {SessionError} */ (err).message,
+          .../** @type {{ code?: string }} */ (
+            /** @type {SessionError} */ (err).code
+              ? { code: /** @type {SessionError} */ (err).code }
+              : {}
+          ),
+        },
         { status }
       );
     }
@@ -114,7 +146,9 @@ export class BrowserSessionDO {
    * @returns {Promise<Response>}
    */
   async #handleStatus() {
+    /** @type {import('@cloudflare/puppeteer').ActiveSession[] | null} */
     let sessions;
+    /** @type {import('@cloudflare/puppeteer').LimitsResponse | null} */
     let limits;
 
     try {
@@ -152,6 +186,7 @@ export class BrowserSessionDO {
    * session has gone away. Reschedules itself only while locks remain.
    */
   async alarm() {
+    /** @type {import('@cloudflare/puppeteer').ActiveSession[]} */
     let sessions;
     try {
       sessions = await puppeteer.sessions(this.env.MYBROWSER);

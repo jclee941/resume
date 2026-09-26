@@ -6,12 +6,95 @@ import {
   mapEducationToWanted,
 } from '../mappers/index.js';
 
+/**
+ * @typedef {{
+ *   summary?: { profileStatement?: string };
+ *   personal: { email?: string; phone: string; [key: string]: unknown };
+ *   careers?: Array<Omit<import('../mappers/wanted-profile-mapper.js').WantedCareerInput, 'company'> & { company: string; [key: string]: unknown }>;
+ *   education?: import('../mappers/wanted-profile-mapper.js').WantedEducationInput;
+ *   certifications?: Array<import('../mappers/wanted-profile-mapper.js').WantedCertificationInput & { status?: string; [key: string]: unknown }>;
+ *   languages?: Array<{ name: string; level: string; [key: string]: unknown }>;
+ * }} SsotData
+ *
+ * @typedef {{
+ *   headline: string;
+ *   [key: string]: unknown;
+ * }} WantedProfileInput
+ *
+ * @typedef {{
+ *   about?: string;
+ *   email?: string;
+ *   mobile?: string;
+ *   careers?: Array<{ id: string | number; company?: { name?: string }; company_name?: string; projects?: unknown[]; [key: string]: unknown }>;
+ *   educations?: Array<{ id: string | number; name?: string; school_name?: string; [key: string]: unknown }>;
+ *   activities?: Array<{ id: string | number; title?: string; activity_type?: string; [key: string]: unknown }>;
+ *   language_certs?: Array<{ id: string | number; language_name?: string; [key: string]: unknown }>;
+ *   [key: string]: unknown;
+ * }} CurrentResume
+ *
+ * @typedef {{
+ *   id?: string | number;
+ *   company?: string;
+ *   data?: unknown;
+ *   ssotCareer?: unknown;
+ *   existingProjects?: unknown[];
+ * }} CareerChangeItem
+ *
+ * @typedef {{
+ *   toUpdate: CareerChangeItem[];
+ *   toAdd: CareerChangeItem[];
+ *   toDelete: CareerChangeItem[];
+ * }} CareerChanges
+ *
+ * @typedef {{
+ *   id?: string | number;
+ *   school?: string;
+ *   data?: unknown;
+ * }} EducationChangeItem
+ *
+ * @typedef {{
+ *   toUpdate: EducationChangeItem[];
+ *   toAdd: EducationChangeItem[];
+ * }} EducationChanges
+ *
+ * @typedef {{
+ *   id?: string | number;
+ *   title?: string;
+ *   data?: unknown;
+ * }} ActivityChangeItem
+ *
+ * @typedef {{
+ *   toUpdate: ActivityChangeItem[];
+ *   toAdd: ActivityChangeItem[];
+ *   toDelete: ActivityChangeItem[];
+ * }} ActivityChanges
+ *
+ * @typedef {{
+ *   id?: string | number;
+ *   name?: string;
+ *   data?: { language_name: string; level: number };
+ * }} LanguageCertChangeItem
+ *
+ * @typedef {{
+ *   toUpdate: LanguageCertChangeItem[];
+ *   toAdd: LanguageCertChangeItem[];
+ *   toDelete: LanguageCertChangeItem[];
+ * }} LanguageCertChanges
+ */
+
+/**
+ * @param {SsotData} ssotData
+ * @param {WantedProfileInput} profileData
+ * @param {CurrentResume | null | undefined} currentResume
+ */
 export function buildWantedChanges(ssotData, profileData, currentResume) {
   const currentCareers = currentResume?.careers || [];
   const currentEducations = currentResume?.educations || [];
   const currentActivities = currentResume?.activities || [];
   const about = ssotData.summary?.profileStatement || '';
+  /** @type {Record<string, string>} */
   const updates = {};
+  /** @type {string[]} */
   const sections = [];
 
   if (about && about !== (currentResume?.about || '')) {
@@ -30,6 +113,7 @@ export function buildWantedChanges(ssotData, profileData, currentResume) {
     sections.push('mobile');
   }
 
+  /** @type {CareerChanges} */
   const careerChanges = { toUpdate: [], toAdd: [], toDelete: [] };
   for (const career of ssotData.careers || []) {
     const normalizedCompany = normalizeCompanyName(career.company);
@@ -60,11 +144,16 @@ export function buildWantedChanges(ssotData, profileData, currentResume) {
     }
   }
 
+  /** @type {EducationChanges} */
   const educationChanges = { toUpdate: [], toAdd: [] };
   if (ssotData.education?.school) {
     const mapped = mapEducationToWanted(ssotData.education);
     const existingEdu = currentEducations.find((item) =>
-      String(item.name || item.school_name || '').includes(ssotData.education.school)
+      String(item.name || item.school_name || '').includes(
+        /** @type {import('../mappers/wanted-profile-mapper.js').WantedEducationInput & { school: string }} */ (
+          ssotData.education
+        ).school
+      )
     );
     if (existingEdu) {
       educationChanges.toUpdate.push({
@@ -77,6 +166,7 @@ export function buildWantedChanges(ssotData, profileData, currentResume) {
     }
   }
 
+  /** @type {ActivityChanges} */
   const activityChanges = { toUpdate: [], toAdd: [], toDelete: [] };
   const matchedActivityIds = new Set();
   for (const certification of (ssotData.certifications || []).filter(
@@ -100,6 +190,7 @@ export function buildWantedChanges(ssotData, profileData, currentResume) {
     }
   }
 
+  /** @type {LanguageCertChanges} */
   const languageCertChanges = { toUpdate: [], toAdd: [], toDelete: [] };
   const matchedLangIds = new Set();
   for (const lang of ssotData.languages || []) {

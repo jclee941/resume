@@ -595,7 +595,17 @@
     "apps/job-server/src/shared/services/analytics/index.js",
     "apps/job-server/src/shared/services/apply/cover-letter-cache.js",
     "apps/job-server/src/shared/services/apply/optimized-orchestrator/execution.js",
-    "apps/job-server/src/shared/services/apply/tracker-lifecycle.js"
+    "apps/job-server/src/shared/services/apply/tracker-lifecycle.js",
+    "apps/job-dashboard/scripts/dev/foreign-apply-dry-run.mjs",
+    "apps/job-dashboard/src/durable-objects/browser-session-do.js",
+    "apps/job-dashboard/src/handlers/applications/update-operation.js",
+    "apps/job-dashboard/src/handlers/applications/wanted-sync-operation.js",
+    "apps/job-dashboard/src/handlers/auto-apply/db-helpers.js",
+    "apps/job-dashboard/src/handlers/diagnostics.js",
+    "apps/job-dashboard/src/handlers/stats.js",
+    "apps/job-dashboard/src/handlers/sync/wanted-profile-changes.js",
+    "apps/job-dashboard/src/queues/queue-consumer.js",
+    "apps/job-dashboard/src/services/auth.js"
   ],
   "exclude": ["packages/env/src/__tests__/**"]
 }
