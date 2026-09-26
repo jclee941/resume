@@ -1,5 +1,4 @@
 import Fastify from 'fastify';
-import fastifyStatic from '@fastify/static';
 import fastifyCors from '@fastify/cors';
 import fastifyCookie from '@fastify/cookie';
 import fastifyRateLimit from '@fastify/rate-limit';
@@ -94,12 +93,6 @@ async function buildServer() {
       docExpansion: 'list',
       deepLinking: true,
     },
-  });
-
-  await fastify.register(fastifyStatic, {
-    root: config.paths.public,
-    prefix: '/',
-    decorateReply: false,
   });
 
   // Root health endpoint (for consistency with resume.jclee.me)
