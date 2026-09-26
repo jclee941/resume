@@ -1,6 +1,8 @@
 import { describe, it, mock } from 'node:test';
 import assert from 'node:assert/strict';
 
+import { decrypt } from '@resume/shared/crypto';
+
 import {
   mintWantedSession,
   refreshWantedSession,
@@ -9,6 +11,8 @@ import {
   WANTED_TOKEN_URL,
   WANTED_SESSION_TTL_S,
 } from '../mint-session.js';
+
+const ENCRYPTION_KEY = btoa('0123456789abcdef0123456789abcdef');
 
 const CREDS = {
   WANTED_EMAIL: 'someone@example.com',
@@ -137,6 +141,7 @@ describe('refreshWantedSession', () => {
     const putCalls = [];
     const env = {
       ...CREDS,
+      ENCRYPTION_KEY,
       SESSIONS: {
         put: mock.fn(async (key, value, opts) => {
           putCalls.push({ key, value, opts });
@@ -155,7 +160,11 @@ describe('refreshWantedSession', () => {
     assert.equal(fetchImpl.mock.callCount(), 2);
     assert.equal(fetchImpl.mock.calls[1].arguments[0], WANTED_PROFILE_URL);
     assert.equal(putCalls[0].key, AUTH_WANTED_KEY);
-    assert.equal(putCalls[0].value, 'WWW_ONEID_ACCESS_TOKEN=fresh-token');
+    assert.doesNotMatch(putCalls[0].value, /WWW_ONEID_ACCESS_TOKEN/);
+    assert.equal(
+      await decrypt(putCalls[0].value, { ENCRYPTION_KEY }),
+      'WWW_ONEID_ACCESS_TOKEN=fresh-token'
+    );
     assert.deepEqual(putCalls[0].opts, { expirationTtl: WANTED_SESSION_TTL_S });
   });
 

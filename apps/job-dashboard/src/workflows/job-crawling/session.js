@@ -1,8 +1,9 @@
-import { decrypt } from '@resume/shared/crypto';
+import { decryptPlatformSession } from '../../services/platform-session.js';
 
 export async function resolveWantedSession(env, encryptedSession) {
   try {
-    const decrypted = await decrypt(encryptedSession, env);
+    const decrypted = await decryptPlatformSession(encryptedSession, env, 'auth:wanted');
+    if (!decrypted) return { cookies: '', sessionValid: false };
     let value;
     try {
       value = JSON.parse(decrypted);

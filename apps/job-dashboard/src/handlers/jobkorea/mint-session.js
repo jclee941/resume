@@ -11,6 +11,7 @@
  */
 
 import { withBrowserSession as defaultWithBrowserSession } from '../browser/browser-service.js';
+import { writePlatformSession } from '../../services/platform-session.js';
 import {
   SUBMIT_SELECTOR,
   CAPTCHA_SUBMIT_SELECTOR,
@@ -157,7 +158,7 @@ export async function mintJobKoreaSession(
 }
 
 /**
- * Mint a JobKorea session and store it in KV as `auth:jobkorea`. Never
+ * Mint a JobKorea session and store it encrypted in KV as `auth:jobkorea`. Never
  * throws — callers (admin route, scheduled cron) get a plain result back
  * either way.
  * @param {{SESSIONS: {put: Function}}} env
@@ -167,7 +168,7 @@ export async function mintJobKoreaSession(
 export async function refreshJobKoreaSession(env, opts = {}) {
   try {
     const cookie = await mintJobKoreaSession(env, opts);
-    await env.SESSIONS.put(AUTH_JOBKOREA_KEY, cookie, { expirationTtl: JOBKOREA_SESSION_TTL_S });
+    await writePlatformSession(env, 'jobkorea', cookie, JOBKOREA_SESSION_TTL_S);
     return { ok: true, key: AUTH_JOBKOREA_KEY, length: cookie.length };
   } catch (err) {
     return {

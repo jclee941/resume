@@ -1,18 +1,11 @@
+import { readPlatformSession } from '../../services/platform-session.js';
+
+/**
+ * Decrypted Wanted cookie header from `auth:wanted`, or null when no usable
+ * session is stored.
+ * @param {Object} env
+ * @returns {Promise<string|null>}
+ */
 export async function getWantedSession(env) {
-  const sessions = env?.SESSIONS;
-  if (!sessions) return null;
-
-  let session = await sessions.get('auth:wanted', { type: 'text' });
-  if (session) return session;
-
-  session = await sessions.get('session:wanted', { type: 'text' });
-  if (!session) {
-    session = await sessions.get('wanted:session', { type: 'json' });
-    if (session?.cookies) {
-      return session.cookies;
-    }
-    return null;
-  }
-
-  return session;
+  return readPlatformSession(env, 'wanted');
 }

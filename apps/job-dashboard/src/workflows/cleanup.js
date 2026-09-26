@@ -1,6 +1,24 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 
 /**
+ * Only plaintext JSON session records carry an inspectable expiry. Encrypted
+ * platform sessions and cookie headers are opaque here and expire through
+ * their KV TTL, so the sweep never deletes them.
+ * @param {unknown} raw
+ * @param {number} now
+ * @returns {boolean}
+ */
+function isExpiredSessionRecord(raw, now) {
+  if (typeof raw !== 'string' || !raw.trimStart().startsWith('{')) return false;
+  try {
+    const expiresAt = JSON.parse(raw)?.expiresAt;
+    return Boolean(expiresAt) && new Date(expiresAt).getTime() < now;
+  } catch {
+    return false; // malformed JSON is left to its KV TTL like any opaque value
+  }
+}
+
+/**
  * Cleanup Workflow
  *
  * Removes expired sessions, old job results, and stale rate limit entries.
@@ -45,12 +63,8 @@ export class CleanupWorkflow extends WorkflowEntrypoint {
         const toDelete = [];
 
         for (const key of list.keys) {
-          try {
-            const value = await this.env.SESSIONS.get(key.name, { type: 'json' });
-            if (value?.expiresAt && new Date(value.expiresAt).getTime() < now) {
-              toDelete.push(key.name);
-            }
-          } catch {
+          const value = await this.env.SESSIONS.get(key.name);
+          if (isExpiredSessionRecord(value, now)) {
             toDelete.push(key.name);
           }
         }

@@ -1,4 +1,5 @@
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
+import { readPlatformSession } from '../../services/platform-session.js';
 import {
   ATS_DRY_RUN_PLATFORMS,
   DEFAULT_APPLICATION_PLATFORMS,
@@ -43,7 +44,7 @@ async function searchAtsDryRun(platform, criteria) {
 }
 
 export async function searchWanted(ctx, criteria) {
-  const session = await ctx.env.SESSIONS.get('auth:wanted');
+  const session = await readPlatformSession(ctx.env, 'wanted');
   if (!session) throw new Error('No Wanted session available');
   const params = new URLSearchParams();
   if (criteria.keyword) params.append('query', criteria.keyword);
@@ -146,7 +147,7 @@ export async function submitApplication(
   }
 }
 export async function submitToWanted(ctx, jobId, resume, coverLetter) {
-  const session = await ctx.env.SESSIONS.get('auth:wanted');
+  const session = await readPlatformSession(ctx.env, 'wanted');
   if (!session) return { success: false, error: 'No Wanted session' };
   const response = await fetch(
     `https://www.wanted.co.kr/api/v4/jobs/${jobId.replace('wanted-', '')}/apply`,

@@ -1,3 +1,5 @@
+const { TEST_ENCRYPTION_KEY, encryptSession } = require('./platform-session-fixtures.js');
+
 describe('Cloudflare Native Wanted session lookup', () => {
   let getWantedSession;
 
@@ -6,18 +8,33 @@ describe('Cloudflare Native Wanted session lookup', () => {
       await import('../../../apps/job-dashboard/src/handlers/auto-apply/session-helpers.js'));
   });
 
-  test('uses the OneID cookie minted into auth:wanted', async () => {
+  function envWith(value) {
     const reads = [];
-    const env = {
+    return {
+      reads,
+      ENCRYPTION_KEY: TEST_ENCRYPTION_KEY,
       SESSIONS: {
         async get(key) {
           reads.push(key);
-          return key === 'auth:wanted' ? 'WWW_ONEID_ACCESS_TOKEN=token' : null;
+          return key === 'auth:wanted' ? value : null;
         },
       },
     };
+  }
+
+  test('decrypts the OneID cookie minted into auth:wanted', async () => {
+    const env = envWith(await encryptSession('WWW_ONEID_ACCESS_TOKEN=token'));
 
     await expect(getWantedSession(env)).resolves.toBe('WWW_ONEID_ACCESS_TOKEN=token');
-    expect(reads[0]).toBe('auth:wanted');
+    expect(env.reads).toEqual(['auth:wanted']);
+  });
+
+  test('treats a legacy plaintext auth:wanted value as missing', async () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    const env = envWith('WWW_ONEID_ACCESS_TOKEN=token');
+
+    await expect(getWantedSession(env)).resolves.toBeNull();
+    expect(env.reads).toEqual(['auth:wanted']);
+    warn.mockRestore();
   });
 });

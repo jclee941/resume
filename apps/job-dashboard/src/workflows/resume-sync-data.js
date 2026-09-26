@@ -1,4 +1,5 @@
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
+import { readPlatformSession } from '../services/platform-session.js';
 
 export async function getMasterResumeRecord(env, resumeId) {
   const row = await env.JOB_DB.prepare('SELECT data, target_resume_id FROM resumes WHERE id = ?')
@@ -30,7 +31,7 @@ export async function exportFromWanted(env, resumeId) {
     throw new Error('No Wanted resume ID: set targetResumeId on the master resume');
   }
 
-  const session = await env.SESSIONS.get('auth:wanted');
+  const session = await readPlatformSession(env, 'wanted');
   if (!session) {
     throw new Error('No Wanted session');
   }
