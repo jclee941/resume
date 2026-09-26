@@ -10,6 +10,18 @@ import {
   updateRememberSkills,
 } from './remember-profile-sections.js';
 
+/** @typedef {import('playwright').Page} P */
+/** @typedef {import('./remember-profile-sections.js').RememberCareer} RememberCareer */
+/** @typedef {import('./remember-profile-sections.js').RememberEducation} RememberEducation */
+/** @typedef {import('./remember-profile-sections.js').RememberSourceData} RememberSourceData */
+
+/**
+ * @typedef {Object} RememberSyncSourceData
+ * @property {{ position?: string, company?: string }} [current]
+ * @property {RememberCareer[]} careers
+ * @property {{ totalExperience: string, expertise: string[] }} summary
+ */
+
 const PROJECT_ROOT = getResumeBasePath();
 const RESUME_DATA_PATH = join(PROJECT_ROOT, 'packages/data/resumes/master/resume_data.json');
 const SESSION_PATH = join(PROJECT_ROOT, 'remember-session.json');
@@ -41,6 +53,7 @@ export class RememberProfileSync extends BaseProfileSync {
     });
 
     if (existsSync(SESSION_PATH)) {
+      /** @type {{ cookies?: import('playwright').Cookie[], cookieString?: string }} */
       const session = JSON.parse(readFileSync(SESSION_PATH, 'utf-8'));
       if (session.cookies && Array.isArray(session.cookies)) {
         await context.addCookies(session.cookies);
@@ -58,7 +71,7 @@ export class RememberProfileSync extends BaseProfileSync {
               path: '/',
               httpOnly: false,
               secure: true,
-              sameSite: 'Lax',
+              sameSite: /** @type {const} */ ('Lax'),
             };
           });
         if (parsed.length > 0) await context.addCookies(parsed);
@@ -70,23 +83,23 @@ export class RememberProfileSync extends BaseProfileSync {
   }
 
   async checkLogin() {
-    await this.page.goto(REMEMBER_URLS.profile, { waitUntil: 'domcontentloaded' });
-    const url = this.page.url();
+    await /**@type {P}*/ (this.page).goto(REMEMBER_URLS.profile, { waitUntil: 'domcontentloaded' });
+    const url = /**@type {P}*/ (this.page).url();
     if (url.includes('/login')) {
       return false;
     }
-    await this.page.waitForSelector(PROFILE_READY_SELECTOR, { timeout: 10000 });
+    await /**@type {P}*/ (this.page).waitForSelector(PROFILE_READY_SELECTOR, { timeout: 10000 });
     return true;
   }
 
   async waitForManualLogin() {
-    await this.page.goto(REMEMBER_URLS.login, { waitUntil: 'domcontentloaded' });
+    await /**@type {P}*/ (this.page).goto(REMEMBER_URLS.login, { waitUntil: 'domcontentloaded' });
 
     console.log('Please login via Remember mobile app QR code...');
 
-    await this.page.waitForURL('**/mypage/**', { timeout: 300000 });
+    await /**@type {P}*/ (this.page).waitForURL('**/mypage/**', { timeout: 300000 });
 
-    const cookies = await this.page.context().cookies();
+    const cookies = await /**@type {P}*/ (this.page).context().cookies();
     const fs = await import('fs/promises');
     await fs.mkdir(dirname(SESSION_PATH), { recursive: true });
     await fs.writeFile(SESSION_PATH, JSON.stringify({ cookies }, null, 2));
@@ -95,8 +108,13 @@ export class RememberProfileSync extends BaseProfileSync {
     return true;
   }
 
+  /**
+   * @param {RememberSyncSourceData} sourceData
+   * @param {{ dry_run?: boolean }} [options]
+   */
   async syncProfile(sourceData, options = {}) {
     const { dry_run = false } = options;
+    /** @type {{ updated: string[], skipped: string[], errors: Array<{ section: string, error: string }> }} */
     const results = { updated: [], skipped: [], errors: [] };
 
     if (!(await this.checkLogin())) {
@@ -117,43 +135,52 @@ export class RememberProfileSync extends BaseProfileSync {
       };
     }
 
-    await this.page.goto(REMEMBER_URLS.profile, { waitUntil: 'domcontentloaded' });
-    await this.page.waitForSelector(PROFILE_READY_SELECTOR, { timeout: 10000 });
+    await /**@type {P}*/ (this.page).goto(REMEMBER_URLS.profile, { waitUntil: 'domcontentloaded' });
+    await /**@type {P}*/ (this.page).waitForSelector(PROFILE_READY_SELECTOR, { timeout: 10000 });
 
     try {
       await this.updateHeadline(sourceData);
       results.updated.push('headline');
     } catch (e) {
-      results.errors.push({ section: 'headline', error: e.message });
+      results.errors.push({ section: 'headline', error: /** @type {Error} */ (e).message });
     }
 
     try {
       await this.updateCareers(sourceData.careers);
       results.updated.push('careers');
     } catch (e) {
-      results.errors.push({ section: 'careers', error: e.message });
+      results.errors.push({ section: 'careers', error: /** @type {Error} */ (e).message });
     }
 
     try {
       await this.updateSkills(sourceData.summary.expertise);
       results.updated.push('skills');
     } catch (e) {
-      results.errors.push({ section: 'skills', error: e.message });
+      results.errors.push({ section: 'skills', error: /** @type {Error} */ (e).message });
     }
 
     return results;
   }
 
+  /**
+   * @param {RememberSourceData} sourceData
+   */
   async updateHeadline(sourceData) {
-    return updateRememberHeadline(this.page, sourceData);
+    return updateRememberHeadline(/**@type {P}*/ (this.page), sourceData);
   }
 
+  /**
+   * @param {RememberCareer[]} careers
+   */
   async updateCareers(careers) {
-    return updateRememberCareers(this.page, careers);
+    return updateRememberCareers(/**@type {P}*/ (this.page), careers);
   }
 
+  /**
+   * @param {string[]} skills
+   */
   async updateSkills(skills) {
-    return updateRememberSkills(this.page, skills);
+    return updateRememberSkills(/**@type {P}*/ (this.page), skills);
   }
   async getProfile() {
     if (!this.page) {
@@ -192,8 +219,11 @@ export class RememberProfileSync extends BaseProfileSync {
     return { success: true, code: 'OK', data: snapshot };
   }
 
+  /**
+   * @param {RememberEducation} education
+   */
   async updateEducation(education) {
-    return updateRememberEducation(this.page, education);
+    return updateRememberEducation(/**@type {P}*/ (this.page), education);
   }
 
   async close() {
@@ -204,6 +234,9 @@ export class RememberProfileSync extends BaseProfileSync {
   }
 }
 
+/**
+ * @param {Record<string, unknown>} [options]
+ */
 export async function syncToRemember(options = {}) {
   if (!existsSync(RESUME_DATA_PATH)) {
     return { error: `Source not found: ${RESUME_DATA_PATH}` };

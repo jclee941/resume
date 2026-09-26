@@ -14,36 +14,83 @@ export const WANTED_CATEGORIES = {
   CTO: 877,
 };
 
+/**
+ * @typedef {Object} WantedSearchParams
+ * @property {string} [sort]
+ * @property {number | string} [years]
+ * @property {string} [locations]
+ * @property {number} [limit]
+ * @property {number | string} [offset]
+ * @property {(string | number)[]} [tag_type_ids]
+ */
+
+/**
+ * @typedef {Object} WantedKeywordOptions
+ * @property {string} [sort]
+ * @property {number | string} [years]
+ * @property {number} [limit]
+ * @property {number | string} [offset]
+ */
+
+/**
+ * @typedef {Object} WantedRawJob
+ * @property {string | number} id
+ * @property {string} [position]
+ * @property {{ id?: string | number, name?: string, industry_name?: string }} [company]
+ * @property {{ location?: string, district?: string }} [address]
+ * @property {number} [annual_from]
+ * @property {number} [annual_to]
+ * @property {{ formatted_total?: string }} [reward]
+ * @property {Array<{ title: string }>} [skill_tags]
+ * @property {string | null} [due_time]
+ * @property {string | null} [created_at]
+ * @property {boolean} [is_remote]
+ * @property {string} [employment_type]
+ */
+
+/**
+ * @param {WantedSearchParams} params
+ * @returns {string}
+ */
 export function buildWantedSearchQuery(params) {
   const query = new URLSearchParams({
     country: 'kr',
     job_sort: params.sort || 'job.latest_order',
-    years: params.years ?? -1,
+    years: String(params.years ?? -1),
     locations: params.locations || 'all',
-    limit: Math.min(params.limit || 20, 100),
-    offset: params.offset || 0,
+    limit: String(Math.min(params.limit || 20, 100)),
+    offset: String(params.offset || 0),
   });
 
   if (params.tag_type_ids && params.tag_type_ids.length > 0) {
-    params.tag_type_ids.forEach((id) => query.append('tag_type_ids', id));
+    params.tag_type_ids.forEach((id) => query.append('tag_type_ids', String(id)));
   }
 
   return query.toString();
 }
 
+/**
+ * @param {string} keyword
+ * @param {WantedKeywordOptions} [options]
+ * @returns {string}
+ */
 export function buildWantedKeywordQuery(keyword, options = {}) {
   const query = new URLSearchParams({
     query: keyword,
     country: 'kr',
     job_sort: options.sort || 'job.latest_order',
-    years: options.years ?? -1,
-    limit: Math.min(options.limit || 20, 100),
-    offset: options.offset || 0,
+    years: String(options.years ?? -1),
+    limit: String(Math.min(options.limit || 20, 100)),
+    offset: String(options.offset || 0),
   });
 
   return query.toString();
 }
 
+/**
+ * @param {WantedRawJob} rawJob
+ * @returns {Record<string, unknown>}
+ */
 export function normalizeWantedJob(rawJob) {
   return {
     id: `wanted_${rawJob.id}`,

@@ -19,12 +19,38 @@ import {
 } from './browser-profile-form.js';
 import { executeProfileSync } from './browser-profile-sync-runner.js';
 
+/**
+ * @typedef {import('./browser-profile-form.js').ProfileSyncSelectors & {
+ *   school?: string,
+ *   major?: string,
+ *   [key: string]: string | undefined
+ * }} BrowserProfileSelectors
+ */
+
+/**
+ * @typedef {Object} BrowserProfileSyncOptions
+ * @property {string} [platform]
+ * @property {Record<string, string>} [urls]
+ * @property {BrowserProfileSelectors} [selectors]
+ * @property {string} [sessionPath]
+ * @property {boolean} [headless]
+ * @property {number} [timeout]
+ * @property {boolean} [debug]
+ */
+
 export class BrowserProfileSync extends BaseProfileSync {
+  /**
+   * @param {BrowserProfileSyncOptions} [options]
+   */
   constructor(options = {}) {
     super(options);
+    /** @type {string} */
     this.platform = options.platform || 'unknown';
+    /** @type {Record<string, string>} */
     this.urls = options.urls || {};
+    /** @type {BrowserProfileSelectors} */
     this.selectors = options.selectors || {};
+    /** @type {string | undefined} */
     this.sessionPath = options.sessionPath;
   }
 
@@ -63,11 +89,15 @@ export class BrowserProfileSync extends BaseProfileSync {
 
   async waitForManualLogin() {
     if (!this.urls.login) throw new Error('login URL not configured');
-    await this.page.goto(this.urls.login, { waitUntil: 'domcontentloaded' });
+    await /** @type {import('playwright').Page} */ (this.page).goto(this.urls.login, {
+      waitUntil: 'domcontentloaded',
+    });
     console.log(`[${this.platform}] Please login manually...`);
-    await this.page.waitForURL('**/mypage/**', { timeout: 300000 });
+    await /** @type {import('playwright').Page} */ (this.page).waitForURL('**/mypage/**', {
+      timeout: 300000,
+    });
 
-    const cookies = await this.page.context().cookies();
+    const cookies = await /** @type {import('playwright').Page} */ (this.page).context().cookies();
     if (this.sessionPath) {
       const { writeFileSync, mkdirSync } = await import('fs');
       const { dirname } = await import('path');
@@ -90,7 +120,9 @@ export class BrowserProfileSync extends BaseProfileSync {
     await this.waitForConfiguredProfileSelectors();
 
     const data = await this.page.evaluate((sel) => {
-      const text = (q) => document.querySelector(q)?.textContent?.trim() || '';
+      /** @param {string} [q] */
+      const text = (q) =>
+        document.querySelector(/** @type {string} */ (q))?.textContent?.trim() || '';
       return {
         name: text(sel.name),
         headline: text(sel.headline),
@@ -103,7 +135,7 @@ export class BrowserProfileSync extends BaseProfileSync {
           school: text(sel.school),
           major: text(sel.major),
         },
-        skills: Array.from(document.querySelectorAll(sel.skills))
+        skills: Array.from(document.querySelectorAll(/** @type {string} */ (sel.skills)))
           .map((el) => el.textContent?.trim())
           .filter(Boolean),
       };
@@ -112,40 +144,82 @@ export class BrowserProfileSync extends BaseProfileSync {
     return { success: true, code: 'OK', data };
   }
 
+  /**
+   * @param {import('./browser-profile-sync-runner.js').ProfileSyncSourceData} sourceData
+   * @param {Record<string, unknown>} [options]
+   */
   async syncProfile(sourceData, options = {}) {
     return executeProfileSync(this, sourceData, options);
   }
 
+  /**
+   * @param {unknown} personal
+   */
   async fillPersonalInfo(personal) {
-    return fillPersonalInfo.call(this, personal);
+    return fillPersonalInfo.call(
+      /** @type {import('./browser-profile-form.js').BrowserProfileSyncContext} */ (this),
+      /** @type {{ name?: string, email?: string, phone?: string }} */ (personal)
+    );
   }
 
   async waitForConfiguredProfileSelectors() {
-    return waitForConfiguredProfileSelectors.call(this);
+    return waitForConfiguredProfileSelectors.call(
+      /** @type {import('./browser-profile-form.js').BrowserProfileSyncContext} */ (this)
+    );
   }
 
   async waitForConfiguredEditSelectors() {
-    return waitForConfiguredEditSelectors.call(this);
+    return waitForConfiguredEditSelectors.call(
+      /** @type {import('./browser-profile-form.js').BrowserProfileSyncContext} */ (this)
+    );
   }
 
+  /**
+   * @param {Array<string | undefined | null>} selectors
+   */
   async waitForAnyConfiguredSelector(selectors) {
-    return waitForAnyConfiguredSelector.call(this, selectors);
+    return waitForAnyConfiguredSelector.call(
+      /** @type {import('./browser-profile-form.js').BrowserProfileSyncContext} */ (this),
+      selectors
+    );
   }
 
+  /**
+   * @param {unknown} careers
+   */
   async fillCareers(careers) {
-    return fillCareers.call(this, careers);
+    return fillCareers.call(
+      /** @type {import('./browser-profile-form.js').BrowserProfileSyncContext} */ (this),
+      careers
+    );
   }
 
+  /**
+   * @param {unknown} education
+   */
   async fillEducation(education) {
-    return fillEducation.call(this, education);
+    return fillEducation.call(
+      /** @type {import('./browser-profile-form.js').BrowserProfileSyncContext} */ (this),
+      /** @type {{ school: string, major: string, status?: string } | null | undefined} */ (
+        education
+      )
+    );
   }
 
+  /**
+   * @param {unknown} certifications
+   */
   async fillCertifications(certifications) {
-    return fillCertifications.call(this, certifications);
+    return fillCertifications.call(
+      /** @type {import('./browser-profile-form.js').BrowserProfileSyncContext} */ (this),
+      certifications
+    );
   }
 
   async saveProfile() {
-    return saveProfile.call(this);
+    return saveProfile.call(
+      /** @type {import('./browser-profile-form.js').BrowserProfileSyncContext} */ (this)
+    );
   }
 }
 

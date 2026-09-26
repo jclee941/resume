@@ -7,11 +7,22 @@ import { buildSession, saveSession } from './session-persistence.js';
 
 const LOGIN_TIMEOUT_MS = 180000;
 
+/**
+ * @param {import('playwright').Page} page
+ * @param {(typeof PLATFORMS)[keyof typeof PLATFORMS]} platform
+ * @returns {Promise<boolean>}
+ */
 async function verifyCurrentLogin(page, platform) {
   const hasUserContent = platform.verifyLogin ? await platform.verifyLogin(page) : true;
   return page.url().includes(platform.successIndicator) && hasUserContent;
 }
 
+/**
+ * @param {import('playwright').Page} page
+ * @param {string} platformKey
+ * @param {(typeof PLATFORMS)[keyof typeof PLATFORMS]} platform
+ * @returns {Promise<void>}
+ */
 async function waitForManualLogin(page, platformKey, platform) {
   const startTime = Date.now();
 
@@ -40,6 +51,12 @@ async function waitForManualLogin(page, platformKey, platform) {
   }
 }
 
+/**
+ * @param {import('playwright').Page} page
+ * @param {string} platformKey
+ * @param {(typeof PLATFORMS)[keyof typeof PLATFORMS]} platform
+ * @returns {Promise<void>}
+ */
 async function ensureLoggedIn(page, platformKey, platform) {
   log('Checking login status...', 'info', platformKey);
   await page.goto(platform.checkUrl, {
@@ -64,8 +81,13 @@ async function ensureLoggedIn(page, platformKey, platform) {
   await waitForManualLogin(page, platformKey, platform);
 }
 
+/**
+ * @param {string} platformKey
+ * @param {boolean} [reset]
+ * @returns {Promise<import('./session-persistence.js').StoredSession | null>}
+ */
 export async function runPlatform(platformKey, reset = false) {
-  const platform = PLATFORMS[platformKey];
+  const platform = PLATFORMS[/** @type {keyof typeof PLATFORMS} */ (platformKey)];
   if (!platform) {
     log(`Unknown platform: ${platformKey}`, 'error');
     return null;
@@ -96,7 +118,13 @@ export async function runPlatform(platformKey, reset = false) {
     await ensureLoggedIn(page, platformKey, platform);
 
     log('Extracting cookies...', 'info', platformKey);
-    const session = buildSession(platformKey, await context.cookies(), platform.cookieDomains);
+    const session = buildSession(
+      platformKey,
+      /** @type {Array<import('playwright').Cookie & import('./session-persistence.js').SessionCookie>} */ (
+        await context.cookies()
+      ),
+      platform.cookieDomains
+    );
 
     if (!session) {
       log('No cookies found. Login may have failed.', 'error', platformKey);

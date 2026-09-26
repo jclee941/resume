@@ -18,7 +18,7 @@ export default class SaraminHandler extends BrowserHandler {
   /**
    * Extract current profile data from Saramin page
    * @param {import('playwright').Page} page - Playwright page
-   * @returns {Promise<Object>} Profile data with name and headline
+   * @returns {Promise<Record<string, string>>} Profile data with name and headline
    */
   async extractProfile(page) {
     const profileData = await page.evaluate(() => {

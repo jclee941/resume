@@ -8,6 +8,10 @@
  */
 import { decrypt, encrypt } from '@resume/shared/crypto';
 
+/**
+ * @param {string} platform
+ * @returns {string}
+ */
 export function platformSessionKey(platform) {
   return `auth:${platform}`;
 }
@@ -38,7 +42,7 @@ export async function decryptPlatformSession(stored, env, label = 'platform sess
     return await decrypt(stored, env);
   } catch (error) {
     console.warn(
-      `[platform-session] ${label} is not decryptable with ENCRYPTION_KEY; treating it as absent: ${error?.message || error}`
+      `[platform-session] ${label} is not decryptable with ENCRYPTION_KEY; treating it as absent: ${/** @type {Error} */ (error)?.message || error}`
     );
     return null;
   }
