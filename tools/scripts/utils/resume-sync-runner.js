@@ -13,10 +13,52 @@ const { generateWebData } = require('./resume-web-data-generator.js');
 
 const REQUIRED_OUTPUT_NAMES = ['data.json', 'data_en.json', 'data_ja.json'];
 
+/**
+ * @typedef {Object} SourceManifestEntry
+ * @property {string} language
+ * @property {string} sourcePath
+ * @property {string} webDataPath
+ *
+ * @typedef {Object} ResolvedSourceEntry
+ * @property {string} language
+ * @property {string} sourcePath
+ * @property {string} webDataPath
+ *
+ * @typedef {import('./resume-web-data-generator.js').ResumeSource &
+ *   import('./resume-sync-derivations.js').ResumeSourceData & {
+ *     personal: { name: string };
+ *     summary: { totalExperience: string };
+ *   }} LoadedSourceData
+ *
+ * @typedef {Object} SummaryItem
+ * @property {string} language
+ * @property {LoadedSourceData} sourceData
+ * @property {{ resume: unknown[]; projects: unknown[]; [key: string]: unknown }} webData
+ *
+ * @typedef {Object} SyncOptions
+ * @property {string} [asOf]
+ * @property {string} [sourceDir]
+ * @property {string} [outputDir]
+ * @property {SourceManifestEntry[]} [sourceManifest]
+ * @property {typeof generateWebData} [generate]
+ */
+
+/**
+ * @param {string} sourcePath
+ * @returns {LoadedSourceData}
+ */
 function loadSource(sourcePath) {
   return JSON.parse(fs.readFileSync(sourcePath, 'utf8'));
 }
 
+/**
+ * @param {{
+ *   sourceDir?: string;
+ *   outputDir?: string;
+ *   sourceManifest?: SourceManifestEntry[];
+ * }} options
+ * @returns {ResolvedSourceEntry[]}
+ */
 function resolveSources({ sourceDir, outputDir, sourceManifest }) {
   if (!Array.isArray(sourceManifest) || sourceManifest.length !== 3) {
     throw new Error('source manifest must contain exactly three language sources');
@@ -44,19 +86,28 @@ function resolveSources({ sourceDir, outputDir, sourceManifest }) {
   return sources;
 }
 
+/**
+ * @param {ResolvedSourceEntry[]} sources
+ */
 function validateSources(sources) {
   console.log('📋 Validating multilingual resume data against schema...');
   for (const source of sources) {
-    const validation = validateResumeDataFile(source.sourcePath, SCHEMA_PATH);
+    const validation =
+      /** @type {{ valid: boolean; errors?: Array<Record<string, unknown>> | null }} */ (
+        validateResumeDataFile(source.sourcePath, SCHEMA_PATH)
+      );
     if (!validation.valid) {
       throw new Error(
-        `Resume data validation failed (${source.language}):${formatErrors(validation.errors)}`
+        `Resume data validation failed (${source.language}):${formatErrors(/** @type {unknown[]} */ (validation.errors))}`
       );
     }
   }
   console.log('✅ Resume data validation passed\n');
 }
 
+/**
+ * @param {SummaryItem[]} summary
+ */
 function printSummary(summary) {
   console.log('\n📊 Summary:');
   for (const item of summary) {
@@ -68,6 +119,9 @@ function printSummary(summary) {
   }
 }
 
+/**
+ * @param {SyncOptions} [options]
+ */
 function runSync({
   asOf,
   sourceDir,
@@ -75,18 +129,20 @@ function runSync({
   sourceManifest = LANGUAGE_SOURCES,
   generate = generateWebData,
 } = {}) {
-  parseAsOf(asOf);
+  parseAsOf(/** @type {string} */ (asOf));
   const sources = resolveSources({ sourceDir, outputDir, sourceManifest });
   validateSources(sources);
   const bindings = output.prepareOutputDirectories(sources.map(({ webDataPath }) => webDataPath));
 
+  /** @type {SummaryItem[]} */
   const summary = [];
+  /** @type {import('./resume-sync-output.js').WrittenSnapshot[]} */
   const written = [];
   try {
     for (const source of sources) {
       console.log(`📄 Loading source (${source.language}): ${source.sourcePath}`);
       const sourceData = loadSource(source.sourcePath);
-      autoCalculateExperience(sourceData, source.language, asOf);
+      autoCalculateExperience(sourceData, source.language, /** @type {string} */ (asOf));
       autoTranslatePeriods(sourceData, source.language);
 
       console.log(`🔄 Generating ${source.webDataPath}...`);

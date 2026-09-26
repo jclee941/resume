@@ -10,14 +10,47 @@ import {
   classifyApplyErrorFallback,
 } from './circuit-breaker-state.js';
 
+/**
+ * @typedef {import('./circuit-breaker-state.js').ClassifiedError} ClassifiedError
+ * @typedef {import('./circuit-breaker-state.js').RetryMetricRecord} RetryMetricRecord
+ *
+ * @typedef {Object} CircuitBreakerOptions
+ * @property {string} [key]
+ * @property {number} [maxRetries]
+ * @property {number} [baseDelay]
+ * @property {number} [maxDelay]
+ * @property {number} [jitterMax]
+ * @property {number} [circuitBreakerThreshold]
+ * @property {number} [circuitBreakerDuration]
+ * @property {(e: unknown, context?: { key: string }) => ClassifiedError} [classifyError]
+ * @property {(error: ClassifiedError) => boolean} [shouldRetry]
+ * @property {((context: { key: string; openUntil: number; remainingMs: number; consecutiveFailures: number }) => Error) | null} [onCircuitOpen]
+ * @property {{ info(msg: string, ...args: unknown[]): void } | typeof console | null} [logger]
+ * @property {(ms: number) => Promise<unknown>} [sleep]
+ * @property {((event: string, payload: unknown) => void) | null} [reporter]
+ * @property {() => number} [now]
+ * @property {() => number} [random]
+ */
+
 export { getRetryMetrics, resetRetryState };
 
+/**
+ * @param {number} retryAttempt
+ * @param {{ baseDelay: number; maxDelay: number; random?: () => number; jitterMax: number }} options
+ * @returns {number}
+ */
 function calculateDelay(retryAttempt, options) {
   const { baseDelay, maxDelay, random, jitterMax } = options,
     exponential = baseDelay * 2 ** retryAttempt;
   return Math.min(maxDelay, exponential + Math.floor((random?.() ?? Math.random()) * jitterMax));
 }
 
+/**
+ * @template T
+ * @param {() => Promise<T> | T} fn
+ * @param {CircuitBreakerOptions} [options]
+ * @returns {Promise<T>}
+ */
 export async function withCircuitBreaker(fn, options = {}) {
   const {
     key = 'unknown',
@@ -27,7 +60,8 @@ export async function withCircuitBreaker(fn, options = {}) {
     jitterMax = 1000,
     circuitBreakerThreshold = 3,
     circuitBreakerDuration = 5 * 60 * 1000,
-    classifyError = (e) => classifyApplyErrorFallback(e, key),
+    classifyError = (e) =>
+      classifyApplyErrorFallback(/** @type {ClassifiedError | null | undefined} */ (e), key),
     shouldRetry = (error) => Boolean(error?.retryable),
     onCircuitOpen = null,
     logger = console,
@@ -38,6 +72,7 @@ export async function withCircuitBreaker(fn, options = {}) {
   } = options;
 
   const circuit = getCircuitState(key);
+  /** @type {Omit<RetryMetricRecord, 'lastUpdatedAt'> & { lastUpdatedAt: string | number | null }} */
   const metrics = getMetricState(key);
   if (circuit.state === 'open') {
     if (circuit.openUntil && now() < circuit.openUntil) {

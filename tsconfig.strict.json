@@ -703,7 +703,11 @@
     "apps/job-server/src/crawlers/browser-utils.js",
     "apps/job-server/src/server/middleware/error-handler.js",
     "apps/job-server/src/session-broker/services/session-broker-state.js",
-    "apps/job-server/src/session-broker/services/wanted-login-flow.js"
+    "apps/job-server/src/session-broker/services/wanted-login-flow.js",
+    "apps/portfolio/src/scripts/modules/timeline-interactions.js",
+    "packages/shared/src/clients/elasticsearch/formatters.js",
+    "packages/shared/src/clients/elasticsearch/index.js",
+    "packages/shared/src/retry/circuit-breaker.js"
   ],
   "exclude": ["packages/env/src/__tests__/**"]
 }
