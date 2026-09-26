@@ -187,7 +187,6 @@ export default {
     return response;
   },
 
-  // Queue handler - acknowledges all messages (no-op for portfolio worker)
   // Queue handler — delegate to job worker (it handles crawl-tasks + notifications queues).
   async queue(batch, env, ctx) {
     return jobWorker.queue(batch, env, ctx);
