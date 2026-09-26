@@ -1,28 +1,31 @@
-# Cloudflare Puppeteer extract-zip Advisory, Accepted Risk
+# Cloudflare Puppeteer extract-zip Advisories, Accepted Risk
 
 **Status**: Accepted risk · unreachable installation path
 
-**Date**: 2026-08-13
+**Date**: 2026-08-13 (updated 2026-09-26: added `GHSA-7pqw-9j4j-h8q3`, `@cloudflare/puppeteer@1.4.0`)
 
 **Scope**: Cloudflare Browser Rendering dependency
 
-The production dependency audit reports `GHSA-jmr9-qjv8-65gv`, an
-`extract-zip` symlink path-traversal advisory. The repository accepts this
-specific advisory while no compatible patched `@cloudflare/puppeteer` release
+The production dependency audit reports two `extract-zip` (<=2.0.1) advisories:
+`GHSA-jmr9-qjv8-65gv` (unvalidated symlink path traversal) and
+`GHSA-7pqw-9j4j-h8q3` (arbitrary file writes through symlink archive entries).
+Both sit in the same archive-extraction code path. The repository accepts these
+specific advisories while no compatible patched `@cloudflare/puppeteer` release
 exists.
 
 ## Affected dependency path
 
 ```text
-@cloudflare/puppeteer@1.3.0
+@cloudflare/puppeteer@1.4.0
 └── @puppeteer/browsers@2.2.4
     └── extract-zip@2.0.1
 ```
 
 The CI policy in `tools/scripts/verification/audit-production-dependencies.mjs`
-allows only this advisory and this exact package graph. Any additional
-high/critical advisory, malformed audit response, or graph change fails the
-dependency-audit job.
+allows only these advisories and this exact package graph. Any additional
+high/critical advisory, malformed audit response, or graph change fails
+`npm run security:audit`, which CI runs as the "Audit production dependencies"
+step.
 
 ## Why the risk is accepted
 
@@ -33,8 +36,8 @@ dependency-audit job.
    ZIP archives passed to `extract-zip`.
 3. The production Worker dry-run bundle must exclude `extract-zip` and
    `@puppeteer/browsers`; inclusion invalidates this acceptance.
-4. `@cloudflare/puppeteer@1.3.0` is the latest compatible release currently
-   available and still pins the affected browser installer.
+4. `@cloudflare/puppeteer@1.4.0` is the latest release (checked 2026-09-26) and
+   still pins `@puppeteer/browsers@2.2.4`, the affected browser installer.
 
 ## Rejected alternatives
 
