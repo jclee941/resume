@@ -177,7 +177,7 @@ export class AuthHandler {
   }
 
   /**
-   * Sync auth from external script (auth-sync.js)
+   * Sync auth from the local auth-persistent script (--sync-worker)
    * Requires X-Auth-Sync-Secret header matching AUTH_SYNC_SECRET env var
    */
   async syncFromScript(request) {
