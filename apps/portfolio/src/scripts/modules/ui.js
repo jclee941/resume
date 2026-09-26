@@ -1,9 +1,5 @@
 import { initContactCopy } from './contact-copy.js';
 
-/**
- * @typedef {Window & { gtag?: (command: string, action: string, params?: Record<string, unknown>) => void }} WindowWithGtag
- */
-
 export function initUI() {
   initSmoothScroll();
   initNavScrollEffect();
@@ -33,13 +29,11 @@ function initSectionAnalytics() {
     (entries) => {
       entries.forEach((e) => {
         if (!e.isIntersecting) return;
-        if (typeof (/** @type {WindowWithGtag} */ (window).gtag) !== 'function') return;
+        if (typeof window.gtag !== 'function') return;
         const id = e.target.id || e.target.getAttribute('data-section');
         if (id && !tracked[id]) {
           tracked[id] = true;
-          /** @type {NonNullable<WindowWithGtag['gtag']>} */ (
-            /** @type {WindowWithGtag} */ (window).gtag
-          )('event', 'section_view', { section: id, event_category: 'engagement' });
+          window.gtag('event', 'section_view', { section: id, event_category: 'engagement' });
         }
       });
     },

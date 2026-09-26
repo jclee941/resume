@@ -1,10 +1,70 @@
 import { applyToJobsParallel, batchProcess } from '../../parallel.js';
 import { getTodayApplicationCount, recordApplyFailure, sleep } from './error-handler.js';
 
+/**
+ * @typedef {import('./error-handler.js').OptimizedApplyStats} OptimizedApplyStats
+ * @typedef {import('./error-handler.js').OrchestratorJob} OrchestratorJob
+ * @typedef {import('./error-handler.js').OrchestratorMetrics} OrchestratorMetrics
+ * @typedef {import('./error-handler.js').OrchestratorLogger} OrchestratorLogger
+ *
+ * @typedef {{
+ *   maxDailyApplications: number;
+ *   parallelApply?: boolean;
+ *   useBrowserPool?: boolean;
+ *   delayBetweenApplies?: number;
+ *   maxConcurrentApplies?: number;
+ * }} ExecutionConfig
+ *
+ * @typedef {{
+ *   job?: OrchestratorJob;
+ *   success: boolean;
+ *   dryRun?: boolean;
+ *   skipped?: boolean;
+ *   message?: string;
+ *   error?: unknown;
+ *   duration?: number;
+ *   [key: string]: unknown;
+ * }} SingleJobApplyResult
+ *
+ * @typedef {import('../../parallel/process-in-parallel.js').ParallelTaskResult<OrchestratorJob, SingleJobApplyResult> & {
+ *   skipped?: boolean;
+ * }} ParallelApplyResult
+ *
+ * @typedef {SingleJobApplyResult | ParallelApplyResult} ExecutionItemResult
+ *
+ * @typedef {{
+ *   browser?: unknown;
+ *   page?: unknown;
+ *   applyToJob(job: OrchestratorJob): Promise<SingleJobApplyResult>;
+ * }} Applier
+ *
+ * @typedef {{
+ *   acquire(): Promise<{ browser: unknown; page: unknown }>;
+ *   release(pooled: { browser: unknown; page: unknown }): Promise<void>;
+ * }} BrowserPool
+ *
+ * @typedef {{
+ *   appManager?: { listApplications(options?: { fromDate?: string }): Array<{ status?: string }> } | null;
+ *   applySingleJob: (job: OrchestratorJob) => Promise<SingleJobApplyResult>;
+ *   config: ExecutionConfig;
+ *   dryRun?: boolean;
+ *   jobs: OrchestratorJob[];
+ *   logger: OrchestratorLogger & { log(msg: string): void; info(msg: string): void };
+ *   metrics: OrchestratorMetrics & { mark(name: string): void; histogram(name: string, val: number): void };
+ *   stats: OptimizedApplyStats;
+ *   applier?: Applier;
+ *   browserPool?: BrowserPool;
+ * }} ExecutionContext
+ */
+
+/**
+ * @param {ExecutionContext} context
+ */
 export async function applyToJobsWithStrategy(context) {
   const { appManager, applySingleJob, config, dryRun, jobs, logger, metrics, stats } = context;
   metrics.mark('apply:start');
 
+  /** @type {ExecutionItemResult[]} */
   const results = [];
   const todayCount = getTodayApplicationCount(appManager);
   const remaining = config.maxDailyApplications - todayCount;
@@ -53,18 +113,35 @@ export async function applyToJobsWithStrategy(context) {
   };
 }
 
+/**
+ * @param {{
+ *   applySingleJob: (job: OrchestratorJob) => Promise<SingleJobApplyResult>;
+ *   config: ExecutionConfig;
+ *   jobs: OrchestratorJob[];
+ * }} options
+ * @returns {Promise<SingleJobApplyResult[]>}
+ */
 async function applySequential({ applySingleJob, config, jobs }) {
   const results = [];
 
   for (const job of jobs) {
     const result = await applySingleJob(job);
     results.push(result);
-    await sleep(config.delayBetweenApplies);
+    await sleep(/** @type {number} */ (config.delayBetweenApplies));
   }
 
   return results;
 }
 
+/**
+ * @param {{
+ *   applySingleJob: (job: OrchestratorJob) => Promise<SingleJobApplyResult>;
+ *   config: ExecutionConfig;
+ *   jobs: OrchestratorJob[];
+ *   logger: OrchestratorLogger & { info(msg: string): void };
+ * }} options
+ * @returns {Promise<ParallelApplyResult[]>}
+ */
 function applyParallel({ applySingleJob, config, jobs, logger }) {
   return applyToJobsParallel(jobs, async (job) => applySingleJob(job), {
     maxConcurrency: config.maxConcurrentApplies,
@@ -77,7 +154,18 @@ function applyParallel({ applySingleJob, config, jobs, logger }) {
   });
 }
 
+/**
+ * @param {{
+ *   applier?: Applier;
+ *   browserPool?: BrowserPool;
+ *   config: ExecutionConfig;
+ *   jobs: OrchestratorJob[];
+ *   logger: OrchestratorLogger & { log(msg: string): void; info(msg: string): void };
+ * }} options
+ * @returns {Promise<ParallelApplyResult[]>}
+ */
 async function applyParallelWithPool({ applier, browserPool, config, jobs, logger }) {
+  /** @type {ParallelApplyResult[]} */
   const results = [];
 
   await applyToJobsParallel(
@@ -104,23 +192,41 @@ async function applyParallelWithPool({ applier, browserPool, config, jobs, logge
   return results;
 }
 
+/**
+ * @param {{
+ *   applier?: Applier;
+ *   browserPool?: BrowserPool;
+ *   job: OrchestratorJob;
+ * }} options
+ * @returns {Promise<SingleJobApplyResult>}
+ */
 async function applyJobWithPooledBrowser({ applier, browserPool, job }) {
-  const pooled = await browserPool.acquire();
-  const originalBrowser = applier.browser;
-  const originalPage = applier.page;
+  const pooled = await /** @type {BrowserPool} */ (browserPool).acquire();
+  const originalBrowser = /** @type {Applier} */ (applier).browser;
+  const originalPage = /** @type {Applier} */ (applier).page;
 
   try {
-    applier.browser = pooled.browser;
-    applier.page = pooled.page;
+    /** @type {Applier} */ (applier).browser = pooled.browser;
+    /** @type {Applier} */ (applier).page = pooled.page;
 
-    return await applier.applyToJob(job);
+    return await /** @type {Applier} */ (applier).applyToJob(job);
   } finally {
-    applier.browser = originalBrowser;
-    applier.page = originalPage;
-    await browserPool.release(pooled);
+    /** @type {Applier} */ (applier).browser = originalBrowser;
+    /** @type {Applier} */ (applier).page = originalPage;
+    await /** @type {BrowserPool} */ (browserPool).release(pooled);
   }
 }
 
+/**
+ * @param {{
+ *   applier: Applier;
+ *   job: OrchestratorJob;
+ *   logger: OrchestratorLogger & { log(msg: string): void };
+ *   metrics: OrchestratorMetrics & { mark(name: string): void; histogram(name: string, val: number): void };
+ *   stats: OptimizedApplyStats;
+ * }} options
+ * @returns {Promise<SingleJobApplyResult>}
+ */
 export async function applySingleJobWithMetrics({ applier, job, logger, metrics, stats }) {
   const startTime = Date.now();
   metrics.mark(`apply:job:${job.id}`);
@@ -150,10 +256,29 @@ export async function applySingleJobWithMetrics({ applier, job, logger, metrics,
 
     return { job, ...result, duration };
   } catch (error) {
-    return recordApplyFailure({ error, job, logger, metrics, startTime, stats });
+    return recordApplyFailure(
+      /** @type {{ error: Error; job: OrchestratorJob; logger: OrchestratorLogger; metrics: OrchestratorMetrics; startTime: number; stats: OptimizedApplyStats }} */ ({
+        error,
+        job,
+        logger,
+        metrics,
+        startTime,
+        stats,
+      })
+    );
   }
 }
 
+/**
+ * @param {{
+ *   applySingleJob: (job: OrchestratorJob) => Promise<SingleJobApplyResult>;
+ *   config: ExecutionConfig;
+ *   jobs: OrchestratorJob[];
+ *   logger: OrchestratorLogger & { info(msg: string): void };
+ *   options: { batchSize?: number; delayBetweenBatches?: number };
+ * }} options
+ * @returns {Promise<ParallelApplyResult[]>}
+ */
 export function applyInBatchesWithStrategy({ applySingleJob, config, jobs, logger, options }) {
   const { batchSize = 10, delayBetweenBatches = 5000 } = options;
 

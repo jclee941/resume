@@ -2,6 +2,36 @@ import { AppError } from './app-error.js';
 import { ErrorCodes } from './error-codes.js';
 import { PlatformError, ValidationError } from './domain-errors.js';
 
+/**
+ * @typedef {{
+ *   params?: { missingProperty?: string };
+ *   instancePath?: string;
+ *   dataPath?: string;
+ * }} ValidationItem
+ *
+ * @typedef {{
+ *   name: 'WantedAPIError';
+ *   statusCode: number;
+ *   response: unknown;
+ *   message?: string;
+ * }} WantedAPIErrorLike
+ *
+ * @typedef {{
+ *   message?: string;
+ *   statusCode?: number;
+ *   name?: string;
+ *   response?: unknown;
+ *   validation?: Array<ValidationItem>;
+ *   validationContext?: unknown;
+ *   stack?: string;
+ * }} ValidationErrorLike
+ */
+
+/**
+ * @param {unknown} [value]
+ * @param {number} [fallback]
+ * @returns {number}
+ */
 function normalizeStatusCode(value, fallback = 500) {
   if (typeof value !== 'number') {
     return fallback;
@@ -14,6 +44,10 @@ function normalizeStatusCode(value, fallback = 500) {
   return fallback;
 }
 
+/**
+ * @param {number} statusCode
+ * @returns {string}
+ */
 function inferCodeFromStatus(statusCode) {
   if (statusCode === 404) {
     return ErrorCodes.NOT_FOUND;
@@ -30,15 +64,23 @@ function inferCodeFromStatus(statusCode) {
   return ErrorCodes.UNKNOWN;
 }
 
+/**
+ * @param {unknown} error
+ * @returns {error is WantedAPIErrorLike}
+ */
 function isWantedAPIError(error) {
   return (
-    error &&
-    error.name === 'WantedAPIError' &&
-    typeof error.statusCode === 'number' &&
-    Object.prototype.hasOwnProperty.call(error, 'response')
+    /** @type {boolean} */ (error) &&
+    /** @type {WantedAPIErrorLike} */ (error).name === 'WantedAPIError' &&
+    typeof (/** @type {WantedAPIErrorLike} */ (error).statusCode) === 'number' &&
+    Object.prototype.hasOwnProperty.call(/** @type {Record<string, unknown>} */ (error), 'response')
   );
 }
 
+/**
+ * @param {Array<ValidationItem>} [validation]
+ * @returns {string[]}
+ */
 function extractValidationFields(validation = []) {
   if (!Array.isArray(validation)) {
     return [];
@@ -71,6 +113,10 @@ function extractValidationFields(validation = []) {
   return [...fields].filter(Boolean);
 }
 
+/**
+ * @param {unknown} error
+ * @returns {AppError}
+ */
 function toAppError(error) {
   if (error instanceof AppError) {
     return error;
@@ -80,28 +126,34 @@ function toAppError(error) {
     return new PlatformError(error.message || 'Wanted API request failed', {
       platform: 'wanted',
       originalStatus: error.statusCode,
-      metadata: { response: error.response },
-      cause: error,
+      metadata: { response: /** @type {Record<string, unknown>} */ (error.response) },
+      cause: /** @type {Error} */ (/** @type {unknown} */ (error)),
       code: ErrorCodes.PLATFORM_API_ERROR,
       statusCode: 502,
     });
   }
 
-  if (error && error.validation) {
-    return new ValidationError(error.message || 'Validation failed', {
-      fields: extractValidationFields(error.validation),
-      metadata: {
-        validation: error.validation,
-        validationContext: error.validationContext || null,
-      },
-      cause: error,
-      code: ErrorCodes.VALIDATION,
-      statusCode: 400,
-    });
+  if (error && /** @type {ValidationErrorLike} */ (error).validation) {
+    return new ValidationError(
+      /** @type {ValidationErrorLike} */ (error).message || 'Validation failed',
+      {
+        fields: extractValidationFields(/** @type {ValidationErrorLike} */ (error).validation),
+        metadata: {
+          validation: /** @type {ValidationErrorLike} */ (error).validation,
+          validationContext: /** @type {ValidationErrorLike} */ (error).validationContext || null,
+        },
+        cause: /** @type {Error} */ (/** @type {unknown} */ (error)),
+        code: ErrorCodes.VALIDATION,
+        statusCode: 400,
+      }
+    );
   }
 
   if (error instanceof Error) {
-    const statusCode = normalizeStatusCode(error.statusCode, 500);
+    const statusCode = normalizeStatusCode(
+      /** @type {Error & { statusCode?: number }} */ (error).statusCode,
+      500
+    );
     const code = inferCodeFromStatus(statusCode);
     return AppError.fromError(error, code, statusCode);
   }
@@ -109,12 +161,16 @@ function toAppError(error) {
   return new AppError('Internal Server Error', ErrorCodes.UNKNOWN, 500, { value: error });
 }
 
+/**
+ * @param {unknown} error
+ * @returns {{ error: { code: string | number; message: string; statusCode: number; stack?: string; details?: Record<string, unknown> } }}
+ */
 export function formatErrorResponse(error) {
   const appError = toAppError(error);
 
   return {
     error: {
-      code: appError.code,
+      code: /** @type {string | number} */ (appError.code),
       message: appError.message,
       statusCode: appError.statusCode,
       ...(process.env.NODE_ENV === 'development' && appError.stack

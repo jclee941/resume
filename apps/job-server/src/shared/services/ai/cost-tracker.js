@@ -6,9 +6,65 @@
  * @module ai/cost-tracker
  */
 
+/** @typedef {typeof _COST_PREFIX} _CostPrefix */
 const _COST_PREFIX = 'ai-cost:';
 const DAILY_KEY_FORMAT = 'ai-cost:daily:';
 const MONTHLY_KEY_FORMAT = 'ai-cost:monthly:';
+
+/**
+ * @typedef {{
+ *   get(key: string, type?: string): Promise<DailyData | MonthlyData | null | undefined>;
+ *   put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
+ * }} CostKvNamespace
+ *
+ * @typedef {{
+ *   prompt_tokens?: number;
+ *   completion_tokens?: number;
+ *   total_tokens?: number;
+ * }} Usage
+ *
+ * @typedef {{
+ *   provider: string;
+ *   model: string;
+ *   usage?: Usage;
+ * }} AIResponse
+ *
+ * @typedef {{
+ *   tokens: number;
+ *   cost: number;
+ *   requests: number;
+ * }} ProviderSession
+ *
+ * @typedef {{
+ *   totalTokens: number;
+ *   totalCost: number;
+ *   requests: number;
+ *   byProvider: Record<string, ProviderSession>;
+ * }} SessionData
+ *
+ * @typedef {{
+ *   dailyLimit: number;
+ *   monthlyLimit: number;
+ *   alertThreshold: number;
+ * }} BudgetsConfig
+ *
+ * @typedef {{
+ *   warn(message: string): void;
+ * }} Logger
+ *
+ * @typedef {{
+ *   totalCost: number;
+ *   totalTokens: number;
+ *   requests: number;
+ *   byProvider: Record<string, { cost: number; tokens: number }>;
+ * }} DailyData
+ *
+ * @typedef {{
+ *   totalCost: number;
+ *   totalTokens: number;
+ *   requests: number;
+ * }} MonthlyData
+ */
 
 /** Default budget thresholds in USD */
 const DEFAULT_BUDGETS = {
@@ -19,20 +75,21 @@ const DEFAULT_BUDGETS = {
 
 export class CostTracker {
   /**
-   * @param {object} options
-   * @param {object} [options.kv] - KV namespace for persisting usage data
-   * @param {object} [options.budgets] - Budget configuration
-   * @param {number} [options.budgets.dailyLimit=5.0] - Daily spending limit (USD)
-   * @param {number} [options.budgets.monthlyLimit=50.0] - Monthly spending limit (USD)
-   * @param {number} [options.budgets.alertThreshold=0.8] - Alert at this fraction of budget
-   * @param {object} [options.logger=console] - Logger instance (must support .warn)
+   * @param {object} [options]
+   * @param {CostKvNamespace} [options.kv] - KV namespace for persisting usage data
+   * @param {Partial<BudgetsConfig>} [options.budgets] - Budget configuration
+   * @param {Logger} [options.logger=console] - Logger instance (must support .warn)
    */
   constructor({ kv, budgets = {}, logger } = {}) {
+    /** @type {CostKvNamespace | undefined} */
     this.kv = kv;
+    /** @type {BudgetsConfig} */
     this.budgets = { ...DEFAULT_BUDGETS, ...budgets };
+    /** @type {Logger} */
     this.logger = logger ?? console;
 
     // In-memory accumulator for the current request lifecycle
+    /** @type {SessionData} */
     this.session = {
       totalTokens: 0,
       totalCost: 0,
@@ -43,12 +100,9 @@ export class CostTracker {
 
   /**
    * Record token usage from an AI response.
-   * @param {object} response - AI provider response
-   * @param {string} response.provider - Provider name
-   * @param {string} response.model - Model identifier
-   * @param {object} response.usage - Token usage {prompt_tokens, completion_tokens, total_tokens}
-   * @param {number} costPer1kTokens - Cost per 1000 tokens for this model
-   * @returns {Promise<{cost: number, alert: string|null}>}
+   * @param {AIResponse} response - AI provider response
+   * @param {number} [costPer1kTokens=0] - Cost per 1000 tokens for this model
+   * @returns {Promise<{cost: number, totalTokens: number, alert: string|null}>}
    */
   async recordUsage(response, costPer1kTokens = 0) {
     const { provider, model, usage } = response;
@@ -78,6 +132,11 @@ export class CostTracker {
 
   /**
    * Persist usage to KV and check budget alerts.
+   * @param {number} cost
+   * @param {number} tokens
+   * @param {string} provider
+   * @param {string} [_model]
+   * @returns {Promise<string|null>}
    * @private
    */
   async _persistAndCheck(cost, tokens, provider, _model) {
@@ -86,12 +145,14 @@ export class CostTracker {
     const monthlyKey = `${MONTHLY_KEY_FORMAT}${now.toISOString().slice(0, 7)}`;
 
     try {
-      const dailyData = (await this.kv.get(dailyKey, 'json')) || {
-        totalCost: 0,
-        totalTokens: 0,
-        requests: 0,
-        byProvider: {},
-      };
+      const dailyData = /** @type {DailyData} */ (
+        (await /** @type {CostKvNamespace} */ (this.kv).get(dailyKey, 'json')) || {
+          totalCost: 0,
+          totalTokens: 0,
+          requests: 0,
+          byProvider: {},
+        }
+      );
       dailyData.totalCost += cost;
       dailyData.totalTokens += tokens;
       dailyData.requests++;
@@ -101,20 +162,22 @@ export class CostTracker {
       dailyData.byProvider[provider].cost += cost;
       dailyData.byProvider[provider].tokens += tokens;
 
-      await this.kv.put(dailyKey, JSON.stringify(dailyData), {
+      await /** @type {CostKvNamespace} */ (this.kv).put(dailyKey, JSON.stringify(dailyData), {
         expirationTtl: 86400 * 7, // Keep 7 days
       });
 
-      const monthlyData = (await this.kv.get(monthlyKey, 'json')) || {
-        totalCost: 0,
-        totalTokens: 0,
-        requests: 0,
-      };
+      const monthlyData = /** @type {MonthlyData} */ (
+        (await /** @type {CostKvNamespace} */ (this.kv).get(monthlyKey, 'json')) || {
+          totalCost: 0,
+          totalTokens: 0,
+          requests: 0,
+        }
+      );
       monthlyData.totalCost += cost;
       monthlyData.totalTokens += tokens;
       monthlyData.requests++;
 
-      await this.kv.put(monthlyKey, JSON.stringify(monthlyData), {
+      await /** @type {CostKvNamespace} */ (this.kv).put(monthlyKey, JSON.stringify(monthlyData), {
         expirationTtl: 86400 * 35, // Keep 35 days
       });
 
@@ -128,7 +191,7 @@ export class CostTracker {
         return `BUDGET_WARNING: Monthly spend at ${Math.round((monthlyData.totalCost / this.budgets.monthlyLimit) * 100)}% ($${monthlyData.totalCost.toFixed(4)}/$${this.budgets.monthlyLimit})`;
       }
     } catch (err) {
-      this.logger.warn(`[CostTracker] Persistence error: ${err.message}`);
+      this.logger.warn(`[CostTracker] Persistence error: ${/** @type {Error} */ (err).message}`);
     }
 
     return null;
@@ -137,23 +200,35 @@ export class CostTracker {
   /**
    * Get daily usage summary.
    * @param {string} [date] - ISO date string (YYYY-MM-DD), defaults to today
-   * @returns {Promise<object>}
+   * @returns {Promise<DailyData | MonthlyData | SessionData>}
    */
   async getDailyUsage(date) {
     if (!this.kv) return this.session;
     const key = `${DAILY_KEY_FORMAT}${date ?? new Date().toISOString().slice(0, 10)}`;
-    return (await this.kv.get(key, 'json')) || { totalCost: 0, totalTokens: 0, requests: 0 };
+    return (
+      (await /** @type {CostKvNamespace} */ (this.kv).get(key, 'json')) || {
+        totalCost: 0,
+        totalTokens: 0,
+        requests: 0,
+      }
+    );
   }
 
   /**
    * Get monthly usage summary.
    * @param {string} [month] - ISO month string (YYYY-MM), defaults to current month
-   * @returns {Promise<object>}
+   * @returns {Promise<MonthlyData | SessionData>}
    */
   async getMonthlyUsage(month) {
     if (!this.kv) return this.session;
     const key = `${MONTHLY_KEY_FORMAT}${month ?? new Date().toISOString().slice(0, 7)}`;
-    return (await this.kv.get(key, 'json')) || { totalCost: 0, totalTokens: 0, requests: 0 };
+    return (
+      (await /** @type {CostKvNamespace} */ (this.kv).get(key, 'json')) || {
+        totalCost: 0,
+        totalTokens: 0,
+        requests: 0,
+      }
+    );
   }
 
   /**

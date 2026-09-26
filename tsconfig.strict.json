@@ -586,7 +586,16 @@
     "packages/shared/src/logger/formatters.js",
     "packages/shared/src/rate-limit/index.js",
     "packages/shared/src/rate-limit/platform-rate-limiter.js",
-    "packages/shared/src/retry/circuit-breaker-state.js"
+    "packages/shared/src/retry/circuit-breaker-state.js",
+    "apps/job-server/src/shared/errors/error-formatter.js",
+    "apps/job-server/src/shared/errors/index.js",
+    "apps/job-server/src/shared/services/ai/ai-service/model-selection.js",
+    "apps/job-server/src/shared/services/ai/cost-tracker.js",
+    "apps/job-server/src/shared/services/analytics/application-analytics.js",
+    "apps/job-server/src/shared/services/analytics/index.js",
+    "apps/job-server/src/shared/services/apply/cover-letter-cache.js",
+    "apps/job-server/src/shared/services/apply/optimized-orchestrator/execution.js",
+    "apps/job-server/src/shared/services/apply/tracker-lifecycle.js"
   ],
   "exclude": ["packages/env/src/__tests__/**"]
 }
