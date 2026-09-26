@@ -29,4 +29,9 @@ select:focus {
   outline: none;
   border-color: var(--color-accent-hover);
 }
+
+.status-select {
+  border: none;
+  cursor: pointer;
+}
 `;

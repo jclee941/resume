@@ -21,10 +21,10 @@ const DASHBOARD_HTML_TEMPLATE = `<!DOCTYPE html>
     <h2 id="automation-heading">
       <span>자동화</span>
       <div class="toolbar" role="toolbar" aria-label="자동화 도구">
-        <button class="btn btn-primary" onclick="triggerJobSearch()" id="searchBtn" aria-describedby="automation-desc">🔍 채용공고 검색</button>
-        <button class="btn btn-secondary" onclick="triggerAutoApply(true)" id="dryRunBtn">🧪 자동지원 테스트</button>
-        <button class="btn btn-danger" onclick="triggerAutoApply(false)" id="applyBtn">🚀 자동지원 실행</button>
-        <button class="btn btn-secondary" onclick="triggerDailyReport()">📊 일일리포트</button>
+        <button class="btn btn-primary" data-action="job-search" id="searchBtn" aria-describedby="automation-desc">🔍 채용공고 검색</button>
+        <button class="btn btn-secondary" data-action="auto-apply" data-dry-run="true" id="dryRunBtn">🧪 자동지원 테스트</button>
+        <button class="btn btn-danger" data-action="auto-apply" data-dry-run="false" id="applyBtn">🚀 자동지원 실행</button>
+        <button class="btn btn-secondary" data-action="daily-report">📊 일일리포트</button>
       </div>
     </h2>
     <div id="automationStatus" class="automation-status" role="status" aria-live="polite">
@@ -37,10 +37,10 @@ const DASHBOARD_HTML_TEMPLATE = `<!DOCTYPE html>
     <h2 id="resume-sync-heading">
       <span>이력서 동기화</span>
       <div class="toolbar" role="toolbar" aria-label="이력서 동기화 도구">
-        <button class="btn btn-secondary" onclick="loadResumeSyncState()">새로고침</button>
-        <button class="btn btn-primary" onclick="saveResumeMaster()" id="saveResumeBtn">업로드 저장</button>
-        <button class="btn btn-secondary" onclick="triggerProfileSyncFromDashboard(true)" id="resumeDryRunBtn">🧪 미리보기</button>
-        <button class="btn btn-danger" onclick="triggerProfileSyncFromDashboard(false)" id="resumeSyncBtn">⬆️ 실제 업로드</button>
+        <button class="btn btn-secondary" data-action="resume-refresh">새로고침</button>
+        <button class="btn btn-primary" data-action="resume-save" id="saveResumeBtn">업로드 저장</button>
+        <button class="btn btn-secondary" data-action="profile-sync" data-dry-run="true" id="resumeDryRunBtn">🧪 미리보기</button>
+        <button class="btn btn-danger" data-action="profile-sync" data-dry-run="false" id="resumeSyncBtn">⬆️ 실제 업로드</button>
       </div>
     </h2>
 
@@ -69,7 +69,7 @@ const DASHBOARD_HTML_TEMPLATE = `<!DOCTYPE html>
       <textarea id="resumePayload" rows="12" placeholder="resume_data.json 내용을 붙여넣거나 파일을 선택하세요"></textarea>
     </div>
 
-    <div id="resumeSyncStatus" class="automation-status" role="status" aria-live="polite" style="display:none;">
+    <div id="resumeSyncStatus" class="automation-status" role="status" aria-live="polite">
       <div id="resumeSyncMessage"></div>
     </div>
 
@@ -99,7 +99,7 @@ const DASHBOARD_HTML_TEMPLATE = `<!DOCTYPE html>
           <option value="offer">합격</option>
           <option value="rejected">불합격</option>
         </select>
-        <button class="btn btn-primary" onclick="openAddModal()" aria-keyshortcuts="Control+n">+ 추가</button>
+        <button class="btn btn-primary" data-action="open-add" aria-keyshortcuts="Control+n">+ 추가</button>
         <span class="keyboard-hint hide-mobile" aria-hidden="true"><kbd>Ctrl</kbd>+<kbd>N</kbd></span>
       </div>
     </h2>
@@ -116,7 +116,7 @@ const DASHBOARD_HTML_TEMPLATE = `<!DOCTYPE html>
       </thead>
       <tbody id="applications" aria-live="polite"></tbody>
     </table>
-    <nav id="pagination" aria-label="페이지 탐색" style="display:flex;justify-content:center;gap:0.5rem;margin-top:1rem;"></nav>
+    <nav id="pagination" class="pagination" aria-label="페이지 탐색"></nav>
   </section>
 
   <!-- Add/Edit Modal -->
@@ -124,7 +124,7 @@ const DASHBOARD_HTML_TEMPLATE = `<!DOCTYPE html>
     <div class="modal-content">
       <div class="modal-header">
         <h3 id="modalTitle">지원 추가</h3>
-        <button class="close-btn" onclick="closeModal()" aria-label="모달 닫기">&times;</button>
+        <button class="close-btn" data-action="close-modal" aria-label="모달 닫기">&times;</button>
       </div>
       <form id="appForm">
         <input type="hidden" id="appId">
@@ -167,7 +167,7 @@ const DASHBOARD_HTML_TEMPLATE = `<!DOCTYPE html>
           <textarea id="notes" placeholder="면접 일정, 연봉 정보 등..."></textarea>
         </div>
         <div class="form-actions">
-          <button type="button" class="btn btn-secondary" onclick="closeModal()">취소</button>
+          <button type="button" class="btn btn-secondary" data-action="close-modal">취소</button>
           <button type="submit" class="btn btn-primary">저장</button>
         </div>
       </form>
@@ -176,14 +176,14 @@ const DASHBOARD_HTML_TEMPLATE = `<!DOCTYPE html>
 
   <!-- Delete Confirm Modal -->
   <div class="modal" id="deleteModal">
-    <div class="modal-content" style="max-width:400px;">
+    <div class="modal-content modal-content-narrow">
       <div class="modal-header">
         <h3>삭제 확인</h3>
-        <button class="close-btn" onclick="closeDeleteModal()">&times;</button>
+        <button class="close-btn" data-action="close-delete" aria-label="모달 닫기">&times;</button>
       </div>
-      <p style="margin-bottom:1.5rem;">정말 이 지원 기록을 삭제하시겠습니까?</p>
+      <p class="modal-message">정말 이 지원 기록을 삭제하시겠습니까?</p>
       <div class="form-actions">
-        <button class="btn btn-secondary" onclick="closeDeleteModal()">취소</button>
+        <button class="btn btn-secondary" data-action="close-delete">취소</button>
         <button class="btn btn-danger" id="confirmDeleteBtn">삭제</button>
       </div>
     </div>
@@ -209,7 +209,7 @@ function getSecurityHeaders(nonce, styleHash) {
     'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload',
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'SAMEORIGIN',
-    'X-XSS-Protection': '1; mode=block',
+    'X-XSS-Protection': '0',
     'Referrer-Policy': 'same-origin',
     'Permissions-Policy':
       'accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()',

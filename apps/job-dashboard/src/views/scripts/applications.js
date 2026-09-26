@@ -7,11 +7,11 @@ function renderStats(stats) {
   const rejected = Number(stats.byStatus?.rejected) || 0;
   const rate = Number(stats.successRate) || 0;
   document.getElementById('stats').innerHTML = \`
-    <div class="stat" onclick="filterByStatus('')"><div class="stat-value">\${total}</div><div class="stat-label">전체</div></div>
-    <div class="stat" onclick="filterByStatus('applied')"><div class="stat-value">\${applied}</div><div class="stat-label">지원완료</div></div>
-    <div class="stat" onclick="filterByStatus('interview')"><div class="stat-value">\${interview}</div><div class="stat-label">면접</div></div>
-    <div class="stat" onclick="filterByStatus('offer')"><div class="stat-value">\${offer}</div><div class="stat-label">합격</div></div>
-    <div class="stat" onclick="filterByStatus('rejected')"><div class="stat-value">\${rejected}</div><div class="stat-label">불합격</div></div>
+    <div class="stat" data-action="filter-status" data-status=""><div class="stat-value">\${total}</div><div class="stat-label">전체</div></div>
+    <div class="stat" data-action="filter-status" data-status="applied"><div class="stat-value">\${applied}</div><div class="stat-label">지원완료</div></div>
+    <div class="stat" data-action="filter-status" data-status="interview"><div class="stat-value">\${interview}</div><div class="stat-label">면접</div></div>
+    <div class="stat" data-action="filter-status" data-status="offer"><div class="stat-value">\${offer}</div><div class="stat-label">합격</div></div>
+    <div class="stat" data-action="filter-status" data-status="rejected"><div class="stat-value">\${rejected}</div><div class="stat-label">불합격</div></div>
     <div class="stat"><div class="stat-value">\${rate}%</div><div class="stat-label">성공률</div></div>
   \`;
 }
@@ -59,7 +59,7 @@ function renderApplications() {
       <td>\${escapeHtml(app.position || '')}</td>
       <td>\${safePlatform}</td>
       <td>
-        <select class="badge badge-\${safeStatus}" onchange="updateStatus('\${safeId}', this.value)" style="border:none;cursor:pointer;">
+        <select class="badge badge-\${safeStatus} status-select" data-action="update-status" data-id="\${safeId}" data-original="\${safeStatus}" aria-label="상태 변경">
           \${Object.entries(statusLabels).map(([k,v]) =>
             \`<option value="\${k}" \${safeStatus === k ? 'selected' : ''}>\${v}</option>\`
           ).join('')}
@@ -68,8 +68,8 @@ function renderApplications() {
       <td class="hide-mobile">\${formatDate(app.created_at || app.createdAt)}</td>
       <td>
         <div class="actions">
-          <button class="btn btn-sm btn-secondary" onclick="openEditModal('\${safeId}')">수정</button>
-          <button class="btn btn-sm btn-danger" onclick="confirmDelete('\${safeId}')">삭제</button>
+          <button class="btn btn-sm btn-secondary" data-action="edit-app" data-id="\${safeId}">수정</button>
+          <button class="btn btn-sm btn-danger" data-action="delete-app" data-id="\${safeId}">삭제</button>
         </div>
       </td>
     </tr>
@@ -86,7 +86,7 @@ function renderPagination(total) {
   }
   let html = '';
   for (let i = 1; i <= pages; i++) {
-    html += \`<button class="btn \${i === currentPage ? 'btn-primary' : 'btn-secondary'} btn-sm" onclick="goToPage(\${i})">\${i}</button>\`;
+    html += \`<button class="btn \${i === currentPage ? 'btn-primary' : 'btn-secondary'} btn-sm" data-action="go-page" data-page="\${i}">\${i}</button>\`;
   }
   document.getElementById('pagination').innerHTML = html;
 }
@@ -130,8 +130,7 @@ function closeDeleteModal() {
   deleteId = null;
 }
 
-async function updateStatus(id, status) {
-  const select = event?.target;
+async function updateStatus(id, status, select) {
   const originalValue = select?.dataset?.original || status;
   try {
     if (select) select.disabled = true;

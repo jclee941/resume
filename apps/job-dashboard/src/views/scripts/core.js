@@ -7,6 +7,10 @@ function getCookieValue(name) {
   return cookie ? decodeURIComponent(cookie.slice(prefix.length)) : '';
 }
 
+// Served under /job/ by the merged portfolio Worker; API paths need the same
+// prefix or they reach the portfolio router instead of this dashboard.
+const API_BASE = location.pathname.startsWith('/job') ? '/job' : '';
+
 async function apiFetch(url, options = {}) {
   const method = (options.method || 'GET').toUpperCase();
   const headers = new Headers(options.headers || {});
@@ -22,7 +26,7 @@ async function apiFetch(url, options = {}) {
     if (csrfToken) headers.set('X-CSRF-Token', csrfToken);
   }
 
-  return fetch(url, {
+  return fetch(API_BASE + url, {
     ...options,
     method,
     headers,
@@ -85,8 +89,8 @@ async function loadDashboard() {
   showSkeletonTable();
   try {
     const [statsRes, appsRes] = await Promise.all([
-      fetch('/api/stats', { credentials: 'include' }),
-      fetch('/api/applications?limit=100', { credentials: 'include' })
+      apiFetch('/api/stats'),
+      apiFetch('/api/applications?limit=100')
     ]);
 
     if (statsRes.status === 401 || appsRes.status === 401) {
@@ -129,10 +133,11 @@ async function promptForToken() {
   }
 }
 
+// Also escapes quotes: rendered rows interpolate values into attributes.
 function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
+  return String(str ?? '').replace(/[&<>"']/g, (ch) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[ch]);
 }
 
 function formatDate(dateStr) {
@@ -146,4 +151,33 @@ function showToast(msg, isError = false) {
   toast.className = 'toast active' + (isError ? ' error' : '');
   setTimeout(() => toast.classList.remove('active'), 3000);
 }
+
+// The page CSP (nonce script-src, no 'unsafe-inline') blocks inline on*
+// attributes, so controls declare data-action and one listener dispatches.
+const DASHBOARD_ACTIONS = {
+  'job-search': () => triggerJobSearch(),
+  'auto-apply': (el) => triggerAutoApply(el.dataset.dryRun === 'true'),
+  'daily-report': () => triggerDailyReport(),
+  'resume-refresh': () => loadResumeSyncState(),
+  'resume-save': () => saveResumeMaster(),
+  'profile-sync': (el) => triggerProfileSyncFromDashboard(el.dataset.dryRun === 'true'),
+  'open-add': () => openAddModal(),
+  'close-modal': () => closeModal(),
+  'close-delete': () => closeDeleteModal(),
+  'filter-status': (el) => filterByStatus(el.dataset.status || ''),
+  'go-page': (el) => goToPage(Number(el.dataset.page)),
+  'edit-app': (el) => openEditModal(el.dataset.id),
+  'delete-app': (el) => confirmDelete(el.dataset.id)
+};
+
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('[data-action]');
+  const action = el && DASHBOARD_ACTIONS[el.dataset.action];
+  if (action) action(el);
+});
+
+document.addEventListener('change', (e) => {
+  const el = e.target.closest('select[data-action="update-status"]');
+  if (el) updateStatus(el.dataset.id, el.value, el);
+});
 `;

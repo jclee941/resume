@@ -167,7 +167,7 @@ export default {
 
       // Static fallback: serve dashboard for non-API routes
       if (!url.pathname.startsWith('/api/')) {
-        const staticResponse = serveStatic(url.pathname);
+        const staticResponse = await serveStatic(url.pathname);
         const withCsrf = addCsrfCookie(staticResponse, request);
         return respond(addCorsHeaders(withCsrf, request, env));
       }
