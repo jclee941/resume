@@ -98,6 +98,10 @@ function sanitizeHref(url) {
   return '';
 }
 
+/**
+ * @param {string} value
+ * @returns {boolean}
+ */
 function hasControlCharacter(value) {
   for (const char of value) {
     const code = char.charCodeAt(0);

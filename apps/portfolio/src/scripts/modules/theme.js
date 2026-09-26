@@ -8,7 +8,7 @@
 
   // Hide theme toggle button if present (legacy UI element)
   document.addEventListener('DOMContentLoaded', function () {
-    const toggle = document.querySelector('.theme-toggle');
+    const toggle = /** @type {HTMLElement | null} */ (document.querySelector('.theme-toggle'));
     if (toggle) {
       toggle.style.display = 'none';
     }

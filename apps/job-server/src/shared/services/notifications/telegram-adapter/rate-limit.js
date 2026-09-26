@@ -1,5 +1,18 @@
 import { RATE_LIMIT_MAX_PER_MINUTE, RATE_LIMIT_WINDOW_MS } from './constants.js';
 
+/**
+ * @typedef {{
+ *   rateState: {
+ *     windowStartedAt: number;
+ *     count: number;
+ *   }
+ * }} RateLimitedAdapter
+ */
+
+/**
+ * @param {RateLimitedAdapter} adapter
+ * @returns {{ allowed: boolean, resetTime: number, remaining: number }}
+ */
 export function checkRateLimit(adapter) {
   const now = Date.now();
   if (
@@ -25,6 +38,10 @@ export function checkRateLimit(adapter) {
   };
 }
 
+/**
+ * @param {RateLimitedAdapter} adapter
+ * @returns {void}
+ */
 export function recordMessageSent(adapter) {
   adapter.rateState.count += 1;
 }

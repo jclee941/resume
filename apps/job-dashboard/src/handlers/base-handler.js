@@ -1,8 +1,14 @@
 /**
  * Base handler class with shared utilities for all domain handlers.
  * Provides common functionality like JSON responses and access to env/auth.
+ * @template [TEnv=Record<string, unknown>]
+ * @template [TAuth=unknown]
  */
 export class BaseHandler {
+  /**
+   * @param {TEnv} env
+   * @param {TAuth} [auth]
+   */
   constructor(env, auth) {
     this.env = env;
     this.auth = auth;
@@ -10,7 +16,7 @@ export class BaseHandler {
 
   /**
    * Create a JSON response with proper headers
-   * @param {Object} data - Response data
+   * @param {unknown} data - Response data
    * @param {number} status - HTTP status code
    * @returns {Response}
    */

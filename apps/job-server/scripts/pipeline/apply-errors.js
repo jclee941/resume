@@ -1,3 +1,18 @@
+/**
+ * @typedef {object} ApplyErrorCandidate
+ * @property {string} [name]
+ * @property {string} [message]
+ * @property {string} [stack]
+ * @property {number | string} [statusCode]
+ * @property {number | string} [status]
+ * @property {{ status?: number | string }} [response]
+ * @property {{ status?: number | string, statusCode?: number | string }} [cause]
+ */
+
+/**
+ * @param {ApplyErrorCandidate | null | undefined} error
+ * @returns {number | null}
+ */
 export function getErrorStatusCode(error) {
   const candidates = [
     error?.statusCode,
@@ -17,6 +32,10 @@ export function getErrorStatusCode(error) {
   return null;
 }
 
+/**
+ * @param {ApplyErrorCandidate | null | undefined} error
+ * @returns {'already_applied' | 'auth_failed' | 'rate_limited' | 'apply_failed'}
+ */
 export function classifyApplyError(error) {
   const statusCode = getErrorStatusCode(error);
   const message = String(error?.message || '').toLowerCase();

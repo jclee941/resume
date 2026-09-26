@@ -11,18 +11,63 @@ const STATUS_EMOJI = {
   expired: '⌛',
 };
 
+/**
+ * @param {string} trend
+ * @returns {string}
+ */
 function getTrendEmoji(trend) {
   if (trend === 'up') return '📈';
   if (trend === 'down') return '📉';
   return '➡️';
 }
 
+/**
+ * @typedef {{ count: number | string; rate: number | string }} PlatformStats
+ */
+
+/**
+ * @param {Record<string, PlatformStats>} platforms
+ * @returns {string}
+ */
 function formatPlatformBreakdown(platforms) {
   return Object.entries(platforms)
     .map(([name, stats]) => `• ${name}: ${stats.count}건 (성공률 ${stats.rate}%)`)
     .join('\n');
 }
 
+/**
+ * @typedef {{
+ *   type: string;
+ *   date: string;
+ *   applications: {
+ *     total: number;
+ *     pending: number;
+ *     saved: number;
+ *     applied: number;
+ *     viewed: number;
+ *     in_progress: number;
+ *     interview: number;
+ *     offer: number;
+ *     rejected: number;
+ *     withdrawn: number;
+ *     expired: number;
+ *   };
+ *   platforms: Record<string, PlatformStats>;
+ *   searches: {
+ *     totalJobs: number;
+ *     avgScore: number;
+ *     maxScore: number;
+ *   };
+ *   trends: {
+ *     trend: string;
+ *     change: number;
+ *   };
+ * }} DailyReport
+ */
+
+/**
+ * @param {DailyReport} report
+ */
 export function generateReportContent(report) {
   const { type, applications, platforms, searches, trends } = report;
   const periodLabel = type === 'weekly' ? '주간' : '일간';

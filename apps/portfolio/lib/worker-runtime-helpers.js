@@ -1,3 +1,7 @@
+/**
+ * @param {{ logToElasticsearchStr: string }} options
+ * @returns {string}
+ */
 function buildWorkerRuntimeHelpers({ logToElasticsearchStr }) {
   return String.raw`
 function buildDocument(message, level, labels, job) {

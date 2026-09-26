@@ -1,18 +1,30 @@
+/**
+ * @param {import('playwright').Page} page
+ * @param {string} captchaSrc
+ * @returns {Promise<{ base64: string, mime: string }>}
+ */
 export async function downloadCaptchaImage(page, captchaSrc) {
-  const raw = await page.evaluate(async (src) => {
-    const res = await fetch(src, { credentials: 'include' });
-    const blob = await res.blob();
-    const dataUrl = await new Promise((resolve) => {
-      const r = new FileReader();
-      r.onloadend = () => resolve(r.result);
-      r.readAsDataURL(blob);
-    });
-    const mimeMatch = dataUrl.match(/^data:([^;]+);/);
-    return {
-      base64: dataUrl.split(',')[1],
-      mime: mimeMatch ? mimeMatch[1] : 'image/bmp',
-    };
-  }, captchaSrc);
+  const raw = await page.evaluate(
+    /**
+     * @param {string} src
+     * @returns {Promise<{ base64: string, mime: string }>}
+     */
+    async (src) => {
+      const res = await fetch(src, { credentials: 'include' });
+      const blob = await res.blob();
+      const dataUrl = await new Promise((resolve) => {
+        const r = new FileReader();
+        r.onloadend = () => resolve(r.result);
+        r.readAsDataURL(blob);
+      });
+      const mimeMatch = dataUrl.match(/^data:([^;]+);/);
+      return {
+        base64: dataUrl.split(',')[1],
+        mime: mimeMatch ? mimeMatch[1] : 'image/bmp',
+      };
+    },
+    captchaSrc
+  );
 
   if (!raw.mime.includes('bmp')) return raw;
 

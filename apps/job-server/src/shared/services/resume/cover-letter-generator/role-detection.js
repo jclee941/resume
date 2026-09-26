@@ -1,3 +1,12 @@
+/**
+ * @typedef {'devsecops' | 'sre' | 'cloud-security' | 'security' | 'devops' | 'infra' | 'general'} DetectedRole
+ */
+
+/**
+ * Detect role from position title.
+ * @param {string} [position]
+ * @returns {DetectedRole}
+ */
 export function detectRole(position) {
   const normalizedPosition = (position || '').toLowerCase();
 
@@ -26,7 +35,13 @@ export function detectRole(position) {
   return 'general';
 }
 
+/**
+ * Get role intro text.
+ * @param {string} role
+ * @returns {string}
+ */
 export function getRoleIntro(role) {
+  /** @type {Record<string, string>} */
   const intros = {
     devsecops: '보안과 운영을 코드로 통합하는 DevSecOps 엔지니어로서',
     sre: '서비스 안정성과 가용성을 최우선으로 설계하는 SRE 엔지니어로서',

@@ -1,3 +1,9 @@
+/**
+ * @typedef {{
+ *   prepare(query: string): { run(): Promise<unknown> };
+ * }} D1Database
+ */
+
 // Track initialized D1 tables at module level.
 const initializedTables = new Set();
 

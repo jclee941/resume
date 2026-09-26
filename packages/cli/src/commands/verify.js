@@ -1,6 +1,9 @@
 import fetch from 'node-fetch';
 import chalk from 'chalk';
 
+/**
+ * @returns {Promise<void>}
+ */
 export async function verify() {
   console.log(chalk.blue('🔍 Verifying services...'));
 
@@ -21,7 +24,8 @@ export async function verify() {
         failed = true;
       }
     } catch (error) {
-      console.log(chalk.red(`❌ ${name}: Error (${error.message})`));
+      const message = error instanceof Error ? error.message : String(error);
+      console.log(chalk.red(`❌ ${name}: Error (${message})`));
       failed = true;
     }
   }

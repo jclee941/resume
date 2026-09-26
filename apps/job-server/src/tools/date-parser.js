@@ -1,3 +1,7 @@
+/**
+ * @param {string | null | undefined} [dateStr]
+ * @returns {string | null}
+ */
 export function parseDate(dateStr) {
   if (!dateStr || dateStr === '현재') return null;
   const [year, month] = dateStr.split('.');

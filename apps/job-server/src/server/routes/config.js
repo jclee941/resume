@@ -21,6 +21,14 @@ function getDefaultConfig() {
   };
 }
 
+/**
+ * @typedef {ReturnType<typeof getDefaultConfig>} ServerConfig
+ */
+
+/**
+ * @param {{ error: (...args: unknown[]) => void }} [logger]
+ * @returns {ServerConfig | Record<string, unknown>}
+ */
 function loadConfig(logger = console) {
   if (existsSync(configPath)) {
     try {
@@ -33,18 +41,29 @@ function loadConfig(logger = console) {
   return getDefaultConfig();
 }
 
+/**
+ * @param {Record<string, unknown>} config
+ */
 function saveConfig(config) {
   writeFileSync(configPath, JSON.stringify(config, null, 2));
 }
 
+/**
+ * @param {import('fastify').FastifyInstance} fastify
+ */
 export default async function configRoutes(fastify) {
   fastify.get('/', async () => {
     return loadConfig(fastify.log);
   });
 
-  fastify.put('/', async (request) => {
-    const newConfig = request.body;
-    saveConfig(newConfig);
-    return { success: true };
-  });
+  fastify.put(
+    '/',
+    async (
+      /** @type {import('fastify').FastifyRequest<{ Body: Record<string, unknown> }>} */ request
+    ) => {
+      const newConfig = request.body;
+      saveConfig(newConfig);
+      return { success: true };
+    }
+  );
 }

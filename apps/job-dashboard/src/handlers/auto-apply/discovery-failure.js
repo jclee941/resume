@@ -1,3 +1,9 @@
+/**
+ * @param {{ hasExplicitCandidates: boolean }} explicitCandidates
+ * @param {readonly unknown[]} allJobs
+ * @param {{ searchFailures: number, searchAttempts: number, jobs: readonly unknown[] }} searchResults
+ * @returns {boolean}
+ */
 export function isFailedDiscoveryRun(explicitCandidates, allJobs, searchResults) {
   return (
     !explicitCandidates.hasExplicitCandidates &&

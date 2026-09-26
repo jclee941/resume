@@ -1,3 +1,72 @@
+/**
+ * @typedef {object} RawRememberJob
+ * @property {string | number} [id]
+ * @property {string} [experience]
+ * @property {string} [career_period]
+ * @property {string} [url]
+ * @property {string} [title]
+ * @property {string} [position]
+ * @property {{ name?: string, company_id?: string | number }} [organization]
+ * @property {{ name?: string, id?: string | number }} [company]
+ * @property {string} [company_name]
+ * @property {string | number} [company_id]
+ * @property {{ level1?: string, level2?: string }} [normalized_address]
+ * @property {string} [location]
+ * @property {string} [region]
+ * @property {number} [min_experience]
+ * @property {number} [max_experience]
+ * @property {string | number} [salary]
+ * @property {string | number} [min_salary]
+ * @property {string | number} [max_salary]
+ * @property {string[]} [skills]
+ * @property {string[]} [tech_stack]
+ * @property {string} [job_description]
+ * @property {string} [description]
+ * @property {string} [qualifications]
+ * @property {string} [requirements]
+ * @property {string} [benefits]
+ * @property {string} [welfare]
+ * @property {string | null} [deadline]
+ * @property {string | null} [due_date]
+ * @property {string | null} [created_at]
+ * @property {string | null} [posted_date]
+ * @property {boolean} [is_remote]
+ * @property {string} [employment_type]
+ * @property {string} [job_posting_type]
+ * @property {string} [application_type]
+ */
+
+/**
+ * @typedef {object} NormalizedRememberJob
+ * @property {string} id
+ * @property {string} sourceId
+ * @property {string} source
+ * @property {string} sourceUrl
+ * @property {string} position
+ * @property {string | { name?: string, id?: string | number }} company
+ * @property {string | number} companyId
+ * @property {string} location
+ * @property {number} experienceMin
+ * @property {number} experienceMax
+ * @property {string} salary
+ * @property {string[]} techStack
+ * @property {string} description
+ * @property {string} requirements
+ * @property {string} benefits
+ * @property {string | null} dueDate
+ * @property {string | null} postedDate
+ * @property {boolean} isRemote
+ * @property {string} employmentType
+ * @property {string} applicationType
+ * @property {string} crawledAt
+ */
+
+/**
+ * @param {RawRememberJob} rawJob
+ * @param {string} baseUrl
+ * @param {boolean} [_isDetail=false]
+ * @returns {NormalizedRememberJob}
+ */
 export function normalizeRememberJob(rawJob, baseUrl, _isDetail = false) {
   // Parse Korean experience format: "5년~12년 차" or "5년 이상"
   let experienceMin = 0;
@@ -10,7 +79,7 @@ export function normalizeRememberJob(rawJob, baseUrl, _isDetail = false) {
     experienceMax = parseInt(expMatch[2]) || experienceMin + 10;
   } else if (expStr.includes('이상')) {
     const minMatch = expStr.match(/(\d+)/);
-    experienceMin = parseInt(minMatch?.[1]) || 0;
+    experienceMin = parseInt(/** @type {string} */ (minMatch?.[1])) || 0;
     experienceMax = 99;
   }
 

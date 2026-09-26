@@ -36,7 +36,7 @@ export async function verifyGoogleCredentialWithSession(
     return { success: false, error: 'Access denied', statusCode: 403 };
   }
 
-  const sessionId = createSession(store, payload.email, config.sessionTTL);
+  const sessionId = createSession(store, payload.email, config.sessionTTL ?? 86400000);
   const csrfToken = generateCsrfToken(store, sessionId);
 
   return {

@@ -1,3 +1,18 @@
+/**
+ * @typedef {{
+ *   repository: {
+ *     findById(id: string): Promise<Record<string, unknown> | null>;
+ *     delete(id: string): Promise<unknown>;
+ *   };
+ *   jsonResponse(data: unknown, status?: number): Response;
+ * }} DeleteHandler
+ */
+
+/**
+ * @param {DeleteHandler} handler
+ * @param {{ params: { id: string } }} request
+ * @returns {Promise<Response>}
+ */
 export async function deleteApplication(handler, request) {
   const { id } = request.params;
   const app = await handler.repository.findById(id);

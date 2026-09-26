@@ -25,6 +25,7 @@ export const PLATFORMS = {
     checkUrl: 'https://www.jobkorea.co.kr/User/Mng/Resume/ResumeList',
     successIndicator: '/User/',
     cookieDomains: ['jobkorea.co.kr'],
+    /** @param {import('playwright').Page} page */
     verifyLogin: async (page) => {
       return page
         .evaluate(() => {

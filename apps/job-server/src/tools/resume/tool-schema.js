@@ -40,6 +40,10 @@ export const RESUME_TOOL_DESCRIPTION = `Manage your resume on Wanted Korea (requ
 
 Use wanted_auth with action="set_cookies" first if not logged in.`;
 
+/**
+ * @param {string[]} actions
+ * @returns {Record<string, unknown>}
+ */
 export function buildResumeInputSchema(actions) {
   return {
     type: 'object',

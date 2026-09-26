@@ -12,6 +12,22 @@ export const SARAMIN_URLS = {
   suitedRecruitPerson: 'https://www.saramin.co.kr/zf_user/member/suited-recruit-person',
 };
 
+/**
+ * @typedef {object} SaraminCookie
+ * @property {string} name
+ * @property {string} value
+ * @property {string} domain
+ * @property {string} path
+ * @property {boolean} httpOnly
+ * @property {boolean} secure
+ * @property {string} sameSite
+ */
+
+/**
+ * @param {string | null | undefined} cookieString
+ * @param {string} [domain='.saramin.co.kr']
+ * @returns {SaraminCookie[]}
+ */
 export function parseCookieString(cookieString, domain = '.saramin.co.kr') {
   if (!cookieString || typeof cookieString !== 'string') {
     return [];

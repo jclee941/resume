@@ -12,6 +12,7 @@ const {CONFIG} = require('./resume-variant-config');
 
 /**
  * Archive old company-specific resumes
+ * @returns {Promise<void>}
  */
 async function archiveOldResumes() {
   console.log('\n🗂️  Archiving old company-specific resumes...');
@@ -52,14 +53,20 @@ async function archiveOldResumes() {
 
       console.log(`\n   📦 Total archived: ${archived} directories`);
     } catch (error) {
-      if (error.code === 'ENOENT') {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'code' in error &&
+        error.code === 'ENOENT'
+      ) {
         console.log('   ℹ️  No companies directory found (nothing to archive)');
       } else {
         throw error;
       }
     }
   } catch (error) {
-    console.error('   ❌ Error during archiving:', error.message);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('   ❌ Error during archiving:', errorMessage);
     // Don't throw - archiving is non-critical
   }
 }

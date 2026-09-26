@@ -1,3 +1,7 @@
+/**
+ * @param {string} html
+ * @returns {string}
+ */
 function applyJapaneseSecurity(html) {
   return html
     .replace(/Edge 런타임 \+ 보안 헤더/g, 'Edgeランタイム + セキュリティヘッダー')

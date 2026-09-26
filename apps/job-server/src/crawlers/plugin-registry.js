@@ -3,14 +3,29 @@
  * Provides centralized registration, lookup, and lifecycle management.
  */
 
-/** @type {Map<string, {CrawlerClass: Function, options: Object, instance: Object|null}>} */
+/**
+ * @typedef {object} CrawlerInstance
+ * @property {string} [name]
+ * @property {string} [baseUrl]
+ * @property {number} [rateLimit]
+ * @property {(params?: unknown) => Promise<unknown>} [crawl]
+ * @property {(jobId: string) => Promise<unknown>} [getJobDetail]
+ * @property {(rawJob: unknown) => unknown} [normalizeJob]
+ */
+
+/**
+ * @typedef {new (options?: Record<string, unknown>) => CrawlerInstance} CrawlerConstructor
+ * @typedef {{ CrawlerClass: CrawlerConstructor, options: Record<string, unknown>, instance: CrawlerInstance | null }} RegistryEntry
+ */
+
+/** @type {Map<string, RegistryEntry>} */
 const registry = new Map();
 
 /**
  * Register a crawler plugin for a platform.
  * @param {string} platform - Platform identifier (e.g., 'rocketpunch')
- * @param {Function} CrawlerClass - Crawler class (must extend BaseCrawler)
- * @param {Object} [options={}] - Default options for the crawler
+ * @param {CrawlerConstructor} CrawlerClass - Crawler class (must extend BaseCrawler)
+ * @param {Record<string, unknown>} [options={}] - Default options for the crawler
  * @throws {Error} If platform already registered
  */
 export function registerCrawler(platform, CrawlerClass, options = {}) {
@@ -23,8 +38,8 @@ export function registerCrawler(platform, CrawlerClass, options = {}) {
 /**
  * Get or create a crawler instance for a platform.
  * @param {string} platform - Platform identifier
- * @param {Object} [overrides={}] - Option overrides for this instance
- * @returns {Object} Crawler instance
+ * @param {Record<string, unknown>} [overrides={}] - Option overrides for this instance
+ * @returns {CrawlerInstance} Crawler instance
  * @throws {Error} If platform not registered
  */
 export function getCrawler(platform, overrides = {}) {
@@ -38,7 +53,7 @@ export function getCrawler(platform, overrides = {}) {
     const mergedOptions = { ...entry.options, ...overrides };
     entry.instance = new entry.CrawlerClass(mergedOptions);
   }
-  return entry.instance;
+  return /** @type {CrawlerInstance} */ (entry.instance);
 }
 
 /**

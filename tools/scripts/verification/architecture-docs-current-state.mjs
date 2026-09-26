@@ -17,6 +17,16 @@ const STALE_CLAIMS = [
   /Cloudflare Queues?\s*\|\s*(?:Job|Crawl)/i,
 ];
 
+/**
+ * @typedef {{ code: string; file: string; message: string }} DocDiagnostic
+ */
+
+/**
+ * @param {string} root
+ * @param {string[]} files
+ * @param {DocDiagnostic[]} diagnostics
+ * @returns {void}
+ */
 export function validateCurrentDocs(root, files, diagnostics) {
   for (const file of files) {
     const text = readFileSync(file, 'utf8');

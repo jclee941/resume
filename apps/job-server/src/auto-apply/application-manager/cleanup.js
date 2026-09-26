@@ -3,6 +3,26 @@ import { APPLICATION_STATUS } from './status.js';
 const EXPIRATION_DAYS = 30;
 const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
 
+/**
+ * @typedef {object} ApplicationTimelineEntry
+ * @property {string} status
+ * @property {string} timestamp
+ * @property {string} [note]
+ */
+
+/**
+ * @typedef {object} ManagedApplication
+ * @property {string} status
+ * @property {string | number | Date} createdAt
+ * @property {string} [updatedAt]
+ * @property {ApplicationTimelineEntry[]} timeline
+ */
+
+/**
+ * @param {ManagedApplication[]} applications
+ * @param {Date} [now=new Date()]
+ * @returns {number}
+ */
 export function expirePendingApplications(applications, now = new Date()) {
   let cleaned = 0;
 
@@ -12,7 +32,7 @@ export function expirePendingApplications(applications, now = new Date()) {
     }
 
     const created = new Date(application.createdAt);
-    const daysPending = (now - created) / MILLISECONDS_PER_DAY;
+    const daysPending = (now.getTime() - created.getTime()) / MILLISECONDS_PER_DAY;
 
     if (daysPending > EXPIRATION_DAYS) {
       application.status = APPLICATION_STATUS.EXPIRED;

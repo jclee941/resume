@@ -1,5 +1,21 @@
 import { PRIORITY } from './queue-message-constants.js';
 
+/**
+ * @typedef {{
+ *   body?: {
+ *     priority?: string;
+ *     createdAt?: number;
+ *     [key: string]: unknown;
+ *   };
+ *   [key: string]: unknown;
+ * }} QueueSortableMessage
+ */
+
+/**
+ * @template {QueueSortableMessage} T
+ * @param {readonly T[]} messages
+ * @returns {T[]}
+ */
 export function sortMessagesByPriority(messages) {
   return [...messages].sort((a, b) => {
     const priorityA = a.body?.priority === PRIORITY.URGENT ? 0 : 1;

@@ -1,3 +1,7 @@
+/**
+ * @param {string} html
+ * @returns {string}
+ */
 function applyJapaneseSections(html) {
   return html
     .replace(/aria-label="exp — 경력"/g, 'aria-label="exp — 経歴"')
