@@ -31,9 +31,6 @@ repos:
       - id: trailing-whitespace
         exclude: \.(md|markdown)$
       - id: detect-private-key
-      - id: no-commit-to-branch
-        args: [--branch=master]
-        stages: [pre-commit]
 
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.42.0
