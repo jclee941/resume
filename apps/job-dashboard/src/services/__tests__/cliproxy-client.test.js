@@ -89,6 +89,71 @@ describe('CliproxyClient', () => {
     assert.equal(requestBody.model, 'custom-model');
   });
 
+  it('asks for a matchScore against the candidate profile and bounds the reply', async () => {
+    let userContent = null;
+    const fetcher = mock.fn(async (_url, options) => {
+      userContent = JSON.parse(JSON.parse(options.body).messages[1].content);
+      return createCliproxyResponse({
+        jobs: [
+          {
+            id: 'rated',
+            company: 'Enterprise Co',
+            position: 'Security Engineer',
+            sourceUrl: 'https://jobs.example/rated',
+            companyScale: 'enterprise',
+            matchScore: '150',
+          },
+        ],
+      });
+    });
+    const client = new CliproxyClient(
+      { CLIPROXY_BASE: 'https://cliproxy.example.test/v1', CLIPROXY_API_KEY: 'secret-test-key' },
+      { fetcher }
+    );
+
+    const { jobs } = await client.searchJobs('security', {
+      limit: 1,
+      profile: { skills: ['siem'], experienceYears: 8, preferredLocations: ['서울'] },
+    });
+
+    assert.deepEqual(userContent.candidateProfile, {
+      skills: ['siem'],
+      experienceYears: 8,
+      preferredLocations: ['서울'],
+    });
+    assert.equal(typeof userContent.matchScore, 'string');
+    assert.equal(jobs[0].matchScore, 100);
+  });
+
+  it('passes scoring inputs through from Cliproxy postings', async () => {
+    const fetcher = mock.fn(async () =>
+      createCliproxyResponse({
+        jobs: [
+          {
+            id: 'scoring-inputs',
+            company: 'Enterprise Co',
+            position: 'Security Engineer',
+            sourceUrl: 'https://jobs.example/scoring-inputs',
+            companyScale: 'enterprise',
+            description: 'SIEM automation',
+            experience: '5년 이상',
+            postedAt: '2026-09-20',
+          },
+        ],
+      })
+    );
+    const client = new CliproxyClient(
+      { CLIPROXY_BASE: 'https://cliproxy.example.test/v1', CLIPROXY_API_KEY: 'secret-test-key' },
+      { fetcher }
+    );
+
+    const { jobs } = await client.searchJobs('security', { limit: 1 });
+
+    assert.equal(jobs[0].description, 'SIEM automation');
+    assert.equal(jobs[0].experience, '5년 이상');
+    assert.equal(jobs[0].postedAt, '2026-09-20');
+  });
+
   it('keeps only HTTP large-company postings when Cliproxy returns mixed jobs', async () => {
     const fetcher = mock.fn(async () =>
       createCliproxyResponse({
