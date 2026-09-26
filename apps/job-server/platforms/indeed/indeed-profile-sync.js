@@ -27,7 +27,21 @@ const INDEED_SELECTORS = {
   skills: '.skill-tag, .skill-item',
 };
 
+/**
+ * @typedef {import('../browser-profile-sync-runner.js').ProfileSyncSourceData} ProfileSyncSourceData
+ * @typedef {import('../browser-profile-sync-runner.js').ProfileSyncOptions & {
+ *   sourceData?: ProfileSyncSourceData;
+ *   headless?: boolean;
+ *   timeout?: number;
+ *   debug?: boolean;
+ *   [key: string]: unknown;
+ * }} IndeedSyncOptions
+ */
+
 export class IndeedProfileSync extends BrowserProfileSync {
+  /**
+   * @param {Record<string, unknown>} [options]
+   */
   constructor(options = {}) {
     super({
       platform: 'indeed',
@@ -39,6 +53,9 @@ export class IndeedProfileSync extends BrowserProfileSync {
   }
 }
 
+/**
+ * @param {IndeedSyncOptions} [options]
+ */
 export async function syncToIndeed(options = {}) {
   const sync = new IndeedProfileSync(options);
   try {

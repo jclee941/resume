@@ -1,5 +1,14 @@
 import { decryptPlatformSession } from '../../services/platform-session.js';
 
+/**
+ * @typedef {{ ENCRYPTION_KEY?: string, [key: string]: unknown }} SessionEnv
+ */
+
+/**
+ * @param {SessionEnv} env
+ * @param {unknown} encryptedSession
+ * @returns {Promise<{ cookies: string, sessionValid: boolean }>}
+ */
 export async function resolveWantedSession(env, encryptedSession) {
   try {
     const decrypted = await decryptPlatformSession(encryptedSession, env, 'auth:wanted');
@@ -30,7 +39,7 @@ export async function resolveWantedSession(env, encryptedSession) {
 /**
  * Validate an encrypted platform session from KV.
  *
- * @param {Object} env
+ * @param {SessionEnv} env
  * @param {string} session
  * @returns {Promise<boolean>}
  */
