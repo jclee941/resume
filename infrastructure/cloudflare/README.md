@@ -86,10 +86,20 @@ For team environments, consider Terraform Cloud or S3 backend.
 
 ## Division of Responsibility
 
-| Layer         | Managed By | Changes Via             |
-| ------------- | ---------- | ----------------------- |
-| DNS records   | Terraform  | \*.tf files → GitHub PR |
-| KV namespaces | Read-only  | Wrangler (create only)  |
-| D1 databases  | Read-only  | Wrangler (create only)  |
-| Worker routes | Terraform  | workers.tf → GitHub PR  |
-| Worker code   | Wrangler   | npm run deploy          |
+| Layer                 | Managed By                    | Changes Via                                             |
+| --------------------- | ----------------------------- | ------------------------------------------------------- |
+| DNS records           | Terraform                     | \*.tf files → GitHub PR                                 |
+| KV namespaces         | Read-only                     | Wrangler (create only)                                  |
+| D1 databases          | Read-only                     | Wrangler (create only)                                  |
+| Worker routes         | Terraform                     | workers.tf → GitHub PR                                  |
+| Worker code           | Workers Builds                | `git push origin master` (`npm run deploy` is disabled) |
+| Zone response headers | Dashboard/API (not Terraform) | Transform Rule below                                    |
+
+## Zone Response Headers
+
+The zone-wide "Add security headers" Managed Transform is disabled so the
+`resume.jclee.me` Worker's own headers (`X-Frame-Options: DENY`,
+`X-XSS-Protection: 0`, `Referrer-Policy: strict-origin-when-cross-origin`) reach
+browsers. A response-header Transform Rule re-applies the former managed values
+(`nosniff`, `SAMEORIGIN`, `same-origin`, `1; mode=block`, `Expect-CT`) to every
+other host with `(http.host ne "resume.jclee.me")`, so they are unchanged.
