@@ -13,37 +13,26 @@ import { appendDecisionTrace } from './decision-trace.js';
  *   getWantedSession: (env: Record<string, unknown>) => Promise<unknown>;
  * }} PrimeWantedSessionOptions
  *
- * @typedef {Array<Record<string, unknown>> & { jobs?: Array<Record<string, unknown>> }} PlatformResult
+ * @typedef {{ jobs?: Array<Record<string, unknown>>; [key: string]: unknown }} PlatformResult
  *
+ * @typedef {import('../../workflows/application/matching-config.js').MatchingConfig} SearchProfile
+ *
+ * WantedAPI keeps searchJobs(filters) for category browsing and searches keywords
+ * with searchByKeyword; the other dashboard clients search with (keyword, options).
  * @typedef {{
- *   searchJobs(keyword: string, options: { limit: number; profile: unknown }): Promise<PlatformResult>;
+ *   searchJobs(keyword: string, options: { limit: number; profile: SearchProfile }): Promise<PlatformResult>;
+ * } | {
+ *   searchByKeyword(keyword: string, options: { limit: number }): Promise<PlatformResult>;
  * }} PlatformClient
  *
- * @typedef {{
- *   searchAttempts: number;
- *   errors: number;
- *   searchFailures: number;
- *   errorDetails: Array<{
- *     platform: string;
- *     keyword: string;
- *     message: string;
- *     errorCode?: string | number;
- *   }>;
- *   byPlatform: Record<string, {
- *     searched: number;
- *     matched: number;
- *     applied: number;
- *     [key: string]: unknown;
- *   }>;
- *   [key: string]: unknown;
- * }} SearchJobResults
+ * @typedef {import('./job-selection.js').SearchResults} SearchJobResults
  *
  * @typedef {{
  *   clients: Record<string, PlatformClient>;
  *   activePlatforms: string[];
  *   searchKeywords: string[];
  *   searchResults: SearchJobResults;
- *   profile: unknown;
+ *   profile: SearchProfile;
  * }} SearchPlatformJobsOptions
  */
 
@@ -81,8 +70,8 @@ export async function searchPlatformJobs({
     for (const keyword of searchKeywords.slice(0, 5)) {
       try {
         searchResults.searchAttempts++;
-        const result = await client.searchJobs(keyword, { limit: 20, profile });
-        const jobs = result.jobs || result || [];
+        const result = await searchPlatformKeyword(client, keyword, profile);
+        const jobs = /** @type {Array<Record<string, unknown>>} */ (result.jobs || result || []);
 
         for (const job of jobs) {
           const uniqueId = `${job.source || platform}_${job.sourceId || job.id}`;
@@ -129,6 +118,19 @@ export async function searchPlatformJobs({
   }
 
   return allJobs;
+}
+
+/**
+ * @param {PlatformClient} client
+ * @param {string} keyword
+ * @param {SearchProfile} profile
+ * @returns {Promise<PlatformResult>}
+ */
+function searchPlatformKeyword(client, keyword, profile) {
+  if ('searchByKeyword' in client) {
+    return client.searchByKeyword(keyword, { limit: 20 });
+  }
+  return client.searchJobs(keyword, { limit: 20, profile });
 }
 
 /**

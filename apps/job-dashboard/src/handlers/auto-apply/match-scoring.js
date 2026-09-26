@@ -50,11 +50,11 @@ export function normalizeSkillName(skill) {
 
 /**
  * @typedef {Object} MatchScoringConfig
- * @property {string[]} [skills]
- * @property {string[]} [preferredCompanies]
- * @property {string[]} [excludeCompanies]
+ * @property {readonly string[]} [skills]
+ * @property {readonly string[]} [preferredCompanies]
+ * @property {readonly string[]} [excludeCompanies]
  * @property {number} [experienceYears]
- * @property {string[]} [preferredLocations]
+ * @property {readonly string[]} [preferredLocations]
  */
 
 /**

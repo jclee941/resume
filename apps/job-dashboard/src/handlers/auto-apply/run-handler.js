@@ -26,6 +26,18 @@ import { rejectInvalidRealSubmit } from './real-submit-gate.js';
 import { isFailedDiscoveryRun } from './discovery-failure.js';
 import { getAutoApplyRunId } from './run-id.js';
 
+/**
+ * @typedef {import('./db-helpers.js').DbEnv
+ *   & import('./native-dispatch.js').NativeDispatchEnv
+ *   & import('./application-actions.js').ActionEnv
+ *   & NonNullable<Parameters<typeof loadMatchingConfig>[0]>} AutoApplyRunEnv
+ * @typedef {ReturnType<typeof import('./client-factory.js').createAutoApplyClients>} AutoApplyClients
+ */
+
+/**
+ * @param {{ request: Request, env: AutoApplyRunEnv, clients: AutoApplyClients }} options
+ * @returns {Promise<Response>}
+ */
 export async function runAutoApply({ request, env, clients }) {
   const body = await request.json().catch(() => ({}));
   if (hasMalformedPlatforms(body)) {
@@ -48,7 +60,7 @@ export async function runAutoApply({ request, env, clients }) {
   } = body;
   const runId = getAutoApplyRunId(body);
   const explicitCandidates = readExplicitCandidates(body);
-  if (explicitCandidates.error) {
+  if ('error' in explicitCandidates) {
     return jsonResponse(
       {
         success: false,
@@ -112,6 +124,7 @@ export async function runAutoApply({ request, env, clients }) {
     }
 
     const profile = await loadMatchingConfig(env);
+    /** @type {Array<import('./job-selection.js').JobCandidate & { source: string }>} */
     const allJobs = explicitCandidates.hasExplicitCandidates
       ? explicitCandidates.jobs
       : await searchPlatformJobs({
@@ -177,16 +190,35 @@ export async function runAutoApply({ request, env, clients }) {
   }
 }
 
+/**
+ * @param {AutoApplyClients} clients
+ * @param {string} platform
+ * @returns {boolean}
+ */
 function canSearchPlatform(clients, platform) {
   if (!isAtsDryRunPlatform(platform)) return true;
-  return typeof clients?.[platform]?.searchJobs === 'function';
+  return (
+    typeof (
+      /** @type {Record<string, { searchJobs?: unknown } | undefined>} */ (clients)?.[platform]
+        ?.searchJobs
+    ) === 'function'
+  );
 }
 
+/**
+ * @param {import('./job-selection.js').SearchResults} searchResults
+ * @param {boolean} dryRun
+ * @returns {number}
+ */
 function countSubmittedApplications(searchResults, dryRun) {
   if (dryRun) return 0;
   return searchResults.jobs.filter((job) => job.action === 'applied').length;
 }
 
+/**
+ * @param {Record<string, unknown>} body
+ * @returns {boolean}
+ */
 function hasMalformedPlatforms(body) {
   return Object.prototype.hasOwnProperty.call(body, 'platforms') && !Array.isArray(body.platforms);
 }

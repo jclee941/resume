@@ -22,6 +22,22 @@ const MAX_ALLOWED_DEPTH = 5;
  * }} RecursiveReference
  *
  * @typedef {RecursiveReference} ExplicitJob
+ *
+ * @typedef {ExplicitJob & {
+ *   id: string;
+ *   sourceId: string;
+ *   source: string;
+ *   sourceUrl: string;
+ *   decisionTrace: unknown[];
+ * }} NormalizedExplicitJob
+ *
+ * @typedef {{ maxDepth: number; maxVisitedDepth: number; visited: number; truncated: number }} ExplicitRecursion
+ *
+ * @typedef {{ hasExplicitCandidates: false; jobs?: undefined; recursion?: undefined }
+ *   | { hasExplicitCandidates: true; jobs: NormalizedExplicitJob[]; recursion: ExplicitRecursion }} ValidExplicitCandidates
+ *
+ * @typedef {ValidExplicitCandidates
+ *   | { hasExplicitCandidates: true; error: string; status: number }} ExplicitCandidatesResult
  */
 
 /**
@@ -55,7 +71,7 @@ function hasRequiredJobFields(job) {
 /**
  * @param {ExplicitJob} candidate
  * @param {number} index
- * @returns {{ job: ExplicitJob; error?: never } | { error: string; job?: never }}
+ * @returns {{ job: NormalizedExplicitJob; error?: never } | { error: string; job?: never }}
  */
 function normalizeCandidate(candidate, index) {
   if (!hasRequiredJobFields(candidate)) {
@@ -132,7 +148,7 @@ function collectRecursiveReferences(job, maxDepth) {
 
 /**
  * @param {Record<string, unknown> | null | undefined} body
- * @returns {{ hasExplicitCandidates: false } | { hasExplicitCandidates: true; error: string; status: number } | { hasExplicitCandidates: true; jobs: Array<ExplicitJob & { decisionTrace: unknown[] }>; recursion: { maxDepth: number; maxVisitedDepth: number; visited: number; truncated: number } }}
+ * @returns {ExplicitCandidatesResult}
  */
 export function readExplicitCandidates(body) {
   if (!body || typeof body !== 'object') {
@@ -174,7 +190,7 @@ export function readExplicitCandidates(body) {
     truncated += recursive.truncated;
     maxVisitedDepth = Math.max(maxVisitedDepth, recursive.maxVisitedDepth);
     jobs.push(
-      appendDecisionTrace(/** @type {ExplicitJob} */ (normalized.job), {
+      appendDecisionTrace(/** @type {NormalizedExplicitJob} */ (normalized.job), {
         stage: 'recursive_expanded',
         outcome: 'included',
         reason: 'bounded_request_recursion',

@@ -30,33 +30,32 @@ import {
  *   [key: string]: unknown;
  * }} AutoApplyJob
  *
- * @typedef {import('./application-result-helpers.js').SearchResults & {
- *   skipped: number;
- *   applied: number;
- *   errors: number;
- * }} SearchResultsExtended
+ * @typedef {import('./job-selection.js').SearchResults} SearchResultsExtended
+ *
+ * @typedef {import('./db-helpers.js').DbEnv
+ *   & NonNullable<Parameters<typeof import('./duplicate-company.js').isCompanyAlreadyApplied>[0]>} ActionEnv
  *
  * @typedef {{
- *   env: Record<string, unknown>;
+ *   env: ActionEnv;
  *   clients: Clients;
  *   matchedJobs: Array<AutoApplyJob>;
  *   dryRun: boolean;
  *   remaining: number;
  *   searchResults: SearchResultsExtended;
- *   isAlreadyApplied: (env: Record<string, unknown>, id: unknown, source: unknown) => Promise<boolean>;
- *   isCompanyAlreadyApplied: (env: Record<string, unknown>, company: unknown) => Promise<boolean>;
- *   recordApplication: (env: Record<string, unknown>, payload: Record<string, unknown>) => Promise<unknown>;
- *   getWantedSession: (env: Record<string, unknown>) => Promise<unknown>;
+ *   isAlreadyApplied: typeof import('./db-helpers.js').isAlreadyApplied;
+ *   isCompanyAlreadyApplied: typeof import('./duplicate-company.js').isCompanyAlreadyApplied;
+ *   recordApplication: typeof import('./db-helpers.js').recordApplication;
+ *   getWantedSession: typeof import('./session-helpers.js').getWantedSession;
  *   runId: string;
  * }} ApplyMatchedJobsOptions
  *
  * @typedef {{
- *   env: Record<string, unknown>;
+ *   env: ActionEnv;
  *   clients: Clients;
  *   job: AutoApplyJob;
  *   searchResults: SearchResultsExtended;
- *   recordApplication: (env: Record<string, unknown>, payload: Record<string, unknown>) => Promise<unknown>;
- *   getWantedSession: (env: Record<string, unknown>) => Promise<unknown>;
+ *   recordApplication: typeof import('./db-helpers.js').recordApplication;
+ *   getWantedSession: typeof import('./session-helpers.js').getWantedSession;
  *   runId: string;
  * }} ApplyWantedJobOptions
  */
