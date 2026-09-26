@@ -677,7 +677,15 @@
     "apps/job-server/scripts/profile-sync/jobkorea-handler/section-slot-adder.js",
     "apps/job-server/scripts/profile-sync/jobkorea-handler/section-slot-rebuild.js",
     "apps/job-server/scripts/profile-sync/jobkorea-handler/sync-form.js",
-    "apps/job-server/scripts/profile-sync/jobkorea-sections/career-fields.js"
+    "apps/job-server/scripts/profile-sync/jobkorea-sections/career-fields.js",
+    "apps/job-dashboard/src/handlers/auth.js",
+    "apps/job-dashboard/src/handlers/auto-apply/client-factory.js",
+    "apps/job-dashboard/src/handlers/auto-apply/config-handler.js",
+    "apps/job-dashboard/src/handlers/auto-apply/explicit-candidates.js",
+    "apps/job-dashboard/src/handlers/auto-apply/native-dispatch.js",
+    "apps/job-dashboard/src/handlers/wanted/mint-session.js",
+    "apps/job-dashboard/src/routes/auth.js",
+    "apps/job-dashboard/src/workflows/application/browser-rendering-cookies.js"
   ],
   "exclude": ["packages/env/src/__tests__/**"]
 }

@@ -3,13 +3,49 @@ import { verifySecret } from '../services/auth.js';
 import { normalizeError } from '@resume/shared/errors';
 import { writePlatformSession } from '../services/platform-session.js';
 
+/**
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       run(): Promise<unknown>;
+ *       all(): Promise<{ results: Array<{ platform: string; email: string | null; expires_at: string | null; updated_at: string | null }> }>;
+ *       first(): Promise<{ cookies: string; expires_at: string | null } | null>;
+ *     };
+ *     all(): Promise<{ results: Array<{ platform: string; email: string | null; expires_at: string | null; updated_at: string | null }> }>;
+ *     first(): Promise<{ cookies: string; expires_at: string | null } | null>;
+ *     run(): Promise<unknown>;
+ *   };
+ * }} AuthDb
+ *
+ * @typedef {{
+ *   delete(key: string): Promise<void> | Promise<unknown>;
+ * }} AuthKv
+ *
+ * @typedef {{
+ *   ENCRYPTION_KEY?: string;
+ *   AUTH_SYNC_SECRET?: string;
+ *   SESSIONS: { put: Function };
+ *   [key: string]: unknown;
+ * }} AuthEnv
+ */
+
 export class AuthHandler {
+  /**
+   * @param {AuthDb} db
+   * @param {AuthKv | null} kv
+   * @param {AuthEnv} env
+   */
   constructor(db, kv, env) {
     this.db = db;
     this.kv = kv;
     this.env = env;
   }
 
+  /**
+   * @param {unknown} data
+   * @param {number} [status]
+   * @returns {Response}
+   */
   jsonResponse(data, status = 200) {
     return new Response(JSON.stringify(data), {
       status,
@@ -17,11 +53,16 @@ export class AuthHandler {
     });
   }
 
+  /**
+   * @param {Request} [_request]
+   * @returns {Promise<Response>}
+   */
   async getStatus(_request) {
     const sessions = await this.db
       .prepare('SELECT platform, email, expires_at, updated_at FROM sessions')
       .all();
 
+    /** @type {Record<string, { authenticated: boolean; email: string | null; expiresAt: string | null; updatedAt: string | null }>} */
     const status = {};
     for (const session of sessions.results) {
       const isExpired = session.expires_at && new Date(session.expires_at) < new Date();
@@ -36,6 +77,10 @@ export class AuthHandler {
     return this.jsonResponse({ success: true, status });
   }
 
+  /**
+   * @param {Request} request
+   * @returns {Promise<Response>}
+   */
   async setAuth(request) {
     const body = await request.json();
     const { platform, cookies, email } = body;
@@ -70,6 +115,10 @@ export class AuthHandler {
     });
   }
 
+  /**
+   * @param {Request & { params: { platform: string } }} request
+   * @returns {Promise<Response>}
+   */
   async clearAuth(request) {
     const { platform } = request.params;
 
@@ -89,6 +138,10 @@ export class AuthHandler {
     });
   }
 
+  /**
+   * @param {string} platform
+   * @returns {Promise<string | null>}
+   */
   async getCookies(platform) {
     const result = await this.db
       .prepare('SELECT cookies, expires_at FROM sessions WHERE platform = ?')
@@ -103,6 +156,10 @@ export class AuthHandler {
     return decrypt(result.cookies, this.env);
   }
 
+  /**
+   * @param {Request} request
+   * @returns {Promise<Response>}
+   */
   async getProfile(request) {
     const url = new URL(request.url);
     const platform = url.searchParams.get('platform') || 'wanted';
@@ -179,6 +236,8 @@ export class AuthHandler {
   /**
    * Sync auth from the local auth-persistent script (--sync-worker)
    * Requires X-Auth-Sync-Secret header matching AUTH_SYNC_SECRET env var
+   * @param {Request} request
+   * @returns {Promise<Response>}
    */
   async syncFromScript(request) {
     // Fail-closed: AUTH_SYNC_SECRET env var must be configured. Without it, this
