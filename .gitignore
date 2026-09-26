@@ -24,6 +24,7 @@ tools/scripts/build/*
 !tools/scripts/build/pptx_ta.py
 !tools/scripts/build/test_pptx_profiles.py
 !tools/scripts/build/test_pptx_publication.py
+!tools/scripts/build/requirements.txt
 !tools/scripts/build/generate-resume-variants.js
 !tools/scripts/build/resume-variant-*.js
 *.tsbuildinfo

@@ -35,8 +35,17 @@ jobs:
           go-version-file: tools/scripts/go.mod
           cache: false
 
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tools/scripts/build/requirements.txt
+
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          pip install -r tools/scripts/build/requirements.txt
 
       - name: Audit production dependencies
         run: npm run security:audit
@@ -48,6 +57,7 @@ jobs:
         run: |
           npm run lint
           npm run lint:loc
+          npm run lint:naming
           npm run lint:agents
 
       - name: Typecheck
@@ -63,6 +73,7 @@ jobs:
           npm run test:tools
           npm run test:cli
           npm run test:go
+          npm run test:python
 
       - name: Verify architecture contracts
         run: npm run verify:architecture-hardening:core
