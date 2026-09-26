@@ -3,20 +3,9 @@ import { applyPlaywrightStealth } from '../playwright-stealth.js';
 import { CONFIG } from '../constants.js';
 import { log } from '../sync-logger.js';
 import { buildJobKoreaFormData } from '../jobkorea-sections.js';
-import { getEditUrl } from './change-detection.js';
-import {
-  assertJobKoreaResumeAccess,
-  assertEditableResume,
-  waitForEditableForm,
-} from './session.js';
-import { JobKoreaAPIClient } from './api-client.js';
-import { buildCookieString, toPlaywrightCookies } from '../../jobkorea-session/cookie-utils.js';
-import {
-  executeHybridPortfolio,
-  executeHybridSave,
-  shouldUseHybridMode,
-  getJobKoreaSyncMode,
-} from './sync-hybrid.js';
+import { assertJobKoreaResumeAccess } from './session.js';
+import { toPlaywrightCookies } from '../../jobkorea-session/cookie-utils.js';
+import { executeHybridSave, shouldUseHybridMode, getJobKoreaSyncMode } from './sync-hybrid.js';
 import {
   assertJobKoreaCareerSlotCoverage,
   selectJobKoreaCareerSectionIndices,
@@ -28,13 +17,9 @@ import {
   logChangeSummary,
   persistUpdatedCookies,
 } from './sync-form.js';
-import { appendPortfolioFields } from './sync-portfolio.js';
-import { appendPhotoUpload } from './sync-photo.js';
-import {
-  loadOrRenewJobKoreaCookies,
-  loadSavedJobKoreaCookies,
-  renewSavedJobKoreaSession,
-} from './sync-session-renewal.js';
+import { loadOrRenewJobKoreaCookies } from './sync-session-renewal.js';
+import { prepareJobKoreaEditPage } from './sync-navigation.js';
+import { handleJobKoreaPortfolioAndPhoto, prepareJobKoreaApiClient } from './sync-pipeline.js';
 
 export { assertJobKoreaCareerSlotCoverage } from './career-guards.js';
 
@@ -84,42 +69,21 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
     await context.addCookies(toPlaywrightCookies(cookies));
     const page = await context.newPage();
 
-    const editUrl = getEditUrl();
-    logger(`Navigating to ${editUrl}`, 'info', 'jobkorea');
-    await page.goto(editUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-
-    if (page.url().includes('/Login')) {
-      if (dryRun) {
-        throw new Error('JobKorea session expired during dry-run; run apply sync to auto-renew');
-      }
-      logger('Session expired on resume page, auto-renewing via Puppeteer...', 'warn', 'jobkorea');
-      try {
-        await renewSavedJobKoreaSession(options, logger);
-        const renewedCookies = loadSavedJobKoreaCookies(handler, {
-          allowFallbackSave: !dryRun,
-        });
-        if (renewedCookies) {
-          cookies = renewedCookies;
-          await context.clearCookies();
-          await context.addCookies(toPlaywrightCookies(renewedCookies));
-          await page.goto(editUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-        } else {
-          throw new Error('Session auto-renewal did not produce saved JobKorea cookies');
-        }
-      } catch (renewError) {
-        throw new Error(`Session auto-renewal failed: ${renewError.message}`, { cause: renewError });
-      }
-    }
-    await ensureResumeAccess(page, {
-      headlessEnv: String(CONFIG.HEADLESS),
+    const prep = await prepareJobKoreaEditPage({
+      page,
+      context,
+      handler,
+      cookies,
+      options,
       logger,
+      dryRun,
+      ensureResumeAccess,
     });
-
-    await assertEditableResume(page, { rNo: process.env.JOBKOREA_RNO?.trim() || '' });
+    if (prep.cookies) {
+      cookies = prep.cookies;
+    }
 
     shouldPersistCookies = !dryRun;
-
-    await waitForEditableForm(page, { rNo: process.env.JOBKOREA_RNO?.trim() || '' });
 
     await activateRequiredSections(page);
 
@@ -145,40 +109,19 @@ export async function syncJobKoreaProfile(handler, ssot, options = {}) {
     const targetFields = buildJobKoreaFormData(ssot, saveSectionIndices);
     let apiClient = null;
     if (hybridMode) {
-      const apiCookieString = handler.loadSessionCookieString?.() || buildCookieString(cookies);
-      apiClient =
-        options.apiClient ??
-        options.apiClientFactory?.({
-          cookieString: apiCookieString,
-          logger,
-        }) ??
-        new JobKoreaAPIClient({
-          cookieString: apiCookieString,
-          logger,
-        });
-      await executeHybridPortfolio(apiClient, ssot?.personal?.portfolio, targetFields, page, ssot, {
-        logger,
-        dryRun,
-        fallbackPortfolio: (fallbackPage, fallbackSsot, fallbackFields) =>
-          appendPortfolioFields(fallbackPage, fallbackSsot, fallbackFields, {
-            registerPortfolioUrl: options.registerPortfolioUrl,
-            logger,
-            getTimestamp: options.getTimestamp,
-          }),
-      });
-    } else if (dryRun) {
-      logger('Portfolio registration skipped (dry-run)', 'info', 'jobkorea');
-    } else {
-      await appendPortfolioFields(page, ssot, targetFields, {
-        registerPortfolioUrl: options.registerPortfolioUrl,
-        logger,
-        getTimestamp: options.getTimestamp,
-      });
+      apiClient = await prepareJobKoreaApiClient(handler, cookies, options, logger);
     }
 
-    if (process.env.JOBKOREA_SYNC_PHOTO === 'true') {
-      await appendPhotoUpload(page, { logger });
-    }
+    await handleJobKoreaPortfolioAndPhoto({
+      apiClient,
+      hybridMode,
+      dryRun,
+      targetFields,
+      page,
+      ssot,
+      options,
+      logger,
+    });
 
     const currentFields = await page.evaluate(() => $('#frm1').serializeArray());
     const changes = handler.computeChanges(currentFields, targetFields);

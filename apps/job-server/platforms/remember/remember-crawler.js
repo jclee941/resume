@@ -9,7 +9,11 @@
  */
 
 import { BaseCrawler } from '../../src/crawlers/base-crawler.js';
-import { withStealthBrowser } from '../../src/crawlers/browser-utils.js';
+import { normalizeRememberJob } from './remember-job-normalizer.js';
+import {
+  getRememberJobDetailWithBrowser,
+  searchRememberWithBrowser,
+} from './remember-browser-scraper.js';
 
 export class RememberCrawler extends BaseCrawler {
   constructor(options = {}) {
@@ -98,59 +102,11 @@ export class RememberCrawler extends BaseCrawler {
   }
 
   async searchWithBrowser(params = {}) {
-    return withStealthBrowser(async (page) => {
-      const query = params.keyword ? `?search=${encodeURIComponent(params.keyword)}` : '';
-      const url = `${this.baseUrl}/job/postings${query}`;
-
-      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
-      await page.waitForSelector('a[href*="/job/posting/"]', { timeout: 10000 }).catch(() => {});
-
-      const jobs = await page.evaluate((limit) => {
-        const results = [];
-        const links = document.querySelectorAll('a[href*="/job/posting/"]');
-        const seen = new Set();
-
-        links.forEach((link) => {
-          if (results.length >= limit) return;
-
-          const href = link.getAttribute('href') || '';
-          const idMatch = href.match(/\/job\/posting\/(\d+)/);
-          if (!idMatch) return;
-
-          const jobId = idMatch[1];
-          if (seen.has(jobId)) return;
-          seen.add(jobId);
-
-          // DOM text format: title\ncompany\nexperience\nlocation
-          const text = (link.innerText || '').trim();
-          const lines = text
-            .split('\n')
-            .map((l) => l.trim())
-            .filter(Boolean);
-
-          if (lines.length >= 2) {
-            results.push({
-              id: jobId,
-              title: lines[0] || '',
-              company: lines[1] || '',
-              experience: lines[2] || '',
-              location: lines[3] || '',
-              url: href,
-            });
-          }
-        });
-
-        return results;
-      }, params.limit || 20);
-
-      return {
-        success: true,
-        source: 'remember',
-        total: jobs.length,
-        hasMore: jobs.length >= (params.limit || 20),
-        jobs: jobs.map((job) => this.normalizeJob(job)),
-      };
-    });
+    return searchRememberWithBrowser(
+      this.baseUrl,
+      (job, isDetail) => this.normalizeJob(job, isDetail),
+      params
+    );
   }
 
   async getJobDetail(jobId) {
@@ -183,85 +139,15 @@ export class RememberCrawler extends BaseCrawler {
   }
 
   async getJobDetailWithBrowser(jobId) {
-    const job = await withStealthBrowser(async (page) => {
-      const url = `${this.baseUrl}/job/posting/${jobId}`;
-      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
-      await page.waitForSelector('h1, [class*="title"], [class*="company"], main', {
-        timeout: 10000,
-      });
-
-      return page.evaluate((jid) => {
-        const getText = (sel) => document.querySelector(sel)?.textContent?.trim() || '';
-        const title = getText('h1') || getText('[class*="title"]');
-        const company = getText('[class*="company"]') || getText('[class*="CompanyName"]');
-        const description =
-          getText('[class*="description"]') || getText('[class*="content"]') || getText('main');
-
-        return {
-          id: jid,
-          title,
-          company,
-          description: description.substring(0, 5000),
-        };
-      }, jobId);
-    });
-
-    return {
-      success: true,
-      source: 'remember',
-      job: this.normalizeJob(job, true),
-    };
+    return getRememberJobDetailWithBrowser(
+      this.baseUrl,
+      (job, isDetail) => this.normalizeJob(job, isDetail),
+      jobId
+    );
   }
 
-  normalizeJob(rawJob, _isDetail = false) {
-    // Parse Korean experience format: "5년~12년 차" or "5년 이상"
-    let experienceMin = 0;
-    let experienceMax = 99;
-
-    const expStr = rawJob.experience || rawJob.career_period || '';
-    const expMatch = expStr.match(/(\d+)(?:년)?(?:~|-)(\d+)?/);
-    if (expMatch) {
-      experienceMin = parseInt(expMatch[1]) || 0;
-      experienceMax = parseInt(expMatch[2]) || experienceMin + 10;
-    } else if (expStr.includes('이상')) {
-      const minMatch = expStr.match(/(\d+)/);
-      experienceMin = parseInt(minMatch?.[1]) || 0;
-      experienceMax = 99;
-    }
-
-    return {
-      id: `remember_${rawJob.id}`,
-      sourceId: String(rawJob.id),
-      source: 'remember',
-      sourceUrl: rawJob.url || `${this.baseUrl}/job/posting/${rawJob.id}`,
-      position: rawJob.title || rawJob.position || '',
-      company:
-        rawJob.organization?.name ||
-        rawJob.company?.name ||
-        rawJob.company_name ||
-        rawJob.company ||
-        '',
-      companyId: rawJob.organization?.company_id || rawJob.company?.id || rawJob.company_id || '',
-      location: rawJob.normalized_address
-        ? `${rawJob.normalized_address.level1}/${rawJob.normalized_address.level2}`
-        : rawJob.location || rawJob.region || '',
-      experienceMin: rawJob.min_experience || experienceMin,
-      experienceMax: rawJob.max_experience || experienceMax,
-      salary:
-        rawJob.salary || rawJob.min_salary
-          ? `${rawJob.min_salary || ''}-${rawJob.max_salary || ''}`
-          : '',
-      techStack: rawJob.skills || rawJob.tech_stack || [],
-      description: rawJob.job_description || rawJob.description || '',
-      requirements: rawJob.qualifications || rawJob.requirements || '',
-      benefits: rawJob.benefits || rawJob.welfare || '',
-      dueDate: rawJob.deadline || rawJob.due_date || null,
-      postedDate: rawJob.created_at || rawJob.posted_date || null,
-      isRemote: rawJob.is_remote || false,
-      employmentType: rawJob.employment_type || rawJob.job_posting_type || '',
-      applicationType: rawJob.application_type || '',
-      crawledAt: new Date().toISOString(),
-    };
+  normalizeJob(rawJob, isDetail = false) {
+    return normalizeRememberJob(rawJob, this.baseUrl, isDetail);
   }
 
   async getProfile() {

@@ -1,16 +1,14 @@
-import {
-  RATE_LIMIT_MAX_PER_MINUTE,
-  RATE_LIMIT_WINDOW_MS,
-  RETRY_DELAYS_MS,
-  TELEGRAM_TIMEOUT_MS,
-  WEBHOOK_TIMEOUT_MS,
-} from './constants.js';
+import { RETRY_DELAYS_MS, TELEGRAM_TIMEOUT_MS } from './constants.js';
 import { formatNotificationText } from './formatters.js';
 import {
   createNotificationHistoryRecord,
   determineNotificationStatus,
   saveNotificationHistory,
 } from './history.js';
+import { checkRateLimit, recordMessageSent } from './rate-limit.js';
+import { triggerAutomationWebhook } from './webhook-delivery.js';
+
+export { triggerAutomationWebhook } from './webhook-delivery.js';
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -30,35 +28,6 @@ function isRetryableError(error, status) {
   }
 
   return status === 429 || status >= 500;
-}
-
-function checkRateLimit(adapter) {
-  const now = Date.now();
-  if (
-    adapter.rateState.windowStartedAt === 0 ||
-    now - adapter.rateState.windowStartedAt >= RATE_LIMIT_WINDOW_MS
-  ) {
-    adapter.rateState.windowStartedAt = now;
-    adapter.rateState.count = 0;
-  }
-
-  if (adapter.rateState.count >= RATE_LIMIT_MAX_PER_MINUTE) {
-    return {
-      allowed: false,
-      resetTime: adapter.rateState.windowStartedAt + RATE_LIMIT_WINDOW_MS,
-      remaining: 0,
-    };
-  }
-
-  return {
-    allowed: true,
-    resetTime: adapter.rateState.windowStartedAt + RATE_LIMIT_WINDOW_MS,
-    remaining: Math.max(0, RATE_LIMIT_MAX_PER_MINUTE - adapter.rateState.count),
-  };
-}
-
-function recordMessageSent(adapter) {
-  adapter.rateState.count += 1;
 }
 
 export async function answerCallbackQuery(adapter, callbackQueryId, text) {
@@ -188,61 +157,6 @@ export async function sendTelegramNotification(adapter, message = {}) {
     error: lastError?.message || 'Unknown error',
     attempts: RETRY_DELAYS_MS.length + 1,
   };
-}
-
-export async function triggerAutomationWebhook(adapter, eventType, data, message) {
-  if (!adapter.automationWebhookUrl) {
-    return { sent: false, reason: 'not_configured' };
-  }
-
-  const payload = {
-    event: eventType,
-    timestamp: new Date().toISOString(),
-    source: adapter.source,
-    data,
-    telegram: {
-      chatId: adapter.telegramChatId,
-      text: message?.text || null,
-      parseMode: message?.parse_mode || 'HTML',
-    },
-  };
-
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), WEBHOOK_TIMEOUT_MS);
-
-  try {
-    const response = await fetch(adapter.automationWebhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Webhook-Source': adapter.source,
-        'X-Event-Type': eventType,
-      },
-      body: JSON.stringify(payload),
-      signal: controller.signal,
-    });
-
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      return {
-        sent: false,
-        reason: 'http_error',
-        status: response.status,
-        error: errorText,
-      };
-    }
-
-    return { sent: true };
-  } catch (error) {
-    clearTimeout(timeoutId);
-    return {
-      sent: false,
-      reason: error?.name === 'AbortError' ? 'timeout' : 'network_error',
-      error: error?.message,
-    };
-  }
 }
 
 export async function notify(adapter, eventType, data, telegramPayload) {

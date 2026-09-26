@@ -1,12 +1,9 @@
 import { CloakBrowser } from './cloak-browser.js';
-import { EncryptionService } from '@resume/shared/crypto';
 import { SessionManager } from '../../shared/services/session/index.js';
 import {
   WANTED_HOME_URL,
   WANTED_LOGIN_URL,
-  WANTED_PROFILE_API_URL,
   DEFAULT_PROFILE_DIR,
-  DEFAULT_BACKOFF_MS,
   WANTED_LOGIN_ERRORS,
   sleep,
   createSessionError,
@@ -14,18 +11,17 @@ import {
   isWafBlocked,
   isCaptchaDetected,
   isAuthCookie,
-  cookiesToHeader,
-  maskEmail,
   buildSessionStateExpression,
   buildCredentialFillExpression,
-  readJsonSafely,
 } from './wanted-login-flow-helpers.js';
-
-function createOptionalEncryptionService(env, provided) {
-  if (provided) return provided;
-  if (!env?.SESSION_ENCRYPTION_KEY) return null;
-  return new EncryptionService({ key: env.SESSION_ENCRYPTION_KEY });
-}
+import {
+  createOptionalEncryptionService,
+  normalizeWantedError,
+  isWantedRetryableError,
+  calculateWantedBackoff,
+  validateWantedSession,
+  buildWantedSessionData,
+} from './wanted-login-flow-session.js';
 
 export class WantedLoginFlow {
   constructor(options = {}) {
@@ -94,8 +90,9 @@ export class WantedLoginFlow {
         );
       }
 
-      const validation = await this.#validateSession(cookies, email);
-      const session = this.#buildSessionData({
+      const validation = await validateWantedSession(this.fetchImpl, cookies, email);
+      const session = buildWantedSessionData({
+        encryptionService: this.encryptionService,
         cookies,
         email,
         user: validation.user,
@@ -171,130 +168,22 @@ export class WantedLoginFlow {
     }
   }
 
-  async #validateSession(cookies, fallbackEmail) {
-    if (typeof this.fetchImpl !== 'function') {
-      throw createSessionError(
-        WANTED_LOGIN_ERRORS.LOGIN_FAILED,
-        'Validation fetch implementation is unavailable'
-      );
-    }
-
-    const cookieHeader = cookiesToHeader(cookies);
-    const response = await this.fetchImpl(WANTED_PROFILE_API_URL, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        Cookie: cookieHeader,
-        Origin: 'https://www.wanted.co.kr',
-        Referer: 'https://www.wanted.co.kr/',
-      },
-    });
-
-    const body = await readJsonSafely(response);
-    if (!response.ok) {
-      if (response.status === 401 || response.status === 403) {
-        const wafError = body?.message || body?.error || '';
-        if (isWafBlocked(null, { message: wafError })) {
-          throw createSessionError(
-            WANTED_LOGIN_ERRORS.WAF_BLOCKED,
-            'Wanted session validation hit CloudFront challenge'
-          );
-        }
-        throw createSessionError(
-          WANTED_LOGIN_ERRORS.LOGIN_FAILED,
-          'Wanted rejected authenticated profile request'
-        );
-      }
-      throw createSessionError(
-        WANTED_LOGIN_ERRORS.LOGIN_FAILED,
-        `Wanted session validation failed with status ${response.status}`
-      );
-    }
-
-    const user = body?.data || body || {};
-    if (!user.id && !user.email && !user.name) {
-      throw createSessionError(
-        WANTED_LOGIN_ERRORS.LOGIN_FAILED,
-        'Wanted session validation did not return profile data'
-      );
-    }
-
-    return {
-      user: {
-        id: user.id ?? null,
-        email: user.email ?? fallbackEmail,
-        name: user.name ?? null,
-      },
-    };
-  }
-
-  #buildSessionData({ cookies, email, user, attempt }) {
-    const cookieString = cookiesToHeader(cookies);
-    const encryptedSession =
-      this.encryptionService?.encrypt({
-        platform: 'wanted',
-        cookieString,
-        email: user.email ?? email,
-      }) ?? null;
-
-    const storage = {
-      token: null,
-      email: user.email ?? email,
-      cookies,
-      cookieString,
-      cookieCount: cookies.length,
-      encryptedSession,
-      authSource: 'cloak-browser',
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-    };
-
-    return {
-      storage,
-      result: {
-        platform: 'wanted',
-        authenticated: true,
-        authSource: 'cloak-browser',
-        email: user.email ?? email,
-        maskedEmail: maskEmail(user.email ?? email),
-        user,
-        cookies,
-        cookieString,
-        cookieCount: cookies.length,
-        encryptedSession,
-        validation: 'profile-api',
-        attempt,
-      },
-    };
-  }
-
   #normalizeError(error) {
-    if (error?.code) return error;
-    if (isTimeoutError(error))
-      return createSessionError(WANTED_LOGIN_ERRORS.TIMEOUT, error.message, error);
-    if (isCaptchaDetected(null, error))
-      return createSessionError(WANTED_LOGIN_ERRORS.CAPTCHA_DETECTED, error.message, error);
-    if (isWafBlocked(null, error))
-      return createSessionError(WANTED_LOGIN_ERRORS.WAF_BLOCKED, error.message, error);
-    return createSessionError(
-      WANTED_LOGIN_ERRORS.LOGIN_FAILED,
-      error?.message || 'Wanted login failed',
-      error
-    );
+    return normalizeWantedError(error);
   }
 
   #isRetryable(error) {
-    return (
-      error?.code === WANTED_LOGIN_ERRORS.WAF_BLOCKED || error?.code === WANTED_LOGIN_ERRORS.TIMEOUT
-    );
+    return isWantedRetryableError(error);
   }
 
   #calculateBackoff(attempt) {
-    return DEFAULT_BACKOFF_MS * 2 ** (attempt - 1) + Math.floor(this.random() * 250);
+    return calculateWantedBackoff(attempt, this.random);
   }
 
   async #humanDelay() {
     await this.sleep(300 + Math.floor(this.random() * 500));
   }
 }
+
 export const runWantedLoginFlow = (options = {}) => new WantedLoginFlow(options).execute();
 export default runWantedLoginFlow;

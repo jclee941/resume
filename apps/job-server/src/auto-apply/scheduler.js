@@ -1,13 +1,15 @@
 import { EventEmitter } from 'events';
-import { AutoApplier } from './auto-applier.js';
 import { notifications } from '../shared/services/notifications/index.js';
+import { DEFAULT_SCHEDULER_CONFIG, parseCronExpression, findNextRun } from './scheduler-utils.js';
 import {
-  DEFAULT_SCHEDULER_CONFIG,
-  parseCronExpression,
-  findNextRun,
-  withTimeout,
-  markRunFailed,
-} from './scheduler-utils.js';
+  createDefaultAutoApplierFactory,
+  createInitialStats,
+  recordRunHistory,
+  buildSchedulerStatus,
+  updateSchedulerConfig,
+  executeScheduledRun,
+  handleScheduledRunError,
+} from './scheduler-runner.js';
 
 export class AutoApplyScheduler extends EventEmitter {
   constructor(options = {}) {
@@ -15,14 +17,7 @@ export class AutoApplyScheduler extends EventEmitter {
     this.logger = options.logger ?? console;
     this.d1Client = options.d1Client ?? null;
     this.notificationService = options.notificationService ?? notifications;
-    this.autoApplierFactory =
-      options.autoApplierFactory ??
-      ((runOptions) =>
-        new AutoApplier({
-          dryRun: runOptions.dryRun !== false,
-          autoApply: runOptions.dryRun === false,
-          maxDailyApplications: runOptions.maxApplications ?? 10,
-        }));
+    this.autoApplierFactory = options.autoApplierFactory ?? createDefaultAutoApplierFactory();
 
     this.config = { ...DEFAULT_SCHEDULER_CONFIG, ...(options.config || {}) };
     this.cronMatcher = parseCronExpression(this.config.cron);
@@ -35,15 +30,7 @@ export class AutoApplyScheduler extends EventEmitter {
     this.lastError = null;
     this.nextRun = null;
     this.history = [];
-    this.stats = {
-      totalRuns: 0,
-      successRuns: 0,
-      failedRuns: 0,
-      skippedOverlaps: 0,
-      manualTriggers: 0,
-      averageDurationMs: 0,
-      lastDurationMs: null,
-    };
+    this.stats = createInitialStats();
   }
 
   start() {
@@ -85,53 +72,29 @@ export class AutoApplyScheduler extends EventEmitter {
 
     let runRecord = null;
     try {
-      await this.notificationService?.notifyJobStarted?.('auto-apply', {
+      const runOutcome = await executeScheduledRun({
+        autoApplierFactory: this.autoApplierFactory,
+        notificationService: this.notificationService,
+        d1Client: this.d1Client,
+        config: this.config,
+        options,
         source,
-        cron: this.config.cron,
-        timezone: this.config.timezone,
+        startedAt: this.currentRunStartedAt,
       });
 
-      if (this.d1Client?.createAutomationRun) {
-        runRecord = await this.d1Client.createAutomationRun({
-          run_type: 'auto-apply',
-          platform: 'all',
-          config: {
-            source,
-            schedule: { cron: this.config.cron, timezone: this.config.timezone },
-            options,
-          },
-        });
-      }
-
-      const runOptions = {
-        keywords: ['보안 운영', '보안 인프라', 'SIEM'],
-        maxApplications: 10,
-        ...options,
-      };
-
-      const result = await withTimeout(
-        this.autoApplierFactory(runOptions).run(runOptions),
-        this.config.timeout
-      );
+      const { result, duration } = runOutcome;
+      runRecord = runOutcome.runRecord;
       this.lastResult = result;
 
-      const duration = Date.now() - this.currentRunStartedAt;
-      this.#recordRun(source, result, duration, result?.success === false ? 'failed' : 'completed');
+      recordRunHistory(
+        this.stats,
+        this.history,
+        source,
+        result,
+        duration,
+        result?.success === false ? 'failed' : 'completed'
+      );
 
-      if (runRecord?.id && this.d1Client?.completeAutomationRun && result?.success !== false) {
-        await this.d1Client.completeAutomationRun(runRecord.id, {
-          jobs_found: result?.results?.searched ?? 0,
-          jobs_matched: result?.results?.matched ?? 0,
-          jobs_applied: result?.results?.applied ?? 0,
-          ...result,
-        });
-      }
-
-      if (runRecord?.id && result?.success === false) {
-        await markRunFailed(this.d1Client, runRecord.id, result?.error || 'run_failed', result);
-      }
-
-      await this.notificationService?.notifyJobCompleted?.('auto-apply', result, duration);
       this.emit(result?.success === false ? 'failed' : 'completed', {
         ...runContext,
         result,
@@ -142,14 +105,15 @@ export class AutoApplyScheduler extends EventEmitter {
     } catch (error) {
       const duration = this.currentRunStartedAt ? Date.now() - this.currentRunStartedAt : 0;
       this.lastError = error.message;
-      this.lastResult = { success: false, error: error.message };
-      this.#recordRun(source, this.lastResult, duration, 'failed');
+      this.lastResult = await handleScheduledRunError({
+        d1Client: this.d1Client,
+        notificationService: this.notificationService,
+        runRecord,
+        error,
+        duration,
+      });
+      recordRunHistory(this.stats, this.history, source, this.lastResult, duration, 'failed');
 
-      if (runRecord?.id) {
-        await markRunFailed(this.d1Client, runRecord.id, error.message, this.lastResult);
-      }
-
-      await this.notificationService?.notifyJobCompleted?.('auto-apply', this.lastResult, duration);
       this.emit('failed', { ...runContext, error: error.message, duration });
       throw error;
     } finally {
@@ -162,13 +126,9 @@ export class AutoApplyScheduler extends EventEmitter {
   }
 
   updateConfig(updates = {}) {
-    const nextConfig = { ...this.config, ...updates };
-    if (typeof nextConfig.cron !== 'string' || nextConfig.cron.trim().length === 0) {
-      throw new Error('Invalid cron expression');
-    }
-
-    this.cronMatcher = parseCronExpression(nextConfig.cron);
-    this.config = nextConfig;
+    const updated = updateSchedulerConfig(this.config, updates);
+    this.cronMatcher = updated.cronMatcher;
+    this.config = updated.config;
 
     if (this.started) {
       if (this.config.enabled) {
@@ -193,20 +153,7 @@ export class AutoApplyScheduler extends EventEmitter {
   }
 
   getStatus() {
-    return {
-      schedule: { ...this.config },
-      started: this.started,
-      running: this.running,
-      nextRun: this.nextRun,
-      lastRun: this.lastRunAt,
-      lastResult: this.lastResult,
-      lastError: this.lastError,
-      currentRunStartedAt: this.currentRunStartedAt
-        ? new Date(this.currentRunStartedAt).toISOString()
-        : null,
-      stats: { ...this.stats },
-      history: [...this.history],
-    };
+    return buildSchedulerStatus(this);
   }
 
   isRunning() {
@@ -242,35 +189,6 @@ export class AutoApplyScheduler extends EventEmitter {
         this.logger.error({ err: error }, 'Scheduled auto-apply run failed');
       });
     }, delay);
-  }
-
-  #recordRun(source, result, duration, status) {
-    this.stats.totalRuns += 1;
-    this.stats.successRuns += status === 'completed' ? 1 : 0;
-    this.stats.failedRuns += status === 'failed' ? 1 : 0;
-    this.stats.lastDurationMs = duration;
-
-    const total = this.stats.totalRuns;
-    const prevAvg = this.stats.averageDurationMs;
-    this.stats.averageDurationMs =
-      total === 1 ? duration : Math.round((prevAvg * (total - 1) + duration) / total);
-
-    this.history.unshift({
-      source,
-      status,
-      duration,
-      timestamp: new Date().toISOString(),
-      success: result?.success !== false,
-      error: result?.error || null,
-      summary: {
-        searched: result?.results?.searched ?? null,
-        matched: result?.results?.matched ?? null,
-        applied: result?.results?.applied ?? null,
-        failed: result?.results?.failed ?? null,
-      },
-    });
-
-    this.history = this.history.slice(0, 50);
   }
 }
 
