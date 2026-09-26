@@ -26,9 +26,9 @@ and memory-intensive.
 **Usage**:
 
 ```javascript
-import { getBrowserPool } from './shared/services/index.js';
+import { createBrowserPool } from './shared/services/index.js';
 
-const pool = getBrowserPool({ maxBrowsers: 3 });
+const pool = createBrowserPool({ maxBrowsers: 3 });
 const browser = await pool.acquire();
 try {
   // Use browser.page for automation
@@ -59,9 +59,9 @@ bandwidth.
 **Usage**:
 
 ```javascript
-import { getGlobalCache } from './shared/services/index.js';
+import { createCache } from './shared/services/index.js';
 
-const cache = getGlobalCache();
+const cache = createCache();
 
 // Get or fetch with caching
 const job = await cache.jobs().getOrSet(jobId, async () => {
@@ -132,9 +132,9 @@ const results = await processInParallel(items, processor, {
 **Usage**:
 
 ```javascript
-import { getMetrics, timed } from './shared/services/index.js';
+import { createGlobalMetrics, timed } from './shared/services/index.js';
 
-const metrics = getMetrics();
+const metrics = createGlobalMetrics();
 
 // Timing
 metrics.mark('operation');
@@ -185,7 +185,7 @@ const crawler = await registry.get('wanted');
 - Lower memory footprint for unused features
 - Crawlers loaded on-demand per platform
 
-### 6. Optimized Orchestrator (`src/shared/services/apply/optimized-orchestrator.js`)
+### 6. Optimized Orchestrator (`src/shared/services/apply/optimized-orchestrator/core.js`)
 
 **Problem**: Original orchestrator doesn't leverage new optimizations.
 
@@ -337,7 +337,7 @@ Set up alerts for:
 ## Best Practices
 
 1. **Always use the pool**: Never create browsers directly, always use
-   `getBrowserPool()`
+   `createBrowserPool()`
 2. **Enable caching**: Cache is disabled by default in tests, enable in
    production
 3. **Monitor metrics**: Log performance reports periodically
@@ -394,8 +394,8 @@ const { browser, page } = await launchStealthBrowser();
 await browser.close();
 
 // After
-import { getBrowserPool } from './shared/services/index.js';
-const pool = getBrowserPool();
+import { createBrowserPool } from './shared/services/index.js';
+const pool = createBrowserPool();
 const { browser, page } = await pool.acquire();
 await pool.release({ browser, page });
 ```

@@ -27,19 +27,6 @@ describe('AuthService', () => {
     assert.equal(service.getSessionTTLSeconds(), 86400);
   });
 
-  it('creates singleton with config then returns same instance without args', async () => {
-    const unique = `${Date.now()}-${Math.random()}`;
-    const module = await import(`../auth-service.js?singleton=${unique}`);
-    const config = { googleClientId: 'gcid', adminEmail: 'admin@example.com' };
-    const store = { sessions: new Map(), csrfTokens: new Map() };
-
-    const created = module.getAuthService(config, store);
-    const fetched = module.getAuthService();
-
-    assert.ok(created instanceof module.AuthService);
-    assert.strictEqual(fetched, created);
-  });
-
   it('returns 400 when credential is missing', async () => {
     const service = new AuthService({ googleClientId: 'gcid', adminEmail: 'admin@example.com' });
     const result = await service.verifyGoogleCredential('');
