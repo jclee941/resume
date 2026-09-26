@@ -19,7 +19,8 @@ function getCacheControlForPath(pathname) {
   if (pathname === '/health' || pathname === '/healthz' || pathname === '/metrics') {
     return 'no-cache, no-store, must-revalidate';
   }
-  if (pathname.startsWith('/api/')) {
+  // /job/api/* is the merged dashboard's authenticated JSON (applications, sessions).
+  if (pathname.startsWith('/api/') || pathname.startsWith('/job/api/')) {
     return 'no-store';
   }
 
