@@ -6,11 +6,31 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 )
 
-const (
-	projectRoot = "/home/jclee/dev/resume"
-)
+var projectRoot = findRepoRoot()
+
+// findRepoRoot walks up from the working directory to the repository root
+// (the directory holding wrangler.jsonc and apps/portfolio).
+func findRepoRoot() string {
+	dir, err := os.Getwd()
+	for err == nil {
+		_, wranglerErr := os.Stat(filepath.Join(dir, "wrangler.jsonc"))
+		_, portfolioErr := os.Stat(filepath.Join(dir, "apps", "portfolio"))
+		if wranglerErr == nil && portfolioErr == nil {
+			return dir
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+	fmt.Fprintln(os.Stderr, "quick-deploy: run from inside the resume repository")
+	os.Exit(1)
+	return ""
+}
 
 // ANSI color codes
 const (

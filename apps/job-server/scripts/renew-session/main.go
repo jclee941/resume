@@ -14,6 +14,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"time"
 )
 
@@ -21,14 +22,20 @@ const (
 	platformWanted   = "wanted"
 	platformJobKorea = "jobkorea"
 
-	logFileTemplate = "/home/jclee/.opencode/logs/session-renewal-%s.log"
-	resumeDir       = "/home/jclee/dev/resume"
-	chromeDebugURL  = "http://127.0.0.1:9222/json/version"
+	chromeDebugURL = "http://127.0.0.1:9222/json/version"
 )
 
 var (
 	flagPlatform string
+	resumeDir    = repoRootFromSource()
 )
+
+// repoRootFromSource resolves the repository root from this file's location
+// (apps/job-server/scripts/renew-session), independent of the working directory.
+func repoRootFromSource() string {
+	_, file, _, _ := runtime.Caller(0)
+	return filepath.Clean(filepath.Join(filepath.Dir(file), "..", "..", "..", ".."))
+}
 
 func init() {
 	flag.StringVar(&flagPlatform, "platform", "wanted", "Platform to renew: wanted or jobkorea")
@@ -39,38 +46,6 @@ type sessionStatus struct {
 	Age     int64  `json:"age"`
 	TTL     int64  `json:"ttl"`
 	Message string `json:"message,omitempty"`
-}
-
-func log(msg string, logFile string) {
-	timestamp := time.Now().Format("2006-01-02 15:04:05")
-	full := fmt.Sprintf("[%s] %s", timestamp, msg)
-	fmt.Println(full)
-	if logFile != "" {
-		f, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err == nil {
-			defer f.Close()
-			f.WriteString(full + "\n")
-		}
-	}
-}
-
-func logTee(msg string, logFile string) {
-	timestamp := time.Now().Format("2006-01-02 15:04:05")
-	full := fmt.Sprintf("[%s] %s", timestamp, msg)
-	fmt.Println(full)
-	if logFile != "" {
-		f, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err == nil {
-			defer f.Close()
-			f.WriteString(full + "\n")
-			// Also write to stdout for tee effect
-		}
-	}
-}
-
-func ensureLogDir(logFile string) {
-	dir := filepath.Dir(logFile)
-	os.MkdirAll(dir, 0755)
 }
 
 func runNodeCheck(platform string, thresholdMs int, logFile string) (bool, error) {
@@ -198,7 +173,7 @@ func main() {
 		os.Exit(2)
 	}
 
-	logFile := fmt.Sprintf(logFileTemplate, platform)
+	logFile := sessionRenewalLogPath(platform)
 	ensureLogDir(logFile)
 
 	log(fmt.Sprintf("=== Session Renewal Started: %s ===", platform), logFile)

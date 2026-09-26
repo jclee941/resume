@@ -7,6 +7,9 @@
 
 import { execSync } from 'child_process';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const REPO_ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 
 const EXIT_OK = 0;
 const EXIT_VIOLATION = 1;
@@ -48,10 +51,10 @@ function isAllowedSh(filePath) {
 
 function getTrackedFiles() {
   try {
-    const out = execSync('git ls-files', { encoding: 'utf-8', cwd: '/home/jclee/dev/resume' });
+    const out = execSync('git ls-files', { encoding: 'utf-8', cwd: REPO_ROOT });
     return out.trim().split('\n').filter(Boolean);
-  } catch {
-    console.error('Error: unable to run git ls-files');
+  } catch (error) {
+    console.error(`Error: unable to run git ls-files: ${error.message}`);
     process.exit(EXIT_VIOLATION);
   }
 }
