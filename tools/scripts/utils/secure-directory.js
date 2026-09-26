@@ -67,5 +67,4 @@ module.exports = {
   matchesOriginal,
   openPinnedDirectory,
   requireFdRelativeSupport,
-  sameIdentity,
 };

@@ -84,7 +84,7 @@ export async function handleCallbackQuery(adapter, query, handlers = {}) {
   }
 }
 
-export async function updateApprovalStatus(adapter, applicationId, status) {
+async function updateApprovalStatus(adapter, applicationId, status) {
   const normalized = status === 'approved' ? 'approved' : 'rejected';
 
   try {

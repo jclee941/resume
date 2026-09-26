@@ -22,22 +22,3 @@ export async function enqueueTask(env, message, options = {}) {
     delaySeconds: options.delaySeconds || 0,
   });
 }
-
-/**
- * Enqueue multiple messages as a batch.
- *
- * @param {Object} env - Worker environment with CRAWL_TASKS binding
- * @param {QueueMessage[]} messages - Messages to enqueue
- * @returns {Promise<void>}
- */
-export async function enqueueBatch(env, messages) {
-  const enriched = messages.map((msg) => ({
-    body: {
-      ...msg,
-      createdAt: msg.createdAt || Date.now(),
-      priority: msg.priority || PRIORITY.BACKGROUND,
-    },
-  }));
-
-  await env.CRAWL_TASKS.sendBatch(enriched);
-}

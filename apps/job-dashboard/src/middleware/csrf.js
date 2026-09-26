@@ -7,7 +7,7 @@ export function generateCsrfToken() {
   return Array.from(array, (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-export function csrfCookie(token, isSecure = true) {
+function csrfCookie(token, isSecure = true) {
   const flags = [`${CSRF_COOKIE}=${token}`, 'Path=/', 'SameSite=Strict', 'Max-Age=3600'];
   if (isSecure) flags.push('Secure');
   return flags.join('; ');

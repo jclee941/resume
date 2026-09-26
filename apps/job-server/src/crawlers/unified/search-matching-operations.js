@@ -1,7 +1,7 @@
 import { JobMatcher } from '../../shared/services/matching/index.js';
 import { WANTED_CATEGORIES } from './platform-crawlers.js';
 
-export function getJobMatcher(crawlerContext) {
+function getJobMatcher(crawlerContext) {
   if (crawlerContext.jobMatcher) {
     return crawlerContext.jobMatcher;
   }

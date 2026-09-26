@@ -1,7 +1,7 @@
 import { matchJobsWithAI } from '../../matching/ai-matcher.js';
 import { generateJobKey, isPreferredCompany } from './criteria.js';
 
-export function calculateHeuristicScore(job, config) {
+function calculateHeuristicScore(job, config) {
   let score = job.matchScore || 50;
 
   if (isPreferredCompany(job, config)) {

@@ -185,5 +185,5 @@ export class WantedLoginFlow {
   }
 }
 
-export const runWantedLoginFlow = (options = {}) => new WantedLoginFlow(options).execute();
+const runWantedLoginFlow = (options = {}) => new WantedLoginFlow(options).execute();
 export default runWantedLoginFlow;

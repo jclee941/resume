@@ -87,14 +87,6 @@ export class LazyCrawlerRegistry extends EventEmitter {
   }
 
   /**
-   * Preload all registered crawlers
-   * @returns {Promise<void>}
-   */
-  async preloadAll() {
-    return this.preload(Array.from(this.#factories.keys()));
-  }
-
-  /**
    * Unload a crawler
    * @param {string} name
    */
@@ -105,29 +97,6 @@ export class LazyCrawlerRegistry extends EventEmitter {
     }
     this.#crawlers.delete(name);
     this.emit('unloaded', { name });
-  }
-
-  /**
-   * Unload all crawlers
-   */
-  unloadAll() {
-    for (const name of this.#crawlers.keys()) {
-      this.unload(name);
-    }
-  }
-
-  /**
-   * Get loaded crawler names
-   * @returns {string[]}
-   */
-  getLoadedNames() {
-    const loaded = [];
-    for (const [name, crawler] of this.#crawlers) {
-      if (crawler instanceof LazyModule ? crawler.loaded : true) {
-        loaded.push(name);
-      }
-    }
-    return loaded;
   }
 
   /**

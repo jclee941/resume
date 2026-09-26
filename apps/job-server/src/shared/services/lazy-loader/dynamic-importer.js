@@ -50,13 +50,6 @@ export class DynamicImporter {
   }
 
   /**
-   * Clear import cache
-   */
-  clearCache() {
-    this.#cache.clear();
-  }
-
-  /**
    * Remove from cache
    * @param {string} path
    */

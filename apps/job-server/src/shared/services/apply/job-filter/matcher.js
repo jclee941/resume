@@ -101,20 +101,6 @@ export class JobFilter {
     };
   }
 
-  invalidateCache(jobId) {
-    const normalized = String(jobId || '')
-      .trim()
-      .toLowerCase();
-    if (!normalized) return false;
-
-    const byIdKey = this.#jobIdToCacheKey.get(normalized);
-    const cacheKey = byIdKey || normalized;
-    const removed = this.#aiScoreCache.delete(cacheKey);
-    if (removed) this.#stats.cacheInvalidations += 1;
-    if (byIdKey) this.#jobIdToCacheKey.delete(normalized);
-    return removed;
-  }
-
   updateConfig(updates) {
     Object.assign(this.#config, updates);
   }

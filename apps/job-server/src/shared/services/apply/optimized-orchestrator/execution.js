@@ -53,7 +53,7 @@ export async function applyToJobsWithStrategy(context) {
   };
 }
 
-export async function applySequential({ applySingleJob, config, jobs }) {
+async function applySequential({ applySingleJob, config, jobs }) {
   const results = [];
 
   for (const job of jobs) {
@@ -65,7 +65,7 @@ export async function applySequential({ applySingleJob, config, jobs }) {
   return results;
 }
 
-export function applyParallel({ applySingleJob, config, jobs, logger }) {
+function applyParallel({ applySingleJob, config, jobs, logger }) {
   return applyToJobsParallel(jobs, async (job) => applySingleJob(job), {
     maxConcurrency: config.maxConcurrentApplies,
     delayBetweenApps: config.delayBetweenApplies,
@@ -77,7 +77,7 @@ export function applyParallel({ applySingleJob, config, jobs, logger }) {
   });
 }
 
-export async function applyParallelWithPool({ applier, browserPool, config, jobs, logger }) {
+async function applyParallelWithPool({ applier, browserPool, config, jobs, logger }) {
   const results = [];
 
   await applyToJobsParallel(

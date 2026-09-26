@@ -108,4 +108,4 @@ function runSync({
   printSummary(summary);
 }
 
-module.exports = { autoCalculateExperience, loadSource, parseAsOf, runSync };
+module.exports = { autoCalculateExperience, parseAsOf, runSync };

@@ -24,24 +24,6 @@ async function getServer(port = 9393) {
   return startupPromise;
 }
 
-async function createMockServer(port = 9393) {
-  const { server } = await getServer(port);
-  return server;
-}
-
-async function stopMockServer(server) {
-  return new Promise((resolve) => {
-    if (!server) {
-      resolve();
-      return;
-    }
-    server.close(() => {
-      console.log('[Mock Server] Server stopped');
-      resolve();
-    });
-  });
-}
-
 async function getApplicationCount(port = 9393) {
   const baseUrl = serverUrl || `http://localhost:${port}`;
   try {
@@ -78,8 +60,6 @@ async function waitForApplicationCount(expectedCount, options = {}) {
 
 module.exports = {
   getServer,
-  createMockServer,
-  stopMockServer,
   getApplicationCount,
   getApplications,
   resetApplications,

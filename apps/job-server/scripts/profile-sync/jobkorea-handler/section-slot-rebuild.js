@@ -1,6 +1,6 @@
 import { log } from '../sync-logger.js';
 
-export async function deleteExistingCareerEntries(page) {
+async function deleteExistingCareerEntries(page) {
   return page.evaluate(() => {
     const originalConfirm = window.confirm;
     window.confirm = () => true;
@@ -28,7 +28,7 @@ export async function deleteExistingCareerEntries(page) {
   });
 }
 
-export async function deleteExistingIntroEntries(page) {
+async function deleteExistingIntroEntries(page) {
   return page.evaluate(() => {
     const originalConfirm = window.confirm;
     window.confirm = () => true;
@@ -56,7 +56,7 @@ export async function deleteExistingIntroEntries(page) {
   });
 }
 
-export async function deleteExistingLicenseEntries(page) {
+async function deleteExistingLicenseEntries(page) {
   return page.evaluate(() => {
     const originalConfirm = window.confirm;
     window.confirm = () => true;

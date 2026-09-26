@@ -1,4 +1,4 @@
-export const SENSITIVE_HEADER_NAMES = new Set([
+const SENSITIVE_HEADER_NAMES = new Set([
   'authorization',
   'cookie',
   'proxy-authorization',
@@ -7,7 +7,7 @@ export const SENSITIVE_HEADER_NAMES = new Set([
   'x-xsrf-token',
 ]);
 
-export const SENSITIVE_FIELD_PATTERNS = [
+const SENSITIVE_FIELD_PATTERNS = [
   /cookie/i,
   /token/i,
   /csrf/i,

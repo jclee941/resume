@@ -150,27 +150,6 @@ export class StealthBrowserCrawler extends BaseCrawler {
   }
 
   /**
-   * Execute an action on a page with stealth browser.
-   * Useful for multi-step interactions (login, form fill, apply).
-   *
-   * @param {string} url - Starting URL
-   * @param {Function} action - async (page) => result
-   * @returns {Promise<*>} Result from action function
-   */
-  async executeAction(url, action) {
-    const page = await this.fetchWithBrowser(url, { returnPage: true });
-
-    try {
-      return await action(page);
-    } catch (err) {
-      this.emit('action:error', { url, error: err.message, crawler: this.name });
-      throw err;
-    } finally {
-      await page.close().catch((e) => this.logger?.debug?.('Cleanup failed:', e.message));
-    }
-  }
-
-  /**
    * Rate limit enforcement with jitter.
    * @private
    */

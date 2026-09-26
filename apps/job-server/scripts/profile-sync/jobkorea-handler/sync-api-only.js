@@ -16,10 +16,6 @@ export function getJobKoreaSyncMode() {
   return process.env.JOBKOREA_SYNC_MODE || 'api-only';
 }
 
-export function isApiOnlyMode() {
-  return getJobKoreaSyncMode() === 'api-only';
-}
-
 function resolveLogger(options) {
   return options.logger ?? log;
 }

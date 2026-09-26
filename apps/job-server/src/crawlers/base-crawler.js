@@ -140,10 +140,6 @@ export class BaseCrawler extends EventEmitter {
     return { ...this.retryMetrics };
   }
 
-  resetRetryMetrics() {
-    this.retryMetrics = createRetryMetrics();
-  }
-
   buildSearchQuery(_params) {
     throw new Error('buildSearchQuery must be implemented by subclass');
   }

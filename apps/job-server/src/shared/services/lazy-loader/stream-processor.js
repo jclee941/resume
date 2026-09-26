@@ -2,12 +2,6 @@
  * Stream processor for large responses
  */
 export class StreamProcessor {
-  #logger;
-
-  constructor(options = {}) {
-    this.#logger = options.logger || console;
-  }
-
   /**
    * Process stream in chunks
    * @param {ReadableStream} stream
@@ -38,51 +32,6 @@ export class StreamProcessor {
       }
 
       return { totalBytes, chunks };
-    } finally {
-      reader.releaseLock();
-    }
-  }
-
-  /**
-   * Stream JSON parser
-   * @param {ReadableStream} stream
-   * @returns {AsyncGenerator}
-   */
-  async *parseJSONStream(stream) {
-    const reader = stream.getReader();
-    const decoder = new TextDecoder();
-    let buffer = '';
-
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-          const trimmed = line.trim();
-          if (trimmed) {
-            try {
-              yield JSON.parse(trimmed);
-            } catch (_e) {
-              this.#logger.debug('Failed to parse JSON line:', trimmed);
-            }
-          }
-        }
-      }
-
-      if (buffer.trim()) {
-        try {
-          yield JSON.parse(buffer);
-        } catch (_e) {
-          this.#logger.debug('Failed to parse final JSON buffer');
-        }
-      }
     } finally {
       reader.releaseLock();
     }

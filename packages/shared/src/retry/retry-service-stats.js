@@ -32,7 +32,7 @@ export function addLatency(s, ms) {
   s.maxLatencyMs = Math.max(s.maxLatencyMs, ms);
 }
 
-export function formatServiceStats(s) {
+function formatServiceStats(s) {
   const successRate = s.executions > 0 ? s.successes / s.executions : 0;
   return {
     executions: s.executions,

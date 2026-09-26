@@ -18,7 +18,7 @@ export const ELK_AUTH =
 export const DEDUP_CACHE_DIR = path.join(os.homedir(), '.opencode', 'data');
 export const DEDUP_CACHE_PATH = path.join(DEDUP_CACHE_DIR, 'pipeline-dedup-v1.json');
 export const DEDUP_CACHE_VERSION = 1;
-export const DAY_MS = 24 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
 export const SCORED_RECENT_WINDOW_MS = 7 * DAY_MS;
 export const SCORED_CACHE_TTL_MS = 30 * DAY_MS;
 export const APPLIED_CACHE_TTL_MS = 120 * DAY_MS;
@@ -58,8 +58,6 @@ export const JOBKOREA_KEYWORDS = [
 
 export const SARAMIN_KEYWORDS = [...JOBKOREA_KEYWORDS];
 
-export const MIN_EXPERIENCE_YEARS = 3;
-export const MAX_EXPERIENCE_YEARS = 15;
 export const EXCLUDED_LOCATIONS = ['제주', '부산', '대구', '광주', '대전', '울산', '강원'];
 export const EXCLUDED_TITLE_WORDS = [
   '인턴',

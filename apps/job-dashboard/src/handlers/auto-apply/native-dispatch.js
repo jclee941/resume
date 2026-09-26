@@ -5,7 +5,7 @@ import { jsonResponse } from '../../middleware/cors.js';
 const NATIVE_MODES = new Set(['cf-native', 'cloudflare-native', 'workflow', 'queue']);
 const AUTO_NATIVE_PLATFORMS = new Set(['jobkorea', 'saramin']);
 
-export function isCloudflareNativeRequest(body) {
+function isCloudflareNativeRequest(body) {
   return (
     body?.cloudflareNative === true ||
     body?.cfNative === true ||

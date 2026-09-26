@@ -5,7 +5,7 @@ import { redactSensitiveValue } from './har-redaction-patterns.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '../../../../../');
-export const DEFAULT_HAR_DIR = '/tmp/opencode/jobkorea-har';
+const DEFAULT_HAR_DIR = '/tmp/opencode/jobkorea-har';
 
 function formatTimestampForFile(date = new Date()) {
   return date.toISOString().replace(/[:.]/g, '-');
@@ -38,7 +38,7 @@ export function assertSafeHarOutputPath(outputPath) {
   return resolvedPath;
 }
 
-export function redactHeaders(headers = {}) {
+function redactHeaders(headers = {}) {
   return Object.fromEntries(
     Object.entries(headers).map(([key, value]) => [key, redactSensitiveValue(key, value)])
   );

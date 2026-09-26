@@ -24,7 +24,7 @@ export async function checkStatus(platforms) {
   }
 }
 
-export async function getPlatformStatus(platform) {
+async function getPlatformStatus(platform) {
   switch (platform) {
     case 'wanted': {
       const { SessionManager } = await import('../../src/shared/services/session/index.js');

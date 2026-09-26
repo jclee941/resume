@@ -25,13 +25,4 @@ const LANGUAGE_SOURCES = [
   { language: 'ja', sourcePath: SOURCE_JA_PATH, webDataPath: WEB_DATA_JA_PATH },
 ];
 
-module.exports = {
-  SOURCE_PATH,
-  SOURCE_EN_PATH,
-  SOURCE_JA_PATH,
-  SCHEMA_PATH,
-  WEB_DATA_PATH,
-  WEB_DATA_EN_PATH,
-  WEB_DATA_JA_PATH,
-  LANGUAGE_SOURCES,
-};
+module.exports = { SOURCE_PATH, SCHEMA_PATH, WEB_DATA_PATH, LANGUAGE_SOURCES };

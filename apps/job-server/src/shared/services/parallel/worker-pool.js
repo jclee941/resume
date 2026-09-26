@@ -31,10 +31,6 @@ export class WorkerPool extends EventEmitter {
     }
   }
 
-  async executeAll(tasks) {
-    return Promise.all(tasks.map((task) => this.execute(task)));
-  }
-
   getStats() {
     return {
       total: this.#workers.length,

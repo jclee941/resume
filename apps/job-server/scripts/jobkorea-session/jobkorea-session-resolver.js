@@ -9,7 +9,7 @@ import {
   savePlatformSession,
 } from './cookie-utils.js';
 
-export const JOBKOREA_SESSION_PLATFORM = 'jobkorea';
+const JOBKOREA_SESSION_PLATFORM = 'jobkorea';
 
 const fallbackSessionFiles = [repoSessionFile, legacyOpencodeSessionFile];
 

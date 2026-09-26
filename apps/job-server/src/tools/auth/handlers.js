@@ -30,5 +30,3 @@ export async function executeAuthAction(params) {
       };
   }
 }
-
-export { AVAILABLE_ACTIONS };

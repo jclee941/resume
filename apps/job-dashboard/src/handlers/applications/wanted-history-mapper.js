@@ -12,7 +12,7 @@ function firstString(...values) {
   return null;
 }
 
-export function mapWantedStatus(status) {
+function mapWantedStatus(status) {
   const normalized = String(status || '').toLowerCase();
   if (VALID_STATUSES.includes(normalized)) {
     return normalized;

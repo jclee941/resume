@@ -255,5 +255,3 @@ export async function serveStatic(pathname) {
     headers: { 'Content-Type': 'application/json' },
   });
 }
-
-export { DASHBOARD_HTML_TEMPLATE, getSecurityHeaders, computeStyleHash };

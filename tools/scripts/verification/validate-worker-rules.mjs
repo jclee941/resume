@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { parse, printParseErrorCode } from 'jsonc-parser';
 
-export const REQUIRED_WORKFLOWS = [
+const REQUIRED_WORKFLOWS = [
   ['APPLICATION_WORKFLOW', 'application-workflow', 'ApplicationWorkflow'],
   ['BACKUP_WORKFLOW', 'backup-workflow', 'BackupWorkflow'],
   ['CLEANUP_WORKFLOW', 'cleanup-workflow', 'CleanupWorkflow'],
@@ -11,17 +11,17 @@ export const REQUIRED_WORKFLOWS = [
   ['RESUME_SYNC_WORKFLOW', 'resume-sync-workflow', 'ResumeSyncWorkflow'],
 ];
 
-export const REQUIRED_QUEUE_PRODUCERS = [
+const REQUIRED_QUEUE_PRODUCERS = [
   { queue: 'crawl-tasks', binding: 'CRAWL_TASKS' },
   { queue: 'notifications', binding: 'NOTIFICATION_QUEUE' },
 ];
 
-export const REQUIRED_QUEUE_CONSUMERS = [
+const REQUIRED_QUEUE_CONSUMERS = [
   { queue: 'crawl-tasks', dead_letter_queue: 'crawl-tasks-dlq' },
   { queue: 'notifications', dead_letter_queue: 'notifications-dlq' },
 ];
 
-export const PREVIEW_FORBIDDEN_KEYS = [
+const PREVIEW_FORBIDDEN_KEYS = [
   'ai',
   'browser',
   'd1_databases',
@@ -32,7 +32,7 @@ export const PREVIEW_FORBIDDEN_KEYS = [
   'workflows',
 ];
 
-export function parseConfiguration(input) {
+function parseConfiguration(input) {
   if (typeof input !== 'string') return input;
   const errors = [];
   const config = parse(input, errors, { allowTrailingComma: true });
@@ -43,14 +43,14 @@ export function parseConfiguration(input) {
   return config;
 }
 
-export function requireBindings(config, key, expected) {
+function requireBindings(config, key, expected) {
   const bindings = config[key];
   assert.ok(Array.isArray(bindings), `${key} must be an array`);
   const actual = bindings.map(({ binding }) => binding).sort();
   assert.deepEqual(actual, [...expected].sort(), `${key} binding inventory mismatch`);
 }
 
-export function requireQueueTopology(queues) {
+function requireQueueTopology(queues) {
   assert.ok(queues && typeof queues === 'object', 'queues must be explicit');
   assert.deepEqual(
     (queues.producers ?? []).map(({ queue, binding }) => ({ queue, binding })),

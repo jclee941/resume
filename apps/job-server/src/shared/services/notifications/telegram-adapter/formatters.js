@@ -35,7 +35,7 @@ export function formatNotificationText(message) {
   return text;
 }
 
-export function resolveJobField(job, ...keys) {
+function resolveJobField(job, ...keys) {
   for (const key of keys) {
     if (job?.[key] != null && job[key] !== '') return job[key];
   }

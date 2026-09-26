@@ -112,10 +112,6 @@ export class ApplicationManager {
     return filterApplications(this.applications, filters);
   }
 
-  getPendingApplications() {
-    return this.listApplications({ status: APPLICATION_STATUS.PENDING });
-  }
-
   getActiveApplications() {
     return selectActiveApplications(this.applications);
   }

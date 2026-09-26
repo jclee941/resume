@@ -8,7 +8,6 @@ export const JK_LOCATION_CODES = {
   인천: 'I300',
   원격: 'I900',
 };
-export const JK_DEFAULT_HOPE_JOB = {};
 export const JK_DEFAULT_HOPE_LOCATION = ['서울'];
 
 export const GRAD_TYPE = { 졸업: 10, 졸업예정: 5, 재학중: 4, 중퇴: 2, 수료: 9, 휴학: 3 };

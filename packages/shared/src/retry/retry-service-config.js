@@ -1,4 +1,4 @@
-export const RETRYABLE = ['ECONNRESET', 'ETIMEDOUT', 'ECONNREFUSED', 429, 500, 502, 503, 504];
+const RETRYABLE = ['ECONNRESET', 'ETIMEDOUT', 'ECONNREFUSED', 429, 500, 502, 503, 504];
 
 export const RETRY = {
   maxRetries: 3,

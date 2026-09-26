@@ -30,7 +30,3 @@ export function createPooledResource(resource) {
     state: 'in_use',
   };
 }
-
-export function resetPoolIdCounter() {
-  defaultPoolIdCounter.reset();
-}

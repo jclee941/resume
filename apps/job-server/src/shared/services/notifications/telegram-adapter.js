@@ -206,8 +206,4 @@ export class TelegramNotificationAdapter {
   }
 }
 
-export function createTelegramNotificationAdapter(options = {}) {
-  return new TelegramNotificationAdapter(options);
-}
-
 export default TelegramNotificationAdapter;

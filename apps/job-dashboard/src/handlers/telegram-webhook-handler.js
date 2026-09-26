@@ -137,21 +137,6 @@ export class TelegramWebhookHandler {
 
     return await response.json();
   }
-
-  /**
-   * Get webhook info
-   */
-  async getWebhookInfo() {
-    const token = this.env.TELEGRAM_BOT_TOKEN;
-    if (!token) {
-      throw new Error('TELEGRAM_BOT_TOKEN not configured');
-    }
-
-    const endpoint = `https://api.telegram.org/bot${token}/getWebhookInfo`;
-
-    const response = await fetch(endpoint);
-    return await response.json();
-  }
 }
 
 export default TelegramWebhookHandler;

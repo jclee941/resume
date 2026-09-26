@@ -18,7 +18,7 @@ const _globalRegistryHolder = (() => {
  * @param {object} [options]
  * @returns {LazyCrawlerRegistry}
  */
-export function createRegistry(options = {}) {
+function createRegistry(options = {}) {
   return new LazyCrawlerRegistry(options);
 }
 
@@ -28,26 +28,11 @@ export function createRegistry(options = {}) {
  * removal when lazy-loader callers are DI-only.
  * @returns {LazyCrawlerRegistry}
  */
-export function getRegistry() {
+function getRegistry() {
   if (!_globalRegistryHolder.get()) {
     _globalRegistryHolder.set(createRegistry());
   }
   return _globalRegistryHolder.get();
-}
-
-/**
- * DEPRECATED: compatibility singleton override for legacy tests/bootstrap. Prefer
- * constructor-injected registries from createRegistry(); singleton exports are
- * planned for removal when lazy-loader callers are DI-only.
- * @param {LazyCrawlerRegistry|null} registry
- * @returns {void}
- */
-export function setRegistry(registry) {
-  if (registry === null) {
-    _globalRegistryHolder.clear();
-    return;
-  }
-  _globalRegistryHolder.set(registry);
 }
 
 /**
@@ -56,11 +41,3 @@ export function setRegistry(registry) {
  * @returns {LazyCrawlerRegistry}
  */
 export const getCrawlerRegistry = getRegistry;
-
-/**
- * DEPRECATED: compatibility alias for legacy crawler-registry overrides. Prefer
- * createRegistry() with constructor-injected dependencies.
- * @param {LazyCrawlerRegistry|null} registry
- * @returns {void}
- */
-export const setCrawlerRegistry = setRegistry;

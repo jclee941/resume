@@ -1,6 +1,6 @@
 import { cookieArrayToString } from '@resume/shared/session';
 
-export function getSessionCookieString(session) {
+function getSessionCookieString(session) {
   return (
     session.cookieString ||
     (Array.isArray(session.cookies) ? cookieArrayToString(session.cookies) : session.cookies) ||

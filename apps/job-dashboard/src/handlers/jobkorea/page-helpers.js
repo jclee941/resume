@@ -10,16 +10,16 @@
  * @module handlers/jobkorea/page-helpers
  */
 
-export const EMAIL_SELECTORS = [
+const EMAIL_SELECTORS = [
   'input[name="M_ID"]',
   'input[type="email"]',
   'input[type="text"][id*="id" i]',
 ];
-export const PASSWORD_SELECTORS = ['input[name="M_PWD"]', 'input[type="password"]'];
+const PASSWORD_SELECTORS = ['input[name="M_PWD"]', 'input[type="password"]'];
 export const SUBMIT_SELECTOR = 'button[type="submit"], input[type="submit"]';
 export const CAPTCHA_SUBMIT_SELECTOR =
   'button[type="submit"], input[type="submit"], button, input[type="button"]';
-export const CAPTCHA_INPUT_SELECTOR =
+const CAPTCHA_INPUT_SELECTOR =
   '#gtxt, input[name="gtxt"], input[id*="captcha" i], input[name*="captcha" i]';
 
 async function resolveInput(page, selectors) {
@@ -84,7 +84,7 @@ function isTransientPageError(err) {
 
 // Evaluate on the page, treating a transient in-flight-navigation error as the
 // fallback so the caller retries on the settled page instead of failing the mint.
-export async function safeEvaluate(page, fn, fallback) {
+async function safeEvaluate(page, fn, fallback) {
   try {
     return await page.evaluate(fn);
   } catch (err) {

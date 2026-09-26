@@ -5,7 +5,6 @@ import { getResumeBasePath } from '../../src/shared/utils/paths.js';
 import { BaseProfileSync } from '../base-profile-sync.js';
 import {
   updateRememberCareers,
-  updateRememberCertifications,
   updateRememberEducation,
   updateRememberHeadline,
   updateRememberSkills,
@@ -195,10 +194,6 @@ export class RememberProfileSync extends BaseProfileSync {
 
   async updateEducation(education) {
     return updateRememberEducation(this.page, education);
-  }
-
-  async updateCertifications(certifications) {
-    return updateRememberCertifications(this.page, certifications);
   }
 
   async close() {
