@@ -56,7 +56,10 @@ describe('scheduled Cliproxy auto-apply discovery', () => {
       action: 'would_apply',
       adapterBacked: true,
     });
-    expect(cliproxy.searchJobs).toHaveBeenCalledWith('security', { limit: 20 });
+    expect(cliproxy.searchJobs).toHaveBeenCalledWith('security', {
+      limit: 20,
+      profile: expect.objectContaining({ skills: expect.any(Array) }),
+    });
     expect(db.recorded[0].slice(15, 19)).toEqual([body.runId, 1, 'would_apply', 1]);
   });
 

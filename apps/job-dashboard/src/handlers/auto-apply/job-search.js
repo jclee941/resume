@@ -13,6 +13,7 @@ export async function searchPlatformJobs({
   activePlatforms,
   searchKeywords,
   searchResults,
+  profile,
 }) {
   const allJobs = [];
   const seen = new Set();
@@ -28,7 +29,7 @@ export async function searchPlatformJobs({
     for (const keyword of searchKeywords.slice(0, 5)) {
       try {
         searchResults.searchAttempts++;
-        const result = await client.searchJobs(keyword, { limit: 20 });
+        const result = await client.searchJobs(keyword, { limit: 20, profile });
         const jobs = result.jobs || result || [];
 
         for (const job of jobs) {

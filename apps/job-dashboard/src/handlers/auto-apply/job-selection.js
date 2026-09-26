@@ -16,10 +16,12 @@ export function createSearchResults() {
   };
 }
 
-export function selectMatchedJobs({ allJobs, searchKeywords, minScore, searchResults }) {
+// `profile` is the loadMatchingConfig() matching profile the Workflows score with;
+// calculateMatchScore ignores search keywords, which capped every score below minScore.
+export function selectMatchedJobs({ allJobs, profile, minScore, searchResults }) {
   const scoredJobs = allJobs.map((job) => {
     const providedScore = Number.isFinite(job.matchScore) ? job.matchScore : null;
-    const matchScore = providedScore ?? calculateMatchScore(job, { keywords: searchKeywords });
+    const matchScore = providedScore ?? calculateMatchScore(job, profile);
     return appendDecisionTrace(
       {
         ...job,
