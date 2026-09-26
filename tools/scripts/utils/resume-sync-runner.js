@@ -92,13 +92,12 @@ function resolveSources({ sourceDir, outputDir, sourceManifest }) {
 function validateSources(sources) {
   console.log('📋 Validating multilingual resume data against schema...');
   for (const source of sources) {
-    const validation =
-      /** @type {{ valid: boolean; errors?: Array<Record<string, unknown>> | null }} */ (
-        validateResumeDataFile(source.sourcePath, SCHEMA_PATH)
-      );
+    const validation = /** @type {import('./validate-resume-data.js').FileValidationResult} */ (
+      validateResumeDataFile(source.sourcePath, SCHEMA_PATH)
+    );
     if (!validation.valid) {
       throw new Error(
-        `Resume data validation failed (${source.language}):${formatErrors(/** @type {unknown[]} */ (validation.errors))}`
+        `Resume data validation failed (${source.language}):${formatErrors(/** @type {import('./validate-resume-data.js').ResumeValidationError[] | null | undefined} */ (validation.errors))}`
       );
     }
   }

@@ -6,11 +6,8 @@ import { AIService } from './service.js';
 /**
  * Factory function to create an AIService from Cloudflare Worker env bindings.
  *
- * @param {object} env - Cloudflare Worker environment
- * @param {object} [options]
- * @param {boolean} [options.enableCache=true]
- * @param {number} [options.cacheTtl=3600]
- * @param {object} [options.budgets]
+ * @param {{ AI?: import('../providers.js').CloudflareAiBinding; OPENAI_API_KEY?: string; AI_GATEWAY_URL?: string; SESSIONS?: import('../prompt-cache.js').PromptCacheKv & import('../cost-tracker.js').CostKvNamespace } | null | undefined} env - Cloudflare Worker environment
+ * @param {{ enableCache?: boolean; cacheTtl?: number; budgets?: Partial<import('../cost-tracker.js').BudgetsConfig>; logger?: import('./response-finalizer.js').AppLogger }} [options]
  * @returns {AIService}
  */
 export function createAIService(env, options = {}) {

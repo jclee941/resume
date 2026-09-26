@@ -1,13 +1,28 @@
 import { BaseCrawler } from '../../src/crawlers/base-crawler.js';
 
 /**
+ * @typedef {{ keyword?: string, offset?: number, limit?: number, category?: string }} ProgrammersSearchParams
+ * @typedef {{
+ *   id?: string | number, jobPositionId?: string | number,
+ *   title?: string, jobPosition?: string, companyName?: string,
+ *   company?: { name?: string }, address?: string, location?: string,
+ *   description?: string, requirement?: string, technicalTags?: string[], techStacks?: string[],
+ *   salary?: string | number, annualFrom?: number, annualTo?: number,
+ *   createdAt?: string | null, publishedAt?: string | null,
+ *   closedAt?: string | null, deadline?: string | null
+ * }} RawProgrammersJob
+ * @typedef {{ jobPositions?: RawProgrammersJob[], data?: RawProgrammersJob[], totalCount?: number, total?: number }} ProgrammersSearchResponse
+ * @typedef {RawProgrammersJob & { data?: RawProgrammersJob }} ProgrammersDetailResponse
+ */
+
+/**
  * Programmers (programmers.co.kr) job platform crawler.
  * Kakao-backed Korean developer job platform.
  * @extends BaseCrawler
  */
 export class ProgrammersCrawler extends BaseCrawler {
   /**
-   * @param {Object} [options] - Crawler options
+   * @param {import('../../src/crawlers/base-crawler.js').BaseCrawlerOptions} [options] - Crawler options
    * @param {number} [options.rateLimit=1200] - Rate limit in ms between requests
    */
   constructor(options = {}) {
@@ -21,7 +36,7 @@ export class ProgrammersCrawler extends BaseCrawler {
 
   /**
    * Build search query URL from parameters.
-   * @param {Object} params - Search parameters
+   * @param {ProgrammersSearchParams} params - Search parameters
    * @param {string} [params.keyword] - Search keyword
    * @param {number} [params.offset=0] - Pagination offset
    * @param {number} [params.limit=20] - Results per page
@@ -32,8 +47,8 @@ export class ProgrammersCrawler extends BaseCrawler {
     const searchParams = new URLSearchParams();
     if (params.keyword) searchParams.set('query', params.keyword);
     if (params.offset)
-      searchParams.set('page', Math.floor(params.offset / (params.limit || 20)) + 1);
-    if (params.limit) searchParams.set('size', params.limit);
+      searchParams.set('page', String(Math.floor(params.offset / (params.limit || 20)) + 1));
+    if (params.limit) searchParams.set('size', String(params.limit));
     if (params.category) searchParams.set('category', params.category);
     searchParams.set('order', 'recent');
     return searchParams.toString();
@@ -41,14 +56,14 @@ export class ProgrammersCrawler extends BaseCrawler {
 
   /**
    * Search for jobs on Programmers.
-   * @param {Object} params - Search parameters
-   * @returns {Promise<{success: boolean, source: string, total: number, hasMore: boolean, jobs: Array}>}
+   * @param {ProgrammersSearchParams} params - Search parameters
+   * @returns {Promise<{success: true, source: string, total: number, hasMore: boolean, nextOffset: number, jobs: ReturnType<ProgrammersCrawler['normalizeJob']>[]} | {success: false, source: string, error: string, jobs: []}>}
    */
   async searchJobs(params = {}) {
     try {
       const query = this.buildSearchQuery(params);
       const url = `${this.baseUrl}/api/job_positions?${query}`;
-      const result = await this.fetchJSON(url);
+      const result = /** @type {ProgrammersSearchResponse} */ (await this.fetchJSON(url));
       const jobs = (result.jobPositions || result.data || []).map((job) => this.normalizeJob(job));
 
       return {
@@ -60,14 +75,19 @@ export class ProgrammersCrawler extends BaseCrawler {
         jobs,
       };
     } catch (error) {
-      return { success: false, source: this.source, error: error.message, jobs: [] };
+      return {
+        success: false,
+        source: this.source,
+        error: error instanceof Error ? error.message : String(error),
+        jobs: [],
+      };
     }
   }
 
   /**
    * Normalize a Programmers job object to common format.
-   * @param {Object} job - Raw Programmers job data
-   * @returns {Object} Normalized job
+   * @param {RawProgrammersJob} job - Raw Programmers job data
+   * @returns Normalized job
    */
   normalizeJob(job) {
     return {
@@ -88,16 +108,16 @@ export class ProgrammersCrawler extends BaseCrawler {
   /**
    * Get detailed job information.
    * @param {string} jobId - Job identifier
-   * @returns {Promise<Object>} Job detail
+   * @returns {Promise<{success: true, job: ReturnType<ProgrammersCrawler['normalizeJob']>} | {success: false, error: string}>} Job detail
    */
   async getJobDetail(jobId) {
     try {
       const numericId = jobId.replace('programmers-', '');
       const url = `${this.baseUrl}/api/job_positions/${numericId}`;
-      const result = await this.fetchJSON(url);
+      const result = /** @type {ProgrammersDetailResponse} */ (await this.fetchJSON(url));
       return { success: true, job: this.normalizeJob(result.data || result) };
     } catch (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: error instanceof Error ? error.message : String(error) };
     }
   }
 }

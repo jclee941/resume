@@ -1,5 +1,11 @@
 /**
  * @fileoverview Parallel crawl orchestrator class.
+ * @typedef {import('./constants.js').CrawlOrchestratorOptions} CrawlOrchestratorOptions
+ * @typedef {import('./platform-crawl.js').SearchParams} SearchParams
+ * @typedef {import('./result-aggregation.js').CrawlResult} CrawlResult
+ * @typedef {import('./result-aggregation.js').PlatformResult} PlatformResult
+ * @typedef {import('./browser-pool.js').PooledBrowserContext} PooledBrowserContext
+ * @typedef {import('../resource-pool/resource-pool.js').ResourcePool<PooledBrowserContext>} ResourcePool
  */
 
 import { EventEmitter } from 'events';
@@ -68,7 +74,11 @@ export class CrawlOrchestrator extends EventEmitter {
 
     this._abortController = new AbortController();
     if (opts.signal) {
-      opts.signal.addEventListener('abort', () => this._abortController.abort(), { once: true });
+      opts.signal.addEventListener(
+        'abort',
+        () => /** @type {AbortController} */ (this._abortController).abort(),
+        { once: true }
+      );
     }
 
     this._ensureBrowserPool(opts);
@@ -125,16 +135,14 @@ export class CrawlOrchestrator extends EventEmitter {
   }
 
   /**
-   * @returns {Promise<{ browser: object|null, page: object|null, closed: boolean }>}
-   * @private
+   * @returns {Promise<PooledBrowserContext>}
    */
   async _createBrowserContext() {
     return createBrowserContext();
   }
 
   /**
-   * @param {{ closed: boolean }} ctx
-   * @private
+   * @param {PooledBrowserContext} ctx
    */
   async _destroyBrowserContext(ctx) {
     return destroyBrowserContext(ctx);
@@ -183,7 +191,6 @@ export class CrawlOrchestrator extends EventEmitter {
    * @param {SearchParams} searchParams
    * @param {string} taskId
    * @returns {Promise<PlatformResult>}
-   * @private
    */
   async _crawlPlatform(platform, searchParams, taskId) {
     return crawlPlatform(this, platform, searchParams, taskId);
@@ -192,8 +199,7 @@ export class CrawlOrchestrator extends EventEmitter {
   /**
    * @param {string} platform
    * @param {SearchParams} searchParams
-   * @returns {Promise<object[]>}
-   * @private
+   * @returns {Promise<import('./result-aggregation.js').PlatformJob[]>}
    */
   async _executePlatformCrawl(platform, searchParams) {
     return executePlatformCrawl(platform, searchParams);

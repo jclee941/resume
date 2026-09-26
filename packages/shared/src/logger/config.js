@@ -19,18 +19,35 @@ const LEVEL_PRIORITY = {
 };
 
 /**
+ * @typedef {{ country?: string, city?: string, asn?: number }} RequestGeo
+ * @typedef {Record<string, unknown> & {
+ *   http: { request: { method: string, id: string } },
+ *   url: { path: string },
+ *   user_agent?: { original: string },
+ *   client?: { geo: { country_iso_code?: string, city_name?: string }, as: { number?: number } },
+ *   traceId?: string, correlationId?: string, trace?: { id: string },
+ *   traceparent?: string, tracestate?: string
+ * }} RequestLabels
+ */
+
+/**
  * Immutable request context that flows through the handler chain.
  */
 class RequestContext {
   /**
-   * @param {Object} options
+   * @param {{ requestId?: string, startTime?: number, method?: string, path?: string,
+   *   userAgent?: string, geo?: RequestGeo | null, extra?: Record<string, unknown>,
+   *   traceparent?: string, tracestate?: string, traceId?: string }} [options]
    * @param {string} [options.requestId]
    * @param {number} [options.startTime]
    * @param {string} [options.method]
    * @param {string} [options.path]
    * @param {string} [options.userAgent]
-   * @param {Object} [options.geo]
-   * @param {Object} [options.extra]
+   * @param {RequestGeo | null} [options.geo]
+   * @param {Record<string, unknown>} [options.extra]
+   * @param {string} [options.traceparent]
+   * @param {string} [options.tracestate]
+   * @param {string} [options.traceId]
    */
   constructor(options = {}) {
     this.requestId = options.requestId || generateRequestId();
@@ -48,7 +65,7 @@ class RequestContext {
 
   /**
    * Create RequestContext from a Cloudflare Worker Request.
-   * @param {Request} request
+   * @param {Request & { cf?: RequestGeo }} request
    * @param {URL} [url]
    * @returns {RequestContext}
    */
@@ -75,8 +92,9 @@ class RequestContext {
     return Date.now() - this.startTime;
   }
 
-  /** @returns {Object} ECS-compatible labels */
+  /** @returns {RequestLabels} ECS-compatible labels */
   toLabels() {
+    /** @type {RequestLabels} */
     const labels = {
       http: { request: { method: this.method, id: this.requestId } },
       url: { path: this.path },

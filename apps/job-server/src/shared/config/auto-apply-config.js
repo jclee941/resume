@@ -41,7 +41,12 @@ const DEFAULT_CONFIG = {
   },
 };
 
+/**
+ * @typedef {{ configPath?: string; env?: Record<string, string | undefined>; logger?: Pick<Console, 'error'> }} AutoApplyConfigOptions
+ * @typedef {import('./config-validation.js').CandidateConfig} AutoApplyConfigData
+ */
 export class AutoApplyConfig {
+  /** @type {AutoApplyConfigData} */
   #config;
   #runtimeOverrides;
   #configPath;
@@ -49,6 +54,7 @@ export class AutoApplyConfig {
   #logger;
   #loaded;
 
+  /** @param {AutoApplyConfigOptions} [options] */
   constructor(options = {}) {
     this.#configPath = options.configPath || DEFAULT_CONFIG_PATH;
     this.#env = options.env || process.env;
@@ -65,22 +71,31 @@ export class AutoApplyConfig {
     const validation = this.validate(merged);
 
     if (!validation.valid) {
+      /** @type {Error & { validationErrors?: string[] }} */
       const error = new Error(`Invalid auto-apply configuration: ${validation.errors.join('; ')}`);
       error.validationErrors = validation.errors;
       throw error;
     }
 
-    this.#config = merged;
+    this.#config = /** @type {AutoApplyConfigData} */ (merged);
     this.#loaded = true;
     return this.toJSON();
   }
 
+  /**
+   * @param {string} [path]
+   * @param {unknown} [fallbackValue]
+   */
   get(path = '', fallbackValue = undefined) {
     if (!this.#loaded) this.load();
     const value = getAtPath(this.#config, path);
     return value === undefined ? fallbackValue : deepClone(value);
   }
 
+  /**
+   * @param {string} path
+   * @param {unknown} value
+   */
   set(path, value) {
     if (typeof path !== 'string' || path.trim() === '') {
       throw new Error('set(path, value) requires a non-empty path string');
@@ -100,10 +115,14 @@ export class AutoApplyConfig {
     } catch (error) {
       this.#config = currentSnapshot;
       this.#runtimeOverrides = overridesSnapshot;
-      throw new Error(`Failed to set config path "${path}": ${error.message}`, { cause: error });
+      throw new Error(
+        `Failed to set config path "${path}": ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
+      );
     }
   }
 
+  /** @param {Record<string, unknown>} [updates] */
   update(updates = {}) {
     if (!isPlainObject(updates)) {
       throw new Error('update(updates) requires a plain object');
@@ -115,7 +134,7 @@ export class AutoApplyConfig {
     const overridesSnapshot = deepClone(this.#runtimeOverrides);
 
     try {
-      this.#config = deepMerge(this.#config, updates);
+      this.#config = /** @type {AutoApplyConfigData} */ (deepMerge(this.#config, updates));
       this.#runtimeOverrides = deepMerge(this.#runtimeOverrides, updates);
       const validation = this.validate(this.#config);
       if (!validation.valid) throw new Error(validation.errors.join('; '));
@@ -123,12 +142,20 @@ export class AutoApplyConfig {
     } catch (error) {
       this.#config = currentSnapshot;
       this.#runtimeOverrides = overridesSnapshot;
-      throw new Error(`Failed to update config: ${error.message}`, { cause: error });
+      throw new Error(
+        `Failed to update config: ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error }
+      );
     }
   }
 
+  /** @param {Record<string, unknown>} [candidateConfig] */
   validate(candidateConfig = this.#config) {
-    return validateAutoApplyConfig(candidateConfig || this.#config);
+    return validateAutoApplyConfig(
+      /** @type {import('./config-validation.js').CandidateConfig} */ (
+        candidateConfig || this.#config
+      )
+    );
   }
 
   toJSON() {
@@ -149,6 +176,7 @@ export class AutoApplyConfig {
   }
 }
 
+/** @param {AutoApplyConfigOptions} [options] */
 export function createAutoApplyConfig(options = {}) {
   return new AutoApplyConfig(options);
 }

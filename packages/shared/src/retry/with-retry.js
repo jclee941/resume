@@ -20,10 +20,19 @@ import { withCircuitBreaker } from './circuit-breaker.js';
 
 const DEFAULT_RETRYABLE_ERRORS = ['ETIMEDOUT', 'ETIMEOUT', 'ECONNRESET', 'ECONNREFUSED', 'EPIPE'];
 
+/**
+ * @typedef {import('./http-retry.js').HttpError} HttpError
+ * @typedef {Omit<import('./circuit-breaker.js').CircuitBreakerOptions, 'shouldRetry'> & {
+ *   platform?: string, retryableErrors?: string[], shouldRetry?: (error: unknown) => boolean
+ * }} RetryOptions
+ */
+
+/** @param {number} ms */
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/** @param {HttpError | null | undefined} error */
 function getHttpStatus(error) {
   return error?.response?.status ?? error?.status ?? null;
 }
@@ -43,10 +52,10 @@ function getHttpStatus(error) {
  */
 export function parseRetryAfter(error) {
   const retryAfter =
-    error?.response?.data?.parameters?.retry_after ??
-    error?.response?.data?.retry_after ??
-    error?.parameters?.retry_after ??
-    error?.retry_after ??
+    /** @type {HttpError | null | undefined} */ (error)?.response?.data?.parameters?.retry_after ??
+    /** @type {HttpError | null | undefined} */ (error)?.response?.data?.retry_after ??
+    /** @type {HttpError | null | undefined} */ (error)?.parameters?.retry_after ??
+    /** @type {HttpError | null | undefined} */ (error)?.retry_after ??
     null;
 
   if (retryAfter === null || retryAfter === undefined) {
@@ -75,12 +84,12 @@ export function isRetryableError(error, retryableErrors = DEFAULT_RETRYABLE_ERRO
     return false;
   }
 
-  const code = error?.code;
+  const code = /** @type {HttpError} */ (error)?.code;
   if (code && retryableErrors.includes(code)) {
     return true;
   }
 
-  const status = getHttpStatus(error);
+  const status = getHttpStatus(/** @type {HttpError} */ (error));
   if (status === 429) {
     return true;
   }
@@ -94,9 +103,9 @@ export function isRetryableError(error, retryableErrors = DEFAULT_RETRYABLE_ERRO
   }
 
   if (
-    error?.name === 'ValidationError' ||
-    error?.code === 'VALIDATION_ERROR' ||
-    error?.code === 'AUTH_ERROR'
+    /** @type {HttpError} */ (error)?.name === 'ValidationError' ||
+    /** @type {HttpError} */ (error)?.code === 'VALIDATION_ERROR' ||
+    /** @type {HttpError} */ (error)?.code === 'AUTH_ERROR'
   ) {
     return false;
   }
@@ -104,6 +113,7 @@ export function isRetryableError(error, retryableErrors = DEFAULT_RETRYABLE_ERRO
   return false;
 }
 
+/** @param {RetryOptions} options */
 function shouldUseCircuitRetry(options) {
   return Boolean(
     options.platform ??
@@ -121,12 +131,7 @@ function shouldUseCircuitRetry(options) {
  *
  * @template T
  * @param {() => Promise<T>} fn
- * @param {Object} [options]
- * @param {number} [options.maxRetries=4]
- * @param {number} [options.baseDelay=1000] - ms
- * @param {number} [options.maxDelay=30000] - ms
- * @param {string[]} [options.retryableErrors] - low-level error codes
- * @param {(error: unknown) => boolean} [options.shouldRetry] - extra gate
+ * @param {RetryOptions} [options]
  * @returns {Promise<T>}
  */
 export async function withRetry(fn, options = {}) {

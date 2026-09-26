@@ -12,6 +12,11 @@ import {
 } from './skill-radar-data.js';
 import { initSkillSearch } from './skill-radar-search.js';
 
+/**
+ * @param {keyof HTMLElementTagNameMap} tagName
+ * @param {string} className
+ * @param {string} [text]
+ */
 function createElement(tagName, className, text = '') {
   const element = document.createElement(tagName);
   if (className) element.className = className;
@@ -41,18 +46,24 @@ function createSkillRadar() {
  * @param {ParentNode} root
  */
 function applyRadarStyles(root) {
-  root.querySelectorAll('[data-level-color]').forEach((el) => {
-    const color = el.getAttribute('data-level-color');
-    if (!color) return;
-    // Domain level indicator uses a custom prop; the per-skill level label
-    // colors its own text. Set both safely; unused one is harmless.
-    el.style.setProperty('--level-color', color);
-    if (el.classList.contains('skill-item__level')) {
-      el.style.color = color;
+  /** @type {NodeListOf<HTMLElement>} */ (root.querySelectorAll('[data-level-color]')).forEach(
+    (el) => {
+      const color = el.getAttribute('data-level-color');
+      if (!color) return;
+      // Domain level indicator uses a custom prop; the per-skill level label
+      // colors its own text. Set both safely; unused one is harmless.
+      el.style.setProperty('--level-color', color);
+      if (el.classList.contains('skill-item__level')) {
+        el.style.color = color;
+      }
     }
-  });
+  );
 }
 
+/**
+ * @param {string} domainKey
+ * @param {import('./skill-radar-data.js').LocaleRadarCategory} domain
+ */
 function createDomainCard(domainKey, domain) {
   const card = document.createElement('div');
   card.className = 'skill-domain-card';
@@ -101,6 +112,10 @@ function createDomainCard(domainKey, domain) {
   return card;
 }
 
+/**
+ * @param {string} domainKey
+ * @param {import('./skill-radar-data.js').LocaleRadarCategory} domain
+ */
 function createSkillPanel(domainKey, domain) {
   const panel = document.createElement('div');
   panel.id = `skill-panel-${domainKey}`;
@@ -131,6 +146,7 @@ function createSkillPanel(domainKey, domain) {
   return panel;
 }
 
+/** @param {import('./skill-radar-data.js').RadarSkillItem} skill */
 function createSkillItem(skill) {
   const levelInfo = getLevelInfo(skill.level);
   const item = createElement('li', 'skill-item');
@@ -144,6 +160,7 @@ function createSkillItem(skill) {
   return item;
 }
 
+/** @param {import('./skill-radar-data.js').RadarSkillItem} skill */
 function createEvidenceItem(skill) {
   const item = createElement('li', 'skill-evidence-item');
   item.dataset.skill = skill.name;
@@ -154,7 +171,9 @@ function createEvidenceItem(skill) {
   return item;
 }
 
+/** @param {string} domainKey */
 function createSkillDomainIcon(domainKey) {
+  /** @type {Record<string, string>} */
   const icons = {
     backendApi: 'server',
     cicdAutomation: 'sync',
@@ -166,10 +185,13 @@ function createSkillDomainIcon(domainKey) {
   return createIconElement(icons[domainKey] || 'layers');
 }
 
+/** @param {HTMLDivElement} card */
 function toggleCard(card) {
   const isExpanded = card.getAttribute('aria-expanded') === 'true';
-  const panel = card.querySelector('.skill-panel');
-  const expandIcon = card.querySelector('.skill-domain-card__expand svg');
+  const panel = /** @type {HTMLElement} */ (card.querySelector('.skill-panel'));
+  const expandIcon = /** @type {SVGSVGElement} */ (
+    card.querySelector('.skill-domain-card__expand svg')
+  );
 
   if (isExpanded) {
     card.setAttribute('aria-expanded', 'false');

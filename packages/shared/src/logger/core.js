@@ -4,17 +4,25 @@ import { buildErrorLabels, buildFatalLabels, buildResponseLabels } from './forma
 import { createDefaultTransports, dispatchToTransports, flushTransports } from './transports.js';
 
 /**
+ * @typedef {import('./config.js').RequestContext} RequestContext
+ * @typedef {import('../clients/elasticsearch/transport.js').ElasticsearchEnv} LoggerEnv
+ * @typedef {import('../clients/elasticsearch/transport.js').ElasticsearchLogOptions & { requestId?: string }} LogOptions
+ * @typedef {Object} LoggerOptions
+ * @property {string} [service]
+ * @property {string} [minLevel]
+ * @property {RequestContext | null} [reqCtx]
+ * @property {Record<string, unknown>} [context]
+ * @property {Parameters<typeof createDefaultTransports>[0]} [transports]
+ * @typedef {{ level: string, message: string, labels: Record<string, unknown>, immediate?: boolean, options?: LogOptions }} LogEntry
+ */
+
+/**
  * Structured logger with context inheritance and error classification.
  */
 class Logger {
   /**
-   * @param {Object} env - Cloudflare Worker env bindings
-   * @param {Object} [options]
-   * @param {string} [options.service]
-   * @param {string} [options.minLevel]
-   * @param {RequestContext} [options.reqCtx]
-   * @param {Object} [options.context]
-   * @param {Array<{name: string, send: Function, flush?: Function}>} [options.transports]
+   * @param {LoggerEnv} env - Cloudflare Worker env bindings
+   * @param {LoggerOptions} [options]
    */
   constructor(env, options = {}) {
     this.env = env;
@@ -25,12 +33,12 @@ class Logger {
     this.transports = createDefaultTransports(options.transports);
   }
 
-  /** @param {Object} env @param {Object} [options] @returns {Logger} */
+  /** @param {LoggerEnv} env @param {LoggerOptions} [options] @returns {Logger} */
   static create(env, options = {}) {
     return new Logger(env, options);
   }
 
-  /** @param {Object} extraContext @returns {Logger} */
+  /** @param {Record<string, unknown>} extraContext @returns {Logger} */
   child(extraContext = {}) {
     return new Logger(this.env, {
       service: this.service,
@@ -57,7 +65,7 @@ class Logger {
     return (LEVEL_PRIORITY[level] ?? 0) >= (LEVEL_PRIORITY[this.minLevel] ?? 0);
   }
 
-  /** @param {Object} [extra] @returns {Object} */
+  /** @param {Record<string, unknown>} [extra] @returns {Record<string, unknown>} */
   _buildLabels(extra = {}) {
     const labels = { ...this.context };
     if (this.reqCtx) Object.assign(labels, this.reqCtx.toLabels());
@@ -68,8 +76,8 @@ class Logger {
   /**
    * @param {string} level
    * @param {string} message
-   * @param {Object} [extra]
-   * @param {Object} [options]
+   * @param {Record<string, unknown>} [extra]
+   * @param {LogOptions} [options]
    * @returns {Promise<void>}
    */
   async _log(level, message, extra = {}, options = {}) {
@@ -83,7 +91,7 @@ class Logger {
     });
   }
 
-  /** @param {Object} entry @returns {Promise<void>} */
+  /** @param {LogEntry} entry @returns {Promise<void>} */
   async _dispatch(entry) {
     return dispatchToTransports(this.transports, {
       level: entry.level,
@@ -96,22 +104,22 @@ class Logger {
     });
   }
 
-  /** @param {string} message @param {Object} [extra] @returns {Promise<void>} */
+  /** @param {string} message @param {Record<string, unknown>} [extra] @returns {Promise<void>} */
   async debug(message, extra) {
     return this._log(LogLevel.DEBUG, message, extra);
   }
 
-  /** @param {string} message @param {Object} [extra] @returns {Promise<void>} */
+  /** @param {string} message @param {Record<string, unknown>} [extra] @returns {Promise<void>} */
   async info(message, extra) {
     return this._log(LogLevel.INFO, message, extra);
   }
 
-  /** @param {string} message @param {Object} [extra] @returns {Promise<void>} */
+  /** @param {string} message @param {Record<string, unknown>} [extra] @returns {Promise<void>} */
   async warn(message, extra) {
     return this._log(LogLevel.WARN, message, extra);
   }
 
-  /** @param {string} message @param {Error|*} error @param {Object} [extra] */
+  /** @param {string} message @param {unknown} error @param {Record<string, unknown>} [extra] */
   async error(message, error, extra = {}) {
     const normalized = normalizeError(error);
     console.error(`[${this.service}] ${message}:`, normalized.message);
@@ -123,7 +131,7 @@ class Logger {
     });
   }
 
-  /** @param {string} message @param {Error|*} error @param {Object} [extra] */
+  /** @param {string} message @param {unknown} error @param {Record<string, unknown>} [extra] */
   async fatal(message, error, extra = {}) {
     const normalized = normalizeError(error);
     console.error(`[FATAL][${this.service}] ${message}:`, normalized.message);

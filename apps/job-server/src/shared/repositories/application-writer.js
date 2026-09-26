@@ -90,7 +90,8 @@ export async function updateApplicationStatus(d1Client, id, status, note = '') {
 
   const current = await requireById(d1Client, id);
   const now = new Date().toISOString();
-  const statusColumn = STATUS_UPDATE_TIMESTAMPS[status] || null;
+  const statusColumn =
+    /** @type {Partial<Record<string, string>>} */ (STATUS_UPDATE_TIMESTAMPS)[status] || null;
 
   let sql = 'UPDATE applications SET status = ?, updated_at = ?';
   const params = [status, now];

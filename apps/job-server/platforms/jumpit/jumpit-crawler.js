@@ -1,13 +1,28 @@
 import { BaseCrawler } from '../../src/crawlers/base-crawler.js';
 
 /**
+ * @typedef {{ keyword?: string, offset?: number, limit?: number, techStack?: string }} JumpitSearchParams
+ * @typedef {{
+ *   id?: string | number, positionId?: string | number,
+ *   title?: string, positionName?: string, companyName?: string,
+ *   company?: { name?: string }, location?: string, workPlace?: string,
+ *   description?: string, content?: string, techStacks?: string[], skills?: string[],
+ *   minSalary?: number, maxSalary?: number, minCareer?: number, maxCareer?: number,
+ *   createdAt?: string | null, publishedAt?: string | null,
+ *   closedAt?: string | null, deadline?: string | null
+ * }} RawJumpitJob
+ * @typedef {{ result?: { positions?: RawJumpitJob[], totalCount?: number }, data?: RawJumpitJob[] }} JumpitSearchResponse
+ * @typedef {RawJumpitJob & { result?: RawJumpitJob, data?: RawJumpitJob }} JumpitDetailResponse
+ */
+
+/**
  * Jumpit (jumpit.co.kr) job platform crawler.
  * Korean developer-focused job platform.
  * @extends BaseCrawler
  */
 export class JumpitCrawler extends BaseCrawler {
   /**
-   * @param {Object} [options] - Crawler options
+   * @param {import('../../src/crawlers/base-crawler.js').BaseCrawlerOptions} [options] - Crawler options
    * @param {number} [options.rateLimit=1000] - Rate limit in ms between requests
    */
   constructor(options = {}) {
@@ -22,7 +37,7 @@ export class JumpitCrawler extends BaseCrawler {
 
   /**
    * Build search query URL from parameters.
-   * @param {Object} params - Search parameters
+   * @param {JumpitSearchParams} params - Search parameters
    * @param {string} [params.keyword] - Search keyword
    * @param {number} [params.offset=0] - Pagination offset
    * @param {number} [params.limit=16] - Results per page
@@ -32,7 +47,7 @@ export class JumpitCrawler extends BaseCrawler {
   buildSearchQuery(params = {}) {
     const searchParams = new URLSearchParams();
     if (params.keyword) searchParams.set('search', params.keyword);
-    searchParams.set('page', Math.floor((params.offset || 0) / (params.limit || 16)) + 1);
+    searchParams.set('page', String(Math.floor((params.offset || 0) / (params.limit || 16)) + 1));
     searchParams.set('sort', 'rpiDesc');
     if (params.techStack) searchParams.set('techStack', params.techStack);
     return searchParams.toString();
@@ -40,14 +55,14 @@ export class JumpitCrawler extends BaseCrawler {
 
   /**
    * Search for jobs on Jumpit.
-   * @param {Object} params - Search parameters
-   * @returns {Promise<{success: boolean, source: string, total: number, hasMore: boolean, jobs: Array}>}
+   * @param {JumpitSearchParams} params - Search parameters
+   * @returns {Promise<{success: true, source: string, total: number, hasMore: boolean, nextOffset: number, jobs: ReturnType<JumpitCrawler['normalizeJob']>[]} | {success: false, source: string, error: string, jobs: []}>}
    */
   async searchJobs(params = {}) {
     try {
       const query = this.buildSearchQuery(params);
       const url = `${this.apiBase}/api/positions?${query}`;
-      const result = await this.fetchJSON(url);
+      const result = /** @type {JumpitSearchResponse} */ (await this.fetchJSON(url));
       const positions = result.result?.positions || result.data || [];
       const jobs = positions.map((job) => this.normalizeJob(job));
 
@@ -60,14 +75,19 @@ export class JumpitCrawler extends BaseCrawler {
         jobs,
       };
     } catch (error) {
-      return { success: false, source: this.source, error: error.message, jobs: [] };
+      return {
+        success: false,
+        source: this.source,
+        error: error instanceof Error ? error.message : String(error),
+        jobs: [],
+      };
     }
   }
 
   /**
    * Normalize a Jumpit job object to common format.
-   * @param {Object} job - Raw Jumpit job data
-   * @returns {Object} Normalized job
+   * @param {RawJumpitJob} job - Raw Jumpit job data
+   * @returns Normalized job
    */
   normalizeJob(job) {
     return {
@@ -89,16 +109,16 @@ export class JumpitCrawler extends BaseCrawler {
   /**
    * Get detailed job information.
    * @param {string} jobId - Job identifier
-   * @returns {Promise<Object>} Job detail
+   * @returns {Promise<{success: true, job: ReturnType<JumpitCrawler['normalizeJob']>} | {success: false, error: string}>} Job detail
    */
   async getJobDetail(jobId) {
     try {
       const numericId = jobId.replace('jumpit-', '');
       const url = `${this.apiBase}/api/positions/${numericId}`;
-      const result = await this.fetchJSON(url);
+      const result = /** @type {JumpitDetailResponse} */ (await this.fetchJSON(url));
       return { success: true, job: this.normalizeJob(result.result || result.data || result) };
     } catch (error) {
-      return { success: false, error: error.message };
+      return { success: false, error: error instanceof Error ? error.message : String(error) };
     }
   }
 }

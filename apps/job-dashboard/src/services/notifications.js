@@ -162,7 +162,7 @@ export class NotificationService {
 
   /**
    * @param {string} eventType
-   * @param {unknown} data
+   * @param {Record<string, unknown>} data
    * @param {Record<string, unknown>} [options]
    * @returns {Promise<unknown>}
    */
@@ -239,7 +239,7 @@ export class NotificationService {
 
   /**
    * @param {string} event
-   * @param {unknown} data
+   * @param {Record<string, unknown> | null | undefined} data
    * @returns {Promise<unknown>}
    */
   async triggerAutomationWebhook(event, data) {

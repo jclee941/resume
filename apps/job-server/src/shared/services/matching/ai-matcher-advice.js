@@ -1,5 +1,11 @@
 import { analyzeWithClaude } from './ai-matcher.js';
 
+/**
+ * @param {string} text
+ * @param {string} [category]
+ * @param {{ logger?: import('./ai-matcher.js').MatchingLogger }} [options]
+ * @returns {Promise<{ keywords: string[]; tech_stack: string[]; importance_scores: Record<string, number> }>}
+ */
 export async function extractKeywordsWithAI(text, category = 'general', { logger = console } = {}) {
   const prompt = `다음 텍스트에서 ${category} 관련 주요 키워드를 추출해주세요.
 JSON 형식: {"keywords": [], "tech_stack": [], "importance_scores": {}}`;
@@ -12,11 +18,21 @@ JSON 형식: {"keywords": [], "tech_stack": [], "importance_scores": {}}`;
     if (!jsonMatch) return { keywords: [], tech_stack: [], importance_scores: {} };
     return JSON.parse(jsonMatch[0]);
   } catch (error) {
-    logger.error('[extractKeywordsWithAI] JSON parse failed:', error.message);
+    logger.error(
+      '[extractKeywordsWithAI] JSON parse failed:',
+      error instanceof Error ? error.message : String(error)
+    );
     return { keywords: [], tech_stack: [], importance_scores: {} };
   }
 }
 
+/**
+ * @param {unknown} resumeAnalysis
+ * @param {unknown} jobAnalysis
+ * @param {unknown} matchResult
+ * @param {{ logger?: import('./ai-matcher.js').MatchingLogger }} [options]
+ * @returns {Promise<{ suitability: string; preparation_needed: string[]; interview_focus: string[]; next_steps: string[] } | null>}
+ */
 export async function getCareerAdvice(
   resumeAnalysis,
   jobAnalysis,
@@ -39,7 +55,10 @@ JSON 형식: {"suitability": "", "preparation_needed": [], "interview_focus": []
     if (!jsonMatch) return null;
     return JSON.parse(jsonMatch[0]);
   } catch (error) {
-    logger.error('[getCareerAdvice] JSON parse failed:', error.message);
+    logger.error(
+      '[getCareerAdvice] JSON parse failed:',
+      error instanceof Error ? error.message : String(error)
+    );
     return null;
   }
 }

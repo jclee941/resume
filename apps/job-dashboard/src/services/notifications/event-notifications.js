@@ -30,7 +30,7 @@ const PLATFORM_NAMES = {
 /**
  * @param {import('../notifications.js').NotificationService} service
  * @param {string} eventType
- * @param {Record<string, unknown> | null | undefined} [data]
+ * @param {Record<string, unknown>} data
  * @param {NotifyOptions} [options]
  * @returns {Promise<Record<string, unknown>>}
  */

@@ -2,9 +2,8 @@ import { answerCallbackQuery } from './delivery.js';
 import { saveNotificationHistory } from './history.js';
 
 /**
- * @typedef {import('./history.js').HistoryAdapter & {
- *   telegramToken?: string;
- *   handlers?: Record<string, (...args: unknown[]) => Promise<{ success?: boolean; message?: string } | void>>;
+ * @typedef {import('./delivery.js').DeliveryAdapter & {
+ *   handlers?: CallbackHandlers;
  * }} TelegramAdapter
  *
  * @typedef {{
@@ -13,7 +12,8 @@ import { saveNotificationHistory } from './history.js';
  *   [key: string]: unknown;
  * }} CallbackQuery
  *
- * @typedef {Record<string, (...args: unknown[]) => Promise<{ success?: boolean; message?: string } | void>>} CallbackHandlers
+ * @typedef {(applicationId: string, query?: CallbackQuery) => Promise<{ success?: boolean; message?: string } | void> | { success?: boolean; message?: string } | void} CallbackHandler
+ * @typedef {{ onApprove?: CallbackHandler; onReject?: CallbackHandler; onView?: CallbackHandler; [key: string]: CallbackHandler | undefined }} CallbackHandlers
  */
 
 /**

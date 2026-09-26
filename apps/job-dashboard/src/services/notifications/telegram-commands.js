@@ -28,7 +28,7 @@ import { AUTO_APPLY_PAUSED_KEY } from '../auto-apply-pause.js';
  * @property {{ JOB_DB: D1DatabaseLike; SESSIONS: KvNamespaceLike }} env
  * @property {string} [telegramToken]
  * @property {string | number} [telegramChatId]
- * @property {{ checkLimit(id: string | number): Promise<{ allowed: boolean; remaining?: number; resetTime?: number }>; consume(id: string | number, count?: number): Promise<unknown> }} [rateLimiter]
+ * @property {import('./delivery.js').RateLimiterLike} rateLimiter
  */
 
 /**
@@ -150,12 +150,12 @@ export async function handleStatusCommand(service, _chatId) {
 
 /**
  * @param {NotificationCommandService} service
- * @param {string | number | undefined} chatId
+ * @param {string | number | undefined} _chatId
  * @param {string[]} args
  * @returns {Promise<unknown>}
  */
-export async function handleApproveCommand(service, chatId, args) {
-  /** @type {string | (typeof chatId & never)} */
+export async function handleApproveCommand(service, _chatId, args) {
+  /** @type {string} */
   const applicationId = args[0];
   if (!applicationId) {
     return sendTelegramNotification(service, {
@@ -169,12 +169,12 @@ export async function handleApproveCommand(service, chatId, args) {
 
 /**
  * @param {NotificationCommandService} service
- * @param {string | number | undefined} chatId
+ * @param {string | number | undefined} _chatId
  * @param {string[]} args
  * @returns {Promise<unknown>}
  */
-export async function handleRejectCommand(service, chatId, args) {
-  /** @type {string | (typeof chatId & never)} */
+export async function handleRejectCommand(service, _chatId, args) {
+  /** @type {string} */
   const applicationId = args[0];
   if (!applicationId) {
     return sendTelegramNotification(service, {

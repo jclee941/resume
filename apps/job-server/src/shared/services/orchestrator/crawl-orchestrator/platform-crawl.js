@@ -1,11 +1,16 @@
 /**
  * @fileoverview Platform crawl execution for crawl orchestration.
+ * @typedef {import('./constants.js').CrawlOrchestratorOptions} CrawlOrchestratorOptions
+ * @typedef {import('./result-aggregation.js').PlatformResult} PlatformResult
+ * @typedef {import('./orchestrator.js').CrawlOrchestrator} CrawlOrchestrator
+ * @typedef {import('../../../../crawlers/unified/job-normalization.js').ConvertParamsInput & { keywords: string | string[], extra?: import('../../../../crawlers/unified/search-operations.js').SearchOptions }} SearchParams
+ * @typedef {Error & { statusCode?: number, status?: number, retryAfter?: number }} PlatformCrawlError
  */
 
 /**
  * Run platform crawls with bounded concurrency.
  *
- * @param {object} orchestrator
+ * @param {CrawlOrchestrator} orchestrator
  * @param {string[]} platforms
  * @param {SearchParams} searchParams
  * @param {Map<string,string>} taskMap platform→taskId
@@ -13,17 +18,18 @@
  * @returns {Promise<Map<string, PlatformResult>>}
  */
 export async function executeWithConcurrency(orchestrator, platforms, searchParams, taskMap, opts) {
+  /** @type {Map<string, PlatformResult>} */
   const results = new Map();
   const concurrency = opts.concurrency;
   let index = 0;
 
   const worker = async () => {
     while (index < platforms.length) {
-      if (orchestrator._abortController.signal.aborted) break;
+      if (/** @type {AbortController} */ (orchestrator._abortController).signal.aborted) break;
 
       const i = index++;
       const platform = platforms[i];
-      const taskId = taskMap.get(platform);
+      const taskId = /** @type {string} */ (taskMap.get(platform));
 
       const result = await orchestrator._crawlPlatform(platform, searchParams, taskId, opts);
       results.set(platform, result);
@@ -39,7 +45,7 @@ export async function executeWithConcurrency(orchestrator, platforms, searchPara
 /**
  * Crawl a single platform with rate limiting and progress tracking.
  *
- * @param {object} orchestrator
+ * @param {CrawlOrchestrator} orchestrator
  * @param {string} platform
  * @param {SearchParams} searchParams
  * @param {string} taskId
@@ -51,7 +57,7 @@ export async function crawlPlatform(orchestrator, platform, searchParams, taskId
   orchestrator.emit('platform:start', { platform, taskId });
 
   try {
-    if (orchestrator._abortController.signal.aborted) {
+    if (/** @type {AbortController} */ (orchestrator._abortController).signal.aborted) {
       orchestrator.progressTracker.cancelTask(taskId);
       return { platform, status: 'cancelled', jobs: [], error: null, durationMs: 0 };
     }
@@ -76,7 +82,13 @@ export async function crawlPlatform(orchestrator, platform, searchParams, taskId
 
     return { platform, status: 'success', jobs, error: null, durationMs };
   } catch (error) {
-    return handlePlatformCrawlError(orchestrator, platform, taskId, error, Date.now() - startTime);
+    return handlePlatformCrawlError(
+      orchestrator,
+      platform,
+      taskId,
+      /** @type {PlatformCrawlError} */ (error),
+      Date.now() - startTime
+    );
   }
 }
 
@@ -85,7 +97,7 @@ export async function crawlPlatform(orchestrator, platform, searchParams, taskId
  *
  * @param {string} platform
  * @param {SearchParams} searchParams
- * @returns {Promise<object[]>}
+ * @returns {Promise<import('./result-aggregation.js').PlatformJob[]>}
  */
 export async function executePlatformCrawl(platform, searchParams) {
   const { default: UnifiedJobCrawler } = await import('../../../../crawlers/index.js');
@@ -104,10 +116,10 @@ export async function executePlatformCrawl(platform, searchParams) {
 /**
  * Convert a platform crawl error into a platform result.
  *
- * @param {object} orchestrator
+ * @param {CrawlOrchestrator} orchestrator
  * @param {string} platform
  * @param {string} taskId
- * @param {Error & { statusCode?: number, status?: number, retryAfter?: number }} error
+ * @param {PlatformCrawlError} error
  * @param {number} durationMs
  * @returns {PlatformResult}
  */

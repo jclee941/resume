@@ -14,6 +14,9 @@ const repoRoot = path.resolve(scriptDir, '../../..');
 const outputNames = ['data.json', 'data_en.json', 'data_ja.json'];
 const childNames = ['sources', 'run-1', 'run-2'];
 
+/** @typedef {import('./secure-directory.js').PinnedDirectoryBinding} PinnedDirectoryBinding */
+
+/** @param {string} outputDir */
 function assertExactOutputs(outputDir) {
   const actual = fs.readdirSync(outputDir).sort();
   const expected = [...outputNames].sort();
@@ -22,12 +25,14 @@ function assertExactOutputs(outputDir) {
   }
 }
 
+/** @param {string} tempBase */
 function prepareTempRoot(tempBase) {
   secureDirectory.requireFdRelativeSupport();
   const tempParent = path.join(tempBase, 'verify-resume-sync');
   fs.mkdirSync(tempParent, { recursive: true });
   const tempRoot = fs.mkdtempSync(path.join(tempParent, 'run-'));
   const root = secureDirectory.openPinnedDirectory(tempRoot);
+  /** @type {Map<string, PinnedDirectoryBinding>} */
   const children = new Map();
   try {
     for (const name of childNames) {
@@ -44,6 +49,7 @@ function prepareTempRoot(tempBase) {
   }
 }
 
+/** @param {PinnedDirectoryBinding} binding @param {string} name */
 function removeKnownFile(binding, name) {
   try {
     fs.unlinkSync(secureDirectory.leafPath(binding, name));
@@ -52,11 +58,14 @@ function removeKnownFile(binding, name) {
   }
 }
 
+/** @param {ReturnType<typeof prepareTempRoot>} temp */
 function cleanupTempRoot({ children, root, tempRoot }) {
   const sourceNames = paths.LANGUAGE_SOURCES.map(({ sourcePath }) => path.basename(sourcePath));
-  for (const name of sourceNames) removeKnownFile(children.get('sources'), name);
+  for (const name of sourceNames)
+    removeKnownFile(/** @type {PinnedDirectoryBinding} */ (children.get('sources')), name);
   for (const run of ['run-1', 'run-2']) {
-    for (const name of outputNames) removeKnownFile(children.get(run), name);
+    for (const name of outputNames)
+      removeKnownFile(/** @type {PinnedDirectoryBinding} */ (children.get(run)), name);
   }
 
   const rootMatches = secureDirectory.matchesOriginal(root);
@@ -86,7 +95,7 @@ export async function verifyResumeSync({
   const run2 = path.join(tempRoot, 'run-2');
 
   try {
-    const sourceBinding = children.get('sources');
+    const sourceBinding = /** @type {PinnedDirectoryBinding} */ (children.get('sources'));
     for (const source of paths.LANGUAGE_SOURCES) {
       const sourceName = path.basename(source.sourcePath);
       const copiedPath = secureDirectory.leafPath(sourceBinding, sourceName);

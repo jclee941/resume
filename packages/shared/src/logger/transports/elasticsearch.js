@@ -16,7 +16,10 @@ import { logToElasticsearch, flush as esFlush } from '../../clients/elasticsearc
 
 /**
  * Create an Elasticsearch transport.
- * @returns {{name: string, send: Function, flush: Function}}
+ * @returns {{ name: string,
+ *   send(entry: import('../core.js').LogEntry & { service: string, env: import('../core.js').LoggerEnv }): Promise<void>,
+ *   flush(env: import('../core.js').LoggerEnv, options?: import('../core.js').LogOptions): Promise<void>
+ * }}
  */
 export function createElasticsearchTransport() {
   return {
@@ -24,14 +27,7 @@ export function createElasticsearchTransport() {
 
     /**
      * Send one log entry through the existing ES batching/queuing path.
-     * @param {Object} entry
-     * @param {string} entry.level
-     * @param {string} entry.message
-     * @param {string} entry.service
-     * @param {Object} entry.labels
-     * @param {Object} entry.env
-     * @param {boolean} [entry.immediate]
-     * @param {Object} [entry.options]
+     * @param {import('../core.js').LogEntry & { service: string, env: import('../core.js').LoggerEnv }} entry
      */
     async send(entry) {
       const opts = {
@@ -44,8 +40,8 @@ export function createElasticsearchTransport() {
 
     /**
      * Flush any queued ES entries.
-     * @param {Object} env
-     * @param {Object} [options]
+     * @param {import('../core.js').LoggerEnv} env
+     * @param {import('../core.js').LogOptions} [options]
      */
     async flush(env, options = {}) {
       return esFlush(env, options);

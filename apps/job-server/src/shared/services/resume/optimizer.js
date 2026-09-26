@@ -6,6 +6,10 @@ import { analyzeWithClaude } from '../matching/ai-matcher.js';
 
 /**
  * JD 분석 결과를 바탕으로 이력서를 최적화합니다.
+ * @param {string} masterResume
+ * @param {unknown} jobAnalysis
+ * @param {{ analyzeFn?: typeof analyzeWithClaude }} [options]
+ * @returns {Promise<string>}
  */
 export async function optimizeResume(masterResume, jobAnalysis, options = {}) {
   const analyzeFn = typeof options.analyzeFn === 'function' ? options.analyzeFn : analyzeWithClaude;

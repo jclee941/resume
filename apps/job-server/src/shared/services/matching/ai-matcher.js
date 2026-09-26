@@ -10,6 +10,19 @@ const CLAUDE_CONFIG = {
   maxTokens: 4000,
 };
 
+/**
+ * @typedef {Pick<Console, 'warn' | 'error'>} MatchingLogger
+ * @typedef {import('./job-matcher/scoring.js').ScoringJob & { title?: string; content?: string }} AIJobPosting
+ * @typedef {string | { summary?: unknown; experience?: unknown; skills?: unknown }} AIResume
+ * @typedef {{ logger?: MatchingLogger; resumeReader?: (path: string) => AIResume }} MatchOptions
+ */
+
+/**
+ * @param {string} prompt
+ * @param {string} text
+ * @param {{ logger?: MatchingLogger }} [options]
+ * @returns {Promise<string | null>}
+ */
 export async function analyzeWithClaude(prompt, text, { logger = console } = {}) {
   if (!CLAUDE_CONFIG.apiKey) {
     logger.warn('Claude API key not found, falling back to basic matching');
@@ -44,11 +57,16 @@ export async function analyzeWithClaude(prompt, text, { logger = console } = {})
     const result = await response.json();
     return result.choices[0].message.content;
   } catch (error) {
-    logger.error('Claude AI 분석 실패:', error.message);
+    logger.error('Claude AI 분석 실패:', error instanceof Error ? error.message : String(error));
     return null;
   }
 }
 
+/**
+ * @param {AIJobPosting} jobPosting
+ * @param {{ logger?: MatchingLogger }} [options]
+ * @returns {Promise<Record<string, unknown> | null>}
+ */
 export async function analyzeJobPosting(jobPosting, { logger = console } = {}) {
   const prompt = `채용 공고를 분석하여 다음 정보를 JSON 형식으로 추출해주세요:
 1. 주요 요구사항 (required_skills, preferred_skills)
@@ -78,11 +96,19 @@ JSON 형식으로만 응답해주세요.`;
     if (!jsonMatch) return null;
     return JSON.parse(jsonMatch[0]);
   } catch (error) {
-    logger.error('[analyzeJobPosting] JSON parse failed:', error.message);
+    logger.error(
+      '[analyzeJobPosting] JSON parse failed:',
+      error instanceof Error ? error.message : String(error)
+    );
     return null;
   }
 }
 
+/**
+ * @param {AIResume} resume
+ * @param {{ logger?: MatchingLogger }} [options]
+ * @returns {Promise<Record<string, unknown> | null>}
+ */
 export async function analyzeResume(resume, { logger = console } = {}) {
   const prompt = `이력서를 분석하여 다음 정보를 JSON 형식으로 추출해주세요:
 1. 보유 기술 스택 (skills)
@@ -105,11 +131,20 @@ JSON 형식으로만 응답해주세요.`;
     if (!jsonMatch) return null;
     return JSON.parse(jsonMatch[0]);
   } catch (error) {
-    logger.error('[analyzeResume] JSON parse failed:', error.message);
+    logger.error(
+      '[analyzeResume] JSON parse failed:',
+      error instanceof Error ? error.message : String(error)
+    );
     return null;
   }
 }
 
+/**
+ * @param {unknown} resumeAnalysis
+ * @param {unknown} jobAnalysis
+ * @param {{ logger?: MatchingLogger }} [options]
+ * @returns {Promise<{ score: number; reasoning: string; details?: Record<string, unknown> }>}
+ */
 export async function calculateAIMatchScore(
   resumeAnalysis,
   jobAnalysis,
@@ -139,11 +174,19 @@ JSON 형식으로 응답:
       details: result,
     };
   } catch (error) {
-    logger.error('[calculateAIMatchScore] JSON parse failed:', error.message);
+    logger.error(
+      '[calculateAIMatchScore] JSON parse failed:',
+      error instanceof Error ? error.message : String(error)
+    );
     return { score: 0, reasoning: '파싱 오류' };
   }
 }
 
+/**
+ * @param {string} resumePath
+ * @param {AIJobPosting} jobPosting
+ * @param {MatchOptions} [options]
+ */
 export async function calculateAIMatch(
   resumePath,
   jobPosting,
@@ -182,7 +225,7 @@ export async function calculateAIMatch(
       matchScore: 0,
       aiAnalysis: null,
       fallback: true,
-      reasoning: `AI 분석 오류: ${error.message}`,
+      reasoning: `AI 분석 오류: ${error instanceof Error ? error.message : String(error)}`,
     };
   }
 }

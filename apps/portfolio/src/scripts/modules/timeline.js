@@ -15,6 +15,12 @@ import { CAREER_UI_META, DEFAULT_CAREER_UI_META } from './timeline-career-meta.j
 import { bindTimelineInteractions } from './timeline-interactions.js';
 import { createTimelineNode } from './timeline-rendering.js';
 
+/**
+ * @typedef {import('./timeline-rendering.js').TimelineCareer} TimelineCareer
+ * @typedef {Omit<TimelineCareer, 'phase' | 'status'> & Partial<Pick<TimelineCareer, 'phase' | 'status'>>} SourceCareer
+ */
+
+/** @type {HTMLUListElement | null} */
 let timelineContainer = null;
 
 /**
@@ -28,7 +34,7 @@ export function initCareerTimeline() {
   }
 
   injectTimeline();
-  bindTimelineInteractions(timelineContainer);
+  bindTimelineInteractions(/** @type {HTMLUListElement} */ (timelineContainer));
 
   console.log('[CareerTimeline] Initialized successfully.');
 }
@@ -44,13 +50,17 @@ function isTimelineSectionPresent() {
 /**
  * Merge build-injected SSoT career DATA with UI-only presentation metadata.
  * Pure function (no globals) so it can be unit-tested in isolation.
- * @param {Array<Object>} careers - SSoT career entries from generated portfolio data.
- * @returns {Array<Object>} Render-ready career nodes with phase/status attached.
+ * @param {SourceCareer[]} careers - SSoT career entries from generated portfolio data.
+ * @returns {TimelineCareer[]} Render-ready career nodes with phase/status attached.
  */
 export function mergeCareerUiMeta(careers) {
   if (!Array.isArray(careers)) return [];
   return careers.map((career) => {
-    const meta = CAREER_UI_META[career.period] || DEFAULT_CAREER_UI_META;
+    const meta = /** @type {Pick<TimelineCareer, 'phase' | 'status'>} */ (
+      /** @type {Record<string, typeof DEFAULT_CAREER_UI_META>} */ (CAREER_UI_META)[
+        career.period
+      ] || DEFAULT_CAREER_UI_META
+    );
     return { ...career, phase: career.phase || meta.phase, status: career.status || meta.status };
   });
 }
@@ -64,7 +74,7 @@ export function mergeCareerUiMeta(careers) {
  * (packages/data/resumes/master/resume_data.json) by
  * tools/scripts/utils/resume-web-data-generator.js, so there is no hardcoded
  * career content here to drift out of sync. UI-only phase/status are merged on.
- * @returns {Array<Object>}
+ * @returns {TimelineCareer[]}
  */
 function getCareerData() {
   const injected = (typeof window !== 'undefined' && window.__RESUME_CHAT_DATA__) || {};
@@ -77,7 +87,7 @@ function getCareerData() {
     return [];
   }
 
-  return mergeCareerUiMeta(careers);
+  return mergeCareerUiMeta(/** @type {SourceCareer[]} */ (careers));
 }
 
 /**
@@ -110,9 +120,11 @@ function injectTimeline() {
   // Store reference to container
   timelineContainer = timeline;
   requestAnimationFrame(() => {
-    const nodes = timelineContainer.querySelectorAll('.timeline-node');
+    const nodes = /** @type {HTMLUListElement} */ (timelineContainer).querySelectorAll(
+      '.timeline-node'
+    );
     nodes.forEach((node, i) => {
-      node.style.animationDelay = `${i * 100}ms`;
+      /** @type {HTMLElement} */ (node).style.animationDelay = `${i * 100}ms`;
       node.classList.add('timeline-node--animate');
     });
   });
