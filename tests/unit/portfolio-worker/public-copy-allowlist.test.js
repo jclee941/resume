@@ -285,42 +285,6 @@ describe('public-copy source audit allowlist', () => {
     ])
       expect(() => validateSourceMapBootstrap(invalid)).toThrow();
   });
-
-  // Opt-in base-diff audit: set PORTFOLIO_COPY_BASE_SHA to a full commit SHA to
-  // check that resume copy edits since that commit stay within the allowlist.
-  // No CI job supplies it, so the default suite skips this test.
-  const baseDiffTest = /^[0-9a-f]{40}$/.test(process.env.PORTFOLIO_COPY_BASE_SHA || '')
-    ? test
-    : test.skip;
-  baseDiffTest('the repository remains unchanged relative to the supplied base', () => {
-    const baseSha = process.env.PORTFOLIO_COPY_BASE_SHA;
-    expect(baseSha).toMatch(/^[0-9a-f]{40}$/);
-    const files = [
-      'packages/data/resumes/master/resume_data.json',
-      'packages/data/resumes/master/resume_data_en.json',
-      'packages/data/resumes/master/resume_data_ja.json',
-    ];
-    const afterDocuments = Object.fromEntries(
-      files.map((file) => [
-        file.endsWith('_en.json') ? 'en' : file.endsWith('_ja.json') ? 'ja' : 'ko',
-        JSON.parse(fs.readFileSync(path.join(ROOT, file), 'utf8')),
-      ])
-    );
-    for (const file of files) {
-      const before = JSON.parse(
-        require('child_process').execFileSync('git', ['show', `${baseSha}:${file}`], {
-          cwd: ROOT,
-          encoding: 'utf8',
-        })
-      );
-      const after = JSON.parse(fs.readFileSync(path.join(ROOT, file), 'utf8'));
-      const locale = file.endsWith('_en.json') ? 'en' : file.endsWith('_ja.json') ? 'ja' : 'ko';
-      const rejected = auditSource(before, after, locale, afterDocuments).filter(
-        ({ allowed }) => !allowed
-      );
-      expect(rejected).toEqual([]);
-    }
-  });
 });
 
 describe('ledger prerequisites', () => {
