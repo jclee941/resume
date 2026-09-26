@@ -295,10 +295,17 @@ describe('csp-hash-generator', () => {
       expect(merged3.length).toBe(1);
     });
 
+    it('should merge every array it receives (ko, en, and ja pages)', () => {
+      const merged = mergeHashes(["'sha256-ko='"], ["'sha256-en='"], ["'sha256-ja='"]);
+
+      expect(merged).toEqual(["'sha256-ko='", "'sha256-en='", "'sha256-ja='"]);
+    });
+
     it('should throw on non-array input', () => {
-      expect(() => mergeHashes(null, [])).toThrow('Both parameters must be arrays');
-      expect(() => mergeHashes([], 'string')).toThrow('Both parameters must be arrays');
-      expect(() => mergeHashes({}, [])).toThrow('Both parameters must be arrays');
+      expect(() => mergeHashes(null, [])).toThrow('All parameters must be arrays');
+      expect(() => mergeHashes([], 'string')).toThrow('All parameters must be arrays');
+      expect(() => mergeHashes({}, [])).toThrow('All parameters must be arrays');
+      expect(() => mergeHashes([], [], null)).toThrow('All parameters must be arrays');
     });
 
     it('should preserve hash order (Set preserves insertion order)', () => {
