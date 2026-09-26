@@ -66,8 +66,12 @@ function createStatsDbWithResult(result) {
       expect(sql).not.toContain("status = 'interviewing'");
       expect(sql).not.toContain("status = 'offered'");
       return {
-        async first() {
-          return result;
+        bind() {
+          return {
+            async first() {
+              return result;
+            },
+          };
         },
       };
     },
@@ -117,7 +121,8 @@ describe('application status contract', () => {
           expired: 1,
         }),
       },
-      'daily'
+      'daily',
+      '2026-09-26'
     );
 
     expect(Object.keys(stats)).toEqual(['total', ...EXPECTED_DASHBOARD_STATUSES]);

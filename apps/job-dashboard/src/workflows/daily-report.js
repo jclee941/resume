@@ -83,7 +83,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '1 minute',
       },
       async () => {
-        return await getApplicationStats(this.env, type);
+        return await getApplicationStats(this.env, type, report.date);
       }
     );
 
@@ -97,7 +97,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '1 minute',
       },
       async () => {
-        return await getPlatformStats(this.env, type);
+        return await getPlatformStats(this.env, type, report.date);
       }
     );
 
@@ -111,7 +111,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '1 minute',
       },
       async () => {
-        return await getSearchStats(this.env, type);
+        return await getSearchStats(this.env, type, report.date);
       }
     );
 
@@ -125,7 +125,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '1 minute',
       },
       async () => {
-        return await calculateTrends(this.env, appStats, type);
+        return await calculateTrends(this.env, appStats, type, report.date);
       }
     );
 

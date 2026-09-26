@@ -1,9 +1,11 @@
 /**
  * @typedef {{
- *   prepare(query: string): {
- *     first(): Promise<Record<string, number | null> | null>;
- *     all(): Promise<{ results?: Array<{ platform: string; count: number; success: number }> }>;
- *   };
+ *   first(): Promise<Record<string, number | null> | null>;
+ *   all(): Promise<{ results?: Array<{ platform: string; count: number; success: number }> }>;
+ * }} D1StatementLike
+ *
+ * @typedef {{
+ *   prepare(query: string): { bind(...values: unknown[]): D1StatementLike };
  * }} D1DatabaseLike
  */
 
@@ -13,20 +15,22 @@
  */
 
 /**
+ * Every query binds the report date (YYYY-MM-DD) as ?1, so a report generated
+ * for a past date covers that date's window instead of the days before "now".
  * @param {string} [type]
  * @returns {string}
  */
-function getReportDateFilter(type) {
-  return type === 'weekly' ? "date('now', '-7 days')" : "date('now', '-1 day')";
+function getReportWindow(type) {
+  const start = type === 'weekly' ? "date(?1, '-7 days')" : "date(?1, '-1 day')";
+  return `date(created_at) >= ${start} AND date(created_at) <= date(?1)`;
 }
 
 /**
  * @param {DailyReportEnv} env
- * @param {string} [type]
+ * @param {string} type
+ * @param {string} reportDate - YYYY-MM-DD date the report covers.
  */
-export async function getApplicationStats(env, type) {
-  const dateFilter = getReportDateFilter(type);
-
+export async function getApplicationStats(env, type, reportDate) {
   const stats = await env.JOB_DB.prepare(
     `
       SELECT 
@@ -42,9 +46,11 @@ export async function getApplicationStats(env, type) {
         SUM(CASE WHEN status = 'withdrawn' THEN 1 ELSE 0 END) as withdrawn,
         SUM(CASE WHEN status = 'expired' THEN 1 ELSE 0 END) as expired
       FROM applications
-      WHERE date(created_at) >= ${dateFilter}
+      WHERE ${getReportWindow(type)}
     `
-  ).first();
+  )
+    .bind(reportDate)
+    .first();
 
   return {
     total: stats?.total || 0,
@@ -63,12 +69,11 @@ export async function getApplicationStats(env, type) {
 
 /**
  * @param {DailyReportEnv} env
- * @param {string} [type]
+ * @param {string} type
+ * @param {string} reportDate - YYYY-MM-DD date the report covers.
  * @returns {Promise<Record<string, { count: number; success: number; rate: string | number }>>}
  */
-export async function getPlatformStats(env, type) {
-  const dateFilter = getReportDateFilter(type);
-
+export async function getPlatformStats(env, type, reportDate) {
   const results = await env.JOB_DB.prepare(
     `
       SELECT 
@@ -76,11 +81,13 @@ export async function getPlatformStats(env, type) {
         COUNT(*) as count,
         SUM(CASE WHEN status = 'interview' OR status = 'offer' THEN 1 ELSE 0 END) as success
       FROM applications
-      WHERE date(created_at) >= ${dateFilter}
+      WHERE ${getReportWindow(type)}
       GROUP BY platform
       ORDER BY count DESC
     `
-  ).all();
+  )
+    .bind(reportDate)
+    .all();
 
   /** @type {Record<string, { count: number; success: number; rate: string | number }>} */
   const platforms = {};
@@ -97,11 +104,10 @@ export async function getPlatformStats(env, type) {
 
 /**
  * @param {DailyReportEnv} env
- * @param {string} [type]
+ * @param {string} type
+ * @param {string} reportDate - YYYY-MM-DD date the report covers.
  */
-export async function getSearchStats(env, type) {
-  const dateFilter = getReportDateFilter(type);
-
+export async function getSearchStats(env, type, reportDate) {
   const stats = await env.JOB_DB.prepare(
     `
       SELECT 
@@ -109,9 +115,11 @@ export async function getSearchStats(env, type) {
         AVG(match_score) as avg_score,
         MAX(match_score) as max_score
       FROM job_search_results
-      WHERE date(created_at) >= ${dateFilter}
+      WHERE ${getReportWindow(type)}
     `
-  ).first();
+  )
+    .bind(reportDate)
+    .first();
 
   return {
     totalJobs: stats?.total_jobs || 0,
@@ -123,21 +131,21 @@ export async function getSearchStats(env, type) {
 /**
  * @param {DailyReportEnv} env
  * @param {{ total: number }} currentStats
- * @param {string} [type]
+ * @param {string} type
+ * @param {string} reportDate - YYYY-MM-DD date the report covers.
  */
-export async function calculateTrends(env, currentStats, type) {
-  const prevFilter =
-    type === 'weekly'
-      ? "date('now', '-14 days') AND date('now', '-7 days')"
-      : "date('now', '-2 days') AND date('now', '-1 day')";
+export async function calculateTrends(env, currentStats, type, reportDate) {
+  const [from, to] = type === 'weekly' ? ["'-14 days'", "'-7 days'"] : ["'-2 days'", "'-1 day'"];
 
   const prevStats = await env.JOB_DB.prepare(
     `
       SELECT COUNT(*) as total
       FROM applications
-      WHERE date(created_at) BETWEEN ${prevFilter.split(' AND ')[0]} AND ${prevFilter.split(' AND ')[1]}
+      WHERE date(created_at) BETWEEN date(?1, ${from}) AND date(?1, ${to})
     `
-  ).first();
+  )
+    .bind(reportDate)
+    .first();
 
   const prev = prevStats?.total || 0;
   const current = currentStats.total;
