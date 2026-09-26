@@ -5,6 +5,11 @@ import { notifyHealthFailure } from './notifications.js';
 
 const DEFAULT_SERVICES = ['https://resume.jclee.me/health', 'https://resume.jclee.me/job/health'];
 
+/**
+ * @param {import('../health-check.js').HealthCheckWorkflow} workflow
+ * @param {import('cloudflare:workers').WorkflowEvent<import('../health-check.js').HealthCheckParams>} event
+ * @param {import('cloudflare:workers').WorkflowStep} step
+ */
 export async function runHealthCheckWorkflow(workflow, event, step) {
   const { services = DEFAULT_SERVICES } = event.payload || {};
   const startedAt = new Date().toISOString();

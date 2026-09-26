@@ -7,10 +7,7 @@ import {
   findTodayApplications,
   getApplicationStats,
 } from './application-reader.js';
-import {
-  createApplication,
-  updateApplicationStatus,
-} from './application-writer.js';
+import { createApplication, updateApplicationStatus } from './application-writer.js';
 import { updateApplication } from './application-field-writer.js';
 
 export class ApplicationRepository {
@@ -62,7 +59,7 @@ export class ApplicationRepository {
    * Update application fields by ID.
    * @param {string} id
    * @param {Record<string, unknown>} updates
-   * @returns {Promise<Record<string, unknown>>}
+   * @returns {Promise<Record<string, unknown> | undefined>}
    */
   async update(id, updates) {
     return await updateApplication(this.d1Client, id, updates);

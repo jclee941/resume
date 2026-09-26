@@ -6,7 +6,7 @@ import { escapeHtml, sendTelegramNotification } from '../../services/notificatio
  * @param {Object} env
  * @param {string[]} platforms
  * @param {{totalJobs: number}} results
- * @param {Object[]} matchedJobs
+ * @param {Array<{ company?: string, position?: string, matchScore?: number }>} matchedJobs
  * @returns {Promise<{notified: boolean, reason?: string}>}
  */
 export async function notifyJobCrawlingResults(env, platforms, results, matchedJobs) {

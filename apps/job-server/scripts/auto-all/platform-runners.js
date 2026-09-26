@@ -2,6 +2,7 @@ import { run } from './command-runner.js';
 import { log } from './logging.js';
 import { checkSession } from './session-status.js';
 
+/** @param {string} platform */
 export async function syncPlatform(platform) {
   const session = checkSession(platform);
   if (!session.valid) {
@@ -15,11 +16,12 @@ export async function syncPlatform(platform) {
     log(`${platform}: Synced`, 'ok');
     return true;
   } catch (e) {
-    log(`${platform}: Sync failed - ${e.message}`, 'err');
+    log(`${platform}: Sync failed - ${e instanceof Error ? e.message : String(e)}`, 'err');
     return false;
   }
 }
 
+/** @param {string[]} platforms */
 export async function syncPlatforms(platforms) {
   let synced = 0;
   for (const platform of platforms) {

@@ -8,8 +8,7 @@
  */
 
 /**
- * @typedef {Object} BindingHealth
- * @property {boolean} healthy
+ * @typedef {import('./probes.js').ProbeResult} BindingHealth
  */
 
 /**

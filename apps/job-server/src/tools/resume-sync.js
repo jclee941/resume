@@ -8,6 +8,17 @@
 import { SessionManager } from '../shared/services/session/index.js';
 import { CommandRegistry } from './commands/index.js';
 
+/**
+ * @typedef {{
+ *   action: string,
+ *   resume_id?: string,
+ *   file_path?: string,
+ *   dry_run?: boolean,
+ *   sections?: string[],
+ *   webhook_url?: string,
+ * }} ResumeSyncParams
+ */
+
 export const resumeSyncTool = {
   name: 'wanted_resume_sync',
   description: `Automated resume sync and bulk update pipeline.
@@ -78,6 +89,7 @@ Data files stored in: ~/.opencode/data/wanted-resume/`,
     required: ['action'],
   },
 
+  /** @param {ResumeSyncParams} params */
   async execute(params) {
     const api = await SessionManager.getAPI();
 
@@ -106,7 +118,7 @@ Data files stored in: ~/.opencode/data/wanted-resume/`,
     } catch (error) {
       return {
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   },
