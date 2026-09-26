@@ -6,10 +6,63 @@ import {
 import { EMPTY_CAREER_FIELDS_PRE_RETIRE, EMPTY_CAREER_FIELDS_POST_RETIRE } from './constants.js';
 import { parseRange, pushField } from './validators.js';
 
+/**
+ * @typedef {{
+ *   headline?: string;
+ *   paragraphs?: string[];
+ *   closing?: string;
+ * }} KoCareerSummary
+ *
+ * @typedef {{
+ *   name?: string;
+ *   description?: string;
+ * }} CareerProject
+ *
+ * @typedef {{
+ *   period?: string;
+ *   company?: string;
+ *   department?: string;
+ *   role?: string;
+ *   jobkoreaRetireReasonCode?: string | number;
+ *   jobkoreaRetireReason?: string;
+ *   jobkoreaJobCode?: string;
+ *   myRole?: string;
+ *   project?: string;
+ *   client?: string;
+ *   teamSize?: string | number;
+ *   workType?: string;
+ *   projects?: CareerProject[];
+ * }} CareerEntry
+ *
+ * @typedef {{
+ *   careerSummary?: {
+ *     ko?: KoCareerSummary;
+ *   };
+ *   careers?: CareerEntry[];
+ *   platformVariants?: {
+ *     jobkorea?: {
+ *       defaultRetireReasonCode?: string | number;
+ *       defaultRetireReason?: string;
+ *       defaultJobCode?: string;
+ *     };
+ *   };
+ * }} CareerSsot
+ */
+
+/**
+ * @param {CareerSsot | null | undefined} ssot
+ * @returns {string}
+ */
 function buildCareerSummary(ssot) {
   const careerSummary = ssot?.careerSummary?.ko;
-  if (careerSummary?.paragraphs?.length > 0) {
-    return [careerSummary.headline, '', ...careerSummary.paragraphs, '', careerSummary.closing]
+  if (/** @type {number} */ (careerSummary?.paragraphs?.length) > 0) {
+    return [
+      /** @type {KoCareerSummary} */ (careerSummary).headline,
+      '',
+      .../** @type {string[]} */ (/** @type {KoCareerSummary} */ (careerSummary).paragraphs),
+      '',
+      /** @type {KoCareerSummary} */ (careerSummary).closing,
+    ]
       .filter(Boolean)
       .join('\n\n')
       .slice(0, 2000);
@@ -20,13 +73,15 @@ function buildCareerSummary(ssot) {
 
 /**
  * Map careers to JobKorea form fields.
- * @param {object} ssot - SSOT resume data
+ * @param {CareerSsot | null | undefined} ssot - SSOT resume data
  * @param {string[]} [indices] - Server-generated entry indices (e.g. ['c14','c844','c845']).
+ * @returns {Array<{ name: string, value: string }>}
  */
 export function mapCareersToFormFields(ssot, indices) {
   const careers = Array.isArray(ssot?.careers) ? ssot.careers : [];
   if (careers.length === 0) return [];
 
+  /** @type {Array<{ name: string, value: string }>} */
   const fields = [];
   const keys =
     indices && indices.length >= careers.length ? indices : careers.map((_, i) => `c${i + 1}`);

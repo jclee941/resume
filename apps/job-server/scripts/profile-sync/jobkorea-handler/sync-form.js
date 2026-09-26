@@ -1,5 +1,40 @@
 import { log } from '../sync-logger.js';
 
+/**
+ * @typedef {{
+ *   field: string;
+ *   from?: unknown;
+ *   to?: unknown;
+ * }} FieldChange
+ *
+ * @typedef {{
+ *   career?: string[];
+ *   intro?: string[];
+ *   license?: string[];
+ *   award?: string[];
+ *   portfolio?: string[];
+ *   language?: string[];
+ * }} SectionIndices
+ *
+ * @typedef {{
+ *   name: string;
+ *   value: unknown;
+ * }} TargetField
+ *
+ * @typedef {{
+ *   IsSuccess?: boolean;
+ *   ErrorMessage?: string;
+ *   FormError?: { Message?: string };
+ *   error?: string;
+ *   saveResult?: unknown;
+ *   [key: string]: unknown;
+ * }} SaveResult
+ */
+
+/**
+ * @param {import('playwright').Page} page
+ * @returns {Promise<void>}
+ */
 export async function activateRequiredSections(page) {
   await page.evaluate(() => {
     const requiredSections = [
@@ -14,13 +49,17 @@ export async function activateRequiredSections(page) {
     for (const syncId of requiredSections) {
       const btn = $(`button[data-sync_id="${syncId}"]`);
       if (btn.length && btn.text().trim() === '필드추가') {
-        btn.click();
+        /** @type {JobKoreaJQuery & { click(): void }} */ (btn).click();
       }
     }
   });
   await page.waitForTimeout(1000);
 }
 
+/**
+ * @param {FieldChange[]} changes
+ * @returns {void}
+ */
 export function logChangeSummary(changes) {
   if (changes.length > 0) {
     log(`Found ${changes.length} field change(s)`, 'diff', 'jobkorea');
@@ -36,8 +75,16 @@ export function logChangeSummary(changes) {
   log('No changes detected', 'info', 'jobkorea');
 }
 
+/**
+ * @param {import('playwright').Page} page
+ * @param {SectionIndices} sectionIndices
+ * @returns {Promise<void>}
+ */
 async function pruneOldSectionEntries(page, sectionIndices) {
   await page.evaluate(
+    /**
+     * @param {{ career?: string[]; intro?: string[]; license?: string[]; award?: string[]; portfolio?: string[]; language?: string[] }} indices
+     */
     (indices) => {
       const sections = [
         { prefix: 'Career', keep: new Set(indices.career) },
@@ -49,7 +96,7 @@ async function pruneOldSectionEntries(page, sectionIndices) {
       ];
       for (const { prefix, keep } of sections) {
         document.querySelectorAll(`[name^="${prefix}["]`).forEach((el) => {
-          const m = el.name.match(/\[([^\]]+)\]/);
+          const m = /** @type {HTMLInputElement} */ (el).name.match(/\[([^\]]+)\]/);
           if (m && !keep.has(m[1])) el.remove();
         });
       }
@@ -65,43 +112,62 @@ async function pruneOldSectionEntries(page, sectionIndices) {
   );
 }
 
+/**
+ * @param {import('playwright').Page} page
+ * @param {TargetField[]} targetFields
+ * @returns {Promise<void>}
+ */
 async function fillTargetFields(page, targetFields) {
-  const fillStats = await page.evaluate((fields) => {
-    const form = document.getElementById('frm1');
-    const occurrenceByName = new Map();
-    let filled = 0;
-    let created = 0;
-    for (const { name, value } of fields) {
-      const els = document.getElementsByName(name);
-      const occurrence = occurrenceByName.get(name) || 0;
-      occurrenceByName.set(name, occurrence + 1);
+  const fillStats = await page.evaluate(
+    /**
+     * @param {TargetField[]} fields
+     */
+    (fields) => {
+      const form = document.getElementById('frm1');
+      const occurrenceByName = new Map();
+      let filled = 0;
+      let created = 0;
+      for (const { name, value } of fields) {
+        const els = document.getElementsByName(name);
+        const occurrence = occurrenceByName.get(name) || 0;
+        occurrenceByName.set(name, occurrence + 1);
 
-      if (els.length > occurrence) {
-        els[occurrence].value = String(value);
-        els[occurrence].dispatchEvent(new Event('change', { bubbles: true }));
-        filled++;
-      } else {
-        const hidden = document.createElement('input');
-        hidden.type = 'hidden';
-        hidden.name = name;
-        hidden.value = String(value);
-        form.appendChild(hidden);
-        created++;
+        if (els.length > occurrence) {
+          /** @type {HTMLInputElement} */ (els[occurrence]).value = String(value);
+          els[occurrence].dispatchEvent(new Event('change', { bubbles: true }));
+          filled++;
+        } else {
+          const hidden = document.createElement('input');
+          hidden.type = 'hidden';
+          hidden.name = name;
+          hidden.value = String(value);
+          /** @type {NonNullable<typeof form>} */ (form).appendChild(hidden);
+          created++;
+        }
       }
-    }
-    return { filled, created };
-  }, targetFields);
+      return { filled, created };
+    },
+    targetFields
+  );
 
   log(`Filled ${fillStats.filled} DOM fields (${fillStats.created} created)`, 'info', 'jobkorea');
 }
 
+/**
+ * @param {import('playwright').Page} page
+ * @returns {Promise<void>}
+ */
 async function markPartialSave(page) {
   await page.evaluate(() => {
     const el = document.getElementsByName('hdnIsCompleteSave');
-    if (el.length > 0) el[0].value = 'False';
+    if (el.length > 0) /** @type {HTMLInputElement} */ (el[0]).value = 'False';
   });
 }
 
+/**
+ * @param {import('playwright').Page} page
+ * @returns {Promise<SaveResult>}
+ */
 async function saveForm(page) {
   return page.evaluate(async () => {
     const formData = $('#frm1').serializeArray();
@@ -112,16 +178,23 @@ async function saveForm(page) {
       formData.push({ name: 'hdnIsCompleteSave', value: 'False' });
     }
 
-    return await new Promise((resolve) => {
-      $.post(`/User/Resume/Save?_=${Date.now()}`, formData, (result) => {
-        resolve(result?.saveResult || result);
-      }).fail((xhr) => {
-        resolve({ IsSuccess: false, error: xhr.statusText || 'POST failed' });
-      });
-    });
+    return await new Promise(
+      /** @param {(value: SaveResult) => void} resolve */
+      (resolve) => {
+        $.post(`/User/Resume/Save?_=${Date.now()}`, formData, (result) => {
+          resolve(/** @type {SaveResult} */ (result?.saveResult || result));
+        }).fail((xhr) => {
+          resolve({ IsSuccess: false, error: xhr.statusText || 'POST failed' });
+        });
+      }
+    );
   });
 }
 
+/**
+ * @param {SaveResult} saveResult
+ * @returns {string}
+ */
 function buildSaveError(saveResult) {
   return (
     saveResult?.ErrorMessage ||
@@ -131,6 +204,13 @@ function buildSaveError(saveResult) {
   );
 }
 
+/**
+ * @param {import('playwright').Page} page
+ * @param {TargetField[]} targetFields
+ * @param {SectionIndices} sectionIndices
+ * @param {(msg: string, level: string, category: string) => void} logger
+ * @returns {Promise<{ success: boolean; error?: string }>}
+ */
 export async function executePlaywrightSave(page, targetFields, sectionIndices, logger) {
   await pruneOldSectionEntries(page, sectionIndices);
   await fillTargetFields(page, targetFields);
@@ -149,6 +229,11 @@ export async function executePlaywrightSave(page, targetFields, sectionIndices, 
   return { success: true };
 }
 
+/**
+ * @param {{ saveSession(cookies: unknown[]): void }} handler
+ * @param {import('playwright').BrowserContext} context
+ * @returns {Promise<void>}
+ */
 export async function persistUpdatedCookies(handler, context) {
   try {
     const allCookies = await context.cookies();
@@ -157,6 +242,10 @@ export async function persistUpdatedCookies(handler, context) {
       handler.saveSession(updatedCookies);
     }
   } catch (error) {
-    log(`Failed to persist refreshed JobKorea cookies: ${error.message}`, 'warn', 'jobkorea');
+    log(
+      `Failed to persist refreshed JobKorea cookies: ${error instanceof Error ? error.message : String(error)}`,
+      'warn',
+      'jobkorea'
+    );
   }
 }

@@ -1,5 +1,61 @@
 import { redactSensitiveValue } from './har-redaction-patterns.js';
 
+/**
+ * @typedef {{
+ *   name: string;
+ *   value: string;
+ * }} HarHeader
+ *
+ * @typedef {{
+ *   name: string;
+ *   value?: string;
+ * }} HarQueryParam
+ *
+ * @typedef {{
+ *   name: string;
+ *   value?: string;
+ *   [key: string]: unknown;
+ * }} HarFieldEntry
+ *
+ * @typedef {{
+ *   mimeType?: string;
+ *   params?: HarFieldEntry[];
+ *   text?: string;
+ * }} HarPostData
+ *
+ * @typedef {{
+ *   method?: string;
+ *   url: string;
+ *   headers?: HarHeader[];
+ *   queryString?: HarQueryParam[];
+ *   postData?: HarPostData;
+ * }} HarRequest
+ *
+ * @typedef {{
+ *   status?: number;
+ *   headers?: HarHeader[];
+ *   content?: {
+ *     mimeType?: string;
+ *     text?: string;
+ *   };
+ * }} HarResponse
+ *
+ * @typedef {{
+ *   request: HarRequest;
+ *   response?: HarResponse;
+ * }} HarEntry
+ *
+ * @typedef {{
+ *   log?: {
+ *     entries?: HarEntry[];
+ *   };
+ * }} HarLog
+ *
+ * @typedef {{
+ *   stripResponseContentText?: boolean;
+ * }} SanitizeHarOptions
+ */
+
 const REDACTED = '[REDACTED]';
 const TIMESTAMP_PARAM_NAMES = new Set(['_', 'timestamp', 'ts', 't']);
 
@@ -26,14 +82,27 @@ const SENSITIVE_TEXT_PATTERNS = [
   /(?:JSESSIONID|ASPSESSIONID|SESSION|AUTH_TOKEN|CSRF_TOKEN)=([^;\s]{4,})/i,
 ];
 
+/**
+ * @template T
+ * @param {T} value
+ * @returns {T}
+ */
 function cloneJson(value) {
   return value == null ? value : JSON.parse(JSON.stringify(value));
 }
 
+/**
+ * @param {unknown} name
+ * @returns {boolean}
+ */
 function isSensitivePostField(name) {
   return SENSITIVE_POST_FIELD_PATTERNS.some((pattern) => pattern.test(String(name ?? '')));
 }
 
+/**
+ * @param {string} rawUrl
+ * @returns {string}
+ */
 function normalizeUrl(rawUrl) {
   if (!rawUrl || typeof rawUrl !== 'string') return rawUrl;
   try {
@@ -57,6 +126,10 @@ function normalizeUrl(rawUrl) {
   }
 }
 
+/**
+ * @param {HarQueryParam[]} [queryString]
+ * @returns {HarQueryParam[]}
+ */
 function normalizeQueryString(queryString = []) {
   return queryString.map((param) => {
     const next = { ...param };
@@ -70,6 +143,20 @@ function normalizeQueryString(queryString = []) {
   });
 }
 
+/**
+ * @overload
+ * @param {HarHeader[]} [headers]
+ * @returns {HarHeader[]}
+ */
+/**
+ * @overload
+ * @param {Record<string, string>} headers
+ * @returns {Record<string, string>}
+ */
+/**
+ * @param {HarHeader[] | Record<string, string>} [headers]
+ * @returns {HarHeader[] | Record<string, string>}
+ */
 export function sanitizeHeaders(headers = []) {
   if (Array.isArray(headers)) {
     return headers.map((header) => ({
@@ -83,6 +170,10 @@ export function sanitizeHeaders(headers = []) {
   );
 }
 
+/**
+ * @param {HarFieldEntry} param
+ * @returns {HarFieldEntry}
+ */
 function sanitizeParam(param) {
   return {
     ...param,
@@ -90,12 +181,20 @@ function sanitizeParam(param) {
   };
 }
 
+/**
+ * @param {string} text
+ * @returns {HarFieldEntry[] | null}
+ */
 function parseUrlEncoded(text) {
   const params = new URLSearchParams(text);
   if ([...params.keys()].length === 0) return null;
   return [...params.entries()].map(([name, value]) => ({ name, value }));
 }
 
+/**
+ * @param {string} text
+ * @returns {HarFieldEntry[] | Record<string, unknown> | null}
+ */
 function parseJsonPostText(text) {
   try {
     const parsed = JSON.parse(text);
@@ -116,6 +215,11 @@ function parseJsonPostText(text) {
   return null;
 }
 
+/**
+ * @param {string} originalText
+ * @param {HarFieldEntry[] | Record<string, unknown> | string | null | undefined} sanitizedValue
+ * @returns {string}
+ */
 function serializeTextLikeOriginal(originalText, sanitizedValue) {
   if (typeof sanitizedValue === 'string') return sanitizedValue;
   if (Array.isArray(sanitizedValue) || sanitizedValue?.constructor === Object) {
@@ -132,6 +236,10 @@ function serializeTextLikeOriginal(originalText, sanitizedValue) {
   return originalText;
 }
 
+/**
+ * @param {HarPostData | undefined} postData
+ * @returns {HarPostData | undefined}
+ */
 export function sanitizePostData(postData) {
   if (!postData) return postData;
   const next = { ...postData };
@@ -153,6 +261,11 @@ export function sanitizePostData(postData) {
   return next;
 }
 
+/**
+ * @param {HarEntry} entry
+ * @param {SanitizeHarOptions} [options]
+ * @returns {HarEntry}
+ */
 function sanitizeHarEntry(entry, options = {}) {
   const next = cloneJson(entry);
   if (!next?.request) return next;
@@ -173,14 +286,25 @@ function sanitizeHarEntry(entry, options = {}) {
   return next;
 }
 
+/**
+ * @param {HarLog} har
+ * @param {SanitizeHarOptions} [options]
+ * @returns {HarLog}
+ */
 export function sanitizeHar(har, options = {}) {
   const next = cloneJson(har);
   const entries = next?.log?.entries;
   if (!Array.isArray(entries)) return next;
-  next.log.entries = entries.map((entry) => sanitizeHarEntry(entry, options));
+  /** @type {NonNullable<typeof next.log>} */ (next.log).entries = entries.map((entry) =>
+    sanitizeHarEntry(entry, options)
+  );
   return next;
 }
 
+/**
+ * @param {unknown} text
+ * @returns {void}
+ */
 export function assertNoSensitiveHarContent(text) {
   const value = typeof text === 'string' ? text : JSON.stringify(text);
   const match = SENSITIVE_TEXT_PATTERNS.find((pattern) => pattern.test(value));

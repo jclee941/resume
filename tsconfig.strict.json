@@ -669,7 +669,15 @@
     "apps/job-server/src/crawlers/base-crawler.js",
     "apps/job-server/src/session-broker/services/session-broker-constants.js",
     "apps/job-server/src/shared/config/config-helpers.js",
-    "apps/job-server/src/shared/errors/apply-errors.js"
+    "apps/job-server/src/shared/errors/apply-errors.js",
+    "apps/job-server/scripts/jk-auto-sync-with-captcha.js",
+    "apps/job-server/scripts/jobkorea-session/cookie-utils.js",
+    "apps/job-server/scripts/profile-sync/jobkorea-handler/har-analyze.js",
+    "apps/job-server/scripts/profile-sync/jobkorea-handler/har-sanitize.js",
+    "apps/job-server/scripts/profile-sync/jobkorea-handler/section-slot-adder.js",
+    "apps/job-server/scripts/profile-sync/jobkorea-handler/section-slot-rebuild.js",
+    "apps/job-server/scripts/profile-sync/jobkorea-handler/sync-form.js",
+    "apps/job-server/scripts/profile-sync/jobkorea-sections/career-fields.js"
   ],
   "exclude": ["packages/env/src/__tests__/**"]
 }

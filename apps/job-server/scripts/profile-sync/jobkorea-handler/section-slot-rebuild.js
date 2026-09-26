@@ -1,5 +1,14 @@
 import { log } from '../sync-logger.js';
 
+/**
+ * @typedef {{ readSectionIndices(page: import('playwright').Page, prefix: string): Promise<string[]> }} SectionIndexReader
+ * @typedef {(handler: SectionIndexReader, page: import('playwright').Page, prefix: string, needed: number, options?: { force?: boolean }) => Promise<void>} AddSlotsFn
+ */
+
+/**
+ * @param {import('playwright').Page} page
+ * @returns {Promise<number>}
+ */
 async function deleteExistingCareerEntries(page) {
   return page.evaluate(() => {
     const originalConfirm = window.confirm;
@@ -17,7 +26,7 @@ async function deleteExistingCareerEntries(page) {
           'button.buttonDeleteField, button.buttonDelete'
         );
         if (!deleteButton) continue;
-        deleteButton.click();
+        /** @type {HTMLElement} */ (deleteButton).click();
         deleted++;
       }
     } finally {
@@ -28,6 +37,10 @@ async function deleteExistingCareerEntries(page) {
   });
 }
 
+/**
+ * @param {import('playwright').Page} page
+ * @returns {Promise<number>}
+ */
 async function deleteExistingIntroEntries(page) {
   return page.evaluate(() => {
     const originalConfirm = window.confirm;
@@ -45,7 +58,7 @@ async function deleteExistingIntroEntries(page) {
           'button.buttonDeleteField, button.buttonDelete'
         );
         if (!deleteButton) continue;
-        deleteButton.click();
+        /** @type {HTMLElement} */ (deleteButton).click();
         deleted++;
       }
     } finally {
@@ -56,6 +69,10 @@ async function deleteExistingIntroEntries(page) {
   });
 }
 
+/**
+ * @param {import('playwright').Page} page
+ * @returns {Promise<number>}
+ */
 async function deleteExistingLicenseEntries(page) {
   return page.evaluate(() => {
     const originalConfirm = window.confirm;
@@ -73,7 +90,7 @@ async function deleteExistingLicenseEntries(page) {
           'button.buttonDeleteField, button.buttonDelete'
         );
         if (!deleteButton) continue;
-        deleteButton.click();
+        /** @type {HTMLElement} */ (deleteButton).click();
         deleted++;
       }
     } finally {
@@ -84,6 +101,13 @@ async function deleteExistingLicenseEntries(page) {
   });
 }
 
+/**
+ * @param {SectionIndexReader} handler
+ * @param {import('playwright').Page} page
+ * @param {number} needed
+ * @param {AddSlotsFn} addSlots
+ * @returns {Promise<void>}
+ */
 export async function recreateCareerEntries(handler, page, needed, addSlots) {
   if (needed <= 0) return;
 
@@ -111,6 +135,13 @@ export async function recreateCareerEntries(handler, page, needed, addSlots) {
   await addSlots(handler, page, 'Career', needed, { force: true });
 }
 
+/**
+ * @param {SectionIndexReader} handler
+ * @param {import('playwright').Page} page
+ * @param {number} needed
+ * @param {AddSlotsFn} addSlots
+ * @returns {Promise<void>}
+ */
 export async function recreateIntroEntries(handler, page, needed, addSlots) {
   if (needed <= 0) return;
 
@@ -144,6 +175,13 @@ export async function recreateIntroEntries(handler, page, needed, addSlots) {
   await addSlots(handler, page, 'ResumeProfile', needed, { force: true });
 }
 
+/**
+ * @param {SectionIndexReader} handler
+ * @param {import('playwright').Page} page
+ * @param {number} needed
+ * @param {AddSlotsFn} addSlots
+ * @returns {Promise<void>}
+ */
 export async function recreateLicenseEntries(handler, page, needed, addSlots) {
   if (needed <= 0) return;
 

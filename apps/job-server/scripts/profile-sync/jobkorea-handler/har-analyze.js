@@ -1,10 +1,32 @@
 const SAVE_PATH = '/User/Resume/Save';
 const PORTFOLIO_PATH = '/User/Resume/AddUserFileDB';
 
+/**
+ * @typedef {{
+ *   method: string | null;
+ *   path: string | null;
+ *   status: number | null;
+ *   contentType: string | null;
+ *   requiredHeaders: string[];
+ *   requestFields: string[];
+ *   requestFieldCount: number;
+ *   hiddenFields: string[];
+ *   responseShape: string | unknown[] | Record<string, unknown> | null;
+ * }} HarRequestSummary
+ */
+
+/**
+ * @param {import('./har-sanitize.js').HarLog | null | undefined} har
+ * @returns {import('./har-sanitize.js').HarEntry[]}
+ */
 function getEntries(har) {
   return Array.isArray(har?.log?.entries) ? har.log.entries : [];
 }
 
+/**
+ * @param {import('./har-sanitize.js').HarEntry} entry
+ * @returns {URL | null}
+ */
 function getUrl(entry) {
   try {
     return new URL(entry.request.url);
@@ -13,15 +35,28 @@ function getUrl(entry) {
   }
 }
 
+/**
+ * @param {import('./har-sanitize.js').HarHeader[]} headers
+ * @param {string} name
+ * @returns {string | undefined}
+ */
 function getHeaderValue(headers = [], name) {
   const header = headers.find((item) => item.name?.toLowerCase() === name.toLowerCase());
   return header?.value;
 }
 
+/**
+ * @param {import('./har-sanitize.js').HarHeader[]} [headers]
+ * @returns {string[]}
+ */
 function headerNames(headers = []) {
   return headers.map((header) => header.name).filter(Boolean);
 }
 
+/**
+ * @param {import('./har-sanitize.js').HarEntry} entry
+ * @returns {string | null}
+ */
 function requestContentType(entry) {
   return (
     getHeaderValue(entry.request?.headers ?? [], 'content-type') ??
@@ -30,6 +65,10 @@ function requestContentType(entry) {
   );
 }
 
+/**
+ * @param {import('./har-sanitize.js').HarEntry} entry
+ * @returns {string | null}
+ */
 function responseContentType(entry) {
   return (
     entry.response?.content?.mimeType ??
@@ -38,11 +77,19 @@ function responseContentType(entry) {
   );
 }
 
+/**
+ * @param {URL | null} url
+ * @returns {string | null}
+ */
 function pathWithNormalizedQuery(url) {
   if (!url) return null;
   return `${url.pathname}${url.search}`;
 }
 
+/**
+ * @param {import('./har-sanitize.js').HarPostData | undefined} postData
+ * @returns {string[]}
+ */
 function decodePostFields(postData) {
   if (!postData) return [];
   if (Array.isArray(postData.params)) {
@@ -63,6 +110,10 @@ function decodePostFields(postData) {
   return [...params.keys()];
 }
 
+/**
+ * @param {string | undefined} text
+ * @returns {unknown}
+ */
 function parseResponseText(text) {
   if (typeof text !== 'string' || !text.trim()) return null;
   try {
@@ -72,13 +123,26 @@ function parseResponseText(text) {
   }
 }
 
+/**
+ * @param {unknown} value
+ * @returns {string | unknown[] | Record<string, unknown>}
+ */
 function shapeOf(value) {
   if (value == null) return value === null ? 'null' : 'undefined';
   if (Array.isArray(value)) return value.length > 0 ? [shapeOf(value[0])] : [];
   if (typeof value !== 'object') return typeof value;
-  return Object.fromEntries(Object.entries(value).map(([key, child]) => [key, shapeOf(child)]));
+  return Object.fromEntries(
+    Object.entries(/** @type {Record<string, unknown>} */ (value)).map(([key, child]) => [
+      key,
+      shapeOf(child),
+    ])
+  );
 }
 
+/**
+ * @param {import('./har-sanitize.js').HarEntry} entry
+ * @returns {string | unknown[] | Record<string, unknown> | null}
+ */
 function responseShape(entry) {
   const content = entry.response?.content;
   if (!content) return null;
@@ -87,6 +151,10 @@ function responseShape(entry) {
   return shapeOf(parsed);
 }
 
+/**
+ * @param {string[]} fields
+ * @returns {string[]}
+ */
 function hiddenFields(fields) {
   return fields.filter(
     (name) =>
@@ -95,6 +163,10 @@ function hiddenFields(fields) {
   );
 }
 
+/**
+ * @param {import('./har-sanitize.js').HarEntry} entry
+ * @returns {HarRequestSummary}
+ */
 export function summarizeHarRequest(entry) {
   const url = getUrl(entry);
   const fields = decodePostFields(entry.request?.postData);
@@ -113,6 +185,10 @@ export function summarizeHarRequest(entry) {
   };
 }
 
+/**
+ * @param {import('./har-sanitize.js').HarLog | null | undefined} har
+ * @returns {import('./har-sanitize.js').HarEntry[]}
+ */
 export function findJobKoreaSaveRequests(har) {
   return getEntries(har).filter((entry) => {
     const url = getUrl(entry);
@@ -120,6 +196,10 @@ export function findJobKoreaSaveRequests(har) {
   });
 }
 
+/**
+ * @param {import('./har-sanitize.js').HarLog | null | undefined} har
+ * @returns {import('./har-sanitize.js').HarEntry[]}
+ */
 export function findJobKoreaPortfolioRequests(har) {
   return getEntries(har).filter((entry) => {
     const url = getUrl(entry);
@@ -127,6 +207,10 @@ export function findJobKoreaPortfolioRequests(har) {
   });
 }
 
+/**
+ * @param {import('./har-sanitize.js').HarLog | null | undefined} har
+ * @returns {import('./har-sanitize.js').HarEntry | undefined}
+ */
 function findEditEntry(har) {
   return getEntries(har).find((entry) => {
     const url = getUrl(entry);
@@ -137,10 +221,18 @@ function findEditEntry(har) {
   });
 }
 
+/**
+ * @param {import('./har-sanitize.js').HarEntry | undefined} entry
+ * @returns {HarRequestSummary | null}
+ */
 function endpointSummary(entry) {
   return entry ? summarizeHarRequest(entry) : null;
 }
 
+/**
+ * @param {import('./har-sanitize.js').HarLog | null | undefined} har
+ * @returns {Record<string, unknown>}
+ */
 export function analyzeJobKoreaHar(har) {
   const edit = endpointSummary(findEditEntry(har));
   const portfolio = endpointSummary(findJobKoreaPortfolioRequests(har)[0]);
