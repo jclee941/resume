@@ -11,14 +11,25 @@
 import puppeteerDefault from '@cloudflare/puppeteer';
 
 /**
+ * @typedef {{
+ *   fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
+ * }} DurableObjectStub
+ *
+ * @typedef {{
+ *   idFromName(name: string): unknown;
+ *   get(id: unknown): DurableObjectStub;
+ * }} DurableObjectNamespaceBinding
+ */
+
+/**
  * Run `fn` with a connected Browser Rendering session borrowed from the
  * `BROWSER_SESSION` Durable Object pool, releasing it when done regardless
  * of success or failure.
  *
  * @template T
- * @param {{BROWSER_SESSION: DurableObjectNamespace, MYBROWSER: unknown}} env
+ * @param {{BROWSER_SESSION: DurableObjectNamespaceBinding, MYBROWSER: import('@cloudflare/puppeteer').ConnectOptions | import('@cloudflare/puppeteer').BrowserWorker}} env
  * @param {(browser: import('@cloudflare/puppeteer').Browser) => Promise<T>} fn
- * @param {{puppeteer?: {connect: Function}, name?: string}} [opts]
+ * @param {{puppeteer?: {connect: (endpoint: import('@cloudflare/puppeteer').ConnectOptions | import('@cloudflare/puppeteer').BrowserWorker, sessionId?: string) => Promise<import('@cloudflare/puppeteer').Browser>}, name?: string}} [opts]
  * @returns {Promise<T>}
  */
 export async function withBrowserSession(env, fn, opts = {}) {
@@ -34,12 +45,14 @@ export async function withBrowserSession(env, fn, opts = {}) {
   const acquired = await acquireResponse.json();
 
   if (!acquired || !acquired.sessionId) {
+    /** @type {Error & { code?: string }} */
     const err = new Error(acquired?.error || 'Failed to acquire browser session');
     if (acquired?.code) err.code = acquired.code;
     throw err;
   }
 
   const { sessionId } = acquired;
+  /** @type {import('@cloudflare/puppeteer').Browser | undefined} */
   let browser;
 
   try {

@@ -27,6 +27,10 @@ const SENSITIVE_QUERY_PARAMETERS = new Set([
   'token',
 ]);
 
+/**
+ * @param {string} name
+ * @returns {boolean}
+ */
 function shouldRemoveQueryParameter(name) {
   const normalizedName = name.toLowerCase();
   return (
@@ -38,6 +42,10 @@ function shouldRemoveQueryParameter(name) {
   );
 }
 
+/**
+ * @param {unknown} value
+ * @returns {string | null}
+ */
 export function canonicalizeJobUrl(value) {
   if (typeof value !== 'string') return null;
 

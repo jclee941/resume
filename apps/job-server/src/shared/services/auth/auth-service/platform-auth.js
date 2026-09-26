@@ -1,7 +1,7 @@
 /**
  * Get platform authentication status.
- * @param {import('./auth-typedefs.js').PlatformSessionStore} sessionStore
- * @returns {{success: boolean, status: Object}}
+ * @param {import('./auth-typedefs.js').PlatformSessionStore & { getStatus: NonNullable<import('./auth-typedefs.js').PlatformSessionStore['getStatus']> }} sessionStore
+ * @returns {{success: boolean, status: ReturnType<NonNullable<import('./auth-typedefs.js').PlatformSessionStore['getStatus']>>}}
  */
 export function getAuthStatus(sessionStore) {
   const status = sessionStore.getStatus();

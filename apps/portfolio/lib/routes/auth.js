@@ -1,9 +1,9 @@
 /**
  * Worker API route generators.
  * Extracted from generate-worker.js template literal.
- * @param {Object} opts - Build-time interpolation values
+ * @param {{ allowedEmailsJson: string }} opts - Build-time interpolation values
+ * @returns {string}
  */
-
 function generateAuthRoutes(opts) {
   return `
       // AUTHENTICATION ENDPOINTS
@@ -114,6 +114,9 @@ function generateAuthRoutes(opts) {
       }`;
 }
 
+/**
+ * @returns {string}
+ */
 function generateControlRoutes() {
   return `
       // AUTOMATION CONTROL ENDPOINT (REMOTE CONTROL)

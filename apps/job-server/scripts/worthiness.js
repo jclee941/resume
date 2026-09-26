@@ -11,7 +11,19 @@
 /** Default "worth applying" threshold (matches JobMatcher REVIEW_THRESHOLD). */
 export const WORTHY_MIN_SCORE = 60;
 
-/** Resolve a job's match score from the various field names in use. */
+/**
+ * @typedef {object} JobWithScore
+ * @property {number | string} [matchPercentage]
+ * @property {number | string} [match_percentage]
+ * @property {number | string} [matchScore]
+ * @property {number | string} [score]
+ */
+
+/**
+ * Resolve a job's match score from the various field names in use.
+ * @param {JobWithScore | null | undefined} job
+ * @returns {number | null}
+ */
 function scoreOf(job) {
   const raw = job?.matchPercentage ?? job?.match_percentage ?? job?.matchScore ?? job?.score;
   const n = Number(raw);
@@ -21,10 +33,11 @@ function scoreOf(job) {
 /**
  * Keep worthy jobs, sorted best-first.
  *
- * @param {Array<object>} jobs
+ * @template {JobWithScore} T
+ * @param {T[]} jobs
  * @param {number} [minScore=WORTHY_MIN_SCORE]
  * @param {{keepUnscored?: boolean}} [options]
- * @returns {Array<object>}
+ * @returns {T[]}
  */
 export function filterWorthy(jobs, minScore = WORTHY_MIN_SCORE, options = {}) {
   if (!Array.isArray(jobs)) return [];

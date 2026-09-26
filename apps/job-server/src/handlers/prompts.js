@@ -53,7 +53,7 @@ export const prompts = [
 
 /**
  * Handle list prompts request.
- * @returns {Promise<{prompts: Array}>}
+ * @returns {Promise<import('@modelcontextprotocol/sdk/types.js').ListPromptsResult>}
  */
 export async function handleListPrompts() {
   return { prompts };
@@ -61,8 +61,8 @@ export async function handleListPrompts() {
 
 /**
  * Handle get prompt request.
- * @param {import('@modelcontextprotocol/sdk/types.js').GetPromptRequestSchema} request
- * @returns {Promise<{messages: Array<{role: string, content: {type: string, text: string}}>}>}
+ * @param {import('@modelcontextprotocol/sdk/types.js').GetPromptRequest} request
+ * @returns {Promise<import('@modelcontextprotocol/sdk/types.js').GetPromptResult>}
  */
 export async function handleGetPrompt(request) {
   const { name, arguments: args } = request.params;

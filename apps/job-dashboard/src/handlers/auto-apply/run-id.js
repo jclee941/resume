@@ -1,3 +1,7 @@
+/**
+ * @param {{ runId?: unknown }} body
+ * @returns {string}
+ */
 export function getAutoApplyRunId(body) {
   if (typeof body.runId === 'string' && body.runId.trim().length > 0) {
     return body.runId.trim();

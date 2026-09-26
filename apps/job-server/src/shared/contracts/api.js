@@ -191,7 +191,13 @@ export const COMMON_STATUSES = {
   PLATFORM: ['wanted', 'jobkorea', 'saramin', 'linkedin', 'remember', 'manual'],
 };
 
+/**
+ * @param {{ response: Record<string, string> }} contract
+ * @param {Record<string, unknown>} response
+ * @returns {{ valid: boolean, errors: string[] }}
+ */
 export function validateResponse(contract, response) {
+  /** @type {string[]} */
   const errors = [];
   for (const [key, _type] of Object.entries(contract.response)) {
     if (!(key in response)) {

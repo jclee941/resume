@@ -1,3 +1,7 @@
+/**
+ * @param {string} html
+ * @returns {string}
+ */
 function applyJapaneseHero(html) {
   return html.replace(/이재철/g, '李在哲');
 }

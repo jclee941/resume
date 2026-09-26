@@ -6,6 +6,24 @@ const TYPES = Object.values(MESSAGE_TYPES);
 const PRIORITIES = Object.values(PRIORITY);
 const MAX_DELAY_SECONDS = 43200;
 
+/**
+ * @typedef {{
+ *   CRAWL_TASKS?: {
+ *     send?(message: unknown, options?: unknown): Promise<void>;
+ *   };
+ * }} QueueCapabilityEnv
+ */
+
+/**
+ * @param {QueueCapabilityEnv | null | undefined} [env]
+ * @returns {{
+ *   status: string;
+ *   available: boolean;
+ *   queue: string;
+ *   types?: string[];
+ *   priorities?: string[];
+ * }}
+ */
 export function getQueueCapability(env) {
   const available = typeof env?.CRAWL_TASKS?.send === 'function';
   const capability = {
@@ -20,6 +38,14 @@ export function getQueueCapability(env) {
   return capability;
 }
 
+/**
+ * @typedef {{ ok: true; value: { type: string; payload: Record<string, unknown>; priority: string; delaySeconds: number } } | { ok: false; error: string }} QueueRequestResult
+ */
+
+/**
+ * @param {Request} request
+ * @returns {Promise<QueueRequestResult>}
+ */
 export async function parseQueueRequest(request) {
   let body;
   try {

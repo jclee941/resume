@@ -27,6 +27,10 @@ const CACHE_STRATEGIES = {
   SW: 'max-age=0, must-revalidate',
 };
 
+/**
+ * @param {string} nonce
+ * @returns {string}
+ */
 function buildScriptSrc(nonce) {
   return [
     "'self'",
@@ -104,7 +108,7 @@ function generateSecurityHeaders(styleHashes, options = {}) {
 /**
  * Get cache headers for specific resource type
  * @param {string} resourceType - Type of resource (HTML, STATIC, DOCUMENT, API, SW)
- * @returns {Object} Cache headers object
+ * @returns {{ 'Cache-Control': string }} Cache headers object
  */
 function getCacheHeaders(resourceType) {
   const cacheControl = CACHE_STRATEGIES[resourceType] || CACHE_STRATEGIES.HTML;

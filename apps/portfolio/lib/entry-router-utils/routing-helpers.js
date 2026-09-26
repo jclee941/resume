@@ -1,3 +1,8 @@
+/**
+ * @param {string} pathname
+ * @param {string} [_language]
+ * @returns {string}
+ */
 function getPortfolioTargetPath(pathname, _language) {
   if (pathname === '/en' || pathname === '/en/') {
     return '/en/';

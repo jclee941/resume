@@ -10,6 +10,16 @@ const CONTENT_PATHS = [
 ];
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
+/**
+ * @typedef {(command: string, options: { cwd: string; encoding: 'utf-8'; stdio: ['ignore', 'pipe', 'ignore'] }) => string} ExecFn
+ */
+
+/**
+ * @param {string} pathArgs
+ * @param {string} repoRoot
+ * @param {ExecFn} exec
+ * @returns {string | null}
+ */
 function lastCommitDate(pathArgs, repoRoot, exec) {
   try {
     const date = exec(`git log -1 --format=%cs ${pathArgs}`.trim(), {
@@ -27,6 +37,8 @@ function lastCommitDate(pathArgs, repoRoot, exec) {
  * Sitemap `<lastmod>` / `Last-Modified` date (YYYY-MM-DD): the last commit that
  * touched rendered content, else the HEAD commit (shallow CI clones keep no
  * older history), else the build day when git is unavailable.
+ * @param {{ repoRoot?: string, exec?: ExecFn, now?: () => Date }} [options]
+ * @returns {string}
  */
 function resolveContentLastmod({
   repoRoot = path.join(__dirname, '..', '..', '..'),

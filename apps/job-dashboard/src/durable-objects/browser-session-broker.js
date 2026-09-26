@@ -25,6 +25,7 @@ export const DEFAULT_KEEP_ALIVE_MS = 60_000;
  * @returns {{sessionId:string}|null}
  */
 export function pickFreeSession(sessions, locked) {
+  /** @param {string} id */
   const has = (id) => (typeof locked.has === 'function' ? locked.has(id) : false);
   for (const s of sessions || []) {
     if (s && s.sessionId && !s.connectionId && !has(s.sessionId)) return s;
@@ -66,6 +67,7 @@ export async function acquireSession(puppeteer, endpoint, locked, opts = {}) {
   const limits = await puppeteer.limits(endpoint);
   const lockedSize = typeof locked.size === 'number' ? locked.size : 0;
   if (!canLaunch(limits, lockedSize)) {
+    /** @type {Error & { code?: string }} */
     const err = new Error('Browser Rendering capacity reached');
     err.code = 'NO_CAPACITY';
     throw err;

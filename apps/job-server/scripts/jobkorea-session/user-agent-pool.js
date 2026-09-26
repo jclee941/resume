@@ -1,3 +1,18 @@
+/**
+ * @typedef {object} JobKoreaBrowserProfile
+ * @property {string} userAgent
+ * @property {{ width: number, height: number }} viewport
+ * @property {string} locale
+ * @property {string} timezoneId
+ */
+
+/**
+ * @typedef {object} PickProfileOptions
+ * @property {() => number} [randomFn]
+ * @property {JobKoreaBrowserProfile[]} [profiles]
+ */
+
+/** @type {JobKoreaBrowserProfile[]} */
 export const JOBKOREA_BROWSER_PROFILES = [
   {
     userAgent:
@@ -43,6 +58,10 @@ export const JOBKOREA_BROWSER_PROFILES = [
   },
 ];
 
+/**
+ * @param {PickProfileOptions} [options={}]
+ * @returns {JobKoreaBrowserProfile}
+ */
 export function pickJobKoreaBrowserProfile(options = {}) {
   const { randomFn = Math.random, profiles = JOBKOREA_BROWSER_PROFILES } = options;
 

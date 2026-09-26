@@ -28,6 +28,12 @@ const SENSITIVE_FIELD_PATTERNS = [
 
 const REDACTED = '[REDACTED]';
 
+/**
+ * @template T
+ * @param {string | number | null | undefined} key
+ * @param {T} value
+ * @returns {T | string}
+ */
 export function redactSensitiveValue(key, value) {
   const normalizedKey = String(key ?? '').trim();
   if (!normalizedKey) {

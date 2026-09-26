@@ -15,6 +15,11 @@ export const VIEWPORTS = [
   { width: 412, height: 915, isMobile: true, deviceScaleFactor: 2.625 },
 ];
 
+/**
+ * @param {number} min
+ * @param {number} max
+ * @returns {number}
+ */
 function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -59,9 +64,9 @@ export function generateFingerprint() {
 
 /**
  * Human-like delay using page.waitForTimeout.
- * @param {import('@cloudflare/puppeteer').Page} page
- * @param {number} min - Minimum delay in ms
- * @param {number} max - Maximum delay in ms
+ * @param {{ waitForTimeout(delay: number): Promise<unknown> }} page
+ * @param {number} [min] - Minimum delay in ms
+ * @param {number} [max] - Maximum delay in ms
  * @returns {Promise<void>}
  */
 export async function humanDelay(page, min = 500, max = 2000) {

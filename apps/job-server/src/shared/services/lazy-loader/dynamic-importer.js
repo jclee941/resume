@@ -2,9 +2,14 @@
  * Dynamic import helper with caching
  */
 export class DynamicImporter {
+  /** @type {Map<string, unknown>} */
   #cache = new Map();
+  /** @type {{ debug: (...args: unknown[]) => void, error: (...args: unknown[]) => void }} */
   #logger;
 
+  /**
+   * @param {{ logger?: { debug: (...args: unknown[]) => void, error: (...args: unknown[]) => void } }} [options]
+   */
   constructor(options = {}) {
     this.#logger = options.logger || console;
   }
@@ -13,7 +18,7 @@ export class DynamicImporter {
    * Import module dynamically
    * @param {string} path - Module path
    * @param {boolean} [cache=true] - Cache the result
-   * @returns {Promise<*>}
+   * @returns {Promise<unknown>}
    */
   async import(path, cache = true) {
     if (cache && this.#cache.has(path)) {
@@ -43,7 +48,7 @@ export class DynamicImporter {
   /**
    * Preload multiple modules
    * @param {string[]} paths
-   * @returns {Promise<Array>}
+   * @returns {Promise<unknown[]>}
    */
   async preload(paths) {
     return Promise.all(paths.map((p) => this.import(p)));

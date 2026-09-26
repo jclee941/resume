@@ -8,6 +8,10 @@
  * accessible) — only the default visual prominence is curated.
  */
 
+/**
+ * @param {number} extra
+ * @returns {{ more: string; less: string }}
+ */
 function moreLang(extra) {
   const l = (document.documentElement.lang || 'ko').toLowerCase();
   if (l.startsWith('en')) return { more: `Show ${extra} more projects`, less: 'Show fewer' };

@@ -1,6 +1,11 @@
 const MAX_ARGUMENT_PREFIX = '--max=';
 const INVALID_MAX_MESSAGE = '--max must be a non-negative safe integer';
 
+/**
+ * @param {string[]} args
+ * @param {number} fallback
+ * @returns {number}
+ */
 export function parseMaxArgument(args, fallback) {
   const maxArguments = args.filter((value) => value.startsWith(MAX_ARGUMENT_PREFIX));
   const [argument] = maxArguments;

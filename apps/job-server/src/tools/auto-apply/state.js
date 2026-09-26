@@ -32,6 +32,7 @@ export function createDefaultState() {
  * isolates do not share or leak state through this module.
  */
 export class AutoApplySessionState {
+  /** @type {ReturnType<typeof createDefaultState> | null} */
   #state;
 
   constructor() {
@@ -51,6 +52,7 @@ export class AutoApplySessionState {
 
   /**
    * Replace the state wholesale.
+   * @param {ReturnType<typeof createDefaultState>} value
    */
   set(value) {
     this.#state = value;

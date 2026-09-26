@@ -12,6 +12,15 @@ export const CONFIG = {
   DIFF_ONLY: process.argv.includes('--diff'),
 };
 
+/**
+ * @typedef {object} SsotResume
+ * @property {{ name: string, email: string, phone: string, github?: string, portfolio?: string }} personal
+ * @property {{ profileStatement?: string, totalExperience: string, expertise: string[] }} summary
+ * @property {{ wanted?: { headline?: string } }} [platformVariants]
+ * @property {{ position?: string }} [current]
+ * @property {Array<{ role?: string }>} [careers]
+ */
+
 export const PLATFORMS = {
   wanted: {
     name: 'Wanted',
@@ -24,6 +33,7 @@ export const PLATFORMS = {
       headline: 'textarea[name="introduction"]',
       skills: '[data-testid="skills-section"]',
     },
+    /** @param {SsotResume} ssot */
     mapData: (ssot) => {
       // Wanted API rejects descriptions > 150 chars, and the write path truncates
       // to 147 + "...". The diff target must match so the sync is idempotent.
@@ -45,6 +55,7 @@ export const PLATFORMS = {
       headline: '#selfIntroduce',
       skills: '.skill-tag-area',
     },
+    /** @param {SsotResume} ssot */
     mapData: (ssot) => ({
       name: ssot.personal.name,
       email: ssot.personal.email,
@@ -64,6 +75,7 @@ export const PLATFORMS = {
       headline: '#selfIntro',
       skills: '.skill-list',
     },
+    /** @param {SsotResume} ssot */
     mapData: (ssot) => ({
       name: ssot.personal.name,
       email: ssot.personal.email,

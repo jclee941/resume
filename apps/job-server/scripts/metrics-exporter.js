@@ -6,11 +6,12 @@
 
 import http from 'http';
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 
 const PORT = process.env.METRICS_PORT || 9101;
-const METRICS_FILE = path.join(process.env.HOME, '.opencode/data/wanted-login-metrics.json');
-const SESSION_FILE = path.join(process.env.HOME, '.opencode/data/wanted-session.json');
+const METRICS_FILE = path.join(os.homedir(), '.opencode/data/wanted-login-metrics.json');
+const SESSION_FILE = path.join(os.homedir(), '.opencode/data/wanted-session.json');
 
 function loadMetrics() {
   try {

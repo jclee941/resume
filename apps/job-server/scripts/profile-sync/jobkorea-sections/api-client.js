@@ -1,4 +1,15 @@
 /**
+ * @typedef {object} JQueryPostResponse
+ * @property {number} [sc]
+ * @property {number} [idx]
+ */
+
+/**
+ * @typedef {object} JQueryStatic
+ * @property {(url: string, data: Record<string, string | number>, callback: (res: JQueryPostResponse) => void) => { fail: (callback: () => void) => void }} post
+ */
+
+/**
  * Register a portfolio URL via AddUserFileDB and return the server-generated IDX.
  * @param {import('playwright').Page} page
  * @param {string} url - Portfolio URL to register
@@ -6,6 +17,7 @@
  */
 export async function registerPortfolioUrl(page, url) {
   const result = await page.evaluate(async (u) => {
+    const $ = /** @type {typeof globalThis & { $: JQueryStatic }} */ (globalThis).$;
     return new Promise((resolve) => {
       $.post(
         '/User/Resume/AddUserFileDB',
@@ -16,6 +28,7 @@ export async function registerPortfolioUrl(page, url) {
           File_Up_Stat: 2,
           File_Size: 0,
         },
+        /** @param {JQueryPostResponse} res */
         (res) => resolve(res)
       ).fail(() => resolve(null));
     });

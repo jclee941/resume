@@ -1,12 +1,23 @@
 /**
+ * @typedef {{ totalBytes: number, chunks: number }} StreamProgressInfo
+ */
+
+/**
+ * @typedef {{
+ *   onProgress?: (info: StreamProgressInfo) => void;
+ * }} StreamProcessOptions
+ */
+
+/**
  * Stream processor for large responses
  */
 export class StreamProcessor {
   /**
    * Process stream in chunks
-   * @param {ReadableStream} stream
-   * @param {Function} processor - Process each chunk
-   * @param {Object} options
+   * @param {ReadableStream<Uint8Array>} stream
+   * @param {(chunk: Uint8Array, info: StreamProgressInfo) => Promise<unknown> | unknown} processor - Process each chunk
+   * @param {StreamProcessOptions} [options]
+   * @returns {Promise<StreamProgressInfo>}
    */
   async process(stream, processor, options = {}) {
     const { onProgress } = options;

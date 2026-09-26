@@ -180,7 +180,7 @@ export class ProgressTracker extends EventEmitter {
 
   /**
    * Get overall progress summary.
-   * @returns {{ totalTasks: number, progress: number, counters: typeof ProgressTracker.prototype['#counters'] extends never ? never : { started: number, completed: number, failed: number, cancelled: number }, elapsedMs: number, tasksPerSecond: number }}
+   * @returns {{ totalTasks: number, progress: number, counters: { started: number, completed: number, failed: number, cancelled: number }, elapsedMs: number, tasksPerSecond: number }}
    */
   getOverallProgress() {
     return buildOverallProgress(this.#tasks.size, this.#counters, this.#startTime);

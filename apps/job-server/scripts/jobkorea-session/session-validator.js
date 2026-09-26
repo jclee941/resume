@@ -1,3 +1,7 @@
+/**
+ * @param {{ cookieString: string, resumeUrl: string, userAgent: string }} options
+ * @returns {Promise<boolean>}
+ */
 export async function verifyAuthenticatedSession({ cookieString, resumeUrl, userAgent }) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000);

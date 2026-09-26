@@ -1,4 +1,9 @@
+/**
+ * @param {string} status
+ * @returns {string}
+ */
 export function getStatusEmoji(status) {
+  /** @type {Record<string, string>} */
   const emojis = {
     pending: '⏳',
     applied: '📝',

@@ -158,6 +158,10 @@ function localeKey() {
   return 'ko';
 }
 
+/**
+ * @param {number} count
+ * @returns {string}
+ */
 export function getProofCountLabel(count) {
   const key = localeKey();
   if (key === 'en') {
@@ -170,6 +174,12 @@ export function getProofCountLabel(count) {
   return `근거 ${new Intl.NumberFormat('ko-KR').format(count)}건`;
 }
 
+/**
+ * @template {{ proof: string | Record<string, string> }} T
+ * @param {T} item
+ * @param {string} key
+ * @returns {T & { proof: string }}
+ */
 function localizeProof(item, key) {
   const proof = item.proof;
   return {

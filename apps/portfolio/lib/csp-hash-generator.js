@@ -80,12 +80,14 @@ function extractStyleHashes(html) {
 }
 
 /**
+ * @typedef {{ scriptHashes: string[]; styleHashes: string[] }} ExtractedHashes
+ */
+
+/**
  * Extract ALL inline script and style hashes from HTML
  * Returns both script and style hashes as separate arrays
  * @param {string} html - HTML content to scan
- * @returns {Object} Object containing extracted hashes
- * @returns {string[]} return.scriptHashes - Array of script CSP hashes (e.g., ["'sha256-...'"])
- * @returns {string[]} return.styleHashes - Array of style CSP hashes (e.g., ["'sha256-...'"])
+ * @returns {ExtractedHashes} Object containing extracted hashes
  * @example
  * const { scriptHashes, styleHashes } = extractAllHashes(htmlContent);
  * // scriptHashes: ["'sha256-abc123...'", "'sha256-def456...'"]
