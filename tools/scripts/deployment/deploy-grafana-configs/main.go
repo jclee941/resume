@@ -71,11 +71,7 @@ func main() {
 
 	// Set up paths
 	if projectRoot == "" {
-		// Try to find project root from executable location
-		ex, err := os.Executable()
-		if err == nil {
-			projectRoot = filepath.Dir(filepath.Dir(filepath.Dir(filepath.Dir(ex))))
-		}
+		projectRoot = findRepoRoot()
 	}
 
 	grafanaConfigDir = filepath.Join(projectRoot, "infrastructure", "configs", "grafana")
@@ -211,4 +207,24 @@ func logError(msg string) {
 // Unused but kept for completeness
 func _unused() {
 	_ = bufio.NewScanner(nil)
+}
+
+// findRepoRoot walks up from the working directory to the directory holding
+// infrastructure/monitoring. `go run` builds the executable in a temporary
+// directory, so the executable path cannot locate the repository.
+func findRepoRoot() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	for {
+		if _, statErr := os.Stat(filepath.Join(dir, "infrastructure", "monitoring")); statErr == nil {
+			return dir
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			return ""
+		}
+		dir = parent
+	}
 }
