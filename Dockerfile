@@ -23,13 +23,17 @@ COPY packages/schemas/package.json packages/schemas/package.json
 COPY packages/shared/package.json packages/shared/package.json
 COPY packages/types/package.json packages/types/package.json
 
-RUN npm ci --omit=dev --ignore-scripts
+# npm still runs workspace `prepare` hooks under --ignore-scripts, and the
+# @resume/schemas hook needs esbuild (a devDependency). The image ships the
+# committed packages/schemas/dist/index.cjs instead.
+RUN npm pkg delete scripts.prepare --workspace @resume/schemas \
+	&& npm ci --omit=dev --ignore-scripts
 
 FROM node:22-alpine AS runtime
 
 WORKDIR /app
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV DASHBOARD_PORT=3000
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/package.json ./package.json
@@ -47,6 +51,6 @@ WORKDIR /app/apps/job-server
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
-  CMD node -e "fetch('http://127.0.0.1:3000/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+	CMD node -e "fetch('http://127.0.0.1:3000/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 
 CMD ["node", "src/server/index.js"]

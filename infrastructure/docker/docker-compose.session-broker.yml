@@ -9,6 +9,7 @@ services:
       NODE_ENV: production
       HOST: 0.0.0.0
       DASHBOARD_PORT: 3456
+      SESSION_ENCRYPTION_KEY: ${SESSION_ENCRYPTION_KEY:?set SESSION_ENCRYPTION_KEY to 64 hex chars}
       PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
       CLOAK_BROWSER_HEADLESS: 'false'
       STEALTH_BROWSER_ENDPOINT: http://stealth-browser:8080
@@ -25,7 +26,7 @@ services:
       stealth-browser:
         condition: service_healthy
     healthcheck:
-      test: ['CMD', 'curl', '-fsS', 'http://localhost:3456/api/session/health']
+      test: ['CMD', 'curl', '-fsS', 'http://localhost:3456/health']
       interval: 30s
       timeout: 10s
       retries: 3
