@@ -23,3 +23,30 @@ interface Window {
     [key: string]: unknown;
   };
 }
+
+// Trusted Types (Chromium) is not in TypeScript's DOM lib. main.js creates a
+// script-URL policy for the service worker when the browser provides the API.
+interface TrustedScriptURL {
+  toString(): string;
+}
+
+interface TrustedScriptURLPolicy {
+  createScriptURL(input: string): TrustedScriptURL;
+}
+
+interface Window {
+  trustedTypes?: {
+    createPolicy(
+      name: string,
+      rules: { createScriptURL?: (input: string) => string }
+    ): TrustedScriptURLPolicy;
+  };
+}
+
+// The Trusted Types spec lets register() take a TrustedScriptURL.
+interface ServiceWorkerContainer {
+  register(
+    scriptURL: string | URL | TrustedScriptURL,
+    options?: RegistrationOptions
+  ): Promise<ServiceWorkerRegistration>;
+}

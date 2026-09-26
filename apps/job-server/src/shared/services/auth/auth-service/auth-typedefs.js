@@ -38,9 +38,14 @@
  */
 
 /**
+ * Session store capabilities AuthService uses; SessionManager provides all of them.
+ * @typedef {PlatformSessionStore & { getStatus: () => Array<Object> } & import('./session-renewal.js').SessionRenewalStore} AuthSessionStore
+ */
+
+/**
  * @typedef {Object} AuthServiceDependencies
  * @property {SessionStore} [store]
- * @property {PlatformSessionStore} [sessionStore]
+ * @property {AuthSessionStore} [sessionStore]
  */
 
 export {};

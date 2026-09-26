@@ -816,7 +816,19 @@
     "apps/portfolio/lib/entry-router-utils/profile-sync-proxy.js",
     "apps/portfolio/lib/entry-router-utils/request-parsing.js",
     "apps/portfolio/lib/entry-router-utils/response-headers.js",
-    "apps/portfolio/lib/localized-page-builder.js"
+    "apps/portfolio/lib/localized-page-builder.js",
+    "apps/job-server/src/auto-apply/browser-helpers.js",
+    "apps/job-server/src/auto-apply/queue-apply.js",
+    "apps/job-server/src/auto-apply/strategies/wanted-applications.js",
+    "apps/job-server/src/auto-apply/strategies/wanted-id.js",
+    "apps/job-server/src/session-broker/services/session-broker-storage.js",
+    "apps/job-server/src/shared/services/auth/auth-service.js",
+    "apps/job-server/src/shared/services/auth/auth-service/auth-service-core.js",
+    "apps/job-server/src/shared/services/auth/auth-service/factory.js",
+    "apps/job-server/src/shared/services/auth/auth-service/index.js",
+    "apps/job-server/src/shared/services/session/index.js",
+    "apps/job-server/src/shared/services/session/session-manager/index.js",
+    "apps/portfolio/src/scripts/main.js"
   ],
   "exclude": ["packages/env/src/__tests__/**"]
 }
