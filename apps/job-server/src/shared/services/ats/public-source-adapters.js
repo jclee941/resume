@@ -9,6 +9,79 @@ import {
   createLeverPostingFetcher,
 } from './public-source-fetchers.js';
 
+/**
+ * @typedef {typeof globalThis.fetch} FetchFunction
+ * @typedef {import('./public-source-fetchers.js').AtsPostingFetcher} AtsPostingFetcher
+ *
+ * @typedef {{
+ *   fetch?: FetchFunction;
+ *   httpFetch?: FetchFunction;
+ *   greenhouse?: { fetch?: FetchFunction; fetchPostings?: AtsPostingFetcher | null };
+ *   lever?: { fetch?: FetchFunction; fetchPostings?: AtsPostingFetcher | null };
+ *   ashby?: { apiKey?: string; fetch?: FetchFunction; fetchPostings?: AtsPostingFetcher | null };
+ *   ashbyApiKey?: string;
+ * }} DefaultForeignAtsAdaptersOptions
+ *
+ * @typedef {{
+ *   company?: string | null;
+ *   boardToken?: string | null;
+ *   locations?: string | string[];
+ *   keywords?: string[];
+ *   postings?: unknown[];
+ *   [key: string]: unknown;
+ * }} AtsSearchCriteria
+ *
+ * @typedef {{
+ *   id: string;
+ *   company: string | null;
+ *   position: string;
+ *   title: string;
+ *   source: string;
+ *   atsPlatform: string;
+ *   externalJobId: string | null;
+ *   sourceUrl: string;
+ *   applicationUrl: string;
+ *   normalizedLocations: (string | RegExp)[];
+ *   locationTargets: (string | RegExp)[];
+ *   remote: boolean;
+ *   dryRunOnly: boolean;
+ *   submissionSkipped: boolean;
+ * }} NormalizedAtsJob
+ *
+ * @typedef {{
+ *   platform: string;
+ *   fetchPostings?: AtsPostingFetcher | null;
+ *   apiKey?: string;
+ *   backendApiKeyOnly?: boolean;
+ *   normalizePosting: (posting: unknown, criteria: AtsSearchCriteria) => NormalizedAtsJob | null;
+ * }} PostingAdapterConfig
+ *
+ * @typedef {{
+ *   platform: string;
+ *   capabilities: {
+ *     locations: string[];
+ *     dryRunFirst: boolean;
+ *     canFetchNetwork: boolean;
+ *     canSubmit: boolean;
+ *     backendApiKeyOnly: boolean;
+ *   };
+ *   planSearch(criteria?: AtsSearchCriteria): Promise<{
+ *     platform: string;
+ *     keywords: unknown[];
+ *     dryRun: boolean;
+ *     locationTargets: (string | RegExp)[];
+ *     unsupportedLocations: string[];
+ *     networkSkipped: boolean;
+ *     submissionSkipped: boolean;
+ *   }>;
+ *   search(criteria?: AtsSearchCriteria): Promise<NormalizedAtsJob[]>;
+ * }} PublicPostingAdapter
+ */
+
+/**
+ * @param {DefaultForeignAtsAdaptersOptions} [options]
+ * @returns {{ greenhouse: PublicPostingAdapter; lever: PublicPostingAdapter; ashby: PublicPostingAdapter }}
+ */
 export function createDefaultForeignAtsAdapters(options = {}) {
   const sharedFetch = options.fetch ?? options.httpFetch;
 
@@ -17,14 +90,18 @@ export function createDefaultForeignAtsAdapters(options = {}) {
       platform: 'greenhouse',
       fetchPostings:
         options.greenhouse?.fetchPostings ??
-        createGreenhousePostingFetcher(options.greenhouse?.fetch ?? sharedFetch),
+        createGreenhousePostingFetcher(
+          /** @type {typeof globalThis.fetch} */ (options.greenhouse?.fetch ?? sharedFetch)
+        ),
       normalizePosting: normalizeGreenhousePosting,
     }),
     lever: createPublicPostingAdapter({
       platform: 'lever',
       fetchPostings:
         options.lever?.fetchPostings ??
-        createLeverPostingFetcher(options.lever?.fetch ?? sharedFetch),
+        createLeverPostingFetcher(
+          /** @type {typeof globalThis.fetch} */ (options.lever?.fetch ?? sharedFetch)
+        ),
       normalizePosting: normalizeLeverPosting,
     }),
     ashby: createPublicPostingAdapter({
@@ -33,12 +110,18 @@ export function createDefaultForeignAtsAdapters(options = {}) {
       backendApiKeyOnly: true,
       fetchPostings:
         options.ashby?.fetchPostings ??
-        createAshbyPostingFetcher(options.ashby?.fetch ?? sharedFetch),
+        createAshbyPostingFetcher(
+          /** @type {typeof globalThis.fetch} */ (options.ashby?.fetch ?? sharedFetch)
+        ),
       normalizePosting: normalizeAshbyPosting,
     }),
   };
 }
 
+/**
+ * @param {string} platform
+ * @returns {PublicPostingAdapter}
+ */
 export function createBoundaryAdapter(platform) {
   return createPublicPostingAdapter({
     platform,
@@ -46,6 +129,10 @@ export function createBoundaryAdapter(platform) {
   });
 }
 
+/**
+ * @param {PostingAdapterConfig} config
+ * @returns {PublicPostingAdapter}
+ */
 function createPublicPostingAdapter(config) {
   const platform = normalizePlatform(config.platform);
 
@@ -65,13 +152,18 @@ function createPublicPostingAdapter(config) {
       const plan = await this.planSearch(safeCriteria);
       const postings = await loadPostings(safeCriteria, config);
 
-      return postings
-        .map((posting) => config.normalizePosting(posting, safeCriteria))
-        .filter((job) => job && hasTargetLocation(job.normalizedLocations, plan.locationTargets));
+      return /** @type {NormalizedAtsJob[]} */ (
+        postings
+          .map((posting) => config.normalizePosting(posting, safeCriteria))
+          .filter((job) => job && hasTargetLocation(job.normalizedLocations, plan.locationTargets))
+      );
     },
   };
 }
 
+/**
+ * @param {PostingAdapterConfig} config
+ */
 function createCapabilities(config) {
   return {
     locations: [...FOREIGN_ATS_LOCATION_TARGETS],
@@ -82,6 +174,11 @@ function createCapabilities(config) {
   };
 }
 
+/**
+ * @param {AtsSearchCriteria} criteria
+ * @param {PostingAdapterConfig} config
+ * @returns {Promise<unknown[]>}
+ */
 async function loadPostings(criteria, config) {
   if (Array.isArray(criteria.postings)) return criteria.postings;
   if (!config.fetchPostings) return [];
@@ -95,6 +192,11 @@ async function loadPostings(criteria, config) {
   return Array.isArray(postings) ? postings : [];
 }
 
+/**
+ * @param {unknown} posting
+ * @param {AtsSearchCriteria} criteria
+ * @returns {NormalizedAtsJob | null}
+ */
 function normalizeGreenhousePosting(posting, criteria) {
   if (!isRecord(posting)) return null;
 
@@ -109,6 +211,11 @@ function normalizeGreenhousePosting(posting, criteria) {
   });
 }
 
+/**
+ * @param {unknown} posting
+ * @param {AtsSearchCriteria} criteria
+ * @returns {NormalizedAtsJob | null}
+ */
 function normalizeLeverPosting(posting, criteria) {
   if (!isRecord(posting)) return null;
 
@@ -123,6 +230,11 @@ function normalizeLeverPosting(posting, criteria) {
   });
 }
 
+/**
+ * @param {unknown} posting
+ * @param {AtsSearchCriteria} criteria
+ * @returns {NormalizedAtsJob | null}
+ */
 function normalizeAshbyPosting(posting, criteria) {
   if (!isRecord(posting)) return null;
 
@@ -137,6 +249,18 @@ function normalizeAshbyPosting(posting, criteria) {
   });
 }
 
+/**
+ * @param {{
+ *   platform: string;
+ *   criteria: AtsSearchCriteria;
+ *   externalJobId?: unknown;
+ *   title?: unknown;
+ *   sourceUrl?: unknown;
+ *   applicationUrl?: unknown;
+ *   normalizedLocations: (string | RegExp)[];
+ * }} params
+ * @returns {NormalizedAtsJob | null}
+ */
 function createJob({
   platform,
   criteria,
@@ -166,14 +290,27 @@ function createJob({
   };
 }
 
+/**
+ * @param {(string | RegExp)[]} normalizedLocations
+ * @param {(string | RegExp)[]} locationTargets
+ * @returns {boolean}
+ */
 function hasTargetLocation(normalizedLocations, locationTargets) {
   return normalizedLocations.some((location) => locationTargets.includes(location));
 }
 
+/**
+ * @param {unknown} value
+ * @returns {value is Record<string, unknown>}
+ */
 function isRecord(value) {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
+/**
+ * @param {unknown} platform
+ * @returns {string}
+ */
 function normalizePlatform(platform) {
   return String(platform).trim().toLowerCase();
 }

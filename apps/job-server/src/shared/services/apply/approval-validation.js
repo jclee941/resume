@@ -1,5 +1,9 @@
 import { AppError, ErrorCodes, ValidationError } from '../../errors/index.js';
 
+/**
+ * @param {{ applicationId?: unknown; application_id?: unknown; id?: unknown } | null | undefined} job
+ * @returns {string}
+ */
 export function resolveApplicationId(job) {
   const applicationId = job?.applicationId || job?.application_id || job?.id;
   if (!applicationId || typeof applicationId !== 'string') {
@@ -11,6 +15,11 @@ export function resolveApplicationId(job) {
   return applicationId;
 }
 
+/**
+ * @param {{ status?: unknown } | null | undefined} request
+ * @param {string} applicationId
+ * @returns {void}
+ */
 export function assertPendingRequest(request, applicationId) {
   if (!request) {
     throw new AppError('Approval request not found', ErrorCodes.NOT_FOUND, 404, {

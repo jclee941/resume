@@ -16,7 +16,7 @@ export class AIService {
    * @param {import('../prompt-cache.js').PromptCache} [options.cache]
    * @param {import('../cost-tracker.js').CostTracker} [options.costTracker]
    * @param {boolean} [options.enableFallback=true]
-   * @param {object} [options.logger=console]
+   * @param {import('./response-finalizer.js').AppLogger} [options.logger=console]
    */
   constructor({ workersAI, openAI, cache, costTracker, enableFallback = true, logger }) {
     this.workersAI = workersAI;
@@ -24,10 +24,15 @@ export class AIService {
     this.cache = cache;
     this.costTracker = costTracker;
     this.enableFallback = enableFallback;
-    this.logger = logger ?? console;
+    /** @type {import('./response-finalizer.js').AppLogger} */
+    this.logger = /** @type {import('./response-finalizer.js').AppLogger} */ (logger ?? console);
   }
 
-  /** Generate a text completion with automatic model routing. */
+  /**
+   * Generate a text completion with automatic model routing.
+   * @param {string} prompt
+   * @param {{ tier?: string; systemPrompt?: string; max_tokens?: number; temperature?: number; skipCache?: boolean; model?: string }} [options]
+   */
   async complete(prompt, options = {}) {
     const {
       tier = 'auto',
@@ -42,7 +47,11 @@ export class AIService {
     return this.chat(messages, { tier, max_tokens, temperature, skipCache, model: modelOverride });
   }
 
-  /** Chat completion with full message history. */
+  /**
+   * Chat completion with full message history.
+   * @param {Array<{ role: string; content: string }>} messages
+   * @param {{ tier?: string; max_tokens?: number; temperature?: number; skipCache?: boolean; model?: string }} [options]
+   */
   async chat(messages, options = {}) {
     const {
       tier = 'auto',
@@ -61,15 +70,18 @@ export class AIService {
       if (cached) return { ...cached, cached: true, cost: 0 };
     }
 
-    const { result, catalogEntry } = await completeWithFallback({
-      resolved,
-      tier,
-      params: { messages, max_tokens, temperature },
-      workersAI: this.workersAI,
-      openAI: this.openAI,
-      enableFallback: this.enableFallback,
-      logger: this.logger,
-    });
+    const { result, catalogEntry } =
+      await /** @type {Promise<{ result: import('./response-finalizer.js').ProviderResult; catalogEntry?: import('./provider-fallback.js').CatalogEntry }>} */ (
+        completeWithFallback({
+          resolved,
+          tier,
+          params: { messages, max_tokens, temperature },
+          workersAI: this.workersAI,
+          openAI: this.openAI,
+          enableFallback: this.enableFallback,
+          logger: this.logger,
+        })
+      );
 
     normalizeUsage(result);
     const costInfo = await trackCost({
@@ -87,7 +99,11 @@ export class AIService {
     return formatChatResult(result, costInfo);
   }
 
-  /** Generate embeddings. */
+  /**
+   * Generate embeddings.
+   * @param {string} text
+   * @param {{ provider?: string }} [options]
+   */
   async embed(text, options = {}) {
     const { provider: providerName = 'workers-ai' } = options;
     const resolved = resolveEmbeddingProvider({
@@ -100,7 +116,12 @@ export class AIService {
     return resolved.provider.embed(resolved.model, text);
   }
 
-  /** @private */
+  /**
+   * @package
+   * @param {string} tier
+   * @param {Array<{ role: string; content: string }>} messages
+   * @param {string} [modelOverride]
+   */
   _resolveModel(tier, messages, modelOverride) {
     return resolveModel({
       tier,
@@ -111,22 +132,37 @@ export class AIService {
     });
   }
 
-  /** @private */
+  /**
+   * @package
+   * @param {Array<{ role: string; content: string }>} messages
+   */
   _autoRoute(messages) {
     return autoRoute(messages);
   }
 
-  /** @private */
+  /**
+   * @package
+   * @param {import('./provider-fallback.js').AnyAIProvider | null} provider
+   * @param {string} model
+   * @param {unknown} params
+   */
   async _callProvider(provider, model, params) {
     return callProvider(provider, model, params);
   }
 
-  /** @private */
+  /**
+   * @package
+   * @param {string} primaryName
+   */
   _getFallbackProvider(primaryName) {
     return getFallbackProvider(primaryName, { workersAI: this.workersAI, openAI: this.openAI });
   }
 
-  /** @private */
+  /**
+   * @package
+   * @param {string} [tier]
+   * @param {string} [fallbackProviderName]
+   */
   _getFallbackModel(tier, fallbackProviderName) {
     return getFallbackModel(tier, fallbackProviderName);
   }

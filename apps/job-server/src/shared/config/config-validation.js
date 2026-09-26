@@ -1,23 +1,64 @@
 import { isPlainObject } from './config-helpers.js';
 
+/**
+ * @param {unknown} value
+ * @returns {boolean}
+ */
 function isPositiveInteger(value) {
-  return Number.isInteger(value) && value > 0;
+  return Number.isInteger(value) && /** @type {number} */ (value) > 0;
 }
 
+/**
+ * @param {unknown} value
+ * @returns {boolean}
+ */
 function isNonNegativeInteger(value) {
-  return Number.isInteger(value) && value >= 0;
+  return Number.isInteger(value) && /** @type {number} */ (value) >= 0;
 }
 
+/**
+ * @param {unknown} value
+ * @returns {boolean}
+ */
 function isValidBoolean(value) {
   return typeof value === 'boolean';
 }
 
+/**
+ * @typedef {{
+ *   thresholds: { review: number; autoApply: number; minMatch: number };
+ *   limits: { maxDaily: number; delayBetweenApps: number; maxPerPlatform: Record<string, number> };
+ *   ai: { enabled: boolean; batchSize: number; cacheTtl: number; minConfidence: number };
+ *   approval: { timeoutHours: number; reminderIntervalHours: number; maxReminders: number };
+ *   retry: { maxRetries: number; baseDelay: number; maxDelay: number; circuit: { failureThreshold: number; resetTimeout: number } };
+ *   notifications: {
+ *     telegram: { enabled: boolean; rateLimitPerMinute: number };
+ *     webhook: { enabled: boolean; url: string | null };
+ *   };
+ *   platforms: Record<string, { enabled: boolean; priority: number }>;
+ * }} CandidateConfig
+ */
+
+/**
+ * @param {CandidateConfig} candidateConfig
+ * @returns {{ valid: boolean; errors: string[] }}
+ */
 function validateAutoApplyConfig(candidateConfig) {
   const config = candidateConfig;
   const errors = [];
 
+  /**
+   * @param {unknown} value
+   * @param {number} min
+   * @param {number} max
+   * @param {string} label
+   */
   const ensureRange = (value, min, max, label) => {
-    if (!Number.isFinite(value) || value < min || value > max) {
+    if (
+      !Number.isFinite(value) ||
+      /** @type {number} */ (value) < min ||
+      /** @type {number} */ (value) > max
+    ) {
       errors.push(`${label} must be a number between ${min} and ${max}`);
     }
   };

@@ -2,13 +2,33 @@ import { COLD_TIER, WARM_TIER } from './constants.js';
 import { ensureD1Schema } from './d1-schema.js';
 
 /**
+ * @typedef {{
+ *   get(key: string, type?: string): Promise<unknown>;
+ * }} KVNamespace
+ *
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       first(): Promise<Record<string, unknown> | null>;
+ *       run(): Promise<unknown>;
+ *     };
+ *     run(): Promise<unknown>;
+ *   };
+ * }} D1Database
+ *
+ * @typedef {{
+ *   get(key: string): Promise<{ json(): Promise<unknown> } | null>;
+ * }} R2Bucket
+ */
+
+/**
  * Read from KV (hot tier).
  *
  * @param {KVNamespace} kv - KV namespace binding
  * @param {string} tieredKey - Full key with namespace prefix
  * @param {number} now - Current timestamp
  * @param {Pick<Console, 'warn'|'error'|'info'>} logger - Logger instance
- * @returns {Promise<import('../index.js').CacheEnvelope|null>}
+ * @returns {Promise<import('../cache-manager.js').CacheEnvelope|null>}
  */
 async function readHot(kv, tieredKey, now, logger) {
   if (!kv) {
@@ -21,14 +41,16 @@ async function readHot(kv, tieredKey, now, logger) {
       return null;
     }
 
-    const envelope = /** @type {import('../index.js').CacheEnvelope} */ (raw);
+    const envelope = /** @type {import('../cache-manager.js').CacheEnvelope} */ (raw);
     if (envelope.expiresAt <= now) {
       return null;
     }
 
     return envelope;
   } catch (error) {
-    logger.warn?.(`[CacheManager] hot read failed for ${tieredKey}: ${error.message}`);
+    logger.warn?.(
+      `[CacheManager] hot read failed for ${tieredKey}: ${error instanceof Error ? error.message : String(error)}`
+    );
     return null;
   }
 }
@@ -41,7 +63,7 @@ async function readHot(kv, tieredKey, now, logger) {
  * @param {number} now - Current timestamp
  * @param {string} tableName - D1 table name
  * @param {Pick<Console, 'warn'|'error'|'info'>} logger - Logger instance
- * @returns {Promise<import('../index.js').CacheEnvelope|null>}
+ * @returns {Promise<import('../cache-manager.js').CacheEnvelope|null>}
  */
 async function readWarm(d1, tieredKey, now, tableName, logger) {
   if (!d1) {
@@ -74,7 +96,7 @@ async function readWarm(d1, tieredKey, now, tableName, logger) {
 
     const envelope = {
       value: JSON.parse(String(row.value)),
-      tier: WARM_TIER,
+      tier: /** @type {'warm'} */ (WARM_TIER),
       expiresAt,
       createdAt: Number(row.created_at),
       updatedAt: Number(row.updated_at),
@@ -88,7 +110,9 @@ async function readWarm(d1, tieredKey, now, tableName, logger) {
 
     return envelope;
   } catch (error) {
-    logger.warn?.(`[CacheManager] warm read failed for ${tieredKey}: ${error.message}`);
+    logger.warn?.(
+      `[CacheManager] warm read failed for ${tieredKey}: ${error instanceof Error ? error.message : String(error)}`
+    );
     return null;
   }
 }
@@ -100,7 +124,7 @@ async function readWarm(d1, tieredKey, now, tableName, logger) {
  * @param {string} objectKey - Full R2 object key
  * @param {number} now - Current timestamp
  * @param {Pick<Console, 'warn'|'error'|'info'>} logger - Logger instance
- * @returns {Promise<import('../index.js').CacheEnvelope|null>}
+ * @returns {Promise<import('../cache-manager.js').CacheEnvelope|null>}
  */
 async function readCold(r2, objectKey, now, logger) {
   if (!r2) {
@@ -114,7 +138,7 @@ async function readCold(r2, objectKey, now, logger) {
     }
 
     const payload = await object.json();
-    const envelope = /** @type {import('../index.js').CacheEnvelope} */ (payload);
+    const envelope = /** @type {import('../cache-manager.js').CacheEnvelope} */ (payload);
 
     if (envelope.expiresAt <= now) {
       return null;
@@ -122,10 +146,12 @@ async function readCold(r2, objectKey, now, logger) {
 
     return {
       ...envelope,
-      tier: COLD_TIER,
+      tier: /** @type {'cold'} */ (COLD_TIER),
     };
   } catch (error) {
-    logger.warn?.(`[CacheManager] cold read failed for ${objectKey}: ${error.message}`);
+    logger.warn?.(
+      `[CacheManager] cold read failed for ${objectKey}: ${error instanceof Error ? error.message : String(error)}`
+    );
     return null;
   }
 }
