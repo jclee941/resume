@@ -7,7 +7,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"os"
 	"strings"
@@ -29,10 +28,8 @@ type claim struct {
 
 func main() {
 	repoRoot := "."
-	jsonFlag := flag.Bool("json", false, "Output results as JSON")
-	flag.Parse()
-	if len(flag.Args()) > 0 {
-		repoRoot = flag.Args()[0]
+	if len(os.Args) > 1 {
+		repoRoot = os.Args[1]
 	}
 
 	fmt.Printf("%s╔══════════════════════════════════════════════════════════════╗%s\n", cyan, reset)
@@ -83,10 +80,6 @@ func main() {
 	}
 
 	fmt.Printf("\n%sSummary:%s Confirmed=%d Stale=%d Partial=%d\n", cyan, reset, confirmed, stale, partial)
-
-	if *jsonFlag {
-		fmt.Println("{}")
-	}
 
 	if confirmed > 0 || partial > 0 {
 		os.Exit(1)

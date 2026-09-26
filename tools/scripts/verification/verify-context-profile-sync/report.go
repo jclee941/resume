@@ -75,16 +75,20 @@ func printStaleAssumptions(claims []claim) {
 
 func printRecommendations(claims []claim) {
 	fmt.Printf("%s=== RECOMMENDATIONS ===%s\n", cyan, reset)
-	recs := []string{
-		"Migrate apps/portfolio/lib/validators.js to use @resume/schemas instead of hand-rolled validation",
-		"Evaluate whether @resume/types, @resume/schemas, @resume/contracts packages need adoption in app code or deprecation",
-		"Add a bidirectional sync mechanism: crawlers → SSoT enrichment pipeline for profile data",
-		"Consider GitHub API integration for repository/activity enrichment into resume_data.json",
-		"Ensure 'npm run sync:data' is always followed by 'npm run build' in automation (automate:ssot already does this)",
-		"Document the split of applications.js and auto-apply.js in architecture docs to close Epic 6 tracking",
+	found := false
+	for _, c := range claims {
+		if !strings.HasPrefix(c.status, "FAIL") && !strings.HasPrefix(c.status, "PARTIAL") {
+			continue
+		}
+		for _, line := range strings.Split(c.details, "\n") {
+			if _, action, ok := strings.Cut(line, "Action: "); ok {
+				found = true
+				fmt.Printf("  %s•%s %s\n", cyan, reset, action)
+			}
+		}
 	}
-	for _, r := range recs {
-		fmt.Printf("  %s•%s %s\n", cyan, reset, r)
+	if !found {
+		fmt.Printf("  %s(none: every claim is resolved)%s\n", green, reset)
 	}
 	fmt.Println()
 }
