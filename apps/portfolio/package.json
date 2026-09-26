@@ -13,7 +13,7 @@
     "start": "CLOUDFLARE_ENV= wrangler dev --config ../../wrangler.jsonc"
   },
   "devDependencies": {
-    "esbuild": "^0.28.1",
+    "esbuild": "^0.28.2",
     "html-minifier-terser": "^7.2.0"
   }
 }
