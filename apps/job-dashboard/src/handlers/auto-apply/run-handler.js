@@ -31,11 +31,14 @@ import { getAutoApplyRunId } from './run-id.js';
  *   & import('./native-dispatch.js').NativeDispatchEnv
  *   & import('./application-actions.js').ActionEnv
  *   & NonNullable<Parameters<typeof loadMatchingConfig>[0]>} AutoApplyRunEnv
- * @typedef {ReturnType<typeof import('./client-factory.js').createAutoApplyClients>} AutoApplyClients
+ * Clients runAutoApply drives: the Wanted client it primes and applies with, plus
+ * every platform client it may search (dashboard clients or ATS dry-run clients).
+ * @typedef {import('./application-actions.js').Clients
+ *   & Record<string, import('./job-search.js').PlatformClient>} AutoApplyClients
  */
 
 /**
- * @param {{ request: Request, env: AutoApplyRunEnv, clients: AutoApplyClients }} options
+ * @param {{ request: Pick<Request, 'json'>, env: AutoApplyRunEnv, clients: AutoApplyClients }} options
  * @returns {Promise<Response>}
  */
 export async function runAutoApply({ request, env, clients }) {
