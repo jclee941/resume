@@ -27,7 +27,27 @@ const RALLIT_SELECTORS = {
   skills: '.skill-tag, .skill-item',
 };
 
+/**
+ * @typedef {Object} RallitProfileSyncOptions
+ * @property {boolean} [headless]
+ * @property {number} [timeout]
+ * @property {string} [sessionPath]
+ * @property {Record<string, string>} [urls]
+ * @property {Record<string, string>} [selectors]
+ * @property {string} [platform]
+ */
+
+/**
+ * @typedef {RallitProfileSyncOptions & {
+ *   sourceData?: import('../browser-profile-sync-runner.js').ProfileSyncSourceData;
+ *   dry_run?: boolean;
+ * }} RallitSyncOptions
+ */
+
 export class RallitProfileSync extends BrowserProfileSync {
+  /**
+   * @param {RallitProfileSyncOptions} [options]
+   */
   constructor(options = {}) {
     super({
       platform: 'rallit',
@@ -39,6 +59,9 @@ export class RallitProfileSync extends BrowserProfileSync {
   }
 }
 
+/**
+ * @param {RallitSyncOptions} [options]
+ */
 export async function syncToRallit(options = {}) {
   const sync = new RallitProfileSync(options);
   try {

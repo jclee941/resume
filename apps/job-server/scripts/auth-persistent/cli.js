@@ -39,6 +39,9 @@ export function printStatus() {
   console.log('');
 }
 
+/**
+ * @param {string[]} [args]
+ */
 export async function runCli(args = process.argv.slice(2)) {
   if (args.includes('--help') || args.length === 0) {
     printHelp();
@@ -58,7 +61,7 @@ export async function runCli(args = process.argv.slice(2)) {
   const reset = args.includes('--reset');
   const platformKey = args.find((arg) => !arg.startsWith('--'));
 
-  if (!platformKey || !PLATFORMS[platformKey]) {
+  if (!platformKey || !PLATFORMS[/** @type {keyof typeof PLATFORMS} */ (platformKey)]) {
     console.error('Invalid platform. Use: wanted, jobkorea, saramin');
     return 1;
   }

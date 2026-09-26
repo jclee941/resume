@@ -27,7 +27,27 @@ const ROCKETPUNCH_SELECTORS = {
   skills: '.skill-tag, .skill-item',
 };
 
+/**
+ * @typedef {Object} RocketPunchProfileSyncOptions
+ * @property {boolean} [headless]
+ * @property {number} [timeout]
+ * @property {string} [sessionPath]
+ * @property {Record<string, string>} [urls]
+ * @property {Record<string, string>} [selectors]
+ * @property {string} [platform]
+ */
+
+/**
+ * @typedef {RocketPunchProfileSyncOptions & {
+ *   sourceData?: import('../browser-profile-sync-runner.js').ProfileSyncSourceData;
+ *   dry_run?: boolean;
+ * }} RocketPunchSyncOptions
+ */
+
 export class RocketPunchProfileSync extends BrowserProfileSync {
+  /**
+   * @param {RocketPunchProfileSyncOptions} [options]
+   */
   constructor(options = {}) {
     super({
       platform: 'rocketpunch',
@@ -39,6 +59,9 @@ export class RocketPunchProfileSync extends BrowserProfileSync {
   }
 }
 
+/**
+ * @param {RocketPunchSyncOptions} [options]
+ */
 export async function syncToRocketPunch(options = {}) {
   const sync = new RocketPunchProfileSync(options);
   try {

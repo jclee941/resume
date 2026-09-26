@@ -1,3 +1,4 @@
+/// <reference path="../jobkorea-page-jquery.d.ts" />
 import { log } from '../sync-logger.js';
 import { addJobKoreaEntrySlots } from './section-slot-adder.js';
 import {
@@ -6,8 +7,39 @@ import {
   recreateLicenseEntries as recreateLicenseEntriesImpl,
 } from './section-slot-rebuild.js';
 
+/**
+ * @typedef {{
+ *   readSectionIndices(page: import('playwright').Page, prefix: string): Promise<string[]>;
+ * }} JobKoreaSectionHandler
+ */
+
+/**
+ * @typedef {{
+ *   careers?: Array<Record<string, unknown>>;
+ *   certifications?: Array<{ date?: string | null; [key: string]: unknown }>;
+ *   awards?: Array<Record<string, unknown>>;
+ *   languages?: Array<Record<string, unknown>>;
+ *   coverLetter?: { ko?: { paragraphs?: unknown[] } };
+ *   personal?: { portfolio?: unknown };
+ * }} JobKoreaSsot
+ */
+
+/**
+ * @typedef {{
+ *   recreateCareerEntries?: boolean;
+ *   recreateIntroEntries?: boolean;
+ *   recreateLicenseEntries?: boolean;
+ * }} CreateJobKoreaEntrySlotsOptions
+ */
+
+/**
+ * @param {import('playwright').Page} page
+ * @param {string} prefix
+ * @returns {Promise<string[]>}
+ */
 export async function readJobKoreaSectionIndices(page, prefix) {
-  return page.evaluate((pfx) => {
+  return page.evaluate((/** @type {string} */ pfx) => {
+    /** @type {string[]} */
     const indices = [];
     const escaped = pfx.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     $('#frm1')
@@ -24,18 +56,45 @@ export async function readJobKoreaSectionIndices(page, prefix) {
   }, prefix);
 }
 
+/**
+ * @param {JobKoreaSectionHandler} handler
+ * @param {import('playwright').Page} page
+ * @param {number} needed
+ * @param {typeof addJobKoreaEntrySlots} [addSlots]
+ * @returns {Promise<void>}
+ */
 async function recreateCareerEntries(handler, page, needed, addSlots = addJobKoreaEntrySlots) {
   return recreateCareerEntriesImpl(handler, page, needed, addSlots);
 }
 
+/**
+ * @param {JobKoreaSectionHandler} handler
+ * @param {import('playwright').Page} page
+ * @param {number} needed
+ * @param {typeof addJobKoreaEntrySlots} [addSlots]
+ * @returns {Promise<void>}
+ */
 async function recreateIntroEntries(handler, page, needed, addSlots = addJobKoreaEntrySlots) {
   return recreateIntroEntriesImpl(handler, page, needed, addSlots);
 }
 
+/**
+ * @param {JobKoreaSectionHandler} handler
+ * @param {import('playwright').Page} page
+ * @param {number} needed
+ * @param {typeof addJobKoreaEntrySlots} [addSlots]
+ * @returns {Promise<void>}
+ */
 async function recreateLicenseEntries(handler, page, needed, addSlots = addJobKoreaEntrySlots) {
   return recreateLicenseEntriesImpl(handler, page, needed, addSlots);
 }
 
+/**
+ * @param {JobKoreaSectionHandler} handler
+ * @param {import('playwright').Page} page
+ * @param {JobKoreaSsot} ssot
+ * @param {CreateJobKoreaEntrySlotsOptions} [options]
+ */
 export async function createJobKoreaEntrySlots(handler, page, ssot, options = {}) {
   const careers = Array.isArray(ssot?.careers) ? ssot.careers : [];
   const validCerts = (Array.isArray(ssot?.certifications) ? ssot.certifications : []).filter(
@@ -43,7 +102,7 @@ export async function createJobKoreaEntrySlots(handler, page, ssot, options = {}
   );
   const awardItems = Array.isArray(ssot?.awards) ? ssot.awards : [];
   const languages = Array.isArray(ssot?.languages) ? ssot.languages : [];
-  const introNeeded = ssot?.coverLetter?.ko?.paragraphs?.length > 0 ? 1 : 0;
+  const introNeeded = /** @type {number} */ (ssot?.coverLetter?.ko?.paragraphs?.length) > 0 ? 1 : 0;
   const sections = [
     { prefix: 'Career', needed: careers.length },
     { prefix: 'ResumeProfile', needed: introNeeded },
@@ -53,6 +112,7 @@ export async function createJobKoreaEntrySlots(handler, page, ssot, options = {}
     { prefix: 'Language', needed: languages.length },
   ];
 
+  /** @type {Record<string, Set<string>>} */
   const existingIndices = {};
 
   for (const { prefix, needed } of sections) {
@@ -60,7 +120,7 @@ export async function createJobKoreaEntrySlots(handler, page, ssot, options = {}
 
     try {
       await page.waitForFunction(
-        (pfx) => {
+        (/** @type {string} */ pfx) => {
           return $('#frm1')
             .serializeArray()
             .some((f) => f.name.startsWith(`${pfx}[`));

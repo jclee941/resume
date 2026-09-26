@@ -685,7 +685,25 @@
     "apps/job-dashboard/src/handlers/auto-apply/native-dispatch.js",
     "apps/job-dashboard/src/handlers/wanted/mint-session.js",
     "apps/job-dashboard/src/routes/auth.js",
-    "apps/job-dashboard/src/workflows/application/browser-rendering-cookies.js"
+    "apps/job-dashboard/src/workflows/application/browser-rendering-cookies.js",
+    "apps/job-server/platforms/programmers/programmers-profile-sync.js",
+    "apps/job-server/platforms/rallit/rallit-profile-sync.js",
+    "apps/job-server/platforms/rocketpunch/rocketpunch-profile-sync.js",
+    "apps/job-server/scripts/auth-persistent.js",
+    "apps/job-server/scripts/auth-persistent/cli.js",
+    "apps/job-server/scripts/auth-persistent/index.js",
+    "apps/job-server/scripts/jobkorea-session/captcha-handler.js",
+    "apps/job-server/scripts/jobkorea-session/login-confirmation.js",
+    "apps/job-server/scripts/profile-sync/jobkorea-handler/har-tools-cli.js",
+    "apps/job-server/scripts/profile-sync/jobkorea-handler/section-slots.js",
+    "apps/job-server/scripts/profile-sync/jobkorea-sections/field-mappers.js",
+    "apps/job-server/scripts/profile-sync/jobkorea-sections/profile-fields.js",
+    "apps/job-server/scripts/profile-sync/wanted-sections.js",
+    "apps/job-server/scripts/profile-sync/wanted-sections/about.js",
+    "apps/job-server/src/crawlers/browser-utils.js",
+    "apps/job-server/src/server/middleware/error-handler.js",
+    "apps/job-server/src/session-broker/services/session-broker-state.js",
+    "apps/job-server/src/session-broker/services/wanted-login-flow.js"
   ],
   "exclude": ["packages/env/src/__tests__/**"]
 }

@@ -27,7 +27,27 @@ const PROGRAMMERS_SELECTORS = {
   skills: '.skill-tag, .skill-item',
 };
 
+/**
+ * @typedef {Object} ProgrammersProfileSyncOptions
+ * @property {boolean} [headless]
+ * @property {number} [timeout]
+ * @property {string} [sessionPath]
+ * @property {Record<string, string>} [urls]
+ * @property {Record<string, string>} [selectors]
+ * @property {string} [platform]
+ */
+
+/**
+ * @typedef {ProgrammersProfileSyncOptions & {
+ *   sourceData?: import('../browser-profile-sync-runner.js').ProfileSyncSourceData;
+ *   dry_run?: boolean;
+ * }} ProgrammersSyncOptions
+ */
+
 export class ProgrammersProfileSync extends BrowserProfileSync {
+  /**
+   * @param {ProgrammersProfileSyncOptions} [options]
+   */
   constructor(options = {}) {
     super({
       platform: 'programmers',
@@ -39,6 +59,9 @@ export class ProgrammersProfileSync extends BrowserProfileSync {
   }
 }
 
+/**
+ * @param {ProgrammersSyncOptions} [options]
+ */
 export async function syncToProgrammers(options = {}) {
   const sync = new ProgrammersProfileSync(options);
   try {
