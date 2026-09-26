@@ -43,9 +43,28 @@ const CAPTCHA_VISION_PROMPT =
   'The answer must not be a normal word like image, captcha, letters, or text. ' +
   'If the characters are illegible, reply with exactly: ZZZZZZ.';
 
+/**
+ * @typedef {{
+ *   JOBKOREA_USERNAME?: string;
+ *   JOBKOREA_EMAIL?: string;
+ *   JOBKOREA_PASSWORD?: string;
+ *   CLIPROXY_BASE?: string;
+ *   CLIPROXY_API_KEY?: string;
+ *   CLIPROXY_VISION_MODEL?: string;
+ *   BROWSER_SESSION: import('../browser/browser-service.js').DurableObjectNamespaceBinding;
+ *   MYBROWSER: import('@cloudflare/puppeteer').ConnectOptions | import('@cloudflare/puppeteer').BrowserWorker;
+ *   SESSIONS?: { put: Function };
+ *   [key: string]: unknown;
+ * }} JobKoreaEnv
+ */
+
 const LOGIN_POLL_ATTEMPTS = 5;
 const LOGIN_POLL_INTERVAL_MS = 1000; // ~5s worst case across LOGIN_POLL_ATTEMPTS
 
+/**
+ * @param {number} ms
+ * @returns {Promise<void>}
+ */
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -103,8 +122,8 @@ export async function solveJobKoreaCaptcha(env, { mime, base64 }, { fetchImpl = 
 /**
  * Mint a fresh JobKorea session cookie by logging in through the Browser
  * Rendering broker, solving the CAPTCHA (if presented) via cliproxy vision.
- * @param {object} env
- * @param {{withBrowserSession?: Function, fetchImpl?: typeof fetch}} [opts]
+ * @param {JobKoreaEnv} env
+ * @param {{ withBrowserSession?: typeof defaultWithBrowserSession, fetchImpl?: typeof fetch }} [opts]
  * @returns {Promise<string>} cookie string `name=value; name2=value2`
  */
 export async function mintJobKoreaSession(
@@ -161,9 +180,9 @@ export async function mintJobKoreaSession(
  * Mint a JobKorea session and store it encrypted in KV as `auth:jobkorea`. Never
  * throws — callers (admin route, scheduled cron) get a plain result back
  * either way.
- * @param {{SESSIONS: {put: Function}}} env
- * @param {{withBrowserSession?: Function, fetchImpl?: typeof fetch}} [opts]
- * @returns {Promise<{ok:true,key:string,length:number}|{ok:false,error:string}>}
+ * @param {JobKoreaEnv & { SESSIONS: { put: Function } }} env
+ * @param {{ withBrowserSession?: typeof defaultWithBrowserSession, fetchImpl?: typeof fetch }} [opts]
+ * @returns {Promise<{ ok: true, key: string, length: number } | { ok: false, error: string, code?: unknown }>}
  */
 export async function refreshJobKoreaSession(env, opts = {}) {
   try {
@@ -173,8 +192,10 @@ export async function refreshJobKoreaSession(env, opts = {}) {
   } catch (err) {
     return {
       ok: false,
-      error: err?.message || String(err),
-      ...(err?.code ? { code: err.code } : {}),
+      error: /** @type {{ message?: string }} */ (err)?.message || String(err),
+      .../** @type {{ code?: unknown }} */ (
+        err?.code ? { code: /** @type {{ code?: unknown }} */ (err).code } : {}
+      ),
     };
   }
 }

@@ -14,6 +14,20 @@ export const WANTED_PROFILE_URL = 'https://www.wanted.co.kr/api/v4/user';
 export const AUTH_WANTED_KEY = 'auth:wanted';
 export const WANTED_SESSION_TTL_S = 60 * 60 * 12; // 12h
 
+/**
+ * @typedef {{
+ *   WANTED_EMAIL?: string;
+ *   WANTED_PASSWORD?: string;
+ *   WANTED_ONEID_CLIENT_ID?: string;
+ *   SESSIONS?: { put: Function };
+ *   [key: string]: unknown;
+ * }} WantedEnv
+ */
+
+/**
+ * @param {string} clientId
+ * @returns {string}
+ */
 function buildWantedOneIdLoginUrl(clientId) {
   const url = new URL('https://id.wanted.co.kr/login');
   url.searchParams.set('service', 'wanted');
@@ -24,7 +38,7 @@ function buildWantedOneIdLoginUrl(clientId) {
 
 /**
  * Mint a fresh Wanted OneID session cookie via the password grant.
- * @param {{WANTED_EMAIL?: string, WANTED_PASSWORD?: string, WANTED_ONEID_CLIENT_ID?: string}} env
+ * @param {WantedEnv} env
  * @param {{fetchImpl?: typeof fetch}} [opts]
  * @returns {Promise<string>} cookie string `WWW_ONEID_ACCESS_TOKEN=<token>`
  */
@@ -75,7 +89,7 @@ export async function mintWantedSession(env, { fetchImpl = fetch } = {}) {
 /**
  * Mint a Wanted session and store it encrypted in KV as `auth:wanted`. Never throws —
  * callers (admin route, scheduled cron) get a plain result back either way.
- * @param {{SESSIONS: {put: Function}}} env
+ * @param {WantedEnv & { SESSIONS: { put: Function } }} env
  * @param {{fetchImpl?: typeof fetch}} [opts]
  * @returns {Promise<{ok:true,key:string,length:number}|{ok:false,error:string}>}
  */
@@ -86,10 +100,18 @@ export async function refreshWantedSession(env, opts = {}) {
     await writePlatformSession(env, 'wanted', cookie, WANTED_SESSION_TTL_S);
     return { ok: true, key: AUTH_WANTED_KEY, length: cookie.length };
   } catch (err) {
-    return { ok: false, error: err?.message || String(err) };
+    return {
+      ok: false,
+      error: /** @type {{ message?: string }} */ (err)?.message || String(err),
+    };
   }
 }
 
+/**
+ * @param {string} cookie
+ * @param {{ fetchImpl?: typeof fetch }} [opts]
+ * @returns {Promise<void>}
+ */
 async function validateWantedSession(cookie, { fetchImpl = fetch } = {}) {
   const response = await fetchImpl(WANTED_PROFILE_URL, {
     headers: {

@@ -4,14 +4,42 @@ import { normalizeApplicationPlatform } from '../../workflows/application/applic
 const DEFAULT_MAX_DEPTH = 1;
 const MAX_ALLOWED_DEPTH = 5;
 
+/**
+ * @typedef {{
+ *   recursive?: { next?: RecursiveReference[] };
+ *   id?: string | number;
+ *   sourceId?: string | number;
+ *   source?: string;
+ *   platform?: string;
+ *   loginPlatform?: string;
+ *   position?: string;
+ *   title?: string;
+ *   company?: string;
+ *   sourceUrl?: string;
+ *   url?: string;
+ *   decisionTrace?: unknown[];
+ *   [key: string]: unknown;
+ * }} RecursiveReference
+ *
+ * @typedef {RecursiveReference} ExplicitJob
+ */
+
+/**
+ * @param {unknown} [value]
+ * @returns {{ value: number; error?: never } | { error: string; value?: never }}
+ */
 function parseMaxDepth(value) {
-  const depth = value ?? DEFAULT_MAX_DEPTH;
+  const depth = /** @type {number} */ (value ?? DEFAULT_MAX_DEPTH);
   if (!Number.isInteger(depth) || depth < 0 || depth > MAX_ALLOWED_DEPTH) {
     return { error: 'maxDepth must be an integer between 0 and 5' };
   }
   return { value: depth };
 }
 
+/**
+ * @param {ExplicitJob | null | undefined} job
+ * @returns {unknown}
+ */
 function hasRequiredJobFields(job) {
   const source = getCandidateSource(job);
   return (
@@ -24,6 +52,11 @@ function hasRequiredJobFields(job) {
   );
 }
 
+/**
+ * @param {ExplicitJob} candidate
+ * @param {number} index
+ * @returns {{ job: ExplicitJob; error?: never } | { error: string; job?: never }}
+ */
 function normalizeCandidate(candidate, index) {
   if (!hasRequiredJobFields(candidate)) {
     return {
@@ -51,12 +84,21 @@ function normalizeCandidate(candidate, index) {
   };
 }
 
+/**
+ * @param {ExplicitJob | null | undefined} candidate
+ * @returns {string}
+ */
 function getCandidateSource(candidate) {
   return normalizeApplicationPlatform(
     candidate?.source || candidate?.platform || candidate?.loginPlatform
   );
 }
 
+/**
+ * @param {ExplicitJob | null | undefined} job
+ * @param {number} maxDepth
+ * @returns {{ visited: number; truncated: number; maxVisitedDepth: number }}
+ */
 function collectRecursiveReferences(job, maxDepth) {
   const next = Array.isArray(job?.recursive?.next) ? job.recursive.next : [];
   if (maxDepth === 0) {
@@ -69,7 +111,7 @@ function collectRecursiveReferences(job, maxDepth) {
   const stack = next.map((reference) => ({ reference, depth: 1 }));
 
   while (stack.length > 0) {
-    const current = stack.shift();
+    const current = /** @type {{ reference: RecursiveReference; depth: number }} */ (stack.shift());
     if (current.depth > maxDepth) {
       truncated++;
       continue;
@@ -88,6 +130,10 @@ function collectRecursiveReferences(job, maxDepth) {
   return { visited, truncated, maxVisitedDepth };
 }
 
+/**
+ * @param {Record<string, unknown> | null | undefined} body
+ * @returns {{ hasExplicitCandidates: false } | { hasExplicitCandidates: true; error: string; status: number } | { hasExplicitCandidates: true; jobs: Array<ExplicitJob & { decisionTrace: unknown[] }>; recursion: { maxDepth: number; maxVisitedDepth: number; visited: number; truncated: number } }}
+ */
 export function readExplicitCandidates(body) {
   if (!body || typeof body !== 'object') {
     return { hasExplicitCandidates: false };
@@ -120,16 +166,19 @@ export function readExplicitCandidates(body) {
     if (normalized.error) {
       return { hasExplicitCandidates: true, error: normalized.error, status: 400 };
     }
-    const recursive = collectRecursiveReferences(normalized.job, parsedDepth.value);
+    const recursive = collectRecursiveReferences(
+      /** @type {ExplicitJob} */ (normalized.job),
+      /** @type {number} */ (parsedDepth.value)
+    );
     visited += 1 + recursive.visited;
     truncated += recursive.truncated;
     maxVisitedDepth = Math.max(maxVisitedDepth, recursive.maxVisitedDepth);
     jobs.push(
-      appendDecisionTrace(normalized.job, {
+      appendDecisionTrace(/** @type {ExplicitJob} */ (normalized.job), {
         stage: 'recursive_expanded',
         outcome: 'included',
         reason: 'bounded_request_recursion',
-        maxDepth: parsedDepth.value,
+        maxDepth: /** @type {number} */ (parsedDepth.value),
         maxVisitedDepth: recursive.maxVisitedDepth,
         visited: 1 + recursive.visited,
         truncated: recursive.truncated,
@@ -140,6 +189,11 @@ export function readExplicitCandidates(body) {
   return {
     hasExplicitCandidates: true,
     jobs,
-    recursion: { maxDepth: parsedDepth.value, maxVisitedDepth, visited, truncated },
+    recursion: {
+      maxDepth: /** @type {number} */ (parsedDepth.value),
+      maxVisitedDepth,
+      visited,
+      truncated,
+    },
   };
 }

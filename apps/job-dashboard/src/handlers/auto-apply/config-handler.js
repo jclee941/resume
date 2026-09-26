@@ -1,6 +1,26 @@
 import { getConfig } from './db-helpers.js';
 import { jsonResponse } from '../../middleware/cors.js';
 
+/**
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       run(): Promise<unknown>;
+ *     };
+ *   };
+ * }} ConfigDb
+ *
+ * @typedef {{
+ *   request: Request;
+ *   env?: Record<string, unknown>;
+ *   db?: ConfigDb | null;
+ * }} ConfigureAutoApplyOptions
+ */
+
+/**
+ * @param {ConfigureAutoApplyOptions} options
+ * @returns {Promise<Response>}
+ */
 export async function configureAutoApply({ request, env, db }) {
   if (!db) {
     return jsonResponse({ error: 'Database not configured' }, 503);

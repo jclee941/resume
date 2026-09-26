@@ -2,6 +2,33 @@ import { WantedAPI } from '@resume/shared/clients/wanted';
 import { buildWantedChanges } from './wanted-profile-changes.js';
 import { applyWantedChanges } from './wanted-profile-apply.js';
 
+/**
+ * @typedef {{
+ *   id: string;
+ *   key: string;
+ *   is_default?: boolean;
+ * }} WantedResumeItem
+ *
+ * @typedef {{
+ *   auth: { getCookies(platform: string): Promise<string | null> };
+ *   [key: string]: unknown;
+ * }} WantedSyncContext
+ *
+ * @typedef {ReturnType<typeof buildWantedChanges> & {
+ *   resumeFields: ReturnType<typeof buildWantedChanges>['resumeFields'] & {
+ *     updates: Record<string, unknown>;
+ *   };
+ * }} PatchedChanges
+ */
+
+/**
+ * @param {WantedSyncContext} context
+ * @param {Record<string, unknown>} ssotData
+ * @param {{ headline: string; [key: string]: unknown }} profileData
+ * @param {boolean} dryRun
+ * @param {string | number | null | undefined} targetResumeId
+ * @returns {Promise<Record<string, unknown>>}
+ */
 export async function syncWantedProfile(context, ssotData, profileData, dryRun, targetResumeId) {
   const { auth } = context;
   const cookies = await auth.getCookies('wanted');
@@ -13,9 +40,10 @@ export async function syncWantedProfile(context, ssotData, profileData, dryRun, 
     };
   }
 
-  const client = new WantedAPI(cookies);
+  const client = new /** @type {new (cookies?: string | null) => WantedAPI} */ (WantedAPI)(cookies);
 
   try {
+    /** @type {WantedResumeItem[]} */
     const resumes = await client.getResumeList();
     const selectedResume =
       resumes.find((resume) => String(resume.id || resume.key) === String(targetResumeId)) ||
@@ -51,7 +79,12 @@ export async function syncWantedProfile(context, ssotData, profileData, dryRun, 
       };
     }
 
-    const syncResults = await applyWantedChanges(client, resumeId, changes, profileData);
+    const syncResults = await applyWantedChanges(
+      client,
+      resumeId,
+      /** @type {PatchedChanges} */ (changes),
+      profileData
+    );
     return {
       method: 'chaos_api',
       authenticated: true,
@@ -64,7 +97,7 @@ export async function syncWantedProfile(context, ssotData, profileData, dryRun, 
     return {
       method: 'chaos_api',
       authenticated: true,
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
     };
   }
 }

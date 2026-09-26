@@ -6,6 +6,25 @@ import {
   mintSessionToken,
 } from '../services/auth.js';
 
+/**
+ * @typedef {Request & { params: { platform: string; [key: string]: string } }} RoutedRequest
+ *
+ * @typedef {{
+ *   get(path: string, handler: (req: RoutedRequest) => Promise<Response> | Response): void;
+ *   post(path: string, handler: (req: RoutedRequest) => Promise<Response> | Response): void;
+ *   delete(path: string, handler: (req: RoutedRequest) => Promise<Response> | Response): void;
+ * }} AuthRouter
+ *
+ * @typedef {{
+ *   env: { ADMIN_TOKEN?: string; [key: string]: unknown };
+ *   auth: import('../handlers/auth.js').AuthHandler;
+ * }} AuthContext
+ */
+
+/**
+ * @param {AuthRouter} router
+ * @param {AuthContext} ctx
+ */
 export function registerAuthRoutes(router, ctx) {
   const { env, auth } = ctx;
 

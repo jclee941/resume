@@ -3,6 +3,7 @@ import { sendTelegramNotification, triggerAutomationWebhook } from './delivery.j
 import { determineStatus, escapeHtml, sanitizeData } from './formatters.js';
 import { saveNotificationHistory } from './history-preferences.js';
 
+/** @type {Record<string, string>} */
 const PLATFORM_NAMES = {
   wanted: '원티드',
   jobkorea: '잡코리아',
@@ -10,13 +11,38 @@ const PLATFORM_NAMES = {
   remember: '리멤버',
 };
 
+/**
+ * @typedef {Record<string, unknown> & {
+ *   position?: string;
+ *   title?: string;
+ *   company?: string;
+ *   platform?: string;
+ *   source?: string;
+ * }} NotificationJob
+ *
+ * @typedef {{
+ *   channels?: string[];
+ *   telegram?: Record<string, unknown>;
+ *   [key: string]: unknown;
+ * }} NotifyOptions
+ */
+
+/**
+ * @param {import('../notifications.js').NotificationService} service
+ * @param {string} eventType
+ * @param {Record<string, unknown> | null | undefined} [data]
+ * @param {NotifyOptions} [options]
+ * @returns {Promise<Record<string, unknown>>}
+ */
 export async function notify(service, eventType, data, options = {}) {
   if (!service.isEnabled(eventType)) {
     return { sent: false, reason: 'disabled' };
   }
 
   const channels = options.channels || service.getChannels(eventType);
+  /** @type {Record<string, { sent?: boolean; [key: string]: unknown }>} */
   const results = {};
+  /** @type {import('./history-preferences.js').NotificationHistoryRecord} */
   const historyRecord = {
     id: crypto.randomUUID(),
     eventType,
@@ -55,6 +81,13 @@ export async function notify(service, eventType, data, options = {}) {
   };
 }
 
+/**
+ * @param {import('../notifications.js').NotificationService} service
+ * @param {NotificationJob} job
+ * @param {number | string} matchScore
+ * @param {string} applicationId
+ * @returns {Promise<Record<string, unknown>>}
+ */
 export async function sendApprovalRequest(service, job, matchScore, applicationId) {
   const message = {
     text:
@@ -91,6 +124,13 @@ export async function sendApprovalRequest(service, job, matchScore, applicationI
   );
 }
 
+/**
+ * @param {import('../notifications.js').NotificationService} service
+ * @param {NotificationJob} job
+ * @param {string} applicationId
+ * @param {string} platform
+ * @returns {Promise<Record<string, unknown>>}
+ */
 export async function sendApplicationSuccess(service, job, applicationId, platform) {
   const data = {
     job,
@@ -114,11 +154,19 @@ export async function sendApplicationSuccess(service, job, applicationId, platfo
   });
 }
 
+/**
+ * @param {import('../notifications.js').NotificationService} service
+ * @param {NotificationJob} job
+ * @param {string} applicationId
+ * @param {unknown} error
+ * @param {string} platform
+ * @returns {Promise<Record<string, unknown>>}
+ */
 export async function sendApplicationFailed(service, job, applicationId, error, platform) {
   const data = {
     job,
     applicationId,
-    error: error?.message || String(error),
+    error: /** @type {{ message?: string }} */ (error)?.message || String(error),
     platform,
     timestamp: new Date().toISOString(),
   };
@@ -138,6 +186,11 @@ export async function sendApplicationFailed(service, job, applicationId, error, 
   });
 }
 
+/**
+ * @param {import('../notifications.js').NotificationService} service
+ * @param {Record<string, unknown> & { applied?: number; pending?: number; failed?: number; successRate?: number }} stats
+ * @returns {Promise<Record<string, unknown>>}
+ */
 export async function sendDailySummary(service, stats) {
   const data = {
     ...stats,
@@ -162,6 +215,12 @@ export async function sendDailySummary(service, stats) {
   });
 }
 
+/**
+ * @param {import('../notifications.js').NotificationService} service
+ * @param {NotificationJob} job
+ * @param {string} platform
+ * @returns {Promise<Record<string, unknown>>}
+ */
 export async function sendCaptchaDetected(service, job, platform) {
   const data = {
     job,
@@ -184,6 +243,13 @@ export async function sendCaptchaDetected(service, job, platform) {
   });
 }
 
+/**
+ * @param {import('../notifications.js').NotificationService} service
+ * @param {string} platform
+ * @param {string} resumeId
+ * @param {boolean} [success]
+ * @returns {Promise<Record<string, unknown>>}
+ */
 export async function sendResumeSync(service, platform, resumeId, success = true) {
   const data = {
     platform,

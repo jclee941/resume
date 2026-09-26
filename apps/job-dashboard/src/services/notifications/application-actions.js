@@ -1,8 +1,46 @@
 import { escapeHtml } from './formatters.js';
 import { sendTelegramNotification } from './delivery.js';
 
+/**
+ * @typedef {{
+ *   id?: string;
+ *   company?: string;
+ *   position?: string;
+ *   source?: string;
+ *   status?: string;
+ *   applied_at?: string;
+ *   job_title?: string;
+ *   platform?: string;
+ *   match_score?: number | string;
+ *   [key: string]: unknown;
+ * }} ApplicationRow
+ *
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       run(): Promise<{ meta?: { changes?: number } }>;
+ *       first(): Promise<ApplicationRow | null>;
+ *     };
+ *   };
+ * }} ActionDb
+ *
+ * @typedef {{
+ *   env: { JOB_DB: ActionDb };
+ *   telegramToken?: string;
+ *   telegramChatId?: string;
+ *   rateLimiter?: { consume(key: string, points: number): Promise<unknown> };
+ *   [key: string]: unknown;
+ * }} ActionService
+ */
+
 // Approval buttons carry approval_requests ids (ApplicationWorkflow and the
 // notification queue); older messages may still carry applications ids.
+/**
+ * @param {ActionService} service
+ * @param {string} id
+ * @param {string} decision
+ * @returns {Promise<boolean>}
+ */
 async function recordDecision(service, id, decision) {
   const db = service.env.JOB_DB;
   const approval = await db
@@ -28,6 +66,11 @@ async function recordDecision(service, id, decision) {
   return Boolean(application.meta?.changes);
 }
 
+/**
+ * @param {ActionService} service
+ * @param {string} applicationId
+ * @returns {Promise<{ success: boolean; message: string }>}
+ */
 export async function approveApplication(service, applicationId) {
   try {
     if (!(await recordDecision(service, applicationId, 'approved'))) {
@@ -36,10 +79,18 @@ export async function approveApplication(service, applicationId) {
     return { success: true, message: `✅ Application ${applicationId} approved.` };
   } catch (error) {
     console.error('[NotificationService] Approve error:', error);
-    return { success: false, message: `❌ Failed to approve: ${error.message}` };
+    return {
+      success: false,
+      message: `❌ Failed to approve: ${error instanceof Error ? error.message : String(error)}`,
+    };
   }
 }
 
+/**
+ * @param {ActionService} service
+ * @param {string} applicationId
+ * @returns {Promise<{ success: boolean; message: string }>}
+ */
 export async function rejectApplication(service, applicationId) {
   try {
     if (!(await recordDecision(service, applicationId, 'rejected'))) {
@@ -48,10 +99,18 @@ export async function rejectApplication(service, applicationId) {
     return { success: true, message: `❌ Application ${applicationId} rejected.` };
   } catch (error) {
     console.error('[NotificationService] Reject error:', error);
-    return { success: false, message: `❌ Failed to reject: ${error.message}` };
+    return {
+      success: false,
+      message: `❌ Failed to reject: ${error instanceof Error ? error.message : String(error)}`,
+    };
   }
 }
 
+/**
+ * @param {ActionService} service
+ * @param {string} applicationId
+ * @returns {Promise<{ success: boolean; message: string }>}
+ */
 export async function viewApplicationDetails(service, applicationId) {
   try {
     const db = service.env.JOB_DB;
@@ -88,10 +147,17 @@ export async function viewApplicationDetails(service, applicationId) {
     return { success: true, message: 'Details sent.' };
   } catch (error) {
     console.error('[NotificationService] View error:', error);
-    return { success: false, message: `Failed to fetch details: ${error.message}` };
+    return {
+      success: false,
+      message: `Failed to fetch details: ${error instanceof Error ? error.message : String(error)}`,
+    };
   }
 }
 
+/**
+ * @param {ApplicationRow} approval
+ * @returns {string}
+ */
 function formatApprovalDetails(approval) {
   return (
     '📋 <b>Approval Request</b>\n\n' +
