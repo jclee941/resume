@@ -3,6 +3,12 @@ import { AppError, ErrorCodes, ValidationError } from '../errors/index.js';
 import { findById, requireById } from './application-reader.js';
 import { throwD1Error } from './helpers/application-normalizer.js';
 
+/**
+ * @param {{ query(sql: string, params?: unknown[]): Promise<Record<string, unknown>[]> }} d1Client
+ * @param {string} id
+ * @param {import('./helpers/application-normalizer.js').ApplicationCreateInput} updates
+ * @returns {Promise<Record<string, unknown>>}
+ */
 export async function updateApplication(d1Client, id, updates) {
   if (!id || typeof id !== 'string') {
     throw new ValidationError('id is required', {

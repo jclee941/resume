@@ -15,7 +15,9 @@ const path = require('path');
 const { runSync } = require('./resume-sync-runner.js');
 const { SOURCE_PATH, WEB_DATA_PATH } = require('./resume-data-paths.js');
 
+/** @param {string[]} argv */
 function parseArguments(argv) {
+  /** @type {Record<string, string>} */
   const values = {};
   for (let index = 0; index < argv.length; index += 2) {
     const flag = argv[index];

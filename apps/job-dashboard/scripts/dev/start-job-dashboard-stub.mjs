@@ -16,6 +16,7 @@ if (args.has('--serve')) {
   process.exit(2);
 }
 
+/** @param {number} port */
 async function startServer(port) {
   const server = http.createServer(async (req, res) => {
     if (req.method === 'GET' && req.url?.startsWith('/ats/')) {
@@ -23,8 +24,12 @@ async function startServer(port) {
       return;
     }
 
-    const statusPath = ['/job/api/auto-apply/status', '/api/auto-apply/status'].includes(req.url);
-    const runPath = ['/job/api/auto-apply/run', '/api/auto-apply/run'].includes(req.url);
+    const statusPath = ['/job/api/auto-apply/status', '/api/auto-apply/status'].includes(
+      /** @type {string} */ (req.url)
+    );
+    const runPath = ['/job/api/auto-apply/run', '/api/auto-apply/run'].includes(
+      /** @type {string} */ (req.url)
+    );
 
     if (req.method === 'GET' && statusPath) {
       const response = await getAutoApplyStatus(createEnv());
@@ -51,6 +56,11 @@ async function startServer(port) {
   server.listen(port, '127.0.0.1');
 }
 
+/**
+ * @param {http.ServerResponse} res
+ * @param {number} status
+ * @param {unknown} body
+ */
 function writeJson(res, status, body) {
   res.writeHead(status, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify(body));
@@ -67,6 +77,7 @@ function createEnv() {
   };
 }
 
+/** @param {http.IncomingMessage} req */
 async function readJson(req) {
   const chunks = [];
   for await (const chunk of req) chunks.push(chunk);
@@ -79,6 +90,7 @@ async function readJson(req) {
 
 function createMockDb() {
   return {
+    /** @param {string} query */
     prepare(query) {
       if (query.includes('SELECT key, value FROM config')) {
         return stmt({ all: async () => ({ results: configRows() }) });
@@ -91,6 +103,10 @@ function createMockDb() {
   };
 }
 
+/**
+ * @template T
+ * @param {T} result
+ */
 const stmt = (result) => ({ bind: () => result });
 const configRows = () => [
   { key: 'auto_apply_enabled', value: 'true' },
@@ -99,6 +115,7 @@ const configRows = () => [
   { key: 'auto_apply_keywords', value: JSON.stringify(['security']) },
 ];
 
+/** @param {number} port */
 function createClients(port) {
   const atsFetch = createAtsFetch(port);
   return {
@@ -130,12 +147,20 @@ function createClients(port) {
   };
 }
 
+/**
+ * @param {string} platform
+ * @param {import('../../src/workflows/application/ats-dry-run-client.js').AtsDryRunOptions} options
+ */
 function createRequiredAtsClient(platform, options) {
   const client = createAtsDryRunClient(platform, options);
   if (!client) throw new Error(`Failed to create ${platform} dry-run client`);
   return client;
 }
 
+/**
+ * @param {number} port
+ * @returns {import('../../src/workflows/application/ats-dry-run-client.js').FetchFunction}
+ */
 function createAtsFetch(port) {
   return async (url, init) => {
     const route = atsRoute(url);
@@ -144,11 +169,13 @@ function createAtsFetch(port) {
   };
 }
 
+/** @param {RequestInfo | URL} url */
 function atsRoute(url) {
-  const parsed = new URL(url);
+  const parsed = new URL(/** @type {string | URL} */ (url));
   return ATS_ROUTES.get(`${parsed.hostname}${parsed.pathname}`) ?? null;
 }
 
+/** @param {string} url */
 function atsFixture(url) {
   return ATS_FIXTURES[url] ?? { jobs: [] };
 }
@@ -158,6 +185,7 @@ const ATS_ROUTES = new Map([
   ['api.lever.co/v0/postings/leverstub', '/ats/lever'],
   ['api.ashbyhq.com/posting-api/job-board/ashbystub', '/ats/ashby'],
 ]);
+/** @type {Record<string, { jobs: ReturnType<typeof greenhouseJob>[] | ReturnType<typeof ashbyJob>[] } | ReturnType<typeof leverJob>[]>} */
 const ATS_FIXTURES = {
   '/ats/greenhouse': { jobs: [greenhouseJob()] },
   '/ats/lever': [leverJob()],

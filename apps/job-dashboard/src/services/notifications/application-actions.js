@@ -27,9 +27,8 @@ import { sendTelegramNotification } from './delivery.js';
  * @typedef {{
  *   env: { JOB_DB: ActionDb };
  *   telegramToken?: string;
- *   telegramChatId?: string;
- *   rateLimiter?: { consume(key: string, points: number): Promise<unknown> };
- *   [key: string]: unknown;
+ *   telegramChatId?: string | number;
+ *   rateLimiter: import('./delivery.js').RateLimiterLike;
  * }} ActionService
  */
 

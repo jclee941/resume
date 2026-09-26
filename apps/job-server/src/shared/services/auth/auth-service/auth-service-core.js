@@ -8,7 +8,7 @@ import { logoutSession, validateSession } from './token-store.js';
 export class AuthService {
   /** @type {OAuth2Client} */
   #googleClient;
-  /** @type {import('./auth-typedefs.js').AuthConfig} */
+  /** @type {import('./auth-typedefs.js').AuthConfig & { sessionTTL: number }} */
   #config;
   /** @type {import('./auth-typedefs.js').SessionStore} */
   #store;
@@ -55,22 +55,31 @@ export class AuthService {
     return getAuthStatus(this.#sessionStore);
   }
 
+  /**
+   * @param {string} platform
+   * @param {unknown} cookies
+   * @param {string} [email]
+   */
   savePlatformAuth(platform, cookies, email) {
     return savePlatformAuth(this.#sessionStore, platform, cookies, email);
   }
 
+  /** @param {string} platform */
   clearPlatformAuth(platform) {
     return clearPlatformAuth(this.#sessionStore, platform);
   }
 
+  /** @param {string} sessionId */
   logout(sessionId) {
     return logoutSession(this.#store, sessionId);
   }
 
+  /** @param {string} sessionId */
   validateSession(sessionId) {
     return validateSession(this.#store, sessionId);
   }
 
+  /** @param {string} platform */
   renewSession(platform) {
     return renewSession(this.#sessionStore, platform);
   }
@@ -85,7 +94,7 @@ export class AuthService {
 }
 
 /**
- * @param {unknown} dependencies
+ * @param {Partial<import('./auth-typedefs.js').SessionStore> & import('./auth-typedefs.js').AuthServiceDependencies} dependencies
  * @returns {dependencies is import('./auth-typedefs.js').SessionStore}
  */
 function isLegacySessionStore(dependencies) {

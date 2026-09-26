@@ -9,6 +9,16 @@ import { runCdpSessionExtraction } from './session-refresh.js';
 import { createStore } from './session-store-factory.js';
 
 /**
+ * @typedef {{
+ *   logger?: import('@resume/shared/session/store.js').SessionStoreLogger,
+ *   store?: ReturnType<typeof createStore>,
+ *   storeFactory?: typeof createStore,
+ *   apiFactory?: (session: import('./session-cookie.js').SessionData) => Promise<unknown>,
+ *   refreshRunner?: (platform: string) => Promise<void> | void
+ * }} SessionManagerDependencies
+ */
+
+/**
  * SessionManager — file-based session persistence.
  *
  * Implements the {@link SessionStore} port contract:
@@ -22,6 +32,7 @@ import { createStore } from './session-store-factory.js';
 export class SessionManager {
   static #defaultInstance = new SessionManager();
 
+  /** @param {SessionManagerDependencies} [dependencies] */
   constructor(dependencies = {}) {
     this.logger = dependencies.logger ?? console;
     this.store = dependencies.store ?? null;
@@ -38,6 +49,7 @@ export class SessionManager {
     SessionManager.#defaultInstance.logger = logger;
   }
 
+  /** @param {SessionManagerDependencies} [dependencies] */
   static configure(dependencies = {}) {
     SessionManager.#defaultInstance = new SessionManager(dependencies);
     return SessionManager.#defaultInstance;
@@ -47,14 +59,20 @@ export class SessionManager {
     return SessionManager.#defaultInstance;
   }
 
+  /** @param {string | null} [platform] */
   static load(platform = null) {
     return SessionManager.#defaultInstance.load(platform);
   }
 
+  /**
+   * @param {string} platform
+   * @param {unknown} data
+   */
   static save(platform, data) {
     return SessionManager.#defaultInstance.save(platform, data);
   }
 
+  /** @param {string | null} [platform] */
   static clear(platform = null) {
     return SessionManager.#defaultInstance.clear(platform);
   }
@@ -67,30 +85,43 @@ export class SessionManager {
     return SessionManager.#defaultInstance.getStatus();
   }
 
+  /** @param {string} platform */
   static checkHealth(platform, thresholdMs = 2 * 60 * 60 * 1000, validateContent = false) {
     return SessionManager.#defaultInstance.checkHealth(platform, thresholdMs, validateContent);
   }
 
+  /**
+   * @param {string} platform
+   * @param {import('./session-content-validation.js').SessionData} session
+   */
   static validateSessionContent(platform, session) {
     return SessionManager.#defaultInstance.validateSessionContent(platform, session);
   }
 
+  /** @param {string} platform */
   static tryRefresh(platform) {
     return SessionManager.#defaultInstance.tryRefresh(platform);
   }
 
+  /** @param {string} platform */
   static isRenewalNeeded(platform, threshold = 0.8) {
     return SessionManager.#defaultInstance.isRenewalNeeded(platform, threshold);
   }
 
+  /** @param {string} platform */
   static getSessionStatus(platform) {
     return SessionManager.#defaultInstance.getSessionStatus(platform);
   }
 
+  /** @param {string} platform */
   static getEncryptedSession(platform) {
     return SessionManager.#defaultInstance.getEncryptedSession(platform);
   }
 
+  /**
+   * @param {string} platform
+   * @param {string} encryptedData
+   */
   static restoreEncryptedSession(platform, encryptedData) {
     return SessionManager.#defaultInstance.restoreEncryptedSession(platform, encryptedData);
   }
@@ -102,10 +133,12 @@ export class SessionManager {
     return this.store;
   }
 
+  /** @param {import('./session-cookie.js').SessionData} session */
   createAuthenticatedApi(session) {
     return this.apiFactory(session);
   }
 
+  /** @param {string} platform */
   runSessionExtraction(platform) {
     return this.refreshRunner(platform);
   }

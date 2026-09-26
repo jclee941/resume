@@ -49,7 +49,7 @@ export default {
   /**
    * Queue consumer handler for notification batch processing
    * @param {ConsumerQueueBatch} batch
-   * @param {Record<string, unknown>} env
+   * @param {import('../services/notifications.js').NotificationEnv} env
    * @param {unknown} [_ctx]
    */
   async queue(batch, env, _ctx) {

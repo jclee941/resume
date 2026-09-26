@@ -6,6 +6,7 @@ import { initProjectCards } from './modules/project-cards.js';
 import { initProjectMore } from './modules/project-more.js';
 import { initRecruiterEnhancements } from './modules/recruiter-enhancements.js';
 
+/** @type {Record<string, string>} */
 const RESUME_DATA_PATHS = {
   ko: '/resume-data.json',
   en: '/en/resume-data.json',
@@ -54,7 +55,7 @@ function registerServiceWorker() {
   const scriptUrl = window.trustedTypes
     ? window.trustedTypes
         .createPolicy('resume-script-url', {
-          createScriptURL: (value) => {
+          createScriptURL: (/** @type {string} */ value) => {
             if (value !== '/sw.js') throw new TypeError('Unsupported service worker URL');
             return value;
           },

@@ -9,8 +9,16 @@ import {
   recordQueueWait,
 } from './resource-tracking.js';
 
+/**
+ * @typedef {import('./browser-lifecycle.js').BrowserPoolEntry} BrowserPoolEntry
+ * @typedef {{ resolve: (browser: BrowserPoolEntry) => void, reject: (error: Error) => void, rotateUA: boolean }} BrowserQueueEntry
+ * @typedef {{ maxBrowsers?: number, maxUsesPerBrowser?: number, idleTimeoutMs?: number, logger?: { debug: (message: string, ...args: unknown[]) => void } }} BrowserPoolOptions
+ */
+
 export class BrowserPool extends EventEmitter {
+  /** @type {Map<string, BrowserPoolEntry>} */
   #pool = new Map();
+  /** @type {BrowserQueueEntry[]} */
   #queue = [];
   #maxBrowsers;
   #maxUsesPerBrowser;
@@ -19,6 +27,7 @@ export class BrowserPool extends EventEmitter {
   #logger;
   #metrics = createPoolMetrics();
 
+  /** @param {BrowserPoolOptions} [options] */
   constructor(options = {}) {
     super();
     this.#maxBrowsers = options.maxBrowsers || 3;
@@ -30,6 +39,10 @@ export class BrowserPool extends EventEmitter {
     this.#cleanupInterval.unref?.();
   }
 
+  /**
+   * @param {{ rotateUA?: boolean }} [options]
+   * @returns {Promise<BrowserPoolEntry>}
+   */
   async acquire(options = {}) {
     const startTime = Date.now();
     const { rotateUA = true } = options;
@@ -71,10 +84,11 @@ export class BrowserPool extends EventEmitter {
     });
   }
 
+  /** @param {BrowserPoolEntry | null | undefined} pooledBrowser */
   async release(pooledBrowser) {
     if (!pooledBrowser || !this.#pool.has(pooledBrowser.id)) return;
 
-    const entry = this.#pool.get(pooledBrowser.id);
+    const entry = /** @type {BrowserPoolEntry} */ (this.#pool.get(pooledBrowser.id));
     if (entry.useCount >= this.#maxUsesPerBrowser || !(await isHealthy(entry))) {
       await this.#closeBrowser(entry);
       this.#processQueue();
@@ -93,7 +107,7 @@ export class BrowserPool extends EventEmitter {
     clearInterval(this.#cleanupInterval);
 
     while (this.#queue.length > 0) {
-      const { reject } = this.#queue.shift();
+      const { reject } = /** @type {BrowserQueueEntry} */ (this.#queue.shift());
       reject(new Error('Pool closing'));
     }
 
@@ -131,6 +145,7 @@ export class BrowserPool extends EventEmitter {
     });
   }
 
+  /** @param {BrowserPoolEntry} entry */
   async #closeBrowser(entry) {
     await closeBrowser({
       entry,
@@ -141,6 +156,10 @@ export class BrowserPool extends EventEmitter {
     });
   }
 
+  /**
+   * @param {BrowserPoolEntry} entry
+   * @param {boolean} reused
+   */
   #markAcquired(entry, reused) {
     entry.inUse = true;
     entry.useCount++;
@@ -155,13 +174,13 @@ export class BrowserPool extends EventEmitter {
 
     const available = this.#findAvailableBrowser();
     if (available) {
-      const { resolve } = this.#queue.shift();
+      const { resolve } = /** @type {BrowserQueueEntry} */ (this.#queue.shift());
       resolve(this.#markAcquired(available, true));
       return;
     }
 
     if (this.#pool.size < this.#maxBrowsers) {
-      const { resolve, rotateUA, reject } = this.#queue.shift();
+      const { resolve, rotateUA, reject } = /** @type {BrowserQueueEntry} */ (this.#queue.shift());
       this.#createBrowser(rotateUA)
         .then((browser) => {
           this.#metrics.created++;

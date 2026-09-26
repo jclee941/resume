@@ -19,7 +19,9 @@ export async function runCliproxyLlmAutoApply({
   const validationError = validateCliproxyConfig(cliproxyConfig);
   if (validationError) return createConfigFailure(validationError);
 
+  /** @type {unknown[][]} */
   const recorded = [];
+  /** @type {Set<unknown>} */
   const seen = new Set();
   const network = createNetworkTracker(fetcher, cliproxyConfig.baseUrl);
   const db = createMemoryDb(recorded, seen);
@@ -59,6 +61,7 @@ export async function runCliproxyLlmAutoApply({
   };
 }
 
+/** @param {import('../../src/services/cliproxy-client.js').CliproxyEnv} env */
 function parseCliproxyConfig(env) {
   return {
     baseUrl: normalizeBaseUrl(env.CLIPROXY_BASE),
@@ -66,6 +69,7 @@ function parseCliproxyConfig(env) {
   };
 }
 
+/** @param {ReturnType<typeof parseCliproxyConfig>} config */
 function validateCliproxyConfig(config) {
   if (!config.baseUrl || !config.apiKey) {
     return 'CLIPROXY_BASE and CLIPROXY_API_KEY are required';
@@ -73,6 +77,7 @@ function validateCliproxyConfig(config) {
   return '';
 }
 
+/** @param {string} error */
 function createConfigFailure(error) {
   return {
     success: false,
@@ -87,11 +92,17 @@ function createConfigFailure(error) {
   };
 }
 
+/**
+ * @param {typeof fetch} fetcher
+ * @param {string} cliproxyBase
+ */
 function createNetworkTracker(fetcher, cliproxyBase) {
   const normalizedBase = String(cliproxyBase || '').replace(/\/+$/, '');
   const stats = { networkWrites: 0, cliproxyRequests: 0 };
+  /** @type {typeof fetch} */
   const trackedFetcher = async (url, options = {}) => {
-    const requestUrl = typeof url === 'string' ? url : url?.url || String(url);
+    const requestUrl =
+      typeof url === 'string' ? url : /** @type {Request} */ (url)?.url || String(url);
     const method = String(options?.method || 'GET').toUpperCase();
     if (normalizedBase && requestUrl.startsWith(`${normalizedBase}/`)) {
       stats.cliproxyRequests++;
@@ -103,12 +114,21 @@ function createNetworkTracker(fetcher, cliproxyBase) {
   return { fetcher: trackedFetcher, stats };
 }
 
+/**
+ * @template T
+ * @param {T} body
+ */
 function createRequest(body) {
   return { json: async () => body };
 }
 
+/**
+ * @param {unknown[][]} recorded
+ * @param {Set<unknown>} seen
+ */
 function createMemoryDb(recorded, seen) {
   return {
+    /** @param {string} query */
     prepare(query) {
       if (query.includes('SELECT key, value FROM config')) {
         return statement(() => ({
@@ -152,10 +172,16 @@ function createMemoryDb(recorded, seen) {
   };
 }
 
+/**
+ * @template T
+ * @param {(...params: unknown[]) => T} handler
+ * @returns {{ bind(...params: unknown[]): T }}
+ */
 function statement(handler) {
   return { bind: (...params) => handler(...params) };
 }
 
+/** @param {unknown[]} row */
 function toRecordedApplication(row) {
   return {
     id: row[0],
@@ -184,6 +210,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   process.exitCode = result.success ? 0 : 1;
 }
 
+/** @param {string} name */
 function readArg(name) {
   const prefix = `${name}=`;
   const value = process.argv.find((arg) => arg.startsWith(prefix));

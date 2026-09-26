@@ -15,7 +15,7 @@ export { escapeHtml, createJobPostingsMessage } from './telegram-adapter/formatt
 
 /**
  * @typedef {{
- *   env?: Record<string, string | undefined>;
+ *   env?: { TELEGRAM_BOT_TOKEN?: string; TELEGRAM_CHAT_ID?: string; AUTOMATION_WEBHOOK_URL?: string; WEBHOOK_URL?: string; DB?: import('./telegram-adapter/history.js').D1DatabaseLike };
  *   logger?: { info(msg: string, ...args: unknown[]): void, warn(msg: string, ...args: unknown[]): void, error(msg: string, ...args: unknown[]): void, [key: string]: unknown };
  *   source?: string;
  *   telegramToken?: string;
@@ -23,11 +23,11 @@ export { escapeHtml, createJobPostingsMessage } from './telegram-adapter/formatt
  *   automationWebhookUrl?: string;
  *   fetchImpl?: typeof fetch | null;
  *   sleepImpl?: (ms: number) => Promise<unknown>;
- *   db?: unknown;
- *   d1Client?: unknown;
- *   onApprove?: (action: Record<string, unknown>) => Promise<unknown> | unknown;
- *   onReject?: (action: Record<string, unknown>) => Promise<unknown> | unknown;
- *   onView?: (action: Record<string, unknown>) => Promise<unknown> | unknown;
+ *   db?: import('./telegram-adapter/history.js').D1DatabaseLike | null;
+ *   d1Client?: import('./telegram-adapter/history.js').D1ClientLike | null;
+ *   onApprove?: import('./telegram-adapter/callbacks.js').CallbackHandler;
+ *   onReject?: import('./telegram-adapter/callbacks.js').CallbackHandler;
+ *   onView?: import('./telegram-adapter/callbacks.js').CallbackHandler;
  *   [key: string]: unknown;
  * }} TelegramAdapterOptions
  *
@@ -48,6 +48,7 @@ export class TelegramNotificationAdapter {
    * @param {TelegramAdapterOptions} [options]
    */
   constructor(options = {}) {
+    /** @type {NonNullable<TelegramAdapterOptions['env']>} */
     const env = options.env || process.env;
 
     this.env = env;
@@ -255,8 +256,8 @@ export class TelegramNotificationAdapter {
   }
 
   /**
-   * @param {Record<string, unknown>} query
-   * @param {Record<string, unknown>} [handlers]
+   * @param {import('./telegram-adapter/callbacks.js').CallbackQuery} query
+   * @param {import('./telegram-adapter/callbacks.js').CallbackHandlers} [handlers]
    */
   async handleCallbackQuery(query, handlers = {}) {
     return handleCallbackQuery(this, query, handlers);

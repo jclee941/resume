@@ -1,6 +1,12 @@
 import { loadResume } from './job-matcher.js';
 import { analyzeJobPosting, analyzeResume, calculateAIMatchScore } from './ai-matcher.js';
 
+/**
+ * @template {import('./ai-matcher.js').AIJobPosting} T
+ * @param {string} resumePath
+ * @param {T[]} jobs
+ * @param {import('./ai-matcher.js').MatchOptions & { minScore?: number; maxResults?: number }} [options]
+ */
 export async function matchJobsWithAI(resumePath, jobs, options = {}) {
   const { minScore = 0, maxResults = 10, logger = console, resumeReader = loadResume } = options;
 
@@ -66,7 +72,7 @@ export async function matchJobsWithAI(resumePath, jobs, options = {}) {
     logger.error('AI Batch Match Error:', error);
     return {
       success: false,
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
       jobs: [],
       resumeAnalysis: null,
     };

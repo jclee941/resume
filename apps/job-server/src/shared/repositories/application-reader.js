@@ -163,11 +163,13 @@ export async function getApplicationStats(d1Client) {
       ),
     ]);
 
+    /** @type {Record<string, number>} */
     const byStatus = {};
     for (const row of statusRows) {
       byStatus[row.status] = Number(row.count || 0);
     }
 
+    /** @type {Record<string, number>} */
     const bySource = {};
     for (const row of sourceRows) {
       bySource[row.source] = Number(row.count || 0);
