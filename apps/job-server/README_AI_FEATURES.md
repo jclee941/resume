@@ -59,7 +59,7 @@ const applied = await system.autoApply({ maxApplications: 5 });
 
 ### 2. AI Matcher (`src/shared/services/matching/ai-matcher.js`)
 
-**383 lines** | **OpenCode AI integration**
+**Claude (Anthropic Messages API) integration**
 
 #### AI Capabilities
 
@@ -71,7 +71,7 @@ const applied = await system.autoApply({ maxApplications: 5 });
 
 #### Features
 
-- **OpenCode 3.5 Sonnet**: Latest AI model
+- **Claude Sonnet 5**: default model (`CLAUDE_MODEL` overrides it)
 - **Fallback Mode**: Works without API key
 - **Caching**: Efficient API usage
 - **Batch Processing**: Multiple jobs at once
@@ -220,7 +220,7 @@ node src/auto-apply/cli/index.js advice
 ```bash
 # Required for AI features
 export ANTHROPIC_API_KEY="sk-ant-..."
-export CLAUDE_MODEL="OpenCode-3-5-sonnet-20241022"
+export CLAUDE_MODEL="claude-sonnet-5"
 
 # Optional notifications
 export SLACK_WEBHOOK_URL="https://hooks.slack.com/..."
@@ -425,7 +425,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/resume-sync/run
 
 ### API Keys
 
-- **OpenCode AI**: Required for AI features
+- **Anthropic API key** (`CLAUDE_API_KEY` or `ANTHROPIC_API_KEY`): Required for AI features
 - **Platform Credentials**: Required for auto-apply
 - **Slack Webhook**: Optional for notifications
 

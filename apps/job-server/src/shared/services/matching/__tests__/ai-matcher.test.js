@@ -11,7 +11,7 @@ process.env.CLAUDE_API_KEY = 'test-key';
 const ai = await import('../ai-matcher.js');
 
 function claudeResponse(text) {
-  return new Response(JSON.stringify({ choices: [{ message: { content: text } }] }), {
+  return new Response(JSON.stringify({ content: [{ type: 'text', text }] }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
   });
@@ -38,14 +38,17 @@ describe('ai-matcher (with API key)', { concurrency: 1 }, () => {
   });
 
   it('returns text on success', async () => {
+    let requestUrl = null;
     let requestBody = null;
-    mock.method(globalThis, 'fetch', async (_url, options) => {
+    mock.method(globalThis, 'fetch', async (url, options) => {
+      requestUrl = url;
       requestBody = JSON.parse(options.body);
       return claudeResponse('{"ok":true}');
     });
     const result = await ai.analyzeWithClaude('prompt', 'text');
     assert.strictEqual(result, '{"ok":true}');
-    assert.strictEqual(requestBody.model, 'gpt-6-pro');
+    assert.strictEqual(requestUrl, 'https://api.anthropic.com/v1/messages');
+    assert.strictEqual(requestBody.model, 'claude-sonnet-5');
   });
 
   it('returns null on non-ok response', async () => {

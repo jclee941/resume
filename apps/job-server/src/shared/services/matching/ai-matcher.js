@@ -3,10 +3,8 @@ export { extractKeywordsWithAI, getCareerAdvice, getAICareerAdvice } from './ai-
 export { matchJobsWithAI } from './ai-matcher-batch.js';
 
 const CLAUDE_CONFIG = {
-  apiKey:
-    process.env.CLIPROXY_API_KEY || process.env.CLAUDE_API_KEY || process.env.ANTHROPIC_API_KEY,
-  baseUrl: (process.env.CLIPROXY_BASE || 'https://cliproxy.jclee.me/v1').replace(/\/$/, ''),
-  model: process.env.CLIPROXY_MODEL || 'gpt-6-pro',
+  apiKey: process.env.CLAUDE_API_KEY || process.env.ANTHROPIC_API_KEY,
+  model: process.env.CLAUDE_MODEL || 'claude-sonnet-5',
   maxTokens: 4000,
 };
 
@@ -30,23 +28,19 @@ export async function analyzeWithClaude(prompt, text, { logger = console } = {})
   }
 
   try {
-    const response = await fetch(`${CLAUDE_CONFIG.baseUrl}/chat/completions`, {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${CLAUDE_CONFIG.apiKey}`,
+        'x-api-key': CLAUDE_CONFIG.apiKey,
+        'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
         model: CLAUDE_CONFIG.model,
         max_tokens: CLAUDE_CONFIG.maxTokens,
-        messages: [
-          {
-            role: 'system',
-            content:
-              '당신은 채용 전문가입니다. 한국어 채용 공고와 이력서를 분석하여 상세한 매칭 정보를 제공해주세요.',
-          },
-          { role: 'user', content: `${prompt}\n\n텍스트: ${text}` },
-        ],
+        system:
+          '당신은 채용 전문가입니다. 한국어 채용 공고와 이력서를 분석하여 상세한 매칭 정보를 제공해주세요.',
+        messages: [{ role: 'user', content: `${prompt}\n\n텍스트: ${text}` }],
       }),
     });
 
@@ -54,8 +48,10 @@ export async function analyzeWithClaude(prompt, text, { logger = console } = {})
       throw new Error(`Claude API error: ${response.status}`);
     }
 
-    const result = await response.json();
-    return result.choices[0].message.content;
+    const result = /** @type {{ content?: Array<{ type: string; text?: string }> }} */ (
+      await response.json()
+    );
+    return result.content?.find((block) => block.type === 'text')?.text ?? null;
   } catch (error) {
     logger.error('Claude AI 분석 실패:', error instanceof Error ? error.message : String(error));
     return null;
