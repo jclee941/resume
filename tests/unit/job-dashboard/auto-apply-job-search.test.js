@@ -24,7 +24,6 @@ describe('auto-apply platform keyword search', () => {
       activePlatforms: ['wanted'],
       searchKeywords: ['SRE'],
       searchResults: createSearchResults(),
-      profile: {},
     });
 
     expect(wanted.searchByKeyword).toHaveBeenCalledWith('SRE', { limit: 20 });
@@ -32,18 +31,16 @@ describe('auto-apply platform keyword search', () => {
     expect(jobs).toEqual([expect.objectContaining({ id: 1, source: 'wanted', keyword: 'SRE' })]);
   });
 
-  test('passes the keyword and matching profile to (keyword, options) clients', async () => {
-    const cliproxy = { searchJobs: jest.fn(async () => ({ jobs: [] })) };
-    const profile = { skills: ['security'] };
+  test('passes the keyword and limit to (keyword, options) clients', async () => {
+    const linkedin = { searchJobs: jest.fn(async () => ({ jobs: [] })) };
 
     await searchPlatformJobs({
-      clients: { cliproxy },
-      activePlatforms: ['cliproxy'],
+      clients: { linkedin },
+      activePlatforms: ['linkedin'],
       searchKeywords: ['DevOps'],
       searchResults: createSearchResults(),
-      profile,
     });
 
-    expect(cliproxy.searchJobs).toHaveBeenCalledWith('DevOps', { limit: 20, profile });
+    expect(linkedin.searchJobs).toHaveBeenCalledWith('DevOps', { limit: 20 });
   });
 });

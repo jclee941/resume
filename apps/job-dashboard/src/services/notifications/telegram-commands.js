@@ -4,7 +4,6 @@ import {
   viewApplicationDetails,
 } from './application-actions.js';
 import { answerCallbackQuery, sendTelegramNotification } from './delivery.js';
-import { AUTO_APPLY_PAUSED_KEY } from '../auto-apply-pause.js';
 
 /**
  * @typedef {{
@@ -63,10 +62,6 @@ export async function handleTelegramCommand(service, command, args, message) {
       return handleApproveCommand(service, chatId, args);
     case '/reject':
       return handleRejectCommand(service, chatId, args);
-    case '/pause':
-      return handlePauseCommand(service, chatId);
-    case '/resume':
-      return handleResumeCommand(service, chatId);
     case '/help':
       return handleHelpCommand(service, chatId);
     default:
@@ -191,38 +186,12 @@ export async function handleRejectCommand(service, _chatId, args) {
  * @param {string | number | undefined} [_chatId]
  * @returns {Promise<unknown>}
  */
-export async function handlePauseCommand(service, _chatId) {
-  await service.env.SESSIONS.put(AUTO_APPLY_PAUSED_KEY, 'true', { expirationTtl: 86400 });
-  return sendTelegramNotification(service, {
-    text: '⏸️ Auto-apply paused. Use /resume to continue.',
-  });
-}
-
-/**
- * @param {NotificationCommandService} service
- * @param {string | number | undefined} [_chatId]
- * @returns {Promise<unknown>}
- */
-export async function handleResumeCommand(service, _chatId) {
-  await service.env.SESSIONS.put(AUTO_APPLY_PAUSED_KEY, 'false', { expirationTtl: 86400 });
-  return sendTelegramNotification(service, {
-    text: '▶️ Auto-apply resumed.',
-  });
-}
-
-/**
- * @param {NotificationCommandService} service
- * @param {string | number | undefined} [_chatId]
- * @returns {Promise<unknown>}
- */
 export async function handleHelpCommand(service, _chatId) {
   const text =
     '🤖 <b>Job Automation Bot Commands</b>\n\n' +
     "<b>/status</b> - Show today's applications\n" +
     '<b>/approve &lt;id&gt;</b> - Approve pending application\n' +
     '<b>/reject &lt;id&gt;</b> - Reject pending application\n' +
-    '<b>/pause</b> - Pause auto-apply\n' +
-    '<b>/resume</b> - Resume auto-apply\n' +
     '<b>/help</b> - Show this help message';
 
   return sendTelegramNotification(service, { text });

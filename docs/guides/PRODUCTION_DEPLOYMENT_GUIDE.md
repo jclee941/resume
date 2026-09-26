@@ -166,10 +166,10 @@ npm run verify:production
 
 ### 자동화 시스템 배포
 
-자동 지원(`0 23 * * *`)과 이력서 동기화(`0 21 * * *`)는 같은 `resume` Worker의
-Cloudflare Cron Trigger와 Workflows로 실행됩니다. `git push origin master`로
-Workers Builds가 배포하면 스케줄도 함께 반영되므로 별도 호스트 서비스(PM2,
-systemd)는 필요 없습니다. 두 스케줄 모두 기본값은 dry-run입니다.
+이력서 동기화(`0 21 * * *`)는 같은 `resume` Worker의 Cloudflare Cron Trigger와
+Workflows로 실행되고, 자동 지원은 대시보드 API로 요청할 때만 실행됩니다.
+`git push origin master`로 Workers Builds가 배포하면 스케줄도 함께 반영되므로 별도
+호스트 서비스(PM2, systemd)는 필요 없습니다. 이력서 동기화의 기본값은 dry-run입니다.
 
 ## 6. 모니터링 설정
 

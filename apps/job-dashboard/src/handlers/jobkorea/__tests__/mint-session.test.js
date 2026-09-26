@@ -6,7 +6,6 @@ import { decrypt } from '@resume/shared/crypto';
 import {
   mintJobKoreaSession,
   refreshJobKoreaSession,
-  solveJobKoreaCaptcha,
   AUTH_JOBKOREA_KEY,
   JOBKOREA_LOGIN_URL,
   JOBKOREA_SESSION_TTL_S,
@@ -14,24 +13,11 @@ import {
 
 const ENCRYPTION_KEY = btoa('0123456789abcdef0123456789abcdef');
 const CREDS = { JOBKOREA_USERNAME: 'someone@example.com', JOBKOREA_PASSWORD: 'super-secret' };
-const CLIPROXY_ENV = {
-  CLIPROXY_BASE: 'https://cliproxy.jclee.me',
-  CLIPROXY_API_KEY: 'cliproxy-key',
-};
 
 const JOBKOREA_COOKIES = [
   { name: 'PLAY_SESSION', value: 'sess-abc', domain: '.jobkorea.co.kr' },
   { name: 'unrelated', value: 'x', domain: '.example.com' },
 ];
-
-function okVisionResponse(content) {
-  return {
-    ok: true,
-    async json() {
-      return { choices: [{ message: { content } }] };
-    },
-  };
-}
 
 function createFakeCandidate() {
   return { evaluate: mock.fn(async () => true), click: mock.fn(async () => {}) };
@@ -43,7 +29,7 @@ function createFakeInput() {
 
 // `evaluateQueue` holds canned page.evaluate() return values in the exact
 // order mint-session.js's internal helpers call page.evaluate(): isLoggedIn,
-// detectCaptcha, findCaptchaImageUrl, downloadCaptchaImage, fillCaptchaInput.
+// then detectCaptcha on every login poll that is not yet logged in.
 function createFakePage({ evaluateQueue = [true], cookies = JOBKOREA_COOKIES, inputs = {} } = {}) {
   const evaluateCalls = [];
   return {
@@ -114,42 +100,21 @@ describe('mintJobKoreaSession', () => {
     assert.equal(withBrowserSession.mock.callCount(), 0);
   });
 
-  it('solves a CAPTCHA challenge via cliproxy vision and logs in on the retry', async () => {
+  it('fails with JOBKOREA_CAPTCHA_REQUIRED when JobKorea presents a CAPTCHA', async () => {
     const inputs = defaultInputs();
     const page = createFakePage({
       evaluateQueue: [
         false, // isLoggedIn (initial, right after submit)
         true, // detectCaptcha
-        'https://www.jobkorea.co.kr/login/captcha.asp', // findCaptchaImageUrl
-        { base64: 'ZmFrZQ==', mime: 'image/png' }, // downloadCaptchaImage
-        true, // fillCaptchaInput (element found)
-        true, // isLoggedIn (after CAPTCHA submit)
       ],
       inputs,
     });
 
-    let requestUrl = null;
-    let requestOptions = null;
-    const fetchImpl = mock.fn(async (url, options) => {
-      requestUrl = url;
-      requestOptions = options;
-      return okVisionResponse('ABC123');
-    });
-
-    const cookie = await mintJobKoreaSession(
-      { ...CREDS, ...CLIPROXY_ENV },
-      { withBrowserSession: fakeWithBrowserSession(page), fetchImpl }
+    await assert.rejects(
+      () => mintJobKoreaSession(CREDS, { withBrowserSession: fakeWithBrowserSession(page) }),
+      (error) => error.code === 'JOBKOREA_CAPTCHA_REQUIRED' && /CAPTCHA/.test(error.message)
     );
-
-    assert.equal(cookie, 'PLAY_SESSION=sess-abc');
-    assert.equal(requestUrl, `${CLIPROXY_ENV.CLIPROXY_BASE}/chat/completions`);
-    assert.equal(requestOptions.headers.Authorization, `Bearer ${CLIPROXY_ENV.CLIPROXY_API_KEY}`);
-    const body = JSON.parse(requestOptions.body);
-    assert.equal(body.messages[0].content[1].image_url.url, 'data:image/png;base64,ZmFrZQ==');
-
-    // fillCaptchaInput's page.evaluate call carries the #gtxt selector + solved answer.
-    const fillCall = page.evaluateCalls.find((arg) => arg && arg.value === 'ABC123');
-    assert.ok(fillCall, 'expected a page.evaluate() call filling #gtxt with the solved answer');
+    assert.equal(page.close.mock.callCount(), 1);
   });
 
   it('throws a diagnostic error when login never completes', async () => {
@@ -162,50 +127,6 @@ describe('mintJobKoreaSession', () => {
       /JobKorea login did not complete/
     );
     assert.equal(page.close.mock.callCount(), 1);
-  });
-});
-
-describe('solveJobKoreaCaptcha', () => {
-  it('POSTs the image to cliproxy and returns the trimmed answer', async () => {
-    const fetchImpl = mock.fn(async () => okVisionResponse('  XY7Z9K  '));
-    const answer = await solveJobKoreaCaptcha(
-      CLIPROXY_ENV,
-      { mime: 'image/png', base64: 'ZmFrZQ==' },
-      { fetchImpl }
-    );
-    assert.equal(answer, 'XY7Z9K');
-    assert.equal(
-      fetchImpl.mock.calls[0].arguments[0],
-      `${CLIPROXY_ENV.CLIPROXY_BASE}/chat/completions`
-    );
-  });
-
-  it('throws when the cliproxy response is not ok', async () => {
-    const fetchImpl = mock.fn(async () => ({
-      ok: false,
-      status: 500,
-      async text() {
-        return 'upstream error';
-      },
-    }));
-    await assert.rejects(
-      () =>
-        solveJobKoreaCaptcha(
-          CLIPROXY_ENV,
-          { mime: 'image/png', base64: 'ZmFrZQ==' },
-          { fetchImpl }
-        ),
-      /cliproxy CAPTCHA solve failed \(500\)/
-    );
-  });
-
-  it('throws when CLIPROXY_BASE/CLIPROXY_API_KEY are not configured', async () => {
-    const fetchImpl = mock.fn(async () => okVisionResponse('ABC123'));
-    await assert.rejects(
-      () => solveJobKoreaCaptcha({}, { mime: 'image/png', base64: 'ZmFrZQ==' }, { fetchImpl }),
-      /CLIPROXY_BASE/
-    );
-    assert.equal(fetchImpl.mock.callCount(), 0);
   });
 });
 

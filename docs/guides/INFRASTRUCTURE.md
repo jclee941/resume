@@ -251,7 +251,6 @@ each cron through `apps/job-dashboard/src/handlers/scheduled/`:
 | Cron (UTC)   | KST   | Job                                                                 |
 | ------------ | ----- | ------------------------------------------------------------------- |
 | `0 21 * * *` | 06:00 | Wanted session refresh, then `ResumeSyncWorkflow` (dry-run default) |
-| `0 23 * * *` | 08:00 | cliproxy job discovery and auto-apply (dry-run default)             |
 
 Health check, backup, cleanup, and daily report jobs are Cloudflare Workflows
 (`apps/job-dashboard/src/workflows/`). Uptime alerting stays in Grafana

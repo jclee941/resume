@@ -56,6 +56,7 @@ Deferred — **owner-gated by necessity, not preference** (Waves 1–5):
 - Move Wanted OneID token mint (mintWantedCookies, pure fetch) into scheduled(); write cookies to KV SESSIONS as auth:wanted — replaces browser fallbacks and is the root auth unblocker
 - Swap file session store (session-store-factory createFileSessionStore) to KV SESSIONS (createMemorySessionStore/KV variant already exists on the CF side)
 - Completed (2026-09-26): `scheduled()` branches by `controller.cron` (`0 21 * * *` resume sync, `0 23 * * *` auto-apply); the systemd timers, `install.go`, `run-auto-apply.go`, `auto-apply-cron.js`, `ops:daily-run`, and `tools/automation/` host schedulers were deleted
+- Completed (2026-09-26): cliproxy removed from the project. The `0 23 * * *` auto-apply cron, `scheduled-cliproxy.js`, `cliproxy-client.js`, and the JobKorea CAPTCHA vision solvers (dashboard and job-server) are deleted with every `CLIPROXY_*` setting; a JobKorea CAPTCHA now fails the session mint with `JOBKOREA_CAPTCHA_REQUIRED` (renew manually), and the job-server AI matcher calls the Anthropic Messages API directly.
 - Retire the Wanted branch of sync:platforms CLI once the cookie lives in KV (native syncToWanted already mirrors it)
 
 ### Wave 2 — Activate dormant CF browser infra (M, med risk) — prerequisite for ports

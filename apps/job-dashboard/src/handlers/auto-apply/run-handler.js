@@ -132,7 +132,6 @@ export async function runAutoApply({ request, env, clients }) {
           activePlatforms: searchablePlatforms,
           searchKeywords,
           searchResults,
-          profile,
         });
     if (isFailedDiscoveryRun(explicitCandidates, allJobs, searchResults)) {
       return jsonResponse(

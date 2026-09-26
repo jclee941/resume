@@ -76,7 +76,7 @@ export class LinkedInClient {
   /**
    * @param {string} keyword
    * @param {LinkedInSearchParams & Record<string, unknown>} [options] - Unknown keys (e.g. the
-   *   auto-apply limit/profile) are ignored when the query is built.
+   *   auto-apply limit) are ignored when the query is built.
    */
   async searchJobs(keyword, options = {}) {
     const params = { keyword, ...options };

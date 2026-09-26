@@ -17,8 +17,6 @@ on the `homelab/resume` item:
 - `jobkorea/email`
 - `jobkorea/password`
 - `JOBKOREA_RNO`
-- `CLIPROXY_BASE`
-- `CLIPROXY_API_KEY`
 - `TELEGRAM_BOT_TOKEN`
 - `TELEGRAM_CHAT_ID`
 - `CLOUDFLARE_ACCOUNT_ID`

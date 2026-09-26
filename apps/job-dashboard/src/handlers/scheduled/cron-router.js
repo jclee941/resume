@@ -1,8 +1,7 @@
-import scheduledCliproxyAutoApply from '../auto-apply/scheduled-cliproxy.js';
 import { refreshWantedSession } from '../wanted/mint-session.js';
 
 // CF-native migration Wave 1: the resume-sync Cron Trigger.
-// MUST stay in sync with the second entry of `triggers.crons` in wrangler.jsonc
+// MUST stay in sync with the `triggers.crons` entry in wrangler.jsonc
 // (enforced by tests/unit/scheduled-cron-wiring.test.js).
 export const RESUME_SYNC_CRON = '0 21 * * *';
 
@@ -13,7 +12,7 @@ export const RESUME_SYNC_CRON = '0 21 * * *';
  *   owner opts in via RESUME_SYNC_CRON_DRY_RUN=false. Refreshes the Wanted
  *   `auth:wanted` KV session first (best-effort — a mint failure is logged but
  *   must not abort workflow creation; export-wanted then fails with the reason).
- * - anything else     -> the existing cliproxy auto-apply schedule.
+ * - anything else     -> logged and ignored; wrangler.jsonc declares no other cron.
  */
 export async function scheduled(controller, env, ctx) {
   if (controller?.cron === RESUME_SYNC_CRON) {
@@ -28,7 +27,7 @@ export async function scheduled(controller, env, ctx) {
     await run;
     return;
   }
-  await scheduledCliproxyAutoApply.scheduled(controller, env, ctx);
+  console.warn('[cron] No scheduled handler for cron:', controller?.cron);
 }
 
 export default { scheduled, RESUME_SYNC_CRON };

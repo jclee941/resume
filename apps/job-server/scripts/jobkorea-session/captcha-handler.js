@@ -1,9 +1,4 @@
 import { isLoggedIn } from './auth-checker.js';
-import {
-  solveJobKoreaCaptcha,
-  isCliproxyConfigured,
-} from '../profile-sync/jobkorea-handler/captcha-solver.js';
-
 import { evaluateWithFallback, getActivePage, sleep } from './page-utils.js';
 
 const MANUAL_RENEW_COMMAND =
@@ -12,123 +7,14 @@ const MANUAL_TIMEOUT_MS = 120000;
 const MANUAL_PROGRESS_INTERVAL_MS = 10000;
 
 /**
- * @param {string | null | undefined} [reason]
  * @returns {string}
  */
-export function buildCaptchaInstructions(reason) {
-  const reasonText = reason ? ` Automatic solve failed: ${reason}.` : '';
+export function buildCaptchaInstructions() {
   return (
-    `CAPTCHA/2FA required.${reasonText} ` +
+    'CAPTCHA/2FA required; it is not solved automatically. ' +
     `Run manual renewal with: ${MANUAL_RENEW_COMMAND}. ` +
     'Complete the JobKorea CAPTCHA/2FA challenge in the opened browser window, then let the script save cookies.'
   );
-}
-
-/**
- * @param {import('puppeteer').Page} page
- */
-async function resolveCaptchaInput(page) {
-  const activePage = await getActivePage(page);
-  for (const selector of [
-    '#gtxt',
-    'input[name="gtxt"]',
-    'input[id*="captcha" i]',
-    'input[name*="captcha" i]',
-  ]) {
-    const input = await activePage.$(selector);
-    if (input) {
-      return { activePage, input };
-    }
-  }
-
-  return { activePage, input: null };
-}
-
-/**
- * @param {import('puppeteer').Page} page
- * @param {string} text
- */
-async function fillCaptchaInput(page, text) {
-  const { activePage } = await resolveCaptchaInput(page);
-  const hasInput = await activePage.evaluate(() => {
-    return !!document.querySelector(
-      '#gtxt, input[name="gtxt"], input[id*="captcha" i], input[name*="captcha" i]'
-    );
-  });
-  if (!hasInput) {
-    throw new Error('CAPTCHA input not found');
-  }
-
-  await activePage.evaluate((value) => {
-    const el = /** @type {HTMLInputElement | null} */ (
-      document.querySelector(
-        '#gtxt, input[name="gtxt"], input[id*="captcha" i], input[name*="captcha" i]'
-      )
-    );
-    if (el) {
-      el.focus();
-      el.value = value;
-      el.dispatchEvent(new Event('input', { bubbles: true }));
-      el.dispatchEvent(new Event('change', { bubbles: true }));
-    }
-  }, text);
-}
-
-/**
- * @param {import('puppeteer').Page} page
- * @param {{ log: (msg: string) => void }} options
- */
-async function clickCaptchaSubmit(page, { log }) {
-  const activePage = await getActivePage(page);
-  const candidates = await activePage.$$(
-    'button[type="submit"], input[type="submit"], button, input[type="button"]'
-  );
-  for (const candidate of candidates) {
-    const visible = await candidate.evaluate((element) => {
-      const style = window.getComputedStyle(element);
-      const rect = element.getBoundingClientRect();
-      return (
-        style.display !== 'none' &&
-        style.visibility !== 'hidden' &&
-        Number(style.opacity || '1') > 0 &&
-        rect.width > 0 &&
-        rect.height > 0
-      );
-    });
-
-    if (visible) {
-      await candidate.click();
-      log('CAPTCHA submit clicked');
-      return true;
-    }
-  }
-
-  return false;
-}
-
-/**
- * @param {import('puppeteer').Page & import('playwright').Page} page
- * @param {{ log: (msg: string) => void, submitAfterSolve?: boolean }} options
- */
-export async function tryAutomaticCaptchaSolve(page, { log, submitAfterSolve = false }) {
-  log('CAPTCHA/2FA detected, attempting automatic CAPTCHA solve');
-  try {
-    const result = await solveJobKoreaCaptcha(page);
-    if (!result?.text) {
-      return { solved: false, reason: 'vision solver returned no answer' };
-    }
-
-    await fillCaptchaInput(page, result.text);
-    log(`CAPTCHA answer entered via ${result.model}`);
-    if (submitAfterSolve) {
-      await clickCaptchaSubmit(page, { log });
-      await sleep(3000);
-    }
-
-    return { solved: true };
-  } catch (error) {
-    return { solved: false, reason: error instanceof Error ? error.message : String(error) };
-  }
 }
 
 /**
@@ -192,23 +78,10 @@ export async function handleCaptchaIfNeeded(page, { log, headlessEnv }) {
     return false;
   }
 
-  const solveResult = await tryAutomaticCaptchaSolve(page, { log });
-  if (solveResult.solved) {
-    return true;
-  }
-
   if (headlessEnv === 'true') {
-    if (!isCliproxyConfigured()) {
-      throw new Error(
-        'CAPTCHA/2FA detected but CLIPROXY_BASE is not configured. ' +
-          'Set CLIPROXY_BASE and CLIPROXY_API_KEY environment variables to enable automatic CAPTCHA solving, ' +
-          'or run with HEADLESS=false to solve manually in a browser window.'
-      );
-    }
-    throw new Error(buildCaptchaInstructions(solveResult.reason));
+    throw new Error(buildCaptchaInstructions());
   }
 
-  log(`Automatic CAPTCHA solve failed: ${solveResult.reason}. Falling back to manual solve.`);
   await waitForManualCaptchaSolve(page, { log });
   return true;
 }

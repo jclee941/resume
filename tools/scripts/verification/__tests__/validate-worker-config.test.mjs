@@ -25,7 +25,7 @@ function validConfiguration() {
       ELASTICSEARCH_INDEX: 'resume-logs-worker',
     },
     routes: [{ pattern: 'resume.jclee.me', custom_domain: true }],
-    triggers: { crons: ['0 23 * * *', '0 21 * * *'] },
+    triggers: { crons: ['0 21 * * *'] },
     migrations: [{ tag: 'v1', new_classes: ['BrowserSessionDO'] }],
     ai: { binding: 'AI' },
     browser: { binding: 'MYBROWSER' },

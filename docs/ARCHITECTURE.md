@@ -130,13 +130,13 @@ During build, `generate-worker.js` inlines the HTML, CSS, and data into
 ### 2. Job Automation Flow
 
 ```text
-Cron Triggers (0 21, 0 23 UTC) or /job/api/* request
+Cron Trigger (0 21 UTC) or /job/api/* request
            │
            ▼
 resume Worker scheduled()/fetch() → apps/job-dashboard handlers
            │
            ▼ Workflows + Queues
-Korean job platforms + cliproxy LLM job discovery and scoring
+Job platforms (Wanted, LinkedIn, Remember, JobKorea, Saramin): discovery and scoring
            │
            ▼ store results
 D1 JOB_DB (applications, job cache, sync logs) · KV SESSIONS
@@ -146,8 +146,8 @@ Scheduled job automation runs inside the merged `resume` Worker: Cron Triggers
 invoke `scheduled()`, which routes through
 `apps/job-dashboard/src/handlers/scheduled/` into Cloudflare Workflows and
 Queues. `0 21 * * *` refreshes the Wanted session and starts
-`ResumeSyncWorkflow`; `0 23 * * *` runs cliproxy auto-apply. Both default to
-dry-run. The dashboard API is served by the job-dashboard module imported
+`ResumeSyncWorkflow` (dry-run by default); auto-apply runs only when requested
+through the dashboard API. The dashboard API is served by the job-dashboard module imported
 directly into the portfolio worker — no Service Binding, no separate
 deployment. `apps/job-server` remains the local MCP server, crawler, and
 profile-sync runtime.
