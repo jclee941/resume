@@ -1,9 +1,48 @@
 const DEFAULT_TIMEOUT_MS = 5000;
 
+/**
+ * @typedef {typeof globalThis & { __esLogTotal?: number; __esLogFailures?: number }} GlobalWithEsCounters
+ */
+
+/**
+ * @typedef {Object} EsLoggerEnv
+ * @property {string} [CF_ACCESS_CLIENT_ID]
+ * @property {string} [CF_ACCESS_CLIENT_SECRET]
+ * @property {string} [ELASTICSEARCH_API_KEY]
+ * @property {string} [ELASTICSEARCH_INDEX]
+ * @property {string} [ELASTICSEARCH_URL]
+ */
+
+/**
+ * @typedef {Record<string, unknown> & {
+ *   traceparent?: string | null;
+ *   tracestate?: string | null;
+ *   traceId?: string | null;
+ *   correlationId?: string | null;
+ * }} EsLogLabels
+ */
+
+/**
+ * @typedef {Object} EsLogOptions
+ * @property {string} [index]
+ * @property {{ headers?: { get?(name: string): string | null } }} [request]
+ * @property {number} [timeout]
+ * @property {boolean} [immediate]
+ * @property {string} [requestId]
+ * @property {number} [startTime]
+ */
+
 function generateRequestId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
+/**
+ * @param {string} message
+ * @param {string} level
+ * @param {Record<string, unknown>} labels
+ * @param {string} job
+ * @returns {Record<string, unknown>}
+ */
 function buildDocument(message, level, labels, job) {
   const now = new Date();
   const normalizedLevel = level.toLowerCase();
@@ -19,7 +58,12 @@ function buildDocument(message, level, labels, job) {
   };
 }
 
+/**
+ * @param {EsLoggerEnv | null | undefined} env
+ * @returns {Record<string, string>}
+ */
 function buildEsHeaders(env) {
+  /** @type {Record<string, string>} */
   const headers = { 'Content-Type': 'application/x-ndjson' };
   const cfId = env?.CF_ACCESS_CLIENT_ID;
   const cfSecret = env?.CF_ACCESS_CLIENT_SECRET;
@@ -30,6 +74,14 @@ function buildEsHeaders(env) {
   return headers;
 }
 
+/**
+ * @param {EsLoggerEnv | null | undefined} env
+ * @param {string} message
+ * @param {string} [level='INFO']
+ * @param {EsLogLabels} [labels={}]
+ * @param {EsLogOptions} [options={}]
+ * @returns {Promise<void>}
+ */
 async function logToElasticsearch(env, message, level = 'INFO', labels = {}, options = {}) {
   try {
     const job = 'resume-worker';
@@ -93,7 +145,10 @@ async function logToElasticsearch(env, message, level = 'INFO', labels = {}, opt
       });
       // Tech-debt audit: track total successful ES writes for success-rate visibility.
       try {
-        globalThis.__esLogTotal = (globalThis.__esLogTotal || 0) + 1;
+        /** @type {GlobalWithEsCounters} */ (globalThis).__esLogTotal =
+          /** @type {number} */ (
+            /** @type {GlobalWithEsCounters} */ (globalThis).__esLogTotal || 0
+          ) + 1;
       } catch {
         // best-effort: success counters must never break logging
       }
@@ -102,20 +157,33 @@ async function logToElasticsearch(env, message, level = 'INFO', labels = {}, opt
       // `es_log_failures_total` for Grafana alerting on sustained logging-
       // pipeline outage. Best-effort — ignore failures (frozen global).
       try {
-        globalThis.__esLogFailures = (globalThis.__esLogFailures || 0) + 1;
+        /** @type {GlobalWithEsCounters} */ (globalThis).__esLogFailures =
+          /** @type {number} */ (
+            /** @type {GlobalWithEsCounters} */ (globalThis).__esLogFailures || 0
+          ) + 1;
       } catch {
         // best-effort: failure counters must never break logging
       }
-      console.error('[ES] Log failed:', err.message);
+      console.error('[ES] Log failed:', err instanceof Error ? err.message : String(err));
     } finally {
       clearTimeout(timeoutId);
     }
   } catch (outerErr) {
     // Never-reject guarantee: logToElasticsearch must not throw
-    console.error('[ES] logToElasticsearch failed:', outerErr.message || outerErr);
+    console.error(
+      '[ES] logToElasticsearch failed:',
+      /** @type {{ message?: string }} */ (outerErr).message || outerErr
+    );
   }
 }
 
+/**
+ * @param {EsLoggerEnv | null | undefined} env
+ * @param {{ method: string; url: string }} request
+ * @param {{ status: number }} response
+ * @param {EsLogOptions} [options={}]
+ * @returns {Promise<void>}
+ */
 async function logResponse(env, request, response, options = {}) {
   const requestId = options.requestId || generateRequestId();
   const startTime = options.startTime || Date.now();

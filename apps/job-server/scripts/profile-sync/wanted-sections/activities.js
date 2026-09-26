@@ -3,8 +3,66 @@ import { log } from '../sync-logger.js';
 import { formatYYYY_MM_DD } from '../../../src/shared/utils/date-formatters.js';
 
 /**
+ * @typedef {Object} SSoTCertification
+ * @property {string} name
+ * @property {string} [issuer]
+ * @property {string|null} [date]
+ * @property {string|null} [expirationDate]
+ * @property {string} [credentialId]
+ * @property {string} [credentialUrl]
+ * @property {string} [status]
+ * @property {string} [note]
+ */
+
+/**
+ * @typedef {Object} SSoTAward
+ * @property {string} [name]
+ * @property {string} [organization]
+ * @property {string} [year]
+ */
+
+/**
+ * @typedef {Object} WantedActivity
+ * @property {string|number} [id]
+ * @property {string} [title]
+ * @property {string} [description]
+ * @property {string|null} [start_time]
+ * @property {string} [activity_type]
+ * @property {string} [expirationDate]
+ * @property {string} [credentialId]
+ * @property {string} [credentialUrl]
+ * @property {string} [status]
+ * @property {string} [note]
+ */
+
+/**
+ * @typedef {Object} SSoTActivities
+ * @property {SSoTCertification[]} [certifications]
+ * @property {SSoTAward[]} [awards]
+ */
+
+/**
+ * @typedef {Object} WantedProfile
+ * @property {WantedActivity[]} [activities]
+ */
+
+/**
+ * @typedef {Object} WantedActivitiesClient
+ * @property {(resumeId: string, payload: WantedActivity) => Promise<unknown>} addActivity
+ */
+
+/**
+ * @typedef {Object} SyncActivitiesResult
+ * @property {number} changes
+ * @property {number} added
+ * @property {boolean} [dryRun]
+ */
+
+/**
  * Map an SSoT certification to a Wanted CERTIFICATE activity, preserving the
  * supported credential metadata fields (not just title/date).
+ * @param {SSoTCertification} cert
+ * @returns {WantedActivity}
  */
 function mapCertificationActivity(cert) {
   return {
@@ -22,6 +80,8 @@ function mapCertificationActivity(cert) {
 
 /**
  * Map an SSoT award to a Wanted AWARD activity.
+ * @param {SSoTAward} award
+ * @returns {WantedActivity}
  */
 function mapAwardActivity(award) {
   return {
@@ -32,7 +92,13 @@ function mapAwardActivity(award) {
   };
 }
 
-/** @param {Object} client @param {Object} ssot @param {Object} profile @param {string} resumeId @returns {Promise<Object>} */
+/**
+ * @param {WantedActivitiesClient} client
+ * @param {SSoTActivities} ssot
+ * @param {WantedProfile} profile
+ * @param {string} resumeId
+ * @returns {Promise<SyncActivitiesResult>}
+ */
 export async function syncWantedActivities(client, ssot, profile, resumeId) {
   const ssotCerts = (ssot.certifications || []).filter((c) => c.date && c.status !== '준비중');
   const ssotAwards = ssot.awards || [];
@@ -48,7 +114,10 @@ export async function syncWantedActivities(client, ssot, profile, resumeId) {
     ...ssotCerts.map((cert) => ({ data: mapCertificationActivity(cert), label: cert.name })),
     ...ssotAwards
       .filter((a) => a.name)
-      .map((award) => ({ data: mapAwardActivity(award), label: award.name })),
+      .map((award) => ({
+        data: mapAwardActivity(award),
+        label: /** @type {string} */ (award.name),
+      })),
   ];
 
   const toAdd = [];
@@ -74,7 +143,11 @@ export async function syncWantedActivities(client, ssot, profile, resumeId) {
       log(`Added activity: ${item.label}`, 'success', 'wanted');
       added++;
     } catch (e) {
-      log(`Failed to add ${item.label}: ${e.message}`, 'error', 'wanted');
+      log(
+        `Failed to add ${item.label}: ${e instanceof Error ? e.message : String(e)}`,
+        'error',
+        'wanted'
+      );
     }
   }
   return { changes: added, added };

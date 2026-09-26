@@ -2,6 +2,62 @@ import { validateApplicationCreate } from '@resume/shared/validation';
 import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
 import { APPLICATION_STATUS, VALID_STATUSES } from './statuses.js';
 
+/**
+ * @typedef {{
+ *   id?: string;
+ *   position?: string;
+ *   title?: string;
+ *   company?: string;
+ *   location?: string | null;
+ *   matchScore?: number | string;
+ *   match_score?: number | string;
+ *   matchPercentage?: number | string;
+ *   match_percentage?: number | string;
+ *   source?: string;
+ *   platform?: string;
+ *   sourceUrl?: string;
+ *   source_url?: string;
+ *   jobUrl?: string;
+ *   job_url?: string;
+ *   priority?: string;
+ *   notes?: string;
+ *   status?: string;
+ *   [key: string]: unknown;
+ * }} JobPayload
+ *
+ * @typedef {{
+ *   priority?: string;
+ *   resumeId?: string | null;
+ *   coverLetter?: string | null;
+ *   notes?: string;
+ *   status?: string;
+ *   [key: string]: unknown;
+ * }} OptionsPayload
+ *
+ * @typedef {{
+ *   job?: JobPayload;
+ *   options?: OptionsPayload;
+ *   status?: string;
+ *   sourceUrl?: string;
+ *   source_url?: string;
+ *   jobUrl?: string;
+ *   job_url?: string;
+ *   [key: string]: unknown;
+ * } & JobPayload} ApplicationCreateBody
+ *
+ * @typedef {{
+ *   repository: {
+ *     insert(app: Record<string, unknown>): Promise<unknown>;
+ *     insertTimeline(event: import('./application-repository.js').ApplicationTimelineEvent): Promise<void>;
+ *     findById(id: string): Promise<Record<string, unknown> | null>;
+ *   };
+ *   jsonResponse(data: unknown, status?: number): Response;
+ * }} CreateHandler
+ */
+
+/**
+ * @param {ApplicationCreateBody} body
+ */
 function normalizeNewApplication(body) {
   const job = body.job || body;
   const options = body.options || {};
@@ -27,11 +83,18 @@ function normalizeNewApplication(body) {
     sourceUrl,
     canonicalUrl: canonicalizeJobUrl(sourceUrl),
     notes: job.notes ?? options.notes ?? '',
-    status: VALID_STATUSES.includes(statusCandidate) ? statusCandidate : APPLICATION_STATUS.SAVED,
-    matchScore: Math.max(0, Math.min(100, parseInt(matchScoreRaw) || 0)),
+    status: VALID_STATUSES.includes(/** @type {string} */ (statusCandidate))
+      ? /** @type {string} */ (statusCandidate)
+      : APPLICATION_STATUS.SAVED,
+    matchScore: Math.max(0, Math.min(100, parseInt(String(matchScoreRaw)) || 0)),
   };
 }
 
+/**
+ * @param {CreateHandler} handler
+ * @param {Request | { json(): Promise<unknown> }} request
+ * @returns {Promise<Response>}
+ */
 export async function createApplication(handler, request) {
   let body;
   try {
@@ -45,7 +108,7 @@ export async function createApplication(handler, request) {
     return handler.jsonResponse({ error: 'Validation failed', details: validation.errors }, 400);
   }
 
-  const data = normalizeNewApplication(body);
+  const data = normalizeNewApplication(/** @type {ApplicationCreateBody} */ (body));
   const id = `app_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   const now = new Date().toISOString();
 

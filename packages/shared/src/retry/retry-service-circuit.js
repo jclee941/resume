@@ -6,6 +6,80 @@ export const CircuitState = Object.freeze({
   HALF_OPEN: 'HALF_OPEN',
 });
 
+/**
+ * @typedef {'CLOSED' | 'OPEN' | 'HALF_OPEN'} CircuitStateValue
+ */
+
+/**
+ * @typedef {Object} Circuit
+ * @property {CircuitStateValue} state
+ * @property {number} failureCount
+ * @property {number | null} openedAt
+ * @property {number | null} resetAt
+ * @property {number} halfOpenActiveCalls
+ * @property {number} halfOpenSuccesses
+ */
+
+/**
+ * @typedef {Object} CircuitConfig
+ * @property {number} failureThreshold
+ * @property {number} resetTimeout
+ * @property {number} halfOpenMaxCalls
+ */
+
+/**
+ * @typedef {Object} CircuitGate
+ * @property {boolean} allowed
+ * @property {CircuitStateValue} state
+ * @property {number | null} openedAt
+ * @property {number | null} resetAt
+ * @property {boolean} fromHalfOpen
+ */
+
+/**
+ * @typedef {Object} CircuitHalfOpenEvent
+ * @property {string} serviceName
+ * @property {CircuitStateValue} state
+ * @property {number | null} openedAt
+ * @property {number | null} resetAt
+ */
+
+/**
+ * @typedef {Object} CircuitRejectedEvent
+ * @property {string} serviceName
+ * @property {CircuitStateValue} state
+ * @property {number | null} resetAt
+ * @property {Error} error
+ */
+
+/**
+ * @typedef {Object} CircuitClosedEvent
+ * @property {string} serviceName
+ * @property {string} reason
+ * @property {CircuitStateValue} state
+ */
+
+/**
+ * @typedef {Object} CircuitOpenEvent
+ * @property {string} serviceName
+ * @property {string} reason
+ * @property {CircuitStateValue} state
+ * @property {number | null} openedAt
+ * @property {number | null} resetAt
+ * @property {number} failureCount
+ */
+
+/**
+ * @typedef {CircuitHalfOpenEvent | CircuitRejectedEvent | CircuitClosedEvent | CircuitOpenEvent} CircuitEventPayload
+ */
+
+/**
+ * @typedef {(event: string, payload: CircuitEventPayload) => void} CircuitEmit
+ */
+
+/**
+ * @returns {Circuit}
+ */
 function createCircuit() {
   return {
     state: CircuitState.CLOSED,
@@ -17,15 +91,30 @@ function createCircuit() {
   };
 }
 
+/**
+ * @param {Map<string, Circuit>} map
+ * @param {string} name
+ * @returns {Circuit}
+ */
 export function getCircuit(map, name) {
   if (!map.has(name)) map.set(name, createCircuit());
-  return map.get(name);
+  return /** @type {Circuit} */ (map.get(name));
 }
 
+/**
+ * @param {Circuit} c
+ * @returns {void}
+ */
 export function closeCircuit(c) {
   Object.assign(c, createCircuit());
 }
 
+/**
+ * @param {Circuit} c
+ * @param {CircuitConfig} config
+ * @param {() => number} clock
+ * @returns {void}
+ */
 export function openCircuit(c, config, clock) {
   const now = clock();
   Object.assign(c, {
@@ -37,6 +126,14 @@ export function openCircuit(c, config, clock) {
   });
 }
 
+/**
+ * @param {Map<string, Circuit>} circuits
+ * @param {string} name
+ * @param {CircuitConfig} config
+ * @param {() => number} clock
+ * @param {CircuitEmit} emit
+ * @returns {CircuitGate}
+ */
 export function enterCircuit(circuits, name, config, clock, emit) {
   const c = getCircuit(circuits, name);
   const current = clock();
@@ -88,6 +185,13 @@ export function enterCircuit(circuits, name, config, clock, emit) {
   };
 }
 
+/**
+ * @param {string} name
+ * @param {CircuitGate} gate
+ * @param {import('./retry-service-stats.js').StatsState} statsState
+ * @param {CircuitEmit} emit
+ * @returns {Error}
+ */
 export function createCircuitRejection(name, gate, statsState, emit) {
   const s = serviceStats(statsState, name);
   s.circuitRejections += 1;
@@ -112,6 +216,16 @@ export function createCircuitRejection(name, gate, statsState, emit) {
   return error;
 }
 
+/**
+ * @param {Map<string, Circuit>} circuits
+ * @param {string} name
+ * @param {CircuitConfig} config
+ * @param {CircuitGate} gate
+ * @param {number} ms
+ * @param {import('./retry-service-stats.js').StatsState} statsState
+ * @param {CircuitEmit} emit
+ * @returns {void}
+ */
 export function recordCircuitSuccess(circuits, name, config, gate, ms, statsState, emit) {
   const c = getCircuit(circuits, name);
   const s = serviceStats(statsState, name);
@@ -130,6 +244,13 @@ export function recordCircuitSuccess(circuits, name, config, gate, ms, statsStat
   }
 }
 
+/**
+ * @param {CircuitEmit} emit
+ * @param {string} name
+ * @param {string} reason
+ * @param {Circuit} c
+ * @returns {void}
+ */
 function emitOpen(emit, name, reason, c) {
   emit('circuit:open', {
     serviceName: name,
@@ -141,6 +262,18 @@ function emitOpen(emit, name, reason, c) {
   });
 }
 
+/**
+ * @param {Map<string, Circuit>} circuits
+ * @param {string} name
+ * @param {CircuitConfig} config
+ * @param {CircuitGate} gate
+ * @param {number} ms
+ * @param {Error | { name?: string, message?: string } | null | undefined} error
+ * @param {import('./retry-service-stats.js').StatsState} statsState
+ * @param {() => number} clock
+ * @param {CircuitEmit} emit
+ * @returns {void}
+ */
 export function recordCircuitFailure(
   circuits,
   name,
@@ -159,11 +292,11 @@ export function recordCircuitFailure(
   s.executions += 1;
   s.failures += 1;
   addLatency(s, ms);
-  s.lastError = {
+  s.lastError = /** @type {Error & { at: string }} */ ({
     name: error?.name ?? 'Error',
     message: error?.message ?? String(error),
     at: new Date(clock()).toISOString(),
-  };
+  });
   if (gate.fromHalfOpen) {
     c.halfOpenActiveCalls = Math.max(0, c.halfOpenActiveCalls - 1);
     openCircuit(c, config, clock);

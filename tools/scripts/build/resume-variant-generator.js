@@ -17,13 +17,16 @@ const {
 
 /**
  * Parse master resume into structured sections
+ * @returns {Promise<Record<string, string>>}
  */
 async function parseMasterResume() {
   try {
     const content = await fs.readFile(CONFIG.masterFile, 'utf-8');
 
+    /** @type {Record<string, string>} */
     const sections = {};
     let currentSection = 'header';
+    /** @type {string[]} */
     let currentContent = [];
 
     const lines = content.split('\n');
@@ -42,7 +45,9 @@ async function parseMasterResume() {
           .trim()
           .toLowerCase()
           .replace(/\s+/g, '_');
-        currentSection = SECTION_NAME_MAP[rawName] || rawName;
+        currentSection =
+          /** @type {Record<string, string>} */ (SECTION_NAME_MAP)[rawName] ||
+          rawName;
         currentContent = [line];
       } else {
         currentContent.push(line);
@@ -56,13 +61,20 @@ async function parseMasterResume() {
 
     return sections;
   } catch (error) {
-    console.error('❌ Error parsing master resume:', error.message);
+    console.error(
+      '❌ Error parsing master resume:',
+      error instanceof Error ? error.message : String(error)
+    );
     throw error;
   }
 }
 
 /**
  * Generate a single variant
+ * @param {string} name
+ * @param {import('./resume-variant-content').VariantConfig & { filename: string, description: string }} config
+ * @param {Record<string, string>} sections
+ * @returns {Promise<{ name: string, filename: string, size: number }>}
  */
 async function generateVariant(name, config, sections) {
   console.log(`\n📝 Generating variant: ${name}`);
@@ -110,7 +122,10 @@ async function generateVariant(name, config, sections) {
 
     return {name, filename: config.filename, size: stats.size};
   } catch (error) {
-    console.error(`   ❌ Error generating ${name}:`, error.message);
+    console.error(
+      `   ❌ Error generating ${name}:`,
+      error instanceof Error ? error.message : String(error)
+    );
     throw error;
   }
 }

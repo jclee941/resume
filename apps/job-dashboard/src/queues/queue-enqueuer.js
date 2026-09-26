@@ -3,9 +3,14 @@ import { PRIORITY } from './queue-message-constants.js';
 /** @typedef {import('@resume/types').QueueMessage} QueueMessage */
 
 /**
+ * @typedef {Object} EnqueuerEnv
+ * @property {{ send(message: unknown, options?: { delaySeconds?: number }): Promise<void> }} CRAWL_TASKS
+ */
+
+/**
  * Enqueue a message to the crawl-tasks queue.
  *
- * @param {Object} env - Worker environment with CRAWL_TASKS binding
+ * @param {EnqueuerEnv} env - Worker environment with CRAWL_TASKS binding
  * @param {QueueMessage} message - Message to enqueue
  * @param {Object} [options] - Send options
  * @param {number} [options.delaySeconds] - Delay before message becomes visible (0-43200)

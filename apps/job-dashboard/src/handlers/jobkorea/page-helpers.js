@@ -22,6 +22,11 @@ export const CAPTCHA_SUBMIT_SELECTOR =
 const CAPTCHA_INPUT_SELECTOR =
   '#gtxt, input[name="gtxt"], input[id*="captcha" i], input[name*="captcha" i]';
 
+/**
+ * @param {import('@cloudflare/puppeteer').Page} page
+ * @param {string[]} selectors
+ * @returns {Promise<import('@cloudflare/puppeteer').ElementHandle<Element> | null>}
+ */
 async function resolveInput(page, selectors) {
   for (const selector of selectors) {
     const input = await page.$(selector);
@@ -30,6 +35,11 @@ async function resolveInput(page, selectors) {
   return null;
 }
 
+/**
+ * @param {import('@cloudflare/puppeteer').Page} page
+ * @param {{ email: string, password: string }} credentials
+ * @returns {Promise<void>}
+ */
 export async function fillLoginForm(page, { email, password }) {
   const emailInput = await resolveInput(page, EMAIL_SELECTORS);
   if (!emailInput) throw new Error('JobKorea email input not found');
@@ -42,6 +52,10 @@ export async function fillLoginForm(page, { email, password }) {
   await passwordInput.type(password, { delay: 35 });
 }
 
+/**
+ * @param {import('@cloudflare/puppeteer').ElementHandle<Element>} candidate
+ * @returns {Promise<boolean>}
+ */
 async function isVisible(candidate) {
   return candidate.evaluate((element) => {
     const style = window.getComputedStyle(element);
@@ -56,6 +70,12 @@ async function isVisible(candidate) {
   });
 }
 
+/**
+ * @param {import('@cloudflare/puppeteer').Page} page
+ * @param {string} selector
+ * @param {{ required?: boolean }} [options]
+ * @returns {Promise<boolean>}
+ */
 export async function clickVisibleSubmit(page, selector, { required = true } = {}) {
   const candidates = await page.$$(selector);
   for (const candidate of candidates) {
@@ -68,6 +88,12 @@ export async function clickVisibleSubmit(page, selector, { required = true } = {
   return false;
 }
 
+/**
+ * @param {import('@cloudflare/puppeteer').Page} page
+ * @param {string} selector
+ * @param {{ required?: boolean }} [opts]
+ * @returns {Promise<void>}
+ */
 export async function submitAndWait(page, selector, opts) {
   await Promise.all([
     page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 15000 }).catch(() => {}),
@@ -78,12 +104,21 @@ export async function submitAndWait(page, selector, opts) {
 const TRANSIENT_PAGE_ERROR =
   /Execution context was destroyed|Target closed|Cannot find context|detached Frame|Session closed|because of a navigation|frame got detached|Navigation timeout/i;
 
+/**
+ * @param {unknown} err
+ * @returns {boolean}
+ */
 function isTransientPageError(err) {
-  return TRANSIENT_PAGE_ERROR.test(err?.message || '');
+  return TRANSIENT_PAGE_ERROR.test(/** @type {{ message?: string }} */ (err)?.message || '');
 }
 
-// Evaluate on the page, treating a transient in-flight-navigation error as the
-// fallback so the caller retries on the settled page instead of failing the mint.
+/**
+ * @template T
+ * @param {import('@cloudflare/puppeteer').Page} page
+ * @param {() => T} fn
+ * @param {T} fallback
+ * @returns {Promise<T>}
+ */
 async function safeEvaluate(page, fn, fallback) {
   try {
     return await page.evaluate(fn);
@@ -93,6 +128,10 @@ async function safeEvaluate(page, fn, fallback) {
   }
 }
 
+/**
+ * @param {import('@cloudflare/puppeteer').Page} page
+ * @returns {Promise<boolean>}
+ */
 export async function isLoggedIn(page) {
   return safeEvaluate(
     page,
@@ -107,6 +146,10 @@ export async function isLoggedIn(page) {
   );
 }
 
+/**
+ * @param {import('@cloudflare/puppeteer').Page} page
+ * @returns {Promise<boolean>}
+ */
 export async function detectCaptcha(page) {
   return safeEvaluate(
     page,
@@ -128,37 +171,62 @@ export async function detectCaptcha(page) {
   );
 }
 
+/**
+ * @param {import('@cloudflare/puppeteer').Page} page
+ * @returns {Promise<string | null>}
+ */
 export async function findCaptchaImageUrl(page) {
   return page.evaluate(() => {
-    const direct = document.querySelector('img[src*="captcha"]');
+    const direct = /** @type {HTMLImageElement | null} */ (
+      document.querySelector('img[src*="captcha"]')
+    );
     if (direct?.src) return direct.src;
     const gtxt = document.querySelector('#gtxt, input[name="gtxt"]');
     const container = gtxt?.closest('div, td, li, p');
-    const img = container?.querySelector('img');
+    const img = /** @type {HTMLImageElement | null | undefined} */ (
+      container?.querySelector('img')
+    );
     if (img?.src) return img.src;
     if (gtxt) return 'https://www.jobkorea.co.kr/login/captcha.asp';
     return null;
   });
 }
 
+/**
+ * @param {import('@cloudflare/puppeteer').Page} page
+ * @param {string} src
+ * @returns {Promise<{ base64: string, mime: string }>}
+ */
 export async function downloadCaptchaImage(page, src) {
-  return page.evaluate(async (imageSrc) => {
-    const res = await fetch(imageSrc, { credentials: 'include' });
-    const blob = await res.blob();
-    const dataUrl = await new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.readAsDataURL(blob);
-    });
-    const mimeMatch = dataUrl.match(/^data:([^;]+);/);
-    return { base64: dataUrl.split(',')[1], mime: mimeMatch ? mimeMatch[1] : 'image/bmp' };
-  }, src);
+  return page.evaluate(
+    /** @param {string} imageSrc */
+    async (imageSrc) => {
+      const res = await fetch(imageSrc, { credentials: 'include' });
+      const blob = await res.blob();
+      const dataUrl = /** @type {string} */ (
+        await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(/** @type {string} */ (reader.result));
+          reader.readAsDataURL(blob);
+        })
+      );
+      const mimeMatch = dataUrl.match(/^data:([^;]+);/);
+      return { base64: dataUrl.split(',')[1], mime: mimeMatch ? mimeMatch[1] : 'image/bmp' };
+    },
+    src
+  );
 }
 
+/**
+ * @param {import('@cloudflare/puppeteer').Page} page
+ * @param {string} value
+ * @returns {Promise<void>}
+ */
 export async function fillCaptchaInput(page, value) {
   const filled = await page.evaluate(
+    /** @param {{ selector: string, value: string }} args */
     ({ selector, value: text }) => {
-      const el = document.querySelector(selector);
+      const el = /** @type {HTMLInputElement | null} */ (document.querySelector(selector));
       if (!el) return false;
       el.focus();
       el.value = text;
@@ -171,7 +239,13 @@ export async function fillCaptchaInput(page, value) {
   if (!filled) throw new Error('JobKorea CAPTCHA input not found');
 }
 
+/**
+ * @param {import('@cloudflare/puppeteer').Page} page
+ * @param {import('@cloudflare/puppeteer').Browser | { defaultBrowserContext?(): { cookies(): Promise<import('@cloudflare/puppeteer').Cookie[]> } }} [browser]
+ * @returns {Promise<string>}
+ */
 export async function collectJobKoreaCookies(page, browser) {
+  /** @type {Array<import('@cloudflare/puppeteer').Cookie>} */
   let cookies;
   try {
     cookies = (await page.cookies()) || [];
@@ -180,7 +254,10 @@ export async function collectJobKoreaCookies(page, browser) {
   }
   if (cookies.length === 0 && typeof browser?.defaultBrowserContext === 'function') {
     try {
-      cookies = (await browser.defaultBrowserContext().cookies()) || [];
+      cookies =
+        (await /** @type {{ cookies(): Promise<import('@cloudflare/puppeteer').Cookie[]> }} */ (
+          browser.defaultBrowserContext()
+        ).cookies()) || [];
     } catch {
       cookies = [];
     }

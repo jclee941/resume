@@ -4,7 +4,26 @@ import { normalizeCareerRole, normalizeCompanyName } from '@resume/shared/normal
 import { log } from '../sync-logger.js';
 import { parsePeriod } from '../period-parser.js';
 
-/** @param {Object} career @returns {Object} Wanted career format */
+/**
+ * @typedef {Object} SSoTCareer
+ * @property {string} period
+ * @property {string} role
+ * @property {string} company
+ * @property {string} [workType]
+ */
+
+/**
+ * @typedef {Object} WantedCareerFormat
+ * @property {{ name: string, type: string }} company
+ * @property {string} job_role
+ * @property {number} job_category_id
+ * @property {string} start_time
+ * @property {string|null} end_time
+ * @property {boolean} served
+ * @property {string} employment_type
+ */
+
+/** @param {SSoTCareer} career @returns {WantedCareerFormat} Wanted career format */
 export function mapCareerToWanted(career) {
   const { startsAt, endsAt } = parsePeriod(career.period);
   const jobRole = normalizeCareerRole(career.role);

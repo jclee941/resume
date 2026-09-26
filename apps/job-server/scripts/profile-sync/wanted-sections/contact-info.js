@@ -2,8 +2,57 @@ import { CONFIG } from '../constants.js';
 import { log } from '../sync-logger.js';
 import { normalizePhone } from '@resume/shared/phone';
 
+/**
+ * @typedef {Object} SSoTPersonal
+ * @property {string} [email]
+ * @property {string} [phone]
+ */
+
+/**
+ * @typedef {Object} SSoTContact
+ * @property {SSoTPersonal} [personal]
+ */
+
+/**
+ * @typedef {Object} ResumeContactDetail
+ * @property {string} [email]
+ * @property {string} [mobile]
+ */
+
+/**
+ * @typedef {Object} ContactUpdates
+ * @property {string} [email]
+ * @property {string} [mobile]
+ */
+
+/**
+ * @typedef {Object} ContactChange
+ * @property {string} field
+ * @property {string | undefined} from
+ * @property {string} to
+ */
+
+/**
+ * @typedef {Object} WantedContactClient
+ * @property {(resumeId: string, updates: ContactUpdates) => Promise<unknown>} updateResumeFields
+ */
+
+/**
+ * @typedef {Object} SyncContactResult
+ * @property {number} changes
+ * @property {number} [updated]
+ * @property {boolean} [dryRun]
+ */
+
+/**
+ * @param {SSoTContact} ssot
+ * @param {ResumeContactDetail | null | undefined} resumeDetail
+ * @returns {{ updates: ContactUpdates, changes: ContactChange[] }}
+ */
 function collectContactUpdates(ssot, resumeDetail) {
+  /** @type {ContactUpdates} */
   const updates = {};
+  /** @type {ContactChange[]} */
   const changes = [];
 
   if (ssot.personal?.email && ssot.personal.email !== resumeDetail?.email) {
@@ -11,7 +60,7 @@ function collectContactUpdates(ssot, resumeDetail) {
     changes.push({ field: 'email', from: resumeDetail?.email, to: ssot.personal.email });
   }
 
-  const normalizedPhoneVal = normalizePhone(ssot.personal?.phone);
+  const normalizedPhoneVal = normalizePhone(/** @type {string} */ (ssot.personal?.phone));
   if (normalizedPhoneVal && normalizedPhoneVal !== resumeDetail?.mobile) {
     updates.mobile = normalizedPhoneVal;
     changes.push({ field: 'mobile', from: resumeDetail?.mobile, to: normalizedPhoneVal });
@@ -25,7 +74,13 @@ function collectContactUpdates(ssot, resumeDetail) {
   return { updates, changes };
 }
 
-/** @param {Object} client @param {Object} ssot @param {Object} resumeDetail @param {string} resumeId @returns {Promise<Object>} */
+/**
+ * @param {WantedContactClient} client
+ * @param {SSoTContact} ssot
+ * @param {ResumeContactDetail | null | undefined} resumeDetail
+ * @param {string} resumeId
+ * @returns {Promise<SyncContactResult>}
+ */
 export async function syncWantedContactInfo(client, ssot, resumeDetail, resumeId) {
   const { updates, changes } = collectContactUpdates(ssot, resumeDetail);
 
@@ -42,7 +97,11 @@ export async function syncWantedContactInfo(client, ssot, resumeDetail, resumeId
     log(`Updated ${Object.keys(updates).join(', ')}`, 'success', 'wanted');
     return { changes: changes.length, updated: changes.length };
   } catch (e) {
-    log(`Failed to update contact: ${e.message}`, 'error', 'wanted');
+    log(
+      `Failed to update contact: ${e instanceof Error ? e.message : String(e)}`,
+      'error',
+      'wanted'
+    );
     return { changes: 0 };
   }
 }

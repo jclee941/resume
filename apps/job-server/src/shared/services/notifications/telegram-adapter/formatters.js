@@ -1,10 +1,18 @@
 import { TELEGRAM_ALLOWED_HTML_TAGS, TELEGRAM_MAX_LENGTH } from './constants.js';
 
+/**
+ * @param {unknown} text
+ * @returns {string}
+ */
 export function escapeHtml(text) {
   if (text == null) return '';
   return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+/**
+ * @param {string | Record<string, unknown> | null | undefined} message
+ * @returns {string}
+ */
 export function formatNotificationText(message) {
   let text;
 
@@ -35,6 +43,11 @@ export function formatNotificationText(message) {
   return text;
 }
 
+/**
+ * @param {Record<string, unknown> | null | undefined} job
+ * @param {...string} keys
+ * @returns {unknown}
+ */
 function resolveJobField(job, ...keys) {
   for (const key of keys) {
     if (job?.[key] != null && job[key] !== '') return job[key];
@@ -43,6 +56,11 @@ function resolveJobField(job, ...keys) {
   return '';
 }
 
+/**
+ * @param {Record<string, unknown>} job
+ * @param {number | string} matchScore
+ * @param {string} applicationId
+ */
 export function createApprovalRequestMessage(job, matchScore, applicationId) {
   return {
     text:
@@ -66,6 +84,11 @@ export function createApprovalRequestMessage(job, matchScore, applicationId) {
   };
 }
 
+/**
+ * @param {Record<string, unknown>} job
+ * @param {string} applicationId
+ * @param {string} [platform]
+ */
 export function createApplicationSuccessMessage(job, applicationId, platform) {
   return {
     text:
@@ -78,6 +101,12 @@ export function createApplicationSuccessMessage(job, applicationId, platform) {
   };
 }
 
+/**
+ * @param {Record<string, unknown>} job
+ * @param {string} applicationId
+ * @param {Error | { message?: string } | null | undefined} [error]
+ * @param {string} [platform]
+ */
 export function createApplicationFailedMessage(job, applicationId, error, platform) {
   const errorText = error?.message || String(error || 'Unknown error');
 
@@ -93,6 +122,20 @@ export function createApplicationFailedMessage(job, applicationId, error, platfo
   };
 }
 
+/**
+ * @typedef {Object} DailySummaryStats
+ * @property {string} [date]
+ * @property {number} [applied]
+ * @property {number} [success]
+ * @property {number} [pending]
+ * @property {number} [awaitingApproval]
+ * @property {number} [failed]
+ * @property {number} [total]
+ */
+
+/**
+ * @param {DailySummaryStats & Record<string, unknown>} [stats]
+ */
 export function createDailySummaryMessage(stats = {}) {
   const date = stats.date || new Date().toISOString().split('T')[0];
   const applied = Number(stats.applied ?? stats.success ?? 0);
@@ -117,6 +160,10 @@ export function createDailySummaryMessage(stats = {}) {
   };
 }
 
+/**
+ * @param {Record<string, unknown>} job
+ * @param {string} [platform]
+ */
 export function createCaptchaDetectedMessage(job, platform) {
   return {
     text:
@@ -132,12 +179,15 @@ export function createCaptchaDetectedMessage(job, platform) {
 /**
  * Build a Telegram HTML message listing job postings, each as a clickable link.
  *
- * @param {Array<{company?:string,companyName?:string,position?:string,title?:string,url?:string,sourceUrl?:string,source?:string,platform?:string,matchScore?:number,score?:number}>} jobs
- * @param {{limit?:number, header?:string}} [options]
- * @returns {{text:string, parse_mode:'HTML', disable_web_page_preview:boolean, renderedCount:number}}
+ * @param {Array<Record<string, unknown>>} [jobs]
+ * @param {{limit?: number, header?: string}} [options]
+ * @returns {{text: string, parse_mode: 'HTML', disable_web_page_preview: boolean, renderedCount?: number}}
  */
 export function createJobPostingsMessage(jobs = [], options = {}) {
-  const limit = Number.isInteger(options.limit) && options.limit > 0 ? options.limit : 10;
+  const limit =
+    Number.isInteger(options.limit) && /** @type {number} */ (options.limit) > 0
+      ? /** @type {number} */ (options.limit)
+      : 10;
   const list = Array.isArray(jobs) ? jobs : [];
   const total = list.length;
 
@@ -169,6 +219,7 @@ export function createJobPostingsMessage(jobs = [], options = {}) {
   // trigger Telegram's "can't parse entities" 400, so we only ever drop whole
   // (tag-balanced) lines. `limit` is the caller's preferred max count; the
   // length budget is the hard constraint that wins when lines are long.
+  /** @param {number} remainder */
   const footerFor = (remainder) => (remainder > 0 ? `\n\n… 외 ${remainder}건 더 있음` : '');
   const maxBody = TELEGRAM_MAX_LENGTH - 64; // headroom for header + footer + emoji
 
@@ -200,12 +251,41 @@ export function createJobPostingsMessage(jobs = [], options = {}) {
 }
 
 /**
+ * @typedef {Object} SingleJobMatchDetail
+ * @property {string} [keyword]
+ * @property {string} [name]
+ */
+
+/**
+ * @typedef {Object} SingleJobDetails
+ * @property {Array<SingleJobMatchDetail>} [skillMatches]
+ */
+
+/**
+ * @typedef {Record<string, unknown> & {
+ *   company?: string,
+ *   companyName?: string,
+ *   position?: string,
+ *   title?: string,
+ *   url?: string,
+ *   sourceUrl?: string,
+ *   source?: string,
+ *   platform?: string,
+ *   matchPercentage?: number,
+ *   matchScore?: number,
+ *   score?: number,
+ *   applicationPriority?: string | number,
+ *   matchDetails?: SingleJobDetails
+ * }} SingleJobInput
+ */
+
+/**
  * Format a SINGLE job posting as its own Telegram HTML message. Used when
  * sending one message per job (see TelegramNotificationAdapter.sendJobPostingsSeparately).
  * Length-splitting of an oversized result is the caller's responsibility
  * (splitForTelegram); this function does not truncate.
  *
- * @param {object} job
+ * @param {SingleJobInput} [job]
  * @param {{header?:string}} [options]
  * @returns {{text:string, parse_mode:'HTML', disable_web_page_preview:true}}
  */

@@ -45,6 +45,36 @@ const PROJECT_LABELS = {
   },
 };
 
+/**
+ * @typedef {{
+ *   railEyebrow: string;
+ *   railTitle: string;
+ *   railDesc: string;
+ *   problem: string;
+ *   role: string;
+ *   proof: string;
+ *   review: string;
+ *   open: string;
+ *   live: string;
+ *   repo: string;
+ *   noLink: string;
+ *   caseSummary: string;
+ * }} ProjectLabels
+ */
+
+/**
+ * @typedef {Object} ProjectItem
+ * @property {string | number} [id]
+ * @property {string} [title]
+ * @property {string} [description]
+ * @property {string} [tagline]
+ * @property {string} [tech]
+ */
+
+/**
+ * @param {Array<ProjectItem>} projectsData
+ * @returns {'ko' | 'en' | 'ja'}
+ */
 function detectLocale(projectsData) {
   const sample = projectsData.map((project) => project.description || '').join(' ');
   if (/[ぁ-ゟ゠-ヿ一-龯]/.test(sample)) return 'ja';
@@ -52,10 +82,19 @@ function detectLocale(projectsData) {
   return 'en';
 }
 
+/**
+ * @param {Array<ProjectItem>} projectsData
+ * @returns {ProjectLabels}
+ */
 function projectLabelsFor(projectsData) {
   return PROJECT_LABELS[detectLocale(projectsData)];
 }
 
+/**
+ * @param {ProjectItem} project
+ * @param {number} index
+ * @returns {string}
+ */
 function projectAnchor(project, index) {
   const id = project.id || project.title || `project-${index + 1}`;
   const slug = String(id)
@@ -66,6 +105,10 @@ function projectAnchor(project, index) {
   return `project-${slug || index + 1}`;
 }
 
+/**
+ * @param {unknown} description
+ * @returns {string[]}
+ */
 function splitProjectSentences(description) {
   return String(description || '')
     .replace(/\s+/g, ' ')
@@ -74,12 +117,27 @@ function splitProjectSentences(description) {
     .filter(Boolean);
 }
 
+/**
+ * @param {ProjectLabels} labels
+ * @param {string | null | undefined} githubUrl
+ * @param {string | null | undefined} demoUrl
+ * @param {unknown[]} dashboards
+ * @returns {string}
+ */
 function projectReviewTarget(labels, githubUrl, demoUrl, dashboards) {
   if (dashboards.length > 0 || demoUrl) return labels.live;
   if (githubUrl) return labels.repo;
   return labels.noLink;
 }
 
+/**
+ * @param {ProjectItem} project
+ * @param {ProjectLabels} labels
+ * @param {string | null | undefined} githubUrl
+ * @param {string | null | undefined} demoUrl
+ * @param {unknown[]} dashboards
+ * @returns {string}
+ */
 function buildProjectCaseNotes(project, labels, githubUrl, demoUrl, dashboards) {
   const sentences = splitProjectSentences(project.description);
   const problem = sentences[0] || project.tagline || project.title;
@@ -87,14 +145,21 @@ function buildProjectCaseNotes(project, labels, githubUrl, demoUrl, dashboards) 
   const proof = sentences[2] || project.tech || project.tagline || project.title;
   const review = projectReviewTarget(labels, githubUrl, demoUrl, dashboards);
 
-  return `<dl class="project-case-notes" aria-label="${escapeHtml(project.title)} ${labels.caseSummary}">
-              <div><dt>${labels.problem}</dt><dd>${escapeHtml(problem)}</dd></div>
-              <div><dt>${labels.role}</dt><dd>${escapeHtml(role)}</dd></div>
-              <div><dt>${labels.proof}</dt><dd>${escapeHtml(proof)}</dd></div>
+  return `<dl class="project-case-notes" aria-label="${escapeHtml(
+    /** @type {string} */ (project.title)
+  )} ${labels.caseSummary}">
+              <div><dt>${labels.problem}</dt><dd>${escapeHtml(/** @type {string} */ (problem))}</dd></div>
+              <div><dt>${labels.role}</dt><dd>${escapeHtml(/** @type {string} */ (role))}</dd></div>
+              <div><dt>${labels.proof}</dt><dd>${escapeHtml(/** @type {string} */ (proof))}</dd></div>
               <div><dt>${labels.review}</dt><dd>${escapeHtml(review)}</dd></div>
           </dl>`;
 }
 
+/**
+ * @param {Array<ProjectItem>} projects
+ * @param {ProjectLabels} labels
+ * @returns {string}
+ */
 function buildProjectReviewRail(projects, labels) {
   if (projects.length < 3) {
     return '';
@@ -105,9 +170,9 @@ function buildProjectReviewRail(projects, labels) {
     const summary =
       splitProjectSentences(project.description)[0] || project.tagline || project.tech;
     return `<a href="#${escapeHtml(anchor)}" class="project-review-rail__link">
-              <span>${escapeHtml(project.tagline || labels.open)}</span>
-              <strong>${escapeHtml(project.title)}</strong>
-              <small>${escapeHtml(summary)}</small>
+              <span>${escapeHtml(/** @type {string} */ (project.tagline || labels.open))}</span>
+              <strong>${escapeHtml(/** @type {string} */ (project.title))}</strong>
+              <small>${escapeHtml(/** @type {string} */ (summary))}</small>
             </a>`;
   });
 

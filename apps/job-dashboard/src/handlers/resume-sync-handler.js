@@ -2,18 +2,29 @@ import { BaseHandler } from './base-handler.js';
 import { normalizeError } from '@resume/shared/errors';
 
 /**
+ * @typedef {{
+ *   getCookies(name: string): Promise<string | null>;
+ * }} ResumeSyncAuth
+ *
+ * @typedef {{
+ *   id: string | number;
+ *   is_default?: boolean;
+ *   [key: string]: unknown;
+ * }} WantedResumeListItem
+ *
  * Handler for resume sync operations.
  * Scrapes resume data from Wanted using Chaos API.
+ * @extends {BaseHandler<Record<string, unknown>, ResumeSyncAuth>}
  */
 export class ResumeSyncHandler extends BaseHandler {
   /**
    * Trigger resume scraping from Wanted
-   * @param {Request} request
+   * @param {Request} _request
    * @returns {Promise<Response>}
    */
   async triggerResumeSync(_request) {
     try {
-      const cookies = await this.auth.getCookies('wanted');
+      const cookies = await /** @type {ResumeSyncAuth} */ (this.auth).getCookies('wanted');
       if (!cookies) {
         return this.jsonResponse({ success: false, error: 'Wanted authentication required' }, 401);
       }
@@ -29,6 +40,7 @@ export class ResumeSyncHandler extends BaseHandler {
       }
 
       const listData = await listResponse.json();
+      /** @type {WantedResumeListItem[]} */
       const resumes = listData.data || [];
       const mainResume = resumes.find((r) => r.is_default) || resumes[0];
 

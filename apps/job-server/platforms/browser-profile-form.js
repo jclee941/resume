@@ -1,15 +1,53 @@
+/**
+ * @typedef {Object} ProfileSyncSelectors
+ * @property {string} [name]
+ * @property {string} [headline]
+ * @property {string} [email]
+ * @property {string} [phone]
+ * @property {string} [skills]
+ * @property {string} [nameInput]
+ * @property {string} [emailInput]
+ * @property {string} [phoneInput]
+ * @property {string} [companyInput]
+ * @property {string} [titleInput]
+ * @property {string} [schoolInput]
+ * @property {string} [majorInput]
+ * @property {string} [certInput]
+ */
+
+/**
+ * @typedef {Object} BrowserProfileSyncContext
+ * @property {import('playwright').Page} page
+ * @property {ProfileSyncSelectors} selectors
+ * @property {Record<string, string>} urls
+ * @property {(selectors: Array<string | undefined | null>) => Promise<void>} waitForAnyConfiguredSelector
+ * @property {() => Promise<void>} waitForConfiguredProfileSelectors
+ * @property {() => Promise<void>} waitForConfiguredEditSelectors
+ */
+
+/**
+ * @this {BrowserProfileSyncContext}
+ * @param {Array<string | undefined | null>} selectors
+ */
 export async function waitForAnyConfiguredSelector(selectors) {
   const candidates = selectors.filter(
-    (selector) => typeof selector === 'string' && selector.length > 0
+    /** @type {(selector: string | undefined | null) => selector is string} */ (
+      (selector) => typeof selector === 'string' && selector.length > 0
+    )
   );
   if (candidates.length === 0) return;
   await this.page.waitForFunction(
-    (selectorList) => selectorList.some((selector) => document.querySelector(selector)),
+    /** @type {(selectorList: string[]) => boolean} */ (
+      (selectorList) => selectorList.some((selector) => document.querySelector(selector))
+    ),
     candidates,
     { timeout: 10000 }
   );
 }
 
+/**
+ * @this {BrowserProfileSyncContext}
+ */
 export async function waitForConfiguredProfileSelectors() {
   await this.waitForAnyConfiguredSelector([
     this.selectors.name,
@@ -20,6 +58,9 @@ export async function waitForConfiguredProfileSelectors() {
   ]);
 }
 
+/**
+ * @this {BrowserProfileSyncContext}
+ */
 export async function waitForConfiguredEditSelectors() {
   await this.waitForAnyConfiguredSelector([
     this.selectors.nameInput,
@@ -28,6 +69,10 @@ export async function waitForConfiguredEditSelectors() {
   ]);
 }
 
+/**
+ * @this {BrowserProfileSyncContext}
+ * @param {{ name?: string, email?: string, phone?: string }} personal
+ */
 export async function fillPersonalInfo(personal) {
   if (!this.urls.edit) return;
   await this.page.goto(this.urls.edit, { waitUntil: 'domcontentloaded' });
@@ -47,6 +92,10 @@ export async function fillPersonalInfo(personal) {
   }
 }
 
+/**
+ * @this {BrowserProfileSyncContext}
+ * @param {Array<{ company: string, role: string }> | unknown} careers
+ */
 export async function fillCareers(careers) {
   if (!Array.isArray(careers)) return;
   for (const career of careers.slice(0, 5)) {
@@ -71,6 +120,10 @@ export async function fillCareers(careers) {
   }
 }
 
+/**
+ * @this {BrowserProfileSyncContext}
+ * @param {{ school: string, major: string, status?: string } | null | undefined} education
+ */
 export async function fillEducation(education) {
   if (!education) return;
   const schoolInput = await this.page.$(
@@ -91,6 +144,10 @@ export async function fillEducation(education) {
   }
 }
 
+/**
+ * @this {BrowserProfileSyncContext}
+ * @param {Array<{ name: string, issuer?: string, date?: string }> | unknown} certifications
+ */
 export async function fillCertifications(certifications) {
   if (!Array.isArray(certifications)) return;
   for (const cert of certifications.slice(0, 6)) {
@@ -124,6 +181,9 @@ export async function fillCertifications(certifications) {
   }
 }
 
+/**
+ * @this {BrowserProfileSyncContext}
+ */
 export async function saveProfile() {
   const saveBtn = await this.page.$(
     'button:has-text("저장"), button[type="submit"], button[class*="save"]'

@@ -1,15 +1,45 @@
 import { buildJobText, getMatchedSkills } from './text-analysis.js';
 
+/** @type {Record<string, string>} */
 const COVER_LETTER_STYLE_PROMPTS = {
   professional: 'Keep the tone professional, concise, and specific to business impact.',
   concise: 'Keep the letter concise and direct, with short paragraphs.',
   detailed: 'Use a detailed style with concrete examples and measurable outcomes.',
 };
 
+/**
+ * @param {unknown} requirements
+ * @returns {string}
+ */
 function buildRequirementText(requirements) {
   return Array.isArray(requirements) ? requirements.join('\n') : String(requirements || '');
 }
 
+/**
+ * @typedef {import('./text-analysis.js').TextAnalysisResumeData & {
+ *   personal?: { name?: string };
+ *   summary?: { totalExperience?: string | number; profileStatement?: string };
+ * }} AIPromptResumeData
+ */
+
+/**
+ * @typedef {import('./text-analysis.js').TextAnalysisJobPosting & {
+ *   company?: { name?: string; [key: string]: unknown } | null;
+ * }} AIPromptJobPosting
+ */
+
+/**
+ * @typedef {Object} AIPromptOptions
+ * @property {string} [language]
+ * @property {string} [style]
+ */
+
+/**
+ * @param {AIPromptResumeData} resumeData
+ * @param {AIPromptJobPosting} jobPosting
+ * @param {AIPromptOptions} [options]
+ * @returns {string}
+ */
 export function buildAIPrompt(resumeData, jobPosting, options = {}) {
   const language = options.language === 'ko' ? 'ko' : 'en';
   const style = options.style || 'professional';

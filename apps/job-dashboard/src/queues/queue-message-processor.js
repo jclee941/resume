@@ -1,7 +1,49 @@
 import { normalizeError } from '@resume/shared/errors';
 import { PRIORITY, RETRY_DELAYS } from './queue-message-constants.js';
 
+/**
+ * @typedef {Object} ProcessorLogger
+ * @property {(msg: string, meta?: Record<string, unknown>) => void} info
+ * @property {(msg: string, meta?: Record<string, unknown>) => void} warn
+ * @property {(msg: string, error?: unknown) => void} error
+ */
+
+/**
+ * @typedef {Object} MessageDispatcher
+ * @property {(type: string, payload: unknown) => Promise<unknown>} dispatch
+ */
+
+/**
+ * @typedef {Object} QueueStatsTracker
+ * @property {number} processed
+ * @property {number} failed
+ * @property {number} succeeded
+ * @property {number} retried
+ */
+
+/**
+ * @typedef {Object} QueueMessageBody
+ * @property {string} [type]
+ * @property {unknown} [payload]
+ * @property {string} [priority]
+ * @property {string} [correlationId]
+ */
+
+/**
+ * @typedef {Object} QueueMessageItem
+ * @property {string} id
+ * @property {number} attempts
+ * @property {QueueMessageBody} [body]
+ * @property {() => void} ack
+ * @property {(options?: { delaySeconds?: number }) => void} retry
+ */
+
 export class QueueMessageProcessor {
+  /**
+   * @param {ProcessorLogger} logger
+   * @param {MessageDispatcher} dispatcher
+   * @param {QueueStatsTracker} stats
+   */
   constructor(logger, dispatcher, stats) {
     this.logger = logger;
     this.dispatcher = dispatcher;
@@ -11,7 +53,7 @@ export class QueueMessageProcessor {
   /**
    * Process a single queue message with error handling and retry logic.
    *
-   * @param {import('@cloudflare/workers-types').Message} msg
+   * @param {QueueMessageItem} msg
    */
   async process(msg) {
     this.stats.processed++;

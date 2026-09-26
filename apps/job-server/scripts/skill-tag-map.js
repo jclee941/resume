@@ -4,6 +4,7 @@
  * Source: Extracted from /sns-api/profile | Last Updated: 2026-01-30
  */
 
+/** @type {Record<string, number>} */
 export const SKILL_TAG_MAP = {
   AWS: 1698,
   GCP: 3468,
@@ -38,6 +39,7 @@ export const SKILL_TAG_MAP = {
   RabbitMQ: 3569,
 };
 
+/** @type {Record<string, string>} */
 export const SKILL_ALIASES = {
   'AWS EC2': 'AWS',
   'AWS VPC': 'AWS',
@@ -86,6 +88,10 @@ export const SKILL_ALIASES = {
   OTel: 'Prometheus',
   Otelp: 'Prometheus',
 };
+/**
+ * @param {string} skillName
+ * @returns {number | null}
+ */
 export function getTagTypeId(skillName) {
   const direct = SKILL_TAG_MAP[skillName];
   if (direct) {
@@ -113,6 +119,21 @@ export function getTagTypeId(skillName) {
   return null;
 }
 
+/**
+ * @typedef {Object} SkillItem
+ * @property {string} name
+ * @property {string} [level]
+ */
+
+/**
+ * @typedef {Object} SkillCategory
+ * @property {Array<string | SkillItem>} [items]
+ */
+
+/**
+ * @param {Record<string, string[] | SkillCategory | null | undefined> | null | undefined} skillsObj
+ * @returns {string[]}
+ */
 export function flattenSkills(skillsObj) {
   if (!skillsObj) return [];
 
@@ -131,6 +152,10 @@ export function flattenSkills(skillsObj) {
   return [...new Set(skills)];
 }
 
+/**
+ * @param {string} name
+ * @returns {string}
+ */
 export function normalizeSkillName(name) {
   const alias = SKILL_ALIASES[name];
   if (alias) return alias;
@@ -140,6 +165,25 @@ export function normalizeSkillName(name) {
   return name;
 }
 
+/**
+ * @typedef {Object} WantedSkillItem
+ * @property {string} name
+ * @property {number} [tagTypeId]
+ * @property {number} [id]
+ */
+
+/**
+ * @typedef {Object} SkillToAdd
+ * @property {string} name
+ * @property {number} tagTypeId
+ * @property {string} original
+ */
+
+/**
+ * @param {string[]} ssotSkills
+ * @param {WantedSkillItem[]} wantedSkills
+ * @returns {{ toAdd: SkillToAdd[], toDelete: WantedSkillItem[], unchanged: string[], unmapped: string[] }}
+ */
 export function diffSkills(ssotSkills, wantedSkills) {
   const wantedNames = new Set(wantedSkills.map((s) => s.name));
   const normalizedSsot = ssotSkills.map((s) => normalizeSkillName(s));
@@ -188,6 +232,10 @@ export default {
   diffSkills,
 };
 
+/**
+ * @param {Record<string, SkillCategory | null | undefined> | null | undefined} skillsObj
+ * @returns {Array<{ name: string, level: string }>}
+ */
 export function flattenSkillsWithLevels(skillsObj) {
   if (!skillsObj) return [];
 

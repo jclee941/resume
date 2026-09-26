@@ -16,9 +16,16 @@ import { rejectAllWaiters, shiftWaiter, waitForResource } from './wait-queue.js'
 
 /**
  * @template T
+ * @typedef {Omit<import('./types.js').ResourcePoolState<T>, 'options'> & {
+ *   options: Required<Pick<import('./types.js').ResourcePoolOptions<T>, 'maxSize' | 'minSize' | 'acquireTimeoutMs' | 'idleTimeoutMs' | 'maxAge' | 'healthCheckIntervalMs'>> & import('./types.js').ResourcePoolOptions<T>
+ * }} InternalPoolState
+ */
+
+/**
+ * @template T
  */
 export class ResourcePool extends EventEmitter {
-  /** @type {import('./types.js').ResourcePoolState<T>} */
+  /** @type {InternalPoolState<T>} */
   _state;
 
   /**
@@ -28,7 +35,9 @@ export class ResourcePool extends EventEmitter {
     super();
     this.setMaxListeners(20);
 
-    const normalizedOptions = normalizePoolOptions(options);
+    const normalizedOptions = /** @type {InternalPoolState<T>['options']} */ (
+      normalizePoolOptions(options)
+    );
     this._state = {
       options: normalizedOptions,
       logger: options.logger ?? console,
@@ -182,7 +191,7 @@ export class ResourcePool extends EventEmitter {
   /** @returns {Promise<T|undefined>} */
   async _checkoutIdleResource() {
     while (this._state.idle.length > 0) {
-      const pooled = this._state.idle.pop();
+      const pooled = /** @type {import('./types.js').PooledResource<T>} */ (this._state.idle.pop());
       if (this._isOverAge(pooled) || !(await this._isValid(pooled))) {
         await this._destroyResource(pooled);
         continue;
@@ -251,7 +260,8 @@ export class ResourcePool extends EventEmitter {
     try {
       return await this._state.options.validate(pooled.resource);
     } catch (error) {
-      this._state.logger.error('[ResourcePool.acquire] Validation failed:', error.message);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this._state.logger.error('[ResourcePool.acquire] Validation failed:', errorMessage);
       return false;
     }
   }

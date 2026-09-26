@@ -1,3 +1,23 @@
+/**
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       run(): Promise<unknown>;
+ *     };
+ *   };
+ * }} D1DatabaseLike
+ *
+ * @typedef {{
+ *   canonicalParams: unknown[];
+ *   currentParams: unknown[];
+ *   legacyParams: unknown[];
+ * }} InsertApplicationRecordOptions
+ */
+
+/**
+ * @param {D1DatabaseLike} db
+ * @param {InsertApplicationRecordOptions} options
+ */
 export async function insertApplicationRecord(
   db,
   { canonicalParams, currentParams, legacyParams }
@@ -17,6 +37,10 @@ export async function insertApplicationRecord(
   }
 }
 
+/**
+ * @param {D1DatabaseLike} db
+ * @param {unknown[]} params
+ */
 async function insertWithAutoApplyMetadata(db, params) {
   await db
     .prepare(
@@ -47,6 +71,10 @@ async function insertWithAutoApplyMetadata(db, params) {
     .run();
 }
 
+/**
+ * @param {D1DatabaseLike} db
+ * @param {unknown[]} params
+ */
 async function insertWithCanonicalUrl(db, params) {
   await db
     .prepare(
@@ -64,6 +92,10 @@ async function insertWithCanonicalUrl(db, params) {
     .run();
 }
 
+/**
+ * @param {D1DatabaseLike} db
+ * @param {unknown[]} params
+ */
 async function insertLegacy(db, params) {
   await db
     .prepare(
@@ -80,7 +112,11 @@ async function insertLegacy(db, params) {
     .run();
 }
 
+/**
+ * @param {unknown} error
+ * @returns {boolean}
+ */
 function isMissingColumn(error) {
-  const message = String(error?.message || error);
+  const message = String(/** @type {{ message?: unknown }} */ (error)?.message || error);
   return /no such column|has no column named|unknown column/i.test(message);
 }

@@ -1,6 +1,55 @@
 import { normalizeError } from '@resume/shared/errors';
 import { appendDecisionTrace } from './decision-trace.js';
 
+/**
+ * @typedef {{
+ *   env: Record<string, unknown>;
+ *   clients: {
+ *     wanted: {
+ *       setCookies(cookies: unknown): void;
+ *     };
+ *     [key: string]: unknown;
+ *   };
+ *   getWantedSession: (env: Record<string, unknown>) => Promise<unknown>;
+ * }} PrimeWantedSessionOptions
+ *
+ * @typedef {Array<Record<string, unknown>> & { jobs?: Array<Record<string, unknown>> }} PlatformResult
+ *
+ * @typedef {{
+ *   searchJobs(keyword: string, options: { limit: number; profile: unknown }): Promise<PlatformResult>;
+ * }} PlatformClient
+ *
+ * @typedef {{
+ *   searchAttempts: number;
+ *   errors: number;
+ *   searchFailures: number;
+ *   errorDetails: Array<{
+ *     platform: string;
+ *     keyword: string;
+ *     message: string;
+ *     errorCode?: string | number;
+ *   }>;
+ *   byPlatform: Record<string, {
+ *     searched: number;
+ *     matched: number;
+ *     applied: number;
+ *     [key: string]: unknown;
+ *   }>;
+ *   [key: string]: unknown;
+ * }} SearchJobResults
+ *
+ * @typedef {{
+ *   clients: Record<string, PlatformClient>;
+ *   activePlatforms: string[];
+ *   searchKeywords: string[];
+ *   searchResults: SearchJobResults;
+ *   profile: unknown;
+ * }} SearchPlatformJobsOptions
+ */
+
+/**
+ * @param {PrimeWantedSessionOptions} options
+ */
 export async function primeWantedSession({ env, clients, getWantedSession }) {
   const wantedCookies = await getWantedSession(env);
   if (wantedCookies) {
@@ -8,6 +57,9 @@ export async function primeWantedSession({ env, clients, getWantedSession }) {
   }
 }
 
+/**
+ * @param {SearchPlatformJobsOptions} options
+ */
 export async function searchPlatformJobs({
   clients,
   activePlatforms,
@@ -79,6 +131,10 @@ export async function searchPlatformJobs({
   return allJobs;
 }
 
+/**
+ * @param {unknown} [message]
+ * @returns {string}
+ */
 function sanitizeSearchError(message) {
   return String(message || 'Unknown search error')
     .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, '[redacted-email]')

@@ -24,7 +24,9 @@ import { activeKeys, cleanupExpired } from './eviction-policy.js';
  */
 
 export class LRUCache {
+  /** @type {import('./cache-operations.js').CacheState} */
   #state;
+  /** @type {NodeJS.Timeout | null | undefined} */
   #cleanupInterval;
 
   /**
@@ -48,19 +50,37 @@ export class LRUCache {
     }
   }
 
+  /**
+   * @param {string} key
+   * @returns {unknown}
+   */
   get(key) {
     return getValue(this.#state, key);
   }
 
+  /**
+   * @param {string} key
+   * @param {unknown} value
+   * @param {number} [ttl]
+   * @returns {this}
+   */
   set(key, value, ttl) {
     setValue(this.#state, key, value, ttl);
     return this;
   }
 
+  /**
+   * @param {string} key
+   * @returns {boolean}
+   */
   has(key) {
     return hasValue(this.#state, key);
   }
 
+  /**
+   * @param {string} key
+   * @returns {boolean}
+   */
   delete(key) {
     return deleteValue(this.#state, key);
   }
@@ -101,8 +121,15 @@ export class LRUCache {
     }
   }
 
+  /**
+   * @template T
+   * @param {string} key
+   * @param {() => T | Promise<T>} factory
+   * @param {number} [ttl]
+   * @returns {Promise<T>}
+   */
   async getOrSet(key, factory, ttl) {
-    return getOrSetValue(this, key, factory, ttl);
+    return /** @type {Promise<T>} */ (getOrSetValue(this, key, factory, ttl));
   }
 }
 

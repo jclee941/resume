@@ -15,6 +15,24 @@ import { extractKeywords, normalize, unique } from './resume-customize/text-proc
 import { scoreCareer, scoreProject, scoreSkills } from './resume-customize/scoring.js';
 import { generateATSMarkdown, generateCustomizedJSON } from './resume-customize/generators.js';
 
+/**
+ * @typedef {Object} ResumeCustomizeParams
+ * @property {string} job_description
+ * @property {string} [job_title]
+ * @property {string} [company_name]
+ * @property {'markdown' | 'json' | 'both'} [output_format]
+ * @property {boolean} [save_to_file]
+ */
+
+/**
+ * @typedef {{
+ *   careers?: import('./resume-customize/scoring.js').ScorableCareer[];
+ *   projects?: import('./resume-customize/scoring.js').ScorableProject[];
+ *   skills?: Record<string, import('./resume-customize/scoring.js').SkillCategory>;
+ *   [key: string]: unknown;
+ * }} CustomizeResumeData
+ */
+
 export const resumeCustomizeTool = {
   name: 'customize_resume',
   description:
@@ -50,6 +68,9 @@ export const resumeCustomizeTool = {
     required: ['job_description'],
   },
 
+  /**
+   * @param {ResumeCustomizeParams} params
+   */
   async execute(params) {
     try {
       const {
@@ -61,7 +82,10 @@ export const resumeCustomizeTool = {
       } = params;
 
       const resumeRaw = await readFile(getResumeMasterDataPath(), 'utf-8');
-      const resumeData = JSON.parse(resumeRaw);
+      const resumeData =
+        /** @type {import('./resume-customize/generators.js').ResumeCustomizationData} */ (
+          JSON.parse(resumeRaw)
+        );
 
       const fullJDText = [job_title, job_description].filter(Boolean).join(' ');
       const { keywords, sections } = extractKeywords(fullJDText);
@@ -103,6 +127,20 @@ export const resumeCustomizeTool = {
           : null,
       };
 
+      /** @type {{
+       *   success: boolean;
+       *   matchAnalysis: {
+       *     overallCoverage: number;
+       *     requirementCoverage: number | null;
+       *     matchedSkillCount: number;
+       *     topRelevantExperience: Array<{ project?: string; company?: string; score: number }>;
+       *     keywordGaps: string[];
+       *   };
+       *   savedFiles: string[];
+       *   markdown?: string;
+       *   customizedData?: unknown;
+       *   recommendations?: string[];
+       * }} */
       const result = {
         success: true,
         matchAnalysis: {
@@ -172,7 +210,10 @@ export const resumeCustomizeTool = {
 
       return result;
     } catch (error) {
-      return { success: false, error: error.message };
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      };
     }
   },
 };

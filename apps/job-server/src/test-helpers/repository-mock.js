@@ -11,11 +11,20 @@ import { createMockD1Client } from './database-mock.js';
 // ========================
 
 /**
+ * @typedef {Object} ApplicationTimelineEntry
+ * @property {string} application_id
+ * @property {string} status
+ * @property {string | null} [previous_status]
+ * @property {string} [note]
+ */
+
+/**
  * Create a mock application repository
  * @returns {Object} Mock repository
  */
 export function createMockRepository() {
   const apps = new Map();
+  /** @type {ApplicationTimelineEntry[]} */
   const timeline = [];
 
   return {

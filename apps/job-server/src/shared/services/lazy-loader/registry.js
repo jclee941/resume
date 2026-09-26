@@ -1,9 +1,11 @@
 import { LazyCrawlerRegistry } from './lazy-crawler-registry.js';
 
 const _globalRegistryHolder = (() => {
+  /** @type {LazyCrawlerRegistry | null} */
   let v = null;
   return {
     get: () => v,
+    /** @param {LazyCrawlerRegistry} x */
     set: (x) => {
       v = x;
     },
@@ -32,7 +34,7 @@ function getRegistry() {
   if (!_globalRegistryHolder.get()) {
     _globalRegistryHolder.set(createRegistry());
   }
-  return _globalRegistryHolder.get();
+  return /** @type {LazyCrawlerRegistry} */ (_globalRegistryHolder.get());
 }
 
 /**

@@ -8,7 +8,46 @@ const SAVE_ENDPOINT = '/User/Resume/Save';
 const PORTFOLIO_ENDPOINT = '/User/Resume/AddUserFileDB';
 const SESSION_CHECK_ENDPOINT = '/User/Resume/Edit';
 
+/**
+ * @typedef {{
+ *   rNo?: string | number;
+ *   userAgent?: string;
+ * }} RequestHeaderOptions
+ *
+ * @typedef {{
+ *   saveResult?: { IsSuccess?: boolean };
+ *   sc?: number;
+ *   idx?: number;
+ *   [key: string]: unknown;
+ * }} JobKoreaApiResponse
+ *
+ * @typedef {{
+ *   baseUrl?: string;
+ *   cookieString?: string;
+ *   logger?: { log: (...args: unknown[]) => void; warn: (...args: unknown[]) => void; error: (...args: unknown[]) => void } | Console;
+ *   rNo?: string;
+ *   userAgent?: string;
+ * }} JobKoreaAPIClientOptions
+ *
+ * @typedef {{
+ *   IsEditPage: string;
+ *   IsCompleteSave: string;
+ *   LastEditDateTicks: string;
+ * }} EditPageTokens
+ *
+ * @typedef {{
+ *   tokens?: EditPageTokens;
+ *   baseFields?: Array<{ name: string; value: string }>;
+ * }} SaveResumeOptions
+ */
+
+/**
+ * @param {string | null | undefined} cookieString
+ * @param {RequestHeaderOptions} [options]
+ * @returns {Record<string, string>}
+ */
 function requestHeaders(cookieString, options = {}) {
+  /** @type {Record<string, string>} */
   const headers = {
     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     'X-Requested-With': 'XMLHttpRequest',
@@ -28,6 +67,10 @@ function requestHeaders(cookieString, options = {}) {
   return headers;
 }
 
+/**
+ * @param {string | null | undefined} rawResponse
+ * @returns {JobKoreaApiResponse}
+ */
 function parseJson(rawResponse) {
   if (!rawResponse) {
     return {};
@@ -40,11 +83,19 @@ function parseJson(rawResponse) {
   }
 }
 
+/**
+ * @param {string} baseUrl
+ * @param {string} endpoint
+ * @returns {URL}
+ */
 function endpointUrl(baseUrl, endpoint) {
   return new URL(endpoint, baseUrl);
 }
 
 export class JobKoreaAPIClient {
+  /**
+   * @param {JobKoreaAPIClientOptions} [options]
+   */
   constructor(options = {}) {
     this.baseUrl = options.baseUrl || DEFAULT_BASE_URL;
     this.session = createAPISession(options.cookieString || '');
@@ -53,6 +104,9 @@ export class JobKoreaAPIClient {
     this.userAgent = options.userAgent || '';
   }
 
+  /**
+   * @param {string} cookieString
+   */
   setCookies(cookieString) {
     this.session.cookieString = cookieString || '';
   }
@@ -79,6 +133,10 @@ export class JobKoreaAPIClient {
     };
   }
 
+  /**
+   * @param {Array<{ name: string; value: string }>} formFields
+   * @param {SaveResumeOptions} [options]
+   */
   async saveResume(formFields, options = {}) {
     const url = endpointUrl(this.baseUrl, SAVE_ENDPOINT);
     url.searchParams.set('_', String(Date.now()));
@@ -107,6 +165,9 @@ export class JobKoreaAPIClient {
     };
   }
 
+  /**
+   * @param {string} url
+   */
   async registerPortfolio(url) {
     const response = await fetch(endpointUrl(this.baseUrl, PORTFOLIO_ENDPOINT), {
       method: 'POST',
@@ -145,6 +206,12 @@ export class JobKoreaAPIClient {
     return { valid: !/\/Login/i.test(response.url || '') };
   }
 
+  /**
+   * @param {Response} response
+   * @param {string} endpoint
+   * @param {string} rawResponse
+   * @param {JobKoreaApiResponse} result
+   */
   throwIfInvalidResponse(response, endpoint, rawResponse, result) {
     const errorContext = {
       url: response.url,

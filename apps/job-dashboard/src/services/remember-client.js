@@ -1,12 +1,64 @@
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 
+/**
+ * @typedef {Object} RememberSearchOptions
+ * @property {number} [page]
+ * @property {number} [limit]
+ * @property {string} [tab]
+ */
+
+/**
+ * @typedef {Object} RawRememberJob
+ * @property {string | number} [id]
+ * @property {string} [title]
+ * @property {string} [position]
+ * @property {string} [url]
+ * @property {{ name?: string, company_id?: string | number }} [organization]
+ * @property {{ name?: string, id?: string | number }} [company]
+ * @property {string} [company_name]
+ * @property {string | number} [company_id]
+ * @property {{ level1?: string, level2?: string }} [normalized_address]
+ * @property {string} [location]
+ * @property {string} [region]
+ * @property {number} [min_experience]
+ * @property {number} [max_experience]
+ * @property {string} [experience]
+ * @property {string} [career_period]
+ * @property {string} [salary]
+ * @property {string | number} [min_salary]
+ * @property {string | number} [max_salary]
+ * @property {string[]} [skills]
+ * @property {string[]} [tech_stack]
+ * @property {string} [job_description]
+ * @property {string} [description]
+ * @property {string} [qualifications]
+ * @property {string} [requirements]
+ * @property {string} [benefits]
+ * @property {string} [welfare]
+ * @property {string | null} [deadline]
+ * @property {string | null} [due_date]
+ * @property {string | null} [created_at]
+ * @property {string | null} [posted_date]
+ * @property {boolean} [is_remote]
+ * @property {string} [employment_type]
+ * @property {string} [job_posting_type]
+ * @property {string} [application_type]
+ */
+
 export class RememberClient {
+  /**
+   * @param {unknown} [env]
+   */
   constructor(env) {
     this.env = env;
     this.baseUrl = 'https://career.rememberapp.co.kr';
     this.apiBaseUrl = 'https://career-api.rememberapp.co.kr';
   }
 
+  /**
+   * @param {string} [keyword]
+   * @param {RememberSearchOptions} [options]
+   */
   async searchJobs(keyword, options = {}) {
     const params = {
       page: options.page || 1,
@@ -21,8 +73,8 @@ export class RememberClient {
         url = `${this.apiBaseUrl}/job_postings/search`;
         const body = new URLSearchParams();
         body.set('search', keyword);
-        body.set('page', params.page);
-        body.set('per', params.per);
+        body.set('page', String(params.page));
+        body.set('per', String(params.per));
 
         fetchOptions = {
           method: 'POST',
@@ -67,12 +119,15 @@ export class RememberClient {
       return {
         success: false,
         source: 'remember',
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         jobs: [],
       };
     }
   }
 
+  /**
+   * @param {string | number} jobId
+   */
   async getJobDetail(jobId) {
     try {
       const response = await fetch(`${this.apiBaseUrl}/job_postings/${jobId}`, {
@@ -98,11 +153,14 @@ export class RememberClient {
       return {
         success: false,
         source: 'remember',
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   }
 
+  /**
+   * @param {string} expStr
+   */
   parseExperience(expStr) {
     let experienceMin = 0;
     let experienceMax = 99;
@@ -110,16 +168,20 @@ export class RememberClient {
     const expMatch = expStr.match(/(\d+)(?:년)?(?:~|-)(\d+)?/);
     if (expMatch) {
       experienceMin = parseInt(expMatch[1]) || 0;
-      experienceMax = parseInt(expMatch[2]) || experienceMin + 10;
+      experienceMax = parseInt(String(expMatch[2])) || experienceMin + 10;
     } else if (expStr.includes('이상')) {
       const minMatch = expStr.match(/(\d+)/);
-      experienceMin = parseInt(minMatch?.[1]) || 0;
+      experienceMin = parseInt(String(minMatch?.[1])) || 0;
       experienceMax = 99;
     }
 
     return { experienceMin, experienceMax };
   }
 
+  /**
+   * @param {RawRememberJob} rawJob
+   * @param {boolean} [_isDetail=false]
+   */
   normalizeJob(rawJob, _isDetail = false) {
     const expStr = rawJob.experience || rawJob.career_period || '';
     const { experienceMin, experienceMax } = this.parseExperience(expStr);

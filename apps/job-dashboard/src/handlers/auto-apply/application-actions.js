@@ -6,6 +6,64 @@ import {
   incrementPlatformApplied,
 } from './application-result-helpers.js';
 
+/**
+ * @typedef {{
+ *   wanted: {
+ *     setCookies(cookies: unknown): void;
+ *     apply(id: unknown): Promise<unknown>;
+ *   };
+ *   [key: string]: unknown;
+ * }} Clients
+ *
+ * @typedef {import('./application-result-helpers.js').JobWithHumanApproval & {
+ *   source: string;
+ *   id?: string;
+ *   sourceId?: string;
+ *   position?: string;
+ *   title?: string;
+ *   company?: string;
+ *   matchScore?: number;
+ *   sourceUrl?: string;
+ *   url?: string;
+ *   adapterBacked?: boolean;
+ *   decisionTrace?: unknown[];
+ *   [key: string]: unknown;
+ * }} AutoApplyJob
+ *
+ * @typedef {import('./application-result-helpers.js').SearchResults & {
+ *   skipped: number;
+ *   applied: number;
+ *   errors: number;
+ * }} SearchResultsExtended
+ *
+ * @typedef {{
+ *   env: Record<string, unknown>;
+ *   clients: Clients;
+ *   matchedJobs: Array<AutoApplyJob>;
+ *   dryRun: boolean;
+ *   remaining: number;
+ *   searchResults: SearchResultsExtended;
+ *   isAlreadyApplied: (env: Record<string, unknown>, id: unknown, source: unknown) => Promise<boolean>;
+ *   isCompanyAlreadyApplied: (env: Record<string, unknown>, company: unknown) => Promise<boolean>;
+ *   recordApplication: (env: Record<string, unknown>, payload: Record<string, unknown>) => Promise<unknown>;
+ *   getWantedSession: (env: Record<string, unknown>) => Promise<unknown>;
+ *   runId: string;
+ * }} ApplyMatchedJobsOptions
+ *
+ * @typedef {{
+ *   env: Record<string, unknown>;
+ *   clients: Clients;
+ *   job: AutoApplyJob;
+ *   searchResults: SearchResultsExtended;
+ *   recordApplication: (env: Record<string, unknown>, payload: Record<string, unknown>) => Promise<unknown>;
+ *   getWantedSession: (env: Record<string, unknown>) => Promise<unknown>;
+ *   runId: string;
+ * }} ApplyWantedJobOptions
+ */
+
+/**
+ * @param {ApplyMatchedJobsOptions} options
+ */
 export async function applyMatchedJobs({
   env,
   clients,
@@ -103,6 +161,9 @@ export async function applyMatchedJobs({
   searchResults.applied = appliedCount;
 }
 
+/**
+ * @param {ApplyWantedJobOptions} options
+ */
 async function applyWantedJob({
   env,
   clients,

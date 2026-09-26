@@ -90,6 +90,7 @@ const PROJECT_EN_OVERRIDES = {
   },
 };
 
+/** @type {Set<string | undefined>} */
 const PUBLIC_PORTFOLIO_EXCLUDED_IDS = new Set([
   'mcp-server-hub',
   'idle-outpost',
@@ -97,19 +98,74 @@ const PUBLIC_PORTFOLIO_EXCLUDED_IDS = new Set([
   'meetup-coordinator-mcp',
   'nunchi-translator-mcp',
 ]);
+/** @type {Set<string | undefined>} */
 const PUBLIC_PORTFOLIO_UNLINKED_IDS = new Set(['jclee-bot-github-app']);
 
+/**
+ * @typedef {Object} ResumeContact
+ * @property {string} [email]
+ * @property {string} [github]
+ * @property {string} [linkedin]
+ * @property {string} [velog]
+ * @property {string} [website]
+ * @property {string} [monitoring]
+ * @property {string} [phone]
+ * @property {string} [portfolio]
+ */
+
+/**
+ * @typedef {Object} ResumeSourceSummary
+ * @property {unknown} [aboutSection]
+ * @property {unknown} [expertise]
+ * @property {unknown} [coreCompetencies]
+ */
+
+/**
+ * @typedef {Object} ResumeSource
+ * @property {import('./resume-web-data-projections.js').SourceCareer[]} careers
+ * @property {import('./resume-web-data-projections.js').SourceProject[]} [personalProjects]
+ * @property {Array<{ id?: string, [key: string]: unknown }>} [infrastructure]
+ * @property {ResumeContact} [contact]
+ * @property {ResumeSourceSummary | null} [summary]
+ * @property {unknown} [certifications]
+ * @property {unknown} [skills]
+ * @property {unknown} [hero]
+ * @property {unknown} [sectionDescriptions]
+ * @property {unknown} [achievements]
+ * @property {unknown} [education]
+ * @property {unknown} [languages]
+ * @property {unknown} [awards]
+ * @property {unknown} [ossContributions]
+ * @property {unknown} [military]
+ * @property {unknown} [coverLetter]
+ * @property {unknown} [platformVariants]
+ */
+
+/**
+ * @template {{ id?: string }} T
+ * @param {T[] | null | undefined} items
+ * @returns {T[]}
+ */
 function publicPortfolioItems(items) {
   return (items || []).filter((item) => !PUBLIC_PORTFOLIO_EXCLUDED_IDS.has(item.id));
 }
 
+/**
+ * @param {ResumeContact | null | undefined} contact
+ */
 function publicContact(contact) {
   const { email, github, linkedin, velog, website, monitoring } = contact || {};
   return { email, github, linkedin, velog, website, monitoring };
 }
 
+/**
+ * @param {ResumeSource} source
+ * @param {string} [language]
+ */
 function generateWebData(source, language = 'ko') {
-  const statsByIndex = RESUME_STATS_BY_INDEX[language] || RESUME_STATS_BY_INDEX.ko;
+  const statsByIndex =
+    /** @type {Record<string, string[][]>} */ (RESUME_STATS_BY_INDEX)[language] ||
+    RESUME_STATS_BY_INDEX.ko;
 
   // SSoT → portfolio data contract:
   // - source.careers[] → resume[] (flat career cards: icon, title, description, period, stats, highlight)
@@ -124,10 +180,12 @@ function generateWebData(source, language = 'ko') {
   const resumeEn = source.careers.map((career, idx) =>
     englishCareerCardFromSource(career, idx, RESUME_STATS_BY_INDEX.en, CAREER_EN_OVERRIDES)
   );
-  const publicProjects = publicPortfolioItems(source.personalProjects).map((project) =>
-    PUBLIC_PORTFOLIO_UNLINKED_IDS.has(project.id)
-      ? { ...project, githubUrl: null, repoUrl: null }
-      : project
+  const publicProjects = /** @type {import('./resume-web-data-projections.js').SourceProject[]} */ (
+    publicPortfolioItems(source.personalProjects).map((project) =>
+      PUBLIC_PORTFOLIO_UNLINKED_IDS.has(project.id)
+        ? { ...project, githubUrl: null, repoUrl: null }
+        : project
+    )
   );
   const projects = publicProjects.map(projectCardFromSource);
   const projectsEn = publicProjects.map((project) =>

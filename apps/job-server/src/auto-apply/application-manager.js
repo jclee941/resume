@@ -30,9 +30,13 @@ import { APPLICATION_STATUS } from './application-manager/status.js';
 export { APPLICATION_STATUS };
 
 export class ApplicationManager {
+  /**
+   * @param {{ logger?: { error: (msg: string, ...args: unknown[]) => void, log?: (...args: unknown[]) => void } }} [options]
+   */
   constructor({ logger = console } = {}) {
     this.logger = logger;
     this.ensureDataDir();
+    /** @type {import('./application-manager/application-records.js').ApplicationRecord[]} */
     this.applications = this.loadApplications();
     this.stats = this.loadStats();
   }
@@ -41,15 +45,18 @@ export class ApplicationManager {
     ensureDataDir();
   }
 
+  /**
+   * @returns {import('./application-manager/application-records.js').ApplicationRecord[]}
+   */
   loadApplications() {
-    return loadJsonFile(
-      APPLICATIONS_FILE,
-      () => [],
-      this.logger,
-      'Failed to parse applications file:'
+    return /** @type {import('./application-manager/application-records.js').ApplicationRecord[]} */ (
+      loadJsonFile(APPLICATIONS_FILE, () => [], this.logger, 'Failed to parse applications file:')
     );
   }
 
+  /**
+   * @returns {import('./application-manager/statistics.js').ApplicationStats}
+   */
   loadStats() {
     return loadJsonFile(
       STATS_FILE,
@@ -67,6 +74,11 @@ export class ApplicationManager {
     saveApplicationData(this.applications, this.stats);
   }
 
+  /**
+   * @param {import('./application-manager/application-records.js').JobInput} job
+   * @param {import('./application-manager/application-records.js').CreateApplicationOptions} [options]
+   * @returns {import('./application-manager/application-records.js').ApplicationRecord}
+   */
   addApplication(job, options = {}) {
     const application = createApplicationRecord(job, options);
 
@@ -77,6 +89,12 @@ export class ApplicationManager {
     return application;
   }
 
+  /**
+   * @param {string} applicationId
+   * @param {string} newStatus
+   * @param {string} [note]
+   * @returns {{ success: boolean, error?: string, application?: import('./application-manager/application-records.js').ApplicationRecord }}
+   */
   updateStatus(applicationId, newStatus, note = '') {
     const app = this.applications.find((application) => application.id === applicationId);
     if (!app) {
@@ -91,12 +109,14 @@ export class ApplicationManager {
       app.appliedAt = new Date().toISOString();
     }
 
-    app.timeline.push({
-      status: newStatus,
-      previousStatus: oldStatus,
-      timestamp: new Date().toISOString(),
-      note,
-    });
+    app.timeline.push(
+      /** @type {import('./application-manager/application-records.js').ApplicationTimelineEntry} */ ({
+        status: newStatus,
+        previousStatus: oldStatus,
+        timestamp: new Date().toISOString(),
+        note,
+      })
+    );
 
     this.updateStats();
     this.save();
@@ -104,10 +124,18 @@ export class ApplicationManager {
     return { success: true, application: app };
   }
 
+  /**
+   * @param {string} applicationId
+   * @returns {import('./application-manager/application-records.js').ApplicationRecord | undefined}
+   */
   getApplication(applicationId) {
     return this.applications.find((application) => application.id === applicationId);
   }
 
+  /**
+   * @param {import('./application-manager/application-records.js').ApplicationFilters} [filters]
+   * @returns {import('./application-manager/application-records.js').ApplicationRecord[]}
+   */
   listApplications(filters = {}) {
     return filterApplications(this.applications, filters);
   }
@@ -116,6 +144,10 @@ export class ApplicationManager {
     return selectActiveApplications(this.applications);
   }
 
+  /**
+   * @param {string} jobId
+   * @returns {boolean}
+   */
   isDuplicate(jobId) {
     return this.applications.some((application) => application.jobId === jobId);
   }
@@ -144,6 +176,10 @@ export class ApplicationManager {
     return buildDailyReport(this.applications, this.stats, this.getActiveApplications(), date);
   }
 
+  /**
+   * @param {string} applicationId
+   * @returns {{ success: boolean, error?: string }}
+   */
   deleteApplication(applicationId) {
     const index = this.applications.findIndex((application) => application.id === applicationId);
     if (index === -1) {

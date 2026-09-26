@@ -19,17 +19,51 @@ function isExpiredSessionRecord(raw, now) {
 }
 
 /**
+ * @typedef {Object} D1Result
+ * @property {{ changes: number }} meta
+ */
+
+/**
+ * @typedef {Object} D1PreparedStatement
+ * @property {(...params: unknown[]) => D1PreparedStatement} bind
+ * @property {() => Promise<Record<string, number> | null>} first
+ * @property {() => Promise<D1Result>} run
+ */
+
+/**
+ * @typedef {Object} D1Database
+ * @property {(query: string) => D1PreparedStatement} prepare
+ */
+
+/**
+ * @typedef {Object} CleanupEnv
+ * @property {string} SESSION_MAX_AGE
+ * @property {string} LOG_MAX_AGE
+ * @property {{ list(options?: { prefix?: string }): Promise<{ keys: Array<{ name: string }> }>, get(key: string): Promise<string | null>, delete(key: { name: string } | string): Promise<void> }} SESSIONS
+ * @property {D1Database} JOB_DB
+ * @property {{ list(): Promise<{ keys: Array<{ name: string, expiration?: number }> }>, delete(key: string): Promise<void> }} RATE_LIMIT_KV
+ */
+
+/**
+ * @typedef {Object} CleanupParams
+ * @property {number} [sessionMaxAge] - Days before sessions expire (default: 7, from env SESSION_MAX_AGE)
+ * @property {number} [logMaxAge] - Days before job results expire (default: 30, from env LOG_MAX_AGE)
+ * @property {boolean} [dryRun] - Preview deletions without executing (default: false)
+ */
+
+/**
  * Cleanup Workflow
  *
  * Removes expired sessions, old job results, and stale rate limit entries.
  * Supports dry-run mode to preview deletions without executing them.
  *
- * @param {Object} params
- * @param {number} params.sessionMaxAge - Days before sessions expire (default: 7, from env SESSION_MAX_AGE)
- * @param {number} params.logMaxAge - Days before job results expire (default: 30, from env LOG_MAX_AGE)
- * @param {boolean} params.dryRun - Preview deletions without executing (default: false)
+ * @extends {WorkflowEntrypoint<CleanupEnv, CleanupParams>}
  */
 export class CleanupWorkflow extends WorkflowEntrypoint {
+  /**
+   * @param {import('cloudflare:workers').WorkflowEvent<CleanupParams>} event
+   * @param {import('cloudflare:workers').WorkflowStep} step
+   */
   async run(event, step) {
     // Read retention config from env vars or use defaults
     const DEFAULT_SESSION_MAX_AGE = parseInt(this.env.SESSION_MAX_AGE) || 7;
