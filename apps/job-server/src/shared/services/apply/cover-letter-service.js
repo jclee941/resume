@@ -13,23 +13,62 @@ import {
   selectEnglishApplicationPacket,
 } from './english-application-packet.js';
 
+/**
+ * @typedef {import('../resume/cover-letter-generator/template-selection.js').TemplateResumeData} TemplateResumeData
+ * @typedef {import('./english-application-packet.js').EnglishPacketData} EnglishPacketData
+ *
+ * @typedef {{
+ *   language?: string;
+ *   style?: string;
+ *   useAI?: boolean;
+ *   cacheEnabled?: boolean;
+ *   dryRun?: boolean;
+ *   [key: string]: unknown;
+ * }} CoverLetterOptions
+ *
+ * @typedef {{
+ *   generator?: typeof generateCoverLetter;
+ *   readFile?: typeof fsPromises.readFile;
+ *   resumePath?: string;
+ *   resumeData?: TemplateResumeData | null;
+ *   dryRun?: boolean;
+ *   packetPath?: string;
+ *   packetData?: EnglishPacketData | null;
+ *   d1Client?: import('./cover-letter-cache.js').D1Client | null;
+ *   db?: import('./cover-letter-cache.js').D1Database | null;
+ *   logger?: import('./cover-letter-cache.js').Logger;
+ *   cacheStore?: import('./cover-letter-cache.js').CacheStore;
+ * }} CoverLetterServiceDependencies
+ */
+
 export class CoverLetterService {
+  /** @type {typeof generateCoverLetter} */
   #generator;
 
+  /** @type {typeof fsPromises.readFile} */
   #readFile;
 
+  /** @type {CoverLetterCache} */
   #cache;
 
+  /** @type {string} */
   #resumePath;
 
+  /** @type {TemplateResumeData | null} */
   #resumeData;
 
+  /** @type {boolean} */
   #dryRun;
 
+  /** @type {string} */
   #packetPath;
 
+  /** @type {EnglishPacketData | null} */
   #packetData;
 
+  /**
+   * @param {CoverLetterServiceDependencies} [dependencies]
+   */
   constructor(dependencies = {}) {
     this.#generator = dependencies.generator ?? generateCoverLetter;
     this.#readFile = dependencies.readFile ?? fsPromises.readFile;
@@ -42,10 +81,18 @@ export class CoverLetterService {
     this.#packetData = dependencies.packetData ?? null;
   }
 
+  /**
+   * @param {Record<string, unknown>} job
+   * @param {CoverLetterOptions} [options]
+   */
   async generateForJob(job, options = {}) {
     return this.generate(job, options);
   }
 
+  /**
+   * @param {Record<string, unknown>} job
+   * @param {CoverLetterOptions} [options]
+   */
   async generate(job, options = {}) {
     if (!job) {
       throw new Error('Job is required for cover letter generation');
@@ -80,10 +127,14 @@ export class CoverLetterService {
     const resumeData = await this.#getResumeData();
 
     if (this.#dryRun || finalOptions.dryRun) {
-      const coverLetter = buildTemplateFallback(resumeData, job, {
-        language: language === 'ko' ? 'ko' : 'en',
-        style: finalOptions.style,
-      });
+      const coverLetter = buildTemplateFallback(
+        resumeData,
+        job,
+        /** @type {{ language?: string }} */ ({
+          language: language === 'ko' ? 'ko' : 'en',
+          style: finalOptions.style,
+        })
+      );
 
       if (finalOptions.cacheEnabled) {
         await this.cache(jobId, coverLetter);
@@ -118,14 +169,24 @@ export class CoverLetterService {
     };
   }
 
+  /**
+   * @param {Record<string, unknown>} job
+   */
   detectLanguage(job) {
     return detectJobLanguage(job);
   }
 
+  /**
+   * @param {string | number} jobId
+   */
   async getCached(jobId) {
     return this.#cache.get(jobId);
   }
 
+  /**
+   * @param {string | number} jobId
+   * @param {string} coverLetter
+   */
   async cache(jobId, coverLetter) {
     return this.#cache.set(jobId, coverLetter);
   }
@@ -135,6 +196,9 @@ export class CoverLetterService {
     return selectEnglishApplicationPacket(data);
   }
 
+  /**
+   * @returns {Promise<TemplateResumeData>}
+   */
   async #getResumeData() {
     if (this.#resumeData) {
       return this.#resumeData;
@@ -142,9 +206,12 @@ export class CoverLetterService {
 
     const raw = await this.#readFile(this.#resumePath, 'utf-8');
     this.#resumeData = JSON.parse(raw);
-    return this.#resumeData;
+    return /** @type {TemplateResumeData} */ (this.#resumeData);
   }
 
+  /**
+   * @returns {Promise<EnglishPacketData>}
+   */
   async #getPacketData() {
     if (this.#packetData) {
       return this.#packetData;
@@ -152,7 +219,7 @@ export class CoverLetterService {
 
     const raw = await this.#readFile(this.#packetPath, 'utf-8');
     this.#packetData = JSON.parse(raw);
-    return this.#packetData;
+    return /** @type {EnglishPacketData} */ (this.#packetData);
   }
 }
 

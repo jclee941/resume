@@ -13,11 +13,40 @@ import { handleCallbackQuery } from './telegram-adapter/callbacks.js';
 
 export { escapeHtml, createJobPostingsMessage } from './telegram-adapter/formatters.js';
 
+/**
+ * @typedef {{
+ *   env?: Record<string, string | undefined>;
+ *   logger?: { info(msg: string, ...args: unknown[]): void, warn(msg: string, ...args: unknown[]): void, error(msg: string, ...args: unknown[]): void, [key: string]: unknown };
+ *   source?: string;
+ *   telegramToken?: string;
+ *   telegramChatId?: string;
+ *   automationWebhookUrl?: string;
+ *   fetchImpl?: typeof fetch | null;
+ *   sleepImpl?: (ms: number) => Promise<unknown>;
+ *   db?: unknown;
+ *   d1Client?: unknown;
+ *   onApprove?: (action: Record<string, unknown>) => Promise<unknown> | unknown;
+ *   onReject?: (action: Record<string, unknown>) => Promise<unknown> | unknown;
+ *   onView?: (action: Record<string, unknown>) => Promise<unknown> | unknown;
+ *   [key: string]: unknown;
+ * }} TelegramAdapterOptions
+ *
+ * @typedef {{
+ *   sent?: boolean,
+ *   reason?: string,
+ *   resetTime?: number,
+ *   [key: string]: unknown,
+ * }} TelegramSendResult
+ */
+
 // Max times sendJobPostingsSeparately will wait out a full rate-limit window
 // and retry a single chunk before counting it as failed.
 const MAX_RATE_LIMIT_WAITS = 3;
 
 export class TelegramNotificationAdapter {
+  /**
+   * @param {TelegramAdapterOptions} [options]
+   */
   constructor(options = {}) {
     const env = options.env || process.env;
 
@@ -30,7 +59,8 @@ export class TelegramNotificationAdapter {
     this.automationWebhookUrl =
       options.automationWebhookUrl || env.AUTOMATION_WEBHOOK_URL || env.WEBHOOK_URL;
     this.fetchImpl = options.fetchImpl || null;
-    this.sleepImpl = options.sleepImpl || ((ms) => new Promise((r) => setTimeout(r, ms)));
+    this.sleepImpl =
+      options.sleepImpl || ((/** @type {number} */ ms) => new Promise((r) => setTimeout(r, ms)));
 
     this.db = options.db || env.DB || null;
     this.d1Client = options.d1Client || null;
@@ -50,7 +80,7 @@ export class TelegramNotificationAdapter {
   /**
    * Send a list of job postings (with clickable URLs) to Telegram.
    *
-   * @param {Array<object>} jobs
+   * @param {Array<Record<string, unknown>>} jobs
    * @param {{limit?:number, header?:string}} [options]
    */
   async sendJobPostings(jobs = [], options = {}) {
@@ -69,14 +99,16 @@ export class TelegramNotificationAdapter {
    * chunks (Telegram-safe, never breaking an HTML tag). Reuses the existing
    * notify()/raw-sender path so rate limiting and retries still apply.
    *
-   * @param {Array<object>} jobs
+   * @param {Array<import('./telegram-adapter/formatters.js').SingleJobInput>} jobs
    * @param {{limit?:number, header?:string}} [options]
-   * @returns {Promise<{sent:number, failed:number, messages:number, results:Array}>}
+   * @returns {Promise<{sent:number, failed:number, messages:number, results:Array<unknown>}>}
    */
   async sendJobPostingsSeparately(jobs = [], options = {}) {
     const list = Array.isArray(jobs) ? jobs : [];
     const limit =
-      Number.isInteger(options.limit) && options.limit > 0 ? options.limit : list.length;
+      Number.isInteger(options.limit) && /** @type {number} */ (options.limit) > 0
+        ? /** @type {number} */ (options.limit)
+        : list.length;
     const selected = list.slice(0, limit);
 
     let sent = 0;
@@ -106,7 +138,7 @@ export class TelegramNotificationAdapter {
             { timestamp: new Date().toISOString() },
             payload
           );
-          const tg = result?.results?.telegram;
+          const tg = /** @type {TelegramSendResult | undefined} */ (result?.results?.telegram);
           telegramSent = tg?.sent === true;
           if (telegramSent) break;
           if (tg?.reason === 'rate_limited' && attempt < MAX_RATE_LIMIT_WAITS) {
@@ -131,6 +163,11 @@ export class TelegramNotificationAdapter {
     return { sent, failed, messages: selected.length, results };
   }
 
+  /**
+   * @param {Record<string, unknown>} job
+   * @param {number | string} matchScore
+   * @param {string} applicationId
+   */
   async sendApprovalRequest(job, matchScore, applicationId) {
     const score = Number(matchScore) || 0;
 
@@ -147,6 +184,11 @@ export class TelegramNotificationAdapter {
     return notify(this, 'approval_required', { job, matchScore: score, applicationId }, message);
   }
 
+  /**
+   * @param {Record<string, unknown>} job
+   * @param {string} applicationId
+   * @param {string} platform
+   */
   async sendApplicationSuccess(job, applicationId, platform) {
     const message = createApplicationSuccessMessage(job, applicationId, platform);
 
@@ -158,8 +200,16 @@ export class TelegramNotificationAdapter {
     );
   }
 
+  /**
+   * @param {Record<string, unknown>} job
+   * @param {string} applicationId
+   * @param {Error | { message?: string } | null | undefined} [error]
+   * @param {string} [platform]
+   */
   async sendApplicationFailed(job, applicationId, error, platform) {
-    const errorText = error?.message || String(error || 'Unknown error');
+    const errorText =
+      /** @type {{ message?: string } | null} */ (error)?.message ||
+      String(error || 'Unknown error');
     const message = createApplicationFailedMessage(job, applicationId, error, platform);
 
     return notify(
@@ -176,12 +226,19 @@ export class TelegramNotificationAdapter {
     );
   }
 
+  /**
+   * @param {Record<string, unknown>} [stats]
+   */
   async sendDailySummary(stats = {}) {
     const { payload, message } = createDailySummaryMessage(stats);
 
     return notify(this, 'daily_summary', payload, message);
   }
 
+  /**
+   * @param {Record<string, unknown>} job
+   * @param {string} platform
+   */
   async sendCaptchaDetected(job, platform) {
     const message = createCaptchaDetectedMessage(job, platform);
 
@@ -197,10 +254,18 @@ export class TelegramNotificationAdapter {
     );
   }
 
+  /**
+   * @param {Record<string, unknown>} query
+   * @param {Record<string, unknown>} [handlers]
+   */
   async handleCallbackQuery(query, handlers = {}) {
     return handleCallbackQuery(this, query, handlers);
   }
 
+  /**
+   * @param {string} callbackQueryId
+   * @param {string} text
+   */
   async answerCallbackQuery(callbackQueryId, text) {
     return answerCallbackQuery(this, callbackQueryId, text);
   }

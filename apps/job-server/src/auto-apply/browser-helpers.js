@@ -4,13 +4,45 @@ import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
 
+/**
+ * @typedef {import('puppeteer').Page} Page
+ * @typedef {import('puppeteer').Browser} Browser
+ * @typedef {import('puppeteer').ElementHandle<Node>} ElementHandle
+ * @typedef {import('puppeteer').CookieParam} CookieParam
+ *
+ * @typedef {{
+ *   cookies?: string | CookieParam[],
+ *   cookieString?: string,
+ * }} SessionRecord
+ *
+ * @typedef {{
+ *   browser: Browser | null,
+ *   page: Page | null,
+ *   config: { cookies?: string | CookieParam[] | null, [key: string]: unknown },
+ *   logger: { info(msg: string, ...args: unknown[]): void, error(msg: string, ...args: unknown[]): void },
+ *   loadCookies(cookies: string | CookieParam[], domain?: string): Promise<void>,
+ *   findByText(tag: string, text: string, cssAlternative?: string | null): Promise<ElementHandle | null>,
+ * }} BrowserHelperHost
+ */
+
+/**
+ * @this {BrowserHelperHost}
+ * @param {string} tag
+ * @param {string} text
+ * @param {string | null} [cssAlternative]
+ * @returns {Promise<ElementHandle | null>}
+ */
 export async function findByText(tag, text, cssAlternative = null) {
   if (cssAlternative) {
-    const el = await this.page.$(cssAlternative);
+    const el = await /** @type {Page} */ (this.page).$(cssAlternative);
     if (el) return el;
   }
 
-  const handle = await this.page.evaluateHandle(
+  const handle = await /** @type {Page} */ (this.page).evaluateHandle(
+    /**
+     * @param {string} tagName
+     * @param {string} searchText
+     */
     (tagName, searchText) => {
       const elements = document.querySelectorAll(tagName);
       for (const el of elements) {
@@ -32,10 +64,19 @@ export async function findByText(tag, text, cssAlternative = null) {
   return element;
 }
 
+/**
+ * @this {BrowserHelperHost}
+ * @param {string} text
+ * @returns {Promise<ElementHandle | null>}
+ */
 export async function findElementWithText(text) {
   return this.findByText('*', text);
 }
 
+/**
+ * @this {BrowserHelperHost}
+ * @returns {Promise<BrowserHelperHost>}
+ */
 export async function initBrowser() {
   const { browser, page } = await launchStealthBrowser();
   this.browser = browser;
@@ -53,13 +94,17 @@ export async function initBrowser() {
 
   for (const [platform, domain] of Object.entries(platformDomains)) {
     try {
-      let session = SessionManager.load(platform);
+      let session = /** @type {(platform?: string | null) => SessionRecord | null} */ (
+        SessionManager.load
+      )(platform);
 
       if (!session?.cookies && !session?.cookieString) {
         const legacyFile = join(homedir(), '.opencode', 'data', `${platform}-session.json`);
         if (existsSync(legacyFile)) {
           try {
-            const legacyData = JSON.parse(readFileSync(legacyFile, 'utf-8'));
+            const legacyData = /** @type {SessionRecord | null} */ (
+              JSON.parse(readFileSync(legacyFile, 'utf-8'))
+            );
             if (legacyData?.cookies || legacyData?.cookieString) {
               session = legacyData;
               this.logger.info(`📂 ${platform}: loaded from legacy session file`);
@@ -87,7 +132,9 @@ export async function initBrowser() {
         this.logger.info(`⚠️ ${platform}: no valid session found`);
       }
     } catch (e) {
-      this.logger.info(`⚠️ ${platform}: failed to load cookies - ${e.message}`);
+      this.logger.info(
+        `⚠️ ${platform}: failed to load cookies - ${e instanceof Error ? e.message : String(e)}`
+      );
     }
   }
 
@@ -99,6 +146,12 @@ export async function initBrowser() {
   return this;
 }
 
+/**
+ * @this {BrowserHelperHost}
+ * @param {string | CookieParam[]} cookies
+ * @param {string} [domain]
+ * @returns {Promise<void>}
+ */
 export async function loadCookies(cookies, domain = '.wanted.co.kr') {
   if (typeof cookies === 'string') {
     const cookieList = cookies
@@ -108,12 +161,16 @@ export async function loadCookies(cookies, domain = '.wanted.co.kr') {
         return { name: name.trim(), value: rest.join('='), domain, path: '/' };
       })
       .filter((c) => c.name);
-    await this.page.setCookie(...cookieList);
+    await /** @type {Page} */ (this.page).setCookie(...cookieList);
   } else if (Array.isArray(cookies)) {
-    await this.page.setCookie(...cookies);
+    await /** @type {Page} */ (this.page).setCookie(...cookies);
   }
 }
 
+/**
+ * @this {BrowserHelperHost}
+ * @returns {Promise<void>}
+ */
 export async function closeBrowser() {
   if (this.browser) {
     await this.browser.close();
@@ -126,6 +183,8 @@ export async function closeBrowser() {
  * Mint a fresh OneID token and inject it via CDP as an HttpOnly cookie.
  * This is required because the Wanted Chaos API /applications/v1 endpoint
  * rejects requests where WWW_ONEID_ACCESS_TOKEN is not set as HttpOnly.
+ * @this {BrowserHelperHost}
+ * @returns {Promise<void>}
  */
 async function mintAndSetWantedToken() {
   const email = process.env.WANTED_EMAIL;
@@ -169,7 +228,7 @@ async function mintAndSetWantedToken() {
       return;
     }
 
-    const cdp = await this.page.createCDPSession();
+    const cdp = await /** @type {Page} */ (this.page).createCDPSession();
     await cdp.send('Network.setCookie', {
       name: 'WWW_ONEID_ACCESS_TOKEN',
       value: token,
@@ -182,13 +241,15 @@ async function mintAndSetWantedToken() {
     await cdp.detach();
 
     // Navigate to wanted.co.kr to activate the cookie and build full cookie jar
-    await this.page.goto('https://www.wanted.co.kr/', {
+    await /** @type {Page} */ (this.page).goto('https://www.wanted.co.kr/', {
       waitUntil: 'domcontentloaded',
       timeout: 15000,
     });
 
     this.logger.info('✅ wanted: OneID token set via CDP (HttpOnly)');
   } catch (e) {
-    this.logger.info(`⚠️ wanted: CDP token injection failed - ${e.message}`);
+    this.logger.info(
+      `⚠️ wanted: CDP token injection failed - ${e instanceof Error ? e.message : String(e)}`
+    );
   }
 }

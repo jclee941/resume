@@ -1,5 +1,46 @@
 import { JobMatcher } from '../../../shared/services/matching/index.js';
 
+/**
+ * @typedef {{
+ *   id?: string,
+ *   source?: string,
+ *   position?: string,
+ *   company?: string,
+ *   location?: string,
+ *   url?: string,
+ *   sourceUrl?: string,
+ *   matchPercentage?: number,
+ *   matchScore?: number,
+ *   applicationPriority?: string,
+ *   matchDetails?: {
+ *     skillMatches?: Array<{ keyword: string }>,
+ *     bonusPoints?: string[],
+ *   },
+ *   enrichmentStatus?: string,
+ *   enrichmentError?: string,
+ *   [key: string]: unknown,
+ * }} ScoredJob
+ *
+ * @typedef {{
+ *   success?: boolean,
+ *   jobs?: ScoredJob[],
+ *   [key: string]: unknown,
+ * }} CrawlerResult
+ *
+ * @typedef {{
+ *   matcher?: JobMatcher,
+ *   resumePath?: string,
+ *   maxResults?: number,
+ * }} RescoreOptions
+ *
+ * @typedef {{
+ *   minScore?: number,
+ *   maxResults?: number,
+ *   keywords?: string[],
+ *   enrichmentStats?: Record<string, unknown>,
+ * }} RankedReportOptions
+ */
+
 export const DEFAULT_KEYWORDS = [
   '보안 운영',
   '보안 인프라',
@@ -18,6 +59,10 @@ export const REVIEW_THRESHOLD = 60;
 const AUTO_THRESHOLD = 75;
 const BORDERLINE_THRESHOLD = 50;
 
+/**
+ * @param {number} percentage
+ * @returns {'auto' | 'review' | 'borderline' | 'skip'}
+ */
 function tierFor(percentage) {
   if (percentage >= AUTO_THRESHOLD) return 'auto';
   if (percentage >= REVIEW_THRESHOLD) return 'review';
@@ -25,11 +70,20 @@ function tierFor(percentage) {
   return 'skip';
 }
 
+/**
+ * @param {string | number | undefined | null} value
+ * @param {number} fallback
+ * @returns {number}
+ */
 export function parsePositiveInt(value, fallback) {
-  const n = parseInt(value, 10);
+  const n = parseInt(String(value), 10);
   return Number.isNaN(n) || n <= 0 ? fallback : n;
 }
 
+/**
+ * @param {Array<CrawlerResult | null | undefined>} results
+ * @returns {ScoredJob[]}
+ */
 export function mergeAndRankResults(results) {
   const byId = new Map();
   for (const result of results) {
@@ -45,6 +99,11 @@ export function mergeAndRankResults(results) {
   return [...byId.values()].sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
 }
 
+/**
+ * @param {ScoredJob[]} jobs
+ * @param {RescoreOptions} [options]
+ * @returns {ScoredJob[]}
+ */
 export function rescoreJobs(jobs, options = {}) {
   const matcher = options.matcher || new JobMatcher({});
   const { jobs: scored } = matcher.filterAndRankJobs(jobs, {
@@ -56,6 +115,18 @@ export function rescoreJobs(jobs, options = {}) {
   return [...prioritized].sort((a, b) => (b.matchPercentage || 0) - (a.matchPercentage || 0));
 }
 
+/**
+ * @param {ScoredJob[]} scoredJobs
+ * @param {RankedReportOptions} [options]
+ * @returns {{
+ *   generatedAt: string,
+ *   keywords: string[],
+ *   minScore: number,
+ *   totalScored: number,
+ *   worthApplying: Array<Record<string, unknown>>,
+ *   enrichmentStats?: Record<string, unknown>,
+ * }}
+ */
 export function buildRankedReport(scoredJobs, options = {}) {
   const { minScore = REVIEW_THRESHOLD, maxResults = 50, keywords = [], enrichmentStats } = options;
   const sorted = [...scoredJobs].sort(
