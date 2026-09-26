@@ -22,15 +22,35 @@ const validateBodySchema = {
   },
 };
 
+/**
+ * @typedef {SessionBrokerService & {
+ *   getSessionStatus(platform: string): unknown;
+ * }} BrokerService
+ *
+ * @typedef {import('fastify').FastifyInstance & {
+ *   sessionBrokerService?: BrokerService;
+ * }} FastifySessionBrokerInstance
+ */
+
+/**
+ * @param {FastifySessionBrokerInstance} fastify
+ * @returns {BrokerService}
+ */
 function getSessionBrokerService(fastify) {
-  return fastify.sessionBrokerService ?? new SessionBrokerService();
+  return /** @type {BrokerService} */ (fastify.sessionBrokerService ?? new SessionBrokerService());
 }
 
+/**
+ * @param {FastifySessionBrokerInstance} fastify
+ */
 export default async function sessionBrokerRoutes(fastify) {
   const sessionBrokerService = getSessionBrokerService(fastify);
 
   fastify.get('/:platform/status', {
     schema: { params: platformParamsSchema },
+    /**
+     * @param {import('fastify').FastifyRequest<{ Params: { platform: string } }>} request
+     */
     handler: async (request) => {
       return sessionBrokerService.getSessionStatus(request.params.platform);
     },
@@ -38,6 +58,10 @@ export default async function sessionBrokerRoutes(fastify) {
 
   fastify.post('/:platform/renew', {
     schema: { params: platformParamsSchema },
+    /**
+     * @param {import('fastify').FastifyRequest<{ Params: { platform: string } }>} request
+     * @param {import('fastify').FastifyReply} reply
+     */
     handler: async (request, reply) => {
       const result = await sessionBrokerService.renewSession(request.params.platform);
       if (!result.success) {
@@ -52,6 +76,9 @@ export default async function sessionBrokerRoutes(fastify) {
       params: platformParamsSchema,
       body: validateBodySchema,
     },
+    /**
+     * @param {import('fastify').FastifyRequest<{ Params: { platform: string }; Body: { encryptedSession: string } }>} request
+     */
     handler: async (request) => {
       return sessionBrokerService.validateEncryptedSession(
         request.params.platform,

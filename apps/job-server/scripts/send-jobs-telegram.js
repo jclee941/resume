@@ -26,10 +26,48 @@ import { readFileSync } from 'fs';
 import { TelegramNotificationAdapter } from '../src/shared/services/notifications/telegram-adapter.js';
 import { filterWorthy, WORTHY_MIN_SCORE } from './worthiness.js';
 
+/**
+ * @typedef {Record<string, unknown> & {
+ *   id?: string | number;
+ *   company?: string;
+ *   companyName?: string;
+ *   position?: string;
+ *   pos?: string;
+ *   title?: string;
+ *   url?: string;
+ *   applicationUrl?: string;
+ *   sourceUrl?: string;
+ *   source?: string;
+ *   src?: string;
+ *   platform?: string;
+ *   matchScore?: number;
+ *   score?: number;
+ *   relevantKeywordHits?: number;
+ *   matchPercentage?: number;
+ *   applicationPriority?: string | number;
+ *   matchDetails?: import('../src/shared/services/notifications/telegram-adapter/formatters.js').SingleJobDetails;
+ * }} RawJobEntry
+ *
+ * @typedef {import('../src/shared/services/notifications/telegram-adapter/formatters.js').SingleJobInput & import('./worthiness.js').JobWithScore & {
+ *   company: string;
+ *   position: string;
+ *   url: string;
+ *   source: string;
+ *   matchScore?: number;
+ *   matchPercentage?: number;
+ *   applicationPriority?: string | number;
+ *   matchDetails?: import('../src/shared/services/notifications/telegram-adapter/formatters.js').SingleJobDetails;
+ * }} NormalizedJob
+ */
+
 const ATS_SOURCES = new Set(['greenhouse', 'lever', 'ashby']);
 const DEFAULT_KEYWORDS = ['보안 운영', '보안 인프라', 'SIEM', 'FortiGate', 'Splunk'];
 
+/**
+ * @param {string[]} argv
+ */
 function parseArgs(argv) {
+  /** @param {string} name */
   const get = (name) =>
     argv
       .find((a) => a.startsWith(`--${name}=`))
@@ -40,9 +78,7 @@ function parseArgs(argv) {
     queuePath: get('queue'),
     limit: Number.parseInt(get('limit') ?? '10', 10) || 10,
     keywords: get('keywords')
-      ? get('keywords')
-          .split(',')
-          .map((s) => s.trim())
+      ? /** @type {string} */ (get('keywords')).split(',').map((s) => s.trim())
       : DEFAULT_KEYWORDS,
     dryRun: argv.includes('--dry-run'),
     separate: argv.includes('--separate'),
@@ -51,6 +87,10 @@ function parseArgs(argv) {
   };
 }
 
+/**
+ * @param {RawJobEntry} entry
+ * @returns {NormalizedJob}
+ */
 function normalizeJob(entry) {
   return {
     company: entry.company || entry.companyName || '',
@@ -64,22 +104,34 @@ function normalizeJob(entry) {
   };
 }
 
+/**
+ * @param {string} queuePath
+ * @returns {Promise<NormalizedJob[]>}
+ */
 async function loadFromQueue(queuePath) {
   const raw = JSON.parse(readFileSync(queuePath, 'utf8'));
+  /** @type {RawJobEntry[]} */
   const entries = Array.isArray(raw) ? raw : raw.candidates || [];
   return entries.map(normalizeJob).filter((j) => j.url);
 }
 
+/**
+ * @param {string[]} keywords
+ * @param {number} minScore
+ * @returns {Promise<NormalizedJob[]>}
+ */
 async function crawlJobs(keywords, minScore) {
   const { UnifiedJobCrawler } = await import('../src/crawlers/unified/unified-job-crawler.js');
   const crawler = new UnifiedJobCrawler({ sources: ['saramin', 'jobkorea'] });
+  /** @type {RawJobEntry[]} */
   const all = [];
   for (const kw of keywords) {
     // searchWithMatching scores each job against the resume (지원할만함 = score>=minScore)
     const r = await crawler.searchWithMatching({ keyword: kw, limit: 10, minScore });
-    if (r.success && Array.isArray(r.jobs)) all.push(...r.jobs);
+    if (r.success && Array.isArray(r.jobs)) all.push(.../** @type {RawJobEntry[]} */ (r.jobs));
   }
   const seen = new Set();
+  /** @type {NormalizedJob[]} */
   const uniq = [];
   for (const j of all) {
     const key = j.id ?? `${j.company}_${j.position}`;
@@ -180,6 +232,7 @@ async function main() {
     createJobPostingsMessage(jobs, { limit: args.limit }).renderedCount ??
     Math.min(jobs.length, args.limit);
 
+  /** @type {{ sent?: boolean; status?: string; historyId?: string; results?: { telegram?: { messageId?: string | number } } }} */
   const result = await adapter.sendJobPostings(jobs, { limit: args.limit });
   if (result.sent) {
     const messageId = result.results?.telegram?.messageId;

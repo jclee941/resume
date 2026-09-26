@@ -1,5 +1,24 @@
 import { sendTelegramNotification, escapeHtml } from '../services/notifications.js';
 
+/**
+ * @typedef {{
+ *   additions: number;
+ *   updates: number;
+ *   deletions: number;
+ * }} SyncPlatformChanges
+ *
+ * @typedef {{
+ *   resumeId: string;
+ *   changes: Record<string, SyncPlatformChanges>;
+ * }} ResumeSync
+ */
+
+/**
+ * @param {Record<string, unknown>} env
+ * @param {ResumeSync} sync
+ * @param {unknown} [_diffs]
+ * @returns {Promise<void>}
+ */
 export async function notifyPreview(env, sync, _diffs) {
   const summary = Object.entries(sync.changes)
     .map(
@@ -16,6 +35,16 @@ export async function notifyPreview(env, sync, _diffs) {
   );
 }
 
+/**
+ * @param {Record<string, unknown>} env
+ * @param {{
+ *   resumeId: string;
+ *   platforms: string[];
+ *   changes: Record<string, SyncPlatformChanges>;
+ *   backupId: string;
+ * }} options
+ * @returns {Promise<{ notified: boolean }>}
+ */
 export async function notifySyncCompletion(env, { resumeId, platforms, changes, backupId }) {
   const summary = platforms
     .map((p) => {

@@ -5,7 +5,42 @@
 
 import { NotificationService } from '../services/notifications.js';
 
+/**
+ * @typedef {{
+ *   TELEGRAM_BOT_TOKEN?: string;
+ *   TELEGRAM_CHAT_ID?: string | number;
+ *   [key: string]: unknown;
+ * }} TelegramEnv
+ *
+ * @typedef {{
+ *   text?: string;
+ *   chat?: { id?: string | number };
+ *   [key: string]: unknown;
+ * }} TelegramMessage
+ *
+ * @typedef {{
+ *   id?: string;
+ *   data?: string;
+ *   message?: TelegramMessage;
+ *   from?: { id?: string | number };
+ *   [key: string]: unknown;
+ * }} TelegramCallbackQuery
+ *
+ * @typedef {{
+ *   callback_query?: TelegramCallbackQuery;
+ *   message?: TelegramMessage;
+ *   [key: string]: unknown;
+ * }} TelegramUpdate
+ *
+ * @typedef {{
+ *   json(): Promise<TelegramUpdate>;
+ * }} TelegramRequest
+ */
+
 export class TelegramWebhookHandler {
+  /**
+   * @param {TelegramEnv} env
+   */
   constructor(env) {
     this.env = env;
     this.notificationService = new NotificationService(env);
@@ -13,6 +48,8 @@ export class TelegramWebhookHandler {
 
   /**
    * Handle incoming Telegram webhook request
+   * @param {Request | TelegramRequest} request
+   * @returns {Promise<Response>}
    */
   async handleWebhook(request) {
     try {
@@ -35,15 +72,23 @@ export class TelegramWebhookHandler {
       });
     } catch (error) {
       console.error('[TelegramWebhook] Error:', error);
-      return new Response(JSON.stringify({ ok: false, error: error.message }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      return new Response(
+        JSON.stringify({
+          ok: false,
+          error: error instanceof Error ? error.message : String(error),
+        }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     }
   }
 
   /**
    * Handle Telegram message (commands)
+   * @param {TelegramMessage} message
+   * @returns {Promise<Response>}
    */
   async handleMessage(message) {
     const text = message.text || '';
@@ -82,6 +127,8 @@ export class TelegramWebhookHandler {
 
   /**
    * Handle Telegram callback query (inline button clicks)
+   * @param {TelegramCallbackQuery} callbackQuery
+   * @returns {Promise<Response>}
    */
   async handleCallbackQuery(callbackQuery) {
     const result = await this.notificationService.handleTelegramCallback(callbackQuery);
@@ -94,6 +141,8 @@ export class TelegramWebhookHandler {
 
   /**
    * Set up Telegram webhook
+   * @param {string} webhookUrl
+   * @returns {Promise<unknown>}
    */
   async setWebhook(webhookUrl) {
     const token = this.env.TELEGRAM_BOT_TOKEN;
@@ -122,6 +171,7 @@ export class TelegramWebhookHandler {
 
   /**
    * Delete Telegram webhook
+   * @returns {Promise<unknown>}
    */
   async deleteWebhook() {
     const token = this.env.TELEGRAM_BOT_TOKEN;

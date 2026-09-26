@@ -7,6 +7,62 @@ import { RetryService } from '@resume/shared/retry';
 import { ApplicationTrackerService } from '../shared/services/apply/application-tracker.js';
 import { TelegramNotificationAdapter } from '../shared/services/notifications/telegram-adapter.js';
 
+/**
+ * @typedef {Object} AutoApplierOptions
+ * @property {ApplicationRepository} [repository]
+ * @property {CoverLetterService} [coverLetterService]
+ * @property {TelegramNotificationAdapter} [notificationAdapter]
+ * @property {ApprovalWorkflowManager} [approvalManager]
+ * @property {RetryService} [retryService]
+ * @property {Record<string, unknown>} [retryConfig]
+ * @property {ApplicationTrackerService} [tracker]
+ * @property {import('../crawlers/unified/unified-job-crawler.js').UnifiedJobCrawlerOptions} [crawler]
+ * @property {number} [maxDailyApplications]
+ * @property {number} [reviewThreshold]
+ * @property {number} [autoApplyThreshold]
+ * @property {number} [minMatchScore]
+ * @property {boolean} [autoApply]
+ * @property {boolean} [dryRun]
+ * @property {number} [delayBetweenApps]
+ * @property {string[]} [excludeCompanies]
+ * @property {string[]} [excludeKeywords]
+ * @property {string[]} [preferredCompanies]
+ * @property {string[]} [keywords]
+ * @property {boolean} [useAI]
+ * @property {string | null} [resumePath]
+ * @property {Console} [logger]
+ *
+ * @typedef {Object} AutoApplierDependencies
+ * @property {ApplicationRepository} repository
+ * @property {CoverLetterService} coverLetterService
+ * @property {TelegramNotificationAdapter} notificationAdapter
+ * @property {ApprovalWorkflowManager} approvalManager
+ * @property {RetryService} retryService
+ * @property {ApplicationTrackerService} tracker
+ * @property {UnifiedJobCrawler} crawler
+ * @property {ApplicationManager} appManager
+ *
+ * @typedef {Object} AutoApplierConfig
+ * @property {number} maxDailyApplications
+ * @property {number} reviewThreshold
+ * @property {number} autoApplyThreshold
+ * @property {number} minMatchScore
+ * @property {boolean} autoApply
+ * @property {boolean} dryRun
+ * @property {number} delayBetweenApps
+ * @property {string[]} excludeCompanies
+ * @property {string[]} excludeKeywords
+ * @property {string[]} preferredCompanies
+ * @property {string[]} keywords
+ * @property {boolean} useAI
+ * @property {string | null} resumePath
+ */
+
+/**
+ * @param {AutoApplierOptions} [options]
+ * @param {Console} [logger]
+ * @returns {AutoApplierDependencies}
+ */
 export function createAutoApplierDependencies(options = {}, logger = console) {
   const repository = options.repository || new ApplicationRepository();
   const coverLetterService =
@@ -52,6 +108,10 @@ export function createAutoApplierDependencies(options = {}, logger = console) {
   };
 }
 
+/**
+ * @param {AutoApplierOptions} [options]
+ * @returns {AutoApplierConfig}
+ */
 export function createAutoApplierConfig(options = {}) {
   return {
     maxDailyApplications: options.maxDailyApplications || 10,
@@ -71,6 +131,11 @@ export function createAutoApplierConfig(options = {}) {
   };
 }
 
+/**
+ * @param {object} target
+ * @param {AutoApplierDependencies} dependencies
+ * @returns {asserts target is AutoApplierDependencies}
+ */
 export function assignAutoApplierDependencies(target, dependencies) {
   Object.assign(target, dependencies);
 }

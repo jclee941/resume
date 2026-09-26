@@ -3,13 +3,39 @@ import { normalizeError } from '@resume/shared/errors';
 import { sendTelegramNotification, escapeHtml } from '../services/notifications.js';
 
 /**
+ * @typedef {{ status: string; count: number }} StatusSummaryRow
+ * @typedef {{ date: string; count: number }} WeeklyActivityRow
+ * @typedef {{ id: string | number; company: string; position: string; match_score: number; created_at: string }} PendingJobRow
+ * @typedef {{ application_id: string; status: string; note: string; timestamp: string; company: string; position: string }} TimelineRow
+ *
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       all<T = Record<string, unknown>>(): Promise<{ results?: T[] }>;
+ *       first<T = Record<string, unknown>>(): Promise<T | null>;
+ *     };
+ *     all<T = Record<string, unknown>>(): Promise<{ results?: T[] }>;
+ *     first<T = Record<string, unknown>>(): Promise<T | null>;
+ *   };
+ * }} ReportDb
+ *
+ * @typedef {{
+ *   DB?: ReportDb;
+ *   TELEGRAM_BOT_TOKEN?: string;
+ *   TELEGRAM_CHAT_ID?: string | number;
+ *   [key: string]: unknown;
+ * }} ReportEnv
+ */
+
+/**
  * Handler for report generation operations.
  * Generates daily reports and emits notifications.
+ * @extends {BaseHandler<ReportEnv>}
  */
 export class ReportHandler extends BaseHandler {
   /**
    * Trigger daily report generation
-   * @param {Request} request
+   * @param {Request} _request
    * @returns {Promise<Response>}
    */
   async triggerDailyReport(_request) {
@@ -26,6 +52,7 @@ export class ReportHandler extends BaseHandler {
       const weekAgoStr = weekAgo.toISOString().split('T')[0];
 
       // 1. Get status summary
+      /** @type {{ results?: StatusSummaryRow[] }} */
       const statusSummary = await db
         .prepare(
           `SELECT status, COUNT(*) as count 
@@ -35,6 +62,7 @@ export class ReportHandler extends BaseHandler {
         .all();
 
       // 2. Get today's new applications
+      /** @type {{ count?: number } | null} */
       const todayNew = await db
         .prepare(
           `SELECT COUNT(*) as count 
@@ -44,6 +72,7 @@ export class ReportHandler extends BaseHandler {
         .first();
 
       // 3. Get this week's applications by day
+      /** @type {{ results?: WeeklyActivityRow[] }} */
       const weeklyActivity = await db
         .prepare(
           `SELECT date(created_at) as date, COUNT(*) as count 
@@ -56,6 +85,7 @@ export class ReportHandler extends BaseHandler {
         .all();
 
       // 4. Get high-priority pending items
+      /** @type {{ results?: PendingJobRow[] }} */
       const pendingHighPriority = await db
         .prepare(
           `SELECT id, company, position, match_score, created_at 
@@ -68,6 +98,7 @@ export class ReportHandler extends BaseHandler {
         .all();
 
       // 5. Get recent status changes
+      /** @type {{ results?: TimelineRow[] }} */
       const recentChanges = await db
         .prepare(
           `SELECT t.application_id, t.status, t.note, t.timestamp, a.company, a.position 

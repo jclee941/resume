@@ -1,3 +1,4 @@
+/// <reference path="../../../../packages/types/src/cloudflare-workers.d.ts" />
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 import { sendTelegramNotification, escapeHtml } from '../services/notifications.js';
 import { generateReportContent } from './daily-report-content.js';
@@ -9,19 +10,63 @@ import {
 } from './daily-report-stats.js';
 
 /**
+ * @typedef {{
+ *   prepare(query: string): {
+ *     first(): Promise<Record<string, number | null> | null>;
+ *     all(): Promise<{ results?: Array<{ platform: string; count: number; success: number }> }>;
+ *     bind(...values: unknown[]): {
+ *       run(): Promise<unknown>;
+ *       first(): Promise<unknown>;
+ *       all(): Promise<{ results?: Array<unknown> }>;
+ *     };
+ *   };
+ * }} DailyReportDb
+ *
+ * @typedef {import('./daily-report-stats.js').DailyReportEnv &
+ *   import('../services/notifications.js').NotificationEnv & {
+ *   JOB_DB: DailyReportDb;
+ *   TELEGRAM_BOT_TOKEN?: string;
+ *   TELEGRAM_CHAT_ID?: string;
+ *   [key: string]: unknown;
+ * }} DailyReportWorkflowEnv
+ *
+ * @typedef {{
+ *   type?: string;
+ *   date?: string;
+ * }} DailyReportParams
+ *
+ * @typedef {{
+ *   id: string;
+ *   type: string;
+ *   generatedAt: string;
+ *   date: string;
+ *   status: string;
+ *   completedAt?: string;
+ *   applications?: Awaited<ReturnType<typeof getApplicationStats>>;
+ *   platforms?: Awaited<ReturnType<typeof getPlatformStats>>;
+ *   searches?: Awaited<ReturnType<typeof getSearchStats>>;
+ *   trends?: Awaited<ReturnType<typeof calculateTrends>>;
+ *   content?: ReturnType<typeof generateReportContent>;
+ * }} ReportRecord
+ */
+
+/**
  * Daily Report Workflow
  *
  * Generates and sends daily/weekly job application reports.
  * Aggregates stats, formats report, and emits notifications.
  *
- * @param {Object} params
- * @param {string} params.type - Report type: 'daily' or 'weekly'
- * @param {string} params.date - Report date (optional, defaults to today)
+ * @extends {WorkflowEntrypoint<DailyReportWorkflowEnv, DailyReportParams>}
  */
 export class DailyReportWorkflow extends WorkflowEntrypoint {
+  /**
+   * @param {import('cloudflare:workers').WorkflowEvent<DailyReportParams>} event
+   * @param {import('cloudflare:workers').WorkflowStep} step
+   */
   async run(event, step) {
     const { type = 'daily', date } = event.payload;
 
+    /** @type {ReportRecord} */
     const report = {
       id: event.instanceId,
       type,
@@ -38,7 +83,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '1 minute',
       },
       async () => {
-        return await getApplicationStats(this.env, type, report.date);
+        return await getApplicationStats(this.env, type);
       }
     );
 
@@ -52,7 +97,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '1 minute',
       },
       async () => {
-        return await getPlatformStats(this.env, type, report.date);
+        return await getPlatformStats(this.env, type);
       }
     );
 
@@ -66,7 +111,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '1 minute',
       },
       async () => {
-        return await getSearchStats(this.env, type, report.date);
+        return await getSearchStats(this.env, type);
       }
     );
 
@@ -94,7 +139,9 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '1 minute',
       },
       async () => {
-        return generateReportContent(report);
+        return generateReportContent(
+          /** @type {import('./daily-report-content.js').DailyReport} */ (report)
+        );
       }
     );
 
@@ -108,13 +155,14 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '30 seconds',
       },
       async () => {
-        await this.env.JOB_DB.prepare(
-          `
+        await /** @type {DailyReportDb} */ (this.env.JOB_DB)
+          .prepare(
+            `
           INSERT INTO reports (id, type, date, data, created_at)
           VALUES (?, ?, ?, ?, datetime('now'))
           ON CONFLICT (type, date) DO UPDATE SET data = excluded.data, updated_at = datetime('now')
         `
-        )
+          )
           .bind(report.id, type, report.date, JSON.stringify(report))
           .run();
       }
@@ -144,6 +192,9 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
     };
   }
 
+  /**
+   * @param {string | { text: string }} message
+   */
   async sendNotification(message) {
     await sendTelegramNotification(this.env, message);
   }

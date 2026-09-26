@@ -1,5 +1,56 @@
 export { searchRecommended, searchWithMatching } from './search-matching-operations.js';
 
+/**
+ * @typedef {import('./job-normalization.js').DeduplicableJob} DeduplicableJob
+ * @typedef {import('./job-normalization.js').ConvertedParams} ConvertedParams
+ *
+ * @typedef {Record<string, unknown> & {
+ *   success: boolean;
+ *   jobs?: DeduplicableJob[];
+ *   error?: unknown;
+ * }} CrawlerSearchResult
+ *
+ * @typedef {Object} PlatformCrawler
+ * @property {(params: Record<string, unknown>) => Promise<CrawlerSearchResult>} searchJobs
+ * @property {(keyword: string, params: Record<string, unknown>) => Promise<CrawlerSearchResult>} [searchByKeyword]
+ * @property {(jobId: string) => Promise<unknown>} getJobDetail
+ * @property {unknown} [cookies]
+ *
+ * @typedef {Object} RateLimiter
+ * @property {(platform: string) => Promise<void>} acquire
+ * @property {(platform: string, response: { statusCode: number }) => void} recordResponse
+ *
+ * @typedef {Object} JobDeduplicator
+ * @property {(job: unknown) => boolean} isDuplicate
+ * @property {(job: unknown) => void} markSeen
+ *
+ * @typedef {Object} UnifiedCrawlerContext
+ * @property {string[]} enabledSources
+ * @property {Record<string, PlatformCrawler>} crawlers
+ * @property {(source: string, params: Record<string, unknown>) => Promise<CrawlerSearchResult>} searchSource
+ * @property {(source: string, params: Record<string, unknown>) => ConvertedParams} convertParams
+ * @property {(jobs: DeduplicableJob[]) => DeduplicableJob[]} deduplicateJobs
+ *
+ * @typedef {Object} SearchAllParams
+ * @property {string} [keyword]
+ * @property {string[]} [categories]
+ * @property {string} [experience]
+ * @property {string} [location]
+ * @property {number} [limit]
+ * @property {string[]} [sources]
+ *
+ * @typedef {Record<string, unknown> & {
+ *   maxConcurrency?: number;
+ *   rateLimiter?: RateLimiter;
+ *   jobDeduplicator?: JobDeduplicator;
+ *   limit?: number;
+ * }} SearchOptions
+ */
+
+/**
+ * @param {UnifiedCrawlerContext} crawlerContext
+ * @param {SearchAllParams} [params]
+ */
 export async function searchAll(crawlerContext, params = {}) {
   const {
     keyword,
@@ -22,21 +73,26 @@ export async function searchAll(crawlerContext, params = {}) {
     )
   );
 
+  /** @type {DeduplicableJob[]} */
   const allJobs = [];
+  /** @type {Record<string, { success: boolean; count?: number; error?: unknown }>} */
   const sourceStats = {};
 
   results.forEach((result, index) => {
     const source = sources[index];
     if (result.status === 'fulfilled' && result.value.success) {
-      allJobs.push(...result.value.jobs);
+      allJobs.push(.../** @type {DeduplicableJob[]} */ (result.value.jobs));
       sourceStats[source] = {
         success: true,
-        count: result.value.jobs.length,
+        count: /** @type {DeduplicableJob[]} */ (result.value.jobs).length,
       };
     } else {
       sourceStats[source] = {
         success: false,
-        error: result.reason?.message || result.value?.error || 'Unknown error',
+        error:
+          /** @type {{ reason?: { message?: string } }} */ (result).reason?.message ||
+          /** @type {{ value?: { error?: string } }} */ (result).value?.error ||
+          'Unknown error',
       };
     }
   });
@@ -51,6 +107,11 @@ export async function searchAll(crawlerContext, params = {}) {
   };
 }
 
+/**
+ * @param {UnifiedCrawlerContext} crawlerContext
+ * @param {string} source
+ * @param {Record<string, unknown> & { keyword?: string }} params
+ */
 export async function searchSource(crawlerContext, source, params) {
   const crawler = crawlerContext.crawlers[source];
   if (!crawler) {
@@ -69,8 +130,15 @@ export async function searchSource(crawlerContext, source, params) {
   return crawler.searchJobs(sourceParams);
 }
 
+/**
+ * @param {UnifiedCrawlerContext} crawlerContext
+ * @param {string} platform
+ * @param {string | string[]} keywords
+ * @param {SearchOptions} [options]
+ */
 export async function search(crawlerContext, platform, keywords, options = {}) {
   const keywordList = Array.isArray(keywords) ? keywords : [keywords];
+  /** @type {DeduplicableJob[]} */
   const allJobs = [];
   const maxConcurrency = Math.max(1, options.maxConcurrency || keywordList.length);
   const rateLimiter = options.rateLimiter;
@@ -96,6 +164,15 @@ export async function search(crawlerContext, platform, keywords, options = {}) {
   return allJobs;
 }
 
+/**
+ * @param {UnifiedCrawlerContext} crawlerContext
+ * @param {string} platform
+ * @param {string} keyword
+ * @param {SearchOptions} options
+ * @param {RateLimiter | undefined} rateLimiter
+ * @param {JobDeduplicator | undefined} jobDeduplicator
+ * @returns {Promise<DeduplicableJob[]>}
+ */
 async function searchKeyword(
   crawlerContext,
   platform,
@@ -116,7 +193,9 @@ async function searchKeyword(
     });
 
     if (rateLimiter) {
-      const statusCode = result.success ? 200 : result.error?.status || 500;
+      const statusCode = result.success
+        ? 200
+        : /** @type {{ status?: number }} */ (result.error)?.status || 500;
       rateLimiter.recordResponse(platform, { statusCode });
     }
 
@@ -125,15 +204,26 @@ async function searchKeyword(
     }
     return [];
   } catch (error) {
-    console.error(`[search] Keyword "${keyword}" failed:`, error.message);
+    console.error(
+      `[search] Keyword "${keyword}" failed:`,
+      error instanceof Error ? error.message : String(error)
+    );
     if (rateLimiter) {
-      rateLimiter.recordResponse(platform, { statusCode: error.statusCode || 500 });
+      rateLimiter.recordResponse(platform, {
+        statusCode: /** @type {{ statusCode?: number }} */ (error).statusCode || 500,
+      });
     }
     return [];
   }
 }
 
+/**
+ * @param {DeduplicableJob[]} jobs
+ * @param {JobDeduplicator | undefined} jobDeduplicator
+ * @returns {DeduplicableJob[]}
+ */
 function filterNewJobs(jobs, jobDeduplicator) {
+  /** @type {DeduplicableJob[]} */
   const newJobs = [];
   for (const job of jobs) {
     const isDuplicate = jobDeduplicator ? jobDeduplicator.isDuplicate(job) : false;

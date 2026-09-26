@@ -1,12 +1,50 @@
 import { sendTelegramNotification, escapeHtml } from '../../services/notifications.js';
 import { getEscalationLevel, isServiceAffected } from './evaluation.js';
 
+/**
+ * @typedef {{
+ *   url: string;
+ *   status_label: string;
+ *   latencyMs: number;
+ *   healthy: boolean;
+ *   [key: string]: unknown;
+ * }} EvaluatedService
+ *
+ * @typedef {{
+ *   healthy: boolean;
+ *   error?: string;
+ * }} EvaluatedBinding
+ *
+ * @typedef {{
+ *   services: EvaluatedService[];
+ *   bindings: { d1: EvaluatedBinding; kv: EvaluatedBinding };
+ *   overallHealth: string;
+ *   hasBindingFailure: boolean;
+ *   hasDown: boolean;
+ *   hasDegraded: boolean;
+ * }} HealthEvaluation
+ *
+ * @typedef {'emergency' | 'critical' | 'warning' | 'none'} EscalationLevel
+ *
+ * @typedef {{
+ *   env: Record<string, unknown>;
+ *   getConsecutiveFailures(): Promise<number>;
+ * }} HealthWorkflow
+ */
+
+/** @type {Record<string, string>} */
 const ESCALATION_EMOJI = {
   warning: '🟡',
   critical: '🔴',
   emergency: '🚨',
 };
 
+/**
+ * @param {HealthWorkflow} workflow
+ * @param {HealthEvaluation} healthEvaluation
+ * @param {string} startedAt
+ * @returns {Promise<{ notified: boolean; escalationLevel: EscalationLevel; consecutiveFailures: number }>}
+ */
 export async function notifyHealthFailure(workflow, healthEvaluation, startedAt) {
   const consecutiveFailures = await workflow.getConsecutiveFailures();
   const escalationLevel = getEscalationLevel(consecutiveFailures);
@@ -22,6 +60,15 @@ export async function notifyHealthFailure(workflow, healthEvaluation, startedAt)
   return { notified: true, escalationLevel, consecutiveFailures: consecutiveFailures + 1 };
 }
 
+/**
+ * @param {{
+ *   healthEvaluation: HealthEvaluation;
+ *   escalationLevel: EscalationLevel;
+ *   consecutiveFailures: number;
+ *   startedAt: string;
+ * }} params
+ * @returns {string}
+ */
 function buildHealthFailureMessage({
   healthEvaluation,
   escalationLevel,
@@ -48,6 +95,10 @@ function buildHealthFailureMessage({
   return message;
 }
 
+/**
+ * @param {EvaluatedService[]} services
+ * @returns {string}
+ */
 function formatAffectedServices(services) {
   return services
     .filter(isServiceAffected)
@@ -58,7 +109,12 @@ function formatAffectedServices(services) {
     .join('\n');
 }
 
+/**
+ * @param {HealthEvaluation} healthEvaluation
+ * @returns {string[]}
+ */
 function formatBindingStatus(healthEvaluation) {
+  /** @type {string[]} */
   const bindingStatus = [];
 
   if (!healthEvaluation.hasBindingFailure) {

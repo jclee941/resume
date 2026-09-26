@@ -5,8 +5,39 @@
 
 import { NotificationService } from '../services/notifications.js';
 
-/** @typedef {import('@resume/types').NotificationJob} NotificationJob */
+/**
+ * @typedef {{
+ *   job: Record<string, unknown>;
+ *   matchScore: number;
+ *   requestId: string;
+ *   [key: string]: unknown;
+ * }} ApprovalNotificationPayload
+ *
+ * @typedef {{
+ *   id: string;
+ *   type: 'telegram' | 'email' | 'slack' | 'approval' | string;
+ *   priority: string;
+ *   payload: ApprovalNotificationPayload & Record<string, unknown>;
+ *   createdAt?: number;
+ *   attempts?: number;
+ *   maxAttempts?: number;
+ * }} ConsumerNotificationJob
+ *
+ * @typedef {{
+ *   id?: string;
+ *   body: ConsumerNotificationJob;
+ *   attempts: number;
+ *   ack(): void;
+ *   retry(): void;
+ * }} QueueMessage
+ *
+ * @typedef {{
+ *   queue?: string;
+ *   messages: QueueMessage[];
+ * }} ConsumerQueueBatch
+ */
 
+/** @type {Record<string, number>} */
 const PRIORITY_ORDER = {
   critical: 0,
   high: 1,
@@ -14,13 +45,13 @@ const PRIORITY_ORDER = {
   low: 3,
 };
 
-/**
- * Queue consumer handler for notification batch processing
- * @param {MessageBatch<NotificationJob>} batch
- * @param {Env} env
- * @param {ExecutionContext} ctx
- */
 export default {
+  /**
+   * Queue consumer handler for notification batch processing
+   * @param {ConsumerQueueBatch} batch
+   * @param {Record<string, unknown>} env
+   * @param {unknown} [_ctx]
+   */
   async queue(batch, env, _ctx) {
     const notificationService = new NotificationService(env);
     const results = {
@@ -42,7 +73,7 @@ export default {
       if (!acc[type]) acc[type] = [];
       acc[type].push(msg);
       return acc;
-    }, {});
+    }, /** @type {Record<string, QueueMessage[]>} */ ({}));
 
     // Process each type group
     for (const [, messages] of Object.entries(groupedByType)) {
@@ -54,7 +85,7 @@ export default {
         } catch (error) {
           console.error('Notification processing failed:', {
             jobId: message.body.id,
-            error: error.message,
+            error: error instanceof Error ? error.message : String(error),
             attempts: message.body.attempts,
           });
 
@@ -79,7 +110,7 @@ export default {
 
 /**
  * Process a single notification
- * @param {NotificationJob} job
+ * @param {ConsumerNotificationJob} job
  * @param {NotificationService} service
  */
 async function processNotification(job, service) {
