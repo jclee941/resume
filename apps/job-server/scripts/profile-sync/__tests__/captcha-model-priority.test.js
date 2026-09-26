@@ -2,10 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { resolveVisionModels } from '../jobkorea-handler/captcha-solver.js';
 
-test('defaults to a GPT vision model first', () => {
-  const models = resolveVisionModels({});
-  assert.ok(models.length > 0);
-  assert.match(models[0], /^gpt-/, `expected first model to be a GPT model, got ${models[0]}`);
+test('defaults to the served cliproxy vision models', () => {
+  assert.deepEqual(resolveVisionModels({}), ['gemini-3.1-flash-lite', 'gemini-3-flash']);
 });
 
 test('honours JOBKOREA_CAPTCHA_MODELS override (comma separated)', () => {
@@ -15,5 +13,5 @@ test('honours JOBKOREA_CAPTCHA_MODELS override (comma separated)', () => {
 
 test('ignores empty override and falls back to defaults', () => {
   const models = resolveVisionModels({ JOBKOREA_CAPTCHA_MODELS: '   ' });
-  assert.match(models[0], /^gpt-/);
+  assert.equal(models[0], 'gemini-3.1-flash-lite');
 });

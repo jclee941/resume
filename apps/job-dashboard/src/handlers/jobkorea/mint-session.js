@@ -30,7 +30,9 @@ export const AUTH_JOBKOREA_KEY = 'auth:jobkorea';
 export const JOBKOREA_LOGIN_URL = 'https://www.jobkorea.co.kr/Login';
 export const JOBKOREA_SESSION_TTL_S = 60 * 60 * 6; // 6h
 
-const DEFAULT_CAPTCHA_MODEL = 'gpt-5.5';
+// Vision-capable model served by cliproxy; kept separate from the search model
+// (CLIPROXY_MODEL) because text-only models cannot read the CAPTCHA image.
+const DEFAULT_CAPTCHA_MODEL = 'gemini-3.1-flash-lite';
 const CAPTCHA_VISION_PROMPT =
   'The image contains a short distorted string of letters and digits. ' +
   'Transcribe exactly the characters you see in the image, preserving upper/lower case. ' +
@@ -50,7 +52,7 @@ function sleep(ms) {
 /**
  * Ask the configured cliproxy vision model to transcribe a JobKorea CAPTCHA
  * image.
- * @param {{CLIPROXY_BASE?: string, CLIPROXY_API_KEY?: string, CLIPROXY_MODEL?: string}} env
+ * @param {{CLIPROXY_BASE?: string, CLIPROXY_API_KEY?: string, CLIPROXY_VISION_MODEL?: string}} env
  * @param {{mime: string, base64: string}} image
  * @param {{fetchImpl?: typeof fetch}} [opts]
  * @returns {Promise<string>} the trimmed CAPTCHA answer
@@ -60,7 +62,7 @@ export async function solveJobKoreaCaptcha(env, { mime, base64 }, { fetchImpl = 
   const apiKey = env?.CLIPROXY_API_KEY;
   if (!base) throw new Error('CLIPROXY_BASE is required to solve the JobKorea CAPTCHA');
   if (!apiKey) throw new Error('CLIPROXY_API_KEY is required to solve the JobKorea CAPTCHA');
-  const model = env?.CLIPROXY_MODEL || DEFAULT_CAPTCHA_MODEL;
+  const model = env?.CLIPROXY_VISION_MODEL || DEFAULT_CAPTCHA_MODEL;
 
   const response = await fetchImpl(`${String(base).replace(/\/+$/, '')}/chat/completions`, {
     method: 'POST',

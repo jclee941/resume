@@ -45,7 +45,7 @@ describe('ai-matcher (with API key)', { concurrency: 1 }, () => {
     });
     const result = await ai.analyzeWithClaude('prompt', 'text');
     assert.strictEqual(result, '{"ok":true}');
-    assert.strictEqual(requestBody.model, 'gpt-5.5');
+    assert.strictEqual(requestBody.model, 'gpt-6-pro');
   });
 
   it('returns null on non-ok response', async () => {
