@@ -78,6 +78,9 @@ Quick method: Read the file -> subtract blank lines, comment-only lines, and
 long static string content -> remaining count = LOC. When in doubt, round up —
 err on the side of splitting.
 
+Enforced by `npm run lint:loc` (`tools/scripts/verification/check-source-loc.mjs`)
+for non-test source under `apps/`, `packages/`, and `tools/`; CI runs it.
+
 Thresholds Reference:
 
 >
