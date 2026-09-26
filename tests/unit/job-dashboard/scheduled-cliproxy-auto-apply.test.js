@@ -6,6 +6,10 @@ function createScheduledCliproxyClient(job) {
   };
 }
 
+function createSessions(values = {}) {
+  return { get: jest.fn(async (key) => values[key] ?? null) };
+}
+
 function makeCliproxyJob() {
   return {
     id: 'cliproxy-job-1',
@@ -35,6 +39,7 @@ describe('scheduled Cliproxy auto-apply discovery', () => {
       controller: { scheduledTime: Date.parse('2026-06-26T00:00:00.000Z') },
       env: {
         DB: db,
+        SESSIONS: createSessions(),
         CLIPROXY_AUTO_APPLY_KEYWORDS: 'security',
         CLIPROXY_AUTO_APPLY_MAX_APPLICATIONS: '1',
       },
@@ -84,6 +89,23 @@ describe('scheduled Cliproxy auto-apply discovery', () => {
     expect(db.recorded).toEqual([]);
   });
 
+  test('skips discovery while auto-apply is paused from Telegram', async () => {
+    const db = createMockDb();
+    const cliproxy = createScheduledCliproxyClient(makeCliproxyJob());
+
+    const response = await runScheduledCliproxyAutoApply({
+      controller: { scheduledTime: Date.parse('2026-06-26T00:00:00.000Z') },
+      env: { DB: db, SESSIONS: createSessions({ 'config:auto-apply:paused': 'true' }) },
+      clients: { cliproxy },
+    });
+    const body = await parseJson(response);
+
+    expect(response.status).toBe(200);
+    expect(body).toEqual({ success: true, skipped: true, reason: 'auto_apply_paused' });
+    expect(cliproxy.searchJobs).not.toHaveBeenCalled();
+    expect(db.recorded).toEqual([]);
+  });
+
   test('reports a failed scheduled run when Cliproxy search fails before any candidate', async () => {
     const db = createMockDb();
     const cliproxy = {
@@ -96,6 +118,7 @@ describe('scheduled Cliproxy auto-apply discovery', () => {
       controller: { scheduledTime: Date.parse('2026-06-26T00:00:00.000Z') },
       env: {
         DB: db,
+        SESSIONS: createSessions(),
         CLIPROXY_AUTO_APPLY_KEYWORDS: 'security',
         CLIPROXY_AUTO_APPLY_MAX_APPLICATIONS: '1',
       },

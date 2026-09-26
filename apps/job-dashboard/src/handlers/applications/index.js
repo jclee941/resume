@@ -1,4 +1,5 @@
 import { ApplicationRepository } from './application-repository.js';
+import { ApprovalRequestRepository } from './approval-request-repository.js';
 import { cleanupExpiredApplications } from './cleanup-operation.js';
 import { createApplication } from './create-operation.js';
 import { deleteApplication } from './delete-operation.js';
@@ -9,6 +10,7 @@ import { updateApplicationStatus } from './status-operation.js';
 import { updateApplication } from './update-operation.js';
 import { syncWantedApplications } from './wanted-sync-operation.js';
 import { WantedHistoryRepository } from './wanted-history-repository.js';
+import { decideWorkflowApprovals } from './workflow-approval-operation.js';
 
 export { APPLICATION_STATUS, VALID_STATUSES } from './statuses.js';
 
@@ -18,6 +20,7 @@ export class ApplicationsHandler {
     this.auth = auth;
     this.fetcher = options.fetcher || fetch;
     this.repository = new ApplicationRepository(db);
+    this.approvalRequests = new ApprovalRequestRepository(db);
     this.wantedHistoryRepository = new WantedHistoryRepository(db);
   }
 
@@ -55,5 +58,9 @@ export class ApplicationsHandler {
 
   async syncWantedHistory(request) {
     return syncWantedApplications(this, request);
+  }
+
+  async decideWorkflowApprovals(request, decision) {
+    return decideWorkflowApprovals(this, request, decision);
   }
 }

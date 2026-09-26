@@ -1,6 +1,7 @@
 import { createAutoApplyClients } from './client-factory.js';
 import { jsonResponse } from '../../middleware/cors.js';
 import { runAutoApply } from './run-handler.js';
+import { isAutoApplyPaused } from '../../services/auto-apply-pause.js';
 
 const SCHEDULED_RUN_ID_PREFIX = 'scheduled-cliproxy-';
 const CLIPROXY_PLATFORM = ['cliproxy'];
@@ -16,6 +17,10 @@ export async function runScheduledCliproxyAutoApply({
       skipped: true,
       reason: 'cliproxy_auto_apply_disabled',
     });
+  }
+
+  if (await isAutoApplyPaused(env)) {
+    return jsonResponse({ success: true, skipped: true, reason: 'auto_apply_paused' });
   }
 
   return runAutoApply({
