@@ -39,6 +39,8 @@
     // OpenAI-compatible LLM/vision proxy (AI job matching + JobKorea CAPTCHA solve).
     // Non-secret base URL only; CLIPROXY_API_KEY stays a Worker Secret, and the
     // cliproxy client stays inert (isConfigured() === false) until that key is set.
+    // Model ids must appear in GET /v1/models: search defaults to gpt-6-pro
+    // (CLIPROXY_MODEL), CAPTCHA vision to gemini-3.1-flash-lite (CLIPROXY_VISION_MODEL).
     "CLIPROXY_BASE": "https://cliproxy.jclee.me/v1",
   },
   "routes": [{ "pattern": "resume.jclee.me", "custom_domain": true }],

@@ -1,11 +1,6 @@
-const VISION_MODELS = [
-  'gpt-5.4',
-  'gpt-5.5',
-  'gemini-3.5-flash-low',
-  'gemini-3-flash',
-  'gpt-5.4-mini',
-  'gemini-3.1-flash-lite',
-];
+// Only vision models cliproxy currently serves (GET /v1/models); the former
+// gpt-5.x entries were removed upstream and failed every attempt with HTTP 400.
+const VISION_MODELS = ['gemini-3.1-flash-lite', 'gemini-3-flash'];
 
 const WEAK_CAPTCHA_TOKENS = new Set([
   'answer',

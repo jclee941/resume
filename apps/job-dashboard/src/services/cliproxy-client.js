@@ -1,4 +1,6 @@
-const DEFAULT_MODEL = 'gpt-sol';
+// Must be a model cliproxy serves (GET /v1/models); an unserved id fails every
+// search with HTTP 400 "unknown provider", which silently stopped discovery.
+const DEFAULT_MODEL = 'gpt-6-pro';
 
 export class CliproxyClient {
   constructor(env = {}, options = {}) {
