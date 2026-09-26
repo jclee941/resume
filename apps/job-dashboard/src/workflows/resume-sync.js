@@ -1,6 +1,6 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 import {
-  getMasterResumeData,
+  getMasterResumeRecord,
   exportFromPlatform,
   calculateDiff,
   syncToPlatform,
@@ -15,13 +15,21 @@ import { sendTelegramNotification, escapeHtml } from '../services/notifications.
  * Export → Diff → Sync → Verify pipeline with rollback capability.
  *
  * @param {Object} params
- * @param {string} params.resumeId - Resume ID to sync
+ * @param {string} [params.resumeId='master'] - Master resume key in JOB_DB `resumes`
+ * @param {string} [params.targetResumeId] - Wanted resume ID (defaults to the stored target)
  * @param {string[]} params.platforms - Target platforms
  * @param {boolean} params.dryRun - Preview changes without applying
  */
 export class ResumeSyncWorkflow extends WorkflowEntrypoint {
   async run(event, step) {
-    const { resumeId, platforms = ['wanted'], dryRun = false, sections = [] } = event.payload;
+    // Cron and queue producers omit resumeId; 'master' is the canonical master key.
+    const {
+      resumeId = 'master',
+      targetResumeId,
+      platforms = ['wanted'],
+      dryRun = false,
+      sections = [],
+    } = event.payload || {};
 
     const sync = {
       id: event.instanceId,
@@ -35,7 +43,7 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
     };
 
     // Step 1: Export current state from master source
-    const masterData = await step.do(
+    const master = await step.do(
       'export-master',
       {
         retries: { limit: 2, delay: '5 seconds' },
@@ -43,13 +51,16 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
       },
       async () => {
         // Master resume data from local JSON (SSoT)
-        const data = await getMasterResumeData(this.env, resumeId);
-        if (!data) {
+        const record = await getMasterResumeRecord(this.env, resumeId);
+        if (!record) {
           throw new Error(`Master resume not found: ${resumeId}`);
         }
-        return data;
+        return record;
       }
     );
+    const masterData = master.data;
+    // Platform APIs address the stored target resume, never the master key.
+    const platformResumeId = targetResumeId || master.targetResumeId;
 
     sync.steps.push({ step: 'export-master', status: 'completed' });
 
@@ -63,7 +74,7 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
           timeout: '2 minutes',
         },
         async () => {
-          return await exportFromPlatform(this.env, platform, resumeId);
+          return await exportFromPlatform(this.env, platform, platformResumeId);
         }
       );
 
@@ -153,7 +164,7 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
           timeout: '5 minutes',
         },
         async () => {
-          return await syncToPlatform(this.env, platform, resumeId, diff);
+          return await syncToPlatform(this.env, platform, platformResumeId, diff);
         }
       );
 
@@ -185,7 +196,7 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
             continue;
           }
 
-          const currentState = await exportFromPlatform(this.env, platform, resumeId);
+          const currentState = await exportFromPlatform(this.env, platform, platformResumeId);
           const verifyDiff = calculateDiff(masterData, currentState, sections);
 
           results[platform] = {

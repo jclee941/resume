@@ -1,5 +1,5 @@
 export {
-  getMasterResumeData,
+  getMasterResumeRecord,
   exportFromPlatform,
   exportFromWanted,
   exportFromLinkedIn,
