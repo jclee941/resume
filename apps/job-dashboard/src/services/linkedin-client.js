@@ -1,17 +1,54 @@
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 
+/**
+ * @typedef {Object} LinkedInSearchParams
+ * @property {string} [keyword]
+ * @property {string} [location]
+ * @property {string} [timeRange]
+ * @property {number} [offset]
+ * @property {number} [experienceLevel]
+ * @property {string} [workType]
+ */
+
+/**
+ * @typedef {Object} RawLinkedInJob
+ * @property {string} id
+ * @property {string} [position]
+ * @property {string} [company]
+ * @property {string} [companyId]
+ * @property {string} [location]
+ * @property {number} [experienceMin]
+ * @property {number} [experienceMax]
+ * @property {string} [salary]
+ * @property {string[]} [techStack]
+ * @property {string} [description]
+ * @property {string} [requirements]
+ * @property {string} [benefits]
+ * @property {string | null} [dueDate]
+ * @property {string | null} [postedDate]
+ * @property {boolean} [isRemote]
+ * @property {string} [employmentType]
+ */
+
 export class LinkedInClient {
+  /**
+   * @param {unknown} [env]
+   */
   constructor(env) {
     this.env = env;
     this.baseUrl = 'https://www.linkedin.com';
   }
 
+  /**
+   * @param {LinkedInSearchParams} params
+   * @returns {string}
+   */
   buildSearchQuery(params) {
     const query = new URLSearchParams({
       keywords: params.keyword || '',
       location: params.location || 'South Korea',
       f_TPR: params.timeRange || 'r604800',
-      start: params.offset || 0,
+      start: String(params.offset || 0),
     });
 
     if (params.experienceLevel) {
@@ -25,6 +62,10 @@ export class LinkedInClient {
     return query.toString();
   }
 
+  /**
+   * @param {number} years
+   * @returns {string}
+   */
   getExperienceLevel(years) {
     if (years <= 2) return '1,2';
     if (years <= 5) return '3';
@@ -32,6 +73,10 @@ export class LinkedInClient {
     return '5,6';
   }
 
+  /**
+   * @param {string} keyword
+   * @param {LinkedInSearchParams} [options]
+   */
   async searchJobs(keyword, options = {}) {
     const params = { keyword, ...options };
     const query = this.buildSearchQuery(params);
@@ -64,18 +109,22 @@ export class LinkedInClient {
       return {
         success: false,
         source: 'linkedin',
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         jobs: [],
       };
     }
   }
 
+  /**
+   * @param {string} html
+   */
   parseSearchResults(html) {
     const jobs = [];
 
     const jobPattern =
       /<div[^>]*class="[^"]*base-card[^"]*"[^>]*data-entity-urn="urn:li:jobPosting:(\d+)"[^>]*>[\s\S]*?<h3[^>]*class="[^"]*base-search-card__title[^"]*"[^>]*>([^<]+)<\/h3>[\s\S]*?<h4[^>]*class="[^"]*base-search-card__subtitle[^"]*"[^>]*>[\s\S]*?<a[^>]*>([^<]+)<\/a>/gi;
 
+    /** @type {RegExpExecArray | null} */
     let match;
     while ((match = jobPattern.exec(html)) !== null) {
       jobs.push(
@@ -91,7 +140,7 @@ export class LinkedInClient {
       /<li[^>]*>[\s\S]*?<a[^>]*href="[^"]*\/jobs\/view\/(\d+)[^"]*"[^>]*>[\s\S]*?<span[^>]*>([^<]+)<\/span>[\s\S]*?<span[^>]*class="[^"]*job-search-card__company-name[^"]*"[^>]*>([^<]+)<\/span>/gi;
 
     while ((match = altPattern.exec(html)) !== null) {
-      const exists = jobs.some((j) => j.sourceId === match[1]);
+      const exists = jobs.some((j) => j.sourceId === /** @type {RegExpExecArray} */ (match)[1]);
       if (!exists) {
         jobs.push(
           this.normalizeJob({
@@ -106,6 +155,9 @@ export class LinkedInClient {
     return jobs;
   }
 
+  /**
+   * @param {string} jobId
+   */
   async getJobDetail(jobId) {
     const url = `${this.baseUrl}/jobs-guest/jobs/api/jobPosting/${jobId}`;
 
@@ -133,11 +185,15 @@ export class LinkedInClient {
       return {
         success: false,
         source: 'linkedin',
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   }
 
+  /**
+   * @param {string} html
+   * @param {string} jobId
+   */
   parseJobDetail(html, jobId) {
     const titleMatch = html.match(
       /<h1[^>]*class="[^"]*top-card-layout__title[^"]*"[^>]*>([^<]+)<\/h1>/i
@@ -165,6 +221,9 @@ export class LinkedInClient {
     };
   }
 
+  /**
+   * @param {string} html
+   */
   stripHtml(html) {
     return html
       .replace(/<[^>]+>/g, ' ')
@@ -172,6 +231,9 @@ export class LinkedInClient {
       .trim();
   }
 
+  /**
+   * @param {RawLinkedInJob} rawJob
+   */
   normalizeJob(rawJob) {
     return {
       id: `linkedin_${rawJob.id}`,

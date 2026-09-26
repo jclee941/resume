@@ -1,5 +1,35 @@
 import { getJobScore } from './pipeline-stages.js';
 
+/**
+ * @typedef {Object} ApprovalStatusResult
+ * @property {string} status
+ * @property {string} [reviewedBy]
+ * @property {{ reason?: string }} [notes]
+ */
+
+/**
+ * @typedef {Object} ApprovalFlowContext
+ * @property {{ reviewThreshold: number, autoApplyThreshold: number }} config
+ * @property {{ isDuplicate: (jobId: string | number) => boolean }} appManager
+ * @property {{ findByJobId: (jobId: string) => Promise<Array<{ status: string }>> }} repository
+ * @property {{ recordApprovalRequest: (applicationId: string) => Promise<unknown>, recordApproval: (applicationId: string, approved: boolean, reviewer: string) => Promise<unknown> }} tracker
+ * @property {{ requestApproval: (job: unknown, score: number) => Promise<unknown>, checkApprovalStatus: (applicationId: string) => Promise<ApprovalStatusResult> }} approvalManager
+ * @property {(job: ApprovalJob, trackedApplication?: import('./pipeline-stages.js').TrackedApplicationRecord | null) => Promise<{ approved: boolean, status: string, reason: string }>} handleApproval
+ */
+
+/**
+ * @typedef {Object} ShouldApplyResult
+ * @property {boolean} apply
+ * @property {string} status
+ * @property {string} reason
+ */
+
+/**
+ * @this {ApprovalFlowContext}
+ * @param {ApprovalJob} job
+ * @param {import('./pipeline-stages.js').TrackedApplicationRecord | null} [trackedApplication]
+ * @returns {Promise<ShouldApplyResult>}
+ */
 export async function shouldApply(job, trackedApplication = null) {
   const score = getJobScore(job);
   const jobId = job.id ?? job.job_id ?? null;
@@ -46,6 +76,18 @@ export async function shouldApply(job, trackedApplication = null) {
   };
 }
 
+/**
+ * @typedef {import('./pipeline-stages.js').StageJob & {
+ *   applicationId?: string;
+ * }} ApprovalJob
+ */
+
+/**
+ * @this {ApprovalFlowContext}
+ * @param {ApprovalJob} job
+ * @param {import('./pipeline-stages.js').TrackedApplicationRecord | null} [trackedApplication]
+ * @returns {Promise<{ approved: boolean, status: string, reason: string }>}
+ */
 export async function handleApproval(job, trackedApplication = null) {
   const score = getJobScore(job);
   if (score < this.config.reviewThreshold || score >= this.config.autoApplyThreshold) {
@@ -101,6 +143,14 @@ export async function handleApproval(job, trackedApplication = null) {
   };
 }
 
+/**
+ * @param {{ shouldApply: (job: ApprovalJob, trackedApplication?: import('./pipeline-stages.js').TrackedApplicationRecord | null) => Promise<ShouldApplyResult> }} autoApplier
+ * @param {ApprovalJob} job
+ * @param {number} score
+ * @param {import('./pipeline-stages.js').TrackedApplicationRecord | null} trackedApplication
+ * @param {import('./pipeline-stages.js').StageState} stageState
+ * @returns {Promise<ShouldApplyResult>}
+ */
 export async function evaluateApplyDecision(
   autoApplier,
   job,

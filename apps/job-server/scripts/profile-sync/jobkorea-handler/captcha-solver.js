@@ -31,13 +31,15 @@ export {
  */
 export async function findCaptchaImageUrl(page) {
   return await page.evaluate(() => {
-    const direct = document.querySelector('img[src*="captcha"]');
+    const direct = /** @type {HTMLImageElement | null} */ (
+      document.querySelector('img[src*="captcha"]')
+    );
     if (direct?.src) return direct.src;
     const gtxt = document.querySelector('#gtxt, input[name="gtxt"]');
     if (gtxt) {
       const container = gtxt.closest('div, td, li, p');
       if (container) {
-        const img = container.querySelector('img');
+        const img = /** @type {HTMLImageElement | null} */ (container.querySelector('img'));
         if (img?.src) return img.src;
       }
     }
@@ -83,7 +85,11 @@ export async function solveJobKoreaCaptcha(page) {
       const text = await callVisionModel(image, model);
       if (text) {
         if (isStrongCaptchaAnswer(text)) {
-          log(`CAPTCHA solved via ${model}: "${text}"`, 'ok', 'jobkorea');
+          /** @type {(msg: string, type?: string, platform?: string | null) => void} */ (log)(
+            `CAPTCHA solved via ${model}: "${text}"`,
+            'ok',
+            'jobkorea'
+          );
           return { text, model };
         }
         fallbackAnswer ??= { text, model };
@@ -96,18 +102,30 @@ export async function solveJobKoreaCaptcha(page) {
       }
       log(`CAPTCHA solver "${model}" returned weak answer: "${text}"`, 'warn', 'jobkorea');
     } catch (err) {
-      errors.push(`${model}: ${err.message}`);
-      log(`CAPTCHA solver "${model}" failed: ${err.message}`, 'warn', 'jobkorea');
+      errors.push(`${model}: ${err instanceof Error ? err.message : String(err)}`);
+      log(
+        `CAPTCHA solver "${model}" failed: ${err instanceof Error ? err.message : String(err)}`,
+        'warn',
+        'jobkorea'
+      );
     }
   }
   if (fallbackAnswer) {
-    log(`CAPTCHA solved via ${fallbackAnswer.model}: "${fallbackAnswer.text}"`, 'ok', 'jobkorea');
+    /** @type {(msg: string, type?: string, platform?: string | null) => void} */ (log)(
+      `CAPTCHA solved via ${fallbackAnswer.model}: "${fallbackAnswer.text}"`,
+      'ok',
+      'jobkorea'
+    );
     return fallbackAnswer;
   }
   log(`All CAPTCHA solvers failed: ${errors.join(' | ')}`, 'error', 'jobkorea');
   return null;
 }
 
+/**
+ * @param {string} text
+ * @returns {boolean}
+ */
 function isStrongCaptchaAnswer(text) {
   return /[0-9]/.test(text);
 }

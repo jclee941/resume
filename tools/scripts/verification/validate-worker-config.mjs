@@ -9,6 +9,16 @@ export { validateWorkerConfiguration };
 const SCANNED_EXTENSIONS = new Set('.cjs .go .js .json .mjs .sh .ts .tsx .yaml .yml'.split(' '));
 const IGNORED_DIRECTORIES = new Set(['.git', '.tmp', 'node_modules', 'third_party', '.worktrees']);
 
+/**
+ * @typedef {Object} ScannedFile
+ * @property {string} path
+ * @property {string} content
+ */
+
+/**
+ * @param {ScannedFile[]} consumers
+ * @returns {void}
+ */
 export function validateWorkerConsumers(consumers) {
   const childPaths = [
     ['apps', 'portfolio', 'wrangler.jsonc'].join('/'),
@@ -26,6 +36,12 @@ export function validateWorkerConsumers(consumers) {
   assert.deepEqual(failures, [], failures.join('\n'));
 }
 
+/**
+ * @param {string} target
+ * @param {string} root
+ * @param {ScannedFile[]} files
+ * @returns {void}
+ */
 function collectFiles(target, root, files) {
   if (!existsSync(target)) return;
   const relative = path.relative(root, target);
@@ -42,6 +58,12 @@ function collectFiles(target, root, files) {
   }
 }
 
+/**
+ * @param {string} target
+ * @param {string} root
+ * @param {string[]} configs
+ * @returns {void}
+ */
 function collectWranglerConfigs(target, root, configs) {
   if (!existsSync(target)) return;
   const relative = path.relative(root, target);
@@ -56,8 +78,13 @@ function collectWranglerConfigs(target, root, configs) {
   if (['wrangler.jsonc', 'wrangler.toml'].includes(path.basename(target))) configs.push(relative);
 }
 
+/**
+ * @param {string} repositoryRoot
+ * @returns {Record<string, unknown>}
+ */
 export function validateWorkerRepository(repositoryRoot) {
   const rootConfig = path.join(repositoryRoot, 'wrangler.jsonc');
+  /** @type {string[]} */
   const configs = [];
   collectWranglerConfigs(repositoryRoot, repositoryRoot, configs);
   assert.deepEqual(
@@ -66,6 +93,7 @@ export function validateWorkerRepository(repositoryRoot) {
     'root wrangler.jsonc must be the only config'
   );
   const inventory = validateWorkerConfiguration(readFileSync(rootConfig, 'utf8'));
+  /** @type {ScannedFile[]} */
   const files = [];
   for (const target of [
     'package.json',

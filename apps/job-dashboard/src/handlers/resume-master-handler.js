@@ -1,6 +1,62 @@
 import { BaseHandler } from './base-handler.js';
 import { normalizeError } from '@resume/shared/errors';
 
+/**
+ * @typedef {{
+ *   personal?: { name?: string | null; email?: string | null };
+ *   careers?: unknown[];
+ *   projects?: unknown[];
+ *   certifications?: unknown[];
+ *   [key: string]: unknown;
+ * }} ResumeData
+ *
+ * @typedef {{
+ *   id: string;
+ *   target_resume_id?: string | null;
+ *   source: string;
+ *   data: string;
+ *   created_at: string;
+ *   updated_at: string;
+ * }} ResumeRow
+ *
+ * @typedef {{
+ *   id: string;
+ *   platforms?: string;
+ *   status: string;
+ *   dry_run?: number | boolean;
+ *   result?: string | null;
+ *   created_at: string;
+ *   updated_at: string;
+ * }} ProfileSyncRow
+ *
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       first(): Promise<ResumeRow | null>;
+ *       all(): Promise<{ results: ProfileSyncRow[] }>;
+ *       run(): Promise<unknown>;
+ *     };
+ *   };
+ * }} ResumeMasterDb
+ *
+ * @typedef {{
+ *   JOB_DB: ResumeMasterDb;
+ *   [key: string]: unknown;
+ * }} ResumeMasterEnv
+ *
+ * @typedef {{
+ *   resumeId?: string;
+ *   targetResumeId?: string | null;
+ *   ssotData?: ResumeData;
+ *   data?: ResumeData;
+ *   source?: string;
+ *   [key: string]: unknown;
+ * }} UploadMasterResumeBody
+ */
+
+/**
+ * @param {ResumeData | null | undefined} data
+ */
 function summarizeResume(data) {
   return {
     name: data?.personal?.name || null,
@@ -11,7 +67,14 @@ function summarizeResume(data) {
   };
 }
 
+/**
+ * @extends {BaseHandler<ResumeMasterEnv>}
+ */
 export class ResumeMasterHandler extends BaseHandler {
+  /**
+   * @param {Request} request
+   * @returns {Promise<Response>}
+   */
   async getMasterResume(request) {
     const url = new URL(request.url);
     const resumeId = url.searchParams.get('resumeId') || 'master';
@@ -49,9 +112,13 @@ export class ResumeMasterHandler extends BaseHandler {
     }
   }
 
+  /**
+   * @param {Request} request
+   * @returns {Promise<Response>}
+   */
   async uploadMasterResume(request) {
     try {
-      const body = await request.json();
+      const body = /** @type {UploadMasterResumeBody} */ (await request.json());
       const resumeId = body.resumeId || 'master';
       const targetResumeId = body.targetResumeId || null;
       const ssotData = body.ssotData || body.data || null;
@@ -97,6 +164,10 @@ export class ResumeMasterHandler extends BaseHandler {
     }
   }
 
+  /**
+   * @param {Request} request
+   * @returns {Promise<Response>}
+   */
   async listResumeSyncHistory(request) {
     const url = new URL(request.url);
     const limit = Math.min(parseInt(url.searchParams.get('limit') || '10', 10) || 10, 50);

@@ -1,12 +1,27 @@
 const { validateNumberValue, validateStringValue } = require('./json-schema-lite-primitives.js');
 const { normalizeDiagnostics } = require('./json-schema-lite-diagnostics.js');
 
+/**
+ * @typedef {import('./json-schema-lite-primitives.js').SchemaObject} SchemaObject
+ * @typedef {import('./json-schema-lite-primitives.js').ValidationError} ValidationError
+ * @typedef {import('./json-schema-lite-diagnostics.js').NormalizedDiagnostic} NormalizedDiagnostic
+ */
+
 class JsonSchemaLiteValidator {
+  /**
+   * @param {SchemaObject} schema
+   */
   constructor(schema) {
     this.schema = schema;
+    /** @type {ValidationError[]} */
     this.errors = [];
   }
 
+  /**
+   * @param {unknown} data
+   * @param {string} [sourceFile]
+   * @returns {{ valid: boolean, errors: NormalizedDiagnostic[] | null }}
+   */
   validate(data, sourceFile) {
     this.errors = [];
     this._validateObject(data, this.schema, '');
@@ -17,6 +32,12 @@ class JsonSchemaLiteValidator {
     };
   }
 
+  /**
+   * @param {unknown} data
+   * @param {SchemaObject} schema
+   * @param {string} path
+   * @returns {void}
+   */
   _validateObject(data, schema, path) {
     if (!this._validateType(data, schema, path || '(root)')) return;
     if (data === null || typeof data !== 'object' || Array.isArray(data)) return;
@@ -47,6 +68,12 @@ class JsonSchemaLiteValidator {
     }
   }
 
+  /**
+   * @param {unknown} data
+   * @param {SchemaObject} schema
+   * @param {string} path
+   * @returns {void}
+   */
   _validateProperty(data, schema, path) {
     if (schema.anyOf) {
       this._validateAnyOf(data, schema, path);
@@ -57,18 +84,33 @@ class JsonSchemaLiteValidator {
       return;
     }
     if (!this._validateType(data, schema, path)) return;
-    if (this._allowsType(schema, 'array')) return this._validateArray(data, schema, path);
+    if (this._allowsType(schema, 'array'))
+      return this._validateArray(/** @type {unknown[]} */ (data), schema, path);
     if (this._allowsType(schema, 'object')) return this._validateObject(data, schema, path);
     if (this._allowsType(schema, 'string')) {
-      validateStringValue(this.errors, data, schema, path);
+      validateStringValue(this.errors, /** @type {string} */ (data), schema, path);
     }
     if (this._allowsType(schema, 'integer') || this._allowsType(schema, 'number')) {
-      validateNumberValue(this.errors, data, schema, path, this._allowsType(schema, 'integer'));
+      validateNumberValue(
+        this.errors,
+        /** @type {number} */ (data),
+        schema,
+        path,
+        this._allowsType(schema, 'integer')
+      );
     }
   }
 
+  /**
+   * @param {unknown} data
+   * @param {SchemaObject} schema
+   * @param {string} path
+   * @returns {void}
+   */
   _validateAnyOf(data, schema, path) {
-    const matched = schema.anyOf.some((candidate) => this._schemaMatches(data, candidate, path));
+    const matched = /** @type {SchemaObject[]} */ (schema.anyOf).some((candidate) =>
+      this._schemaMatches(data, candidate, path)
+    );
     if (!matched) {
       this.errors.push({
         path,
@@ -79,6 +121,12 @@ class JsonSchemaLiteValidator {
     }
   }
 
+  /**
+   * @param {unknown} data
+   * @param {SchemaObject} schema
+   * @param {string} path
+   * @returns {void}
+   */
   _validateNull(data, schema, path) {
     if (!this._allowsType(schema, 'null')) {
       this.errors.push({
@@ -89,6 +137,12 @@ class JsonSchemaLiteValidator {
     }
   }
 
+  /**
+   * @param {unknown[]} data
+   * @param {SchemaObject} schema
+   * @param {string} path
+   * @returns {void}
+   */
   _validateArray(data, schema, path) {
     if (schema.minItems !== undefined && data.length < schema.minItems) {
       this.errors.push({
@@ -105,12 +159,24 @@ class JsonSchemaLiteValidator {
     }
   }
 
+  /**
+   * @param {unknown} data
+   * @param {SchemaObject} schema
+   * @param {string} path
+   * @returns {boolean}
+   */
   _schemaMatches(data, schema, path) {
     const validator = new JsonSchemaLiteValidator(this.schema);
     validator._validateProperty(data, schema, path);
     return validator.errors.length === 0;
   }
 
+  /**
+   * @param {unknown} data
+   * @param {SchemaObject} schema
+   * @param {string} path
+   * @returns {boolean}
+   */
   _validateType(data, schema, path) {
     const expectedTypes = this._types(schema);
     if (expectedTypes.length === 0 || expectedTypes.some((type) => this._matchesType(data, type))) {
@@ -124,16 +190,30 @@ class JsonSchemaLiteValidator {
     return false;
   }
 
+  /**
+   * @param {SchemaObject} schema
+   * @param {string} type
+   * @returns {boolean}
+   */
   _allowsType(schema, type) {
     const types = this._types(schema);
     return types.length === 0 || types.includes(type);
   }
 
+  /**
+   * @param {SchemaObject} schema
+   * @returns {string[]}
+   */
   _types(schema) {
     if (!schema.type) return [];
     return Array.isArray(schema.type) ? schema.type : [schema.type];
   }
 
+  /**
+   * @param {unknown} data
+   * @param {string} type
+   * @returns {boolean}
+   */
   _matchesType(data, type) {
     if (type === 'array') return Array.isArray(data);
     if (type === 'object') return data !== null && typeof data === 'object' && !Array.isArray(data);
@@ -143,6 +223,10 @@ class JsonSchemaLiteValidator {
     return typeof data === type;
   }
 
+  /**
+   * @param {SchemaObject} schema
+   * @returns {string}
+   */
   _formatExpectedTypes(schema) {
     return this._types(schema)
       .map((type) => `'${type}'`)

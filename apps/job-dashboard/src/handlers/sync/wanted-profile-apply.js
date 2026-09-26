@@ -1,3 +1,76 @@
+/**
+ * @typedef {{
+ *   updateCareer(resumeId: string, careerId: unknown, data: unknown): Promise<unknown>;
+ *   deleteProject(resumeId: string, careerId: unknown, projectId: unknown): Promise<unknown>;
+ *   addProject(resumeId: string, careerId: unknown, data: unknown): Promise<unknown>;
+ *   addCareer(resumeId: string, data: unknown): Promise<{ data?: { id?: unknown }; id?: unknown }>;
+ *   deleteCareer(resumeId: string, careerId: unknown): Promise<unknown>;
+ *   updateEducation(resumeId: string, educationId: unknown, data: unknown): Promise<unknown>;
+ *   addEducation(resumeId: string, data: unknown): Promise<unknown>;
+ *   updateActivity(resumeId: string, activityId: unknown, data: unknown): Promise<unknown>;
+ *   addActivity(resumeId: string, data: unknown): Promise<unknown>;
+ *   deleteActivity(resumeId: string, activityId: unknown): Promise<unknown>;
+ *   updateLanguageCert(resumeId: string, langId: unknown, data: unknown): Promise<unknown>;
+ *   addLanguageCert(resumeId: string, data: unknown): Promise<unknown>;
+ *   deleteLanguageCert(resumeId: string, langId: unknown): Promise<unknown>;
+ *   updateProfile(data: { description: string }): Promise<unknown>;
+ *   updateResumeFields(resumeId: string, updates: unknown): Promise<unknown>;
+ *   saveResume(resumeId: string): Promise<unknown>;
+ * }} WantedSyncClient
+ *
+ * @typedef {{
+ *   id?: unknown;
+ *   company?: unknown;
+ *   data?: unknown;
+ *   ssotCareer?: { project?: string; description?: string; [key: string]: unknown };
+ *   existingProjects?: Array<{ id: unknown; [key: string]: unknown }>;
+ * }} CareerUpdateItem
+ *
+ * @typedef {{
+ *   toUpdate: CareerUpdateItem[];
+ *   toAdd: CareerUpdateItem[];
+ *   toDelete: Array<{ id: unknown; company: unknown }>;
+ * }} CareerChanges
+ *
+ * @typedef {{
+ *   toUpdate: Array<{ id: unknown; school: unknown; data: unknown }>;
+ *   toAdd: Array<{ school: unknown; data: unknown }>;
+ * }} EducationChanges
+ *
+ * @typedef {{
+ *   toUpdate: Array<{ id: unknown; title: unknown; data: unknown }>;
+ *   toAdd: Array<{ title: unknown; data: unknown }>;
+ *   toDelete: Array<{ id: unknown; title: unknown }>;
+ * }} ActivityChanges
+ *
+ * @typedef {{
+ *   toUpdate: Array<{ id: unknown; name: unknown; data: unknown }>;
+ *   toAdd: Array<{ name: unknown; data: unknown }>;
+ *   toDelete: Array<{ id: unknown; name: unknown }>;
+ * }} LanguageCertChanges
+ *
+ * @typedef {{
+ *   updated: string[];
+ *   failed: Array<{ section: string; error: string }>;
+ * }} SyncResults
+ *
+ * @typedef {{
+ *   profile: { changed: boolean; current?: unknown; proposed?: unknown };
+ *   resumeFields: { updates: Record<string, unknown>; sections: string[] };
+ *   careers: CareerChanges;
+ *   educations: EducationChanges;
+ *   activities: ActivityChanges;
+ *   languageCerts: LanguageCertChanges;
+ * }} WantedProfileChanges
+ */
+
+/**
+ * @param {WantedSyncClient} client
+ * @param {string} resumeId
+ * @param {CareerChanges} careers
+ * @param {SyncResults} syncResults
+ * @returns {Promise<void>}
+ */
 async function applyCareerUpdates(client, resumeId, careers, syncResults) {
   for (const career of careers.toUpdate) {
     try {
@@ -13,7 +86,10 @@ async function applyCareerUpdates(client, resumeId, careers, syncResults) {
       }
       syncResults.updated.push(`career:${career.company}`);
     } catch (error) {
-      syncResults.failed.push({ section: `career:${career.company}`, error: error.message });
+      syncResults.failed.push({
+        section: `career:${career.company}`,
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -29,7 +105,10 @@ async function applyCareerUpdates(client, resumeId, careers, syncResults) {
       }
       syncResults.updated.push(`career:${career.company}`);
     } catch (error) {
-      syncResults.failed.push({ section: `career:${career.company}`, error: error.message });
+      syncResults.failed.push({
+        section: `career:${career.company}`,
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -40,12 +119,19 @@ async function applyCareerUpdates(client, resumeId, careers, syncResults) {
     } catch (error) {
       syncResults.failed.push({
         section: `career_delete:${career.company}`,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       });
     }
   }
 }
 
+/**
+ * @param {WantedSyncClient} client
+ * @param {string} resumeId
+ * @param {EducationChanges} educations
+ * @param {SyncResults} syncResults
+ * @returns {Promise<void>}
+ */
 async function applyEducationUpdates(client, resumeId, educations, syncResults) {
   for (const education of educations.toUpdate || []) {
     try {
@@ -54,7 +140,7 @@ async function applyEducationUpdates(client, resumeId, educations, syncResults) 
     } catch (error) {
       syncResults.failed.push({
         section: `education_update:${education.school}`,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       });
     }
   }
@@ -66,12 +152,19 @@ async function applyEducationUpdates(client, resumeId, educations, syncResults) 
     } catch (error) {
       syncResults.failed.push({
         section: `education:${education.school}`,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       });
     }
   }
 }
 
+/**
+ * @param {WantedSyncClient} client
+ * @param {string} resumeId
+ * @param {ActivityChanges} activities
+ * @param {SyncResults} syncResults
+ * @returns {Promise<void>}
+ */
 async function applyActivityUpdates(client, resumeId, activities, syncResults) {
   for (const activity of activities.toUpdate || []) {
     try {
@@ -80,7 +173,7 @@ async function applyActivityUpdates(client, resumeId, activities, syncResults) {
     } catch (error) {
       syncResults.failed.push({
         section: `activity_update:${activity.title}`,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       });
     }
   }
@@ -90,7 +183,10 @@ async function applyActivityUpdates(client, resumeId, activities, syncResults) {
       await client.addActivity(resumeId, activity.data);
       syncResults.updated.push(`activity:${activity.title}`);
     } catch (error) {
-      syncResults.failed.push({ section: `activity:${activity.title}`, error: error.message });
+      syncResults.failed.push({
+        section: `activity:${activity.title}`,
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -101,19 +197,29 @@ async function applyActivityUpdates(client, resumeId, activities, syncResults) {
     } catch (error) {
       syncResults.failed.push({
         section: `activity_delete:${activity.title}`,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       });
     }
   }
 }
 
+/**
+ * @param {WantedSyncClient} client
+ * @param {string} resumeId
+ * @param {LanguageCertChanges} languageCerts
+ * @param {SyncResults} syncResults
+ * @returns {Promise<void>}
+ */
 async function applyLanguageCertUpdates(client, resumeId, languageCerts, syncResults) {
   for (const lc of languageCerts?.toUpdate || []) {
     try {
       await client.updateLanguageCert(resumeId, lc.id, lc.data);
       syncResults.updated.push(`lang_updated:${lc.name}`);
     } catch (error) {
-      syncResults.failed.push({ section: `lang_update:${lc.name}`, error: error.message });
+      syncResults.failed.push({
+        section: `lang_update:${lc.name}`,
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -122,7 +228,10 @@ async function applyLanguageCertUpdates(client, resumeId, languageCerts, syncRes
       await client.addLanguageCert(resumeId, lc.data);
       syncResults.updated.push(`lang:${lc.name}`);
     } catch (error) {
-      syncResults.failed.push({ section: `lang:${lc.name}`, error: error.message });
+      syncResults.failed.push({
+        section: `lang:${lc.name}`,
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -131,12 +240,23 @@ async function applyLanguageCertUpdates(client, resumeId, languageCerts, syncRes
       await client.deleteLanguageCert(resumeId, lc.id);
       syncResults.updated.push(`lang_deleted:${lc.name}`);
     } catch (error) {
-      syncResults.failed.push({ section: `lang_delete:${lc.name}`, error: error.message });
+      syncResults.failed.push({
+        section: `lang_delete:${lc.name}`,
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 }
 
+/**
+ * @param {WantedSyncClient} client
+ * @param {string} resumeId
+ * @param {WantedProfileChanges} changes
+ * @param {{ headline: string, [key: string]: unknown }} profileData
+ * @returns {Promise<SyncResults>}
+ */
 export async function applyWantedChanges(client, resumeId, changes, profileData) {
+  /** @type {SyncResults} */
   const syncResults = { updated: [], failed: [] };
 
   if (changes.profile.changed) {
@@ -144,7 +264,10 @@ export async function applyWantedChanges(client, resumeId, changes, profileData)
       await client.updateProfile({ description: profileData.headline });
       syncResults.updated.push('profile_headline');
     } catch (error) {
-      syncResults.failed.push({ section: 'profile_headline', error: error.message });
+      syncResults.failed.push({
+        section: 'profile_headline',
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -153,7 +276,10 @@ export async function applyWantedChanges(client, resumeId, changes, profileData)
       await client.updateResumeFields(resumeId, changes.resumeFields.updates);
       syncResults.updated.push(...changes.resumeFields.sections);
     } catch (error) {
-      syncResults.failed.push({ section: 'resume_fields', error: error.message });
+      syncResults.failed.push({
+        section: 'resume_fields',
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -166,7 +292,10 @@ export async function applyWantedChanges(client, resumeId, changes, profileData)
     await client.saveResume(resumeId);
     syncResults.updated.push('resume_pdf');
   } catch (error) {
-    syncResults.failed.push({ section: 'resume_pdf', error: error.message });
+    syncResults.failed.push({
+      section: 'resume_pdf',
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 
   return syncResults;

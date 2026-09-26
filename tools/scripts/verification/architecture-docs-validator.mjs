@@ -6,20 +6,57 @@ import { validateIndex } from './architecture-docs-index.mjs';
 
 const EXPECTED_IDS = Array.from({ length: 9 }, (_, index) => String(index + 1).padStart(4, '0'));
 
+/**
+ * @typedef {Object} DiagnosticItem
+ * @property {string} code
+ * @property {string} file
+ * @property {string} message
+ */
+
+/**
+ * @typedef {Object} ParsedAdr
+ * @property {string} [id]
+ * @property {string} [status]
+ * @property {string} [rawStatus]
+ * @property {string} file
+ * @property {string} absoluteFile
+ * @property {string} text
+ */
+
+/**
+ * @param {string} code
+ * @param {string} file
+ * @param {string} message
+ * @returns {DiagnosticItem}
+ */
 function diagnostic(code, file, message) {
   return { code, file, message };
 }
 
+/**
+ * @param {string} text
+ * @param {string} name
+ * @returns {string | undefined}
+ */
 function metadataValue(text, name) {
   const escaped = name.replaceAll('*', '\\*');
   const match = text.match(new RegExp(`^(?:- ${escaped}:|\\*\\*${escaped}:\\*\\*)\\s*(.+)$`, 'mi'));
   return match?.[1]?.replace(/^\*\*(.*)\*\*$/, '$1').trim();
 }
 
+/**
+ * @param {string} text
+ * @returns {string[]}
+ */
 function markdownLinks(text) {
   return [...text.matchAll(/!?\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g)].map((match) => match[1]);
 }
 
+/**
+ * @param {string} file
+ * @param {string} target
+ * @returns {string | null | undefined}
+ */
 function relativeLinkTarget(file, target) {
   if (/^(?:[a-z]+:|#)/i.test(target)) return undefined;
   try {
@@ -31,6 +68,12 @@ function relativeLinkTarget(file, target) {
   }
 }
 
+/**
+ * @param {string} root
+ * @param {string} file
+ * @param {DiagnosticItem[]} diagnostics
+ * @returns {ParsedAdr}
+ */
 function parseAdr(root, file, diagnostics) {
   const text = readFileSync(file, 'utf8');
   const repoFile = relative(root, file);
@@ -58,6 +101,12 @@ function parseAdr(root, file, diagnostics) {
   return { id, status, rawStatus, file: repoFile, absoluteFile: file, text };
 }
 
+/**
+ * @param {string} root
+ * @param {string[]} files
+ * @param {DiagnosticItem[]} diagnostics
+ * @returns {void}
+ */
 function validateLinks(root, files, diagnostics) {
   for (const file of files) {
     const repoFile = relative(root, file);
@@ -71,6 +120,11 @@ function validateLinks(root, files, diagnostics) {
   }
 }
 
+/**
+ * @param {ParsedAdr[]} adrs
+ * @param {DiagnosticItem[]} diagnostics
+ * @returns {void}
+ */
 function validateIds(adrs, diagnostics) {
   const counts = new Map();
   for (const { id } of adrs) if (id) counts.set(id, (counts.get(id) ?? 0) + 1);
@@ -87,7 +141,12 @@ function validateIds(adrs, diagnostics) {
       diagnostics.push(diagnostic('nonsequential-id', 'docs/adr', `Unexpected ADR ID ${id}`));
 }
 
+/**
+ * @param {string} root
+ * @param {string} mode
+ */
 export function validateArchitectureDocs(root, mode) {
+  /** @type {DiagnosticItem[]} */
   const diagnostics = [];
   const adrDir = join(root, 'docs/adr');
   const adrFiles = readdirSync(adrDir)
@@ -98,7 +157,11 @@ export function validateArchitectureDocs(root, mode) {
   const governanceFiles = [join(root, 'docs/README.md'), ...adrFiles];
   validateIds(adrs, diagnostics);
   validateAdrSupersession(adrs, adrDir, diagnostics);
-  validateIndex(root, adrs, diagnostics);
+  validateIndex(
+    root,
+    /** @type {import('./architecture-docs-index.mjs').AdrEntry[]} */ (adrs),
+    diagnostics
+  );
   validateLinks(root, governanceFiles, diagnostics);
   const currentFiles = mode === 'full' ? CURRENT_DOCS.map((file) => join(root, file)) : [];
   if (mode === 'full') {

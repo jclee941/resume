@@ -8,16 +8,29 @@ const EXPERTISE_LABELS = {
   ja: { expertise: '専門分野', competencies: '中核スキル' },
 };
 
+/**
+ * @param {unknown} [locale]
+ * @returns {'ko' | 'en' | 'ja'}
+ */
 function normalizeExpertiseLocale(locale) {
-  return Object.prototype.hasOwnProperty.call(EXPERTISE_LABELS, locale) ? locale : 'en';
+  return Object.prototype.hasOwnProperty.call(EXPERTISE_LABELS, /** @type {string} */ (locale))
+    ? /** @type {'ko' | 'en' | 'ja'} */ (locale)
+    : 'en';
 }
+
+/**
+ * @typedef {Object} EvidenceData
+ * @property {string[]} [achievements]
+ * @property {string[]} [expertise]
+ * @property {string[]} [coreCompetencies]
+ */
 
 /**
  * Generate an "achievements" evidence section surfacing the real SSoT
  * `achievements[]` array that was previously unsurfaced on the live
  * portfolio. Rendered as clean evidence cards.
  *
- * @param {Object} data - data.json (uses `achievements[]` of strings).
+ * @param {EvidenceData | null | undefined} data - data.json (uses `achievements[]` of strings).
  * @returns {string} HTML for the achievements list, or '' if nothing to show.
  */
 function generateAchievementsSection(data) {
@@ -41,8 +54,8 @@ function generateAchievementsSection(data) {
  * SSoT `summary.expertise` (keyword tags) and `summary.coreCompetencies`
  * (experience bullets) that were previously unsurfaced on the live portfolio.
  *
- * @param {Object} data - data.json (uses `expertise[]`, `coreCompetencies[]`).
- * @param {'ko'|'en'|'ja'} [locale='en'] - Locale for generated section headings.
+ * @param {EvidenceData | null | undefined} data - data.json (uses `expertise[]`, `coreCompetencies[]`).
+ * @param {string} [locale='en'] - Locale for generated section headings.
  * @returns {string} HTML, or '' if nothing to show.
  */
 function generateExpertiseSection(data, locale = 'en') {

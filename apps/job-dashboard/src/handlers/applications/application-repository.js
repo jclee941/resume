@@ -1,11 +1,65 @@
 import { recordAtsApplication } from './ats-application-recorder.js';
 import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
 
+/**
+ * @typedef {{
+ *   applicationId: string;
+ *   status: string;
+ *   previousStatus?: string | null;
+ *   note?: string;
+ *   timestamp: string;
+ * }} ApplicationTimelineEvent
+ *
+ * @typedef {{
+ *   status?: string;
+ *   source?: string;
+ *   company?: string;
+ *   sortBy?: string;
+ *   sortOrder?: string;
+ *   limit?: number | string;
+ *   offset?: number | string;
+ * }} FindAllOptions
+ *
+ * @typedef {{
+ *   status: string;
+ *   updatedAt: string;
+ *   appliedAt?: string | null;
+ * }} UpdateStatusOptions
+ *
+ * @typedef {{
+ *   notes?: string;
+ *   priority?: number;
+ *   resumeId?: string;
+ *   [key: string]: unknown;
+ * }} UpdateFields
+ *
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       first<T = Record<string, unknown>>(colName?: string): Promise<T | null>;
+ *       all<T = Record<string, unknown>>(): Promise<{ results: T[]; success?: boolean; meta?: unknown }>;
+ *       run(): Promise<{ success?: boolean; meta?: { changes?: number; [key: string]: unknown } }>;
+ *       raw<T = unknown>(): Promise<T[]>;
+ *     };
+ *     first<T = Record<string, unknown>>(colName?: string): Promise<T | null>;
+ *     all<T = Record<string, unknown>>(): Promise<{ results: T[]; success?: boolean; meta?: unknown }>;
+ *     run(): Promise<{ success?: boolean; meta?: { changes?: number; [key: string]: unknown } }>;
+ *     raw<T = unknown>(): Promise<T[]>;
+ *   };
+ * }} ApplicationDb
+ */
+
 export class ApplicationRepository {
+  /**
+   * @param {ApplicationDb} db
+   */
   constructor(db) {
     this.db = db;
   }
 
+  /**
+   * @param {Record<string, unknown>} app
+   */
   async insert(app) {
     await this.db
       .prepare(
@@ -37,10 +91,16 @@ export class ApplicationRepository {
     return this.findById(app.id);
   }
 
+  /**
+   * @param {import('./ats-application-recorder.js').AtsApplicationInput} app
+   */
   async recordAtsApplication(app) {
     return recordAtsApplication(this, app);
   }
 
+  /**
+   * @param {ApplicationTimelineEvent} event
+   */
   async insertTimeline(event) {
     await this.db
       .prepare(
@@ -59,10 +119,16 @@ export class ApplicationRepository {
       .run();
   }
 
+  /**
+   * @param {unknown} id
+   */
   async findById(id) {
     return this.db.prepare('SELECT * FROM applications WHERE id = ?').bind(id).first();
   }
 
+  /**
+   * @param {string} applicationId
+   */
   async findTimelineByAppId(applicationId) {
     const result = await this.db
       .prepare(
@@ -73,6 +139,9 @@ export class ApplicationRepository {
     return result.results || [];
   }
 
+  /**
+   * @param {FindAllOptions} options
+   */
   async findAll({
     status,
     source,
@@ -84,6 +153,7 @@ export class ApplicationRepository {
   }) {
     const VALID_SORT_COLUMNS = ['created_at', 'updated_at', 'company', 'status', 'match_score'];
     let sql = 'SELECT * FROM applications WHERE 1=1';
+    /** @type {Array<string | number>} */
     const params = [];
 
     if (status) {
@@ -102,7 +172,7 @@ export class ApplicationRepository {
     const sortCol = VALID_SORT_COLUMNS.includes(sortBy) ? sortBy : 'created_at';
     const order = sortOrder.toLowerCase() === 'asc' ? 'ASC' : 'DESC';
     sql += ` ORDER BY ${sortCol} ${order} LIMIT ? OFFSET ?`;
-    params.push(parseInt(limit, 10), parseInt(offset, 10));
+    params.push(parseInt(String(limit), 10), parseInt(String(offset), 10));
 
     const result = await this.db
       .prepare(sql)
@@ -116,6 +186,10 @@ export class ApplicationRepository {
     return result?.total || 0;
   }
 
+  /**
+   * @param {string} id
+   * @param {UpdateStatusOptions} options
+   */
   async updateStatus(id, { status, updatedAt, appliedAt }) {
     let sql = 'UPDATE applications SET status = ?, updated_at = ?';
     const params = [status, updatedAt];
@@ -135,6 +209,11 @@ export class ApplicationRepository {
     return this.findById(id);
   }
 
+  /**
+   * @param {string} id
+   * @param {UpdateFields} fields
+   * @param {string} updatedAt
+   */
   async update(id, fields, updatedAt) {
     const updates = [];
     const params = [];
@@ -166,6 +245,9 @@ export class ApplicationRepository {
     return this.findById(id);
   }
 
+  /**
+   * @param {unknown} id
+   */
   async delete(id) {
     await this.db
       .prepare('DELETE FROM application_timeline WHERE application_id = ?')
@@ -174,6 +256,9 @@ export class ApplicationRepository {
     await this.db.prepare('DELETE FROM applications WHERE id = ?').bind(id).run();
   }
 
+  /**
+   * @param {string} cutoffDate
+   */
   async cleanupExpired(cutoffDate) {
     const result = await this.db
       .prepare(

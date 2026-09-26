@@ -2,6 +2,10 @@ import { CONFIG, PLATFORMS } from './config.js';
 import { log } from './logging.js';
 import { isSessionExpired, loadSession, serializeCookies } from './session-persistence.js';
 
+/**
+ * @param {import('./session-persistence.js').StoredSession | null | undefined} session
+ * @returns {Promise<boolean>}
+ */
 export async function syncToWorker(session) {
   if (!session?.cookies && !session?.cookieString) return false;
 
@@ -21,6 +25,7 @@ export async function syncToWorker(session) {
       }),
     });
 
+    /** @type {{ success?: boolean; error?: string }} */
     const result = await response.json();
 
     if (response.ok && result.success) {
@@ -31,7 +36,11 @@ export async function syncToWorker(session) {
     log(`Sync failed: ${result.error || response.status}`, 'error', session.platform);
     return false;
   } catch (error) {
-    log(`Sync error: ${error.message}`, 'error', session.platform);
+    log(
+      `Sync error: ${error instanceof Error ? error.message : String(error)}`,
+      'error',
+      session.platform
+    );
     return false;
   }
 }
@@ -55,11 +64,19 @@ export async function syncAllSessions() {
 
       await syncToWorker(session);
     } catch (error) {
-      log(`Failed to load session: ${error.message}`, 'error', platformKey);
+      log(
+        `Failed to load session: ${error instanceof Error ? error.message : String(error)}`,
+        'error',
+        platformKey
+      );
     }
   }
 }
 
+/**
+ * @param {Array<import('./session-persistence.js').SessionCookie> | string} cookies
+ * @returns {string}
+ */
 function normalizeSessionCookies(cookies) {
   return Array.isArray(cookies) ? serializeCookies(cookies) : cookies;
 }

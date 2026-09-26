@@ -1,19 +1,60 @@
 import { EventEmitter } from 'events';
 
 /**
+ * @typedef {Object} PerformanceMark
+ * @property {string} name
+ * @property {number} startTime
+ * @property {Record<string, unknown>} [metadata]
+ */
+
+/**
+ * @typedef {Object} PerformanceMeasure
+ * @property {string} name
+ * @property {number} startTime
+ * @property {number} endTime
+ * @property {number} duration
+ * @property {Record<string, unknown>} [metadata]
+ */
+
+/**
+ * @typedef {Object} PerformanceLogger
+ * @property {(message: string) => void} warn
+ * @property {(...args: unknown[]) => void} [error]
+ * @property {(...args: unknown[]) => void} [info]
+ */
+
+/**
+ * @typedef {Object} PerformanceMetricsOptions
+ * @property {PerformanceLogger} [logger]
+ * @property {boolean} [enabled]
+ */
+
+/**
  * Performance metrics core collector
  */
 export class PerformanceMetricsCore extends EventEmitter {
+  /** @type {Map<string, PerformanceMark>} */
   _marks;
+  /** @type {PerformanceMeasure[]} */
   _measures;
+  /** @type {Map<string, number>} */
   _counters;
+  /** @type {Map<string, number>} */
   _gauges;
+  /** @type {Map<string, number[]>} */
   _histograms;
+  /** @type {number} */
   _startTime;
+  /** @type {PerformanceLogger} */
   _logger;
+  /** @type {boolean} */
   _enabled;
+  /** @type {NodeJS.Timeout | number | null} */
   _samplingInterval;
 
+  /**
+   * @param {PerformanceMetricsOptions} [options]
+   */
   constructor(options = {}) {
     super();
     this._marks = new Map();
@@ -35,6 +76,10 @@ export class PerformanceMetricsCore extends EventEmitter {
     this._enabled = false;
   }
 
+  /**
+   * @param {string} name
+   * @param {Record<string, unknown>} [metadata]
+   */
   mark(name, metadata = {}) {
     if (!this._enabled) return;
 
@@ -48,6 +93,11 @@ export class PerformanceMetricsCore extends EventEmitter {
     this.emit('mark', mark);
   }
 
+  /**
+   * @param {string} name
+   * @param {Record<string, unknown>} [metadata]
+   * @returns {number}
+   */
   measure(name, metadata = {}) {
     if (!this._enabled) return 0;
 
@@ -79,6 +129,14 @@ export class PerformanceMetricsCore extends EventEmitter {
     return duration;
   }
 
+  /**
+   * @template T
+   * @param {string} name
+   * @param {(...args: unknown[]) => T | Promise<T>} fn
+   * @param {unknown} [context]
+   * @param {...unknown} args
+   * @returns {Promise<T>}
+   */
   async timeAsync(name, fn, context, ...args) {
     this.mark(name);
     try {
@@ -86,11 +144,18 @@ export class PerformanceMetricsCore extends EventEmitter {
       this.measure(name, { success: true });
       return result;
     } catch (error) {
-      this.measure(name, { success: false, error: error.message });
+      this.measure(name, {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      });
       throw error;
     }
   }
 
+  /**
+   * @param {string} name
+   * @param {number} [value]
+   */
   increment(name, value = 1) {
     if (!this._enabled) return;
 
@@ -98,11 +163,19 @@ export class PerformanceMetricsCore extends EventEmitter {
     this._counters.set(name, current + value);
   }
 
+  /**
+   * @param {string} name
+   * @param {number} value
+   */
   gauge(name, value) {
     if (!this._enabled) return;
     this._gauges.set(name, value);
   }
 
+  /**
+   * @param {string} name
+   * @param {number} value
+   */
   histogram(name, value) {
     if (!this._enabled) return;
 
@@ -110,7 +183,7 @@ export class PerformanceMetricsCore extends EventEmitter {
       this._histograms.set(name, []);
     }
 
-    const values = this._histograms.get(name);
+    const values = /** @type {number[]} */ (this._histograms.get(name));
     values.push(value);
 
     if (values.length > 1000) {

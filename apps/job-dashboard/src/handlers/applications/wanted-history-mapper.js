@@ -1,5 +1,9 @@
 import { APPLICATION_STATUS, VALID_STATUSES } from './statuses.js';
 
+/**
+ * @param {...unknown} values
+ * @returns {string | null}
+ */
 function firstString(...values) {
   for (const value of values) {
     if (typeof value === 'string' && value.trim().length > 0) {
@@ -12,6 +16,10 @@ function firstString(...values) {
   return null;
 }
 
+/**
+ * @param {unknown} status
+ * @returns {string}
+ */
 function mapWantedStatus(status) {
   const normalized = String(status || '').toLowerCase();
   if (VALID_STATUSES.includes(normalized)) {
@@ -29,6 +37,54 @@ function mapWantedStatus(status) {
   return APPLICATION_STATUS.APPLIED;
 }
 
+/**
+ * @typedef {{
+ *   applications?: Array<Record<string, unknown>>;
+ *   data?: { applications?: Array<Record<string, unknown>> } | Array<Record<string, unknown>>;
+ *   [key: string]: unknown;
+ * }} WantedPayloadObject
+ *
+ * @typedef {WantedPayloadObject | Array<Record<string, unknown>> | null | undefined} WantedPayload
+ *
+ * @typedef {{
+ *   id?: string | number;
+ *   application_id?: string | number;
+ *   applicationId?: string | number;
+ *   job_id?: string | number;
+ *   jobId?: string | number;
+ *   wd_id?: string | number;
+ *   position?: string;
+ *   title?: string;
+ *   company_name?: string;
+ *   company?: { name?: string };
+ *   applied_at?: string;
+ *   appliedAt?: string;
+ *   created_at?: string;
+ *   createdAt?: string;
+ *   updated_at?: string;
+ *   updatedAt?: string;
+ *   status_updated_at?: string;
+ *   statusUpdatedAt?: string;
+ *   source_url?: string;
+ *   sourceUrl?: string;
+ *   status?: string;
+ *   resume_id?: string | number;
+ *   resumeId?: string | number;
+ *   job?: {
+ *     id?: string | number;
+ *     position?: string;
+ *     title?: string;
+ *     company?: { name?: string };
+ *     url?: string;
+ *   };
+ *   [key: string]: unknown;
+ * }} WantedItem
+ */
+
+/**
+ * @param {WantedPayload} payload
+ * @returns {Array<Record<string, unknown>>}
+ */
 export function extractWantedApplications(payload) {
   if (Array.isArray(payload)) return payload;
   if (Array.isArray(payload?.applications)) return payload.applications;
@@ -37,6 +93,10 @@ export function extractWantedApplications(payload) {
   return [];
 }
 
+/**
+ * @param {WantedItem} item
+ * @param {string} [now]
+ */
 export function normalizeWantedApplication(item, now = new Date().toISOString()) {
   const wantedApplicationId = firstString(item.id, item.application_id, item.applicationId);
   const wantedJobId = firstString(item.job?.id, item.job_id, item.jobId, item.wd_id);

@@ -36,18 +36,30 @@ export class BaseProfileSync {
     }
   }
 
+  /**
+   * @returns {Promise<unknown>}
+   */
   async init() {
     throw new Error('init() must be implemented by subclass');
   }
 
+  /**
+   * @returns {Promise<boolean>}
+   */
   async checkLogin() {
     throw new Error('checkLogin() must be implemented by subclass');
   }
 
+  /**
+   * @returns {Promise<unknown>}
+   */
   async waitForManualLogin() {
     throw new Error('waitForManualLogin() must be implemented by subclass');
   }
 
+  /**
+   * @returns {Promise<unknown>}
+   */
   async getProfile() {
     throw new Error('getProfile() must be implemented by subclass');
   }
@@ -55,6 +67,7 @@ export class BaseProfileSync {
   /**
    * @param {unknown} _sourceData
    * @param {Record<string, unknown>} [_options={}]
+   * @returns {Promise<unknown>}
    */
   async syncProfile(_sourceData, _options = {}) {
     throw new Error('syncProfile() must be implemented by subclass');

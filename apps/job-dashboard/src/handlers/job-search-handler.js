@@ -3,8 +3,37 @@ import { normalizeError } from '@resume/shared/errors';
 import { canonicalizeJobUrl } from '../job-url-canonicalization.js';
 
 /**
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       run(): Promise<{ meta?: { changes?: number } }>;
+ *     };
+ *   };
+ * }} JobSearchDb
+ *
+ * @typedef {{
+ *   DB?: JobSearchDb;
+ *   [key: string]: unknown;
+ * }} JobSearchEnv
+ *
+ * @typedef {{
+ *   id?: string | number;
+ *   company?: { name?: string };
+ *   company_name?: string;
+ *   position?: { title?: string };
+ *   title?: string;
+ *   address?: { full_location?: string; location?: string };
+ *   location?: string | null;
+ *   matching_score?: number | string;
+ *   matchingScore?: number | string;
+ *   [key: string]: unknown;
+ * }} WantedJob
+ */
+
+/**
  * Handler for job search operations.
  * Fetches jobs from Wanted API and stores them in D1.
+ * @extends {BaseHandler<JobSearchEnv>}
  */
 export class JobSearchHandler extends BaseHandler {
   /**
@@ -37,8 +66,8 @@ export class JobSearchHandler extends BaseHandler {
 
     try {
       const now = new Date().toISOString();
-      const maxTotal = Math.max(1, Math.min(parseInt(limit) || 30, 100));
-      const perKeyword = Math.max(1, Math.min(parseInt(maxPerKeyword) || 10, 25));
+      const maxTotal = Math.max(1, Math.min(parseInt(String(limit)) || 30, 100));
+      const perKeyword = Math.max(1, Math.min(parseInt(String(maxPerKeyword)) || 10, 25));
 
       const jobs = [];
       const seen = new Set();
@@ -72,7 +101,7 @@ export class JobSearchHandler extends BaseHandler {
         const appId = `wanted_${jobId}`;
         const sourceUrl = `https://www.wanted.co.kr/wd/${jobId}`;
         const matchScoreRaw = job.matching_score ?? job.matchingScore ?? 0;
-        const matchScore = Math.max(0, Math.min(100, parseInt(matchScoreRaw) || 0));
+        const matchScore = Math.max(0, Math.min(100, parseInt(String(matchScoreRaw)) || 0));
         const notes = `keyword=${item.keyword}; minScore=${minScore}`;
 
         const result = await db
@@ -130,10 +159,8 @@ export class JobSearchHandler extends BaseHandler {
   /**
    * Fetch jobs from Wanted API
    * @param {string} keyword - Search keyword
-   * @param {Object} options - Options
-   * @param {number} options.limit - Max results
-   * @param {number} options.offset - Offset
-   * @returns {Promise<Array>}
+   * @param {{ limit?: number, offset?: number }} [options] - Options
+   * @returns {Promise<Array<WantedJob>>}
    */
   async fetchWantedJobs(keyword, { limit = 10, offset = 0 } = {}) {
     const queryParams = new URLSearchParams({

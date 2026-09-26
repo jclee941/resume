@@ -1,5 +1,28 @@
 import { toIsoDate } from './tracker-normalizers.js';
 
+/**
+ * @typedef {Object} D1Client
+ * @property {(sql: string, params?: unknown[]) => Promise<Array<Record<string, unknown>>>} query
+ */
+
+/**
+ * @typedef {Object} TrackerRepository
+ * @property {() => Promise<Record<string, unknown>>} getStats
+ * @property {D1Client} d1Client
+ */
+
+/**
+ * @typedef {Object} TrackerAnalyticsContext
+ * @property {TrackerRepository} repository
+ * @property {boolean} enableAnalytics
+ * @property {(timeRange?: unknown) => { from: string, to: string }} normalizeTimeRange
+ * @property {(sql: string, params?: unknown[]) => Promise<Record<string, unknown> | null>} queryOne
+ */
+
+/**
+ * @param {TrackerAnalyticsContext} context
+ * @param {unknown} [timeRange]
+ */
 export async function getStats(
   { repository, enableAnalytics, normalizeTimeRange, queryOne },
   timeRange = {}
@@ -31,6 +54,10 @@ export async function getStats(
   };
 }
 
+/**
+ * @param {Pick<TrackerAnalyticsContext, 'enableAnalytics' | 'queryOne'>} context
+ * @param {Date | string} [date]
+ */
 export async function getDailyStats({ enableAnalytics, queryOne }, date = new Date()) {
   if (!enableAnalytics) {
     return { enabled: false };
@@ -59,6 +86,9 @@ export async function getDailyStats({ enableAnalytics, queryOne }, date = new Da
   };
 }
 
+/**
+ * @param {Pick<TrackerAnalyticsContext, 'repository' | 'enableAnalytics'>} context
+ */
 export async function getWeeklyStats({ repository, enableAnalytics }) {
   if (!enableAnalytics) {
     return { enabled: false };
@@ -86,6 +116,9 @@ export async function getWeeklyStats({ repository, enableAnalytics }) {
   }));
 }
 
+/**
+ * @param {Pick<TrackerAnalyticsContext, 'enableAnalytics' | 'queryOne'>} context
+ */
 export async function getSuccessRate({ enableAnalytics, queryOne }) {
   if (!enableAnalytics) {
     return { enabled: false };
@@ -110,6 +143,9 @@ export async function getSuccessRate({ enableAnalytics, queryOne }) {
   };
 }
 
+/**
+ * @param {Pick<TrackerAnalyticsContext, 'enableAnalytics' | 'queryOne'>} context
+ */
 export async function getAverageMatchScore({ enableAnalytics, queryOne }) {
   if (!enableAnalytics) {
     return { enabled: false };
@@ -126,6 +162,10 @@ export async function getAverageMatchScore({ enableAnalytics, queryOne }) {
   return Number(row?.average || 0);
 }
 
+/**
+ * @param {Pick<TrackerAnalyticsContext, 'repository' | 'enableAnalytics'>} context
+ * @param {number | string} [limit]
+ */
 export async function getTopCompanies({ repository, enableAnalytics }, limit = 10) {
   if (!enableAnalytics) {
     return { enabled: false };
@@ -148,6 +188,9 @@ export async function getTopCompanies({ repository, enableAnalytics }, limit = 1
   }));
 }
 
+/**
+ * @param {Pick<TrackerAnalyticsContext, 'repository' | 'enableAnalytics'>} context
+ */
 export async function getPlatformBreakdown({ repository, enableAnalytics }) {
   if (!enableAnalytics) {
     return { enabled: false };

@@ -7,6 +7,8 @@
 /** @typedef {import('@resume/types').ApplicationResult} ApplicationResult */
 /** @typedef {import('@resume/types').ApplicationManagerPort} ApplicationManagerPort */
 /** @typedef {import('@resume/types').ApplicationServiceDependencies} ApplicationServiceDependencies */
+/** @typedef {import('@resume/types').Application & { notes?: string, priority?: string | number, resumeId?: string }} ApplicationRecord */
+/** @typedef {ApplicationResult & { limit?: number, offset?: number }} ApplicationListResult */
 
 export class ApplicationService {
   /** @type {ApplicationManagerPort} */
@@ -25,7 +27,7 @@ export class ApplicationService {
   /**
    * List applications with filters
    * @param {ListOptions} options
-   * @returns {ApplicationResult}
+   * @returns {ApplicationListResult}
    */
   list(options = {}) {
     const {
@@ -45,8 +47,8 @@ export class ApplicationService {
       company,
       sortBy,
       sortOrder,
-      limit: parseInt(limit, 10),
-      offset: parseInt(offset, 10),
+      limit: parseInt(String(limit), 10),
+      offset: parseInt(String(offset), 10),
       fromDate,
     });
 
@@ -54,8 +56,8 @@ export class ApplicationService {
       success: true,
       applications: apps,
       total: apps.length,
-      limit: parseInt(limit, 10),
-      offset: parseInt(offset, 10),
+      limit: parseInt(String(limit), 10),
+      offset: parseInt(String(offset), 10),
     };
   }
 
@@ -90,11 +92,11 @@ export class ApplicationService {
   /**
    * Update application metadata
    * @param {string} id
-   * @param {Object} updates - { notes, priority, resumeId }
+   * @param {{ notes?: string, priority?: string | number, resumeId?: string }} updates - { notes, priority, resumeId }
    * @returns {ApplicationResult}
    */
   update(id, updates) {
-    const app = this.#manager.getApplication(id);
+    const app = /** @type {ApplicationRecord | null} */ (this.#manager.getApplication(id));
     if (!app) {
       return {
         success: false,
@@ -121,7 +123,7 @@ export class ApplicationService {
    * @returns {ApplicationResult}
    */
   updateStatus(id, status, note) {
-    const result = this.#manager.updateStatus(id, status, note);
+    const result = /** @type {ApplicationResult} */ (this.#manager.updateStatus(id, status, note));
     return {
       ...result,
       statusCode: result.success ? 200 : 400,
@@ -134,7 +136,7 @@ export class ApplicationService {
    * @returns {ApplicationResult}
    */
   delete(id) {
-    const result = this.#manager.deleteApplication(id);
+    const result = /** @type {ApplicationResult} */ (this.#manager.deleteApplication(id));
     return {
       ...result,
       statusCode: result.success ? 200 : 404,

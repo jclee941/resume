@@ -161,7 +161,9 @@ async function defaultHasExistingPhoto(page) {
       if (document.querySelector(selectors.dropped)) return true;
       const img = document.querySelector(selectors.image);
       if (img && img.getAttribute('src')) return true;
-      const hiddenFlag = document.querySelector(selectors.hiddenFlag);
+      const hiddenFlag = /** @type {HTMLInputElement | null} */ (
+        document.querySelector(selectors.hiddenFlag)
+      );
       if (hiddenFlag && hiddenFlag.value === 'True') return true;
       return false;
     }, EXISTING_PHOTO_SELECTORS);
@@ -170,14 +172,21 @@ async function defaultHasExistingPhoto(page) {
   }
 }
 
+/**
+ * @param {string} photoPath
+ * @param {string} timestamp
+ * @returns {Error & { failLoud: boolean }}
+ */
 function buildPhotoUploadError(photoPath, timestamp) {
-  const error = new Error(
-    'JobKorea profile photo upload failed — the change-photo popup did not close ' +
-      'cleanly. Check the image meets JobKorea requirements (min 150x210px; ' +
-      `gif/jpg/jpeg/png only) and that the 사진변경 popup flow is reachable (path=${photoPath}, timestamp=${timestamp})`
+  const error = /** @type {Error & { failLoud?: boolean }} */ (
+    new Error(
+      'JobKorea profile photo upload failed — the change-photo popup did not close ' +
+        'cleanly. Check the image meets JobKorea requirements (min 150x210px; ' +
+        `gif/jpg/jpeg/png only) and that the 사진변경 popup flow is reachable (path=${photoPath}, timestamp=${timestamp})`
+    )
   );
   error.failLoud = true;
-  return error;
+  return /** @type {Error & { failLoud: boolean }} */ (error);
 }
 
 /**

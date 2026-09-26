@@ -21,14 +21,15 @@ export default class BrowserHandler {
    */
   constructor(platformKey) {
     this.platformKey = platformKey;
+    /** @type {import('./constants.js').PlatformConfig} */
     this.config = PLATFORMS[platformKey];
   }
 
   /**
    * Extract current profile data from platform page.
    * Override in subclasses for platform-specific extraction.
-   * @param {import('playwright').Page} page - Playwright page
-   * @returns {Promise<Object|null>} Profile data or null if failed
+   * @param {import('playwright').Page} _page - Playwright page
+   * @returns {Promise<Record<string, string> | null>} Profile data or null if failed
    */
   async extractProfile(_page) {
     throw new Error(`extractProfile() must be overridden by ${this.platformKey} handler`);
@@ -37,7 +38,7 @@ export default class BrowserHandler {
   /**
    * Get current profile from the platform
    * @param {import('playwright').Page} page - Playwright page
-   * @returns {Promise<Object|null>} Profile data or null
+   * @returns {Promise<Record<string, string> | null>} Profile data or null
    */
   async getCurrentProfile(page) {
     try {
@@ -54,7 +55,11 @@ export default class BrowserHandler {
       log(`Current profile: ${JSON.stringify(profile)}`, 'info', this.platformKey);
       return profile;
     } catch (error) {
-      log(`Failed to get profile: ${error.message}`, 'error', this.platformKey);
+      log(
+        `Failed to get profile: ${error instanceof Error ? error.message : String(error)}`,
+        'error',
+        this.platformKey
+      );
       return null;
     }
   }
@@ -77,7 +82,9 @@ export default class BrowserHandler {
       for (const change of changes) {
         log(`Applying: ${change.field} = ${change.to}`, 'info', this.platformKey);
 
-        const selector = this.config.selectors[change.field];
+        const selector = /** @type {Record<string, string>} */ (this.config.selectors)[
+          change.field
+        ];
         if (!selector) {
           log(`No selector for field: ${change.field}`, 'warn', this.platformKey);
           continue;
@@ -107,15 +114,19 @@ export default class BrowserHandler {
 
       return true;
     } catch (error) {
-      log(`Failed to apply changes: ${error.message}`, 'error', this.platformKey);
+      log(
+        `Failed to apply changes: ${error instanceof Error ? error.message : String(error)}`,
+        'error',
+        this.platformKey
+      );
       return false;
     }
   }
 
   /**
    * Sync SSOT data to this platform via browser automation
-   * @param {Object} ssot - Resume data from SSOT
-   * @returns {Object} Result with {success, changes, dryRun?}
+   * @param {import('./constants.js').SsotResume} ssot - Resume data from SSOT
+   * @returns {Promise<{ success: boolean, changes: Array<{ field: string, from: string, to: string }>, dryRun?: boolean, error?: string }>} Result with {success, changes, dryRun?}
    */
   async sync(ssot) {
     const userDataDir = path.join(CONFIG.USER_DATA_DIR, this.platformKey);
@@ -145,7 +156,9 @@ export default class BrowserHandler {
         return { success: false, changes: [] };
       }
 
-      const target = this.config.mapData(ssot);
+      const target = /** @type {Record<string, string>} */ (
+        /** @type {NonNullable<typeof this.config.mapData>} */ (this.config.mapData)(ssot)
+      );
       const changes = computeDiff(current, target);
 
       if (changes.length === 0) {
@@ -168,9 +181,10 @@ export default class BrowserHandler {
       await browser.close();
       return { success: true, changes, dryRun: true };
     } catch (error) {
-      log(`Sync failed: ${error.message}`, 'error', this.platformKey);
+      const msg = error instanceof Error ? error.message : String(error);
+      log(`Sync failed: ${msg}`, 'error', this.platformKey);
       await browser.close();
-      return { success: false, changes: [], error: error.message };
+      return { success: false, changes: [], error: msg };
     }
   }
 }

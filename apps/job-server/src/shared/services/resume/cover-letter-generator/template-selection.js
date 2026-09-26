@@ -6,6 +6,18 @@ import {
   parseYears,
 } from './text-analysis.js';
 
+/**
+ * @param {string} name
+ * @param {unknown} company
+ * @param {unknown} position
+ * @param {number} years
+ * @param {string} domain
+ * @param {string} role
+ * @param {string[]} matchedSkills
+ * @param {string[]} achievements
+ * @param {string} portfolio
+ * @returns {string}
+ */
 export function buildKoreanCoverLetter(
   name,
   company,
@@ -47,6 +59,18 @@ export function buildKoreanCoverLetter(
     .join('\n');
 }
 
+/**
+ * @param {string} name
+ * @param {unknown} company
+ * @param {unknown} position
+ * @param {number} years
+ * @param {string} domain
+ * @param {string} _role
+ * @param {string[]} matchedSkills
+ * @param {string[]} achievements
+ * @param {string} portfolio
+ * @returns {string}
+ */
 export function buildEnglishCoverLetter(
   name,
   company,
@@ -85,6 +109,25 @@ export function buildEnglishCoverLetter(
     .join('\n');
 }
 
+/**
+ * @typedef {import('./text-analysis.js').TextAnalysisResumeData & {
+ *   personal?: { name?: string; portfolio?: string };
+ *   summary?: { totalExperience?: string | number };
+ * }} TemplateResumeData
+ */
+
+/**
+ * @typedef {import('./text-analysis.js').TextAnalysisJobPosting & {
+ *   company?: { name?: string; [key: string]: unknown } | null;
+ * }} TemplateJobPosting
+ */
+
+/**
+ * @param {TemplateResumeData} resumeData
+ * @param {TemplateJobPosting} jobPosting
+ * @param {{ language?: string }} [options]
+ * @returns {string}
+ */
 export function buildTemplateFallback(resumeData, jobPosting, options = {}) {
   const language = options.language === 'ko' ? 'ko' : 'en';
   const matchedSkills = getMatchedSkills(resumeData, jobPosting);

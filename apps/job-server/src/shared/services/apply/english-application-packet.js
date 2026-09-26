@@ -1,5 +1,49 @@
 import { toSafeString } from './cover-letter-normalization.js';
 
+/**
+ * @typedef {Object} EnglishPacketMetadata
+ * @property {string} name
+ * @property {string} language
+ * @property {string} audience
+ * @property {string[]} targetRoles
+ * @property {string} sourcePolicy
+ * @property {string[]} [locationPreferences]
+ * @property {string[]} [workingPreferences]
+ */
+
+/**
+ * @typedef {Object} EnglishPersonalData
+ * @property {string} name
+ * @property {string} email
+ * @property {string} phone
+ */
+
+/**
+ * @typedef {Object} EnglishSummaryData
+ * @property {string} headline
+ * @property {string} profile
+ * @property {string[]} [roleFit]
+ */
+
+/**
+ * @typedef {Object} EnglishProjectData
+ * @property {string} [name]
+ * @property {string} [description]
+ * @property {Record<string, unknown>} [extra]
+ */
+
+/**
+ * @typedef {Object} EnglishPacketData
+ * @property {EnglishPacketMetadata} packet
+ * @property {EnglishPersonalData} personal
+ * @property {EnglishSummaryData} summary
+ * @property {unknown[]} careers
+ * @property {EnglishProjectData[]} projects
+ * @property {unknown} skills
+ * @property {unknown[]} certifications
+ * @property {Record<string, unknown>} [extra]
+ */
+
 export const FOREIGN_COMPANY_PACKET_PATH =
   'packages/data/resumes/applications/foreign-company/foreign_company_security_sre_packet.json';
 
@@ -44,6 +88,9 @@ const QUANTIFIED_CLAIM_PATTERNS = [
   new RegExp(`\\b${METRIC_TERM}\\b[^.:\n;]{0,80}\\b${RATIO_QUANTITY}\\b`, 'i'),
 ];
 
+/**
+ * @param {EnglishPacketData} data
+ */
 export function selectEnglishApplicationPacket(data) {
   validateEnglishPacketData(data);
   return {
@@ -77,6 +124,9 @@ export function selectEnglishApplicationPacket(data) {
   };
 }
 
+/**
+ * @param {EnglishPacketData} data
+ */
 function validateEnglishPacketData(data) {
   requireObject(data, 'root');
   requirePresent(data, REQUIRED_TOP_KEYS, 'root');
@@ -96,12 +146,19 @@ function validateEnglishPacketData(data) {
   }
 }
 
+/**
+ * @param {Record<string, unknown>} data
+ * @param {string[]} fields
+ */
 function requireArrayFields(data, fields) {
   for (const field of fields) {
     if (!Array.isArray(data[field])) throw new Error(`missing required packet fields: ${field}`);
   }
 }
 
+/**
+ * @param {EnglishPacketData} data
+ */
 function requireCoverLetterInterpolatedText(data) {
   requireNonEmptyStringArrayField(data.packet, 'targetRoles', 'packet');
   requireOptionalStringArrayField(data.summary, 'roleFit', 'summary');
@@ -118,6 +175,11 @@ function requireCoverLetterInterpolatedText(data) {
   }
 }
 
+/**
+ * @param {Record<string, unknown> | null | undefined} source
+ * @param {string} field
+ * @param {string} label
+ */
 function requireNonEmptyStringArrayField(source, field, label) {
   const value = source?.[field];
   if (!Array.isArray(value) || value.length === 0 || hasBlankOrNonStringEntry(value)) {
@@ -125,6 +187,11 @@ function requireNonEmptyStringArrayField(source, field, label) {
   }
 }
 
+/**
+ * @param {Record<string, unknown> | null | undefined} source
+ * @param {string} field
+ * @param {string} label
+ */
 function requireOptionalStringArrayField(source, field, label) {
   const value = source?.[field];
   if (value === undefined || value === null) return;
@@ -133,16 +200,28 @@ function requireOptionalStringArrayField(source, field, label) {
   }
 }
 
+/**
+ * @param {unknown[]} value
+ */
 function hasBlankOrNonStringEntry(value) {
   return value.some((entry) => typeof entry !== 'string' || !entry.trim());
 }
 
+/**
+ * @param {unknown} value
+ * @param {string} label
+ */
 function requireObject(value, label) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     throw new Error(`missing required packet fields: ${label}`);
   }
 }
 
+/**
+ * @param {Record<string, unknown> | null | undefined} source
+ * @param {string[]} fields
+ * @param {string} label
+ */
 function requirePresent(source, fields, label) {
   const missing = fields.filter(
     (field) => source?.[field] === undefined || source?.[field] === null
@@ -152,6 +231,11 @@ function requirePresent(source, fields, label) {
   }
 }
 
+/**
+ * @param {Record<string, unknown> | null | undefined} source
+ * @param {string[]} fields
+ * @param {string} label
+ */
 function requireFields(source, fields, label) {
   const missing = fields.filter((field) => {
     const value = source?.[field];
@@ -162,6 +246,11 @@ function requireFields(source, fields, label) {
   }
 }
 
+/**
+ * @param {unknown} value
+ * @param {string} [key]
+ * @returns {string[]}
+ */
 function collectClaimText(value, key = '') {
   if (typeof value === 'string') return CLAIM_TEXT_KEYS.has(key) ? [value] : [];
   if (Array.isArray(value)) return value.flatMap((entry) => collectClaimText(entry, key));
@@ -169,10 +258,17 @@ function collectClaimText(value, key = '') {
   return Object.entries(value).flatMap(([childKey, child]) => collectClaimText(child, childKey));
 }
 
+/**
+ * @param {string[]} texts
+ */
 function findQuantifiedClaim(texts) {
   return texts.find((text) => QUANTIFIED_CLAIM_PATTERNS.some((pattern) => pattern.test(text)));
 }
 
+/**
+ * @param {EnglishPacketData} data
+ * @returns {string}
+ */
 function buildPacketCoverLetter(data) {
   const roles = data.packet.targetRoles.join(', ');
   const focus = data.summary.roleFit?.slice(0, 2).join(' ');

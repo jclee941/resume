@@ -1,3 +1,25 @@
+/**
+ * @typedef {Object} WebhookEnv
+ * @property {string} [WEBHOOK_SECRET]
+ * @property {{ get(key: string): Promise<string | null>, put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void> }} [NONCE_KV]
+ */
+
+/**
+ * @typedef {Object} WebhookResult
+ * @property {boolean} ok
+ * @property {number} [status]
+ * @property {string} [error]
+ */
+
+/**
+ * @typedef {{ [key: string]: string | WebhookResult | undefined, t?: string, v1?: string, error?: WebhookResult }} SignatureParts
+ */
+
+/**
+ * @param {Request} request
+ * @param {WebhookEnv} env
+ * @returns {Promise<WebhookResult>}
+ */
 export async function verifyWebhookSignature(request, env) {
   if (!env?.WEBHOOK_SECRET) {
     return { ok: false, status: 503, error: 'Webhook not configured' };
@@ -26,12 +48,17 @@ export async function verifyWebhookSignature(request, env) {
     return { ok: false, status: 403, error: 'Invalid signature' };
   }
 
-  const nonceResult = await recordNonce(parts, env);
+  const nonceResult = await recordNonce(/** @type {{ t: string, v1: string }} */ (parts), env);
   if (!nonceResult.ok) return nonceResult;
   return { ok: true };
 }
 
+/**
+ * @param {string} signature
+ * @returns {SignatureParts}
+ */
 function parseSignatureParts(signature) {
+  /** @type {SignatureParts} */
   const parts = {};
   for (const part of signature.split(',')) {
     const trimmed = part.trim();
@@ -45,10 +72,19 @@ function parseSignatureParts(signature) {
   return parts;
 }
 
+/**
+ * @param {string} error
+ * @returns {WebhookResult}
+ */
 function malformed(error) {
   return { ok: false, status: 403, error };
 }
 
+/**
+ * @param {string} payload
+ * @param {string} secret
+ * @returns {Promise<string>}
+ */
 async function signPayload(payload, secret) {
   const encoder = new TextEncoder();
   const key = await crypto.subtle.importKey(
@@ -64,6 +100,11 @@ async function signPayload(payload, secret) {
     .join('');
 }
 
+/**
+ * @param {string} a
+ * @param {string} b
+ * @returns {boolean}
+ */
 function sameLengthConstantTime(a, b) {
   if (a.length !== b.length) return false;
   let mismatch = 0;
@@ -71,6 +112,11 @@ function sameLengthConstantTime(a, b) {
   return mismatch === 0;
 }
 
+/**
+ * @param {{ t: string, v1: string }} parts
+ * @param {WebhookEnv} env
+ * @returns {Promise<WebhookResult>}
+ */
 async function recordNonce(parts, env) {
   if (!env.NONCE_KV) return { ok: true };
   const nonceKey = `webhook:nonce:${parts.t}:${parts.v1.slice(0, 16)}`;

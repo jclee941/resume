@@ -13,6 +13,19 @@ import { basename, dirname, join } from 'path';
 
 import { mergeEquivalentProposals, updateProposalStatus } from './proposal-provenance.js';
 
+/**
+ * @typedef {import('./proposal-provenance.js').ProvenanceProposal & { filePath: string }} ProposalWithFilePath
+ */
+
+/**
+ * @param {{
+ *   proposal: ProposalWithFilePath;
+ *   targetDir: string;
+ *   status: string;
+ *   rename?: (oldPath: string, newPath: string) => void;
+ * }} options
+ * @returns {string}
+ */
 export function publishReviewedProposal({ proposal, targetDir, status, rename = renameSync }) {
   if (!proposal.filePath) throw new Error('proposal file path is required');
   if (!existsSync(targetDir)) mkdirSync(targetDir, { recursive: true });
@@ -25,14 +38,17 @@ export function publishReviewedProposal({ proposal, targetDir, status, rename = 
   let hasDestinationBackup = false;
 
   try {
-    const updated = { ...updateProposalStatus(proposal, status), reviewedAt: new Date().toISOString() };
-    delete updated.filePath;
+    const updated = {
+      ...updateProposalStatus(proposal, status),
+      reviewedAt: new Date().toISOString(),
+    };
+    delete (/** @type {{ filePath?: string }} */ (updated).filePath);
     writeFileSync(temporaryPath, `${JSON.stringify(updated, null, 2)}\n`, { flag: 'wx' });
 
     try {
       linkSync(temporaryPath, destinationPath);
     } catch (error) {
-      if (error?.code !== 'EEXIST') throw error;
+      if (/** @type {NodeJS.ErrnoException} */ (error)?.code !== 'EEXIST') throw error;
       const existing = JSON.parse(readFileSync(destinationPath, 'utf8'));
       const merged =
         existing.id === updated.id && existing.status === status
@@ -50,14 +66,24 @@ export function publishReviewedProposal({ proposal, targetDir, status, rename = 
     try {
       rename(proposal.filePath, pendingBackupPath);
     } catch (error) {
-      rollbackDestination(destinationPath, destinationBackupPath, hasDestinationBackup, error);
+      rollbackDestination(
+        destinationPath,
+        destinationBackupPath,
+        hasDestinationBackup,
+        /** @type {Error} */ (error)
+      );
     }
 
     try {
       unlinkSync(pendingBackupPath);
     } catch (error) {
-      restorePending(pendingBackupPath, proposal.filePath, error);
-      rollbackDestination(destinationPath, destinationBackupPath, hasDestinationBackup, error);
+      restorePending(pendingBackupPath, proposal.filePath, /** @type {Error} */ (error));
+      rollbackDestination(
+        destinationPath,
+        destinationBackupPath,
+        hasDestinationBackup,
+        /** @type {Error} */ (error)
+      );
     }
 
     if (hasDestinationBackup) unlinkSync(destinationBackupPath);
@@ -67,23 +93,37 @@ export function publishReviewedProposal({ proposal, targetDir, status, rename = 
   }
 }
 
+/**
+ * @param {string} destinationPath
+ * @param {string} backupPath
+ * @param {boolean} hasBackup
+ * @param {Error} cause
+ */
 function rollbackDestination(destinationPath, backupPath, hasBackup, cause) {
   try {
     unlinkSync(destinationPath);
     if (hasBackup) renameSync(backupPath, destinationPath);
   } catch (rollbackError) {
-    throw new Error(`${cause.message}; restore review destination: ${rollbackError.message}`, {
+    const rollbackMsg =
+      rollbackError instanceof Error ? rollbackError.message : String(rollbackError);
+    throw new Error(`${cause.message}; restore review destination: ${rollbackMsg}`, {
       cause: rollbackError,
     });
   }
   throw cause;
 }
 
+/**
+ * @param {string} backupPath
+ * @param {string} pendingPath
+ * @param {Error} cause
+ */
 function restorePending(backupPath, pendingPath, cause) {
   try {
     renameSync(backupPath, pendingPath);
   } catch (restoreError) {
-    throw new Error(`${cause.message}; restore pending proposal: ${restoreError.message}`, {
+    const restoreMsg = restoreError instanceof Error ? restoreError.message : String(restoreError);
+    throw new Error(`${cause.message}; restore pending proposal: ${restoreMsg}`, {
       cause: restoreError,
     });
   }

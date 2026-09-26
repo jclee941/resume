@@ -22,9 +22,11 @@ export function getEditUrl() {
   const profileUrl = PLATFORMS.jobkorea?.profileUrl || '';
   const match = profileUrl.match(/[?&]rNo=(\d+)/i);
   if (!match) {
-    const error = new Error(
-      `Cannot extract rNo from PLATFORMS.jobkorea.profileUrl ("${profileUrl}"). ` +
-        'Set profileUrl to https://www.jobkorea.co.kr/User/Resume/View?rNo=XXXXX'
+    const error = /** @type {Error & { failLoud?: boolean }} */ (
+      new Error(
+        `Cannot extract rNo from PLATFORMS.jobkorea.profileUrl ("${profileUrl}"). ` +
+          'Set profileUrl to https://www.jobkorea.co.kr/User/Resume/View?rNo=XXXXX'
+      )
     );
     error.failLoud = true;
     throw error;
@@ -32,6 +34,11 @@ export function getEditUrl() {
   return `https://www.jobkorea.co.kr/User/Resume/Edit?RNo=${match[1]}`;
 }
 
+/**
+ * @param {string} name
+ * @param {unknown} value
+ * @returns {string}
+ */
 function normalizeJobKoreaValue(name, value) {
   const text = String(value ?? '')
     .replace(/\r\n/g, '\n')
@@ -41,7 +48,19 @@ function normalizeJobKoreaValue(name, value) {
   return text;
 }
 
+/**
+ * @typedef {{ name: string; value?: unknown }} FormField
+ * @typedef {{ field: string; from: string; to: string }} FieldChange
+ */
+
+/**
+ * @param {FormField[] | null | undefined} currentFields
+ * @param {FormField[] | null | undefined} targetFields
+ * @param {(name: string) => string} describeField
+ * @returns {FieldChange[]}
+ */
 export function computeChangesForJobKorea(currentFields, targetFields, describeField) {
+  /** @type {Map<string, string>} */
   const currentByName = new Map();
   for (const field of currentFields || []) {
     if (!currentByName.has(field.name)) {
@@ -49,6 +68,7 @@ export function computeChangesForJobKorea(currentFields, targetFields, describeF
     }
   }
 
+  /** @type {FieldChange[]} */
   const changes = [];
   for (const field of targetFields || []) {
     const isKeyField = KEY_FIELD_PATTERNS.some((pattern) => pattern.test(field.name));

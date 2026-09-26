@@ -2,6 +2,13 @@ import { BaseHandler } from './base-handler.js';
 import { normalizeError } from '@resume/shared/errors';
 
 /**
+ * @typedef {Object} WantedResumeSummary
+ * @property {string | number} id
+ * @property {string} title
+ * @property {string} [updated_at]
+ */
+
+/**
  * Handler for test/debug operations.
  * Provides diagnostic endpoints for testing API integrations.
  */
@@ -9,7 +16,7 @@ export class TestHandler extends BaseHandler {
   /**
    * Test endpoint for Chaos API resume integration
    * GET /api/test/chaos-resumes
-   * @param {Request} request
+   * @param {Request} _request
    * @returns {Promise<Response>}
    */
   async testChaosResumes(_request) {
@@ -54,7 +61,7 @@ export class TestHandler extends BaseHandler {
 
       // Direct fetch worked - return the data directly without WantedClient
       const debugData = JSON.parse(debugBody);
-      const resumes = debugData.data || [];
+      const resumes = /** @type {WantedResumeSummary[]} */ (debugData.data || []);
 
       return this.jsonResponse({
         success: true,

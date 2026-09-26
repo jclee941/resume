@@ -1,5 +1,57 @@
 import { SKILL_CATEGORIES } from './skill-categories.js';
 
+/**
+ * @typedef {Object} SkillCategoryConfig
+ * @property {string[]} keywords
+ * @property {number} weight
+ */
+
+/**
+ * @typedef {Object} ScoringConfig
+ * @property {Record<string, SkillCategoryConfig>} skillCategories
+ * @property {string[]} preferredLocations
+ * @property {string[]} topCompanies
+ * @property {number} skillKeywordScore
+ * @property {number} skillCategoryMaxScore
+ * @property {number} experienceMaxScore
+ * @property {number} experiencePartialScore
+ * @property {number} experienceMaxToleranceYears
+ * @property {number} experienceMinToleranceYears
+ * @property {number} locationMaxScore
+ * @property {number} bonusMaxScore
+ * @property {number} financeBonusScore
+ * @property {number} automationBonusScore
+ * @property {number} topCompanyBonusScore
+ */
+
+/**
+ * @typedef {Object} ScoringJob
+ * @property {string} [position]
+ * @property {string} [description]
+ * @property {string} [requirements]
+ * @property {string} [techStack]
+ * @property {number} [experienceMin]
+ * @property {number} [experienceMax]
+ * @property {number} [annual_from]
+ * @property {number} [annual_to]
+ * @property {string} [location]
+ * @property {string} [company]
+ */
+
+/**
+ * @typedef {Object} SkillMatch
+ * @property {string} category
+ * @property {string} keyword
+ */
+
+/**
+ * @typedef {Object} MatchDetails
+ * @property {SkillMatch[]} skillMatches
+ * @property {boolean} experienceMatch
+ * @property {boolean} locationMatch
+ * @property {string[]} bonusPoints
+ */
+
 export const DEFAULT_SCORING_CONFIG = Object.freeze({
   skillCategories: SKILL_CATEGORIES,
   preferredLocations: ['서울', 'seoul', '판교', 'pangyo', '성남'],
@@ -30,6 +82,10 @@ export const DEFAULT_SCORING_CONFIG = Object.freeze({
   topCompanyBonusScore: 2,
 });
 
+/**
+ * @param {Partial<ScoringConfig>} [overrides]
+ * @returns {ScoringConfig}
+ */
 export function createScoringConfig(overrides = {}) {
   return {
     ...DEFAULT_SCORING_CONFIG,
@@ -40,10 +96,21 @@ export function createScoringConfig(overrides = {}) {
   };
 }
 
+/**
+ * @param {ScoringJob} job
+ * @returns {string}
+ */
 function buildJobText(job) {
   return `${job.position || ''} ${job.description || ''} ${job.requirements || ''} ${job.techStack || ''}`.toLowerCase();
 }
 
+/**
+ * @param {string} jobText
+ * @param {Iterable<[string, SkillCategoryConfig]>} resumeSkills
+ * @param {MatchDetails} matchDetails
+ * @param {ScoringConfig} config
+ * @returns {{ score: number, maxScore: number }}
+ */
 function scoreSkills(jobText, resumeSkills, matchDetails, config) {
   let score = 0;
   let maxScore = 0;
@@ -71,6 +138,13 @@ function scoreSkills(jobText, resumeSkills, matchDetails, config) {
   return { score, maxScore };
 }
 
+/**
+ * @param {ScoringJob} job
+ * @param {number} resumeExperience
+ * @param {MatchDetails} matchDetails
+ * @param {ScoringConfig} config
+ * @returns {{ score: number, maxScore: number }}
+ */
 function scoreExperience(job, resumeExperience, matchDetails, config) {
   const jobExpMin = job.experienceMin || job.annual_from || 0;
   const jobExpMax = job.experienceMax || job.annual_to || 99;
@@ -89,6 +163,12 @@ function scoreExperience(job, resumeExperience, matchDetails, config) {
   return { score: 0, maxScore: config.experienceMaxScore };
 }
 
+/**
+ * @param {ScoringJob} job
+ * @param {MatchDetails} matchDetails
+ * @param {ScoringConfig} config
+ * @returns {{ score: number, maxScore: number }}
+ */
 function scoreLocation(job, matchDetails, config) {
   const jobLocation = (job.location || '').toLowerCase();
   if (config.preferredLocations.some((loc) => jobLocation.includes(loc))) {
@@ -99,6 +179,13 @@ function scoreLocation(job, matchDetails, config) {
   return { score: 0, maxScore: config.locationMaxScore };
 }
 
+/**
+ * @param {ScoringJob} job
+ * @param {string} jobText
+ * @param {MatchDetails} matchDetails
+ * @param {ScoringConfig} config
+ * @returns {{ score: number, maxScore: number }}
+ */
 function scoreBonus(job, jobText, matchDetails, config) {
   let score = 0;
 
@@ -120,6 +207,12 @@ function scoreBonus(job, jobText, matchDetails, config) {
   return { score, maxScore: config.bonusMaxScore };
 }
 
+/**
+ * @param {ScoringJob} job
+ * @param {Iterable<[string, SkillCategoryConfig]>} resumeSkills
+ * @param {number} resumeExperience
+ * @param {Partial<ScoringConfig> & { scoringConfig?: Partial<ScoringConfig> }} [options]
+ */
 export function calculateMatchScore(job, resumeSkills, resumeExperience, options = {}) {
   const config = createScoringConfig(options.scoringConfig || options);
   let score = 0;

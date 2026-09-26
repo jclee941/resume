@@ -1,5 +1,62 @@
 import { getEscalationLevel } from './evaluation.js';
 
+/**
+ * @typedef {Object} HealthEvaluatedService
+ * @property {string} [url]
+ * @property {number} [status]
+ * @property {number} latencyMs
+ * @property {boolean} healthy
+ */
+
+/**
+ * @typedef {Object} HealthEvaluatedBinding
+ * @property {boolean} healthy
+ * @property {number} latencyMs
+ */
+
+/**
+ * @typedef {Object} HealthEvaluationData
+ * @property {string} overallHealth
+ * @property {HealthEvaluatedService[]} services
+ * @property {{ d1: HealthEvaluatedBinding, kv: HealthEvaluatedBinding }} bindings
+ */
+
+/**
+ * @typedef {Object} HealthD1PreparedStatement
+ * @property {(...params: unknown[]) => unknown} bind
+ * @property {() => Promise<{ cnt?: number } | null>} first
+ */
+
+/**
+ * @typedef {Object} HealthD1Database
+ * @property {(query: string) => HealthD1PreparedStatement} prepare
+ * @property {(batch: unknown[]) => Promise<unknown>} batch
+ */
+
+/**
+ * @typedef {Object} HealthWorkflowEnv
+ * @property {HealthD1Database} JOB_DB
+ */
+
+/**
+ * @typedef {Object} HealthWorkflowInstance
+ * @property {HealthWorkflowEnv} env
+ * @property {() => Promise<number>} getConsecutiveFailures
+ */
+
+/**
+ * @typedef {Object} MetricBatchOptions
+ * @property {HealthD1PreparedStatement} healthStmt
+ * @property {HealthD1PreparedStatement} detailStmt
+ * @property {HealthEvaluationData} healthEvaluation
+ * @property {number} consecutiveFailures
+ * @property {string} escalationLevel
+ */
+
+/**
+ * @param {HealthWorkflowInstance} workflow
+ * @param {HealthEvaluationData} healthEvaluation
+ */
 export async function logHealthMetrics(workflow, healthEvaluation) {
   const healthStmt = workflow.env.JOB_DB.prepare(`
     INSERT INTO health_checks (service_url, status, latency_ms, checked_at)
@@ -29,6 +86,9 @@ export async function logHealthMetrics(workflow, healthEvaluation) {
   return { logged: batch.length, consecutiveFailures, escalationLevel };
 }
 
+/**
+ * @param {MetricBatchOptions} options
+ */
 function buildHealthMetricBatch({
   healthStmt,
   detailStmt,
@@ -69,6 +129,9 @@ function buildHealthMetricBatch({
   ];
 }
 
+/**
+ * @param {HealthWorkflowEnv} env
+ */
 export async function getConsecutiveFailures(env) {
   try {
     const row = await env.JOB_DB.prepare(
