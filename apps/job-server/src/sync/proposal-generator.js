@@ -1,5 +1,13 @@
 import { randomUUID } from 'crypto';
-import { existsSync, linkSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'fs';
+import {
+  existsSync,
+  linkSync,
+  mkdirSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  writeFileSync,
+} from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -11,10 +19,29 @@ export const PROJECT_ROOT = join(__dirname, '..', '..', '..', '..');
 export const RESUME_DATA_PATH = join(PROJECT_ROOT, 'packages/data/resumes/master/resume_data.json');
 export const PROPOSALS_DIR = join(PROJECT_ROOT, 'packages/data/proposals');
 
+/**
+ * @typedef {Object} ProposalGeneratorOptions
+ * @property {Record<string, unknown>} [resumeData]
+ * @property {string} [resumePath]
+ * @property {string} [timestamp]
+ * @property {string} [proposalsDir]
+ * @property {string} [crawler]
+ * @property {string} [platform]
+ */
+
+/**
+ * @typedef {unknown[] | { jobs?: unknown[], data?: { jobs?: unknown[] } } | null | undefined} CrawlerResultInput
+ */
+
 export function loadResumeData(path = RESUME_DATA_PATH) {
   return JSON.parse(readFileSync(path, 'utf8'));
 }
 
+/**
+ * @param {CrawlerResultInput} crawlerResult
+ * @param {ProposalGeneratorOptions} [options]
+ * @returns {import('./proposal-provenance.js').ProvenanceProposal[]}
+ */
 export function generateProposalsFromCrawlerResult(crawlerResult, options = {}) {
   const resume = options.resumeData || loadResumeData(options.resumePath || RESUME_DATA_PATH);
   const jobs = normalizeJobs(crawlerResult);
@@ -38,6 +65,11 @@ export function generateProposalsFromCrawlerResult(crawlerResult, options = {}) 
   return [...proposalsById.values()];
 }
 
+/**
+ * @param {import('./proposal-provenance.js').ProvenanceProposal[]} proposals
+ * @param {ProposalGeneratorOptions} [options]
+ * @returns {string[]}
+ */
 export function writeProposalFiles(proposals, options = {}) {
   const targetDir = options.proposalsDir || PROPOSALS_DIR;
   ensureProposalDirectories(targetDir);
@@ -58,6 +90,10 @@ export function ensureProposalDirectories(baseDir = PROPOSALS_DIR) {
   }
 }
 
+/**
+ * @param {CrawlerResultInput} [input]
+ * @returns {unknown[]}
+ */
 function normalizeJobs(input) {
   if (Array.isArray(input)) return input;
   if (Array.isArray(input?.jobs)) return input.jobs;
@@ -65,6 +101,11 @@ function normalizeJobs(input) {
   return [];
 }
 
+/**
+ * @param {string} targetDir
+ * @param {import('./proposal-provenance.js').ProvenanceProposal} proposal
+ * @returns {string}
+ */
 function publishProposalFile(targetDir, proposal) {
   const filePath = join(targetDir, `${proposal.id}.proposal.json`);
   const temporaryPath = join(targetDir, `.${proposal.id}.${randomUUID()}.tmp`);
@@ -73,7 +114,7 @@ function publishProposalFile(targetDir, proposal) {
     linkSync(temporaryPath, filePath);
     return filePath;
   } catch (error) {
-    if (error?.code !== 'EEXIST') throw error;
+    if (/** @type {{ code?: string }} */ (error)?.code !== 'EEXIST') throw error;
     const existing = JSON.parse(readFileSync(filePath, 'utf8'));
     const merged = mergeEquivalentProposals(existing, proposal);
     if (!merged) {
@@ -86,6 +127,10 @@ function publishProposalFile(targetDir, proposal) {
   }
 }
 
+/**
+ * @param {string} filePath
+ * @param {import('./proposal-provenance.js').ProvenanceProposal} proposal
+ */
 function writeProposalFileAtomically(filePath, proposal) {
   const temporaryPath = `${filePath}.${randomUUID()}.tmp`;
   try {

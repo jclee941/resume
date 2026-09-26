@@ -5,13 +5,20 @@
  * @module html-transformer
  */
 
-const { minify } = require('html-minifier-terser');
+const { minify } =
+  /** @type {(id: string) => { minify: (html: string, options?: Record<string, unknown>) => Promise<string> }} */ (
+    require
+  )('html-minifier-terser');
 const { buildJapaneseTemplate } = require('./japanese-template/index.js');
 
 const EXTERNAL_SRI = {
   GOOGLE_GSI: 'sha384-Li3+JwrJUjnnr4ZvOP9SRczNCfPkOLWRVCzUTrD2TOhgQLBfRKs5Q5/lxh2tWguw',
 };
 
+/**
+ * @param {string} html
+ * @returns {string}
+ */
 function applyExternalSri(html) {
   return html.replace(
     /<script\s+src="https:\/\/accounts\.google\.com\/gsi\/client"\s+async\s+defer><\/script>/g,
@@ -20,22 +27,34 @@ function applyExternalSri(html) {
 }
 
 /**
+ * @typedef {Object} PlaceholderOptions
+ * @property {string} cssContent - Bundled CSS.
+ * @property {string} [heroContentHtml] - Hero section.
+ * @property {string} [resumeDescriptionHtml] - Resume description.
+ * @property {string} resumeCardsHtml - Resume cards.
+ * @property {string} projectCardsHtml - Project cards.
+ * @property {string} [projectSchemasHtml] - Project JSON-LD schemas.
+ * @property {string} infrastructureCardsHtml - Infrastructure cards.
+ * @property {string} [certCardsHtml] - Certification cards.
+ * @property {string} skillsHtml - Skills list.
+ * @property {string} contactGridHtml - Contact grid.
+ * @property {string} [resumePdfUrl] - Resume PDF URL.
+ * @property {string} [resumeDocxUrl] - Resume DOCX URL.
+ * @property {string} [resumeMdUrl] - Resume markdown URL.
+ * @property {string} [aboutContentHtml] - About section.
+ * @property {string} [profileBentoHtml] - Profile bento section.
+ * @property {string} [achievementsHtml] - Achievements section.
+ * @property {string} [expertiseHtml] - Expertise section.
+ * @property {string} [coverLetterHtml] - Cover letter section.
+ * @property {string} [buildVersion] - Build version.
+ * @property {string} [buildDeployedAt] - Build deployed timestamp.
+ * @property {string} [buildDeployedDate] - Build deployed date string.
+ */
+
+/**
  * Replace known HTML placeholders.
  * @param {string} html - Raw HTML template.
- * @param {Object} options - Placeholder values.
- * @param {string} options.cssContent - Bundled CSS.
- * @param {string} options.heroContentHtml - Hero section.
- * @param {string} options.resumeDescriptionHtml - Resume description.
- * @param {string} options.resumeCardsHtml - Resume cards.
- * @param {string} options.projectCardsHtml - Project cards.
- * @param {string} [options.projectSchemasHtml] - Project JSON-LD schemas.
- * @param {string} options.infrastructureCardsHtml - Infrastructure cards.
- * @param {string} options.certCardsHtml - Certification cards.
- * @param {string} options.skillsHtml - Skills list.
- * @param {string} options.contactGridHtml - Contact grid.
- * @param {string} options.resumePdfUrl - Resume PDF URL.
- * @param {string} options.resumeDocxUrl - Resume DOCX URL.
- * @param {string} options.resumeMdUrl - Resume markdown URL.
+ * @param {PlaceholderOptions} options - Placeholder values.
  * @returns {string} HTML with placeholders replaced.
  */
 function injectPlaceholders(html, options) {
@@ -101,7 +120,7 @@ function escapeForTemplateLiteral(html, escapePatterns) {
 /**
  * Build and minify localized HTML page from template data.
  * @param {string} html - Raw HTML template.
- * @param {Object} options - Placeholder replacement values.
+ * @param {PlaceholderOptions} options - Placeholder replacement values.
  * @returns {Promise<string>} Minified HTML page.
  */
 async function buildLocalizedHtml(html, options) {

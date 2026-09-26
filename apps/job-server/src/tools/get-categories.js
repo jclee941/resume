@@ -2,6 +2,11 @@
  * MCP Tool: Get Job Categories
  */
 
+/**
+ * @typedef {{ id: number | string, title: string }} WantedSubTag
+ * @typedef {{ id: number | string, sub_tags?: WantedSubTag[] }} WantedTag
+ */
+
 import WantedAPI from '@resume/shared/clients/wanted';
 
 export const getCategoriesTool = {
@@ -21,7 +26,9 @@ Returns main categories and their sub-categories with IDs.`,
     try {
       const result = await api.getTags();
       // Handle both normalized array and raw response structure
-      const tagsData = Array.isArray(result) ? result : result.data || [];
+      const tagsData = /** @type {WantedTag[]} */ (
+        Array.isArray(result) ? result : result.data || []
+      );
 
       const categories = tagsData.map((cat) => ({
         id: cat.id,
@@ -55,7 +62,7 @@ Returns main categories and their sub-categories with IDs.`,
     } catch (error) {
       return {
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   },

@@ -2,6 +2,15 @@
  * MCP Tool: Search Jobs
  */
 
+/**
+ * @typedef {Object} SearchJobsParams
+ * @property {number[]} [tag_type_ids]
+ * @property {string} [locations]
+ * @property {number} [years]
+ * @property {number} [limit]
+ * @property {number} [offset]
+ */
+
 import WantedAPI from '@resume/shared/clients/wanted';
 
 export const searchJobsTool = {
@@ -53,18 +62,24 @@ Returns job listings with: id, position, company, location, experience range, re
     },
   },
 
+  /**
+   * @param {SearchJobsParams} params
+   * @returns {Promise<Record<string, unknown>>}
+   */
   async execute(params) {
     const api = new WantedAPI();
 
     try {
-      const result = await api.searchJobs({
-        country: 'kr',
-        tag_type_ids: params.tag_type_ids,
-        locations: params.locations || 'all',
-        years: params.years ?? -1,
-        limit: Math.min(params.limit || 20, 100),
-        offset: params.offset || 0,
-      });
+      const result = await api.searchJobs(
+        /** @type {import('@resume/shared/clients/wanted/endpoints/jobs.js').JobSearchOptions & { country?: string }} */ ({
+          country: 'kr',
+          tag_type_ids: params.tag_type_ids,
+          locations: params.locations || 'all',
+          years: params.years ?? -1,
+          limit: Math.min(params.limit || 20, 100),
+          offset: params.offset || 0,
+        })
+      );
 
       return {
         success: true,
@@ -76,7 +91,7 @@ Returns job listings with: id, position, company, location, experience range, re
     } catch (error) {
       return {
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   },

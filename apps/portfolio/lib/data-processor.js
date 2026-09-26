@@ -23,7 +23,6 @@ const {
   generateProjectSchemasHtml,
 } = require('./cards');
 
-
 /**
  * @typedef {Object} Dashboard
  * @property {string} name - Dashboard name
@@ -42,7 +41,6 @@ const {
  * @property {string} [repoUrl] - Repository URL (GitHub/GitLab)
  */
 
-
 /**
  * Validate source data and build reusable HTML fragments.
  * @param {{projectDataRaw: string, projectDataEnRaw?: string, projectDataJaRaw?: string, logger: {log: Function}}} options - Data processing options.
@@ -59,7 +57,7 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
   const dataHash = calculateDataHash(projectData);
   if (TEMPLATE_CACHE.dataHash !== dataHash) {
     logger.log('📝 Data changed, regenerating templates...');
-    TEMPLATE_CACHE.dataHash = dataHash;
+    /** @type {{ dataHash: string | null }} */ (TEMPLATE_CACHE).dataHash = dataHash;
   }
 
   const templates = {
@@ -112,7 +110,9 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
       ...projectData.hero,
       email: projectData.contact && projectData.contact.email,
     }),
-    resumeDescriptionHtml: generateResumeDescription(projectData.resume),
+    resumeDescriptionHtml: /** @type {(resume?: typeof projectData.resume) => string} */ (
+      generateResumeDescription
+    )(projectData.resume),
     infrastructureCardsHtml: generateInfrastructureCards(projectData.infrastructure),
     infrastructureCardsEnHtml: generateInfrastructureCards(
       (projectDataEn && projectDataEn.infrastructure) || projectData.infrastructure
@@ -163,8 +163,8 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
 
 /**
  * Convert binary assets to base64 strings.
- * @param {{ogImageBuffer: Buffer, ogImageEnBuffer: Buffer, ogImageJaBuffer?: Buffer, resumePdfBuffer: Buffer}} buffers - Binary assets.
- * @returns {{ogImageBase64: string, ogImageEnBase64: string, ogImageJaBase64: string, resumePdfBase64: string}} Base64 payload.
+ * @param {{ogImageBuffer: Buffer, ogImageEnBuffer: Buffer, ogImageJaBuffer?: Buffer}} buffers - Binary assets.
+ * @returns {{ogImageBase64: string, ogImageEnBase64: string, ogImageJaBase64: string}} Base64 payload.
  */
 function encodeBinaryAssets({ ogImageBuffer, ogImageEnBuffer, ogImageJaBuffer }) {
   return {

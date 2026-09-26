@@ -6,12 +6,28 @@ import { setupTestDatabase } from './database-setup.js';
 // ========================
 
 /**
+ * @typedef {Object} IntegrationTestOptions
+ * @property {import('./database-setup.js').ApplicationRecord[]} [seedApplications]
+ * @property {import('./database-setup.js').D1ClientLike} [d1Client]
+ * @property {unknown} [logger]
+ * @property {unknown} [fetch]
+ * @property {unknown} [env]
+ * @property {unknown} [repository]
+ * @property {unknown} [telegram]
+ * @property {unknown} [claude]
+ * @property {unknown} [wanted]
+ */
+
+/**
  * Setup integration test environment
- * @param {Object} [options]
- * @returns {Promise<Object>} Test environment
+ * @param {IntegrationTestOptions} [options]
+ * @returns {Promise<Record<string, unknown>>} Test environment
  */
 export async function setupIntegrationTest(options = {}) {
-  const services = createTestServices(options);
+  const services =
+    /** @type {{ d1Client: import('./database-setup.js').D1ClientLike, [key: string]: unknown }} */ (
+      createTestServices(options)
+    );
   const dbSetup = setupTestDatabase(services.d1Client);
 
   await dbSetup.createTables();

@@ -1,24 +1,38 @@
 import { skillCountText } from './skill-radar-data.js';
 
+/**
+ * @param {NodeListOf<HTMLElement>} cards
+ * @param {string} searchTerm
+ * @returns {number}
+ */
 function filterSkills(cards, searchTerm) {
   let matchCount = 0;
 
   cards.forEach((card) => {
-    const matchesDomain = card
-      .querySelector('.skill-domain-card__title')
-      .textContent.toLowerCase()
+    const matchesDomain = /** @type {string} */ (
+      /** @type {HTMLElement} */ (card.querySelector('.skill-domain-card__title')).textContent
+    )
+      .toLowerCase()
       .includes(searchTerm);
     let domainCount = 0;
 
-    card.querySelectorAll('.skill-item').forEach((item) => {
-      const matches = matchesDomain || item.dataset.skill.toLowerCase().includes(searchTerm);
-      item.style.display = matches ? '' : 'none';
-      if (matches) domainCount++;
-    });
-    card.querySelectorAll('.skill-evidence-item').forEach((item) => {
-      const matches = matchesDomain || item.dataset.skill.toLowerCase().includes(searchTerm);
-      item.style.display = matches ? '' : 'none';
-    });
+    /** @type {NodeListOf<HTMLElement>} */ (card.querySelectorAll('.skill-item')).forEach(
+      (item) => {
+        const matches =
+          matchesDomain ||
+          /** @type {string} */ (item.dataset.skill).toLowerCase().includes(searchTerm);
+        item.style.display = matches ? '' : 'none';
+        if (matches) domainCount++;
+      }
+    );
+    /** @type {NodeListOf<HTMLElement>} */ (card.querySelectorAll('.skill-evidence-item')).forEach(
+      (item) => {
+        const matches =
+          matchesDomain ||
+          /** @type {string} */ (item.dataset.skill).toLowerCase().includes(searchTerm);
+        item.style.display = matches ? '' : 'none';
+      }
+    );
 
     card.style.display = domainCount > 0 ? '' : 'none';
     matchCount += domainCount;
@@ -28,11 +42,15 @@ function filterSkills(cards, searchTerm) {
 }
 
 export function initSkillSearch() {
-  const searchInput = document.getElementById('skill-search-input');
+  const searchInput = /** @type {HTMLInputElement | null} */ (
+    document.getElementById('skill-search-input')
+  );
   const grid = document.getElementById('skill-radar-grid');
   if (!searchInput || !grid) return;
 
-  const cards = grid.querySelectorAll('.skill-domain-card');
+  const cards = /** @type {NodeListOf<HTMLElement>} */ (
+    grid.querySelectorAll('.skill-domain-card')
+  );
   const counter = document.getElementById('skill-search-count');
   const lang = (document.documentElement.lang || 'ko').toLowerCase();
   const noResults = document.createElement('p');
@@ -59,6 +77,7 @@ export function initSkillSearch() {
     }
   };
 
+  /** @type {ReturnType<typeof setTimeout> | undefined} */
   let debounceTimer;
   searchInput.addEventListener('input', () => {
     clearTimeout(debounceTimer);

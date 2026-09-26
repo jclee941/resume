@@ -2,6 +2,13 @@ import { PROJECTS } from './project-cards-data.js';
 import { createDeepDiveOverlay } from './project-deep-dive-overlay.js';
 import { createIconElement, getTechClass } from './project-card-formatting.js';
 
+/**
+ * @template {keyof HTMLElementTagNameMap} K
+ * @param {K} tagName
+ * @param {string} [className]
+ * @param {string} [text]
+ * @returns {HTMLElementTagNameMap[K]}
+ */
 function createElement(tagName, className, text = '') {
   const element = document.createElement(tagName);
   if (className) element.className = className;
@@ -13,6 +20,14 @@ function currentLanguage() {
   return (document.documentElement.lang || 'ko').toLowerCase();
 }
 
+/**
+ * @typedef {{ title: string, description: string, gridLabel: string, cta: string }} CaseStudyCopy
+ */
+
+/**
+ * @param {string} lang
+ * @returns {CaseStudyCopy}
+ */
 function caseStudyCopy(lang) {
   if (lang.startsWith('en')) {
     return {
@@ -90,6 +105,17 @@ export function initProjectCards() {
   });
 }
 
+/**
+ * @typedef {import('./project-deep-dive-overlay.js').DeepDiveProject & { id: string, metrics: Array<import('./project-deep-dive-overlay.js').DeepDiveMetric & { icon: string }> }} ProjectCardItem
+ */
+
+/**
+ * @param {ProjectCardItem} project
+ * @param {number} index
+ * @param {(project: import('./project-deep-dive-overlay.js').DeepDiveProject) => void} openDeepDive
+ * @param {CaseStudyCopy} copy
+ * @returns {HTMLDivElement}
+ */
 function createProjectCard(project, index, openDeepDive, copy) {
   const card = document.createElement('div');
   card.className = 'project-card';
@@ -117,7 +143,7 @@ function createProjectCard(project, index, openDeepDive, copy) {
   project.metrics.forEach((metric) => {
     const preview = createElement('div', 'metric-preview');
     const metricIcon = createElement('span', 'metric-preview__icon');
-    metricIcon.appendChild(createIconElement(metric.icon));
+    metricIcon.appendChild(createIconElement(/** @type {string} */ (metric.icon)));
     preview.append(
       metricIcon,
       createElement('span', 'metric-preview__value', `${metric.value} ${metric.label}`)

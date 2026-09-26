@@ -2,6 +2,48 @@
  * MCP Tool: Get Company Info
  */
 
+/**
+ * @typedef {import('@resume/types/wanted.js').WantedCompany & {
+ *   industry_name?: string,
+ *   logo_img?: { origin?: string, thumb?: string },
+ *   address?: { full_location?: string },
+ *   employee_count?: number,
+ *   data?: unknown,
+ * }} CompanyApiResponse
+ *
+ * @typedef {{
+ *   company_id: number | string,
+ *   include_jobs?: boolean,
+ * }} GetCompanyParams
+ *
+ * @typedef {{
+ *   id: number | string,
+ *   position: string,
+ *   annual_from?: number,
+ *   annual_to?: number,
+ * }} CompanyOpenJob
+ *
+ * @typedef {{
+ *   id: number | string,
+ *   position: string,
+ *   experience: string,
+ *   url: string,
+ * }} FormattedCompanyJob
+ *
+ * @typedef {{
+ *   success: boolean,
+ *   company?: Record<string, unknown>,
+ *   open_jobs?: FormattedCompanyJob[],
+ *   total_jobs?: number,
+ *   error?: string,
+ * }} GetCompanyResult
+ *
+ * @typedef {{
+ *   error(msg: string, ...args: unknown[]): void,
+ *   log?(msg: string, ...args: unknown[]): void,
+ * }} ToolLogger
+ */
+
 import WantedAPI from '@resume/shared/clients/wanted';
 
 export const getCompanyTool = {
@@ -29,13 +71,21 @@ Use this to research companies before applying:
     required: ['company_id'],
   },
 
+  /**
+   * @param {GetCompanyParams} params
+   * @param {{ logger?: ToolLogger }} [options]
+   * @returns {Promise<GetCompanyResult>}
+   */
   async execute(params, { logger = console } = {}) {
     const api = new WantedAPI();
 
     try {
-      const companyResult = await api.getCompany(params.company_id);
-      const company = companyResult.data || companyResult;
+      const companyResult = /** @type {CompanyApiResponse} */ (
+        await api.getCompany(params.company_id)
+      );
+      const company = /** @type {CompanyApiResponse} */ (companyResult.data) || companyResult;
 
+      /** @type {GetCompanyResult} */
       const result = {
         success: true,
         company: {
@@ -57,7 +107,7 @@ Use this to research companies before applying:
           const jobsResult = await api.getCompanyJobs(params.company_id, {
             limit: 10,
           });
-          const jobsData = jobsResult.data || [];
+          const jobsData = /** @type {{ data?: CompanyOpenJob[] }} */ (jobsResult).data || [];
 
           result.open_jobs = jobsData.map((job) => ({
             id: job.id,
@@ -77,7 +127,7 @@ Use this to research companies before applying:
     } catch (error) {
       return {
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   },

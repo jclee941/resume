@@ -5,6 +5,21 @@ import { createTestServices } from './service-setup.js';
 // ========================
 
 /**
+ * @typedef {{
+ *   info: { (...args: unknown[]): void, mock: { calls: unknown[][] } },
+ *   error: { (...args: unknown[]): void, mock: { calls: unknown[][] } },
+ *   warn?: { (...args: unknown[]): void, mock: { calls: unknown[][] } },
+ *   debug?: { (...args: unknown[]): void, mock: { calls: unknown[][] } },
+ * }} MockTestLogger
+ *
+ * @typedef {{
+ *   logger: MockTestLogger,
+ *   fetch: { (...args: unknown[]): Promise<unknown>, mock?: { calls?: unknown[][] } },
+ *   [key: string]: unknown,
+ * }} TestContextServices
+ */
+
+/**
  * Create test context with common utilities
  * @param {Object} [options]
  * @returns {Object} Test context
@@ -14,11 +29,11 @@ export function createTestContext(options = {}) {
     /** @type {number} */
     testStartTime: Date.now(),
 
-    /** @type {Array} */
+    /** @type {Array<{ step?: string, type?: string, error: unknown }>} */
     errors: [],
 
-    /** @type {Object} */
-    services: createTestServices(options),
+    /** @type {TestContextServices} */
+    services: /** @type {TestContextServices} */ (createTestServices(options)),
 
     /**
      * Log test step
@@ -34,7 +49,10 @@ export function createTestContext(options = {}) {
         return result;
       } catch (error) {
         context.errors.push({ step: name, error });
-        context.services.logger.error(`[TEST STEP] ${name} - ERROR:`, error.message);
+        context.services.logger.error(
+          `[TEST STEP] ${name} - ERROR:`,
+          error instanceof Error ? error.message : String(error)
+        );
         throw error;
       }
     },
