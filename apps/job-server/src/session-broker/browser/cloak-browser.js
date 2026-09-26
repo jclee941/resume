@@ -11,21 +11,40 @@ const DEFAULT_CLOAK_BROWSER_OPTIONS = Object.freeze({
   profileDir: null,
 });
 
+/**
+ * @param {{ cookies?: unknown[] } | unknown[] | null | undefined} payload
+ */
 function normalizeCookies(payload) {
   if (Array.isArray(payload)) return payload;
   if (Array.isArray(payload?.cookies)) return payload.cookies;
   return [];
 }
 
+/**
+ * @param {unknown} error
+ */
 function isUnsupportedEvaluate(error) {
-  return /evaluate|unsupported|not implemented|404/i.test(error?.message || '');
+  const message =
+    error instanceof Error
+      ? error.message
+      : error && typeof error === 'object' && 'message' in error
+        ? String(/** @type {{ message?: unknown }} */ (error).message || '')
+        : '';
+  return /evaluate|unsupported|not implemented|404/i.test(message);
 }
 
 export class CloakBrowser {
+  /**
+   * @param {{
+   *   endpoint?: string;
+   *   fetchImpl?: typeof fetch;
+   *   ensureProfileDir?: (dir: string) => unknown;
+   * }} [options]
+   */
   constructor({
     endpoint = process.env.STEALTH_BROWSER_ENDPOINT || DEFAULT_CLOAK_BROWSER_ENDPOINT,
     fetchImpl = globalThis.fetch,
-    ensureProfileDir = (dir) => mkdirSync(dir, { recursive: true }),
+    ensureProfileDir = (/** @type {string} */ dir) => mkdirSync(dir, { recursive: true }),
   } = {}) {
     this.endpoint = endpoint;
     this.fetchImpl = fetchImpl;
@@ -65,13 +84,13 @@ export class CloakBrowser {
       sessionId: this.sessionId,
       stealthEnabled: payload.stealthEnabled ?? true,
       profileDir: this.options.profileDir,
-      goto: async (url) =>
+      goto: async (/** @type {string} */ url) =>
         this.#request({
           action: 'goto',
           url,
           sessionId: this.sessionId,
         }),
-      evaluate: async (expression) => this.#evaluate(expression),
+      evaluate: async (/** @type {string} */ expression) => this.#evaluate(expression),
       getCookies: async () => this.getCookies(),
       close: async () => this.close(),
     };
@@ -109,6 +128,9 @@ export class CloakBrowser {
     }
   }
 
+  /**
+   * @param {string} expression
+   */
   async #evaluate(expression) {
     try {
       const payload = await this.#request({
@@ -126,6 +148,9 @@ export class CloakBrowser {
     }
   }
 
+  /**
+   * @param {Record<string, unknown>} body
+   */
   async #request(body) {
     const response = await this.fetchImpl(this.endpoint, {
       method: 'POST',

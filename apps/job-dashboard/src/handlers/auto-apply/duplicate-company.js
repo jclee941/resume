@@ -1,3 +1,13 @@
+/**
+ * @typedef {Object} D1Database
+ * @property {(query: string) => { bind(...values: unknown[]): { first(): Promise<unknown> } }} prepare
+ */
+
+/**
+ * @param {{ DB?: D1Database, JOB_DB?: D1Database } | null | undefined} env
+ * @param {string | null | undefined} company
+ * @returns {Promise<boolean>}
+ */
 export async function isCompanyAlreadyApplied(env, company) {
   const db = env?.DB || env?.JOB_DB;
   const normalizedCompany = normalizeCompany(company);
@@ -11,6 +21,11 @@ export async function isCompanyAlreadyApplied(env, company) {
   }
 }
 
+/**
+ * @param {D1Database} db
+ * @param {string} normalizedCompany
+ * @returns {Promise<boolean>}
+ */
 async function hasBlockingApplicationWithAutoApplyMetadata(db, normalizedCompany) {
   const result = await db
     .prepare(
@@ -30,6 +45,11 @@ async function hasBlockingApplicationWithAutoApplyMetadata(db, normalizedCompany
   return !!result;
 }
 
+/**
+ * @param {D1Database} db
+ * @param {string} normalizedCompany
+ * @returns {Promise<boolean>}
+ */
 async function hasBlockingLegacyApplication(db, normalizedCompany) {
   const result = await db
     .prepare(
@@ -44,10 +64,22 @@ async function hasBlockingLegacyApplication(db, normalizedCompany) {
   return !!result;
 }
 
+/**
+ * @param {unknown} company
+ * @returns {string}
+ */
 function normalizeCompany(company) {
   return typeof company === 'string' ? company.trim().replace(/\s+/g, ' ') : '';
 }
 
+/**
+ * @param {unknown} error
+ * @returns {boolean}
+ */
 function isMissingAutoApplyColumn(error) {
-  return /no such column|has no column named|unknown column/i.test(String(error?.message || error));
+  const message =
+    error && typeof error === 'object' && 'message' in error && error.message
+      ? String(error.message)
+      : String(error);
+  return /no such column|has no column named|unknown column/i.test(message);
 }

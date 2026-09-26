@@ -1,3 +1,21 @@
+/**
+ * @typedef {Object} ProjectApi
+ * @property {(resumeId: string | number, careerId: string | number, project: Record<string, unknown>) => Promise<Record<string, unknown>>} addCareerProject
+ * @property {(resumeId: string | number, careerId: string | number, projectId: string | number) => Promise<unknown>} deleteCareerProject
+ */
+
+/**
+ * @typedef {Object} ProjectParams
+ * @property {string | number} [resume_id]
+ * @property {string | number} [career_id]
+ * @property {string | number} [project_id]
+ * @property {Record<string, unknown>} [project]
+ */
+
+/**
+ * @param {ProjectApi} api
+ * @param {ProjectParams} params
+ */
 export async function add_project(api, params) {
   if (!params.resume_id) {
     return { success: false, error: 'resume_id is required for add_project' };
@@ -16,6 +34,10 @@ export async function add_project(api, params) {
   return { success: true, message: 'Project added successfully', project: result };
 }
 
+/**
+ * @param {ProjectApi} api
+ * @param {ProjectParams} params
+ */
 export async function delete_project(api, params) {
   if (!params.resume_id) {
     return { success: false, error: 'resume_id is required for delete_project' };

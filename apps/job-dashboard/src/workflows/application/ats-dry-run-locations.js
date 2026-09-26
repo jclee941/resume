@@ -1,3 +1,4 @@
+/** @type {ReadonlyArray<readonly [string, RegExp]>} */
 const ATS_LOCATION_MATCHERS = Object.freeze([
   ['remote', /remote|anywhere|work from home|재택|원격/i],
   ['seoul', /seoul|서울/i],
@@ -18,7 +19,12 @@ const LOCATION_KEYS = Object.freeze([
   'categories',
 ]);
 
+/**
+ * @param {unknown} source
+ * @returns {string[]}
+ */
 export function normalizePostingLocations(source) {
+  /** @type {string[]} */
   const normalized = [];
 
   for (const value of collectLocationValues(source)) {
@@ -32,6 +38,10 @@ export function normalizePostingLocations(source) {
   return normalized;
 }
 
+/**
+ * @param {unknown} source
+ * @returns {Array<string | number>}
+ */
 function collectLocationValues(source) {
   if (source === null || source === undefined) return [];
   if (typeof source === 'string' || typeof source === 'number') return [source];
@@ -40,10 +50,11 @@ function collectLocationValues(source) {
   if (typeof source !== 'object') return [];
 
   const values = [];
-  if (source.remote === true) values.push('remote');
+  const obj = /** @type {Record<string, unknown>} */ (source);
+  if (obj.remote === true) values.push('remote');
 
   for (const key of LOCATION_KEYS) {
-    if (Object.hasOwn(source, key)) values.push(...collectLocationValues(source[key]));
+    if (Object.hasOwn(obj, key)) values.push(...collectLocationValues(obj[key]));
   }
 
   return values;

@@ -1,10 +1,18 @@
 import { TELEGRAM_MAX_LENGTH } from './constants.js';
 
+/**
+ * @param {string | null | undefined} text
+ * @returns {string}
+ */
 export function escapeHtml(text) {
   if (!text) return '';
   return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+/**
+ * @param {string | number | boolean | (Record<string, unknown> & { text?: unknown }) | null | undefined} message
+ * @returns {string}
+ */
 export function formatNotificationText(message) {
   let text;
 
@@ -39,6 +47,10 @@ export function formatNotificationText(message) {
   return text;
 }
 
+/**
+ * @param {Record<string, unknown> | null | undefined} data
+ * @returns {Record<string, unknown> | null | undefined}
+ */
 export function sanitizeData(data) {
   if (!data || typeof data !== 'object') return data;
 
@@ -54,6 +66,10 @@ export function sanitizeData(data) {
   return sanitized;
 }
 
+/**
+ * @param {Record<string, { sent?: boolean } | null | undefined>} results
+ * @returns {'failed' | 'partial' | 'success'}
+ */
 export function determineStatus(results) {
   const values = Object.values(results);
   if (values.length === 0) return 'failed';

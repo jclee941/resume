@@ -1,15 +1,40 @@
 const CONTROL_SELECTOR = 'a,button,input[type="button"],input[type="submit"]';
 
+/**
+ * @param {{ waitForTimeout?: (ms: number) => Promise<unknown> }} page
+ * @returns {Promise<void>}
+ */
 export async function settlePage(page) {
   if (typeof page.waitForTimeout === 'function') {
     await page.waitForTimeout(800).catch(() => {});
   }
 }
 
+/**
+ * @typedef {Object} PageControl
+ * @property {string} text
+ * @property {string} selector
+ * @property {string} href
+ * @property {boolean} disabled
+ */
+
+/**
+ * @typedef {Object} InspectablePage
+ * @property {(fn: (selector: string) => { bodyText: string, controls: PageControl[] }, arg: string) => Promise<{ bodyText: string, controls: PageControl[] }>} evaluate
+ */
+
+/**
+ * @param {InspectablePage} page
+ * @returns {Promise<{ bodyText: string, controls: PageControl[] }>}
+ */
 export async function inspectApplicationPage(page) {
-  return await page.evaluate((selector) => {
+  return await page.evaluate((/** @type {string} */ selector) => {
     const doc = globalThis.document;
-    const controls = Array.from(doc.querySelectorAll(selector))
+    const controls = Array.from(
+      /** @type {NodeListOf<HTMLElement & { value?: string, href?: string, disabled?: boolean }>} */ (
+        doc.querySelectorAll(selector)
+      )
+    )
       .map((node, index) => {
         const actionId = `cf-native-${index}`;
         node.setAttribute('data-cf-native-control', actionId);
@@ -39,6 +64,22 @@ export async function inspectApplicationPage(page) {
   }, CONTROL_SELECTOR);
 }
 
+/**
+ * @typedef {Object} ClickableElement
+ * @property {() => Promise<unknown>} click
+ */
+
+/**
+ * @typedef {Object} PageWithClick
+ * @property {((selector: string) => Promise<ClickableElement | null>)} [$]
+ * @property {((ms: number) => Promise<unknown>)} [waitForTimeout]
+ */
+
+/**
+ * @param {PageWithClick} page
+ * @param {{ selector?: string } | null | undefined} control
+ * @returns {Promise<boolean>}
+ */
 export async function clickControl(page, control) {
   if (!control?.selector) return false;
   const handle = await page.$?.(control.selector);

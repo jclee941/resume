@@ -1,3 +1,10 @@
+/**
+ * @template {keyof HTMLElementTagNameMap} K
+ * @param {K} tagName
+ * @param {string} className
+ * @param {string} [text='']
+ * @returns {HTMLElementTagNameMap[K]}
+ */
 function createElement(tagName, className, text = '') {
   const element = document.createElement(tagName);
   if (className) element.className = className;
@@ -5,6 +12,10 @@ function createElement(tagName, className, text = '') {
   return element;
 }
 
+/**
+ * @param {{ title: string, architecture: string }} project
+ * @returns {HTMLDivElement}
+ */
 export function createArchitectureElement(project) {
   const flow = createElement('div', 'architecture-flow');
   flow.setAttribute('role', 'group');
@@ -20,6 +31,10 @@ export function createArchitectureElement(project) {
   return flow;
 }
 
+/**
+ * @param {string} architecture
+ * @returns {HTMLOListElement|null}
+ */
 function createArchitectureSteps(architecture) {
   const steps = architectureSteps(architecture);
   if (steps.length === 0) return null;
@@ -36,8 +51,26 @@ function createArchitectureSteps(architecture) {
   return list;
 }
 
+/**
+ * @typedef {Object} ArchitectureBox
+ * @property {number} start
+ * @property {string[]} parts
+ */
+
+/**
+ * @typedef {Object} ArchitectureCell
+ * @property {number} start
+ * @property {string} text
+ */
+
+/**
+ * @param {string} architecture
+ * @returns {string[]}
+ */
 function architectureSteps(architecture) {
+  /** @type {string[]} */
   const steps = [];
+  /** @type {ArchitectureBox[]} */
   let activeBoxes = [];
 
   for (const line of architecture.split('\n')) {
@@ -49,6 +82,7 @@ function architectureSteps(architecture) {
       continue;
     }
 
+    /** @type {ArchitectureBox[]} */
     const nextBoxes = [];
     for (const cell of cells) {
       const box = activeBoxes.find((item) => Math.abs(item.start - cell.start) <= 2);
@@ -72,6 +106,10 @@ function architectureSteps(architecture) {
   return steps.filter(Boolean);
 }
 
+/**
+ * @param {string} line
+ * @returns {ArchitectureCell[]}
+ */
 function architectureLineCells(line) {
   const cells = [];
   const pattern = /│([^│]+)│/g;

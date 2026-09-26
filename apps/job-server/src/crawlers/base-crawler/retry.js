@@ -1,3 +1,8 @@
+/**
+ * @param {number} attempt
+ * @param {import('./schema.js').RetryConfig} config
+ * @returns {number}
+ */
 export function calculateBackoff(attempt, config) {
   const exponentialDelay = config.baseDelay * Math.pow(2, attempt - 1);
   const cappedDelay = Math.min(exponentialDelay, config.maxDelay);
@@ -5,6 +10,11 @@ export function calculateBackoff(attempt, config) {
   return Math.round(cappedDelay * jitter);
 }
 
+/**
+ * @param {number | null} statusCode
+ * @param {import('./schema.js').RetryConfig} config
+ * @returns {boolean}
+ */
 export function isRetryable(statusCode, config) {
   if (statusCode === null) {
     return true;

@@ -1,10 +1,38 @@
 import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
 
+/**
+ * @typedef {Object} D1Database
+ * @property {(query: string) => { bind(...values: unknown[]): { run(): Promise<unknown> } }} prepare
+ */
+
 export class WantedHistoryRepository {
+  /**
+   * @param {D1Database} db
+   */
   constructor(db) {
     this.db = db;
   }
 
+  /**
+   * @typedef {Object} WantedHistoryRecord
+   * @property {string} [id]
+   * @property {string} wantedApplicationId
+   * @property {string | null} [wantedJobId]
+   * @property {string} status
+   * @property {string} position
+   * @property {string} company
+   * @property {string | null} [sourceUrl]
+   * @property {string | null} [resumeId]
+   * @property {string} appliedAt
+   * @property {string} updatedAt
+   * @property {string} [rawPayload]
+   * @property {string} [syncedAt]
+   */
+
+  /**
+   * @param {WantedHistoryRecord} record
+   * @returns {Promise<WantedHistoryRecord>}
+   */
   async upsertHistory(record) {
     await this.db
       .prepare(
@@ -53,6 +81,10 @@ export class WantedHistoryRepository {
     return record;
   }
 
+  /**
+   * @param {WantedHistoryRecord} record
+   * @returns {Promise<WantedHistoryRecord>}
+   */
   async upsertApplication(record) {
     await this.db
       .prepare(

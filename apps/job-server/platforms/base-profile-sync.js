@@ -11,14 +11,25 @@
  * Subclasses typically override syncProfile() to call section-specific fill methods.
  */
 export class BaseProfileSync {
+  /**
+   * @param {Object} [options]
+   * @param {boolean} [options.headless]
+   * @param {number} [options.timeout]
+   * @param {boolean} [options.debug]
+   */
   constructor(options = {}) {
     this.headless = options.headless ?? false;
+    /** @type {import('playwright').Browser | null} */
     this.browser = null;
+    /** @type {import('playwright').Page | null} */
     this.page = null;
     this.timeout = options.timeout || 30000;
     this.debug = options.debug ?? false;
   }
 
+  /**
+   * @param {...unknown} args
+   */
   log(...args) {
     if (this.debug) {
       console.debug(`[${this.constructor.name}]`, ...args);
@@ -41,7 +52,11 @@ export class BaseProfileSync {
     throw new Error('getProfile() must be implemented by subclass');
   }
 
-  async syncProfile(sourceData, _options = {}) {
+  /**
+   * @param {unknown} _sourceData
+   * @param {Record<string, unknown>} [_options={}]
+   */
+  async syncProfile(_sourceData, _options = {}) {
     throw new Error('syncProfile() must be implemented by subclass');
   }
 
@@ -58,13 +73,14 @@ export class BaseProfileSync {
  * Compute diff between source (SSoT) and current platform profile.
  * Returns an array of changed sections with before/after values.
  *
- * @param {object} source — canonical SSoT resume data
- * @param {object} current — platform-specific profile snapshot
- * @returns {Array<{section: string, field: string, from: any, to: any}>}
+ * @param {Record<string, unknown>} source — canonical SSoT resume data
+ * @param {Record<string, unknown>} current — platform-specific profile snapshot
+ * @returns {Array<{section: string, field: string, from: unknown, to: unknown}>}
  */
 export function diffProfileSections(source, current) {
   const changes = [];
 
+  /** @type {Array<{ key: string, label: string, isArray?: boolean, idField?: string, fields?: string[] }>} */
   const sections = [
     { key: 'personal', label: 'personal', fields: ['name', 'email', 'phone'] },
     { key: 'careers', label: 'careers', isArray: true, idField: 'company' },
@@ -93,8 +109,8 @@ export function diffProfileSections(source, current) {
       }
 
       for (let i = 0; i < sourceArr.length; i++) {
-        const s = sourceArr[i];
-        const c = currentArr[i];
+        const s = /** @type {Record<string, unknown>} */ (sourceArr[i]);
+        const c = /** @type {Record<string, unknown> | undefined} */ (currentArr[i]);
         if (section.idField && s[section.idField] !== c?.[section.idField]) {
           changes.push({
             section: section.label,
@@ -106,8 +122,8 @@ export function diffProfileSections(source, current) {
       }
     } else if (section.fields) {
       for (const field of section.fields) {
-        const s = sourceVal?.[field];
-        const c = currentVal?.[field];
+        const s = /** @type {Record<string, unknown> | undefined} */ (sourceVal)?.[field];
+        const c = /** @type {Record<string, unknown> | undefined} */ (currentVal)?.[field];
         if (s !== c) {
           changes.push({ section: section.label, field, from: c, to: s });
         }

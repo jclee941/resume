@@ -5,10 +5,15 @@
 const HISTOGRAM_BUCKETS = [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10];
 
 /**
+ * @typedef {Record<string | number, number>} HistogramBuckets
+ */
+
+/**
  * Initialize empty histogram buckets.
- * @returns {Object}
+ * @returns {HistogramBuckets}
  */
 function initHistogramBuckets() {
+  /** @type {HistogramBuckets} */
   const buckets = {};
   HISTOGRAM_BUCKETS.forEach((le) => {
     buckets[le] = 0;
@@ -19,7 +24,7 @@ function initHistogramBuckets() {
 
 /**
  * Update histogram buckets with a new observation.
- * @param {Object} buckets - Current bucket counts.
+ * @param {HistogramBuckets} buckets - Current bucket counts.
  * @param {number} valueSeconds - Observed value in seconds.
  */
 function observeHistogram(buckets, valueSeconds) {
@@ -34,7 +39,7 @@ function observeHistogram(buckets, valueSeconds) {
 /**
  * Generate histogram metric lines.
  * @param {string} name - Metric name.
- * @param {Object} buckets - Bucket counts.
+ * @param {HistogramBuckets} buckets - Bucket counts.
  * @param {string} labels - Additional labels.
  * @returns {string}
  */

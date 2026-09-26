@@ -1,3 +1,54 @@
+/**
+ * @typedef {Object} ProfileExperience
+ * @property {string | number} [id]
+ * @property {string} [company_name]
+ * @property {string} [position]
+ * @property {string} [start_date]
+ * @property {string} [end_date]
+ * @property {boolean} [is_current]
+ */
+
+/**
+ * @typedef {Object} ProfileEducation
+ * @property {string | number} [id]
+ * @property {string} [school_name]
+ * @property {string} [major]
+ * @property {string} [start_date]
+ * @property {string} [end_date]
+ */
+
+/**
+ * @typedef {Object} ProfileSkill
+ * @property {string | number} [id]
+ * @property {string} [name]
+ */
+
+/**
+ * @typedef {Object} ProfileData
+ * @property {string | number} [id]
+ * @property {string} [name]
+ * @property {string} [headline]
+ * @property {string | number} [annual]
+ * @property {ProfileExperience[]} [experiences]
+ * @property {ProfileEducation[]} [educations]
+ * @property {ProfileSkill[]} [skills]
+ */
+
+/**
+ * @typedef {Object} ProfileApi
+ * @property {() => Promise<ProfileData>} getProfile
+ * @property {(profileData: Record<string, unknown>) => Promise<unknown>} updateProfile
+ */
+
+/**
+ * @typedef {Object} ProfileParams
+ * @property {string} [text]
+ */
+
+/**
+ * @param {ProfileApi} api
+ * @param {Record<string, unknown>} [_params]
+ */
 export async function view(api, _params) {
   const profile = await api.getProfile();
   return {
@@ -27,6 +78,10 @@ export async function view(api, _params) {
   };
 }
 
+/**
+ * @param {ProfileApi} api
+ * @param {ProfileParams} params
+ */
 export async function update_headline(api, params) {
   if (!params.text) {
     return { success: false, error: 'text is required for update_headline' };
@@ -35,6 +90,10 @@ export async function update_headline(api, params) {
   return { success: true, message: 'Headline updated', headline: params.text };
 }
 
+/**
+ * @param {ProfileApi} api
+ * @param {ProfileParams} params
+ */
 export async function update_intro(api, params) {
   if (!params.text) {
     return { success: false, error: 'text is required for update_intro' };

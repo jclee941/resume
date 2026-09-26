@@ -30,9 +30,26 @@ export const AUTH_STRATEGY = {
   admin: ['/api/applications', '/api/stats', '/api/config', '/api/automation', '/api/report'],
 };
 
+/**
+ * @typedef {{
+ *   headers: {
+ *     get?: (name: string) => string | null | undefined;
+ *     authorization?: string;
+ *     [key: string]: unknown;
+ *   };
+ * }} AuthRequest
+ */
+
+/**
+ * @param {{ ADMIN_TOKEN?: string } | null | undefined} [env]
+ */
 export function createAuthMiddleware(env) {
   const adminToken = env?.ADMIN_TOKEN || process.env.ADMIN_TOKEN;
 
+  /**
+   * @param {AuthRequest} request
+   * @returns {{ authenticated: boolean; error: string | null }}
+   */
   return function verifyAuth(request) {
     const authHeader = request.headers.get?.('authorization') || request.headers?.authorization;
 
@@ -47,6 +64,11 @@ export function createAuthMiddleware(env) {
   };
 }
 
+/**
+ * @param {unknown} a
+ * @param {unknown} b
+ * @returns {boolean}
+ */
 function timingSafeEqual(a, b) {
   if (typeof a !== 'string' || typeof b !== 'string') return false;
   if (a.length !== b.length) return false;

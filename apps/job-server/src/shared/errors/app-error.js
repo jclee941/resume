@@ -1,5 +1,17 @@
 import { ErrorCodes } from './error-codes.js';
 
+/**
+ * @typedef {{
+ *   errorCode?: string | number;
+ *   code?: string | number;
+ *   statusCode?: number;
+ *   context?: Record<string, unknown>;
+ *   metadata?: Record<string, unknown>;
+ *   cause?: Error | null;
+ *   isOperational?: boolean;
+ * }} AppErrorOptions
+ */
+
 export class AppError extends Error {
   /**
    * Polymorphic constructor (SSOT-032 / issue #41 Phase 2). Accepts both:
@@ -15,9 +27,9 @@ export class AppError extends Error {
    * keep working unchanged while new code can use the canonical names.
    *
    * @param {string} message
-   * @param {string|number|object} [codeOrOptions] - error code (legacy) OR options object (canonical)
+   * @param {string|number|AppErrorOptions} [codeOrOptions] - error code (legacy) OR options object (canonical)
    * @param {number} [statusCode=500]
-   * @param {object} [metadata={}]
+   * @param {Record<string, unknown>} [metadata={}]
    * @param {Error|null} [cause=null]
    */
   constructor(
@@ -39,7 +51,7 @@ export class AppError extends Error {
       !Array.isArray(codeOrOptions)
     ) {
       // Canonical options-object form.
-      const opts = codeOrOptions;
+      const opts = /** @type {AppErrorOptions} */ (codeOrOptions);
       code = opts.errorCode ?? opts.code ?? ErrorCodes.UNKNOWN;
       resolvedStatusCode = opts.statusCode ?? statusCode;
       resolvedMetadata = opts.context ?? opts.metadata ?? {};
@@ -88,6 +100,11 @@ export class AppError extends Error {
     };
   }
 
+  /**
+   * @param {unknown} error
+   * @param {string|number} [code=ErrorCodes.UNKNOWN]
+   * @param {number} [statusCode=500]
+   */
   static fromError(error, code = ErrorCodes.UNKNOWN, statusCode = 500) {
     if (error instanceof AppError) {
       return error;

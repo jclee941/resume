@@ -11,15 +11,28 @@ function formatTimestampForFile(date = new Date()) {
   return date.toISOString().replace(/[:.]/g, '-');
 }
 
+/**
+ * @param {string} parent
+ * @param {string} candidate
+ * @returns {boolean}
+ */
 function isPathInside(parent, candidate) {
   const relative = path.relative(parent, candidate);
   return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
 }
 
+/**
+ * @param {Date} [date=new Date()]
+ * @returns {string}
+ */
 export function getDefaultHarOutputPath(date = new Date()) {
   return path.join(DEFAULT_HAR_DIR, `jobkorea-profile-sync-${formatTimestampForFile(date)}.har`);
 }
 
+/**
+ * @param {string} outputPath
+ * @returns {string}
+ */
 export function assertSafeHarOutputPath(outputPath) {
   if (!outputPath || typeof outputPath !== 'string') {
     throw new Error('HAR output path is required');
@@ -38,12 +51,20 @@ export function assertSafeHarOutputPath(outputPath) {
   return resolvedPath;
 }
 
+/**
+ * @param {Record<string, string>} [headers={}]
+ * @returns {Record<string, string>}
+ */
 function redactHeaders(headers = {}) {
   return Object.fromEntries(
     Object.entries(headers).map(([key, value]) => [key, redactSensitiveValue(key, value)])
   );
 }
 
+/**
+ * @param {import('playwright').Request} request
+ * @returns {{ method: string, origin: string, path: string, resourceType: string, headers: Record<string, string> }}
+ */
 export function summarizeRequest(request) {
   const url = new URL(request.url());
   return {

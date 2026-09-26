@@ -1,6 +1,26 @@
 /**
+ * @typedef {{
+ *   timestamp: number;
+ *   expiresAt?: string;
+ *   [key: string]: unknown;
+ * }} PlatformSessionData
+ *
+ * @typedef {{
+ *   valid?: boolean;
+ *   expiringSoon?: boolean;
+ *   expiresAt?: string;
+ *   [key: string]: unknown;
+ * }} PlatformHealthData
+ *
+ * @typedef {{
+ *   load(platform: string): PlatformSessionData | null;
+ *   checkHealth(platform: string, thresholdMs?: number): PlatformHealthData;
+ * }} SessionRenewalStore
+ */
+
+/**
  * Renew platform session through the existing CDP extraction script.
- * @param {import('./auth-typedefs.js').PlatformSessionStore} sessionStore
+ * @param {SessionRenewalStore} sessionStore
  * @param {string} platform
  * @returns {Promise<{success: boolean, message?: string, error?: string, expiresAt?: string}>}
  */
@@ -62,7 +82,7 @@ export async function renewSession(sessionStore, platform) {
   } catch (error) {
     return {
       success: false,
-      error: `Renewal failed: ${error.message}`,
+      error: `Renewal failed: ${error instanceof Error ? error.message : String(error)}`,
     };
   }
 }

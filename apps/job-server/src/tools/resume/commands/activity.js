@@ -1,3 +1,22 @@
+/**
+ * @typedef {Object} ActivityParams
+ * @property {string} [resume_id]
+ * @property {string} [activity_id]
+ * @property {Record<string, unknown>} [activity]
+ */
+
+/**
+ * @typedef {Object} ActivityApi
+ * @property {(resumeId: string, activityId: string, activity: Record<string, unknown>) => Promise<unknown>} updateResumeActivity
+ * @property {(resumeId: string, activity: Record<string, unknown>) => Promise<unknown>} addResumeActivity
+ * @property {(resumeId: string, activityId: string) => Promise<unknown>} deleteResumeActivity
+ */
+
+/**
+ * @param {ActivityApi} api
+ * @param {ActivityParams} params
+ * @returns {Promise<{ success: boolean, message?: string, error?: string, activity?: unknown }>}
+ */
 export async function update_activity(api, params) {
   if (!params.resume_id) {
     return {
@@ -30,6 +49,11 @@ export async function update_activity(api, params) {
   };
 }
 
+/**
+ * @param {ActivityApi} api
+ * @param {ActivityParams} params
+ * @returns {Promise<{ success: boolean, message?: string, error?: string, activity?: unknown }>}
+ */
 export async function add_activity(api, params) {
   if (!params.resume_id) {
     return { success: false, error: 'resume_id is required for add_activity' };
@@ -49,6 +73,11 @@ export async function add_activity(api, params) {
   };
 }
 
+/**
+ * @param {ActivityApi} api
+ * @param {ActivityParams} params
+ * @returns {Promise<{ success: boolean, message?: string, error?: string }>}
+ */
 export async function delete_activity(api, params) {
   if (!params.resume_id) {
     return {

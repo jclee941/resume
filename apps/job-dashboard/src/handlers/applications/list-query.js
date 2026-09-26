@@ -1,3 +1,14 @@
+/**
+ * @typedef {Object} ApplicationListHandler
+ * @property {{ findAll(options: Record<string, unknown>): Promise<unknown[]>, countAll(): Promise<number> }} repository
+ * @property {(data: unknown, status?: number) => Response} jsonResponse
+ */
+
+/**
+ * @param {ApplicationListHandler} handler
+ * @param {Request} request
+ * @returns {Promise<Response>}
+ */
 export async function listApplications(handler, request) {
   const url = new URL(request.url);
   const status = url.searchParams.get('status');
@@ -22,7 +33,7 @@ export async function listApplications(handler, request) {
   return handler.jsonResponse({
     applications,
     total,
-    limit: parseInt(limit),
-    offset: parseInt(offset),
+    limit: parseInt(String(limit), 10),
+    offset: parseInt(String(offset), 10),
   });
 }

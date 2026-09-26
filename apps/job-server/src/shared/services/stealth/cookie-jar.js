@@ -20,12 +20,24 @@
  */
 
 /**
+ * @typedef {Cookie & { path: string }} StoredCookie
+ */
+
+/**
+ * @typedef {object} CookieJarOptions
+ * @property {{ error: (...args: unknown[]) => void }} [logger]
+ */
+
+/**
  * In-memory cookie jar with domain/path matching and expiry.
  */
 export class CookieJar {
+  /**
+   * @param {CookieJarOptions} [options]
+   */
   constructor(options = {}) {
     this.logger = options?.logger ?? console;
-    /** @type {Map<string, Cookie>} key = "domain|path|name" */
+    /** @type {Map<string, StoredCookie>} key = "domain|path|name" */
     this._cookies = new Map();
   }
 
@@ -36,6 +48,7 @@ export class CookieJar {
   setCookie(cookie) {
     if (!cookie.name || !cookie.domain) return;
 
+    /** @type {StoredCookie} */
     const normalized = {
       ...cookie,
       domain: cookie.domain.startsWith('.') ? cookie.domain : `.${cookie.domain}`,
@@ -58,7 +71,8 @@ export class CookieJar {
     try {
       hostname = new URL(requestUrl).hostname;
     } catch (error) {
-      this.logger.error('[CookieJar.setCookiesFromHeader] Invalid URL:', error.message);
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error('[CookieJar.setCookiesFromHeader] Invalid URL:', message);
       return;
     }
 
@@ -75,7 +89,7 @@ export class CookieJar {
    * Get cookies applicable to a URL (domain + path matching).
    * Automatically clears expired cookies encountered.
    * @param {string} url
-   * @returns {Cookie[]}
+   * @returns {StoredCookie[]}
    */
   getCookies(url) {
     let hostname, pathname;
@@ -84,7 +98,8 @@ export class CookieJar {
       hostname = parsed.hostname;
       pathname = parsed.pathname;
     } catch (error) {
-      this.logger.error('[CookieJar.getCookies] Invalid URL:', error.message);
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error('[CookieJar.getCookies] Invalid URL:', message);
       return [];
     }
 
@@ -118,6 +133,7 @@ export class CookieJar {
   getCookieHeader(url) {
     const cookies = this.getCookies(url);
     if (cookies.length === 0) return '';
+
     return cookies.map((c) => `${c.name}=${c.value}`).join('; ');
   }
 
@@ -170,7 +186,7 @@ export class CookieJar {
 
   /**
    * Export all cookies for persistence.
-   * @returns {Cookie[]}
+   * @returns {StoredCookie[]}
    */
   exportCookies() {
     return [...this._cookies.values()];

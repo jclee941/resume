@@ -1,3 +1,22 @@
+/**
+ * @typedef {Object} ActivityParams
+ * @property {string} [resume_id]
+ * @property {string} [activity_id]
+ * @property {Record<string, unknown>} [activity]
+ */
+
+/**
+ * @typedef {Object} ActivitySessionManager
+ * @property {(resumeId: string, activityId: string, activity: Record<string, unknown>) => Promise<unknown>} updateResumeActivity
+ * @property {(resumeId: string, activity: Record<string, unknown>) => Promise<unknown>} addResumeActivity
+ * @property {(resumeId: string, activityId: string) => Promise<unknown>} deleteResumeActivity
+ */
+
+/**
+ * @param {ActivityParams} params
+ * @param {ActivitySessionManager} sessionManager
+ * @returns {Promise<{ success: boolean, message?: string, error?: string, activity?: unknown }>}
+ */
 export async function update_activity(params, sessionManager) {
   if (!params.resume_id) {
     return {
@@ -30,6 +49,11 @@ export async function update_activity(params, sessionManager) {
   };
 }
 
+/**
+ * @param {ActivityParams} params
+ * @param {ActivitySessionManager} sessionManager
+ * @returns {Promise<{ success: boolean, message?: string, error?: string, activity?: unknown }>}
+ */
 export async function add_activity(params, sessionManager) {
   if (!params.resume_id) {
     return {
@@ -52,6 +76,11 @@ export async function add_activity(params, sessionManager) {
   };
 }
 
+/**
+ * @param {ActivityParams} params
+ * @param {ActivitySessionManager} sessionManager
+ * @returns {Promise<{ success: boolean, message?: string, error?: string }>}
+ */
 export async function delete_activity(params, sessionManager) {
   if (!params.resume_id) {
     return {

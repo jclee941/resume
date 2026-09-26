@@ -1,4 +1,27 @@
+/**
+ * @typedef {Object} QueueStats
+ * @property {number} failed
+ * @property {number} [processed]
+ * @property {number} [succeeded]
+ * @property {number} [retried]
+ */
+
+/**
+ * @typedef {Object} QueueMetricsLogger
+ * @property {(msg: string, meta?: Record<string, unknown>) => void} warn
+ */
+
+/**
+ * @typedef {Object} D1Database
+ * @property {(query: string) => { bind(...values: unknown[]): { run(): Promise<unknown> } }} prepare
+ */
+
 export class QueueMetricsRecorder {
+  /**
+   * @param {{ JOB_DB?: D1Database }} env
+   * @param {QueueMetricsLogger} logger
+   * @param {QueueStats} stats
+   */
   constructor(env, logger, stats) {
     this.env = env;
     this.logger = logger;
@@ -31,7 +54,9 @@ export class QueueMetricsRecorder {
         )
         .run();
     } catch (err) {
-      this.logger.warn('Failed to record queue metrics', { error: err.message });
+      this.logger.warn('Failed to record queue metrics', {
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
   }
 }

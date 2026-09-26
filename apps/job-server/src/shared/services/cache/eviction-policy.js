@@ -3,8 +3,17 @@
  */
 
 /**
+ * @typedef {{ expiresAt: number; [key: string]: unknown }} CacheEntry
+ *
+ * @typedef {{
+ *   cache: Map<string, CacheEntry>;
+ *   stats: { evictions: number; expirations: number; [key: string]: unknown };
+ * }} LruCacheState
+ */
+
+/**
  * Evict least recently used entry.
- * @param {Object} state
+ * @param {LruCacheState} state
  */
 export function evictLRU(state) {
   const firstKey = state.cache.keys().next().value;
@@ -16,7 +25,7 @@ export function evictLRU(state) {
 
 /**
  * Get all non-expired keys without mutating cache contents.
- * @param {Object} state
+ * @param {LruCacheState} state
  * @returns {string[]}
  */
 export function activeKeys(state) {
@@ -34,7 +43,7 @@ export function activeKeys(state) {
 
 /**
  * Cleanup expired entries.
- * @param {Object} state
+ * @param {LruCacheState} state
  * @returns {number} Number of entries removed
  */
 export function cleanupExpired(state) {

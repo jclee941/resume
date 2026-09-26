@@ -12,6 +12,10 @@
 const COPIED_CLASS = 'is-copied';
 const RESET_MS = 2000;
 
+/**
+ * @param {string} email
+ * @returns {string}
+ */
 function copiedMessage(email) {
   const lang =
     typeof document !== 'undefined' && document.documentElement
@@ -22,11 +26,22 @@ function copiedMessage(email) {
   return `${email} 복사됨`;
 }
 
+/**
+ * @param {ParentNode} root
+ * @param {string} message
+ * @returns {void}
+ */
 function announce(root, message) {
   const status = root.querySelector('.contact-copy-status');
   if (status) status.textContent = message;
 }
 
+/**
+ * @param {Element & { dataset?: DOMStringMap, _copyTimer?: ReturnType<typeof setTimeout> }} link
+ * @param {ParentNode} root
+ * @param {(href: string) => void} navigate
+ * @returns {Promise<void>}
+ */
 async function copyEmail(link, root, navigate) {
   const email = link.dataset && link.dataset.contactEmail;
   if (!email) return;
@@ -56,12 +71,20 @@ async function copyEmail(link, root, navigate) {
   }
 }
 
+/**
+ * @param {string} href
+ * @returns {void}
+ */
 function defaultNavigate(href) {
   if (typeof window !== 'undefined' && window.location) {
     window.location.href = href;
   }
 }
 
+/**
+ * @param {ParentNode} [root=document]
+ * @param {{ navigate?: (href: string) => void }} [options={}]
+ */
 export function initContactCopy(root = document, options = {}) {
   const navigate = options.navigate || defaultNavigate;
   const links = root.querySelectorAll('[data-contact-email]');

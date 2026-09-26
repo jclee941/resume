@@ -1,3 +1,22 @@
+/**
+ * @typedef {Object} EducationParams
+ * @property {string} [resume_id]
+ * @property {string} [education_id]
+ * @property {Record<string, unknown>} [education]
+ */
+
+/**
+ * @typedef {Object} EducationApi
+ * @property {(resumeId: string, educationId: string, education: Record<string, unknown>) => Promise<unknown>} updateResumeEducation
+ * @property {(resumeId: string, education: Record<string, unknown>) => Promise<unknown>} addResumeEducation
+ * @property {(resumeId: string, educationId: string) => Promise<unknown>} deleteResumeEducation
+ */
+
+/**
+ * @param {EducationApi} api
+ * @param {EducationParams} params
+ * @returns {Promise<{ success: boolean, message?: string, error?: string, education?: unknown }>}
+ */
 export async function update_education(api, params) {
   if (!params.resume_id) {
     return {
@@ -30,6 +49,11 @@ export async function update_education(api, params) {
   };
 }
 
+/**
+ * @param {EducationApi} api
+ * @param {EducationParams} params
+ * @returns {Promise<{ success: boolean, message?: string, error?: string, education?: unknown }>}
+ */
 export async function add_education(api, params) {
   if (!params.resume_id) {
     return { success: false, error: 'resume_id is required for add_education' };
@@ -49,6 +73,11 @@ export async function add_education(api, params) {
   };
 }
 
+/**
+ * @param {EducationApi} api
+ * @param {EducationParams} params
+ * @returns {Promise<{ success: boolean, message?: string, error?: string }>}
+ */
 export async function delete_education(api, params) {
   if (!params.resume_id) {
     return {

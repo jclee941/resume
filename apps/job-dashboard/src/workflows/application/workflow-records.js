@@ -1,3 +1,37 @@
+/**
+ * @typedef {Object} WorkflowEvent
+ * @property {{ runId?: string }} [payload]
+ * @property {string} [instanceId]
+ * @property {string} [id]
+ */
+
+/**
+ * @typedef {Object} WorkflowStats
+ * @property {number} jobsFound
+ * @property {number} jobsScored
+ * @property {number} jobsApproved
+ * @property {number} jobsRejected
+ * @property {number} jobsApplied
+ * @property {number} jobsFailed
+ */
+
+/**
+ * @typedef {Object} WorkflowRecord
+ * @property {string} id
+ * @property {string} triggerType
+ * @property {string} status
+ * @property {string} startedAt
+ * @property {string} [completedAt]
+ * @property {unknown[]} steps
+ * @property {WorkflowStats} stats
+ * @property {unknown[]} errors
+ */
+
+/**
+ * @param {WorkflowEvent | null | undefined} event
+ * @param {string} triggerType
+ * @returns {WorkflowRecord}
+ */
 export function createWorkflowRecord(event, triggerType) {
   return {
     id: resolveWorkflowId(event),
@@ -17,6 +51,10 @@ export function createWorkflowRecord(event, triggerType) {
   };
 }
 
+/**
+ * @param {WorkflowEvent | null | undefined} event
+ * @returns {string}
+ */
 function resolveWorkflowId(event) {
   const runId = typeof event?.payload?.runId === 'string' ? event.payload.runId.trim() : '';
   if (runId) return runId;
@@ -26,10 +64,18 @@ function resolveWorkflowId(event) {
   return `application-workflow-${Date.now()}`;
 }
 
+/**
+ * @param {Array<{ matchScore: number }>} scoredJobs
+ * @returns {number}
+ */
 export function averageScore(scoredJobs) {
   return scoredJobs.reduce((sum, job) => sum + job.matchScore, 0) / scoredJobs.length || 0;
 }
 
+/**
+ * @param {WorkflowRecord} workflow
+ * @returns {void}
+ */
 export function completeWorkflow(workflow) {
   workflow.status =
     workflow.stats.jobsFailed > 0 && workflow.stats.jobsApplied === 0 ? 'failed' : 'completed';

@@ -21,9 +21,20 @@ function normalizeLang(lang) {
 }
 
 /**
+ * @typedef {Object} CoverLetterEntry
+ * @property {string} headline
+ * @property {string[]} paragraphs
+ * @property {string} closing
+ */
+
+/**
+ * @typedef {Record<string, CoverLetterEntry | undefined>} CoverLetterMap
+ */
+
+/**
  * A locale entry is valid only when it carries the three required fields.
- * @param {*} entry - Candidate locale object.
- * @returns {boolean} True when the entry can be rendered.
+ * @param {Record<string, unknown> | null | undefined} entry - Candidate locale object.
+ * @returns {entry is CoverLetterEntry} True when the entry can be rendered.
  */
 function isValidEntry(entry) {
   return (
@@ -39,9 +50,9 @@ function isValidEntry(entry) {
 
 /**
  * Pick the best locale entry: requested → 'ko' → first valid.
- * @param {Object} coverLetter - Map of locale key to entry.
+ * @param {CoverLetterMap} coverLetter - Map of locale key to entry.
  * @param {string} lang - Normalized locale key.
- * @returns {Object|null} A valid entry, or null when none exists.
+ * @returns {CoverLetterEntry|null} A valid entry, or null when none exists.
  */
 function pickEntry(coverLetter, lang) {
   const candidates = [coverLetter[lang], coverLetter.ko];
@@ -56,7 +67,7 @@ function pickEntry(coverLetter, lang) {
 
 /**
  * Render the cover letter for the given locale as plain text.
- * @param {Object|null} coverLetter - SSoT coverLetter map ({ ko, en, ja }).
+ * @param {CoverLetterMap|null|undefined} coverLetter - SSoT coverLetter map ({ ko, en, ja }).
  * @param {string} [lang] - Requested language tag; defaults to 'ko'.
  * @returns {string} Plain-text cover letter, or a friendly unavailable line.
  */

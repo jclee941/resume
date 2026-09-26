@@ -1,3 +1,15 @@
+/**
+ * @typedef {Object} RememberSourceData
+ * @property {{ position?: string }} [current]
+ * @property {Array<{ role?: string }>} [careers]
+ * @property {{ totalExperience?: string }} summary
+ */
+
+/**
+ * @param {import('playwright').Page} page
+ * @param {RememberSourceData} sourceData
+ * @returns {Promise<void>}
+ */
 export async function updateRememberHeadline(page, sourceData) {
   const editBtn = await page.$('button:has-text("수정"), [class*="edit"]');
   if (editBtn) {
@@ -18,6 +30,18 @@ export async function updateRememberHeadline(page, sourceData) {
   }
 }
 
+/**
+ * @typedef {Object} RememberCareer
+ * @property {string} company
+ * @property {string} role
+ * @property {string} period
+ */
+
+/**
+ * @param {import('playwright').Page} page
+ * @param {RememberCareer[]} careers
+ * @returns {Promise<void>}
+ */
 export async function updateRememberCareers(page, careers) {
   const careerSection = await page.$('[class*="career"], [data-section="career"]');
   if (!careerSection) return;
@@ -46,6 +70,17 @@ export async function updateRememberCareers(page, careers) {
   }
 }
 
+/**
+ * @typedef {Object} RememberEducation
+ * @property {string} school
+ * @property {string} major
+ */
+
+/**
+ * @param {import('playwright').Page} page
+ * @param {RememberEducation} education
+ * @returns {Promise<void>}
+ */
 export async function updateRememberEducation(page, education) {
   const eduSection = await page.$('[class*="education"], [data-section="education"]');
   if (!eduSection) return;
@@ -73,6 +108,18 @@ export async function updateRememberEducation(page, education) {
   }
 }
 
+/**
+ * @typedef {Object} RememberCertification
+ * @property {string} name
+ * @property {string} [issuer]
+ * @property {string} [date]
+ */
+
+/**
+ * @param {import('playwright').Page} page
+ * @param {RememberCertification[]} certifications
+ * @returns {Promise<void>}
+ */
 export async function updateRememberCertifications(page, certifications) {
   const certSection = await page.$('[class*="certification"], [data-section="certification"]');
   if (!certSection) return;
@@ -116,6 +163,11 @@ export async function updateRememberCertifications(page, certifications) {
   }
 }
 
+/**
+ * @param {import('playwright').Page} page
+ * @param {string[]} skills
+ * @returns {Promise<void>}
+ */
 export async function updateRememberSkills(page, skills) {
   const skillSection = await page.$('[class*="skill"], [data-section="skill"]');
   if (!skillSection) return;

@@ -8,11 +8,31 @@
  */
 
 /**
+ * @typedef {{
+ *   run(model: string, options?: unknown): Promise<unknown>;
+ * }} CloudflareAiBinding
+ *
+ * @typedef {{
+ *   prompt_tokens: number;
+ *   completion_tokens: number;
+ *   total_tokens: number;
+ * }} ProviderUsage
+ *
+ * @typedef {{
+ *   text: string;
+ *   model: string;
+ *   provider: string;
+ *   latencyMs: number;
+ *   usage: ProviderUsage;
+ * }} ProviderCompletionResult
+ */
+
+/**
  * Workers AI provider — runs models on Cloudflare's edge network.
  * Requires `AI` binding in wrangler.jsonc.
  */
 export class WorkersAIProvider {
-  /** @param {object} env - Cloudflare Worker environment bindings */
+  /** @param {{ AI?: CloudflareAiBinding }} env - Cloudflare Worker environment bindings */
   constructor(env) {
     if (!env?.AI) {
       throw new Error('Workers AI binding (env.AI) is not configured');
@@ -28,16 +48,19 @@ export class WorkersAIProvider {
    * @param {Array<{role: string, content: string}>} options.messages - Chat messages
    * @param {number} [options.max_tokens=512] - Maximum tokens to generate
    * @param {number} [options.temperature=0.7] - Sampling temperature
-   * @returns {Promise<{text: string, model: string, provider: string, usage: object}>}
+   * @returns {Promise<ProviderCompletionResult>}
    */
   async complete(model, { messages, max_tokens = 512, temperature = 0.7 }) {
     const startTime = Date.now();
 
-    const result = await this.ai.run(model, {
-      messages,
-      max_tokens,
-      temperature,
-    });
+    const result =
+      /** @type {{ response?: string; result?: string } | string | null | undefined} */ (
+        await this.ai.run(model, {
+          messages,
+          max_tokens,
+          temperature,
+        })
+      );
 
     const text =
       typeof result === 'string'
@@ -65,10 +88,12 @@ export class WorkersAIProvider {
    */
   async embed(model, text) {
     const input = Array.isArray(text) ? text : [text];
-    const result = await this.ai.run(model, { text: input });
+    const result = /** @type {{ data?: number[][] } | number[][] | null | undefined} */ (
+      await this.ai.run(model, { text: input })
+    );
 
     return {
-      embeddings: result?.data ?? result,
+      embeddings: /** @type {number[][]} */ (result && 'data' in result ? result.data : result),
       model,
       provider: this.name,
     };
@@ -106,7 +131,7 @@ export class OpenAIProvider {
    * @param {Array<{role: string, content: string}>} options.messages
    * @param {number} [options.max_tokens=1024]
    * @param {number} [options.temperature=0.7]
-   * @returns {Promise<{text: string, model: string, provider: string, usage: object}>}
+   * @returns {Promise<ProviderCompletionResult>}
    */
   async complete(model, { messages, max_tokens = 1024, temperature = 0.7 }) {
     const startTime = Date.now();
@@ -129,7 +154,10 @@ export class OpenAIProvider {
         throw new Error(`OpenAI API error ${response.status}: ${errorBody}`);
       }
 
-      const data = await response.json();
+      const data =
+        /** @type {{ choices?: Array<{ message?: { content?: string } }>; model?: string; usage?: ProviderUsage }} */ (
+          await response.json()
+        );
       const text = data.choices?.[0]?.message?.content ?? '';
 
       return {
@@ -174,7 +202,9 @@ export class OpenAIProvider {
         throw new Error(`OpenAI embedding error ${response.status}`);
       }
 
-      const data = await response.json();
+      const data = /** @type {{ data: Array<{ embedding: number[] }>; model?: string }} */ (
+        await response.json()
+      );
       return {
         embeddings: data.data.map((d) => d.embedding),
         model: data.model ?? model,

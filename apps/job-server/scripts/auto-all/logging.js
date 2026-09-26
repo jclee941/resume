@@ -9,12 +9,23 @@ export const c = {
   cyan: '\x1b[36m',
 };
 
+/**
+ * @typedef {'info' | 'ok' | 'err' | 'warn' | 'run'} LogType
+ */
+
+/**
+ * @param {string} msg
+ * @param {LogType} [type='info']
+ */
 export function log(msg, type = 'info') {
   const icons = { info: '→', ok: '✓', err: '✗', warn: '⚠', run: '▶' };
   const colors = { info: c.cyan, ok: c.green, err: c.red, warn: c.yellow, run: c.blue };
   console.log(`${colors[type]}${icons[type]}${c.reset} ${msg}`);
 }
 
+/**
+ * @param {string} title
+ */
 export function header(title) {
   console.log(`\n${c.bold}━━━ ${title} ━━━${c.reset}\n`);
 }

@@ -82,6 +82,8 @@ export function splitForTelegram(html, maxLen = TELEGRAM_MAX_LENGTH) {
  * Returns boolean[] of length text.length+1 where entry[i] is true if a split
  * BEFORE character i is safe (not inside a `<...>` tag and not inside an open
  * `<a>…</a>`). Index 0 and length are always boundaries.
+ * @param {string} text
+ * @returns {boolean[]}
  */
 function computeLegalBoundaries(text) {
   const legal = new Array(text.length + 1).fill(false);
@@ -120,6 +122,12 @@ function computeLegalBoundaries(text) {
   return legal;
 }
 
+/**
+ * @param {boolean[]} legal
+ * @param {number} from
+ * @param {number} max
+ * @returns {number}
+ */
 function nextLegalBoundary(legal, from, max) {
   for (let i = from + 1; i <= max; i += 1) {
     if (legal[i]) return i;

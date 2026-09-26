@@ -19,7 +19,9 @@
  * @module skill-radar-data
  */
 
-/** Map SSoT proficiency strings to the radar's 0-100 scale. */
+/** Map SSoT proficiency strings to the radar's 0-100 scale.
+ * @type {Record<string, number>}
+ */
 const LEVEL_MAP = {
   expert: 95,
   advanced: 80,
@@ -27,6 +29,7 @@ const LEVEL_MAP = {
   beginner: 35,
 };
 
+/** @type {Record<string, string>} */
 const EVIDENCE_LABELS = {
   expert: 'Primary operating evidence',
   advanced: 'Applied in project work',
@@ -37,6 +40,7 @@ const EVIDENCE_LABELS = {
 /**
  * Inline SVG icons keyed by the lucide icon name used in the SSoT.
  * Falls back to a generic glyph for unknown names.
+ * @type {Record<string, string>}
  */
 const ICON_SVG = {
   Activity:
@@ -57,13 +61,41 @@ const FALLBACK_ICON =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></svg>';
 
 /**
+ * @typedef {Object} SSoTSkillItem
+ * @property {string} [name]
+ * @property {string} [level]
+ */
+
+/**
+ * @typedef {Object} SSoTSkillCategory
+ * @property {string} [title]
+ * @property {string} icon
+ * @property {SSoTSkillItem[]} [items]
+ */
+
+/**
+ * @typedef {Object} RadarSkillItem
+ * @property {string} name
+ * @property {number} level
+ * @property {string} evidence
+ */
+
+/**
+ * @typedef {Object} RadarCategory
+ * @property {string} title
+ * @property {string} icon
+ * @property {RadarSkillItem[]} skills
+ */
+
+/**
  * Build the radar data object from SSoT skills.
- * @param {Object} skills - The `skills` object from data.json.
- * @returns {Object} Radar-shaped skill data. Empty object if input invalid.
+ * @param {Record<string, SSoTSkillCategory>|null|undefined} skills - The `skills` object from data.json.
+ * @returns {Record<string, RadarCategory>} Radar-shaped skill data. Empty object if input invalid.
  */
 function buildSkillRadarData(skills) {
   if (!skills || typeof skills !== 'object') return {};
 
+  /** @type {Record<string, RadarCategory>} */
   const out = {};
   for (const [category, data] of Object.entries(skills)) {
     if (!data || !Array.isArray(data.items) || data.items.length === 0) continue;

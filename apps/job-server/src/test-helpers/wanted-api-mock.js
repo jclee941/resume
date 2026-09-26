@@ -11,10 +11,11 @@ import { mockResumeData, mockWantedResponse, mockWantedSearchResponse } from './
 
 /**
  * Create a mock Wanted API client
- * @param {Object} [config]
+ * @param {Record<string, unknown>} [_config]
  * @returns {Object} Wanted API mock
  */
 export function mockWantedAPI(_config = {}) {
+  /** @type {Array<{ method: string, resumeId?: string, jobId?: string, params?: unknown, query?: string, coverLetter?: unknown }>} */
   const calls = [];
   let isAuthenticated = true;
   let shouldFail = false;
@@ -27,8 +28,11 @@ export function mockWantedAPI(_config = {}) {
     async getProfile() {
       if (shouldFail) throw failError;
       calls.push({ method: 'getProfile' });
+      /** @type {Record<string, unknown>} */
+      const data = mockWantedResponse.data;
+      const user = typeof data.user === 'object' && data.user !== null ? data.user : null;
       return (
-        mockWantedResponse.data?.user || {
+        user || {
           id: 12345,
           name: 'Mock User',
           email: 'mock@example.com',
@@ -84,7 +88,7 @@ export function mockWantedAPI(_config = {}) {
     },
 
     /**
-     * @param {Object} params
+     * @param {Object} [params]
      * @returns {Promise<Object>}
      */
     async searchJobs(params = {}) {
@@ -132,7 +136,7 @@ export function mockWantedAPI(_config = {}) {
       failError = error;
     },
 
-    /** @returns {Array} */
+    /** @returns {Array<{ method: string, resumeId?: string, jobId?: string, params?: unknown, query?: string, coverLetter?: unknown }>} */
     getCalls() {
       return calls;
     },

@@ -1,5 +1,9 @@
 const DEFAULT_ORIGINS = ['https://resume.jclee.me', 'http://localhost:3456'];
 
+/**
+ * @param {{ CORS_ALLOWED_ORIGINS?: string } | null | undefined} env
+ * @returns {string[]}
+ */
 function getAllowedOrigins(env) {
   if (env?.CORS_ALLOWED_ORIGINS) {
     try {
@@ -11,6 +15,11 @@ function getAllowedOrigins(env) {
   return DEFAULT_ORIGINS;
 }
 
+/**
+ * @param {Request | string} request
+ * @param {{ CORS_ALLOWED_ORIGINS?: string } | null | undefined} env
+ * @returns {Record<string, string>}
+ */
 export function corsHeaders(request, env) {
   const origin = request instanceof Request ? request.headers.get('Origin') : request;
   const allowedOrigins = getAllowedOrigins(env);
@@ -27,6 +36,12 @@ export function corsHeaders(request, env) {
   };
 }
 
+/**
+ * @param {Response} response
+ * @param {Request | string} request
+ * @param {{ CORS_ALLOWED_ORIGINS?: string } | null | undefined} env
+ * @returns {Response}
+ */
 export function addCorsHeaders(response, request, env) {
   const headers = new Headers(response.headers);
   Object.entries(corsHeaders(request, env)).forEach(([key, value]) => {
@@ -47,6 +62,11 @@ export function addCorsHeaders(response, request, env) {
   return new Response(response.body, { status: response.status, headers });
 }
 
+/**
+ * @param {unknown} data
+ * @param {number} [status=200]
+ * @returns {Response}
+ */
 export function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,

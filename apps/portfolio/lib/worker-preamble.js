@@ -7,31 +7,36 @@
 const { buildWorkerRuntimeHelpers } = require('./worker-runtime-helpers');
 
 /**
+ * @typedef {Object} WorkerPreambleOpts
+ * @property {string} deployedAt - ISO timestamp of deployment
+ * @property {string} indexHtml - Escaped HTML content (Korean)
+ * @property {string} indexEnHtml - Escaped HTML content (English)
+ * @property {string} indexJaHtml - Escaped HTML content (Japanese)
+ * @property {string} resumeDataJson - Escaped portfolio data JSON (Korean)
+ * @property {string} resumeDataEnJson - Escaped portfolio data JSON (English)
+ * @property {string} resumeDataJaJson - Escaped portfolio data JSON (Japanese)
+ * @property {string} manifestJson - Escaped manifest.json content (Korean)
+ * @property {string} manifestEnJson - Escaped manifest.json content (English)
+ * @property {string} serviceWorker - Escaped service worker JS
+ * @property {string} mainJs - Escaped main.js content
+ * @property {string} robotsTxt - Escaped robots.txt content
+ * @property {string} sitemapXml - Escaped sitemap.xml content
+ * @property {string} ogImageBase64 - Base64 OG image (Korean)
+ * @property {string} ogImageEnBase64 - Base64 OG image (English)
+ * @property {string} ogImageJaBase64 - Base64 OG image (Japanese)
+ * @property {string} securityHeadersJson - JSON.stringify'd security headers (pretty)
+ * @property {string} metricsJson - JSON.stringify'd initial metrics (pretty)
+ * @property {string} initHistogramBucketsStr - initHistogramBuckets function source
+ * @property {string} generateHistogramLinesStr - generateHistogramLines function source
+ * @property {string} generateMetricsStr - generateMetrics function source
+ * @property {string} logToElasticsearchStr - logToElasticsearch function source
+ * @property {string} rateLimitConfigJson - JSON.stringify'd rate limit config
+ * @property {string} authHelpersStr - Generated auth helper code
+ */
+
+/**
  * Generate the worker preamble code (constants, metrics, logging, auth).
- * @param {object} opts - Build-time values to interpolate
- * @param {string} opts.deployedAt - ISO timestamp of deployment
- * @param {string} opts.indexHtml - Escaped HTML content (Korean)
- * @param {string} opts.indexEnHtml - Escaped HTML content (English)
- * @param {string} opts.indexJaHtml - Escaped HTML content (Japanese)
- * @param {string} opts.resumeDataJson - Escaped portfolio data JSON (Korean)
- * @param {string} opts.resumeDataEnJson - Escaped portfolio data JSON (English)
- * @param {string} opts.resumeDataJaJson - Escaped portfolio data JSON (Japanese)
- * @param {string} opts.manifestJson - Escaped manifest.json content (Korean)
- * @param {string} opts.manifestEnJson - Escaped manifest.json content (English)
- * @param {string} opts.serviceWorker - Escaped service worker JS
- * @param {string} opts.mainJs - Escaped main.js content
- * @param {string} opts.robotsTxt - Escaped robots.txt content
- * @param {string} opts.sitemapXml - Escaped sitemap.xml content
- * @param {string} opts.ogImageBase64 - Base64 OG image (Korean)
- * @param {string} opts.ogImageEnBase64 - Base64 OG image (English)
- * @param {string} opts.securityHeadersJson - JSON.stringify'd security headers (pretty)
- * @param {string} opts.metricsJson - JSON.stringify'd initial metrics (pretty)
- * @param {string} opts.initHistogramBucketsStr - initHistogramBuckets function source
- * @param {string} opts.generateHistogramLinesStr - generateHistogramLines function source
- * @param {string} opts.generateMetricsStr - generateMetrics function source
- * @param {string} opts.logToElasticsearchStr - logToElasticsearch function source
- * @param {string} opts.rateLimitConfigJson - JSON.stringify'd rate limit config
- * @param {string} opts.authHelpersStr - Generated auth helper code
+ * @param {WorkerPreambleOpts} opts - Build-time values to interpolate
  * @returns {string} Worker preamble code
  */
 function generateWorkerPreamble(opts) {

@@ -1,22 +1,51 @@
 import { EventEmitter } from 'events';
 import { sleep } from './shared.js';
 
+/**
+ * @template TItem, TResult
+ * @typedef {Object} QueueEntry
+ * @property {TItem} item
+ * @property {(value: TResult | PromiseLike<TResult>) => void} resolve
+ * @property {(reason?: unknown) => void} reject
+ * @property {number} startTime
+ */
+
+/**
+ * @typedef {Object} AsyncQueueOptions
+ * @property {number} [concurrency]
+ */
+
+/**
+ * @template TItem, TResult
+ */
 export class AsyncQueue extends EventEmitter {
+  /** @type {QueueEntry<TItem, TResult>[]} */
   #queue = [];
   #running = 0;
   #concurrency;
+  /** @type {(item: TItem) => Promise<TResult> | TResult} */
   #processor;
+  /** @type {Array<{ item: TItem, result: TResult }>} */
   #results = [];
+  /** @type {Array<{ item: TItem, error: unknown }>} */
   #errors = [];
   #isProcessing = false;
   #isPaused = false;
 
+  /**
+   * @param {(item: TItem) => Promise<TResult> | TResult} processor
+   * @param {AsyncQueueOptions} [options]
+   */
   constructor(processor, options = {}) {
     super();
     this.#processor = processor;
     this.#concurrency = options.concurrency || 1;
   }
 
+  /**
+   * @param {TItem} item
+   * @returns {Promise<TResult>}
+   */
   add(item) {
     return new Promise((resolve, reject) => {
       this.#queue.push({
@@ -31,6 +60,10 @@ export class AsyncQueue extends EventEmitter {
     });
   }
 
+  /**
+   * @param {TItem[]} items
+   * @returns {Promise<TResult[]>}
+   */
   addAll(items) {
     return Promise.all(items.map((item) => this.add(item)));
   }
@@ -46,6 +79,9 @@ export class AsyncQueue extends EventEmitter {
     this.#process();
   }
 
+  /**
+   * @param {boolean} [rejectPending=true]
+   */
   clear(rejectPending = true) {
     if (rejectPending) {
       for (const { reject } of this.#queue) {
@@ -80,7 +116,9 @@ export class AsyncQueue extends EventEmitter {
     this.#isProcessing = true;
 
     while (this.#queue.length > 0 && this.#running < this.#concurrency && !this.#isPaused) {
-      const { item, resolve, reject } = this.#queue.shift();
+      const entry = this.#queue.shift();
+      if (!entry) break;
+      const { item, resolve, reject } = entry;
       this.#running++;
 
       this.emit('started', { item, running: this.#running });

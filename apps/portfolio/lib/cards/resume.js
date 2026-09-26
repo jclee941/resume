@@ -1,7 +1,14 @@
-const { TEMPLATE_CACHE } = require('../config');
+const { TEMPLATE_CACHE } =
+  /** @type {{ TEMPLATE_CACHE: { dataHash: string | null, resumeCardsHtml: string | null } }} */ (
+    require('../config')
+  );
 const { escapeHtml } = require('../template-sanitizer');
 const logger = require('../../logger');
 
+/**
+ * @param {Record<string, unknown>|null|undefined} metrics
+ * @returns {string}
+ */
 function buildMetricsLine(metrics) {
   return metrics && typeof metrics === 'object'
     ? Object.entries(metrics)
@@ -12,8 +19,18 @@ function buildMetricsLine(metrics) {
 }
 
 /**
+ * @typedef {Object} ResumeCardItem
+ * @property {string} title
+ * @property {string} period
+ * @property {string} [role]
+ * @property {string} description
+ * @property {string[]} [stats]
+ * @property {Record<string, unknown>} [metrics]
+ */
+
+/**
  * @description Generate resume list items HTML from JSON data
- * @param {Array} resumeData - Array of resume project objects
+ * @param {Array<ResumeCardItem>} resumeData - Array of resume project objects
  * @param {string} dataHash - Hash of the data for cache validation
  * @returns {string} HTML string for resume list items
  */

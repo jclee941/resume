@@ -24,6 +24,7 @@ export function normalizeSkillName(skill) {
     .replace(/\./g, '')
     .trim();
 
+  /** @type {Record<string, string>} */
   const aliases = {
     reactjs: 'react',
     vuejs: 'vue',
@@ -38,14 +39,28 @@ export function normalizeSkillName(skill) {
 }
 
 /**
+ * @typedef {Object} ScorableJob
+ * @property {string} [company]
+ * @property {string} [position]
+ * @property {string} [description]
+ * @property {string} [experience]
+ * @property {string} [location]
+ * @property {string | number | Date} [postedAt]
+ */
+
+/**
+ * @typedef {Object} MatchScoringConfig
+ * @property {string[]} [skills]
+ * @property {string[]} [preferredCompanies]
+ * @property {string[]} [excludeCompanies]
+ * @property {number} [experienceYears]
+ * @property {string[]} [preferredLocations]
+ */
+
+/**
  * Calculate a weighted match score for a job listing.
- * @param {Object} job - Job listing with position, company, description, etc.
- * @param {Object} config - Scoring configuration
- * @param {string[]} [config.skills] - Required skills to match
- * @param {string[]} [config.preferredCompanies] - Preferred company names
- * @param {string[]} [config.excludeCompanies] - Companies to exclude (returns 0)
- * @param {number} [config.experienceYears] - User's years of experience
- * @param {string[]} [config.preferredLocations] - Preferred job locations
+ * @param {ScorableJob} job - Job listing with position, company, description, etc.
+ * @param {MatchScoringConfig} config - Scoring configuration
  * @returns {number} Score 0-100
  */
 export function calculateMatchScore(job, config) {

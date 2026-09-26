@@ -24,6 +24,10 @@ const COMMON_STOPWORDS = new Set([
   '에서',
 ]);
 
+/**
+ * @param {unknown} value
+ * @returns {string}
+ */
 export function normalize(value) {
   return String(value || '')
     .toLowerCase()
@@ -32,6 +36,10 @@ export function normalize(value) {
     .trim();
 }
 
+/**
+ * @param {unknown} value
+ * @returns {string[]}
+ */
 export function toTokens(value) {
   return normalize(value)
     .split(/\s+/)
@@ -39,10 +47,20 @@ export function toTokens(value) {
     .filter((token) => token.length >= 2 && !COMMON_STOPWORDS.has(token));
 }
 
+/**
+ * @template T
+ * @param {T[]} list
+ * @returns {T[]}
+ */
 export function unique(list) {
   return [...new Set(list)];
 }
 
+/**
+ * @param {string[]} leftTokens
+ * @param {string[]} rightTokens
+ * @returns {number}
+ */
 export function jaccardSimilarity(leftTokens, rightTokens) {
   const left = new Set(leftTokens);
   const right = new Set(rightTokens);
@@ -55,6 +73,10 @@ export function jaccardSimilarity(leftTokens, rightTokens) {
   return union === 0 ? 0 : intersection / union;
 }
 
+/**
+ * @param {unknown} requirements
+ * @returns {string}
+ */
 export function parseRequirements(requirements) {
   return Array.isArray(requirements) ? requirements.join(' ') : String(requirements || '');
 }

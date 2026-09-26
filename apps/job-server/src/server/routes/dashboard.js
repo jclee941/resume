@@ -1,15 +1,33 @@
+/**
+ * @typedef {import('fastify').FastifyInstance & {
+ *   sessions: { has(id: string): boolean };
+ *   cloudflareAnalytics: { getWorkerAnalytics(): Promise<unknown> };
+ *   profileAggregator?: { fetchUnifiedProfile(): Promise<unknown> };
+ * }} DashboardFastifyInstance
+ */
+
+/**
+ * @param {DashboardFastifyInstance} fastify
+ */
 export default async function dashboardRoutes(fastify) {
   // Cloudflare Analytics
-  fastify.get('/cf/stats', async (request, reply) => {
-    // Only logged in users (or admin session)
-    const sessionId = request.cookies?.session_id;
-    if (!sessionId || !fastify.sessions.has(sessionId)) {
-      return reply.status(401).send({ error: 'Unauthorized' });
-    }
+  fastify.get(
+    '/cf/stats',
+    /**
+     * @param {import('fastify').FastifyRequest & { cookies?: Record<string, string | undefined> }} request
+     * @param {import('fastify').FastifyReply} reply
+     */
+    async (request, reply) => {
+      // Only logged in users (or admin session)
+      const sessionId = request.cookies?.session_id;
+      if (!sessionId || !fastify.sessions.has(sessionId)) {
+        return reply.status(401).send({ error: 'Unauthorized' });
+      }
 
-    const stats = await fastify.cloudflareAnalytics.getWorkerAnalytics();
-    return { stats };
-  });
+      const stats = await fastify.cloudflareAnalytics.getWorkerAnalytics();
+      return { stats };
+    }
+  );
 
   // System Status
   fastify.get('/status', async () => {
@@ -23,30 +41,46 @@ export default async function dashboardRoutes(fastify) {
   });
 
   // Web Vitals Receiver
-  fastify.post('/vitals', async (request, _reply) => {
-    const vitals = request.body;
-    // Log to Loki or store
-    request.log.info({ vitals }, 'Web Vitals received');
-    return { status: 'ok' };
-  });
+  fastify.post(
+    '/vitals',
+    /**
+     * @param {import('fastify').FastifyRequest} request
+     * @param {import('fastify').FastifyReply} _reply
+     */
+    async (request, _reply) => {
+      const vitals = request.body;
+      // Log to Loki or store
+      request.log.info({ vitals }, 'Web Vitals received');
+      return { status: 'ok' };
+    }
+  );
 
   // Unified Profile (aggregated from all platforms)
-  fastify.get('/profile/unified', async (request, reply) => {
-    const profileAggregator = fastify.profileAggregator;
+  fastify.get(
+    '/profile/unified',
+    /**
+     * @param {import('fastify').FastifyRequest} request
+     * @param {import('fastify').FastifyReply} reply
+     */
+    async (request, reply) => {
+      const profileAggregator = fastify.profileAggregator;
 
-    if (!profileAggregator) {
-      return reply.status(503).send({
-        success: false,
-        error: 'Profile aggregator not available',
-      });
-    }
+      if (!profileAggregator) {
+        return reply.status(503).send({
+          success: false,
+          error: 'Profile aggregator not available',
+        });
+      }
 
-    try {
-      const profile = await profileAggregator.fetchUnifiedProfile();
-      return { success: true, profile };
-    } catch (err) {
-      request.log.error(err, 'Failed to fetch unified profile');
-      return reply.status(500).send({ success: false, error: err.message });
+      try {
+        const profile = await profileAggregator.fetchUnifiedProfile();
+        return { success: true, profile };
+      } catch (err) {
+        request.log.error(err, 'Failed to fetch unified profile');
+        return reply
+          .status(500)
+          .send({ success: false, error: err instanceof Error ? err.message : String(err) });
+      }
     }
-  });
+  );
 }

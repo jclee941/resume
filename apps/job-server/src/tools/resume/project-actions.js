@@ -1,3 +1,21 @@
+/**
+ * @typedef {Object} ProjectApi
+ * @property {(resumeId: string | number, careerId: string | number, project: Record<string, unknown>) => Promise<Record<string, unknown>>} addCareerProject
+ * @property {(resumeId: string | number, careerId: string | number, projectId: string | number) => Promise<unknown>} deleteCareerProject
+ */
+
+/**
+ * @typedef {Object} ProjectParams
+ * @property {string | number} [resume_id]
+ * @property {string | number} [career_id]
+ * @property {string | number} [project_id]
+ * @property {Record<string, unknown>} [project]
+ */
+
+/**
+ * @param {ProjectParams} params
+ * @param {ProjectApi} sessionManager
+ */
 export async function add_project(params, sessionManager) {
   if (!params.resume_id) {
     return {
@@ -30,6 +48,10 @@ export async function add_project(params, sessionManager) {
   };
 }
 
+/**
+ * @param {ProjectParams} params
+ * @param {ProjectApi} sessionManager
+ */
 export async function delete_project(params, sessionManager) {
   if (!params.resume_id) {
     return {

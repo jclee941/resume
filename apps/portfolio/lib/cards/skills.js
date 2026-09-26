@@ -1,4 +1,7 @@
-const { TEMPLATE_CACHE } = require('../config');
+const { TEMPLATE_CACHE } =
+  /** @type {{ TEMPLATE_CACHE: { dataHash: string | null, skillsHtml: string | null } }} */ (
+    require('../config')
+  );
 const { escapeHtml } = require('../template-sanitizer');
 const logger = require('../../logger');
 
@@ -13,17 +16,42 @@ const CATEGORY_ORDER = [
   'compliance',
 ];
 
+/**
+ * @typedef {string | { name?: string }} SkillItem
+ */
+
+/**
+ * @typedef {{ title?: string, items?: SkillItem[] }} SkillCategoryObject
+ */
+
+/**
+ * @typedef {SkillCategoryObject | (SkillItem[] & { title?: string })} SkillCategoryData
+ */
+
+/**
+ * @param {SkillCategoryData} skillData
+ * @returns {SkillItem[]}
+ */
 function normalizeSkills(skillData) {
   if (Array.isArray(skillData)) return skillData;
   if (skillData.items) return skillData.items;
   return [];
 }
 
+/**
+ * @param {SkillItem} skill
+ * @returns {string}
+ */
 function renderSkillItem(skill) {
   if (typeof skill === 'string') return escapeHtml(skill);
   return escapeHtml(String(skill && skill.name ? skill.name : 'Unknown'));
 }
 
+/**
+ * @param {Record<string, SkillCategoryData | undefined>} skillsData
+ * @param {string} dataHash
+ * @returns {string}
+ */
 function generateSkillsList(skillsData, dataHash) {
   if (TEMPLATE_CACHE.dataHash === dataHash && TEMPLATE_CACHE.skillsHtml) {
     logger.log('✓ Using cached skills HTML');

@@ -5,9 +5,10 @@ const logger = require('./logger');
 
 /**
  * Generate Open Graph images for resume site
- * Supports Korean and English variants
+ * Supports Korean, English, and Japanese variants
  * Size: 1200x630px (recommended for og:image)
  * Design: Minimal with brand colors and language-specific text
+ * @param {'ko' | 'en' | 'ja'} [language='ko']
  */
 async function generateOGImage(language = 'ko') {
   const width = 1200;
@@ -71,6 +72,7 @@ async function generateOGImage(language = 'ko') {
 
   svg += '</g></svg>';
 
+  /** @type {Array<{ ext: string, format: 'png' | 'webp' }>} */
   const formats = [
     { ext: 'png', format: 'png' },
     { ext: 'webp', format: 'webp' },
@@ -99,7 +101,8 @@ async function generateOGImage(language = 'ko') {
 
       logger.log(`✅ Generated: ${fileName} (${(stats.size / 1024).toFixed(2)} KB)`);
     } catch (error) {
-      logger.error(`❌ Error generating ${fileName}:`, error.message);
+      const msg = error instanceof Error ? error.message : String(error);
+      logger.error(`❌ Error generating ${fileName}:`, msg);
       throw error;
     }
   }
@@ -107,6 +110,10 @@ async function generateOGImage(language = 'ko') {
   return results;
 }
 
+/**
+ * @param {string} str
+ * @returns {string}
+ */
 function escapeXml(str) {
   return str
     .replace(/&/g, '&amp;')
@@ -136,7 +143,8 @@ if (require.main === module) {
 
       logger.log('✅ All Open Graph images generated successfully!');
     } catch (error) {
-      logger.error('❌ Generation failed:', error.message);
+      const msg = error instanceof Error ? error.message : String(error);
+      logger.error('❌ Generation failed:', msg);
       process.exit(1);
     }
   })();

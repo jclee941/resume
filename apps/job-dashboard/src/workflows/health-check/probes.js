@@ -3,10 +3,18 @@ const HTTP_TIMEOUT_MS = 25000;
 const KV_TEST_KEY = 'jd:health:check';
 const KV_TEST_TTL_SECONDS = 60;
 
+/**
+ * @param {string[]} services
+ * @returns {Promise<Array<{ url: string, status: number, latencyMs: number, healthy: boolean, error?: string }>>}
+ */
 export async function checkServices(services) {
   return Promise.all(services.map(checkService));
 }
 
+/**
+ * @param {string} url
+ * @returns {Promise<{ url: string, status: number, latencyMs: number, healthy: boolean, error?: string }>}
+ */
 async function checkService(url) {
   const start = Date.now();
 
@@ -36,20 +44,52 @@ async function checkService(url) {
       status: 0,
       latencyMs: Date.now() - start,
       healthy: false,
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
     };
   }
 }
 
-export async function checkBindings(env) {
-  const checks = {};
+/**
+ * @typedef {Object} D1HealthBinding
+ * @property {(query: string) => { first: () => Promise<unknown> }} prepare
+ */
 
-  checks.d1 = await checkD1(env);
-  checks.kv = await checkKV(env);
+/**
+ * @typedef {Object} KVHealthBinding
+ * @property {(key: string, value: string, options?: { expirationTtl?: number }) => Promise<void>} put
+ * @property {(key: string) => Promise<string | null>} get
+ */
+
+/**
+ * @typedef {Object} HealthCheckEnv
+ * @property {D1HealthBinding} JOB_DB
+ * @property {KVHealthBinding} SESSIONS
+ */
+
+/**
+ * @typedef {Object} ProbeResult
+ * @property {boolean} healthy
+ * @property {number} latencyMs
+ * @property {string} [error]
+ */
+
+/**
+ * @param {HealthCheckEnv} env
+ * @returns {Promise<{ d1: ProbeResult, kv: ProbeResult }>}
+ */
+export async function checkBindings(env) {
+  const checks = {
+    d1: await checkD1(env),
+    kv: await checkKV(env),
+  };
 
   return checks;
 }
 
+/**
+ * @param {HealthCheckEnv} env
+ * @returns {Promise<ProbeResult>}
+ */
 async function checkD1(env) {
   const start = Date.now();
 
@@ -57,10 +97,18 @@ async function checkD1(env) {
     await env.JOB_DB.prepare('SELECT 1 AS ok').first();
     return { healthy: true, latencyMs: Date.now() - start };
   } catch (error) {
-    return { healthy: false, latencyMs: Date.now() - start, error: error.message };
+    return {
+      healthy: false,
+      latencyMs: Date.now() - start,
+      error: error instanceof Error ? error.message : String(error),
+    };
   }
 }
 
+/**
+ * @param {HealthCheckEnv} env
+ * @returns {Promise<ProbeResult>}
+ */
 async function checkKV(env) {
   const start = Date.now();
 
@@ -75,6 +123,10 @@ async function checkKV(env) {
       error: readBack !== testValue ? 'Read-back mismatch' : undefined,
     };
   } catch (error) {
-    return { healthy: false, latencyMs: Date.now() - start, error: error.message };
+    return {
+      healthy: false,
+      latencyMs: Date.now() - start,
+      error: error instanceof Error ? error.message : String(error),
+    };
   }
 }

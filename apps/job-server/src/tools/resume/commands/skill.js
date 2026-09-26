@@ -1,3 +1,20 @@
+/**
+ * @typedef {Object} SkillApi
+ * @property {(resumeId: string | number, tagTypeId: string | number) => Promise<Record<string, unknown>>} addResumeSkill
+ * @property {(resumeId: string | number, skillId: string | number) => Promise<unknown>} deleteResumeSkill
+ */
+
+/**
+ * @typedef {Object} SkillParams
+ * @property {string | number} [resume_id]
+ * @property {string | number} [tag_type_id]
+ * @property {string | number} [skill_id]
+ */
+
+/**
+ * @param {SkillApi} api
+ * @param {SkillParams} params
+ */
 export async function add_skill(api, params) {
   if (!params.resume_id) {
     return { success: false, error: 'resume_id is required for add_skill' };
@@ -13,6 +30,10 @@ export async function add_skill(api, params) {
   return { success: true, message: 'Skill added successfully', skill: result };
 }
 
+/**
+ * @param {SkillApi} api
+ * @param {SkillParams} params
+ */
 export async function delete_skill(api, params) {
   if (!params.resume_id) {
     return { success: false, error: 'resume_id is required for delete_skill' };

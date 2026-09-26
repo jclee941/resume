@@ -1,3 +1,7 @@
+/**
+ * @param {Date | string | number | null | undefined} date
+ * @returns {{ year: string, month: string, day: string } | null}
+ */
 function normalizeDateParts(date) {
   if (date === null || date === undefined || date === '') return null;
 
@@ -25,24 +29,49 @@ function normalizeDateParts(date) {
   };
 }
 
+/**
+ * @param {Date | string | number | null | undefined} date
+ * @returns {string}
+ */
 export function formatYYYYMM(date) {
   const parts = normalizeDateParts(date);
   if (!parts) return '';
   return `${parts.year}${parts.month}`;
 }
 
+/**
+ * @param {Date | string | number | null | undefined} date
+ * @returns {string}
+ */
 export function formatYYYY_MM(date) {
   const parts = normalizeDateParts(date);
   if (!parts) return '';
   return `${parts.year}-${parts.month}`;
 }
 
+/**
+ * @param {Date | string | number | null | undefined} date
+ * @returns {string}
+ */
 export function formatYYYY_MM_DD(date) {
   const parts = normalizeDateParts(date);
   if (!parts) return '';
   return `${parts.year}-${parts.month}-${parts.day}`;
 }
 
+/**
+ * @typedef {Object} ParsedPeriod
+ * @property {string} start
+ * @property {string} end
+ * @property {string} startsAt
+ * @property {string | null} endsAt
+ * @property {boolean} isCurrent
+ */
+
+/**
+ * @param {string | null | undefined} periodString
+ * @returns {ParsedPeriod}
+ */
 export function parsePeriod(periodString) {
   if (typeof periodString !== 'string' || !periodString.trim()) {
     return { start: '', end: '', startsAt: '', endsAt: null, isCurrent: false };

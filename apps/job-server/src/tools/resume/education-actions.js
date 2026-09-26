@@ -1,3 +1,21 @@
+/**
+ * @typedef {Object} EducationApi
+ * @property {(resumeId: string | number, educationId: string | number, education: Record<string, unknown>) => Promise<Record<string, unknown>>} updateResumeEducation
+ * @property {(resumeId: string | number, education: Record<string, unknown>) => Promise<Record<string, unknown>>} addResumeEducation
+ * @property {(resumeId: string | number, educationId: string | number) => Promise<unknown>} deleteResumeEducation
+ */
+
+/**
+ * @typedef {Object} EducationParams
+ * @property {string | number} [resume_id]
+ * @property {string | number} [education_id]
+ * @property {Record<string, unknown>} [education]
+ */
+
+/**
+ * @param {EducationParams} params
+ * @param {EducationApi} sessionManager
+ */
 export async function update_education(params, sessionManager) {
   if (!params.resume_id) {
     return {
@@ -30,6 +48,10 @@ export async function update_education(params, sessionManager) {
   };
 }
 
+/**
+ * @param {EducationParams} params
+ * @param {EducationApi} sessionManager
+ */
 export async function add_education(params, sessionManager) {
   if (!params.resume_id) {
     return {
@@ -52,6 +74,10 @@ export async function add_education(params, sessionManager) {
   };
 }
 
+/**
+ * @param {EducationParams} params
+ * @param {EducationApi} sessionManager
+ */
 export async function delete_education(params, sessionManager) {
   if (!params.resume_id) {
     return {

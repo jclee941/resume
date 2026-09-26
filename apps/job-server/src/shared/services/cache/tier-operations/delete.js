@@ -1,6 +1,25 @@
 import { ensureD1Schema } from './d1-schema.js';
 
 /**
+ * @typedef {{
+ *   delete(key: string): Promise<unknown>;
+ * }} KVNamespace
+ *
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       run(): Promise<unknown>;
+ *     };
+ *     run(): Promise<unknown>;
+ *   };
+ * }} D1Database
+ *
+ * @typedef {{
+ *   delete(key: string): Promise<unknown>;
+ * }} R2Bucket
+ */
+
+/**
  * Delete from KV (hot tier).
  *
  * @param {KVNamespace} kv - KV namespace binding
@@ -16,7 +35,9 @@ async function deleteHot(kv, tieredKey, logger) {
   try {
     await kv.delete(tieredKey);
   } catch (error) {
-    logger.warn?.(`[CacheManager] hot delete failed for ${tieredKey}: ${error.message}`);
+    logger.warn?.(
+      `[CacheManager] hot delete failed for ${tieredKey}: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 }
 
@@ -42,7 +63,9 @@ async function deleteWarm(d1, tieredKey, tableName, logger) {
   try {
     await d1.prepare(`DELETE FROM ${tableName} WHERE cache_key = ?1`).bind(tieredKey).run();
   } catch (error) {
-    logger.warn?.(`[CacheManager] warm delete failed for ${tieredKey}: ${error.message}`);
+    logger.warn?.(
+      `[CacheManager] warm delete failed for ${tieredKey}: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 }
 
@@ -62,7 +85,9 @@ async function deleteCold(r2, objectKey, logger) {
   try {
     await r2.delete(objectKey);
   } catch (error) {
-    logger.warn?.(`[CacheManager] cold delete failed for ${objectKey}: ${error.message}`);
+    logger.warn?.(
+      `[CacheManager] cold delete failed for ${objectKey}: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 }
 

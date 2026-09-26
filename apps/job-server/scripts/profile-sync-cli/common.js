@@ -1,6 +1,11 @@
 import fs from 'fs';
 import { CONFIG } from './config.js';
 
+/**
+ * @param {string} msg
+ * @param {'info' | 'success' | 'warn' | 'error' | 'diff' | string} [type='info']
+ * @param {string | null} [platform=null]
+ */
 export function log(msg, type = 'info', platform = null) {
   const prefix =
     { info: 'INFO', success: 'OK', warn: 'WARN', error: 'ERR', diff: 'DIFF' }[type] || 'LOG';
@@ -17,6 +22,11 @@ export function loadSSOT() {
   return data;
 }
 
+/**
+ * @param {Record<string, string>} current
+ * @param {Record<string, string>} target
+ * @returns {Array<{field: string, from: string, to: string}>}
+ */
 export function computeDiff(current, target) {
   const changes = [];
   for (const [key, targetValue] of Object.entries(target)) {

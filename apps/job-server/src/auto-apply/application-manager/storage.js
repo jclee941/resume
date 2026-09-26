@@ -12,6 +12,14 @@ export function ensureDataDir() {
   }
 }
 
+/**
+ * @template T
+ * @param {string} filePath
+ * @param {() => T} fallback
+ * @param {{ error: (message: string, error?: unknown) => void }} logger
+ * @param {string} errorMessage
+ * @returns {T}
+ */
 export function loadJsonFile(filePath, fallback, logger, errorMessage) {
   if (!existsSync(filePath)) {
     return fallback();
@@ -25,6 +33,11 @@ export function loadJsonFile(filePath, fallback, logger, errorMessage) {
   }
 }
 
+/**
+ * @param {import('./reports.js').ApplicationRecord[]} applications
+ * @param {import('./reports.js').ApplicationStats} stats
+ * @returns {void}
+ */
 export function saveApplicationData(applications, stats) {
   writeFileSync(APPLICATIONS_FILE, JSON.stringify(applications, null, 2));
   writeFileSync(STATS_FILE, JSON.stringify(stats, null, 2));

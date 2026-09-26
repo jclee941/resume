@@ -1,3 +1,21 @@
+/**
+ * @typedef {Object} CookieParam
+ * @property {string} name
+ * @property {string} value
+ * @property {string} domain
+ * @property {string} path
+ */
+
+/**
+ * @typedef {Object} PuppeteerCookiePage
+ * @property {(...cookies: CookieParam[]) => Promise<unknown>} [setCookie]
+ */
+
+/**
+ * @param {PuppeteerCookiePage} page
+ * @param {string | null | undefined} cookieString
+ * @returns {Promise<void>}
+ */
 export async function applyJobKoreaCookiesToPage(page, cookieString) {
   if (!cookieString || typeof page.setCookie !== 'function') return;
 
@@ -13,16 +31,30 @@ export async function applyJobKoreaCookiesToPage(page, cookieString) {
         path: '/',
       };
     })
-    .filter(Boolean);
+    .filter(/** @type {(c: CookieParam | null) => c is CookieParam} */ ((c) => c !== null));
 
   if (cookies.length > 0) {
     await page.setCookie(...cookies);
   }
 }
 
+/**
+ * @typedef {Object} ExtractedJobKoreaJob
+ * @property {string} id
+ * @property {string} position
+ * @property {string} company
+ * @property {string} url
+ */
+
+/**
+ * @param {{ evaluate: <T>(fn: () => T) => Promise<T> }} page
+ * @returns {Promise<ExtractedJobKoreaJob[]>}
+ */
 export async function extractJobKoreaSearchJobs(page) {
   return page.evaluate(() => {
+    /** @type {ExtractedJobKoreaJob[]} */
     const results = [];
+    /** @type {Map<string, ExtractedJobKoreaJob>} */
     const jobMap = new Map();
     const links = document.querySelectorAll('a[href*="/Recruit/GI_Read/"]');
 
@@ -45,7 +77,7 @@ export async function extractJobKoreaSearchJobs(page) {
       }
 
       const job = jobMap.get(jobId);
-      if (!hasImg && text.length > 0) {
+      if (job && !hasImg && text.length > 0) {
         if (!job.position) {
           job.position = text;
         } else if (!job.company) {
@@ -64,6 +96,32 @@ export async function extractJobKoreaSearchJobs(page) {
   });
 }
 
+/**
+ * @typedef {Object} RawJobKoreaJob
+ * @property {string} id
+ * @property {string} [url]
+ * @property {string} [position]
+ * @property {string} [company]
+ * @property {string} [companyId]
+ * @property {string} [location]
+ * @property {number} [experienceMin]
+ * @property {number} [experienceMax]
+ * @property {string} [salary]
+ * @property {string[]} [techStack]
+ * @property {string} [description]
+ * @property {string} [requirements]
+ * @property {string} [benefits]
+ * @property {string | null} [dueDate]
+ * @property {string | null} [postedDate]
+ * @property {boolean} [isRemote]
+ * @property {string} [employmentType]
+ */
+
+/**
+ * @param {RawJobKoreaJob} rawJob
+ * @param {string} baseUrl
+ * @returns {Record<string, unknown>}
+ */
 export function normalizeJobKoreaJob(rawJob, baseUrl) {
   return {
     id: `jobkorea_${rawJob.id}`,
