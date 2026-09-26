@@ -1,4 +1,6 @@
 import { loadResume } from './job-matcher.js';
+export { extractKeywordsWithAI, getCareerAdvice, getAICareerAdvice } from './ai-matcher-advice.js';
+export { matchJobsWithAI } from './ai-matcher-batch.js';
 
 const CLAUDE_CONFIG = {
   apiKey:
@@ -108,7 +110,11 @@ JSON 형식으로만 응답해주세요.`;
   }
 }
 
-async function calculateAIMatchScore(resumeAnalysis, jobAnalysis, { logger = console } = {}) {
+export async function calculateAIMatchScore(
+  resumeAnalysis,
+  jobAnalysis,
+  { logger = console } = {}
+) {
   const prompt = `이력서와 채용 공고의 매칭도를 분석해주세요.
 
 이력서: ${JSON.stringify(resumeAnalysis)}
@@ -180,121 +186,3 @@ export async function calculateAIMatch(
     };
   }
 }
-
-export async function extractKeywordsWithAI(text, category = 'general', { logger = console } = {}) {
-  const prompt = `다음 텍스트에서 ${category} 관련 주요 키워드를 추출해주세요.
-JSON 형식: {"keywords": [], "tech_stack": [], "importance_scores": {}}`;
-
-  const analysis = await analyzeWithClaude(prompt, text, { logger });
-  if (!analysis) return { keywords: [], tech_stack: [], importance_scores: {} };
-
-  try {
-    const jsonMatch = analysis.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) return { keywords: [], tech_stack: [], importance_scores: {} };
-    return JSON.parse(jsonMatch[0]);
-  } catch (error) {
-    logger.error('[extractKeywordsWithAI] JSON parse failed:', error.message);
-    return { keywords: [], tech_stack: [], importance_scores: {} };
-  }
-}
-
-export async function matchJobsWithAI(resumePath, jobs, options = {}) {
-  const { minScore = 0, maxResults = 10, logger = console, resumeReader = loadResume } = options;
-
-  try {
-    const resume = resumeReader(resumePath);
-    const resumeAnalysis = await analyzeResume(resume, { logger });
-
-    if (!resumeAnalysis) {
-      throw new Error('Resume analysis failed');
-    }
-
-    const results = [];
-
-    // Process in parallel with concurrency limit
-    const batchSize = 5;
-    for (let i = 0; i < jobs.length; i += batchSize) {
-      const batch = jobs.slice(i, i + batchSize);
-      const batchResults = await Promise.all(
-        batch.map(async (job) => {
-          try {
-            const jobAnalysis = await analyzeJobPosting(job, { logger });
-            if (!jobAnalysis) return null;
-
-            const matchResult = await calculateAIMatchScore(resumeAnalysis, jobAnalysis, {
-              logger,
-            });
-
-            return {
-              ...job,
-              matchScore: matchResult.score,
-              matchPercentage: matchResult.score, // Alias for compatibility
-              matchType: 'ai',
-              confidence: 'medium',
-              aiAnalysis: {
-                matchDetails: matchResult.details,
-                reasoning: matchResult.reasoning,
-              },
-            };
-          } catch (e) {
-            logger.error(`Job analysis failed for ${job.position}:`, e);
-            return null;
-          }
-        })
-      );
-      results.push(...batchResults.filter((r) => r !== null));
-    }
-
-    const matchedJobs = results
-      .filter((job) => job.matchScore >= minScore)
-      .sort((a, b) => b.matchScore - a.matchScore)
-      .slice(0, maxResults);
-
-    return {
-      success: true,
-      jobs: matchedJobs,
-      resumeAnalysis: {
-        ...resumeAnalysis,
-        aiMatchCount: matchedJobs.length,
-        basicMatchCount: jobs.length, // Rough approximation
-      },
-    };
-  } catch (error) {
-    logger.error('AI Batch Match Error:', error);
-    return {
-      success: false,
-      error: error.message,
-      jobs: [],
-      resumeAnalysis: null,
-    };
-  }
-}
-
-export async function getCareerAdvice(
-  resumeAnalysis,
-  jobAnalysis,
-  matchResult,
-  { logger = console } = {}
-) {
-  const prompt = `이력서와 채용 공고 분석 결과를 바탕으로 커리어 조언을 제공해주세요.
-
-이력서: ${JSON.stringify(resumeAnalysis)}
-채용 공고: ${JSON.stringify(jobAnalysis)}
-매칭 결과: ${JSON.stringify(matchResult)}
-
-JSON 형식: {"suitability": "", "preparation_needed": [], "interview_focus": [], "next_steps": []}`;
-
-  const analysis = await analyzeWithClaude(prompt, '', { logger });
-  if (!analysis) return null;
-
-  try {
-    const jsonMatch = analysis.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) return null;
-    return JSON.parse(jsonMatch[0]);
-  } catch (error) {
-    logger.error('[getCareerAdvice] JSON parse failed:', error.message);
-    return null;
-  }
-}
-
-export const getAICareerAdvice = getCareerAdvice;
