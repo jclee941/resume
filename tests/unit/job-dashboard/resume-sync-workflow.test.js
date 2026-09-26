@@ -1,3 +1,11 @@
+const { TEST_ENCRYPTION_KEY, encryptSession } = require('./platform-session-fixtures.js');
+
+let wantedSession;
+
+beforeAll(async () => {
+  wantedSession = await encryptSession('WWW_ONEID_ACCESS_TOKEN=test');
+});
+
 // Regression: the 0 21 * * * cron starts ResumeSyncWorkflow without resumeId, which
 // made D1 reject bind(undefined) on every run. Platform calls must use the stored
 // Wanted target resume ID, not the master key.
@@ -46,7 +54,8 @@ describe('ResumeSyncWorkflow resume identifiers', () => {
           },
         }),
       },
-      SESSIONS: { get: async () => 'WWW_ONEID_ACCESS_TOKEN=test' },
+      ENCRYPTION_KEY: TEST_ENCRYPTION_KEY,
+      SESSIONS: { get: async () => wantedSession },
     };
   }
 

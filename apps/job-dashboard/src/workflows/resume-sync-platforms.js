@@ -1,4 +1,5 @@
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
+import { readPlatformSession } from '../services/platform-session.js';
 
 export async function syncToPlatform(env, platform, resumeId, diff) {
   const syncers = {
@@ -20,7 +21,7 @@ export async function syncToPlatform(env, platform, resumeId, diff) {
 }
 
 export async function syncToWanted(env, resumeId, diff) {
-  const session = await env.SESSIONS.get('auth:wanted');
+  const session = await readPlatformSession(env, 'wanted');
   if (!session) {
     return { success: false, error: 'No Wanted session' };
   }

@@ -1,3 +1,11 @@
+const { TEST_ENCRYPTION_KEY, encryptSession } = require('./platform-session-fixtures.js');
+
+let wantedSession;
+
+beforeAll(async () => {
+  wantedSession = await encryptSession('wanted-cookie=value');
+});
+
 const {
   createMockDb,
   createRequest,
@@ -62,8 +70,9 @@ describe('job-dashboard auto-apply run handler edge cases', () => {
       request: createRequest(makeApprovalIdOnlyBody()),
       env: {
         DB: createMockDb(),
+        ENCRYPTION_KEY: TEST_ENCRYPTION_KEY,
         SESSIONS: {
-          get: jest.fn(async () => 'wanted-cookie=value'),
+          get: jest.fn(async () => wantedSession),
         },
       },
       clients,

@@ -1,3 +1,11 @@
+const { TEST_ENCRYPTION_KEY, encryptSession } = require('./platform-session-fixtures.js');
+
+let jobkoreaSession;
+
+beforeAll(async () => {
+  jobkoreaSession = await encryptSession('User=abc; token=def');
+});
+
 describe('Cloudflare Browser Rendering application submitter', () => {
   let createApplicationUrl;
   let submitWithBrowserRendering;
@@ -64,7 +72,8 @@ describe('Cloudflare Browser Rendering application submitter', () => {
     const ctx = {
       env: {
         MYBROWSER: {},
-        SESSIONS: { get: jest.fn(async () => 'User=abc; token=def') },
+        ENCRYPTION_KEY: TEST_ENCRYPTION_KEY,
+        SESSIONS: { get: jest.fn(async () => jobkoreaSession) },
       },
     };
 

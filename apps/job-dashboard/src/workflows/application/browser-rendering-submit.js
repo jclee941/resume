@@ -1,4 +1,5 @@
 import { BrowserService } from '@resume/shared/browser/service';
+import { readPlatformSession } from '../../services/platform-session.js';
 import { clickControl, inspectApplicationPage, settlePage } from './browser-rendering-page.js';
 import {
   completedResult,
@@ -96,9 +97,8 @@ async function hydrateSessionCookies(ctx, page, platform, targetUrl) {
 }
 
 async function getPlatformCookieHeader(ctx, platform) {
-  const raw = await ctx?.env?.SESSIONS?.get?.(`auth:${platform}`);
+  const raw = await readPlatformSession(ctx?.env, platform);
   if (!raw) return '';
-  if (typeof raw !== 'string') return cookiesToHeader(raw.cookies);
 
   const trimmed = raw.trim();
   if (!trimmed.startsWith('{') && !trimmed.startsWith('[')) return raw;

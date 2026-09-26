@@ -7,6 +7,8 @@
  * @module handlers/wanted/mint-session
  */
 
+import { writePlatformSession } from '../../services/platform-session.js';
+
 export const WANTED_TOKEN_URL = 'https://id-api.wanted.co.kr/v1/auth/token';
 export const WANTED_PROFILE_URL = 'https://www.wanted.co.kr/api/v4/user';
 export const AUTH_WANTED_KEY = 'auth:wanted';
@@ -71,7 +73,7 @@ export async function mintWantedSession(env, { fetchImpl = fetch } = {}) {
 }
 
 /**
- * Mint a Wanted session and store it in KV as `auth:wanted`. Never throws —
+ * Mint a Wanted session and store it encrypted in KV as `auth:wanted`. Never throws —
  * callers (admin route, scheduled cron) get a plain result back either way.
  * @param {{SESSIONS: {put: Function}}} env
  * @param {{fetchImpl?: typeof fetch}} [opts]
@@ -81,7 +83,7 @@ export async function refreshWantedSession(env, opts = {}) {
   try {
     const cookie = await mintWantedSession(env, opts);
     await validateWantedSession(cookie, opts);
-    await env.SESSIONS.put(AUTH_WANTED_KEY, cookie, { expirationTtl: WANTED_SESSION_TTL_S });
+    await writePlatformSession(env, 'wanted', cookie, WANTED_SESSION_TTL_S);
     return { ok: true, key: AUTH_WANTED_KEY, length: cookie.length };
   } catch (err) {
     return { ok: false, error: err?.message || String(err) };

@@ -1,6 +1,7 @@
 import { encrypt, decrypt } from '@resume/shared/crypto';
 import { verifySecret } from '../services/auth.js';
 import { normalizeError } from '@resume/shared/errors';
+import { writePlatformSession } from '../services/platform-session.js';
 
 export class AuthHandler {
   constructor(db, kv, env) {
@@ -58,27 +59,9 @@ export class AuthHandler {
       .run();
 
     if (this.kv) {
-      // P0 fix: encrypt all KV cookie storage. Previously `auth:${platform}` and
-      // `wanted:session` were plaintext — KV compromise would expose live sessions.
-      // All KV reads MUST go through helper that decrypts before use.
-      await this.kv.put(`session:${platform}`, encryptedCookies, {
-        expirationTtl: 86400,
-      });
-      await this.kv.put(`auth:${platform}`, encryptedCookies, {
-        expirationTtl: 86400,
-      });
-      if (platform === 'wanted') {
-        const wantedSessionEncrypted = await encrypt(
-          JSON.stringify({
-            cookies,
-            email: email || null,
-            expires_at: expiresAt,
-            updated_at: now,
-          }),
-          this.env
-        );
-        await this.kv.put('wanted:session', wantedSessionEncrypted, { expirationTtl: 86400 });
-      }
+      // KV keeps one encrypted copy under auth:<platform>; every reader decrypts
+      // through services/platform-session.js.
+      await writePlatformSession(this.env, platform, cookies, 86400);
     }
 
     return this.jsonResponse({
@@ -243,28 +226,8 @@ export class AuthHandler {
       .bind(platform, encryptedCookies, email || null, expiresAt, now, now)
       .run();
 
-    // P0 fix: KV stores encrypted blobs only — see saveAuth() comment.
     if (this.kv) {
-      await this.kv.put(`session:${platform}`, encryptedCookies, {
-        expirationTtl: Math.floor(ttl / 1000),
-      });
-      await this.kv.put(`auth:${platform}`, encryptedCookies, {
-        expirationTtl: Math.floor(ttl / 1000),
-      });
-      if (platform === 'wanted') {
-        const wantedSessionEncrypted = await encrypt(
-          JSON.stringify({
-            cookies,
-            email: email || null,
-            expires_at: expiresAt,
-            updated_at: now,
-          }),
-          this.env
-        );
-        await this.kv.put('wanted:session', wantedSessionEncrypted, {
-          expirationTtl: Math.floor(ttl / 1000),
-        });
-      }
+      await writePlatformSession(this.env, platform, cookies, Math.floor(ttl / 1000));
     }
 
     return this.jsonResponse({

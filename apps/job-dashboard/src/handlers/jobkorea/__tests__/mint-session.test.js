@@ -1,6 +1,8 @@
 import { describe, it, mock } from 'node:test';
 import assert from 'node:assert/strict';
 
+import { decrypt } from '@resume/shared/crypto';
+
 import {
   mintJobKoreaSession,
   refreshJobKoreaSession,
@@ -10,6 +12,7 @@ import {
   JOBKOREA_SESSION_TTL_S,
 } from '../mint-session.js';
 
+const ENCRYPTION_KEY = btoa('0123456789abcdef0123456789abcdef');
 const CREDS = { JOBKOREA_USERNAME: 'someone@example.com', JOBKOREA_PASSWORD: 'super-secret' };
 const CLIPROXY_ENV = {
   CLIPROXY_BASE: 'https://cliproxy.jclee.me',
@@ -213,6 +216,7 @@ describe('refreshJobKoreaSession', () => {
     const putCalls = [];
     const env = {
       ...CREDS,
+      ENCRYPTION_KEY,
       SESSIONS: {
         put: mock.fn(async (key, value, opts) => {
           putCalls.push({ key, value, opts });
@@ -231,7 +235,8 @@ describe('refreshJobKoreaSession', () => {
     });
     assert.equal(putCalls.length, 1);
     assert.equal(putCalls[0].key, AUTH_JOBKOREA_KEY);
-    assert.equal(putCalls[0].value, 'PLAY_SESSION=sess-abc');
+    assert.doesNotMatch(putCalls[0].value, /PLAY_SESSION/);
+    assert.equal(await decrypt(putCalls[0].value, { ENCRYPTION_KEY }), 'PLAY_SESSION=sess-abc');
     assert.deepEqual(putCalls[0].opts, { expirationTtl: JOBKOREA_SESSION_TTL_S });
   });
 

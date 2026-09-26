@@ -1,3 +1,11 @@
+const { TEST_ENCRYPTION_KEY, encryptSession } = require('./platform-session-fixtures.js');
+
+let wantedSession;
+
+beforeAll(async () => {
+  wantedSession = await encryptSession('wanted-cookie=value');
+});
+
 const {
   createMockDb,
   createRequest,
@@ -60,7 +68,11 @@ describe('job-dashboard explicit auto-apply candidates', () => {
     });
     const response = await runAutoApply({
       request: createRequest(makeRealSubmitBody(candidate, { maxDepth: 2 })),
-      env: { DB: db, SESSIONS: { get: jest.fn(async () => 'wanted-cookie=value') } },
+      env: {
+        DB: db,
+        ENCRYPTION_KEY: TEST_ENCRYPTION_KEY,
+        SESSIONS: { get: jest.fn(async () => wantedSession) },
+      },
       clients,
     });
     const body = await parseJson(response);
@@ -146,7 +158,11 @@ describe('job-dashboard explicit auto-apply candidates', () => {
     const clients = createClients();
     const approvedJob = makeApprovedExplicitJob();
     const requestBody = makeRealSubmitBody(approvedJob, { maxDepth: 1 });
-    const env = { JOB_DB: db, SESSIONS: { get: jest.fn(async () => 'wanted-cookie=value') } };
+    const env = {
+      JOB_DB: db,
+      ENCRYPTION_KEY: TEST_ENCRYPTION_KEY,
+      SESSIONS: { get: jest.fn(async () => wantedSession) },
+    };
 
     const first = await runAutoApply({ request: createRequest(requestBody), env, clients });
     const second = await runAutoApply({ request: createRequest(requestBody), env, clients });
