@@ -17,6 +17,7 @@ src/
 │   ├── main.css       # ordered CSS import graph
 │   └── variables.css  # design-token source
 └── scripts/
+    ├── package.json   # "type": "module" marker so Node/Jest load these as ESM
     ├── main.js        # browser bootstrap and service-worker registration
     └── modules/       # project, timeline, recruiter, skills, UI, Web Vitals
 ```

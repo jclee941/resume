@@ -11,6 +11,10 @@ mock.method(osCjs, 'homedir', () => '/home/tester');
 syncBuiltinESMExports();
 process.env.RESUME_BASE_PATH = '/home/tester/dev/resume';
 const { SessionManager } = await import('../session-manager/index.js');
+// Load the lazily imported Wanted client before any setupFs() mock exists:
+// Node 24's synchronous ESM loader reads module source through the mockable
+// fs.readFileSync, so loading it later under fs mocks fails with ENOENT.
+await import('@resume/shared/clients/wanted');
 
 function createFsState(initialFiles = {}) {
   const files = new Map(Object.entries(initialFiles));
