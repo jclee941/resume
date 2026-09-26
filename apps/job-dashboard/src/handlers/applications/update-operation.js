@@ -1,11 +1,42 @@
 import { validateApplicationUpdate } from '@resume/shared/validation';
 
+/**
+ * @typedef {{
+ *   notes?: string;
+ *   priority?: string;
+ *   resumeId?: string;
+ * }} ApplicationUpdateBody
+ *
+ * @typedef {{
+ *   repository: {
+ *     findById(id: string): Promise<Record<string, unknown> | null>;
+ *     update(
+ *       id: string,
+ *       updates: { notes?: string; priority?: string; resumeId?: string },
+ *       now: string
+ *     ): Promise<unknown>;
+ *   };
+ *   jsonResponse(data: unknown, status?: number): Response;
+ * }} UpdateHandler
+ *
+ * @typedef {{
+ *   params: { id: string };
+ *   json(): Promise<unknown>;
+ * }} UpdateRequest
+ */
+
+/**
+ * @param {UpdateHandler} handler
+ * @param {UpdateRequest} request
+ * @returns {Promise<Response>}
+ */
 export async function updateApplication(handler, request) {
   const { id } = request.params;
 
+  /** @type {ApplicationUpdateBody} */
   let body;
   try {
-    body = await request.json();
+    body = /** @type {ApplicationUpdateBody} */ (await request.json());
   } catch {
     return handler.jsonResponse({ error: 'Invalid JSON body' }, 400);
   }

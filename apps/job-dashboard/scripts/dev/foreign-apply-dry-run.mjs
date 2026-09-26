@@ -15,7 +15,11 @@ if (!args.has('--ats-stub')) {
 const port = await reservePort();
 const child = spawn(
   process.execPath,
-  ['apps/job-dashboard/scripts/dev/start-job-dashboard-stub.mjs', '--serve', port],
+  [
+    'apps/job-dashboard/scripts/dev/start-job-dashboard-stub.mjs',
+    '--serve',
+    /** @type {string} */ (port),
+  ],
   {
     stdio: 'ignore',
   }
@@ -53,6 +57,35 @@ try {
   console.log(`cleanup stopped local stub pid=${child.pid}`);
 }
 
+/**
+ * @typedef {{
+ *   action: string;
+ *   matchScore: number;
+ *   adapterBacked: boolean;
+ *   sourceUrl: string;
+ * }} WalkthroughJob
+ *
+ * @typedef {{
+ *   success: boolean;
+ *   dryRun: boolean;
+ *   submitted: number;
+ *   platforms: string[];
+ *   results: { searched: number; matched: number; jobs: WalkthroughJob[] };
+ *   data?: WalkthroughRunData;
+ * }} WalkthroughRunData
+ *
+ * @typedef {{
+ *   dryRun: { enabledByDefault: boolean };
+ *   platforms: Record<string, { submissions: string }>;
+ *   pendingApprovals?: number;
+ *   data?: WalkthroughStatusData;
+ * }} WalkthroughStatusData
+ */
+
+/**
+ * @param {WalkthroughRunData} run
+ * @param {WalkthroughStatusData} status
+ */
 function validateWalkthrough(run, status) {
   const data = run?.data ?? run;
   const statusData = status?.data ?? status;
@@ -100,6 +133,11 @@ function validateWalkthrough(run, status) {
   };
 }
 
+/**
+ * @param {string} url
+ * @param {unknown} body
+ * @returns {Promise<WalkthroughRunData>}
+ */
 function postJson(url, body) {
   return fetchJson(url, {
     method: 'POST',
@@ -108,10 +146,20 @@ function postJson(url, body) {
   });
 }
 
+/**
+ * @param {string} url
+ * @returns {Promise<WalkthroughStatusData>}
+ */
 function getJson(url) {
   return fetchJson(url, { method: 'GET' });
 }
 
+/**
+ * @template [T=unknown]
+ * @param {string} url
+ * @param {RequestInit} [init]
+ * @returns {Promise<T>}
+ */
 async function fetchJson(url, init) {
   const response = await fetch(url, init);
   const text = await response.text();
@@ -127,21 +175,33 @@ async function fetchJson(url, init) {
   return payload;
 }
 
+/**
+ * @param {unknown} condition
+ * @param {string} message
+ * @returns {asserts condition}
+ */
 function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+/**
+ * @returns {Promise<string | number>}
+ */
 function reservePort() {
   return new Promise((resolve, reject) => {
     const server = net.createServer();
     server.once('error', reject);
     server.listen(0, '127.0.0.1', () => {
       const address = server.address();
-      server.close(() => resolve(address.port));
+      server.close(() => resolve(/** @type {import('node:net').AddressInfo} */ (address).port));
     });
   });
 }
 
+/**
+ * @param {string | number} port
+ * @returns {Promise<void>}
+ */
 async function waitForPort(port) {
   for (let attempt = 0; attempt < 50; attempt++) {
     if (await canConnect(port)) return;
@@ -150,14 +210,22 @@ async function waitForPort(port) {
   throw new Error(`Local dashboard stub did not listen on ${port}`);
 }
 
+/**
+ * @param {string | number} port
+ * @returns {Promise<boolean>}
+ */
 function canConnect(port) {
   return new Promise((resolve) => {
-    const socket = net.connect(port, '127.0.0.1');
+    const socket = net.connect(/** @type {number} */ (port), '127.0.0.1');
     socket.once('connect', () => socket.end(() => resolve(true)));
     socket.once('error', () => resolve(false));
   });
 }
 
+/**
+ * @param {import('node:child_process').ChildProcess} childProcess
+ * @returns {Promise<unknown>}
+ */
 function waitForExit(childProcess) {
   return new Promise((resolve) => {
     childProcess.once('exit', resolve);

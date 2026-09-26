@@ -1,7 +1,30 @@
 import { extractWantedApplications, normalizeWantedApplication } from './wanted-history-mapper.js';
 
+/**
+ * @typedef {{
+ *   auth?: { getCookies(provider: string): Promise<string | null> };
+ *   fetcher: (url: string, init?: RequestInit) => Promise<Response>;
+ *   wantedHistoryRepository: {
+ *     upsertHistory(record: unknown): Promise<unknown>;
+ *     upsertApplication(record: unknown): Promise<unknown>;
+ *   };
+ *   jsonResponse(data: unknown, status?: number): Response;
+ * }} WantedSyncHandler
+ *
+ * @typedef {{
+ *   payload?: import('./wanted-history-mapper.js').WantedPayload;
+ *   source?: string;
+ *   error?: string;
+ *   status?: number;
+ * }} WantedHistoryResult
+ */
+
 const WANTED_APPLICATIONS_URL = 'https://www.wanted.co.kr/api/v4/applications';
 
+/**
+ * @param {Request} request
+ * @returns {Promise<{ body?: unknown; hasBody?: boolean; error?: string; status?: number }>}
+ */
 async function readOptionalJson(request) {
   if (typeof request.text === 'function') {
     const text = await request.text();
@@ -22,15 +45,31 @@ async function readOptionalJson(request) {
   }
 }
 
+/**
+ * @param {import('./wanted-history-mapper.js').WantedPayload} payload
+ * @returns {boolean}
+ */
 function hasWantedApplicationsPayload(payload) {
   return (
     Array.isArray(payload) ||
-    Array.isArray(payload?.applications) ||
-    Array.isArray(payload?.data) ||
-    Array.isArray(payload?.data?.applications)
+    Array.isArray(
+      /** @type {import('./wanted-history-mapper.js').WantedPayloadObject} */ (payload)
+        ?.applications
+    ) ||
+    Array.isArray(
+      /** @type {import('./wanted-history-mapper.js').WantedPayloadObject} */ (payload)?.data
+    ) ||
+    Array.isArray(
+      /** @type {import('./wanted-history-mapper.js').WantedPayloadObject} */ (payload)?.data
+        ?.applications
+    )
   );
 }
 
+/**
+ * @param {Request} request
+ * @returns {string}
+ */
 function buildWantedApplicationsUrl(request) {
   const url = new URL(request.url);
   const params = new URLSearchParams();
@@ -43,6 +82,11 @@ function buildWantedApplicationsUrl(request) {
   return `${WANTED_APPLICATIONS_URL}?${params.toString()}`;
 }
 
+/**
+ * @param {WantedSyncHandler} handler
+ * @param {Request} request
+ * @returns {Promise<WantedHistoryResult>}
+ */
 async function fetchWantedHistory(handler, request) {
   if (!handler.auth?.getCookies) {
     return { error: 'Wanted auth provider is not configured', status: 503 };
@@ -68,6 +112,11 @@ async function fetchWantedHistory(handler, request) {
   return { payload: await response.json(), source: 'wanted-api' };
 }
 
+/**
+ * @param {WantedSyncHandler} handler
+ * @param {Request} request
+ * @returns {Promise<Response>}
+ */
 export async function syncWantedApplications(handler, request) {
   const parsed = await readOptionalJson(request);
   if (parsed.error) {
@@ -75,8 +124,14 @@ export async function syncWantedApplications(handler, request) {
   }
 
   const source =
-    parsed.hasBody && hasWantedApplicationsPayload(parsed.body)
-      ? { payload: parsed.body, source: 'request' }
+    parsed.hasBody &&
+    hasWantedApplicationsPayload(
+      /** @type {import('./wanted-history-mapper.js').WantedPayload} */ (parsed.body)
+    )
+      ? {
+          payload: /** @type {import('./wanted-history-mapper.js').WantedPayload} */ (parsed.body),
+          source: 'request',
+        }
       : await fetchWantedHistory(handler, request);
 
   if (source.error) {

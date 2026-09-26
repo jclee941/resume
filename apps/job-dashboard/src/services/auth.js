@@ -29,10 +29,15 @@ const NO_AUTH_ROUTES = [
   '/api/auth/profile',
 ];
 
+/** @type {string[]} */
 const WEBHOOK_ROUTES = [];
 const ADMIN_SESSION_COOKIE = 'adminToken';
 const BEARER_PREFIX = 'Bearer ';
 
+/**
+ * @param {string} pathname
+ * @returns {boolean}
+ */
 export function requiresAuth(pathname) {
   if (NO_AUTH_ROUTES.some((route) => pathname === route)) {
     return false;
@@ -40,10 +45,19 @@ export function requiresAuth(pathname) {
   return ADMIN_ROUTES.some((route) => pathname.startsWith(route));
 }
 
+/**
+ * @param {string} pathname
+ * @returns {boolean}
+ */
 export function requiresWebhookSignature(pathname) {
   return WEBHOOK_ROUTES.some((route) => pathname.startsWith(route));
 }
 
+/**
+ * @param {unknown} a
+ * @param {unknown} b
+ * @returns {boolean}
+ */
 function constantTimeCompare(a, b) {
   if (typeof a !== 'string' || typeof b !== 'string') {
     return false;
@@ -58,6 +72,11 @@ function constantTimeCompare(a, b) {
   return mismatch === 0;
 }
 
+/**
+ * @param {unknown} provided
+ * @param {unknown} expected
+ * @returns {boolean}
+ */
 export function verifySecret(provided, expected) {
   if (!provided || !expected) {
     return false;
@@ -65,6 +84,10 @@ export function verifySecret(provided, expected) {
   return constantTimeCompare(provided, expected);
 }
 
+/**
+ * @param {Request} request
+ * @returns {string | null}
+ */
 function getLegacyBearerToken(request) {
   const authHeader = request.headers.get('Authorization');
   if (!authHeader?.startsWith(BEARER_PREFIX)) {
@@ -75,11 +98,36 @@ function getLegacyBearerToken(request) {
 
 /**
  * Extract admin session token from HttpOnly cookie.
+ * @param {Request} request
+ * @returns {string | null}
  */
 function getSessionTokenFromCookie(request) {
   return getCookie(request, ADMIN_SESSION_COOKIE);
 }
 
+/**
+ * @typedef {{
+ *   ADMIN_TOKEN?: string;
+ *   [key: string]: unknown;
+ * }} AuthEnv
+ *
+ * @typedef {{
+ *   ok: true;
+ *   mode: string;
+ *   exp?: number;
+ *   deprecated?: boolean;
+ * } | {
+ *   ok: false;
+ *   status: number;
+ *   error: string;
+ * }} AdminAuthResult
+ */
+
+/**
+ * @param {Request} request
+ * @param {AuthEnv | null | undefined} env
+ * @returns {Promise<AdminAuthResult>}
+ */
 export async function verifyAdminAuth(request, env) {
   if (!env?.ADMIN_TOKEN) {
     return { ok: false, status: 503, error: 'Service misconfigured' };
@@ -110,6 +158,11 @@ export async function verifyAdminAuth(request, env) {
   return { ok: true, mode: 'legacy-admin-token', deprecated: true };
 }
 
+/**
+ * @param {string} key
+ * @param {string} message
+ * @returns {Promise<string>}
+ */
 async function hmacHex(key, message) {
   const enc = new TextEncoder();
   const cryptoKey = await crypto.subtle.importKey(
@@ -125,7 +178,12 @@ async function hmacHex(key, message) {
     .join('');
 }
 
-/** Create a short-lived HMAC-signed session token. */
+/**
+ * Create a short-lived HMAC-signed session token.
+ * @param {AuthEnv | null | undefined} env
+ * @param {number} [ttlMs]
+ * @returns {Promise<string>}
+ */
 export async function mintSessionToken(env, ttlMs = ADMIN_SESSION_TTL_MS) {
   if (!env?.ADMIN_TOKEN) {
     throw new Error('ADMIN_TOKEN not configured');
@@ -142,6 +200,9 @@ export async function mintSessionToken(env, ttlMs = ADMIN_SESSION_TTL_MS) {
 /**
  * Verify an HMAC session token. Returns `{ ok: true, exp }` on success,
  * `{ ok: false }` on shape mismatch / signature mismatch / expiry.
+ * @param {unknown} token
+ * @param {AuthEnv | null | undefined} env
+ * @returns {Promise<{ ok: true; exp: number } | { ok: false; exp?: undefined }>}
  */
 export async function verifySessionToken(token, env) {
   if (!token || typeof token !== 'string' || !env?.ADMIN_TOKEN) {
@@ -159,6 +220,9 @@ export async function verifySessionToken(token, env) {
 /**
  * Create Set-Cookie header for admin session-token authentication.
  * HttpOnly + Secure + SameSite=Strict for XSS protection
+ * @param {string} token
+ * @param {number} [maxAge]
+ * @returns {string}
  */
 export function createAuthCookie(token, maxAge = 86400) {
   return createSessionCookie(ADMIN_SESSION_COOKIE, token, { maxAge });
