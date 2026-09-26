@@ -6,7 +6,8 @@ import {
   syncToPlatform,
   notifyPreview,
 } from './resume-sync-helpers.js';
-import { sendTelegramNotification, escapeHtml } from '../services/notifications.js';
+import { createResumeBackup, recordSyncHistory, verifyPlatformSync } from './resume-sync-steps.js';
+import { notifySyncCompletion } from './resume-sync-notifications.js';
 
 /**
  * Resume Sync Workflow
@@ -132,15 +133,7 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
         retries: { limit: 2, delay: '5 seconds' },
         timeout: '1 minute',
       },
-      async () => {
-        const backupId = `backup-${Date.now()}`;
-        await this.env.SESSIONS.put(
-          `resume:backup:${backupId}`,
-          JSON.stringify({ platforms: platformStates, createdAt: new Date().toISOString() }),
-          { expirationTtl: 86400 * 30 } // 30 days
-        );
-        return { backupId };
-      }
+      async () => createResumeBackup(this.env, platformStates)
     );
 
     sync.backupId = backup.backupId;
@@ -188,27 +181,14 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
         retries: { limit: 2, delay: '10 seconds' },
         timeout: '2 minutes',
       },
-      async () => {
-        const results = {};
-        for (const platform of platforms) {
-          if (syncResults[platform].status === 'no-changes') {
-            results[platform] = { verified: true, reason: 'no-changes' };
-            continue;
-          }
-
-          const currentState = await exportFromPlatform(this.env, platform, platformResumeId);
-          const verifyDiff = calculateDiff(masterData, currentState, sections);
-
-          results[platform] = {
-            verified:
-              verifyDiff.additions.length === 0 &&
-              verifyDiff.updates.length === 0 &&
-              verifyDiff.deletions.length === 0,
-            remainingDiff: verifyDiff,
-          };
-        }
-        return results;
-      }
+      async () =>
+        verifyPlatformSync(this.env, {
+          platforms,
+          syncResults,
+          masterData,
+          platformResumeId,
+          sections,
+        })
     );
 
     sync.verification = verification;
@@ -221,24 +201,14 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
         retries: { limit: 2, delay: '5 seconds' },
         timeout: '30 seconds',
       },
-      async () => {
-        await this.env.JOB_DB.prepare(
-          `
-          INSERT INTO resume_sync_history (
-            id, resume_id, platforms, changes, status, backup_id, created_at
-          ) VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
-        `
-        )
-          .bind(
-            sync.id,
-            resumeId,
-            JSON.stringify(platforms),
-            JSON.stringify(sync.changes),
-            'completed',
-            backup.backupId
-          )
-          .run();
-      }
+      async () =>
+        recordSyncHistory(this.env, {
+          syncId: sync.id,
+          resumeId,
+          platforms,
+          changes: sync.changes,
+          backupId: backup.backupId,
+        })
     );
 
     sync.steps.push({ step: 'record-history', status: 'completed' });
@@ -250,23 +220,13 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
         retries: { limit: 2, delay: '10 seconds' },
         timeout: '30 seconds',
       },
-      async () => {
-        const summary = platforms
-          .map((p) => {
-            const changes = sync.changes[p];
-            return `<b>${escapeHtml(p)}</b>: +${changes.additions} ~${changes.updates} -${changes.deletions}`;
-          })
-          .join('\n');
-
-        await sendTelegramNotification(
-          this.env,
-          '✅ <b>Resume Sync Complete</b>\n\n' +
-            `<b>Resume</b>: ${escapeHtml(resumeId)}\n` +
-            `<b>Platforms</b>:\n${summary}\n` +
-            `<b>Backup ID</b>: ${escapeHtml(backup.backupId)}`
-        );
-        return { notified: true };
-      }
+      async () =>
+        notifySyncCompletion(this.env, {
+          resumeId,
+          platforms,
+          changes: sync.changes,
+          backupId: backup.backupId,
+        })
     );
 
     sync.status = 'completed';

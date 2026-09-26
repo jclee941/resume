@@ -23,13 +23,15 @@ import {
   searchLinkedIn,
   searchRemember,
   searchWanted,
+} from './application/platforms.js';
+import {
   submitApplication,
   submitToJobKorea,
   submitToLinkedIn,
   submitToRemember,
   submitToSaramin,
   submitToWanted,
-} from './application/platforms.js';
+} from './application/application-submitters.js';
 
 /**
  * Application Workflow - Enhanced for Batch Processing with Approval Gates
