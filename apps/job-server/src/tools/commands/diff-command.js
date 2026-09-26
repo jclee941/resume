@@ -1,7 +1,32 @@
 import { existsSync } from 'fs';
 import { BaseCommand } from './base-command.js';
 
+/**
+ * @typedef {import('./base-command.js').ResumeSections & {
+ *   exported_at?: string;
+ *   [key: string]: unknown;
+ * }} LocalResumeData
+ */
+
 export class DiffCommand extends BaseCommand {
+  /**
+   * @param {{ resume_id?: string; file_path?: string }} params
+   * @returns {Promise<{
+   *   success: boolean;
+   *   error?: string;
+   *   dry_run?: boolean;
+   *   errors?: unknown;
+   *   hint?: string;
+   *   diff?: import('./base-command.js').ResumeDiff;
+   *   local_exported_at?: string;
+   *   summary?: {
+   *     careers: { local: number | undefined; remote: number | undefined };
+   *     educations: { local: number | undefined; remote: number | undefined };
+   *     skills: { local: number | undefined; remote: number | undefined };
+   *     activities: { local: number | undefined; remote: number | undefined };
+   *   };
+   * }>}
+   */
   async execute(params) {
     const { resume_id, file_path } = params;
 
@@ -17,7 +42,7 @@ export class DiffCommand extends BaseCommand {
       };
     }
 
-    const localData = this.readJsonFile(filePath);
+    const localData = /** @type {LocalResumeData} */ (this.readJsonFile(filePath));
 
     const validation = this.validateLocalData(localData, filePath);
     if (!validation.valid) {
@@ -30,7 +55,10 @@ export class DiffCommand extends BaseCommand {
       };
     }
 
-    const remoteData = await this.api.getResumeDetail(resume_id);
+    const remoteData =
+      await /** @type {(id: string) => Promise<import('./base-command.js').ResumeSections>} */ (
+        this.api.getResumeDetail
+      )(resume_id);
     const diff = this.compareResume(localData, remoteData);
 
     return {

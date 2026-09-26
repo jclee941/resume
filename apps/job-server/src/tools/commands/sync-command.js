@@ -2,6 +2,32 @@ import { existsSync } from 'fs';
 import { BaseCommand, DATA_DIR } from './base-command.js';
 
 export class SyncCommand extends BaseCommand {
+  /**
+   * @param {{
+   *   resume_id?: string;
+   *   file_path?: string;
+   *   dry_run?: boolean;
+   *   sections?: string[];
+   * }} params
+   * @returns {Promise<{
+   *   success: boolean;
+   *   error?: string;
+   *   message?: string;
+   *   file_path?: string;
+   *   dry_run?: boolean;
+   *   diff?: import('./base-command.js').ResumeDiff;
+   *   changes_needed?: string[];
+   *   results?: {
+   *     changes_applied: number;
+   *     errors: Array<{
+   *       section: string;
+   *       change: import('./base-command.js').DiffChange;
+   *       error: string;
+   *     }>;
+   *   };
+   *   pdf_regenerated?: boolean;
+   * }>}
+   */
   async execute(params) {
     const { resume_id, file_path, dry_run = false, sections } = params;
 
@@ -9,7 +35,10 @@ export class SyncCommand extends BaseCommand {
       return { success: false, error: 'resume_id is required for sync' };
     }
 
-    const remoteData = await this.api.getResumeDetail(resume_id);
+    const remoteData =
+      await /** @type {(id: string) => Promise<import('./base-command.js').ResumeSections>} */ (
+        this.api.getResumeDetail
+      )(resume_id);
     const filePath = this.resolveResumeFilePathForRead(resume_id, file_path);
 
     if (!existsSync(filePath)) {
@@ -29,7 +58,9 @@ export class SyncCommand extends BaseCommand {
       };
     }
 
-    const localData = this.readJsonFile(filePath);
+    const localData = /** @type {import('./base-command.js').ResumeSections} */ (
+      this.readJsonFile(filePath)
+    );
     const diff = this.compareResume(localData, remoteData);
 
     if (dry_run) {
@@ -45,7 +76,7 @@ export class SyncCommand extends BaseCommand {
     const results = await this.syncResumeSections(resume_id, localData, remoteData, sections);
 
     if (results.changes_applied > 0) {
-      await this.api.saveResume(resume_id);
+      await /** @type {(id: string) => Promise<unknown>} */ (this.api.saveResume)(resume_id);
     }
 
     return {

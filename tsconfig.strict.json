@@ -628,7 +628,23 @@
     "packages/shared/src/retry/retry-service.js",
     "tools/scripts/build/generate-resume-variants.js",
     "tools/scripts/utils/validate-resume-data.js",
-    "tools/scripts/verification/run-lighthouse-ci.mjs"
+    "tools/scripts/verification/run-lighthouse-ci.mjs",
+    "apps/job-server/src/shared/services/stats/stats-service.js",
+    "apps/job-server/src/sync/proposal-skills.js",
+    "apps/job-server/src/test-helpers/service-setup.js",
+    "apps/job-server/src/tools/commands/diff-command.js",
+    "apps/job-server/src/tools/commands/export-command.js",
+    "apps/job-server/src/tools/commands/import-command.js",
+    "apps/job-server/src/tools/commands/pipeline-run-command.js",
+    "apps/job-server/src/tools/commands/pipeline-schedule-command.js",
+    "apps/job-server/src/tools/commands/pipeline-status-command.js",
+    "apps/job-server/src/tools/commands/sync-command.js",
+    "apps/job-server/src/tools/commands/sync-section-command.js",
+    "apps/job-server/src/tools/platforms/wanted-sync-operations.js",
+    "apps/job-server/src/tools/platforms/wanted-sync-operations/format-mapper.js",
+    "apps/job-server/src/tools/platforms/wanted-sync-operations/profile-sections.js",
+    "apps/portfolio/lib/cards.js",
+    "apps/portfolio/lib/cards/profile.js"
   ],
   "exclude": ["packages/env/src/__tests__/**"]
 }

@@ -2,6 +2,28 @@ import { existsSync } from 'fs';
 import { BaseCommand } from './base-command.js';
 
 export class ImportCommand extends BaseCommand {
+  /**
+   * @param {{
+   *   resume_id?: string;
+   *   file_path?: string;
+   *   dry_run?: boolean;
+   *   sections?: string[];
+   * }} params
+   * @returns {Promise<{
+   *   success: boolean;
+   *   error?: string;
+   *   errors?: unknown;
+   *   hint?: string;
+   *   dry_run?: boolean;
+   *   message?: string;
+   *   data?: unknown;
+   *   results?: {
+   *     imported: Array<{ section: string; id: unknown }>;
+   *     errors: Array<{ section: string; id: unknown; error: string }>;
+   *   };
+   *   pdf_regenerated?: boolean;
+   * }>}
+   */
   async execute(params) {
     const { resume_id, file_path, dry_run = false, sections } = params;
 
@@ -14,7 +36,7 @@ export class ImportCommand extends BaseCommand {
       return { success: false, error: `File not found: ${filePath}` };
     }
 
-    const localData = this.readJsonFile(filePath);
+    const localData = /** @type {Record<string, unknown>} */ (this.readJsonFile(filePath));
 
     const validation = this.validateLocalData(localData, filePath);
     if (!validation.valid) {
@@ -36,7 +58,7 @@ export class ImportCommand extends BaseCommand {
     }
 
     const results = await this.importResumeSections(resume_id, localData, sections);
-    await this.api.saveResume(resume_id);
+    await /** @type {(id: string) => Promise<unknown>} */ (this.api.saveResume)(resume_id);
 
     return {
       success: true,

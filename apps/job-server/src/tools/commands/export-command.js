@@ -1,6 +1,37 @@
 import { BaseCommand } from './base-command.js';
 
+/**
+ * @typedef {{
+ *   resume?: unknown;
+ *   careers?: import('./base-command.js').ResumeItem[];
+ *   educations?: import('./base-command.js').ResumeItem[];
+ *   skills?: import('./base-command.js').ResumeSkillItem[];
+ *   activities?: import('./base-command.js').ResumeItem[];
+ *   language_certs?: import('./base-command.js').ResumeItem[];
+ *   links?: unknown[];
+ *   [key: string]: unknown;
+ * }} ExportResumeDetail
+ */
+
 export class ExportCommand extends BaseCommand {
+  /**
+   * @param {{ resume_id?: string; file_path?: string }} params
+   * @returns {Promise<{
+   *   success: boolean;
+   *   error?: string;
+   *   errors?: unknown;
+   *   hint?: string;
+   *   message?: string;
+   *   file_path?: string;
+   *   summary?: {
+   *     careers: number;
+   *     educations: number;
+   *     skills: number;
+   *     activities: number;
+   *     language_certs: number;
+   *   };
+   * }>}
+   */
   async execute(params) {
     const { resume_id, file_path } = params;
 
@@ -8,7 +39,9 @@ export class ExportCommand extends BaseCommand {
       return { success: false, error: 'resume_id is required for export' };
     }
 
-    const data = await this.api.getResumeDetail(resume_id);
+    const data = await /** @type {(id: string) => Promise<ExportResumeDetail>} */ (
+      this.api.getResumeDetail
+    )(resume_id);
 
     const validation = this.validateLocalData(data.resume);
     if (!validation.valid) {

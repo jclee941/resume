@@ -2,6 +2,17 @@ import { join } from 'path';
 import { BaseCommand, DATA_DIR } from './base-command.js';
 
 export class PipelineScheduleCommand extends BaseCommand {
+  /**
+   * @param {{ resume_id?: string; webhook_url?: string }} params
+   * @returns {Promise<{
+   *   success: boolean;
+   *   error?: string;
+   *   hint?: string;
+   *   message?: string;
+   *   webhook_url?: string;
+   *   config_file?: string;
+   * }>}
+   */
   async execute(params) {
     const { resume_id, webhook_url } = params;
 
