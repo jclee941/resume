@@ -1,3 +1,39 @@
+/**
+ * @typedef {{
+ *   name: string;
+ *   [key: string]: unknown;
+ * }} ResumeSkillItem
+ *
+ * @typedef {{
+ *   items?: ResumeSkillItem[];
+ *   [key: string]: unknown;
+ * }} ResumeSkillGroup
+ *
+ * @typedef {{
+ *   skills?: Record<string, ResumeSkillGroup>;
+ *   summary?: { expertise?: string[]; [key: string]: unknown };
+ *   careers?: Array<{
+ *     projects?: Array<{
+ *       achievements?: string[];
+ *       [key: string]: unknown;
+ *     }>;
+ *     [key: string]: unknown;
+ *   }>;
+ *   [key: string]: unknown;
+ * }} TextAnalysisResumeData
+ *
+ * @typedef {{
+ *   position?: string | null;
+ *   title?: string | null;
+ *   requirements?: string | string[] | null;
+ *   description?: string | null;
+ *   detail?: string | null;
+ *   preferred?: string | null;
+ *   benefits?: string | null;
+ *   [key: string]: unknown;
+ * }} TextAnalysisJobPosting
+ */
+
 const COMMON_STOPWORDS = new Set([
   'and',
   'the',
@@ -24,6 +60,10 @@ const COMMON_STOPWORDS = new Set([
   '에서',
 ]);
 
+/**
+ * @param {unknown} value
+ * @returns {string}
+ */
 function normalize(value) {
   return String(value || '')
     .toLowerCase()
@@ -32,6 +72,10 @@ function normalize(value) {
     .trim();
 }
 
+/**
+ * @param {unknown} value
+ * @returns {string[]}
+ */
 export function toTokens(value) {
   return normalize(value)
     .split(/\s+/)
@@ -39,22 +83,39 @@ export function toTokens(value) {
     .filter((token) => token.length >= 2 && !COMMON_STOPWORDS.has(token));
 }
 
+/**
+ * @template T
+ * @param {T[]} list
+ * @returns {T[]}
+ */
 export function unique(list) {
   return [...new Set(list)];
 }
 
+/**
+ * @param {unknown} totalExperience
+ * @returns {number}
+ */
 export function parseYears(totalExperience) {
   const value = String(totalExperience || '');
   const match = value.match(/(\d+(?:\.\d+)?)/);
   return match ? Number(match[1]) : 0;
 }
 
+/**
+ * @param {TextAnalysisResumeData} resumeData
+ * @returns {string[]}
+ */
 export function collectResumeSkills(resumeData) {
   return Object.values(resumeData.skills || {}).flatMap((group) =>
     (group.items || []).map((item) => item.name)
   );
 }
 
+/**
+ * @param {TextAnalysisJobPosting} jobPosting
+ * @returns {string}
+ */
 export function buildJobText(jobPosting) {
   const requirements = Array.isArray(jobPosting.requirements)
     ? jobPosting.requirements.join(' ')
@@ -75,6 +136,10 @@ export function buildJobText(jobPosting) {
 // says "클라우드 운영").
 const WEAK_MATCH_TOKENS = new Set(['운영', '관리', '구축', '설계', '지원', 'ops', 'admin']);
 
+/**
+ * @param {unknown} skill
+ * @returns {string[]}
+ */
 function coreSkillTokens(skill) {
   // Drop parenthetical annotations like "(홈랩 운영)" before tokenizing so the
   // skill matches on its identifying name, not its descriptive note.
@@ -82,6 +147,11 @@ function coreSkillTokens(skill) {
   return toTokens(core).filter((token) => !WEAK_MATCH_TOKENS.has(token));
 }
 
+/**
+ * @param {TextAnalysisResumeData} resumeData
+ * @param {TextAnalysisJobPosting} jobPosting
+ * @returns {string[]}
+ */
 export function getMatchedSkills(resumeData, jobPosting) {
   const resumeSkills = collectResumeSkills(resumeData);
   const jobTokenSet = new Set(toTokens(buildJobText(jobPosting)));
@@ -99,6 +169,10 @@ export function getMatchedSkills(resumeData, jobPosting) {
   return unique(scored).slice(0, 6);
 }
 
+/**
+ * @param {TextAnalysisResumeData} resumeData
+ * @returns {string}
+ */
 export function inferDomain(resumeData) {
   const expertise = Array.isArray(resumeData.summary?.expertise)
     ? resumeData.summary.expertise
@@ -115,7 +189,13 @@ export function inferDomain(resumeData) {
   return 'infrastructure and automation';
 }
 
+/**
+ * @param {TextAnalysisResumeData} resumeData
+ * @param {TextAnalysisJobPosting} jobPosting
+ * @returns {string[]}
+ */
 export function getRelevantAchievements(resumeData, jobPosting) {
+  /** @type {string[]} */
   const achievements = [];
   for (const career of resumeData.careers || []) {
     for (const project of career.projects || []) {

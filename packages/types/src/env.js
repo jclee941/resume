@@ -1,4 +1,67 @@
 /**
+ * @typedef {{
+ *   get(key: string, options?: unknown): Promise<unknown>;
+ *   put(key: string, value: unknown, options?: unknown): Promise<void>;
+ *   delete(key: string): Promise<void>;
+ *   list(options?: unknown): Promise<unknown>;
+ * }} KVNamespace
+ *
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       first<T = unknown>(colName?: string): Promise<T | null>;
+ *       all<T = unknown>(): Promise<{ results: T[]; success: boolean; meta: unknown }>;
+ *       run(): Promise<{ success: boolean; meta: unknown }>;
+ *       raw<T = unknown>(): Promise<T[]>;
+ *     };
+ *     first<T = unknown>(colName?: string): Promise<T | null>;
+ *     all<T = unknown>(): Promise<{ results: T[]; success: boolean; meta: unknown }>;
+ *     run(): Promise<{ success: boolean; meta: unknown }>;
+ *     raw<T = unknown>(): Promise<T[]>;
+ *   };
+ *   batch?(statements: unknown[]): Promise<unknown[]>;
+ *   exec?(query: string): Promise<unknown>;
+ * }} D1Database
+ *
+ * @typedef {{
+ *   get(key: string): Promise<unknown>;
+ *   put(key: string, value: unknown, options?: unknown): Promise<unknown>;
+ *   delete(key: string | string[]): Promise<void>;
+ *   head(key: string): Promise<unknown>;
+ *   list(options?: unknown): Promise<unknown>;
+ * }} R2Bucket
+ *
+ * @typedef {{
+ *   run(model: string, inputs: unknown, options?: unknown): Promise<unknown>;
+ * }} Ai
+ *
+ * @typedef {{
+ *   fetch(request: Request | string, init?: RequestInit): Promise<Response>;
+ * }} BrowserWorker
+ *
+ * @typedef {{
+ *   send(message: unknown, options?: unknown): Promise<void>;
+ *   sendBatch(messages: Iterable<unknown>): Promise<void>;
+ * }} Queue
+ *
+ * @typedef {{
+ *   fetch(request: Request | string, init?: RequestInit): Promise<Response>;
+ * }} Fetcher
+ *
+ * @typedef {{
+ *   idFromName(name: string): unknown;
+ *   idFromString(id: string): unknown;
+ *   newUniqueId(options?: unknown): unknown;
+ *   get(id: unknown): unknown;
+ * }} DurableObjectNamespace
+ *
+ * @typedef {{
+ *   create(options?: unknown): Promise<unknown>;
+ *   get(id: string): Promise<unknown>;
+ * }} WorkflowNamespace
+ */
+
+/**
  * Cloudflare Worker bindings — canonical Env interface for all workers.
  *
  * Each worker imports the subset relevant to its bindings; bindings

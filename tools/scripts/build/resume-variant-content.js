@@ -6,18 +6,32 @@
  */
 
 /**
+ * @typedef {{
+ *   filename?: string;
+ *   description?: string;
+ *   sections: string[];
+ *   maxLength?: number | null;
+ *   emphasis?: string[];
+ * }} VariantConfig
+ */
+
+/**
  * Filter sections based on variant configuration
+ * @param {Record<string, string>} sections
+ * @param {VariantConfig} variantConfig
+ * @returns {Record<string, string>}
  */
 function filterSections(sections, variantConfig) {
   if (variantConfig.sections.includes('all')) {
     return sections;
   }
 
+  /** @type {Record<string, string>} */
   const filtered = {};
 
   for (const [key, content] of Object.entries(sections)) {
     // Check if section matches any allowed section pattern
-    const isIncluded = variantConfig.sections.some(pattern => {
+    const isIncluded = variantConfig.sections.some((pattern) => {
       if (pattern.endsWith('-recent')) {
         return key.startsWith(pattern.replace('-recent', ''));
       }
@@ -37,6 +51,9 @@ function filterSections(sections, variantConfig) {
 
 /**
  * Emphasize specific keywords in content
+ * @param {string} content
+ * @param {string[]} [keywords]
+ * @returns {string}
  */
 function emphasizeContent(content, keywords) {
   if (!keywords || keywords.length === 0) {
@@ -45,25 +62,28 @@ function emphasizeContent(content, keywords) {
 
   // Split into lines and filter/sort by keyword relevance
   const lines = content.split('\n');
-  const scored = lines.map(line => {
+  const scored = lines.map((line) => {
     const score = keywords.reduce((acc, keyword) => {
       return acc + (line.toLowerCase().includes(keyword) ? 1 : 0);
     }, 0);
-    return {line, score};
+    return { line, score };
   });
 
   // Keep high-scoring lines and essential structure
   return scored
     .filter(
-      item =>
+      (item) =>
         item.score > 0 || item.line.startsWith('#') || item.line.startsWith('-')
     )
-    .map(item => item.line)
+    .map((item) => item.line)
     .join('\n');
 }
 
 /**
  * Truncate content to maximum length
+ * @param {string} content
+ * @param {number | null | undefined} maxLength
+ * @returns {string}
  */
 function truncateContent(content, maxLength) {
   if (!maxLength) {

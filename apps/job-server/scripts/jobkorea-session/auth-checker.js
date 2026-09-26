@@ -1,5 +1,9 @@
 import { evaluateWithFallback, getActivePage } from './page-utils.js';
 
+/**
+ * @param {import('puppeteer').Page} page
+ * @returns {Promise<boolean>}
+ */
 export async function isLoggedIn(page) {
   const activePage = await getActivePage(page);
   return evaluateWithFallback(activePage, (currentPage) => {
@@ -13,6 +17,21 @@ export async function isLoggedIn(page) {
   });
 }
 
+/**
+ * @typedef {{
+ *   url: string,
+ *   title: string,
+ *   hasLogoutLink: boolean,
+ *   hasUserLink: boolean,
+ *   hasLoginForm: boolean,
+ *   bodySnippet: string
+ * }} DiagnosticResult
+ */
+
+/**
+ * @param {import('puppeteer').Page} page
+ * @returns {Promise<DiagnosticResult>}
+ */
 export async function getDiagnostics(page) {
   const activePage = await getActivePage(page);
   return evaluateWithFallback(activePage, (currentPage) => {

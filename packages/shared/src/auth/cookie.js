@@ -1,5 +1,21 @@
+/**
+ * @typedef {Object} CookieSerializeOptions
+ * @property {number} [maxAge]
+ * @property {Date} [expires]
+ * @property {string} [path]
+ * @property {string} [domain]
+ * @property {boolean} [httpOnly]
+ * @property {boolean} [secure]
+ * @property {'Strict' | 'Lax' | 'None' | string} [sameSite]
+ */
+
+/**
+ * @param {string | null | undefined} cookieHeader
+ * @returns {Record<string, string>}
+ */
 export function parseCookies(cookieHeader) {
   if (!cookieHeader || typeof cookieHeader !== 'string') return {};
+  /** @type {Record<string, string>} */
   const out = {};
   for (const pair of cookieHeader.split(';')) {
     const eq = pair.indexOf('=');
@@ -11,6 +27,12 @@ export function parseCookies(cookieHeader) {
   return out;
 }
 
+/**
+ * @param {string} name
+ * @param {string} value
+ * @param {CookieSerializeOptions} [options]
+ * @returns {string}
+ */
 export function serializeCookie(name, value, options = {}) {
   const segments = [`${name}=${encodeURIComponent(value)}`];
   if (options.maxAge != null) segments.push(`Max-Age=${Math.floor(options.maxAge)}`);
@@ -23,6 +45,11 @@ export function serializeCookie(name, value, options = {}) {
   return segments.join('; ');
 }
 
+/**
+ * @param {string} name
+ * @param {CookieSerializeOptions} [options]
+ * @returns {string}
+ */
 export function clearCookieHeader(name, options = {}) {
   return serializeCookie(name, '', {
     ...options,

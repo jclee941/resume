@@ -1,3 +1,40 @@
+/**
+ * @typedef {{
+ *   prepare(query: string): {
+ *     first(): Promise<unknown>;
+ *   };
+ * }} D1CheckBinding
+ *
+ * @typedef {{
+ *   get(key: string): Promise<string | null>;
+ *   put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
+ *   delete(key: string): Promise<void>;
+ * }} KvCheckBinding
+ *
+ * @typedef {{
+ *   send?: unknown;
+ * }} QueueCheckBinding
+ *
+ * @typedef {{
+ *   create?: unknown;
+ * }} WorkflowCheckBinding
+ *
+ * @typedef {{
+ *   get?: unknown;
+ * }} AssetsCheckBinding
+ *
+ * @typedef {{
+ *   status: string;
+ *   detail?: string;
+ *   latencyMs?: number;
+ * }} DiagnosticProbeResult
+ */
+
+/**
+ * @param {D1CheckBinding | null | undefined} binding
+ * @param {string} name
+ * @returns {Promise<DiagnosticProbeResult>}
+ */
 export async function checkD1(binding, name) {
   const start = performance.now();
   try {
@@ -9,12 +46,17 @@ export async function checkD1(binding, name) {
   } catch (err) {
     return {
       status: 'error',
-      detail: err.message,
+      detail: err instanceof Error ? err.message : String(err),
       latencyMs: Math.round((performance.now() - start) * 10) / 10,
     };
   }
 }
 
+/**
+ * @param {KvCheckBinding | null | undefined} binding
+ * @param {string} name
+ * @returns {Promise<DiagnosticProbeResult>}
+ */
 export async function checkKv(binding, name) {
   const start = performance.now();
   try {
@@ -36,12 +78,16 @@ export async function checkKv(binding, name) {
   } catch (err) {
     return {
       status: 'error',
-      detail: err.message,
+      detail: err instanceof Error ? err.message : String(err),
       latencyMs: Math.round((performance.now() - start) * 10) / 10,
     };
   }
 }
 
+/**
+ * @param {QueueCheckBinding | null | undefined} binding
+ * @returns {DiagnosticProbeResult}
+ */
 export function checkQueue(binding) {
   try {
     if (!binding) {
@@ -52,10 +98,14 @@ export function checkQueue(binding) {
     }
     return { status: 'ok', detail: 'binding present' };
   } catch (err) {
-    return { status: 'error', detail: err.message };
+    return { status: 'error', detail: err instanceof Error ? err.message : String(err) };
   }
 }
 
+/**
+ * @param {WorkflowCheckBinding | null | undefined} binding
+ * @returns {DiagnosticProbeResult}
+ */
 export function checkWorkflow(binding) {
   try {
     if (!binding) {
@@ -66,10 +116,14 @@ export function checkWorkflow(binding) {
     }
     return { status: 'ok' };
   } catch (err) {
-    return { status: 'error', detail: err.message };
+    return { status: 'error', detail: err instanceof Error ? err.message : String(err) };
   }
 }
 
+/**
+ * @param {AssetsCheckBinding | null | undefined} binding
+ * @returns {DiagnosticProbeResult}
+ */
 export function checkAssets(binding) {
   try {
     if (!binding) {
@@ -80,10 +134,13 @@ export function checkAssets(binding) {
     }
     return { status: 'ok' };
   } catch (err) {
-    return { status: 'error', detail: err.message };
+    return { status: 'error', detail: err instanceof Error ? err.message : String(err) };
   }
 }
 
+/**
+ * @returns {Promise<DiagnosticProbeResult>}
+ */
 export async function checkSubtleDigest() {
   const start = performance.now();
   try {
@@ -98,12 +155,15 @@ export async function checkSubtleDigest() {
   } catch (err) {
     return {
       status: 'error',
-      detail: err.message,
+      detail: err instanceof Error ? err.message : String(err),
       latencyMs: Math.round((performance.now() - start) * 10) / 10,
     };
   }
 }
 
+/**
+ * @returns {DiagnosticProbeResult}
+ */
 export function checkRandomUUID() {
   try {
     if (!crypto || typeof crypto.randomUUID !== 'function') {
@@ -115,10 +175,13 @@ export function checkRandomUUID() {
     }
     return { status: 'ok' };
   } catch (err) {
-    return { status: 'error', detail: err.message };
+    return { status: 'error', detail: err instanceof Error ? err.message : String(err) };
   }
 }
 
+/**
+ * @returns {DiagnosticProbeResult}
+ */
 export function checkBuffer() {
   try {
     if (typeof Buffer === 'undefined') {
@@ -133,10 +196,13 @@ export function checkBuffer() {
     }
     return { status: 'ok' };
   } catch (err) {
-    return { status: 'error', detail: err.message };
+    return { status: 'error', detail: err instanceof Error ? err.message : String(err) };
   }
 }
 
+/**
+ * @returns {DiagnosticProbeResult}
+ */
 export function checkProcess() {
   try {
     if (typeof process === 'undefined') {
@@ -145,6 +211,6 @@ export function checkProcess() {
     const version = process.version || process.env.NODE_VERSION || 'unknown';
     return { status: 'ok', detail: `version: ${version}` };
   } catch (err) {
-    return { status: 'error', detail: err.message };
+    return { status: 'error', detail: err instanceof Error ? err.message : String(err) };
   }
 }

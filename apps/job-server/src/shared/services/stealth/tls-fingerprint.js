@@ -1,18 +1,72 @@
 import { JA3_FORMAT, buildDefaultFingerprintPool } from './tls-fingerprint-pool.js';
 
+/**
+ * @typedef {Object} TLSConfig
+ * @property {string} minVersion
+ * @property {string} maxVersion
+ * @property {string} ciphers
+ * @property {string} sigalgs
+ * @property {string} ecdhCurve
+ * @property {string[]} alpnProtocols
+ */
+
+/**
+ * @typedef {Object} TLSFingerprint
+ * @property {string} id
+ * @property {string} browser
+ * @property {string} version
+ * @property {string} platform
+ * @property {string} ja3
+ * @property {string} userAgent
+ * @property {TLSConfig} tls
+ */
+
+/**
+ * @typedef {Object} TLSFingerprintOptions
+ * @property {TLSFingerprint[]} [fingerprints]
+ * @property {string} [platform]
+ * @property {string} [browser]
+ * @property {boolean} [forceRotate]
+ */
+
+/**
+ * @typedef {Object} TLSConnectOptions
+ * @property {string} minVersion
+ * @property {string} maxVersion
+ * @property {string[]} ALPNProtocols
+ * @property {string} [ciphers]
+ * @property {string} [sigalgs]
+ * @property {string} [ecdhCurve]
+ * @property {boolean} [honorCipherOrder]
+ */
+
 export class TLSFingerprintManager {
+  /**
+   * @param {TLSFingerprintOptions} [options]
+   */
   constructor(options = {}) {
+    /** @type {TLSFingerprint[]} */
     this.fingerprints = options.fingerprints?.length
       ? options.fingerprints.filter((fp) => this.isValidJA3(fp.ja3))
       : this._buildDefaultPool();
+    /** @type {Map<string, number>} */
     this._usage = new Map(this.fingerprints.map((fp) => [fp.id, 0]));
+    /** @type {Map<string, string>} */
     this._proxyAssignments = new Map();
   }
 
+  /**
+   * @param {unknown} ja3
+   * @returns {boolean}
+   */
   isValidJA3(ja3) {
     return typeof ja3 === 'string' && JA3_FORMAT.test(ja3);
   }
 
+  /**
+   * @param {TLSFingerprintOptions} [options]
+   * @returns {TLSFingerprint | null}
+   */
   getRandomFingerprint(options = {}) {
     let candidates = this.fingerprints;
 
@@ -41,14 +95,27 @@ export class TLSFingerprintManager {
     return selected;
   }
 
+  /**
+   * @param {TLSFingerprintOptions} [options]
+   * @returns {TLSFingerprint | null}
+   */
   rotateFingerprint(options = {}) {
     return this.getRandomFingerprint(options);
   }
 
+  /**
+   * @param {string} platform
+   * @returns {TLSFingerprint[]}
+   */
   getForPlatform(platform) {
     return this.fingerprints.filter((fp) => fp.platform === platform);
   }
 
+  /**
+   * @param {string} [proxyUrl]
+   * @param {TLSFingerprintOptions} [options]
+   * @returns {TLSFingerprint | null}
+   */
   getForProxy(proxyUrl, options = {}) {
     if (!proxyUrl) return this.getRandomFingerprint(options);
 
@@ -65,6 +132,10 @@ export class TLSFingerprintManager {
     return next;
   }
 
+  /**
+   * @param {TLSFingerprint} [fingerprint]
+   * @returns {TLSConnectOptions}
+   */
   buildTlsConnectOptions(fingerprint) {
     if (!fingerprint) {
       return {
@@ -85,10 +156,16 @@ export class TLSFingerprintManager {
     };
   }
 
+  /**
+   * @returns {Map<string, number>}
+   */
   getUsageReport() {
     return new Map(this._usage);
   }
 
+  /**
+   * @returns {TLSFingerprint[]}
+   */
   _buildDefaultPool() {
     return buildDefaultFingerprintPool();
   }

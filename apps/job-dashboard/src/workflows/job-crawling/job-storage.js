@@ -1,11 +1,42 @@
 import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
 
 /**
+ * @typedef {Object} MatchedJob
+ * @property {string} id
+ * @property {string} source
+ * @property {string} [sourceUrl]
+ * @property {string} [url]
+ * @property {string} position
+ * @property {string} company
+ * @property {string} [location]
+ * @property {string} [description]
+ * @property {string[] | string} [techStack]
+ * @property {string} [experienceLevel]
+ * @property {string} [experience]
+ * @property {number} [matchScore]
+ * @property {string} [discoveryStatus]
+ */
+
+/**
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): unknown;
+ *   };
+ *   batch(statements: unknown[]): Promise<unknown>;
+ * }} D1DatabaseLike
+ */
+
+/**
+ * @typedef {Object} StorageEnv
+ * @property {D1DatabaseLike} JOB_DB
+ */
+
+/**
  * Persist the top matched jobs to D1.
  *
- * @param {Object} env
- * @param {Object[]} matchedJobs
- * @returns {Promise<{saved: number}>}
+ * @param {StorageEnv} env
+ * @param {MatchedJob[]} matchedJobs
+ * @returns {Promise<{ saved: number }>}
  */
 export async function saveMatchedJobs(env, matchedJobs) {
   const stmt = env.JOB_DB.prepare(`
@@ -29,25 +60,23 @@ export async function saveMatchedJobs(env, matchedJobs) {
       updated_at = excluded.updated_at
   `);
 
-  const batch = matchedJobs
-    .slice(0, 50)
-    .map((job) => {
-      const sourceUrl = job.sourceUrl || job.url || null;
-      return stmt.bind(
-        job.id,
-        job.source,
-        sourceUrl,
-        canonicalizeJobUrl(sourceUrl),
-        job.position,
-        job.company,
-        job.location || null,
-        job.description || null,
-        Array.isArray(job.techStack) ? JSON.stringify(job.techStack) : job.techStack || null,
-        job.experienceLevel || job.experience || null,
-        job.matchScore ?? 0,
-        job.discoveryStatus || 'new'
-      );
-    });
+  const batch = matchedJobs.slice(0, 50).map((job) => {
+    const sourceUrl = job.sourceUrl || job.url || null;
+    return stmt.bind(
+      job.id,
+      job.source,
+      sourceUrl,
+      canonicalizeJobUrl(sourceUrl),
+      job.position,
+      job.company,
+      job.location || null,
+      job.description || null,
+      Array.isArray(job.techStack) ? JSON.stringify(job.techStack) : job.techStack || null,
+      job.experienceLevel || job.experience || null,
+      job.matchScore ?? 0,
+      job.discoveryStatus || 'new'
+    );
+  });
 
   await env.JOB_DB.batch(batch);
   return { saved: batch.length };

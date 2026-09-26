@@ -1,3 +1,51 @@
+/**
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       run(): Promise<unknown>;
+ *       all(): Promise<{ results?: unknown[] }>;
+ *     };
+ *   };
+ * }} D1DatabaseLike
+ */
+
+/**
+ * @typedef {{
+ *   get(key: string, type?: string): Promise<Record<string, unknown> | null>;
+ *   put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
+ * }} KvNamespaceLike
+ */
+
+/**
+ * @typedef {Object} NotificationService
+ * @property {{ JOB_DB: D1DatabaseLike; SESSIONS: KvNamespaceLike }} env
+ * @property {Record<string, unknown>} preferences
+ */
+
+/**
+ * @typedef {Object} NotificationHistoryRecord
+ * @property {string} id
+ * @property {string} eventType
+ * @property {unknown} [data]
+ * @property {string[]} [channels]
+ * @property {string} timestamp
+ * @property {string} status
+ * @property {unknown} [results]
+ */
+
+/**
+ * @typedef {Object} HistoryOptions
+ * @property {number} [limit]
+ * @property {string} [eventType]
+ * @property {string} [startDate]
+ * @property {string} [endDate]
+ */
+
+/**
+ * @param {NotificationService} service
+ * @param {NotificationHistoryRecord} record
+ * @returns {Promise<void>}
+ */
 export async function saveNotificationHistory(service, record) {
   if (!service.env.JOB_DB) return;
 
@@ -25,10 +73,16 @@ export async function saveNotificationHistory(service, record) {
   }
 }
 
+/**
+ * @param {NotificationService} service
+ * @param {HistoryOptions} [options]
+ * @returns {Promise<unknown[]>}
+ */
 export async function getNotificationHistory(service, options = {}) {
   const { limit = 50, eventType, startDate, endDate } = options;
 
   let sql = 'SELECT * FROM notification_history WHERE 1=1';
+  /** @type {(string | number)[]} */
   const params = [];
 
   if (eventType) {
@@ -55,6 +109,12 @@ export async function getNotificationHistory(service, options = {}) {
   return result.results || [];
 }
 
+/**
+ * @param {NotificationService} service
+ * @param {string} eventType
+ * @param {Record<string, unknown>} preferences
+ * @returns {Promise<{ success: boolean; reason?: string }>}
+ */
 export async function updatePreferences(service, eventType, preferences) {
   if (!service.preferences[eventType]) {
     return { success: false, reason: 'invalid_event_type' };
@@ -71,6 +131,10 @@ export async function updatePreferences(service, eventType, preferences) {
   return { success: true };
 }
 
+/**
+ * @param {NotificationService} service
+ * @returns {Promise<void>}
+ */
 export async function loadPreferences(service) {
   try {
     const saved = await service.env.SESSIONS.get('config:notification:preferences', 'json');

@@ -1,11 +1,37 @@
 import { sleep } from './shared.js';
 
 /**
+ * @template T
+ * @template R
+ * @typedef {{
+ *   item: T;
+ *   result: R | null;
+ *   success: boolean;
+ *   duration: number;
+ *   error?: unknown;
+ * }} ParallelTaskResult
+ */
+
+/**
+ * @template T
+ * @template R
+ * @typedef {{
+ *   concurrency?: number;
+ *   stopOnError?: boolean;
+ *   retryCount?: number;
+ *   retryDelay?: number;
+ *   onProgress?: (info: { completed: number; total: number; current: T; result: ParallelTaskResult<T, R> }) => void;
+ * }} ProcessInParallelOptions
+ */
+
+/**
  * Process items in parallel with concurrency limit
- * @param {Array} items - Items to process
- * @param {Function} processor - Async processor function
- * @param {Object} options
- * @returns {Promise<Array>}
+ * @template T
+ * @template R
+ * @param {T[]} items - Items to process
+ * @param {(item: T, index: number) => Promise<R> | R} processor - Async processor function
+ * @param {ProcessInParallelOptions<T, R>} [options]
+ * @returns {Promise<ParallelTaskResult<T, R>[]>}
  */
 export async function processInParallel(items, processor, options = {}) {
   const {
@@ -16,6 +42,7 @@ export async function processInParallel(items, processor, options = {}) {
     onProgress,
   } = options;
 
+  /** @type {ParallelTaskResult<T, R>[]} */
   const results = [];
   const queue = [...items];
   const inProgress = new Set();
@@ -37,10 +64,14 @@ export async function processInParallel(items, processor, options = {}) {
       while (inProgress.size < concurrency && queue.length > 0 && !(hasError && stopOnError)) {
         const item = queue.shift();
         const index = completed + inProgress.size;
-        processItem(item, index);
+        processItem(/** @type {T} */ (item), index);
       }
     }
 
+    /**
+     * @param {T} item
+     * @param {number} index
+     */
     async function processItem(item, index) {
       const startTime = Date.now();
       const promiseId = `${index}-${Date.now()}`;

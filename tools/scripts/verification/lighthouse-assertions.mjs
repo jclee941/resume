@@ -1,3 +1,53 @@
+/**
+ * @typedef {{
+ *   minScore?: number;
+ *   maxNumericValue?: number;
+ *   minNumericValue?: number;
+ *   [key: string]: unknown;
+ * }} AssertionOptions
+ *
+ * @typedef {{
+ *   level: string;
+ *   options: AssertionOptions;
+ * }} NormalizedAssertion
+ *
+ * @typedef {{
+ *   score?: number | null;
+ *   numericValue?: number | null;
+ *   details?: {
+ *     items?: Array<{
+ *       resourceType?: string;
+ *       transferSize?: number;
+ *       [key: string]: unknown;
+ *     }>;
+ *     [key: string]: unknown;
+ *   };
+ *   [key: string]: unknown;
+ * }} LighthouseAudit
+ *
+ * @typedef {{
+ *   score?: number | null;
+ *   [key: string]: unknown;
+ * }} LighthouseCategory
+ *
+ * @typedef {{
+ *   categories?: Record<string, LighthouseCategory | undefined>;
+ *   audits?: Record<string, LighthouseAudit | undefined>;
+ *   [key: string]: unknown;
+ * }} LighthouseResult
+ *
+ * @typedef {{
+ *   performance: number | null;
+ *   accessibility: number | null;
+ *   bestPractices: number | null;
+ *   seo: number | null;
+ * }} CategoryScores
+ */
+
+/**
+ * @param {number[]} values
+ * @returns {number | null}
+ */
 export function median(values) {
   if (!values.length) return null;
   const sorted = [...values].sort((a, b) => a - b);
@@ -5,6 +55,10 @@ export function median(values) {
   return sorted.length % 2 === 0 ? (sorted[middle - 1] + sorted[middle]) / 2 : sorted[middle];
 }
 
+/**
+ * @param {unknown} rawAssertion
+ * @returns {NormalizedAssertion}
+ */
 export function normalizeAssertion(rawAssertion) {
   if (Array.isArray(rawAssertion)) {
     return {
@@ -18,6 +72,11 @@ export function normalizeAssertion(rawAssertion) {
   };
 }
 
+/**
+ * @param {LighthouseResult} lhr
+ * @param {string} key
+ * @returns {number | null}
+ */
 function getResourceSummaryValue(lhr, key) {
   const [, type, metric] = key.split(':');
   if (metric !== 'size') return null;
@@ -29,6 +88,12 @@ function getResourceSummaryValue(lhr, key) {
   return typeof target?.transferSize === 'number' ? target.transferSize : null;
 }
 
+/**
+ * @param {LighthouseResult} lhr
+ * @param {string} key
+ * @param {AssertionOptions} options
+ * @returns {number | null}
+ */
 export function getAssertionValue(lhr, key, options) {
   if (key.startsWith('categories:')) {
     const category = key.split(':')[1];
@@ -50,8 +115,17 @@ export function getAssertionValue(lhr, key, options) {
   return typeof audit.score === 'number' ? audit.score : null;
 }
 
+/**
+ * @param {string} key
+ * @param {NormalizedAssertion} assertion
+ * @param {number | null} value
+ * @param {string} profileName
+ * @returns {{ failures: string[]; warnings: string[] }}
+ */
 function evaluateAssertion(key, assertion, value, profileName) {
+  /** @type {string[]} */
   const failures = [];
+  /** @type {string[]} */
   const warnings = [];
 
   if (value === null) {
@@ -82,8 +156,16 @@ function evaluateAssertion(key, assertion, value, profileName) {
   return { failures, warnings };
 }
 
+/**
+ * @param {string} profileName
+ * @param {LighthouseResult[]} results
+ * @param {Record<string, unknown>} assertions
+ * @returns {{ failures: string[]; warnings: string[] }}
+ */
 export function summarizeAssertions(profileName, results, assertions) {
+  /** @type {string[]} */
   const failures = [];
+  /** @type {string[]} */
   const warnings = [];
 
   for (const [key, rawAssertion] of Object.entries(assertions)) {
@@ -92,7 +174,7 @@ export function summarizeAssertions(profileName, results, assertions) {
 
     const values = results
       .map((lhr) => getAssertionValue(lhr, key, assertion.options))
-      .filter((value) => value !== null);
+      .filter(/** @type {(v: number | null) => v is number} */ ((value) => value !== null));
     const outcome = evaluateAssertion(key, assertion, median(values), profileName);
     failures.push(...outcome.failures);
     warnings.push(...outcome.warnings);
@@ -101,6 +183,10 @@ export function summarizeAssertions(profileName, results, assertions) {
   return { failures, warnings };
 }
 
+/**
+ * @param {LighthouseResult} lhr
+ * @returns {CategoryScores}
+ */
 export function getCategoryScores(lhr) {
   return {
     performance: lhr.categories?.performance?.score ?? null,

@@ -1,6 +1,64 @@
 import { readFile } from 'fs/promises';
 import { getResumeMasterDataPath } from '../shared/utils/paths.js';
 
+/**
+ * @typedef {Object} SkillItem
+ * @property {string} name
+ */
+
+/**
+ * @typedef {Object} SkillGroup
+ * @property {SkillItem[]} [items]
+ */
+
+/**
+ * @typedef {Object} RawCareer
+ * @property {string} [company]
+ * @property {string} [project]
+ * @property {string} [period]
+ * @property {string} [role]
+ * @property {string} [description]
+ */
+
+/**
+ * @typedef {Object} RawProject
+ * @property {string} [name]
+ * @property {string} [period]
+ * @property {string} [role]
+ * @property {string} [description]
+ * @property {string[]} [technologies]
+ */
+
+/**
+ * @typedef {Object} RawCertification
+ * @property {string} [name]
+ * @property {string} [status]
+ * @property {string} [issuer]
+ */
+
+/**
+ * @typedef {Object} RawResumeData
+ * @property {Record<string, SkillGroup>} [skills]
+ * @property {RawCareer[]} [careers]
+ * @property {RawProject[]} [projects]
+ * @property {{ profileStatement?: string, totalExperience?: string }} [summary]
+ * @property {RawCertification[]} [certifications]
+ * @property {Record<string, unknown>} [contact]
+ */
+
+/**
+ * @typedef {Object} ResumeCorpus
+ * @property {string[]} skills
+ * @property {RawCareer[]} experiences
+ * @property {RawProject[]} projects
+ */
+
+/**
+ * @typedef {Object} ResumeGeneratorParams
+ * @property {string} [job_description]
+ * @property {string} [role_focus]
+ */
+
 const STOPWORDS = new Set([
   'and',
   'the',
@@ -28,6 +86,10 @@ const STOPWORDS = new Set([
   '에서',
 ]);
 
+/**
+ * @param {unknown} value
+ * @returns {string}
+ */
 function normalize(value) {
   return String(value || '')
     .toLowerCase()
@@ -36,6 +98,10 @@ function normalize(value) {
     .trim();
 }
 
+/**
+ * @param {string} text
+ * @returns {string[]}
+ */
 function extractKeywords(text) {
   const tokens = normalize(text)
     .split(/\s+/)
@@ -45,6 +111,10 @@ function extractKeywords(text) {
   return [...new Set(tokens)].slice(0, 80);
 }
 
+/**
+ * @param {RawResumeData} resumeData
+ * @returns {ResumeCorpus}
+ */
 function collectResumeSearchCorpus(resumeData) {
   const skills = Object.values(resumeData.skills || {}).flatMap((group) =>
     (group.items || []).map((item) => item.name)
@@ -69,6 +139,11 @@ function collectResumeSearchCorpus(resumeData) {
   return { skills, experiences, projects };
 }
 
+/**
+ * @param {string} text
+ * @param {string[]} keywords
+ * @returns {number}
+ */
 function scoreMatch(text, keywords) {
   const normalized = normalize(text);
   return keywords.reduce((acc, keyword) => (normalized.includes(keyword) ? acc + 1 : acc), 0);
@@ -94,12 +169,16 @@ export const resumeGeneratorTool = {
     required: ['job_description'],
   },
 
+  /**
+   * @param {ResumeGeneratorParams} params
+   */
   async execute(params) {
     try {
       const jobDescription = params.job_description || '';
       const keywords = extractKeywords(jobDescription);
 
       const resumeDataRaw = await readFile(getResumeMasterDataPath(), 'utf-8');
+      /** @type {RawResumeData} */
       const resumeData = JSON.parse(resumeDataRaw);
 
       const { skills, experiences, projects } = collectResumeSearchCorpus(resumeData);
@@ -189,7 +268,7 @@ export const resumeGeneratorTool = {
     } catch (error) {
       return {
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   },

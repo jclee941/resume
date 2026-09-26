@@ -1,5 +1,29 @@
 import { normalize, parseRequirements } from './text-utils.js';
 
+/**
+ * @typedef {{
+ *   location?: string | null;
+ *   title?: string | null;
+ *   description?: string | null;
+ *   requirements?: unknown;
+ *   [key: string]: unknown;
+ * }} JobLocationListing
+ *
+ * @typedef {{
+ *   personal?: { address?: string | null };
+ *   [key: string]: unknown;
+ * }} ResumeLocationData
+ *
+ * @typedef {{
+ *   score: number;
+ *   reason: string;
+ * }} LocationScoreResult
+ */
+
+/**
+ * @param {unknown} location
+ * @returns {string}
+ */
 export function getCity(location) {
   const normalized = normalize(location);
   if (!normalized) {
@@ -9,6 +33,11 @@ export function getCity(location) {
   return first || '';
 }
 
+/**
+ * @param {JobLocationListing} jobListing
+ * @param {ResumeLocationData} resumeData
+ * @returns {LocationScoreResult}
+ */
 export function scoreLocation(jobListing, resumeData) {
   const jobLocation = String(jobListing.location || '');
   const resumeLocation = String(resumeData.personal?.address || '');

@@ -1,3 +1,87 @@
+/**
+ * @typedef {{
+ *   applied?: boolean;
+ *   status?: string;
+ *   stages: {
+ *     generateCoverLetter?: boolean;
+ *     checkApproval?: boolean;
+ *     submit?: boolean;
+ *     track?: boolean;
+ *   };
+ *   [key: string]: unknown;
+ * }} ProcessResult
+ */
+
+/**
+ * @typedef {{
+ *   searched: number;
+ *   matched: number;
+ *   applied: number;
+ *   skipped: number;
+ *   failed: number;
+ *   applications: ProcessResult[];
+ *   stages: {
+ *     search: number;
+ *     filterScore: number;
+ *     generateCoverLetter: number;
+ *     checkApproval: number;
+ *     submit: number;
+ *     track: number;
+ *   };
+ *   filterStats: unknown;
+ * }} RunResults
+ */
+
+/**
+ * @typedef {{
+ *   keywords?: string[];
+ *   categories?: string[];
+ *   experience?: number;
+ *   location?: string;
+ *   maxApplications?: number;
+ *   useAI?: boolean;
+ *   resumePath?: string;
+ * }} RunAutoApplyOptions
+ */
+
+/**
+ * @typedef {{
+ *   config: {
+ *     maxDailyApplications: number;
+ *     useAI: boolean;
+ *     resumePath: string;
+ *     minMatchScore: number;
+ *     excludeCompanies: string[];
+ *     autoApply: boolean;
+ *     dryRun: boolean;
+ *     delayBetweenApps: number;
+ *   };
+ *   logger: { info(msg: string): void; error?(msg: string): void };
+ *   retryService: { execute<T>(fn: () => Promise<T>, options?: { serviceName?: string }): Promise<T> };
+ *   crawler: {
+ *     searchWithMatching(query: unknown): Promise<{
+ *       success: boolean;
+ *       totalJobs: number;
+ *       jobs: unknown[];
+ *       sourceStats?: unknown;
+ *       resumeAnalysis?: unknown;
+ *     }>;
+ *   };
+ *   tracker: { recordSearch(jobs: unknown[], options: unknown): Promise<unknown> };
+ *   getExistingJobKeys(): Promise<Set<string>>;
+ *   jobFilter: {
+ *     filter(jobs: unknown[], keys: Set<string>, options: unknown): Promise<{ jobs: unknown[]; stats: unknown }>;
+ *   };
+ *   processJob(job: unknown, context: { ensureBrowser: () => Promise<void> }): Promise<ProcessResult>;
+ *   initBrowser(): Promise<void>;
+ *   closeBrowser(): Promise<void>;
+ *   sleep(ms: number): Promise<void>;
+ * }} AutoApplierContext
+ */
+
+/**
+ * @returns {RunResults}
+ */
 function createRunResults() {
   return {
     searched: 0,
@@ -18,6 +102,16 @@ function createRunResults() {
   };
 }
 
+/**
+ * @this {AutoApplierContext}
+ * @param {RunAutoApplyOptions} [options]
+ * @returns {Promise<{
+ *   success: boolean;
+ *   error?: string;
+ *   results: RunResults;
+ *   resumeAnalysis?: unknown;
+ * }>}
+ */
 export async function runAutoApply(options = {}) {
   const {
     keywords = ['보안 운영', '보안 인프라', 'SIEM'],
@@ -100,7 +194,7 @@ export async function runAutoApply(options = {}) {
   } catch (error) {
     return {
       success: false,
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
       results,
     };
   } finally {
@@ -110,6 +204,11 @@ export async function runAutoApply(options = {}) {
   }
 }
 
+/**
+ * @param {RunResults} results
+ * @param {ProcessResult} processResult
+ * @returns {void}
+ */
 function recordProcessResult(results, processResult) {
   results.applications.push(processResult);
 

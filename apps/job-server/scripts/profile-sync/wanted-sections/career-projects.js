@@ -1,10 +1,44 @@
 import { log } from '../sync-logger.js';
 
 /**
+ * @typedef {{
+ *   name?: string;
+ *   title?: string;
+ *   description?: string;
+ *   techStack?: string[];
+ *   achievements?: string[];
+ * }} SsotCareerProject
+ */
+
+/**
+ * @typedef {{
+ *   company?: string;
+ *   project?: string;
+ *   description?: string;
+ *   projects?: SsotCareerProject[];
+ * }} SsotCareer
+ */
+
+/**
+ * @typedef {{
+ *   id?: string | number;
+ *   title: string;
+ *   description?: string | null;
+ * }} ExistingWantedProject
+ */
+
+/**
+ * @typedef {{
+ *   deleteProject(resumeId: string | number, careerId: string | number, projectId: string | number | undefined): Promise<unknown>;
+ *   addProject(resumeId: string | number, careerId: string | number, project: { title: string; description: string }): Promise<unknown>;
+ * }} WantedClient
+ */
+
+/**
  * Map a structured SSoT career project to the Wanted project payload.
  * Falls back to the career-level project/description when no structured
  * projects[] array is present.
- * @param {Object} p - SSoT career project entry
+ * @param {SsotCareerProject} p - SSoT career project entry
  * @returns {{title: string, description: string}}
  */
 function mapProject(p) {
@@ -26,7 +60,7 @@ function mapProject(p) {
  * Collect the SSoT projects for a career. Prefers the structured
  * careers[].projects[] array; falls back to the single career-level
  * project/description pair for older SSoT entries.
- * @param {Object} ssotCareer
+ * @param {SsotCareer} ssotCareer
  * @returns {Array<{title: string, description: string}>}
  */
 export function collectCareerProjects(ssotCareer) {
@@ -44,6 +78,12 @@ export function collectCareerProjects(ssotCareer) {
  * Wanted (matched by title) and delete only remote projects that are no
  * longer in the SSoT. Career PATCH ignores the `projects` field, so per-item
  * DELETE/POST is required.
+ * @param {WantedClient} client
+ * @param {string | number} resumeId
+ * @param {string | number} careerId
+ * @param {SsotCareer} ssotCareer
+ * @param {ExistingWantedProject[] | null | undefined} existingProjects
+ * @returns {Promise<void>}
  */
 export async function syncCareerProjects(client, resumeId, careerId, ssotCareer, existingProjects) {
   const desired = collectCareerProjects(ssotCareer);
@@ -67,7 +107,11 @@ export async function syncCareerProjects(client, resumeId, careerId, ssotCareer,
     try {
       await client.deleteProject(resumeId, careerId, p.id);
     } catch (e) {
-      log(`Failed to delete project ${p.id}: ${e.message}`, 'error', 'wanted');
+      log(
+        `Failed to delete project ${p.id}: ${e instanceof Error ? e.message : String(e)}`,
+        'error',
+        'wanted'
+      );
     }
   }
 
@@ -78,7 +122,7 @@ export async function syncCareerProjects(client, resumeId, careerId, ssotCareer,
       await client.addProject(resumeId, careerId, project);
     } catch (e) {
       log(
-        `Failed to add project "${project.title}" for ${ssotCareer.company}: ${e.message}`,
+        `Failed to add project "${project.title}" for ${ssotCareer.company}: ${e instanceof Error ? e.message : String(e)}`,
         'error',
         'wanted'
       );

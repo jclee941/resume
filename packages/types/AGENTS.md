@@ -19,6 +19,7 @@ TypeScript Language Service checking without a runtime validation dependency.
 packages/types/src/
 ├── index.js           # Barrel re-export
 ├── application.js     # Application, ApplicationStatus, APPLICATION_STATUSES
+├── cloudflare-workers.d.ts # cloudflare:workers Workflow API subset for the strict typecheck
 ├── env.js             # WorkerEnv, PortfolioEnv, JobDashboardEnv (CF bindings)
 ├── job-categories.js  # JOB_CATEGORY_BY_NAME, JOB_CATEGORY_BY_KEY (canonical)
 ├── notification.js    # NotificationJob, NotificationPriority, NotificationType

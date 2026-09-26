@@ -1,6 +1,36 @@
 import fetch from 'node-fetch';
 
+/**
+ * @typedef {{
+ *   id?: string;
+ *   platform?: string;
+ *   job_id?: string;
+ *   title?: string;
+ *   company?: string;
+ *   url?: string;
+ *   location?: string | null;
+ *   salary?: string | null;
+ *   deadline?: string | null;
+ *   status?: string;
+ *   match_score?: number;
+ *   resume_id?: string | null;
+ *   notes?: string | null;
+ *   [key: string]: unknown;
+ * }} D1ApplicationInput
+ *
+ * @typedef {{
+ *   success?: boolean;
+ *   errors?: Array<{ message: string }>;
+ *   result?: Array<{ results?: Array<Record<string, unknown>> }>;
+ * }} D1QueryResponse
+ */
+
 export class D1Client {
+  /**
+   * @param {string} [accountId]
+   * @param {string} [databaseId]
+   * @param {string} [apiKey]
+   */
   constructor(accountId, databaseId, apiKey) {
     this.accountId = accountId || process.env.CLOUDFLARE_ACCOUNT_ID;
     this.databaseId = databaseId || process.env.D1_DATABASE_ID;
@@ -8,6 +38,12 @@ export class D1Client {
     this.baseURL = 'https://api.cloudflare.com/client/v4';
   }
 
+  /**
+   * @template [T=Record<string, unknown>]
+   * @param {string} sql
+   * @param {Array<unknown>} [params]
+   * @returns {Promise<Array<T>>}
+   */
   async query(sql, params = []) {
     const url = `${this.baseURL}/accounts/${this.accountId}/d1/database/${this.databaseId}/query`;
 
@@ -20,16 +56,19 @@ export class D1Client {
       body: JSON.stringify({ sql, params }),
     });
 
-    const data = await response.json();
+    const data = /** @type {D1QueryResponse} */ (await response.json());
 
     if (!data.success) {
       const errorMsg = data.errors?.[0]?.message || 'D1 query failed';
       throw new Error(errorMsg);
     }
 
-    return data.result?.[0]?.results || [];
+    return /** @type {Array<T>} */ (data.result?.[0]?.results || []);
   }
 
+  /**
+   * @param {{ status?: string; platform?: string; limit?: number; offset?: number }} [options]
+   */
   async getApplications(options = {}) {
     const { status, platform, limit = 100, offset = 0 } = options;
     let sql = 'SELECT * FROM job_applications WHERE 1=1';
@@ -51,23 +90,28 @@ export class D1Client {
   }
 
   async getStats() {
+    /** @type {Array<{ total: number }>} */
     const totalResult = await this.query('SELECT COUNT(*) as total FROM job_applications');
+    /** @type {Array<{ status: string; count: number }>} */
     const statusResult = await this.query(`
       SELECT status, COUNT(*) as count 
       FROM job_applications 
       GROUP BY status
     `);
+    /** @type {Array<{ platform: string; count: number }>} */
     const platformResult = await this.query(`
       SELECT platform, COUNT(*) as count 
       FROM job_applications 
       GROUP BY platform
     `);
 
+    /** @type {Record<string, number>} */
     const byStatus = {};
     for (const row of statusResult) {
       byStatus[row.status] = row.count;
     }
 
+    /** @type {Record<string, number>} */
     const byPlatform = {};
     for (const row of platformResult) {
       byPlatform[row.platform] = row.count;
@@ -80,6 +124,9 @@ export class D1Client {
     };
   }
 
+  /**
+   * @param {D1ApplicationInput} app
+   */
   async addApplication(app) {
     const sql = `
       INSERT INTO job_applications 
@@ -106,6 +153,10 @@ export class D1Client {
     return { success: true, id: params[0] };
   }
 
+  /**
+   * @param {string} id
+   * @param {string} status
+   */
   async updateStatus(id, status) {
     const sql = `
       UPDATE job_applications 
@@ -116,10 +167,16 @@ export class D1Client {
     return { success: true };
   }
 
+  /**
+   * @param {number} [limit]
+   */
   async getAutomationRuns(limit = 20) {
     return this.query('SELECT * FROM automation_runs ORDER BY started_at DESC LIMIT ?', [limit]);
   }
 
+  /**
+   * @param {{ run_type?: string; platform?: string; config?: Record<string, unknown> }} run
+   */
   async createAutomationRun(run) {
     const sql = `
       INSERT INTO automation_runs (id, run_type, platform, status, config, started_at)
@@ -130,6 +187,10 @@ export class D1Client {
     return { id };
   }
 
+  /**
+   * @param {string} id
+   * @param {{ jobs_found?: number; jobs_matched?: number; jobs_applied?: number } & Record<string, unknown>} results
+   */
   async completeAutomationRun(id, results) {
     const sql = `
       UPDATE automation_runs 
@@ -157,7 +218,7 @@ export class D1Client {
    * @param {string} jobId - Platform-specific job ID
    * @param {string} [company] - Company name (fallback check)
    * @param {string} [title] - Job title (fallback check)
-   * @returns {Promise<{isDuplicate: boolean, existingApplication?: Object}>}
+   * @returns {Promise<{isDuplicate: boolean, existingApplication?: Record<string, unknown>, matchType?: string}>}
    */
   async checkDuplicate(platform, jobId, company, title) {
     // Primary check: exact job_id match
@@ -205,6 +266,7 @@ export class D1Client {
    * @returns {Promise<Set<string>>}
    */
   async getAppliedJobIds(platform) {
+    /** @type {Array<{ job_id: string }>} */
     const results = await this.query('SELECT job_id FROM job_applications WHERE platform = ?', [
       platform,
     ]);

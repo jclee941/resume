@@ -12,21 +12,45 @@ export const WANTED_LOGIN_ERRORS = Object.freeze({
   TIMEOUT: 'ERR_WANTED_TIMEOUT',
 });
 
+/**
+ * @param {number} ms
+ * @returns {Promise<void>}
+ */
 export function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/**
+ * @typedef {Error & { code?: string; cause?: unknown }} SessionError
+ */
+
+/**
+ * @param {string} code
+ * @param {string} message
+ * @param {unknown} [cause]
+ * @returns {SessionError}
+ */
 export function createSessionError(code, message, cause) {
+  /** @type {SessionError} */
   const error = new Error(message);
   error.code = code;
   if (cause) error.cause = cause;
   return error;
 }
 
+/**
+ * @param {{ message?: string } | null | undefined} error
+ * @returns {boolean}
+ */
 export function isTimeoutError(error) {
   return /timeout|timed out|navigation/i.test(error?.message || '');
 }
 
+/**
+ * @param {{ waf?: boolean } | null | undefined} state
+ * @param {{ message?: string } | null | undefined} error
+ * @returns {boolean}
+ */
 export function isWafBlocked(state, error) {
   return Boolean(
     state?.waf ||
@@ -34,18 +58,35 @@ export function isWafBlocked(state, error) {
   );
 }
 
+/**
+ * @param {{ captcha?: boolean } | null | undefined} state
+ * @param {{ message?: string } | null | undefined} error
+ * @returns {boolean}
+ */
 export function isCaptchaDetected(state, error) {
   return Boolean(state?.captcha || /captcha|recaptcha|hcaptcha/i.test(error?.message || ''));
 }
 
+/**
+ * @param {{ name?: string } | null | undefined} cookie
+ * @returns {boolean}
+ */
 export function isAuthCookie(cookie) {
   return AUTH_COOKIE_PATTERNS.some((pattern) => pattern.test(cookie?.name || ''));
 }
 
+/**
+ * @param {Array<{ name: string; value: string }>} cookies
+ * @returns {string}
+ */
 export function cookiesToHeader(cookies) {
   return cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ');
 }
 
+/**
+ * @param {unknown} email
+ * @returns {string | null}
+ */
 export function maskEmail(email) {
   if (typeof email !== 'string' || !email.includes('@')) return null;
   const [local, domain] = email.split('@');
@@ -85,6 +126,11 @@ export function buildSessionStateExpression() {
   })();`;
 }
 
+/**
+ * @param {string} email
+ * @param {string} password
+ * @returns {string}
+ */
 export function buildCredentialFillExpression(email, password) {
   const payload = JSON.stringify({ email, password });
   return `(() => {
@@ -117,6 +163,10 @@ export function buildCredentialFillExpression(email, password) {
   })();`;
 }
 
+/**
+ * @param {{ json(): Promise<unknown> }} response
+ * @returns {Promise<unknown>}
+ */
 export async function readJsonSafely(response) {
   try {
     return await response.json();

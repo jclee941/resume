@@ -9,10 +9,44 @@
  */
 
 /**
- * @typedef {object} CacheStats
- * @property {number} hits - Number of cache hits
- * @property {number} misses - Number of cache misses
- * @property {number} hitRate - Hit rate as a percentage (0-100)
+ * @typedef {{
+ *   hits: number;
+ *   misses: number;
+ *   hitRate: number;
+ * }} CacheStats
+ */
+
+/**
+ * @typedef {{
+ *   kv?: PromptCacheKv;
+ *   ttlSeconds?: number;
+ *   enabled?: boolean;
+ *   logger?: PromptCacheLogger;
+ * }} PromptCacheOptions
+ */
+
+/**
+ * @typedef {{
+ *   get(key: string, type?: string): Promise<Record<string, unknown> | null>;
+ *   put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
+ *   delete(key: string): Promise<void>;
+ * }} PromptCacheKv
+ *
+ * @typedef {{
+ *   warn(message: string, ...args: unknown[]): void;
+ * }} PromptCacheLogger
+ *
+ * @typedef {{
+ *   temperature?: number;
+ *   max_tokens?: number;
+ * }} PromptCacheParams
+ *
+ * @typedef {{
+ *   text: string;
+ *   model: string;
+ *   provider: string;
+ *   usage?: unknown;
+ * }} PromptCacheResponse
  */
 
 const CACHE_PREFIX = 'ai-cache:';
@@ -20,11 +54,7 @@ const DEFAULT_TTL_SECONDS = 3600; // 1 hour
 
 export class PromptCache {
   /**
-   * @param {object} options
-   * @param {object} options.kv - Cloudflare KV namespace binding (SESSIONS)
-   * @param {number} [options.ttlSeconds=3600] - Cache TTL in seconds
-   * @param {boolean} [options.enabled=true] - Enable/disable caching
-   * @param {object} [options.logger=console] - Logger instance (must support .warn)
+   * @param {PromptCacheOptions} options
    */
   constructor({ kv, ttlSeconds = DEFAULT_TTL_SECONDS, enabled = true, logger }) {
     this.kv = kv;
@@ -37,8 +67,8 @@ export class PromptCache {
   /**
    * Generate a deterministic cache key from model + messages.
    * @param {string} model
-   * @param {Array<{role: string, content: string}>} messages
-   * @param {object} [params] - Additional params that affect output (temperature, etc.)
+   * @param {Array<{role?: string, content?: string}>} messages
+   * @param {PromptCacheParams} [params] - Additional params that affect output (temperature, etc.)
    * @returns {Promise<string>} SHA-256 hex digest prefixed with cache namespace
    */
   async getCacheKey(model, messages, params = {}) {
@@ -61,7 +91,7 @@ export class PromptCache {
   /**
    * Look up a cached response.
    * @param {string} cacheKey
-   * @returns {Promise<object|null>} Cached AI response or null
+   * @returns {Promise<(Record<string, unknown> & { cached: boolean }) | null>} Cached AI response or null
    */
   async get(cacheKey) {
     if (!this.enabled || !this.kv) return null;
@@ -73,7 +103,9 @@ export class PromptCache {
         return { ...cached, cached: true };
       }
     } catch (err) {
-      this.logger.warn(`[PromptCache] Read error: ${err.message}`);
+      this.logger.warn(
+        `[PromptCache] Read error: ${err instanceof Error ? err.message : String(err)}`
+      );
     }
 
     this.stats.misses++;
@@ -83,7 +115,7 @@ export class PromptCache {
   /**
    * Store a response in cache.
    * @param {string} cacheKey
-   * @param {object} response - AI response to cache
+   * @param {PromptCacheResponse} response - AI response to cache
    * @returns {Promise<void>}
    */
   async set(cacheKey, response) {
@@ -102,7 +134,9 @@ export class PromptCache {
         expirationTtl: this.ttlSeconds,
       });
     } catch (err) {
-      this.logger.warn(`[PromptCache] Write error: ${err.message}`);
+      this.logger.warn(
+        `[PromptCache] Write error: ${err instanceof Error ? err.message : String(err)}`
+      );
     }
   }
 
@@ -116,7 +150,9 @@ export class PromptCache {
     try {
       await this.kv.delete(cacheKey);
     } catch (err) {
-      this.logger.warn(`[PromptCache] Delete error: ${err.message}`);
+      this.logger.warn(
+        `[PromptCache] Delete error: ${err instanceof Error ? err.message : String(err)}`
+      );
     }
   }
 

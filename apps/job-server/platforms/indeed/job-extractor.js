@@ -1,5 +1,110 @@
 /** Indeed job extraction and normalization helpers. */
 
+/**
+ * @typedef {Object} RawIndeedJob
+ * @property {string} [jobKey]
+ * @property {string} [id]
+ * @property {string} [title]
+ * @property {string} [displayTitle]
+ * @property {string} [company]
+ * @property {string} [companyName]
+ * @property {string} [location]
+ * @property {string} [formattedLocation]
+ * @property {string} [jobLocationCity]
+ * @property {string} [salary]
+ * @property {string} [formattedSalary]
+ * @property {string} [estimatedSalary]
+ * @property {string[]} [techStack]
+ * @property {string} [description]
+ * @property {string} [snippet]
+ * @property {string | number} [requirements]
+ * @property {string} [benefits]
+ * @property {string} [datePosted]
+ * @property {string} [formattedRelativeTime]
+ * @property {boolean} [isRemote]
+ * @property {boolean} [remoteLocation]
+ * @property {string} [jobType]
+ * @property {string[]} [jobTypes]
+ * @property {string} [employmentType]
+ */
+
+/**
+ * @typedef {Object} NormalizedIndeedJob
+ * @property {string} id
+ * @property {string} sourceId
+ * @property {string} source
+ * @property {string} sourceUrl
+ * @property {string} position
+ * @property {string} company
+ * @property {string} companyId
+ * @property {string} location
+ * @property {number} experienceMin
+ * @property {number} experienceMax
+ * @property {string} salary
+ * @property {string[]} techStack
+ * @property {string} description
+ * @property {string | number} requirements
+ * @property {string} benefits
+ * @property {null} dueDate
+ * @property {string | null} postedDate
+ * @property {boolean} isRemote
+ * @property {string} employmentType
+ * @property {string} crawledAt
+ */
+
+/**
+ * @typedef {Object} JsonLdHiringOrg
+ * @property {string} [name]
+ */
+
+/**
+ * @typedef {Object} JsonLdAddress
+ * @property {string} [addressLocality]
+ * @property {string} [addressRegion]
+ * @property {string} [addressCountry]
+ */
+
+/**
+ * @typedef {Object} JsonLdLocation
+ * @property {JsonLdAddress} [address]
+ */
+
+/**
+ * @typedef {Object} JsonLdSalaryValue
+ * @property {number} [minValue]
+ * @property {number} [maxValue]
+ */
+
+/**
+ * @typedef {Object} JsonLdSalary
+ * @property {string} [currency]
+ * @property {JsonLdSalaryValue} [value]
+ */
+
+/**
+ * @typedef {{
+ *   '@type'?: string;
+ *   title?: string;
+ *   description?: string;
+ *   datePosted?: string;
+ *   jobLocationType?: string;
+ *   applicantLocationRequirements?: unknown;
+ *   employmentType?: string;
+ *   jobBenefits?: string | string[];
+ *   qualifications?: string;
+ *   identifier?: { value?: string };
+ *   hiringOrganization?: JsonLdHiringOrg;
+ *   jobLocation?: JsonLdLocation;
+ *   baseSalary?: JsonLdSalary;
+ *   experienceRequirements?: { monthsOfExperience?: string | number };
+ *   '@graph'?: JsonLdJob[];
+ * }} JsonLdJob
+ */
+
+/**
+ * @param {RawIndeedJob} rawJob
+ * @returns {NormalizedIndeedJob}
+ */
 export function normalizeJob(rawJob) {
   return {
     id: `indeed_${rawJob.jobKey || rawJob.id || ''}`,
@@ -25,6 +130,12 @@ export function normalizeJob(rawJob) {
   };
 }
 
+/**
+ * @param {string} html
+ * @param {(raw: RawIndeedJob) => NormalizedIndeedJob} [normalize]
+ * @param {(json: JsonLdJob) => RawIndeedJob} [normalizeJson]
+ * @returns {NormalizedIndeedJob[]}
+ */
 export function parseSearchResults(
   html,
   normalize = normalizeJob,
@@ -43,6 +154,13 @@ export function parseSearchResults(
   return jobs.map((job) => normalize(job));
 }
 
+/**
+ * @param {string} html
+ * @param {string} jobKey
+ * @param {(raw: RawIndeedJob) => NormalizedIndeedJob} [normalize]
+ * @param {(json: JsonLdJob) => RawIndeedJob} [normalizeJson]
+ * @returns {NormalizedIndeedJob}
+ */
 export function parseJobDetail(
   html,
   jobKey,
@@ -69,6 +187,10 @@ export function parseJobDetail(
   return normalize(parseDetailFields(html, jobKey));
 }
 
+/**
+ * @param {JsonLdJob} jsonLd
+ * @returns {RawIndeedJob}
+ */
 export function normalizeJsonLd(jsonLd) {
   const hiringOrg = jsonLd.hiringOrganization || {};
   const jobLocation = jsonLd.jobLocation || {};
@@ -102,7 +224,13 @@ export function normalizeJsonLd(jsonLd) {
   };
 }
 
+/**
+ * @param {string} html
+ * @param {(json: JsonLdJob) => RawIndeedJob} normalizeJson
+ * @returns {RawIndeedJob[]}
+ */
 function parseJsonLdJobs(html, normalizeJson) {
+  /** @type {RawIndeedJob[]} */
   const jobs = [];
   const jsonLdMatches = html.match(
     /<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi
@@ -134,6 +262,27 @@ function parseJsonLdJobs(html, normalizeJson) {
   return jobs;
 }
 
+/**
+ * @typedef {Object} MosaicJobResult
+ * @property {string} [jobkey]
+ * @property {string} [title]
+ * @property {string} [displayTitle]
+ * @property {string} [company]
+ * @property {string} [companyName]
+ * @property {string} [formattedLocation]
+ * @property {string} [jobLocationCity]
+ * @property {string} [formattedSalary]
+ * @property {string} [estimatedSalary]
+ * @property {string} [snippet]
+ * @property {string} [formattedRelativeTime]
+ * @property {boolean} [remoteLocation]
+ * @property {string[]} [jobTypes]
+ */
+
+/**
+ * @param {string} html
+ * @returns {RawIndeedJob[]}
+ */
 function parseMosaicJobs(html) {
   const mosaicMatch = html.match(/window\.mosaic\.providerData\s*=\s*(\{[\s\S]*?\});\s*<\/script>/);
   if (!mosaicMatch) {
@@ -142,6 +291,7 @@ function parseMosaicJobs(html) {
 
   try {
     const mosaicData = JSON.parse(mosaicMatch[1]);
+    /** @type {MosaicJobResult[]} */
     const results = mosaicData?.metaData?.mosaicProviderJobCardsModel?.results || [];
 
     return results.map((result) => ({
@@ -161,7 +311,12 @@ function parseMosaicJobs(html) {
   }
 }
 
+/**
+ * @param {string} html
+ * @returns {RawIndeedJob[]}
+ */
 function parseRegexJobCards(html) {
+  /** @type {RawIndeedJob[]} */
   const jobs = [];
   const cardPattern =
     /data-jk="([^"]+)"[\s\S]*?<h2[^>]*class="[^"]*jobTitle[^"]*"[^>]*>[\s\S]*?<(?:span|a)[^>]*>([^<]+)<\/(?:span|a)>[\s\S]*?data-testid="company-name"[^>]*>([^<]+)<[\s\S]*?data-testid="text-location"[^>]*>([^<]+)</gi;
@@ -182,6 +337,11 @@ function parseRegexJobCards(html) {
   return jobs;
 }
 
+/**
+ * @param {string} html
+ * @param {string} jobKey
+ * @returns {RawIndeedJob}
+ */
 function parseDetailFields(html, jobKey) {
   const titleMatch = html.match(
     /<h1[^>]*class="[^"]*jobsearch-JobInfoHeader-title[^"]*"[^>]*>([^<]+)/i
@@ -201,6 +361,10 @@ function parseDetailFields(html, jobKey) {
   };
 }
 
+/**
+ * @param {string} html
+ * @returns {string}
+ */
 function stripHtml(html) {
   return html
     .replace(/<[^>]+>/g, ' ')

@@ -55,7 +55,9 @@ export async function migrate(options = {}) {
 
       console.log(chalk.green('    ✅ Applied successfully'));
     } catch (err) {
-      console.error(chalk.red(`    ❌ Failed: ${err.message}`));
+      console.error(
+        chalk.red(`    ❌ Failed: ${err instanceof Error ? err.message : String(err)}`)
+      );
       console.error(chalk.red('\n⛔ Migration aborted. Fix the error and retry.\n'));
       process.exit(1);
     }
@@ -106,7 +108,9 @@ export async function rollback(options = {}) {
 
       console.log(chalk.green('    ✅ Rolled back successfully'));
     } catch (err) {
-      console.error(chalk.red(`    ❌ Failed: ${err.message}`));
+      console.error(
+        chalk.red(`    ❌ Failed: ${err instanceof Error ? err.message : String(err)}`)
+      );
       process.exit(1);
     }
   }
@@ -182,7 +186,9 @@ export async function seed(options = {}) {
       executeD1File(join(SEEDS_DIR, file), options);
       console.log(chalk.green('    ✅ Done'));
     } catch (err) {
-      console.error(chalk.red(`    ❌ Failed: ${err.message}`));
+      console.error(
+        chalk.red(`    ❌ Failed: ${err instanceof Error ? err.message : String(err)}`)
+      );
       process.exit(1);
     }
   }

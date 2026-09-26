@@ -1,3 +1,4 @@
+/** @type {Record<string, number>} */
 const WEEKDAY_MAP = {
   Sun: 0,
   Mon: 1,
@@ -16,15 +17,22 @@ export const DEFAULT_SCHEDULER_CONFIG = {
   timeout: 30 * 60 * 1000,
 };
 
+/**
+ * @param {string} field
+ * @param {number} min
+ * @param {number} max
+ * @returns {(value: number) => boolean}
+ */
 function parseCronField(field, min, max) {
   if (field === '*') {
     return () => true;
   }
 
+  /** @type {Set<number>} */
   const values = new Set();
   const segments = field
     .split(',')
-    .map((v) => v.trim())
+    .map((/** @type {string} */ v) => v.trim())
     .filter(Boolean);
   if (segments.length === 0) {
     throw new Error(`Invalid cron field: ${field}`);
@@ -66,9 +74,23 @@ function parseCronField(field, min, max) {
     }
   }
 
-  return (value) => values.has(value);
+  return (/** @type {number} */ value) => values.has(value);
 }
 
+/**
+ * @typedef {{
+ *   minute: (value: number) => boolean;
+ *   hour: (value: number) => boolean;
+ *   day: (value: number) => boolean;
+ *   month: (value: number) => boolean;
+ *   weekday: (value: number) => boolean;
+ * }} CronMatcher
+ */
+
+/**
+ * @param {string} cron
+ * @returns {CronMatcher}
+ */
 export function parseCronExpression(cron) {
   const fields = cron.trim().split(/\s+/);
   if (fields.length !== 5) {
@@ -85,6 +107,21 @@ export function parseCronExpression(cron) {
   };
 }
 
+/**
+ * @typedef {{
+ *   minute: number;
+ *   hour: number;
+ *   day: number;
+ *   month: number;
+ *   weekday: number;
+ * }} TimeParts
+ */
+
+/**
+ * @param {Date} date
+ * @param {string} timezone
+ * @returns {TimeParts}
+ */
 function getTimeParts(date, timezone) {
   const formatter = new Intl.DateTimeFormat('en-US', {
     timeZone: timezone,
@@ -107,6 +144,11 @@ function getTimeParts(date, timezone) {
   };
 }
 
+/**
+ * @param {CronMatcher} cronMatcher
+ * @param {string} timezone
+ * @returns {Date | null}
+ */
 export function findNextRun(cronMatcher, timezone) {
   const now = new Date();
   const cursor = new Date(now.getTime());
@@ -130,11 +172,18 @@ export function findNextRun(cronMatcher, timezone) {
   return null;
 }
 
+/**
+ * @template T
+ * @param {Promise<T>} promise
+ * @param {number} timeout
+ * @returns {Promise<T>}
+ */
 export function withTimeout(promise, timeout) {
   if (!timeout || timeout <= 0) {
     return promise;
   }
 
+  /** @type {NodeJS.Timeout | undefined} */
   let timer;
   const timeoutPromise = new Promise((_, reject) => {
     timer = setTimeout(() => reject(new Error(`Auto-apply timed out after ${timeout}ms`)), timeout);
@@ -143,6 +192,19 @@ export function withTimeout(promise, timeout) {
   return Promise.race([promise, timeoutPromise]).finally(() => clearTimeout(timer));
 }
 
+/**
+ * @typedef {{
+ *   query(sql: string, params?: unknown[]): Promise<unknown>;
+ * }} D1ClientLike
+ */
+
+/**
+ * @param {D1ClientLike | null | undefined} d1Client
+ * @param {string | number} id
+ * @param {unknown} errorMessage
+ * @param {unknown} [result]
+ * @returns {Promise<void>}
+ */
 export async function markRunFailed(d1Client, id, errorMessage, result) {
   if (!d1Client?.query) {
     return;

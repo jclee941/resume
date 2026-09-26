@@ -1,3 +1,26 @@
+/**
+ * @typedef {{
+ *   url: string,
+ *   title: string,
+ *   fullText: string,
+ *   name: string | null
+ * }} ProfileSnapshot
+ *
+ * @typedef {{
+ *   personal?: { name?: string | null, email?: string | null, phone?: string | null, birthDate?: string | null, gender?: string | null },
+ *   education?: Record<string, string | null>,
+ *   careers?: Array<{ company?: string, role?: string | null, period?: string | null, employmentType?: string | null }>,
+ *   skills?: Array<{ name: string }>,
+ *   certifications?: Array<{ name: string, issuer?: string | null, date?: string | null }>,
+ *   desiredConditions?: Record<string, string | null>,
+ *   rawLines?: string[]
+ * }} ParsedProfileData
+ */
+
+/**
+ * @param {string | null | undefined} raw
+ * @returns {string | null}
+ */
 export function normalizeDate(raw) {
   if (!raw) return null;
 
@@ -13,6 +36,10 @@ export function normalizeDate(raw) {
   return year;
 }
 
+/**
+ * @param {ProfileSnapshot | { fullText?: string, name?: string | null } | null | undefined} snapshot
+ * @returns {ParsedProfileData}
+ */
 export function parseProfileSections(snapshot) {
   const text = (snapshot?.fullText || '').replace(/\u00a0/g, ' ');
   const lines = text
@@ -20,7 +47,7 @@ export function parseProfileSections(snapshot) {
     .map((line) => line.trim())
     .filter(Boolean);
 
-  const findByRegex = (regex) => {
+  const findByRegex = (/** @type {RegExp} */ regex) => {
     const target = lines.find((line) => regex.test(line));
     return target ? target.replace(regex, '').trim() : null;
   };
@@ -85,6 +112,10 @@ export function parseProfileSections(snapshot) {
   };
 }
 
+/**
+ * @param {ParsedProfileData} data
+ * @returns {{ valid: boolean, personalFields: number, contentSignals: number }}
+ */
 export function validateExtractedData(data) {
   const personalFields = [data.personal?.name, data.personal?.email, data.personal?.phone].filter(
     Boolean
@@ -102,6 +133,10 @@ export function validateExtractedData(data) {
   };
 }
 
+/**
+ * @this {{ page: import('playwright').Page }}
+ * @returns {Promise<ProfileSnapshot>}
+ */
 export async function extractProfileSnapshot() {
   return this.page.evaluate(() => {
     const fullText = document.body?.innerText || '';

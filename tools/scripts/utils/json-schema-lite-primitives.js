@@ -1,3 +1,44 @@
+/**
+ * @typedef {{
+ *   path: string;
+ *   message: string;
+ *   value?: unknown;
+ *   expectedFormat?: string | null;
+ *   allowed?: unknown;
+ *   type?: string;
+ *   code?: string;
+ *   rawInput?: unknown;
+ *   expected?: unknown;
+ *   [key: string]: unknown;
+ * }} ValidationError
+ */
+
+/**
+ * @typedef {{
+ *   type?: string | string[];
+ *   required?: string[];
+ *   properties?: Record<string, SchemaObject>;
+ *   additionalProperties?: boolean;
+ *   items?: SchemaObject;
+ *   pattern?: string;
+ *   description?: string;
+ *   minLength?: number;
+ *   maxLength?: number;
+ *   minItems?: number;
+ *   minimum?: number;
+ *   format?: string;
+ *   enum?: (string | number)[];
+ *   anyOf?: SchemaObject[];
+ *   [key: string]: unknown;
+ * }} SchemaObject
+ */
+
+/**
+ * @param {ValidationError[]} errors
+ * @param {string} data
+ * @param {SchemaObject} schema
+ * @param {string} path
+ */
 function validateStringValue(errors, data, schema, path) {
   validateStringPattern(errors, data, schema, path);
   validateStringLength(errors, data, schema, path);
@@ -13,6 +54,12 @@ function validateStringValue(errors, data, schema, path) {
   }
 }
 
+/**
+ * @param {ValidationError[]} errors
+ * @param {string} data
+ * @param {SchemaObject} schema
+ * @param {string} path
+ */
 function validateStringPattern(errors, data, schema, path) {
   if (schema.pattern && !new RegExp(schema.pattern).test(data)) {
     errors.push({
@@ -25,6 +72,12 @@ function validateStringPattern(errors, data, schema, path) {
   }
 }
 
+/**
+ * @param {ValidationError[]} errors
+ * @param {string} data
+ * @param {SchemaObject} schema
+ * @param {string} path
+ */
 function validateStringLength(errors, data, schema, path) {
   if (schema.minLength !== undefined && data.length < schema.minLength) {
     errors.push({
@@ -44,6 +97,12 @@ function validateStringLength(errors, data, schema, path) {
   }
 }
 
+/**
+ * @param {ValidationError[]} errors
+ * @param {string} data
+ * @param {SchemaObject} schema
+ * @param {string} path
+ */
 function validateStringFormat(errors, data, schema, path) {
   if (schema.format === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data)) {
     errors.push({ path, message: 'Invalid email format', value: data, type: 'format' });
@@ -53,6 +112,13 @@ function validateStringFormat(errors, data, schema, path) {
   }
 }
 
+/**
+ * @param {ValidationError[]} errors
+ * @param {number} data
+ * @param {SchemaObject} schema
+ * @param {string} path
+ * @param {boolean} [allowsInteger]
+ */
 function validateNumberValue(errors, data, schema, path, allowsInteger) {
   if (allowsInteger && !Number.isInteger(data)) {
     errors.push({ path, message: `Expected integer, got ${data}`, value: data });
@@ -68,6 +134,10 @@ function validateNumberValue(errors, data, schema, path, allowsInteger) {
   }
 }
 
+/**
+ * @param {string} value
+ * @returns {boolean}
+ */
 function isUri(value) {
   try {
     const url = new URL(value);

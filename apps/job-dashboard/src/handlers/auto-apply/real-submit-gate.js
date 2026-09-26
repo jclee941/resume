@@ -2,6 +2,33 @@ import { jsonResponse } from '../../middleware/cors.js';
 
 const REAL_SUBMIT_ERROR = 'REAL_SUBMIT_APPROVAL_REQUIRED';
 
+/**
+ * @typedef {{
+ *   approvalId?: unknown;
+ *   approvalMetadata?: { approvalId?: unknown; [key: string]: unknown };
+ *   workflowApprovalMetadata?: { approvalId?: unknown; [key: string]: unknown };
+ *   [key: string]: unknown;
+ * }} CandidateJob
+ *
+ * @typedef {{
+ *   hasExplicitCandidates: boolean;
+ *   jobs: CandidateJob[];
+ * }} ExplicitCandidates
+ *
+ * @typedef {{
+ *   explicitSubmit?: boolean;
+ *   submitOptIn?: boolean;
+ *   approvalId?: unknown;
+ *   [key: string]: unknown;
+ * }} SubmitBody
+ */
+
+/**
+ * @param {SubmitBody} body
+ * @param {boolean} dryRun
+ * @param {ExplicitCandidates} explicitCandidates
+ * @returns {Response | null}
+ */
 export function rejectInvalidRealSubmit(body, dryRun, explicitCandidates) {
   const gate = validateRealSubmitGate(body, dryRun, explicitCandidates);
   if (!gate.error) return null;
@@ -15,6 +42,12 @@ export function rejectInvalidRealSubmit(body, dryRun, explicitCandidates) {
   );
 }
 
+/**
+ * @param {SubmitBody} body
+ * @param {boolean} dryRun
+ * @param {ExplicitCandidates} explicitCandidates
+ * @returns {{ error?: string }}
+ */
 function validateRealSubmitGate(body, dryRun, explicitCandidates) {
   if (dryRun) return {};
   if (!explicitCandidates.hasExplicitCandidates) {
@@ -39,6 +72,10 @@ function validateRealSubmitGate(body, dryRun, explicitCandidates) {
   return {};
 }
 
+/**
+ * @param {CandidateJob | null | undefined} job
+ * @returns {string}
+ */
 function candidateApprovalId(job) {
   return (
     normalizedText(job?.approvalId) ||
@@ -47,6 +84,10 @@ function candidateApprovalId(job) {
   );
 }
 
+/**
+ * @param {unknown} value
+ * @returns {string}
+ */
 function normalizedText(value) {
   return typeof value === 'string' && value.trim() ? value.trim() : '';
 }

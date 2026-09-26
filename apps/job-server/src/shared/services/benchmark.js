@@ -15,13 +15,14 @@ import { performance } from 'perf_hooks';
  * @property {number} minTime
  * @property {number} maxTime
  * @property {number} opsPerSecond
+ * @property {{ heapUsed: number; rss: number }} memoryDelta
  */
 
 /**
  * Run benchmark comparison
  * @param {string} name
- * @param {Function} fn
- * @param {Object} options
+ * @param {() => Promise<unknown> | unknown} fn
+ * @param {{ iterations?: number; warmup?: number }} [options]
  * @returns {Promise<BenchmarkResult>}
  */
 export async function benchmark(name, fn, options = {}) {
@@ -73,9 +74,9 @@ export async function benchmark(name, fn, options = {}) {
 /**
  * Compare two implementations
  * @param {string} name
- * @param {Function} baseline
- * @param {Function} optimized
- * @param {Object} options
+ * @param {() => Promise<unknown> | unknown} baseline
+ * @param {() => Promise<unknown> | unknown} optimized
+ * @param {{ iterations?: number; warmup?: number }} [options]
  * @returns {Promise<Object>}
  */
 export async function compare(name, baseline, optimized, options = {}) {
@@ -115,8 +116,8 @@ export async function compare(name, baseline, optimized, options = {}) {
 
 /**
  * Memory stress test
- * @param {Function} fn
- * @param {Object} options
+ * @param {() => Promise<unknown> | unknown} fn
+ * @param {{ iterations?: number; checkInterval?: number }} [options]
  * @returns {Promise<Object>}
  */
 export async function memoryStressTest(fn, options = {}) {
@@ -159,14 +160,16 @@ export async function memoryStressTest(fn, options = {}) {
 
 /**
  * Concurrent load test
- * @param {Function} fn
- * @param {Object} options
+ * @param {() => Promise<unknown> | unknown} fn
+ * @param {{ concurrent?: number; requests?: number }} [options]
  * @returns {Promise<Object>}
  */
 export async function loadTest(fn, options = {}) {
   const { concurrent = 10, requests = 100 } = options;
 
+  /** @type {number[]} */
   const results = [];
+  /** @type {Array<{ time: number; error: unknown }>} */
   const errors = [];
 
   const startTime = performance.now();
@@ -232,9 +235,18 @@ ${result.name}
 }
 
 /**
+ * @typedef {{
+ *   maxTime?: number;
+ *   minOpsPerSecond?: number;
+ *   maxMemoryMB?: number;
+ * }} PerformanceTargets
+ */
+
+/**
  * Assert performance target
  * @param {BenchmarkResult} result
- * @param {Object} targets
+ * @param {PerformanceTargets} targets
+ * @returns {{ passed: boolean; failures: string[] }}
  */
 export function assertPerformance(result, targets) {
   const failures = [];

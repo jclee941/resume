@@ -2,6 +2,24 @@ const { escapeHtml } = require('../template-sanitizer');
 
 const JAPANESE_ATOMIC_PHRASE = /(?:\(株\))?[\p{Script=Katakana}ー]{2,}/gu;
 
+/**
+ * @typedef {Object} CoverLetterLocaleEntry
+ * @property {string} headline
+ * @property {string[]} paragraphs
+ * @property {string} closing
+ */
+
+/**
+ * @typedef {Object} MaybeCoverLetter
+ * @property {unknown} [headline]
+ * @property {unknown} [paragraphs]
+ * @property {unknown} [closing]
+ */
+
+/**
+ * @param {string} value
+ * @returns {string}
+ */
 function renderParagraphText(value) {
   return escapeHtml(value).replace(
     JAPANESE_ATOMIC_PHRASE,
@@ -13,8 +31,8 @@ function renderParagraphText(value) {
  * A cover-letter locale entry is renderable only when it carries the three
  * required SSoT fields with content. Mirrors the validity contract of the
  * plain-text formatter so the visual section and plain-text output never diverge.
- * @param {*} entry - Candidate `coverLetter[locale]` object.
- * @returns {boolean} True when the entry can be rendered.
+ * @param {MaybeCoverLetter | null | undefined} entry - Candidate `coverLetter[locale]` object.
+ * @returns {entry is CoverLetterLocaleEntry} True when the entry can be rendered.
  */
 function isRenderable(entry) {
   return (
@@ -40,7 +58,7 @@ function isRenderable(entry) {
  * Pure and cache-free: callers pass one locale entry at a time, so there is no
  * cross-locale cache key to leak (KO/EN/JA each render independently).
  *
- * @param {Object|null} entry - `coverLetter[locale]` = { headline, paragraphs[], closing }.
+ * @param {MaybeCoverLetter | null | undefined} entry - `coverLetter[locale]` = { headline, paragraphs[], closing }.
  * @returns {string} HTML for the card body, or '' when the entry is unrenderable.
  */
 function generateCoverLetterSection(entry) {

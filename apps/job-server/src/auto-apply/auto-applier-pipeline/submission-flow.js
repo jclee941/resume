@@ -1,9 +1,103 @@
+/**
+ * @typedef {{
+ *   source?: string;
+ *   sourceUrl?: string;
+ *   company?: string;
+ *   position?: string;
+ *   applicationId?: string;
+ *   coverLetter?: string | null;
+ *   [key: string]: unknown;
+ * }} SubmissionJob
+ */
+
+/**
+ * @typedef {{
+ *   success?: boolean;
+ *   applied?: boolean;
+ *   status?: string;
+ *   alreadyApplied?: boolean;
+ *   error?: string;
+ *   reason?: string;
+ *   [key: string]: unknown;
+ * }} SubmissionResult
+ */
+
+/**
+ * @typedef {{
+ *   status?: string;
+ *   reason?: string;
+ *   [key: string]: unknown;
+ * }} ApplyDecision
+ */
+
+/**
+ * @typedef {{
+ *   id: string;
+ *   [key: string]: unknown;
+ * }} TrackedApplication
+ */
+
+/**
+ * @typedef {{
+ *   generateCoverLetter?: boolean;
+ *   checkApproval?: boolean;
+ *   submit?: boolean;
+ *   track?: boolean;
+ *   [key: string]: unknown;
+ * }} StageState
+ */
+
+/**
+ * @typedef {{
+ *   ensureBrowser?: () => Promise<unknown>;
+ *   [key: string]: unknown;
+ * }} SubmissionContext
+ */
+
+/**
+ * @typedef {{
+ *   config: { dryRun?: boolean };
+ *   repository: { updateStatus(id: string, status: string, reason?: string): Promise<unknown> };
+ *   tracker: {
+ *     recordCompletion(id: string, status: string, reason?: string): Promise<unknown>;
+ *     recordSubmission(id: string, data: { message: string; sourceUrl?: string }): Promise<unknown>;
+ *   };
+ *   retryService: { execute<T>(fn: () => Promise<T>, options?: { serviceName?: string }): Promise<T> };
+ *   submitApplication(job: SubmissionJob): Promise<SubmissionResult>;
+ *   notificationAdapter: { sendApplicationSuccess(job: SubmissionJob, id: string, source?: string): Promise<unknown> };
+ * }} AutoApplier
+ */
+
+/**
+ * @this {{
+ *   retryService: { execute<T>(fn: () => Promise<T>, options?: { serviceName?: string }): Promise<T> };
+ *   applyToJob(job: SubmissionJob): Promise<SubmissionResult>;
+ * }}
+ * @param {SubmissionJob} job
+ * @returns {Promise<SubmissionResult>}
+ */
 export async function submitApplication(job) {
   return await this.retryService.execute(async () => await this.applyToJob(job), {
     serviceName: `apply-${job.source || 'unknown'}`,
   });
 }
 
+/**
+ * @param {AutoApplier} autoApplier
+ * @param {ApplyDecision} applyDecision
+ * @param {TrackedApplication} trackedApplication
+ * @param {string} jobId
+ * @param {StageState} stageState
+ * @returns {Promise<{
+ *   success: boolean;
+ *   applied: boolean;
+ *   status: string;
+ *   reason: string | undefined;
+ *   jobId: string;
+ *   applicationId: string;
+ *   stages: StageState;
+ * }>}
+ */
 export async function handleSkippedDecision(
   autoApplier,
   applyDecision,
@@ -33,6 +127,21 @@ export async function handleSkippedDecision(
   };
 }
 
+/**
+ * @param {AutoApplier} autoApplier
+ * @param {TrackedApplication} trackedApplication
+ * @param {string} jobId
+ * @param {StageState} stageState
+ * @returns {Promise<{
+ *   success: boolean;
+ *   applied: boolean;
+ *   status: string;
+ *   reason: string;
+ *   jobId: string;
+ *   applicationId: string;
+ *   stages: StageState;
+ * }>}
+ */
 export async function handleSubmissionDisabled(autoApplier, trackedApplication, jobId, stageState) {
   const reason = autoApplier.config.dryRun ? 'Dry run - submission skipped' : 'Auto-apply disabled';
 
@@ -50,6 +159,15 @@ export async function handleSubmissionDisabled(autoApplier, trackedApplication, 
   };
 }
 
+/**
+ * @param {AutoApplier} autoApplier
+ * @param {SubmissionJob} job
+ * @param {TrackedApplication} trackedApplication
+ * @param {string | null} coverLetter
+ * @param {SubmissionContext} context
+ * @param {StageState} stageState
+ * @returns {Promise<SubmissionResult>}
+ */
 export async function submitApprovedApplication(
   autoApplier,
   job,
@@ -120,6 +238,22 @@ export async function submitApprovedApplication(
   return submissionResult;
 }
 
+/**
+ * @param {string} jobId
+ * @param {TrackedApplication} trackedApplication
+ * @param {SubmissionResult} submissionResult
+ * @param {StageState} stageState
+ * @returns {{
+ *   success: boolean;
+ *   applied: boolean;
+ *   status: string;
+ *   reason?: string;
+ *   jobId: string;
+ *   applicationId: string;
+ *   submission: SubmissionResult;
+ *   stages: StageState;
+ * }}
+ */
 export function createSubmittedResult(jobId, trackedApplication, submissionResult, stageState) {
   if (submissionResult.applied === false) {
     return {

@@ -1,6 +1,35 @@
 import { calculateMatchScore } from './match-scoring.js';
 import { appendDecisionTrace } from './decision-trace.js';
 
+/**
+ * @typedef {{
+ *   matched: number;
+ *   [key: string]: unknown;
+ * }} PlatformStats
+ *
+ * @typedef {{
+ *   searched: number;
+ *   matched: number;
+ *   applied: number;
+ *   skipped: number;
+ *   errors: number;
+ *   searchAttempts: number;
+ *   searchFailures: number;
+ *   errorDetails: unknown[];
+ *   jobs: unknown[];
+ *   byPlatform: Record<string, PlatformStats>;
+ * }} SearchResults
+ *
+ * @typedef {import('./match-scoring.js').ScorableJob & {
+ *   source?: string;
+ *   matchScore?: number;
+ *   [key: string]: unknown;
+ * }} JobCandidate
+ */
+
+/**
+ * @returns {SearchResults}
+ */
 export function createSearchResults() {
   return {
     searched: 0,
@@ -18,6 +47,15 @@ export function createSearchResults() {
 
 // `profile` is the loadMatchingConfig() matching profile the Workflows score with;
 // calculateMatchScore ignores search keywords, which capped every score below minScore.
+/**
+ * @param {{
+ *   allJobs: JobCandidate[];
+ *   profile: import('./match-scoring.js').MatchScoringConfig;
+ *   minScore: number;
+ *   searchResults: SearchResults;
+ * }} options
+ * @returns {(JobCandidate & { matchScore: number; decisionTrace: unknown[] })[]}
+ */
 export function selectMatchedJobs({ allJobs, profile, minScore, searchResults }) {
   const scoredJobs = allJobs.map((job) => {
     const providedScore = Number.isFinite(job.matchScore) ? job.matchScore : null;

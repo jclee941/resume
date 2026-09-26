@@ -1,3 +1,46 @@
+/**
+ * @typedef {{
+ *   id?: string;
+ *   userAgent?: string;
+ *   [key: string]: unknown;
+ * }} TlsFingerprint
+ */
+
+/**
+ * @typedef {{
+ *   enabled: boolean;
+ *   rotatePerRequest: boolean;
+ *   platform?: string;
+ *   browser?: string;
+ * }} TlsOptions
+ */
+
+/**
+ * @typedef {{
+ *   getForProxy(proxyUrl: string, opts: { platform?: string; browser?: string; forceRotate: boolean }): TlsFingerprint;
+ *   rotateFingerprint(opts: { platform?: string; browser?: string }): TlsFingerprint;
+ *   buildTlsConnectOptions(fingerprint?: TlsFingerprint | null): import('undici').buildConnector.BuildOptions;
+ * }} TlsFingerprintManager
+ */
+
+/**
+ * @typedef {{
+ *   _undici?: typeof import('undici') | null;
+ *   _undiciLoadFailed?: boolean;
+ *   _loadUndici(): Promise<typeof import('undici') | null | undefined>;
+ *   tlsOptions: TlsOptions;
+ *   currentFingerprint: TlsFingerprint | null;
+ *   currentProxy: string | null | undefined;
+ *   tlsFingerprintManager: TlsFingerprintManager;
+ *   headers: Record<string, string>;
+ *   _dispatchers: Map<string, unknown>;
+ * }} TlsCrawlerContext
+ */
+
+/**
+ * @this {TlsCrawlerContext}
+ * @returns {Promise<typeof import('undici') | null | undefined>}
+ */
 export async function loadUndici() {
   if (this._undici || this._undiciLoadFailed) {
     return this._undici;
@@ -12,6 +55,11 @@ export async function loadUndici() {
   }
 }
 
+/**
+ * @this {TlsCrawlerContext}
+ * @param {string | null | undefined} proxyUrl
+ * @returns {TlsFingerprint | null}
+ */
 export function resolveFingerprint(proxyUrl) {
   if (!this.tlsOptions.enabled) {
     return this.currentFingerprint;
@@ -40,6 +88,12 @@ export function resolveFingerprint(proxyUrl) {
   return this.currentFingerprint;
 }
 
+/**
+ * @this {TlsCrawlerContext}
+ * @param {string | null | undefined} proxyUrl
+ * @param {TlsFingerprint | null | undefined} fingerprint
+ * @returns {Promise<unknown>}
+ */
 export async function resolveDispatcher(proxyUrl, fingerprint) {
   if (!this.tlsOptions.enabled) {
     return null;

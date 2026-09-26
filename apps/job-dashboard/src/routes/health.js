@@ -1,9 +1,39 @@
 import { jsonResponse } from '../middleware/cors.js';
 
+/**
+ * @typedef {{
+ *   prepare(query: string): {
+ *     first(): Promise<{ count?: number } | null>;
+ *   };
+ * }} HealthDb
+ *
+ * @typedef {{
+ *   JOB_DB?: HealthDb;
+ *   NOTIFICATION_QUEUE?: unknown;
+ *   RATE_LIMIT_KV?: unknown;
+ *   TELEGRAM_BOT_TOKEN?: string;
+ *   TELEGRAM_CHAT_ID?: string;
+ *   [key: string]: unknown;
+ * }} HealthEnv
+ *
+ * @typedef {{
+ *   get(path: string, handler: (req: Request) => Promise<Response> | Response): void;
+ * }} HealthRouter
+ *
+ * @typedef {{
+ *   env: HealthEnv;
+ * }} HealthContext
+ */
+
+/**
+ * @param {HealthRouter} router
+ * @param {HealthContext} ctx
+ */
 export function registerHealthRoutes(router, ctx) {
   const { env } = ctx;
 
   router.get('/health', async () => {
+    /** @type {{ status: string; timestamp: string; version: string; database?: string }} */
     const health = {
       status: 'ok',
       timestamp: new Date().toISOString(),
@@ -24,6 +54,7 @@ export function registerHealthRoutes(router, ctx) {
   });
 
   router.get('/api/health', async () => {
+    /** @type {{ status: string; timestamp: string; version: string; database?: string }} */
     const health = {
       status: 'ok',
       timestamp: new Date().toISOString(),
@@ -44,6 +75,7 @@ export function registerHealthRoutes(router, ctx) {
   });
 
   router.get('/api/status', async () => {
+    /** @type {{ status: string; timestamp: string; version: string; applications?: number | string }} */
     const status = {
       status: 'ok',
       timestamp: new Date().toISOString(),
@@ -80,6 +112,10 @@ export function registerHealthRoutes(router, ctx) {
   });
 }
 
+/**
+ * @param {HealthEnv} env
+ * @returns {Promise<{ name: string; healthy: boolean; message: string }>}
+ */
 async function checkQueueHealth(env) {
   try {
     const queue = env.NOTIFICATION_QUEUE;
@@ -89,10 +125,18 @@ async function checkQueueHealth(env) {
       message: queue ? 'Queue binding active' : 'Queue not configured',
     };
   } catch (error) {
-    return { name: 'queue', healthy: false, message: error.message };
+    return {
+      name: 'queue',
+      healthy: false,
+      message: error instanceof Error ? error.message : String(error),
+    };
   }
 }
 
+/**
+ * @param {HealthEnv} env
+ * @returns {Promise<{ name: string; healthy: boolean; message: string }>}
+ */
 async function checkRateLimiterHealth(env) {
   try {
     const kv = env.RATE_LIMIT_KV;
@@ -102,10 +146,18 @@ async function checkRateLimiterHealth(env) {
       message: kv ? 'KV store accessible' : 'KV not configured',
     };
   } catch (error) {
-    return { name: 'rateLimiter', healthy: false, message: error.message };
+    return {
+      name: 'rateLimiter',
+      healthy: false,
+      message: error instanceof Error ? error.message : String(error),
+    };
   }
 }
 
+/**
+ * @param {HealthEnv} env
+ * @returns {Promise<{ name: string; healthy: boolean; message: string }>}
+ */
 async function checkTelegramAPI(env) {
   try {
     const hasToken = !!env.TELEGRAM_BOT_TOKEN;
@@ -116,6 +168,10 @@ async function checkTelegramAPI(env) {
       message: hasToken && hasChatId ? 'Credentials configured' : 'Missing configuration',
     };
   } catch (error) {
-    return { name: 'telegramAPI', healthy: false, message: error.message };
+    return {
+      name: 'telegramAPI',
+      healthy: false,
+      message: error instanceof Error ? error.message : String(error),
+    };
   }
 }

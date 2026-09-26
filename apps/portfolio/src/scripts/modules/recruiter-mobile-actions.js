@@ -1,7 +1,17 @@
 import { getHiringActions } from './recruiter-enhancements-data.js';
 import { createIconElement } from './project-card-formatting.js';
 
+/**
+ * @typedef {ReturnType<typeof import('./recruiter-enhancements-data.js').getRecruiterLabels>} RecruiterLabels
+ */
+
 // DOM construction instead of innerHTML keeps this module Trusted-Types clean.
+/**
+ * @param {string} href
+ * @param {string} label
+ * @param {string} [download]
+ * @returns {HTMLAnchorElement}
+ */
 function createActionLink(href, label, download) {
   const link = document.createElement('a');
   link.className = 'recruiter-action-bar__link';
@@ -11,6 +21,12 @@ function createActionLink(href, label, download) {
   return link;
 }
 
+/**
+ * @param {string} selector
+ * @param {string} rootMargin
+ * @param {(inView: boolean) => void} setInView
+ * @returns {void}
+ */
 function observeVisibilityBlocker(selector, rootMargin, setInView) {
   const target = document.querySelector(selector);
   if (!target || typeof IntersectionObserver !== 'function') return;
@@ -23,6 +39,10 @@ function observeVisibilityBlocker(selector, rootMargin, setInView) {
   observer.observe(target);
 }
 
+/**
+ * @param {RecruiterLabels} labels
+ * @returns {void}
+ */
 export function renderMobileActionBar(labels) {
   if (document.querySelector('.recruiter-action-bar')) return;
   const actions = getHiringActions();

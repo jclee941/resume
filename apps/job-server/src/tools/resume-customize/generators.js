@@ -5,6 +5,108 @@
 import { scoreCareer, scoreProject, scoreSkills } from './scoring.js';
 import { normalize, unique } from './text-processing.js';
 
+/**
+ * @typedef {Object} ResumePersonal
+ * @property {string} name
+ * @property {string} email
+ * @property {string} phone
+ * @property {string} [github]
+ */
+
+/**
+ * @typedef {Object} ResumeSummary
+ * @property {string} [totalExperience]
+ * @property {string} [profileStatement]
+ * @property {string[]} [tailoredHighlights]
+ */
+
+/**
+ * @typedef {Object} ResumeCareer
+ * @property {string} [role]
+ * @property {string} [company]
+ * @property {string} [period]
+ * @property {string} [duration]
+ * @property {string} [project]
+ * @property {string} [description]
+ * @property {number} [relevanceScore]
+ * @property {string[]} [matchedKeywords]
+ */
+
+/**
+ * @typedef {Object} ResumeProject
+ * @property {string} [name]
+ * @property {string} [client]
+ * @property {string} [period]
+ * @property {string} [role]
+ * @property {string} [description]
+ * @property {string[]} [technologies]
+ * @property {string} [os]
+ * @property {number} [relevanceScore]
+ * @property {string[]} [matchedKeywords]
+ */
+
+/**
+ * @typedef {Object} ResumeCertification
+ * @property {string} name
+ * @property {string} issuer
+ * @property {string} date
+ * @property {string} [status]
+ */
+
+/**
+ * @typedef {Object} ResumeEducation
+ * @property {string} school
+ * @property {string} major
+ * @property {string} startDate
+ * @property {string} status
+ */
+
+/**
+ * @typedef {Object} ResumeLanguage
+ * @property {string} language
+ * @property {string} [level]
+ * @property {string} [fluency]
+ */
+
+/**
+ * @typedef {Object} ResumeCustomizationData
+ * @property {ResumePersonal} personal
+ * @property {ResumeSummary} summary
+ * @property {ResumeCareer[]} [careers]
+ * @property {ResumeProject[]} [projects]
+ * @property {Record<string, import('./scoring.js').SkillCategory>} skills
+ * @property {ResumeCertification[]} [certifications]
+ * @property {ResumeEducation} [education]
+ * @property {ResumeLanguage[]} [languages]
+ */
+
+/**
+ * @typedef {Object} RankedCareer
+ * @property {ResumeCareer} career
+ * @property {number} score
+ * @property {string[]} matched
+ */
+
+/**
+ * @typedef {Object} RankedProject
+ * @property {ResumeProject} project
+ * @property {number} score
+ * @property {string[]} matched
+ */
+
+/**
+ * @typedef {Object} CustomizationResult
+ * @property {RankedCareer[]} rankedCareers
+ * @property {RankedProject[]} rankedProjects
+ * @property {ReturnType<typeof scoreSkills>} skillAnalysis
+ * @property {{ topMatchedKeywords: string[] }} matchMeta
+ */
+
+/**
+ * @param {ResumeCustomizationData} resumeData
+ * @param {string[]} keywords
+ * @returns {CustomizationResult}
+ */
 function buildCustomization(resumeData, keywords) {
   const rankedCareers = (resumeData.careers || [])
     .map((career) => scoreCareer(career, keywords))
@@ -31,7 +133,7 @@ function buildCustomization(resumeData, keywords) {
 
 /**
  * Generate ATS-friendly markdown resume.
- * @param {object} resumeData
+ * @param {ResumeCustomizationData} resumeData
  * @param {string} _jobDescription
  * @param {string[]} keywords
  * @returns {string}
@@ -120,11 +222,27 @@ export function generateATSMarkdown(resumeData, _jobDescription, keywords) {
 }
 
 /**
+ * @typedef {Object} CustomizedJSONResult
+ * @property {ResumePersonal} personal
+ * @property {ResumeSummary & { tailoredHighlights: string[] }} summary
+ * @property {Array<ResumeCareer & { relevanceScore: number, matchedKeywords: string[] }>} careers
+ * @property {Array<ResumeProject & { relevanceScore: number, matchedKeywords: string[] }>} projects
+ * @property {{
+ *   matched: Array<{ name: string, level?: string }>,
+ *   additional: Array<{ name: string, level?: string }>,
+ *   categoryRelevance: Record<string, import('./scoring.js').CategorySummary>,
+ * }} skills
+ * @property {ResumeCertification[] | undefined} certifications
+ * @property {ResumeEducation | undefined} education
+ * @property {ResumeLanguage[] | undefined} languages
+ */
+
+/**
  * Generate customized resume JSON.
- * @param {object} resumeData
+ * @param {ResumeCustomizationData} resumeData
  * @param {string} _jobDescription
  * @param {string[]} keywords
- * @returns {object}
+ * @returns {CustomizedJSONResult}
  */
 export function generateCustomizedJSON(resumeData, _jobDescription, keywords) {
   const { rankedCareers, rankedProjects, skillAnalysis, matchMeta } = buildCustomization(

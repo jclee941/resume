@@ -1,3 +1,11 @@
+/**
+ * @typedef {{ name: string, value?: string | number | boolean | null }} FormField
+ */
+
+/**
+ * @param {FormField[] | null | undefined} fields
+ * @returns {string}
+ */
 export function encodeFormFields(fields) {
   const params = new URLSearchParams();
 
@@ -5,12 +13,16 @@ export function encodeFormFields(fields) {
     if (!field || typeof field.name !== 'string') {
       continue;
     }
-    params.append(field.name, field.value ?? '');
+    params.append(field.name, String(field.value ?? ''));
   }
 
   return params.toString();
 }
 
+/**
+ * @param {FormField[] | null | undefined} formFields
+ * @returns {string}
+ */
 export function buildSavePayload(formFields) {
   const fields = Array.isArray(formFields) ? [...formFields] : [];
   if (!fields.some((f) => f && f.name === 'hdnIsCompleteSave')) {
@@ -19,6 +31,10 @@ export function buildSavePayload(formFields) {
   return encodeFormFields(fields);
 }
 
+/**
+ * @param {string} url
+ * @returns {string}
+ */
 export function buildPortfolioPayload(url) {
   return encodeFormFields([
     { name: 'File_Name', value: url },
@@ -29,7 +45,12 @@ export function buildPortfolioPayload(url) {
   ]);
 }
 
+/**
+ * @param {FormField[]} fields
+ * @returns {Record<string, number>}
+ */
 function groupFieldsByIndex(fields) {
+  /** @type {Record<string, number>} */
   const groups = {};
   for (const f of fields) {
     const m = f.name.match(/^([A-Za-z]+)\[([^\]]+)\]\./);
@@ -41,24 +62,44 @@ function groupFieldsByIndex(fields) {
   return groups;
 }
 
+/**
+ * @param {string} name
+ * @returns {boolean}
+ */
 function isRepeatableIndexField(name) {
   return /^[A-Za-z]+\.[Ii]ndex$/.test(name);
 }
 
+/**
+ * @param {string} indexFieldName
+ * @returns {string}
+ */
 function repeatableSectionName(indexFieldName) {
   const match = indexFieldName.match(/^([A-Za-z]+)\.[Ii]ndex$/);
   return match ? match[1] : '';
 }
 
+/**
+ * @param {string} groupKey
+ * @returns {string}
+ */
 function indexedSectionName(groupKey) {
   const match = groupKey.match(/^([A-Za-z]+)\[[^\]]+\]$/);
   return match ? match[1] : '';
 }
 
+/**
+ * @param {string} sectionName
+ * @returns {boolean}
+ */
 function canReplaceRepeatableSection(sectionName) {
   return sectionName === 'Career' || sectionName === 'License';
 }
 
+/**
+ * @param {string} name
+ * @returns {string}
+ */
 function repeatableIndexKey(name) {
   const sectionName = repeatableSectionName(name);
   return sectionName ? `${sectionName}.index` : name;
@@ -68,6 +109,10 @@ function repeatableIndexKey(name) {
  * Smart merge: overlay target fields onto base fields, skipping sections
  * where the target override is incomplete compared to the base.
  * This prevents server validation errors on partially-mapped sections.
+ * @param {FormField[]} baseFields
+ * @param {FormField[]} targetFields
+ * @param {Record<string, string | number | boolean | null | undefined>} [tokens]
+ * @returns {FormField[]}
  */
 export function smartMergeFields(baseFields, targetFields, tokens = {}) {
   const baseGroups = groupFieldsByIndex(baseFields);
@@ -92,6 +137,7 @@ export function smartMergeFields(baseFields, targetFields, tokens = {}) {
       .map((name) => repeatableSectionName(name))
       .filter(Boolean)
   );
+  /** @type {Map<string, number>} */
   const maxBaseCountBySection = new Map();
   for (const [key, baseCount] of Object.entries(baseGroups)) {
     const sectionName = indexedSectionName(key);
@@ -120,7 +166,9 @@ export function smartMergeFields(baseFields, targetFields, tokens = {}) {
   // (e.g. UnivSchool date fields stored dotted as "2024.03" instead of "202403").
   const FORCE_OVERLAY = /\.(Entc_YM|Grad_YM|CSYM|CEYM|Lc_YYMM)$/;
 
+  /** @type {Map<string, string | number | boolean>} */
   const merged = new Map();
+  /** @type {FormField[]} */
   const repeatableFields = [];
   for (const field of baseFields) {
     const baseIndexedMatch = field.name.match(/^([A-Za-z]+)\[[^\]]+\]\./);

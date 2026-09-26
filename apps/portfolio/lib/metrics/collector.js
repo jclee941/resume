@@ -1,6 +1,31 @@
 const { initHistogramBuckets, observeHistogram } = require('./histogram');
 
 /**
+ * @typedef {Object} WebVitalsMetrics
+ * @property {number} lcp
+ * @property {number} inp
+ * @property {number} cls
+ * @property {number} fcp
+ * @property {number} ttfb
+ * @property {number} samples
+ */
+
+/**
+ * @typedef {Object} CfMetrics
+ * @property {number} cache_hit_ratio
+ * @property {number} cache_bypass_ratio
+ * @property {number} cpu_time_ms
+ * @property {number} cache_hits
+ * @property {number} cache_misses
+ */
+
+/**
+ * @typedef {Object} GeoMetrics
+ * @property {Record<string, number>} by_country
+ * @property {Record<string, number>} by_colo
+ */
+
+/**
  * @typedef {Object} WorkerMetrics
  * @property {number} requests_total - Total number of requests.
  * @property {number} requests_success - Successful requests (2xx/3xx).
@@ -8,12 +33,14 @@ const { initHistogramBuckets, observeHistogram } = require('./histogram');
  * @property {number} response_time_sum - Sum of response times in ms.
  * @property {number} vitals_received - Web Vitals data points received.
  * @property {number} worker_start_time - Worker start timestamp.
- * @property {Object} [path_counts] - Request counts by path.
- * @property {Object} [status_counts] - Request counts by status code.
- * @property {Object} [response_time_buckets] - Response time histogram buckets.
- * @property {Object} [web_vitals] - Aggregated Web Vitals metrics.
- * @property {Object} [cf_metrics] - Cloudflare-specific metrics.
- * @property {Object} [geo_metrics] - Geographic distribution metrics.
+ * @property {Record<string, number>} [path_counts] - Request counts by path.
+ * @property {Record<string, number>} [status_counts] - Request counts by status code.
+ * @property {import('./histogram').HistogramBuckets} response_time_buckets - Response time histogram buckets.
+ * @property {WebVitalsMetrics} web_vitals - Aggregated Web Vitals metrics.
+ * @property {CfMetrics} cf_metrics - Cloudflare-specific metrics.
+ * @property {GeoMetrics} geo_metrics - Geographic distribution metrics.
+ * @property {string} version - Worker version.
+ * @property {string} deployed_at - Worker deployment timestamp.
  */
 
 /**

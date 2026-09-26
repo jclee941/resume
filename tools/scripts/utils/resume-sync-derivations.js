@@ -1,3 +1,38 @@
+/**
+ * @typedef {{
+ *   period?: string;
+ *   [key: string]: unknown;
+ * }} ItemWithPeriod
+ *
+ * @typedef {ItemWithPeriod & {
+ *   projects?: ItemWithPeriod[];
+ * }} CareerEntry
+ *
+ * @typedef {{
+ *   experienceStart?: string;
+ *   totalExperience?: string;
+ *   profileStatement?: string;
+ *   [key: string]: unknown;
+ * }} ResumeSummary
+ *
+ * @typedef {{
+ *   resume?: string;
+ *   [key: string]: unknown;
+ * }} SectionDescriptions
+ *
+ * @typedef {{
+ *   summary?: ResumeSummary;
+ *   sectionDescriptions?: SectionDescriptions;
+ *   careers?: CareerEntry[];
+ *   personalProjects?: ItemWithPeriod[];
+ *   [key: string]: unknown;
+ * }} ResumeSourceData
+ */
+
+/**
+ * @param {string} asOf
+ * @returns {Date}
+ */
 function parseAsOf(asOf) {
   if (typeof asOf !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(asOf)) {
     throw new Error('as-of must be a strict UTC calendar date in YYYY-MM-DD format');
@@ -14,6 +49,12 @@ function parseAsOf(asOf) {
   return parsed;
 }
 
+/**
+ * @param {ResumeSourceData} sourceData
+ * @param {string} language
+ * @param {string} asOf
+ * @returns {void}
+ */
 function autoCalculateExperience(sourceData, language, asOf) {
   const effectiveDate = parseAsOf(asOf);
   if (!sourceData.summary || !sourceData.summary.experienceStart) return;
@@ -22,6 +63,7 @@ function autoCalculateExperience(sourceData, language, asOf) {
   let years = effectiveDate.getUTCFullYear() - startYear;
   if (effectiveDate.getUTCMonth() + 1 < startMonth) years--;
 
+  /** @type {Record<string, string>} */
   const formats = { ko: `${years}년`, en: `${years} years`, ja: `${years}年` };
   const newValue = formats[language] || `${years} years`;
   if (sourceData.summary.totalExperience !== newValue) {
@@ -29,6 +71,7 @@ function autoCalculateExperience(sourceData, language, asOf) {
     sourceData.summary.totalExperience = newValue;
   }
 
+  /** @type {Record<string, { regex: RegExp; replacement: string }>} */
   const profilePatterns = {
     ko: { regex: /\d+년차/g, replacement: `${years}년차` },
     en: { regex: /\d+ years/g, replacement: `${years} years` },
@@ -43,6 +86,7 @@ function autoCalculateExperience(sourceData, language, asOf) {
     }
   }
 
+  /** @type {Record<string, { regex: RegExp; replacement: string }>} */
   const sectionPatterns = {
     ko: { regex: /\d+년차/g, replacement: `${years}년차` },
     en: { regex: /\d+ years/g, replacement: `${years} years` },
@@ -58,12 +102,20 @@ function autoCalculateExperience(sourceData, language, asOf) {
   }
 }
 
+/**
+ * @param {ResumeSourceData} sourceData
+ * @param {string} language
+ * @returns {void}
+ */
 function autoTranslatePeriods(sourceData, language) {
   if (language === 'ko') return;
-  const target = { en: 'Present', ja: '現在' }[language];
+  const target = /** @type {Record<string, string>} */ ({ en: 'Present', ja: '現在' })[language];
   if (!target) return;
 
   let count = 0;
+  /**
+   * @param {ItemWithPeriod} item
+   */
   function replacePeriod(item) {
     if (item.period && typeof item.period === 'string' && item.period.includes('현재')) {
       item.period = item.period.replace('현재', target);
