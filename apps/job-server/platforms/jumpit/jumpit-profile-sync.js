@@ -27,7 +27,21 @@ const JUMPIT_SELECTORS = {
   skills: '.skill-tag, [class*="skill-item"]',
 };
 
+/**
+ * @typedef {import('../browser-profile-sync-runner.js').ProfileSyncSourceData} ProfileSyncSourceData
+ * @typedef {import('../browser-profile-sync-runner.js').ProfileSyncOptions & {
+ *   sourceData?: ProfileSyncSourceData;
+ *   headless?: boolean;
+ *   timeout?: number;
+ *   debug?: boolean;
+ *   [key: string]: unknown;
+ * }} JumpitSyncOptions
+ */
+
 export class JumpitProfileSync extends BrowserProfileSync {
+  /**
+   * @param {Record<string, unknown>} [options]
+   */
   constructor(options = {}) {
     super({
       platform: 'jumpit',
@@ -39,6 +53,9 @@ export class JumpitProfileSync extends BrowserProfileSync {
   }
 }
 
+/**
+ * @param {JumpitSyncOptions} [options]
+ */
 export async function syncToJumpit(options = {}) {
   const sync = new JumpitProfileSync(options);
   try {

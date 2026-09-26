@@ -17,6 +17,70 @@ export {
   normalizeApplicationPlatforms,
   supportedApplicationPlatforms,
 };
+
+/**
+ * @typedef {{
+ *   id: string;
+ *   company?: string | null;
+ *   position?: string;
+ *   url?: string;
+ *   sourceUrl?: string;
+ *   location?: string;
+ *   experience?: string | number;
+ *   description?: string;
+ *   [key: string]: unknown;
+ * }} PlatformJob
+ */
+
+/**
+ * @typedef {{
+ *   keyword?: string;
+ *   keywords?: string[];
+ *   location?: string;
+ *   atsStub?: boolean;
+ *   atsClients?: Record<string, Record<string, unknown>>;
+ *   [key: string]: unknown;
+ * }} PlatformSearchCriteria
+ */
+
+/**
+ * @typedef {{
+ *   env: {
+ *     ENCRYPTION_KEY?: string;
+ *     SESSIONS?: { get(key: string): Promise<string | null> };
+ *     [key: string]: unknown;
+ *   };
+ *   [key: string]: unknown;
+ * }} PlatformSearchContext
+ */
+
+/**
+ * @typedef {{
+ *   id: string | number;
+ *   company?: { name?: string };
+ *   position?: string;
+ *   address?: { location?: string };
+ *   years?: string | number;
+ *   detail?: { description?: string };
+ * }} WantedApiRawJob
+ */
+
+/**
+ * @typedef {{
+ *   id: string | number;
+ *   organization?: { name?: string };
+ *   company?: { name?: string };
+ *   title?: string;
+ *   location?: { name?: string };
+ * }} RememberApiRawJob
+ */
+
+/**
+ * @param {PlatformSearchContext} ctx
+ * @param {string} platform
+ * @param {PlatformSearchCriteria} criteria
+ * @returns {Promise<PlatformJob[]>}
+ */
 export async function searchJobs(ctx, platform, criteria) {
   switch (platform) {
     case 'wanted':
@@ -33,6 +97,11 @@ export async function searchJobs(ctx, platform, criteria) {
   }
 }
 
+/**
+ * @param {string} platform
+ * @param {PlatformSearchCriteria} criteria
+ * @returns {Promise<PlatformJob[]>}
+ */
 async function searchAtsDryRun(platform, criteria) {
   const client = createAtsDryRunClient(platform, criteria?.atsClients?.[platform] ?? {});
   if (!client) return [];
@@ -41,6 +110,11 @@ async function searchAtsDryRun(platform, criteria) {
   return result.jobs;
 }
 
+/**
+ * @param {PlatformSearchContext} ctx
+ * @param {PlatformSearchCriteria} criteria
+ * @returns {Promise<PlatformJob[]>}
+ */
 export async function searchWanted(ctx, criteria) {
   const session = await readPlatformSession(ctx.env, 'wanted');
   if (!session) throw new Error('No Wanted session available');
@@ -51,6 +125,7 @@ export async function searchWanted(ctx, criteria) {
     headers: { Cookie: session, 'User-Agent': DEFAULT_USER_AGENT },
   });
   if (!response.ok) throw new Error(`Wanted API error: ${response.status}`);
+  /** @type {{ data?: WantedApiRawJob[] }} */
   const data = await response.json();
   return (data.data || []).map((job) => ({
     id: `wanted-${job.id}`,
@@ -62,6 +137,11 @@ export async function searchWanted(ctx, criteria) {
     description: job.detail?.description || '',
   }));
 }
+/**
+ * @param {PlatformSearchContext} _ctx
+ * @param {PlatformSearchCriteria} criteria
+ * @returns {Promise<PlatformJob[]>}
+ */
 export async function searchLinkedIn(_ctx, criteria) {
   const keyword = encodeURIComponent(criteria.keyword || '');
   const location = encodeURIComponent(criteria.location || '');
@@ -71,6 +151,7 @@ export async function searchLinkedIn(_ctx, criteria) {
   });
   if (!response.ok) throw new Error(`LinkedIn API error: ${response.status}`);
   const html = await response.text();
+  /** @type {PlatformJob[]} */
   const jobs = [];
   const pattern =
     /data-entity-urn="urn:li:jobPosting:(\d+)"[\s\S]*?base-search-card__title[^>]*>([^<]+)<\/[\s\S]*?base-search-card__subtitle[\s\S]*?<a[^>]*>([^<]+)</gi;
@@ -86,6 +167,11 @@ export async function searchLinkedIn(_ctx, criteria) {
   }
   return jobs;
 }
+/**
+ * @param {PlatformSearchContext} _ctx
+ * @param {PlatformSearchCriteria} criteria
+ * @returns {Promise<PlatformJob[]>}
+ */
 export async function searchRemember(_ctx, criteria) {
   const headers = {
     Accept: 'application/json',
@@ -105,6 +191,7 @@ export async function searchRemember(_ctx, criteria) {
       );
   if (!response.ok) throw new Error(`Remember API error: ${response.status}`);
   const data = await response.json();
+  /** @type {RememberApiRawJob[]} */
   const jobs = Array.isArray(data?.data?.job_postings)
     ? data.data.job_postings
     : Array.isArray(data?.data)
