@@ -4,6 +4,10 @@ import { WANTED_ABOUT_LIMIT } from '../../../src/tools/platforms/wanted-sync-ope
 
 // Wanted stores the about field HTML-encoded (" -> &quot;, & -> &amp;, etc.).
 // Normalize both sides before comparing so the sync is idempotent.
+/**
+ * @param {string | null | undefined} [s]
+ * @returns {string}
+ */
 function decodeEntities(s) {
   return String(s || '')
     .replace(/&quot;/g, '"')
@@ -13,7 +17,40 @@ function decodeEntities(s) {
     .replace(/&amp;/g, '&');
 }
 
-/** @param {Object} client @param {Object} ssot @param {Object} resumeDetail @param {string} resumeId @returns {Promise<Object>} */
+/**
+ * @typedef {{
+ *   platformVariants?: {
+ *     wanted?: {
+ *       about?: string | null,
+ *     },
+ *   },
+ *   summary?: {
+ *     profileStatement?: string | null,
+ *   },
+ * }} SSoTAbout
+ *
+ * @typedef {{
+ *   about?: string | null,
+ * }} WantedResumeDetail
+ *
+ * @typedef {{
+ *   updateResumeFields(resumeId: string, fields: { about: string }): Promise<unknown>,
+ * }} WantedAboutClient
+ *
+ * @typedef {{
+ *   changes: number,
+ *   dryRun?: boolean,
+ *   updated?: number,
+ * }} SyncWantedAboutResult
+ */
+
+/**
+ * @param {WantedAboutClient} client
+ * @param {SSoTAbout} ssot
+ * @param {WantedResumeDetail} resumeDetail
+ * @param {string} resumeId
+ * @returns {Promise<SyncWantedAboutResult>}
+ */
 export async function syncWantedAbout(client, ssot, resumeDetail, resumeId) {
   // Prefer the Wanted-specific SSoT variant when present, else fall back to the
   // generic profile statement.
@@ -42,7 +79,7 @@ export async function syncWantedAbout(client, ssot, resumeDetail, resumeId) {
     log('Updated about field', 'success', 'wanted');
     return { changes: 1, updated: 1 };
   } catch (e) {
-    log(`Failed to update about: ${e.message}`, 'error', 'wanted');
+    log(`Failed to update about: ${e instanceof Error ? e.message : String(e)}`, 'error', 'wanted');
     return { changes: 0 };
   }
 }

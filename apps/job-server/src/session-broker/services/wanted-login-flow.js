@@ -2,13 +2,65 @@ import CloakBrowser from '../browser/cloak-browser.js';
 
 import { DEFAULT_SESSION_LIFETIME_MS, defaultSleep } from './session-broker-constants.js';
 
+/**
+ * @typedef {{
+ *   goto(url: string): Promise<unknown>,
+ *   evaluate(fn: Function, ...args: unknown[]): Promise<unknown>,
+ *   getCookies(): Promise<CookieItem[]>,
+ *   close(): Promise<void>,
+ * }} CloakBrowserInstance
+ *
+ * @typedef {{
+ *   launch(config: { proxy?: string, timezone?: string, locale?: string }): Promise<CloakBrowserInstance>,
+ * }} CloakBrowserLauncher
+ *
+ * @typedef {{
+ *   encrypt(data: unknown): string,
+ * }} EncryptionServiceLike
+ *
+ * @typedef {{
+ *   log(...args: unknown[]): void,
+ *   error?(...args: unknown[]): void,
+ * }} LoggerLike
+ *
+ * @typedef {{
+ *   browser?: CloakBrowserLauncher,
+ *   encryptionService?: EncryptionServiceLike | null,
+ *   logger?: LoggerLike,
+ * }} WantedLoginFlowOptions
+ *
+ * @typedef {{
+ *   name: string,
+ *   value: string,
+ *   [key: string]: unknown,
+ * }} CookieItem
+ *
+ * @typedef {{
+ *   platform: string,
+ *   cookies: CookieItem[],
+ *   cookieString: string,
+ *   cookieCount: number,
+ *   renewedAt: string,
+ *   extractedAt: string,
+ *   expiresAt: string,
+ *   encryptedSession?: string,
+ * }} WantedSessionData
+ */
+
 export default class WantedLoginFlow {
+  /**
+   * @param {WantedLoginFlowOptions} [options]
+   */
   constructor(options = {}) {
-    this.browser = options.browser || new CloakBrowser();
+    this.browser = /** @type {CloakBrowserLauncher} */ (options.browser || new CloakBrowser());
     this.encryptionService = options.encryptionService || null;
     this.logger = options.logger || console;
   }
 
+  /**
+   * @param {string} platform
+   * @returns {Promise<WantedSessionData>}
+   */
   async execute(platform) {
     if (platform !== 'wanted') {
       throw new Error(`WantedLoginFlow only supports 'wanted' platform, got: ${platform}`);
@@ -46,9 +98,17 @@ export default class WantedLoginFlow {
       }
 
       await browser.evaluate(
+        /**
+         * @param {string} loginEmail
+         * @param {string} loginPassword
+         */
         (loginEmail, loginPassword) => {
-          const emailInput = document.querySelector('input[type="email"]');
-          const passwordInput = document.querySelector('input[type="password"]');
+          const emailInput = /** @type {HTMLInputElement | null} */ (
+            document.querySelector('input[type="email"]')
+          );
+          const passwordInput = /** @type {HTMLInputElement | null} */ (
+            document.querySelector('input[type="password"]')
+          );
           if (emailInput) emailInput.value = loginEmail;
           if (passwordInput) passwordInput.value = loginPassword;
         },
@@ -57,7 +117,9 @@ export default class WantedLoginFlow {
       );
 
       await browser.evaluate(() => {
-        const submitButton = document.querySelector('button[type="submit"]');
+        const submitButton = /** @type {HTMLButtonElement | null} */ (
+          document.querySelector('button[type="submit"]')
+        );
         if (submitButton) submitButton.click();
       });
 
@@ -102,11 +164,20 @@ export default class WantedLoginFlow {
     }
   }
 
+  /**
+   * @returns {Promise<WantedSessionData>}
+   */
   async renew() {
     return this.execute('wanted');
   }
 
+  /**
+   * @param {string} platform
+   * @param {CookieItem[]} cookies
+   * @returns {WantedSessionData}
+   */
   buildSessionData(platform, cookies) {
+    /** @type {WantedSessionData} */
     const session = {
       platform,
       cookies,

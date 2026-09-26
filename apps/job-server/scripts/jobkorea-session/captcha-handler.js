@@ -11,6 +11,10 @@ const MANUAL_RENEW_COMMAND =
 const MANUAL_TIMEOUT_MS = 120000;
 const MANUAL_PROGRESS_INTERVAL_MS = 10000;
 
+/**
+ * @param {string | null | undefined} [reason]
+ * @returns {string}
+ */
 export function buildCaptchaInstructions(reason) {
   const reasonText = reason ? ` Automatic solve failed: ${reason}.` : '';
   return (
@@ -20,6 +24,9 @@ export function buildCaptchaInstructions(reason) {
   );
 }
 
+/**
+ * @param {import('puppeteer').Page} page
+ */
 async function resolveCaptchaInput(page) {
   const activePage = await getActivePage(page);
   for (const selector of [
@@ -37,6 +44,10 @@ async function resolveCaptchaInput(page) {
   return { activePage, input: null };
 }
 
+/**
+ * @param {import('puppeteer').Page} page
+ * @param {string} text
+ */
 async function fillCaptchaInput(page, text) {
   const { activePage } = await resolveCaptchaInput(page);
   const hasInput = await activePage.evaluate(() => {
@@ -49,8 +60,10 @@ async function fillCaptchaInput(page, text) {
   }
 
   await activePage.evaluate((value) => {
-    const el = document.querySelector(
-      '#gtxt, input[name="gtxt"], input[id*="captcha" i], input[name*="captcha" i]'
+    const el = /** @type {HTMLInputElement | null} */ (
+      document.querySelector(
+        '#gtxt, input[name="gtxt"], input[id*="captcha" i], input[name*="captcha" i]'
+      )
     );
     if (el) {
       el.focus();
@@ -61,6 +74,10 @@ async function fillCaptchaInput(page, text) {
   }, text);
 }
 
+/**
+ * @param {import('puppeteer').Page} page
+ * @param {{ log: (msg: string) => void }} options
+ */
 async function clickCaptchaSubmit(page, { log }) {
   const activePage = await getActivePage(page);
   const candidates = await activePage.$$(
@@ -89,6 +106,10 @@ async function clickCaptchaSubmit(page, { log }) {
   return false;
 }
 
+/**
+ * @param {import('puppeteer').Page & import('playwright').Page} page
+ * @param {{ log: (msg: string) => void, submitAfterSolve?: boolean }} options
+ */
 export async function tryAutomaticCaptchaSolve(page, { log, submitAfterSolve = false }) {
   log('CAPTCHA/2FA detected, attempting automatic CAPTCHA solve');
   try {
@@ -106,10 +127,14 @@ export async function tryAutomaticCaptchaSolve(page, { log, submitAfterSolve = f
 
     return { solved: true };
   } catch (error) {
-    return { solved: false, reason: error.message };
+    return { solved: false, reason: error instanceof Error ? error.message : String(error) };
   }
 }
 
+/**
+ * @param {import('puppeteer').Page} page
+ * @param {{ log: (msg: string) => void }} options
+ */
 export async function waitForManualCaptchaSolve(page, { log }) {
   log('CAPTCHA/2FA detected, waiting up to 120 seconds for manual completion');
   const startedAt = Date.now();
@@ -133,6 +158,9 @@ export async function waitForManualCaptchaSolve(page, { log }) {
   throw new Error('CAPTCHA/2FA required but was not completed within 120 seconds');
 }
 
+/**
+ * @param {import('puppeteer').Page} page
+ */
 export async function detectCaptcha(page) {
   const activePage = await getActivePage(page);
   return evaluateWithFallback(activePage, (currentPage) => {
@@ -154,6 +182,10 @@ export async function detectCaptcha(page) {
   });
 }
 
+/**
+ * @param {import('puppeteer').Page & import('playwright').Page} page
+ * @param {{ log: (msg: string) => void, headlessEnv?: string }} options
+ */
 export async function handleCaptchaIfNeeded(page, { log, headlessEnv }) {
   const captchaDetected = await detectCaptcha(page);
   if (!captchaDetected) {

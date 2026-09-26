@@ -258,7 +258,8 @@ export class BaseCrawler extends EventEmitter {
   }
 
   /**
-   * @returns {Promise<{ authenticated: boolean; [key: string]: unknown }>}
+   * Platform crawlers report auth in their own shape (object or boolean).
+   * @returns {Promise<unknown>}
    */
   async checkAuth() {
     return { authenticated: false };

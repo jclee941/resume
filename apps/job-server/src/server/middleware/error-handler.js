@@ -1,6 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import { formatErrorResponse } from '../../shared/errors/error-formatter.js';
 
+/**
+ * @param {import('fastify').FastifyError | Error} error
+ * @param {import('fastify').FastifyRequest} request
+ * @param {import('fastify').FastifyReply} reply
+ */
 export default function errorHandler(error, request, reply) {
   const correlationId = randomUUID();
   const {

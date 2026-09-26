@@ -3,16 +3,92 @@ import { parseRange, pushField, toFieldValue, toYYYYMM } from './validators.js';
 
 export { mapHighSchoolToFormFields, mapSchoolToFormFields } from './school-fields.js';
 
+/**
+ * @typedef {{ name: string, value: string }} FormField
+ *
+ * @typedef {{
+ *   name?: string,
+ *   issuer?: string,
+ *   date?: string | null,
+ *   expirationDate?: string | null,
+ *   credentialId?: string,
+ *   credentialUrl?: string,
+ *   status?: string,
+ *   note?: string,
+ * }} CertificationItem
+ *
+ * @typedef {{
+ *   status?: string,
+ *   period?: string,
+ * }} MilitaryInfo
+ *
+ * @typedef {{
+ *   name?: string,
+ *   organization?: string,
+ *   year?: string | number,
+ * }} AwardItem
+ *
+ * @typedef {{
+ *   name?: string,
+ *   level?: string,
+ * }} LanguageItem
+ *
+ * @typedef {{
+ *   portfolio?: string,
+ *   birthDate?: string,
+ *   address?: string,
+ *   github?: string,
+ * }} PersonalInfo
+ *
+ * @typedef {{
+ *   name?: string,
+ *   description?: string,
+ *   url?: string,
+ *   githubUrl?: string,
+ *   demoUrl?: string,
+ * }} PersonalProjectItem
+ *
+ * @typedef {{
+ *   name?: string,
+ *   level?: string,
+ * }} SkillItem
+ *
+ * @typedef {{
+ *   items?: Array<SkillItem | string>,
+ * }} SkillCategory
+ *
+ * @typedef {{
+ *   certifications?: CertificationItem[],
+ *   military?: MilitaryInfo,
+ *   awards?: AwardItem[],
+ *   achievements?: string[],
+ *   personal?: PersonalInfo,
+ *   languages?: LanguageItem[],
+ *   personalProjects?: PersonalProjectItem[],
+ *   skills?: Record<string, SkillCategory>,
+ * }} JobKoreaSsot
+ */
+
+/**
+ * @param {string} [kind]
+ * @returns {number}
+ */
 function militaryKindToCode(kind) {
   if (kind === '사회복무요원') return 7;
-  return MILITARY_KIND[kind] || 8;
+  return /** @type {Record<string, number>} */ (MILITARY_KIND)[/** @type {string} */ (kind)] || 8;
 }
 
+/**
+ * @param {JobKoreaSsot | null | undefined} [ssot]
+ * @param {string[]} [indices]
+ * @returns {FormField[]}
+ */
 export function mapLicensesToFormFields(ssot, indices) {
   const validCerts = (Array.isArray(ssot?.certifications) ? ssot.certifications : []).filter(
     (cert) => cert?.date
   );
   if (validCerts.length === 0) return [];
+  /** @type {FormField[]} */
   const fields = [];
   const keys =
     indices && indices.length >= validCerts.length
@@ -40,24 +116,39 @@ export function mapLicensesToFormFields(ssot, indices) {
   return fields;
 }
 
+/**
+ * @param {JobKoreaSsot | null | undefined} [ssot]
+ * @returns {FormField[]}
+ */
 export function mapMilitaryToFormFields(ssot) {
   const military = ssot?.military;
   if (!military) return [];
   const { start, end } = parseRange(military.period || '');
-  return [
-    ['UserAddition.Military_Stat', MILITARY_STAT[military.status] || MILITARY_STAT.해당없음],
+  return /** @type {Array<[string, unknown]>} */ ([
+    [
+      'UserAddition.Military_Stat',
+      /** @type {Record<string, number>} */ (MILITARY_STAT)[
+        /** @type {string} */ (military.status)
+      ] || MILITARY_STAT.해당없음,
+    ],
     ['UserAddition.Military_Kind', militaryKindToCode(military.status)],
     ['UserAddition.Military_SYM', start],
     ['UserAddition.Military_EYM', end],
     ['InputStat.UserAdditionInputStat', 'True'],
     ['PIOfferAgree.IpAgree', '1'],
-  ].map(([name, value]) => ({ name, value: toFieldValue(value) }));
+  ]).map(([name, value]) => ({ name, value: toFieldValue(value) }));
 }
 
+/**
+ * @param {JobKoreaSsot | null | undefined} [ssot]
+ * @param {string[]} [indices]
+ * @returns {FormField[]}
+ */
 export function mapAwardToFormFields(ssot, indices) {
   const awards = Array.isArray(ssot?.awards) ? ssot.awards : [];
   const achievements = Array.isArray(ssot?.achievements) ? ssot.achievements : [];
   if (awards.length === 0 && achievements.length === 0) return [];
+  /** @type {FormField[]} */
   const fields = [];
   const keys =
     indices && indices.length >= awards.length ? indices : awards.map((_, i) => `c${i + 1}`);
@@ -88,6 +179,11 @@ export function mapAwardToFormFields(ssot, indices) {
   return fields;
 }
 
+/**
+ * @param {JobKoreaSsot | null | undefined} [ssot]
+ * @param {string | number} [fileIdx]
+ * @returns {FormField[]}
+ */
 export function mapPortfolioToFormFields(ssot, fileIdx) {
   const url = ssot?.personal?.portfolio || '';
   if (!url || !fileIdx) return [];
@@ -97,9 +193,15 @@ export function mapPortfolioToFormFields(ssot, fileIdx) {
   ];
 }
 
+/**
+ * @param {JobKoreaSsot | null | undefined} [ssot]
+ * @param {string[]} [indices]
+ * @returns {FormField[]}
+ */
 export function mapLanguagesToFormFields(ssot, indices) {
   const languages = Array.isArray(ssot?.languages) ? ssot.languages : [];
   if (languages.length === 0) return [];
+  /** @type {FormField[]} */
   const fields = [];
   const keys =
     indices && indices.length >= languages.length ? indices : languages.map((_, i) => `c${i + 1}`);
@@ -115,8 +217,13 @@ export function mapLanguagesToFormFields(ssot, indices) {
   return fields;
 }
 
+/**
+ * @param {JobKoreaSsot | null | undefined} [ssot]
+ * @returns {FormField[]}
+ */
 export function mapPersonalFieldsToFormFields(ssot) {
   const personal = ssot?.personal || {};
+  /** @type {FormField[]} */
   const fields = [];
   if (personal.birthDate) {
     pushField(fields, 'UserResume.Birth_YMD', personal.birthDate.replace(/[^0-9]/g, ''));
@@ -130,9 +237,15 @@ export function mapPersonalFieldsToFormFields(ssot) {
   return fields;
 }
 
+/**
+ * @param {JobKoreaSsot | null | undefined} [ssot]
+ * @param {string[]} [indices]
+ * @returns {FormField[]}
+ */
 export function mapPersonalProjectsToFormFields(ssot, indices) {
   const projects = Array.isArray(ssot?.personalProjects) ? ssot.personalProjects : [];
   if (projects.length === 0) return [];
+  /** @type {FormField[]} */
   const fields = [];
   const keys =
     indices && indices.length >= projects.length ? indices : projects.map((_, i) => `c${i + 1}`);
@@ -153,8 +266,14 @@ export function mapPersonalProjectsToFormFields(ssot, indices) {
   return fields;
 }
 
+/**
+ * @param {JobKoreaSsot | null | undefined} [ssot]
+ * @param {string[]} [indices]
+ * @returns {FormField[]}
+ */
 export function mapSkillsToFormFields(ssot, indices) {
   const categories = ssot?.skills || {};
+  /** @type {SkillItem[]} */
   const skills = [];
   for (const category of Object.values(categories)) {
     if (category && Array.isArray(category.items)) {
@@ -168,6 +287,7 @@ export function mapSkillsToFormFields(ssot, indices) {
     }
   }
   if (skills.length === 0) return [];
+  /** @type {FormField[]} */
   const fields = [];
   const keys =
     indices && indices.length >= skills.length ? indices : skills.map((_, i) => `c${i + 1}`);

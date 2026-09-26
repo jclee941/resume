@@ -1,6 +1,52 @@
 import { APPLICATION_STATUS } from '../application-manager.js';
 import { notifications } from '../../shared/services/notifications/index.js';
 
+/**
+ * @typedef {{
+ *   click(): Promise<void>,
+ * }} ClickableElement
+ *
+ * @typedef {{
+ *   goto(url: string, options?: { waitUntil?: string }): Promise<unknown>,
+ * }} PageLike
+ *
+ * @typedef {{
+ *   id?: string | number,
+ *   [key: string]: unknown,
+ * }} ApplicationRecord
+ *
+ * @typedef {{
+ *   addApplication(job: LinkedInJob, details?: { notes?: string }): ApplicationRecord,
+ *   updateStatus(id: string | number | undefined, status: string, notes?: string): unknown,
+ * }} AppManagerLike
+ *
+ * @typedef {{
+ *   page: PageLike,
+ *   findByText(tag: string, text: string): Promise<ClickableElement | null>,
+ *   findElementWithText(text: string): Promise<unknown>,
+ *   appManager: AppManagerLike,
+ * }} LinkedInStrategyHost
+ *
+ * @typedef {{
+ *   sourceUrl: string,
+ *   company?: string,
+ *   title?: string,
+ *   [key: string]: unknown,
+ * }} LinkedInJob
+ *
+ * @typedef {{
+ *   success: boolean,
+ *   application?: ApplicationRecord,
+ *   external?: boolean,
+ *   error?: string,
+ * }} LinkedInApplyResult
+ */
+
+/**
+ * @this {LinkedInStrategyHost}
+ * @param {LinkedInJob} job
+ * @returns {Promise<LinkedInApplyResult>}
+ */
 export async function applyToLinkedIn(job) {
   try {
     await this.page.goto(job.sourceUrl, { waitUntil: 'domcontentloaded' });
@@ -69,9 +115,10 @@ export async function applyToLinkedIn(job) {
 
     return { success: true, application };
   } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
     notifications
-      .notifyApplyFailed(job.company, job.title, job.sourceUrl, error.message, 'linkedin')
+      .notifyApplyFailed(job.company, job.title, job.sourceUrl, message, 'linkedin')
       .catch(() => {});
-    return { success: false, error: error.message };
+    return { success: false, error: message };
   }
 }

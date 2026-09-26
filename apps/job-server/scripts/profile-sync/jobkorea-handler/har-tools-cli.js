@@ -6,12 +6,16 @@ import { assertNoSensitiveHarContent, sanitizeHar } from './har-sanitize.js';
 
 const VALID_COMMANDS = new Set(['sanitize', 'analyze']);
 
+/**
+ * @param {string[]} [argv]
+ */
 export function parseHarToolsCliArgs(argv = process.argv.slice(2)) {
   const [command, ...rest] = argv;
   if (!VALID_COMMANDS.has(command)) {
     throw new Error('Usage: har-tools-cli.js <sanitize|analyze> --input <har> [--output <json>]');
   }
 
+  /** @type {{ command: string, input?: string, output?: string }} */
   const options = { command, input: undefined, output: undefined };
   for (let i = 0; i < rest.length; i++) {
     const arg = rest[i];
@@ -33,19 +37,25 @@ export function parseHarToolsCliArgs(argv = process.argv.slice(2)) {
   return options;
 }
 
+/**
+ * @param {string} filePath
+ */
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
 
+/**
+ * @param {string[]} [argv]
+ */
 export async function main(argv = process.argv.slice(2)) {
   const options = parseHarToolsCliArgs(argv);
-  const input = readJson(options.input);
+  const input = readJson(/** @type {string} */ (options.input));
 
   if (options.command === 'sanitize') {
     const sanitized = sanitizeHar(input);
     const text = JSON.stringify(sanitized, null, 2);
     assertNoSensitiveHarContent(text);
-    fs.writeFileSync(options.output, `${text}\n`, { mode: 0o600 });
+    fs.writeFileSync(/** @type {string} */ (options.output), `${text}\n`, { mode: 0o600 });
     return;
   }
 

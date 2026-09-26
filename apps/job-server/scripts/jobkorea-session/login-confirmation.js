@@ -8,7 +8,12 @@ import {
   waitForManualCaptchaSolve,
 } from './captcha-handler.js';
 
+/**
+ * @param {import('puppeteer').Page & { context?: () => { cookies: () => Promise<Array<{ name: string, value: string }>> } }} page
+ * @returns {Promise<string>}
+ */
 async function buildCookieHeaderFromContext(page) {
+  /** @type {Array<{ name: string, value: string }>} */
   let cookies = [];
   try {
     if (
@@ -26,6 +31,20 @@ async function buildCookieHeaderFromContext(page) {
   return cookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ');
 }
 
+/**
+ * @typedef {Object} LoginConfirmationOptions
+ * @property {(params: { cookieString: string, resumeUrl: string, userAgent: string }) => Promise<unknown>} verifyAuthenticatedSession
+ * @property {string} resumeUrl
+ * @property {string} userAgent
+ * @property {string} [headlessEnv]
+ * @property {(msg: string) => void} log
+ */
+
+/**
+ * @param {import('puppeteer').Page & import('playwright').Page} page
+ * @param {LoginConfirmationOptions} options
+ * @returns {Promise<boolean>}
+ */
 export async function waitForLoginConfirmation(
   page,
   { verifyAuthenticatedSession, resumeUrl, userAgent, headlessEnv, log }
