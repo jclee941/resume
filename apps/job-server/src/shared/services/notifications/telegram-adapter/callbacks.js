@@ -24,7 +24,7 @@ import { saveNotificationHistory } from './history.js';
 export async function handleCallbackQuery(adapter, query, handlers = {}) {
   try {
     const callbackData = query?.data;
-    const callbackId = query?.id;
+    const callbackId = /** @type {string} */ (query?.id);
 
     if (!callbackData || typeof callbackData !== 'string') {
       return { handled: false, reason: 'invalid_callback_data' };

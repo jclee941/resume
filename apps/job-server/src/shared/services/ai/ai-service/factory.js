@@ -42,11 +42,13 @@ export function createAIService(env, options = {}) {
     budgets,
   });
 
-  return new AIService({
-    workersAI,
-    openAI,
-    cache,
-    costTracker,
-    logger: log,
-  });
+  return new AIService(
+    /** @type {ConstructorParameters<typeof AIService>[0]} */ ({
+      workersAI,
+      openAI,
+      cache,
+      costTracker,
+      logger: log,
+    })
+  );
 }

@@ -6,16 +6,9 @@ import { setupTestDatabase } from './database-setup.js';
 // ========================
 
 /**
- * @typedef {Object} IntegrationTestOptions
- * @property {import('./database-setup.js').ApplicationRecord[]} [seedApplications]
- * @property {import('./database-setup.js').D1ClientLike} [d1Client]
- * @property {unknown} [logger]
- * @property {unknown} [fetch]
- * @property {unknown} [env]
- * @property {unknown} [repository]
- * @property {unknown} [telegram]
- * @property {unknown} [claude]
- * @property {unknown} [wanted]
+ * @typedef {import('./service-setup.js').TestServicesOptions & {
+ *   seedApplications?: import('./database-setup.js').ApplicationRecord[],
+ * }} IntegrationTestOptions
  */
 
 /**

@@ -21,6 +21,8 @@ import {
  *   sourceUrl?: string;
  *   job?: { sourceUrl?: string };
  *   jobId?: string | number;
+ *   resume?: unknown;
+ *   coverLetter?: string;
  * }} BrowserSubmitParams
  */
 
@@ -46,10 +48,22 @@ const PLATFORM_URL_HOSTS = {
 };
 
 /**
- * @param {{ env?: import('@resume/shared/browser/service').BrowserEnv }} ctx
+ * @typedef {{
+ *   env: {
+ *     MYBROWSER?: import('@cloudflare/puppeteer').BrowserWorker;
+ *     SESSIONS?: { get: Function };
+ *     ENCRYPTION_KEY?: string;
+ *     [key: string]: unknown;
+ *   };
+ *   [key: string]: unknown;
+ * }} BrowserSubmitContext
+ */
+
+/**
+ * @param {BrowserSubmitContext} ctx
  * @param {BrowserSubmitParams} params
  * @param {BrowserDependencies} [dependencies]
- * @returns {Promise<Record<string, unknown>>}
+ * @returns {Promise<import('./application-submitters.js').SubmitResult>}
  */
 export async function submitWithBrowserRendering(ctx, params, dependencies = {}) {
   const platform = params.platform;
@@ -142,7 +156,7 @@ function normalizeAllowedApplicationUrl(platform, value) {
  * @param {import('./browser-rendering-results.js').ResponseLike | null} response
  * @param {number} cookieCount
  * @param {import('./browser-rendering-results.js').PageState & { bodyText?: string }} pageState
- * @returns {Promise<Record<string, unknown>>}
+ * @returns {Promise<import('./application-submitters.js').SubmitResult>}
  */
 async function submitFromRenderedPage(platform, targetUrl, page, response, cookieCount, pageState) {
   const title = /** @type {string} */ (await page.title?.());
@@ -256,7 +270,7 @@ async function submitFromRenderedPage(platform, targetUrl, page, response, cooki
  * @param {string} platform
  * @param {string | null} targetUrl
  * @param {string} reason
- * @returns {Record<string, unknown>}
+ * @returns {import('./application-submitters.js').SubmitResult}
  */
 function browserRenderingRequired(platform, targetUrl, reason) {
   return {

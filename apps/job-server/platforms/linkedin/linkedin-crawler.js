@@ -5,7 +5,41 @@
 
 import { BaseCrawler } from '../../src/crawlers/base-crawler.js';
 
+/**
+ * @typedef {Object} LinkedInSearchParams
+ * @property {string} [keyword]
+ * @property {string} [location]
+ * @property {string} [timeRange]
+ * @property {string | number} [offset]
+ * @property {string | number} [page]
+ * @property {number} [experienceLevel]
+ * @property {string} [workType]
+ */
+
+/**
+ * @typedef {Object} RawLinkedInJob
+ * @property {string} id
+ * @property {string} [position]
+ * @property {string} [company]
+ * @property {string} [companyId]
+ * @property {string} [location]
+ * @property {number} [experienceMin]
+ * @property {number} [experienceMax]
+ * @property {string} [salary]
+ * @property {string[]} [techStack]
+ * @property {string} [description]
+ * @property {string} [requirements]
+ * @property {string} [benefits]
+ * @property {string | null} [dueDate]
+ * @property {string | null} [postedDate]
+ * @property {boolean} [isRemote]
+ * @property {string} [employmentType]
+ */
+
 export class LinkedInCrawler extends BaseCrawler {
+  /**
+   * @param {import('../../src/crawlers/base-crawler.js').BaseCrawlerOptions} [options]
+   */
   constructor(options = {}) {
     super('linkedin', {
       baseUrl: 'https://www.linkedin.com',
@@ -16,14 +50,15 @@ export class LinkedInCrawler extends BaseCrawler {
 
   /**
    * 검색 쿼리 빌드
+   * @param {LinkedInSearchParams} params
    */
   buildSearchQuery(params) {
     const query = new URLSearchParams({
       keywords: params.keyword || '',
       location: params.location || 'South Korea',
       f_TPR: params.timeRange || 'r604800', // 최근 1주일
-      position: params.offset || 0,
-      pageNum: params.page || 0,
+      position: String(params.offset || 0),
+      pageNum: String(params.page || 0),
     });
 
     // 경력 레벨
@@ -41,6 +76,7 @@ export class LinkedInCrawler extends BaseCrawler {
 
   /**
    * 경력 레벨 변환
+   * @param {number} years
    */
   getExperienceLevel(years) {
     if (years <= 2) return '1,2'; // Internship, Entry level
@@ -51,6 +87,7 @@ export class LinkedInCrawler extends BaseCrawler {
 
   /**
    * 채용공고 검색 (공개 API)
+   * @param {LinkedInSearchParams} [params]
    */
   async searchJobs(params = {}) {
     const query = this.buildSearchQuery(params);
@@ -71,7 +108,7 @@ export class LinkedInCrawler extends BaseCrawler {
       return {
         success: false,
         source: 'linkedin',
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         jobs: [],
       };
     }
@@ -79,6 +116,7 @@ export class LinkedInCrawler extends BaseCrawler {
 
   /**
    * 검색 결과 HTML 파싱
+   * @param {string} html
    */
   parseSearchResults(html) {
     const jobs = [];
@@ -87,6 +125,7 @@ export class LinkedInCrawler extends BaseCrawler {
     const jobPattern =
       /<div[^>]*class="[^"]*base-card[^"]*"[^>]*data-entity-urn="urn:li:jobPosting:(\d+)"[^>]*>[\s\S]*?<h3[^>]*class="[^"]*base-search-card__title[^"]*"[^>]*>([^<]+)<\/h3>[\s\S]*?<h4[^>]*class="[^"]*base-search-card__subtitle[^"]*"[^>]*>[\s\S]*?<a[^>]*>([^<]+)<\/a>/gi;
 
+    /** @type {RegExpExecArray | null} */
     let match;
     while ((match = jobPattern.exec(html)) !== null) {
       jobs.push(
@@ -103,7 +142,7 @@ export class LinkedInCrawler extends BaseCrawler {
       /<li[^>]*>[\s\S]*?<a[^>]*href="[^"]*\/jobs\/view\/(\d+)[^"]*"[^>]*>[\s\S]*?<span[^>]*>([^<]+)<\/span>[\s\S]*?<span[^>]*class="[^"]*job-search-card__company-name[^"]*"[^>]*>([^<]+)<\/span>/gi;
 
     while ((match = altPattern.exec(html)) !== null) {
-      const exists = jobs.some((j) => j.sourceId === match[1]);
+      const exists = jobs.some((j) => j.sourceId === /** @type {RegExpExecArray} */ (match)[1]);
       if (!exists) {
         jobs.push(
           this.normalizeJob({
@@ -120,6 +159,7 @@ export class LinkedInCrawler extends BaseCrawler {
 
   /**
    * 채용공고 상세 조회
+   * @param {string} jobId
    */
   async getJobDetail(jobId) {
     const url = `${this.baseUrl}/jobs-guest/jobs/api/jobPosting/${jobId}`;
@@ -137,13 +177,15 @@ export class LinkedInCrawler extends BaseCrawler {
       return {
         success: false,
         source: 'linkedin',
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
       };
     }
   }
 
   /**
    * 상세 페이지 파싱
+   * @param {string} html
+   * @param {string} jobId
    */
   parseJobDetail(html, jobId) {
     const titleMatch = html.match(
@@ -181,6 +223,7 @@ export class LinkedInCrawler extends BaseCrawler {
 
   /**
    * HTML 태그 제거
+   * @param {string} html
    */
   stripHtml(html) {
     return html
@@ -191,6 +234,7 @@ export class LinkedInCrawler extends BaseCrawler {
 
   /**
    * 결과 정규화
+   * @param {RawLinkedInJob} rawJob
    */
   normalizeJob(rawJob) {
     return {
@@ -219,6 +263,8 @@ export class LinkedInCrawler extends BaseCrawler {
 
   /**
    * 회사별 채용공고 검색
+   * @param {string} companyName
+   * @param {LinkedInSearchParams} [options]
    */
   async searchByCompany(companyName, options = {}) {
     return this.searchJobs({

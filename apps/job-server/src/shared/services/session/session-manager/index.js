@@ -9,6 +9,7 @@ import { runCdpSessionExtraction } from './session-refresh.js';
 import { createStore } from './session-store-factory.js';
 
 /**
+ * @typedef {import('./session-cookie.js').SessionData & import('./session-expiration.js').SessionDataLike & { timestamp?: number }} UnifiedSessionData
  * @typedef {{
  *   logger?: import('@resume/shared/session/store.js').SessionStoreLogger,
  *   store?: ReturnType<typeof createStore>,
@@ -126,11 +127,12 @@ export class SessionManager {
     return SessionManager.#defaultInstance.restoreEncryptedSession(platform, encryptedData);
   }
 
+  /** @returns {import('./session-storage.js').SessionStoreContract} */
   getStore() {
     if (!this.store) {
       this.store = this.storeFactory(this.logger);
     }
-    return this.store;
+    return /** @type {import('./session-storage.js').SessionStoreContract} */ (this.store);
   }
 
   /** @param {import('./session-cookie.js').SessionData} session */
@@ -143,7 +145,11 @@ export class SessionManager {
     return this.refreshRunner(platform);
   }
 
-  load = sessionStorageMethods.load;
+  /** @type {((platform: string) => UnifiedSessionData | null) & ((platform?: string | null) => Record<string, UnifiedSessionData> | UnifiedSessionData | null)} */
+  load =
+    /** @type {((platform: string) => UnifiedSessionData | null) & ((platform?: string | null) => Record<string, UnifiedSessionData> | UnifiedSessionData | null)} */ (
+      sessionStorageMethods.load
+    );
 
   save = sessionStorageMethods.save;
 
@@ -155,7 +161,10 @@ export class SessionManager {
 
   checkHealth = sessionExpirationMethods.checkHealth;
 
-  validateSessionContent = sessionContentValidationMethods.validateSessionContent;
+  validateSessionContent =
+    /** @type {(platform: string, session: import('./session-expiration.js').SessionDataLike) => { valid: boolean; reason: string | null }} */ (
+      sessionContentValidationMethods.validateSessionContent
+    );
 
   tryRefresh = sessionRefreshMethods.tryRefresh;
 

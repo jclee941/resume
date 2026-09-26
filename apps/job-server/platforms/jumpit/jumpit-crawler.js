@@ -23,7 +23,6 @@ import { BaseCrawler } from '../../src/crawlers/base-crawler.js';
 export class JumpitCrawler extends BaseCrawler {
   /**
    * @param {import('../../src/crawlers/base-crawler.js').BaseCrawlerOptions} [options] - Crawler options
-   * @param {number} [options.rateLimit=1000] - Rate limit in ms between requests
    */
   constructor(options = {}) {
     super('jumpit', {
@@ -37,11 +36,7 @@ export class JumpitCrawler extends BaseCrawler {
 
   /**
    * Build search query URL from parameters.
-   * @param {JumpitSearchParams} params - Search parameters
-   * @param {string} [params.keyword] - Search keyword
-   * @param {number} [params.offset=0] - Pagination offset
-   * @param {number} [params.limit=16] - Results per page
-   * @param {string} [params.techStack] - Tech stack filter
+   * @param {JumpitSearchParams} [params] - Search parameters
    * @returns {string} Query URL
    */
   buildSearchQuery(params = {}) {

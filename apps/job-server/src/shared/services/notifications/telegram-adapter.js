@@ -16,7 +16,7 @@ export { escapeHtml, createJobPostingsMessage } from './telegram-adapter/formatt
 /**
  * @typedef {{
  *   env?: { TELEGRAM_BOT_TOKEN?: string; TELEGRAM_CHAT_ID?: string; AUTOMATION_WEBHOOK_URL?: string; WEBHOOK_URL?: string; DB?: import('./telegram-adapter/history.js').D1DatabaseLike };
- *   logger?: { info(msg: string, ...args: unknown[]): void, warn(msg: string, ...args: unknown[]): void, error(msg: string, ...args: unknown[]): void, [key: string]: unknown };
+ *   logger?: import('./telegram-adapter/history.js').LoggerLike;
  *   source?: string;
  *   telegramToken?: string;
  *   telegramChatId?: string;
@@ -52,6 +52,7 @@ export class TelegramNotificationAdapter {
     const env = options.env || process.env;
 
     this.env = env;
+    /** @type {import('./telegram-adapter/history.js').LoggerLike} */
     this.logger = options.logger || console;
     this.source = options.source || 'job-server';
 
@@ -59,12 +60,20 @@ export class TelegramNotificationAdapter {
     this.telegramChatId = options.telegramChatId || env.TELEGRAM_CHAT_ID;
     this.automationWebhookUrl =
       options.automationWebhookUrl || env.AUTOMATION_WEBHOOK_URL || env.WEBHOOK_URL;
-    this.fetchImpl = options.fetchImpl || null;
+    /** @type {typeof fetch | undefined} */
+    this.fetchImpl = /** @type {typeof fetch | undefined} */ (options.fetchImpl || null);
     this.sleepImpl =
       options.sleepImpl || ((/** @type {number} */ ms) => new Promise((r) => setTimeout(r, ms)));
 
-    this.db = options.db || env.DB || null;
-    this.d1Client = options.d1Client || null;
+    /** @type {import('./telegram-adapter/history.js').D1DatabaseLike | undefined} */
+    this.db = /** @type {import('./telegram-adapter/history.js').D1DatabaseLike | undefined} */ (
+      options.db || env.DB || null
+    );
+    /** @type {import('./telegram-adapter/history.js').D1ClientLike | undefined} */
+    this.d1Client =
+      /** @type {import('./telegram-adapter/history.js').D1ClientLike | undefined} */ (
+        options.d1Client || null
+      );
 
     this.handlers = {
       onApprove: options.onApprove,

@@ -25,6 +25,17 @@ const LINKEDIN_SELECTORS = {
   skills: '.pv-skill-category-entity__name-text, [class*="skill"]',
 };
 
+/**
+ * @typedef {Object} LinkedInSourceData
+ * @property {Record<string, unknown>} [personal]
+ * @property {Array<{ role?: string, company?: string }>} [careers]
+ * @property {Record<string, unknown>} [education]
+ * @property {unknown[]} [certifications]
+ * @property {string[]} [skills]
+ * @property {{ position?: string }} [current]
+ * @property {{ totalExperience?: string }} [summary]
+ */
+
 export class LinkedInProfileSync extends BrowserProfileSync {
   constructor(options = {}) {
     super({
@@ -36,6 +47,10 @@ export class LinkedInProfileSync extends BrowserProfileSync {
     });
   }
 
+  /**
+   * @param {LinkedInSourceData} sourceData
+   * @param {{ dry_run?: boolean }} [options]
+   */
   async syncProfile(sourceData, options = {}) {
     const { dry_run = false } = options;
 
@@ -82,6 +97,12 @@ export class LinkedInProfileSync extends BrowserProfileSync {
   }
 }
 
+/**
+ * @param {Record<string, unknown> & {
+ *   sourceData?: LinkedInSourceData;
+ *   dry_run?: boolean;
+ * }} [options]
+ */
 export async function syncToLinkedIn(options = {}) {
   const sync = new LinkedInProfileSync(options);
   try {

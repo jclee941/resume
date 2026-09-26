@@ -20,6 +20,11 @@ const LEVEL_PRIORITY = {
 
 /**
  * @typedef {{ country?: string, city?: string, asn?: number }} RequestGeo
+ * @typedef {{
+ *   requestId?: string, startTime?: number, method?: string, path?: string,
+ *   userAgent?: string, geo?: RequestGeo | null, extra?: Record<string, unknown>,
+ *   traceparent?: string, tracestate?: string, traceId?: string
+ * }} RequestContextOptions
  * @typedef {Record<string, unknown> & {
  *   http: { request: { method: string, id: string } },
  *   url: { path: string },
@@ -35,19 +40,7 @@ const LEVEL_PRIORITY = {
  */
 class RequestContext {
   /**
-   * @param {{ requestId?: string, startTime?: number, method?: string, path?: string,
-   *   userAgent?: string, geo?: RequestGeo | null, extra?: Record<string, unknown>,
-   *   traceparent?: string, tracestate?: string, traceId?: string }} [options]
-   * @param {string} [options.requestId]
-   * @param {number} [options.startTime]
-   * @param {string} [options.method]
-   * @param {string} [options.path]
-   * @param {string} [options.userAgent]
-   * @param {RequestGeo | null} [options.geo]
-   * @param {Record<string, unknown>} [options.extra]
-   * @param {string} [options.traceparent]
-   * @param {string} [options.tracestate]
-   * @param {string} [options.traceId]
+   * @param {RequestContextOptions} [options]
    */
   constructor(options = {}) {
     this.requestId = options.requestId || generateRequestId();

@@ -33,8 +33,8 @@ const FOREIGN_COMPANY_PACKET_PATH =
  * }} ApprovalMetadata
  *
  * @typedef {{
- *   id: string | number;
- *   source: string;
+ *   id?: string | number;
+ *   source?: string;
  *   matchScore: number;
  *   platform?: string;
  *   dryRun?: boolean;
@@ -71,7 +71,7 @@ const FOREIGN_COMPANY_PACKET_PATH =
  * @typedef {{
  *   id: string;
  *   stats: { jobsApproved: number; jobsRejected: number; [key: string]: unknown };
- *   steps: Array<Record<string, unknown>>;
+ *   steps: unknown[];
  *   [key: string]: unknown;
  * }} ApprovalWorkflow
  */
@@ -92,7 +92,7 @@ export function attachServerAtsCapability(job, capability) {
  * @param {ScoredJob[]} scoredJobs
  * @param {boolean} autoApprove
  * @param {number} autoApproveThreshold
- * @returns {Promise<{ approvedJobs: Array<Record<string, unknown>>; approvalResults: ApprovalResult[] }>}
+ * @returns {Promise<{ approvedJobs: Array<import('./workflow-notifications.js').ApprovedJob>; approvalResults: ApprovalResult[] }>}
  */
 export async function processApprovalGates(
   ctx,
@@ -237,14 +237,19 @@ function isApprovedResult(status) {
 
 /**
  * @param {ApprovalResult} result
- * @returns {Record<string, unknown>}
+ * @returns {import('./workflow-notifications.js').ApprovedJob}
  */
 function createApprovedJob(result) {
-  return attachWorkflowApproval(result.job, {
-    id: result.requestId,
-    status: result.status,
-    metadata: result.approvalMetadata,
-  });
+  return /** @type {import('./workflow-notifications.js').ApprovedJob} */ (
+    attachWorkflowApproval(result.job, {
+      id: result.requestId,
+      status: result.status,
+      metadata:
+        /** @type {import('./application-submission-gates.js').WorkflowApproval['metadata']} */ (
+          result.approvalMetadata
+        ),
+    })
+  );
 }
 
 /**

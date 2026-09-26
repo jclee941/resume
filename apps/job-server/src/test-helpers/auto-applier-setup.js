@@ -5,15 +5,46 @@ import { createTestServices } from './service-setup.js';
 // ========================
 
 /**
+ * @typedef {{
+ *   logger: unknown,
+ *   repository: unknown,
+ *   config: Record<string, unknown>,
+ * }} MockAutoApplierInstance
+ *
+ * @typedef {import('./service-setup.js').TestServicesOptions & {
+ *   maxDailyApplications?: number,
+ *   reviewThreshold?: number,
+ *   autoApplyThreshold?: number,
+ *   minMatchScore?: number,
+ *   autoApply?: boolean,
+ *   dryRun?: boolean,
+ *   delayBetweenApps?: number,
+ *   excludeCompanies?: string[],
+ *   excludeKeywords?: string[],
+ *   preferredCompanies?: string[],
+ *   keywords?: string[],
+ *   useAI?: boolean,
+ *   resumePath?: string | null,
+ * }} TestAutoApplierOptions
+ *
+ * @typedef {import('./service-setup.js').TestServices & {
+ *   autoApplier: import('../auto-apply/auto-applier.js').AutoApplier | MockAutoApplierInstance,
+ * }} TestAutoApplierResult
+ */
+
+/**
  * Create auto-applier with all mocks
- * @param {Object} [options]
- * @returns {Promise<Object>} AutoApplier instance and mocks
+ * @param {TestAutoApplierOptions} [options]
+ * @returns {Promise<TestAutoApplierResult>} AutoApplier instance and mocks
  */
 export async function createTestAutoApplier(options = {}) {
   const { logger, d1Client, fetch, env, repository, telegram, claude, wanted } =
     createTestServices(options);
 
   // Auto-applier will be imported dynamically to avoid circular dependencies
+  /**
+   * @type {typeof import('../auto-apply/auto-applier.js').AutoApplier | (new (opts: TestAutoApplierOptions & { repository?: unknown }) => MockAutoApplierInstance)}
+   */
   let AutoApplier;
   try {
     const module = await import('../auto-apply/auto-applier.js');
@@ -21,6 +52,9 @@ export async function createTestAutoApplier(options = {}) {
   } catch {
     // Fallback for when auto-applier isn't available
     AutoApplier = class MockAutoApplier {
+      /**
+       * @param {TestAutoApplierOptions & { repository?: unknown }} opts
+       */
       constructor(opts) {
         this.logger = opts.logger || logger;
         this.repository = opts.repository || repository;
@@ -43,24 +77,27 @@ export async function createTestAutoApplier(options = {}) {
     };
   }
 
-  const autoApplier = new AutoApplier({
-    logger,
-    repository,
-    d1Client,
-    maxDailyApplications: options.maxDailyApplications,
-    reviewThreshold: options.reviewThreshold,
-    autoApplyThreshold: options.autoApplyThreshold,
-    minMatchScore: options.minMatchScore,
-    autoApply: options.autoApply,
-    dryRun: options.dryRun !== undefined ? options.dryRun : true,
-    delayBetweenApps: options.delayBetweenApps,
-    excludeCompanies: options.excludeCompanies,
-    excludeKeywords: options.excludeKeywords,
-    preferredCompanies: options.preferredCompanies,
-    keywords: options.keywords,
-    useAI: options.useAI,
-    resumePath: options.resumePath,
-  });
+  const autoApplier =
+    new /** @type {new (options: Record<string, unknown>) => import('../auto-apply/auto-applier.js').AutoApplier | MockAutoApplierInstance} */ (
+      AutoApplier
+    )({
+      logger,
+      repository,
+      d1Client,
+      maxDailyApplications: options.maxDailyApplications,
+      reviewThreshold: options.reviewThreshold,
+      autoApplyThreshold: options.autoApplyThreshold,
+      minMatchScore: options.minMatchScore,
+      autoApply: options.autoApply,
+      dryRun: options.dryRun !== undefined ? options.dryRun : true,
+      delayBetweenApps: options.delayBetweenApps,
+      excludeCompanies: options.excludeCompanies,
+      excludeKeywords: options.excludeKeywords,
+      preferredCompanies: options.preferredCompanies,
+      keywords: options.keywords,
+      useAI: options.useAI,
+      resumePath: options.resumePath,
+    });
 
   return {
     autoApplier,
@@ -75,7 +112,7 @@ export async function createTestAutoApplier(options = {}) {
 
     /**
      * Get all mocks
-     * @returns {Object}
+     * @returns {import('./service-setup.js').TestServiceMocks & { repository: ReturnType<typeof import('./mocks.js').createMockRepository> }}
      */
     getMocks() {
       return {

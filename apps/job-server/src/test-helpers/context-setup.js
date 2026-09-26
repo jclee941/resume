@@ -12,16 +12,15 @@ import { createTestServices } from './service-setup.js';
  *   debug?: { (...args: unknown[]): void, mock: { calls: unknown[][] } },
  * }} MockTestLogger
  *
- * @typedef {{
+ * @typedef {import('./service-setup.js').TestServices & {
  *   logger: MockTestLogger,
- *   fetch: { (...args: unknown[]): Promise<unknown>, mock?: { calls?: unknown[][] } },
- *   [key: string]: unknown,
+ *   fetch: { mock?: { calls?: unknown[][] } },
  * }} TestContextServices
  */
 
 /**
  * Create test context with common utilities
- * @param {Object} [options]
+ * @param {import('./service-setup.js').TestServicesOptions} [options]
  * @returns {Object} Test context
  */
 export function createTestContext(options = {}) {
