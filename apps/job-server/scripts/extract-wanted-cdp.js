@@ -5,9 +5,9 @@
  */
 import WebSocket from 'ws';
 import { SessionManager } from '../src/shared/services/session/index.js';
+import { SESSION_FILE } from '../src/shared/services/session/session-manager/session-store-factory.js';
 
 const CHROME_DEBUG_PORT = process.env.CHROME_DEBUG_PORT || 9222;
-const SESSION_PATH = '/home/jclee/.OpenCode/data/wanted-session.json';
 
 async function getWebSocketUrl() {
   const res = await fetch(`http://127.0.0.1:${CHROME_DEBUG_PORT}/json/version`);
@@ -104,7 +104,7 @@ async function extractWantedCookies() {
     if (authCookie) {
       console.log(`  Auth: ${authCookie.name}`);
     }
-    console.log(`  Session saved to: ${SESSION_PATH}`);
+    console.log(`  Session saved to: ${SESSION_FILE}`);
   } finally {
     ws.close();
   }
