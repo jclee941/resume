@@ -18,6 +18,20 @@ const RETRY_CONFIG = {
   maxDelay: 30000,
 };
 
+/**
+ * @typedef {import('./browser-strategy-host.js').BrowserStrategyHost} BrowserStrategyHost
+ * @typedef {import('./browser-strategy-host.js').BrowserStrategyJob} BrowserStrategyJob
+ * @typedef {import('./wanted-retry.js').RetryContext} RetryContext
+ * @typedef {import('./wanted-retry.js').RetryJob} RetryJob
+ * @typedef {import('./wanted-retry.js').RetryPayload} RetryPayload
+ * @typedef {import('../../shared/errors/apply-errors.js').ErrorLike} ErrorLike
+ */
+
+/**
+ * @param {RetryContext} ctx
+ * @param {RetryJob} job
+ * @returns {(event: string, payload: unknown) => void}
+ */
 function createRetryReporter(ctx, job) {
   return (event, payload) => {
     if (typeof ctx?.statsService?.recordApplyRetryMetric === 'function') {
@@ -29,7 +43,7 @@ function createRetryReporter(ctx, job) {
     }
 
     if (event === 'execution_success' || event === 'execution_failed') {
-      const successRate = payload?.metrics?.successRate;
+      const successRate = /** @type {RetryPayload | undefined} */ (payload)?.metrics?.successRate;
       ctx.logger?.info?.(
         `[retry:jobkorea] ${event} for ${job.company}/${job.title} (successRate=${successRate ?? 0})`
       );
@@ -37,10 +51,19 @@ function createRetryReporter(ctx, job) {
   };
 }
 
+/**
+ * @param {unknown} error
+ */
 function classifyJobKoreaError(error) {
-  return classifyApplyError(error, { platform: 'jobkorea' });
+  return classifyApplyError(/** @type {ErrorLike | null | undefined} */ (error), {
+    platform: 'jobkorea',
+  });
 }
 
+/**
+ * @this {BrowserStrategyHost}
+ * @param {BrowserStrategyJob} job
+ */
 async function executeJobKoreaApply(job) {
   await this.page.goto(job.sourceUrl, { waitUntil: 'domcontentloaded' });
   await this.sleep(2000);
@@ -101,7 +124,10 @@ async function executeJobKoreaApply(job) {
     try {
       await this.page.screenshot({ path: `/tmp/jobkorea-debug-${Date.now()}.png` });
     } catch (screenshotError) {
-      this.logger.error('[debug-screenshot] JobKorea:', screenshotError.message);
+      this.logger.error(
+        '[debug-screenshot] JobKorea:',
+        screenshotError instanceof Error ? screenshotError.message : String(screenshotError)
+      );
     }
     throw new ValidationError('Apply button not found', { platform: 'jobkorea' });
   }
@@ -163,6 +189,10 @@ async function executeJobKoreaApply(job) {
   return { success: true, application };
 }
 
+/**
+ * @this {BrowserStrategyHost}
+ * @param {BrowserStrategyJob} job
+ */
 export async function applyToJobKorea(job) {
   try {
     return await withRetry(() => executeJobKoreaApply.call(this, job), {

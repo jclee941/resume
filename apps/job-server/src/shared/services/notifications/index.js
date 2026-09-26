@@ -62,8 +62,8 @@ class NotificationService {
 
   /**
    * 입사지원 실패 알림
-   * @param {string} companyName
-   * @param {string} jobTitle
+   * @param {string | undefined} companyName
+   * @param {string | undefined} jobTitle
    * @param {string} jobUrl
    * @param {unknown} error
    * @param {string} [platform]
