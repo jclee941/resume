@@ -3,98 +3,47 @@ import { describe, it } from 'node:test';
 
 import { evaluateAuditReport } from '../audit-production-dependencies.mjs';
 
-const acceptedReport = {
-  auditReportVersion: 2,
-  vulnerabilities: {
-    '@cloudflare/puppeteer': {
-      name: '@cloudflare/puppeteer',
-      severity: 'high',
-      isDirect: true,
-      via: ['@puppeteer/browsers'],
-      effects: [],
-      nodes: ['node_modules/@cloudflare/puppeteer'],
-    },
-    '@puppeteer/browsers': {
-      name: '@puppeteer/browsers',
-      severity: 'high',
-      isDirect: false,
-      via: ['extract-zip'],
-      effects: ['@cloudflare/puppeteer'],
-      nodes: ['node_modules/@puppeteer/browsers'],
-    },
-    'extract-zip': {
-      name: 'extract-zip',
-      severity: 'high',
-      isDirect: false,
-      via: [
-        {
-          name: 'extract-zip',
-          dependency: 'extract-zip',
-          url: 'https://github.com/advisories/GHSA-jmr9-qjv8-65gv',
-          severity: 'high',
-        },
-        {
-          name: 'extract-zip',
-          dependency: 'extract-zip',
-          url: 'https://github.com/advisories/GHSA-7pqw-9j4j-h8q3',
-          severity: 'high',
-        },
-      ],
-      effects: ['@puppeteer/browsers'],
-      nodes: ['node_modules/extract-zip'],
-    },
-  },
-};
+function vulnerability(name, severity) {
+  return {
+    name,
+    severity,
+    isDirect: true,
+    via: [
+      {
+        name,
+        dependency: name,
+        url: `https://github.com/advisories/GHSA-${name}`,
+        severity,
+      },
+    ],
+    effects: [],
+    nodes: [`node_modules/${name}`],
+  };
+}
 
 describe('production dependency audit policy', () => {
-  it('accepts only the documented Cloudflare Puppeteer advisory graph', () => {
-    const result = evaluateAuditReport(structuredClone(acceptedReport));
-
-    assert.deepEqual(result, {
-      acceptedAdvisories: ['GHSA-7pqw-9j4j-h8q3', 'GHSA-jmr9-qjv8-65gv'],
-      violations: [],
+  it('passes when no high or critical advisories remain', () => {
+    const result = evaluateAuditReport({
+      auditReportVersion: 2,
+      vulnerabilities: { 'minor-package': vulnerability('minor-package', 'moderate') },
     });
+
+    assert.deepEqual(result, { violations: [] });
   });
 
-  it('rejects an additional high-severity advisory', () => {
-    const report = structuredClone(acceptedReport);
-    report.vulnerabilities['unexpected-package'] = {
-      name: 'unexpected-package',
-      severity: 'high',
-      isDirect: true,
-      via: [],
-      effects: [],
-      nodes: ['node_modules/unexpected-package'],
-    };
+  it('rejects every high or critical advisory', () => {
+    const result = evaluateAuditReport({
+      auditReportVersion: 2,
+      vulnerabilities: {
+        'high-package': vulnerability('high-package', 'high'),
+        'critical-package': vulnerability('critical-package', 'critical'),
+      },
+    });
 
-    const result = evaluateAuditReport(report);
-
-    assert.match(result.violations.join('\n'), /unexpected-package/u);
-  });
-
-  it('rejects changes to the accepted dependency path', () => {
-    const report = structuredClone(acceptedReport);
-    report.vulnerabilities['@puppeteer/browsers'].effects = ['different-parent'];
-
-    const result = evaluateAuditReport(report);
-
-    assert.match(result.violations.join('\n'), /@puppeteer\/browsers.*graph/u);
-  });
-
-  it('rejects the graph when an accepted advisory disappears', () => {
-    const report = structuredClone(acceptedReport);
-    report.vulnerabilities['extract-zip'].via.pop();
-
-    const result = evaluateAuditReport(report);
-
-    assert.match(
-      result.violations.join('\n'),
-      /extract-zip: accepted vulnerability graph changed/u
-    );
-    assert.match(
-      result.violations.join('\n'),
-      /GHSA-7pqw-9j4j-h8q3: accepted advisory is missing/u
-    );
+    assert.deepEqual(result.violations, [
+      'high-package: high vulnerability',
+      'critical-package: critical vulnerability',
+    ]);
   });
 
   it('surfaces npm audit errors instead of a generic shape error', () => {
@@ -106,5 +55,9 @@ describe('production dependency audit policy', () => {
 
   it('rejects malformed audit output', () => {
     assert.throws(() => evaluateAuditReport({ auditReportVersion: 2 }), /vulnerabilities object/u);
+    assert.throws(
+      () => evaluateAuditReport({ vulnerabilities: { broken: { severity: 'high' } } }),
+      /broken is malformed/u
+    );
   });
 });
