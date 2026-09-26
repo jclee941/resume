@@ -1,9 +1,27 @@
 import { NotificationService, escapeHtml } from '../../services/notifications.js';
 
+/**
+ * @typedef {{
+ *   company: string;
+ *   position: string;
+ *   matchScore: number | string;
+ * }} ApprovedJob
+ */
+
+/**
+ * @param {{ env: Record<string, unknown> }} ctx
+ * @returns {NotificationService}
+ */
 export function createNotificationService(ctx) {
   return new NotificationService(ctx.env);
 }
 
+/**
+ * @param {NotificationService} notificationService
+ * @param {string} triggerType
+ * @param {string[]} platforms
+ * @returns {Promise<void>}
+ */
 export async function notifyNoJobs(notificationService, triggerType, platforms) {
   await notificationService.sendTelegramNotification({
     text:
@@ -14,6 +32,14 @@ export async function notifyNoJobs(notificationService, triggerType, platforms) 
   });
 }
 
+/**
+ * @param {NotificationService} notificationService
+ * @param {{ stats: { jobsFound: number; jobsApproved: number; jobsApplied: number; jobsFailed: number } }} workflow
+ * @param {string} triggerType
+ * @param {boolean} dryRun
+ * @param {ApprovedJob[]} approvedJobs
+ * @returns {Promise<void>}
+ */
 export async function notifyCompletion(
   notificationService,
   workflow,
@@ -40,6 +66,10 @@ export async function notifyCompletion(
   });
 }
 
+/**
+ * @param {ApprovedJob[]} approvedJobs
+ * @returns {string}
+ */
 function topApprovedJobs(approvedJobs) {
   return (
     approvedJobs

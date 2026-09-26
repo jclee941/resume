@@ -23,7 +23,41 @@ import {
 } from './platforms/index.js';
 import { UnifiedJobCrawler } from '../crawlers/unified/unified-job-crawler.js';
 
+/**
+ * @typedef {Record<string, unknown>} ResumeSourceData
+ *
+ * @typedef {{
+ *   keyword?: string;
+ *   categories?: string[];
+ *   experience?: string;
+ *   location?: string;
+ *   limit?: number;
+ *   minScore?: number;
+ *   maxResults?: number;
+ *   [key: string]: unknown;
+ * }} CrawlerProposalParams
+ *
+ * @typedef {{
+ *   info?: (message: string) => void;
+ *   [key: string]: unknown;
+ * }} SyncLogger
+ *
+ * @typedef {{
+ *   dry_run?: boolean;
+ *   resume_id?: string;
+ *   logger?: Console;
+ *   [key: string]: unknown;
+ * }} SyncPlatformParams
+ */
+
+/**
+ * @param {ResumeSourceData} sourceData
+ * @param {string[]} platforms
+ * @param {SyncPlatformParams} params
+ * @returns {Promise<{ success: boolean; diff: Record<string, unknown> }>}
+ */
 export async function diffAllPlatforms(sourceData, platforms, params) {
+  /** @type {Record<string, unknown>} */
   const results = {};
   for (const platform of platforms) {
     results[platform] = await diffPlatform(sourceData, platform, params);
@@ -31,6 +65,13 @@ export async function diffAllPlatforms(sourceData, platforms, params) {
   return { success: true, diff: results };
 }
 
+/**
+ * @param {string[]} platforms
+ * @param {CrawlerProposalParams} params
+ * @param {SyncLogger} logger
+ * @param {string} resumeDataPath
+ * @returns {Promise<{ proposals?: { count?: number; [key: string]: unknown }; [key: string]: unknown }>}
+ */
 export async function generateCrawlerProposals(platforms, params, logger, resumeDataPath) {
   const crawler = new UnifiedJobCrawler({ sources: platforms, resumePath: resumeDataPath });
   const result = await crawler.searchWithProposals({
@@ -46,6 +87,12 @@ export async function generateCrawlerProposals(platforms, params, logger, resume
   return result;
 }
 
+/**
+ * @param {ResumeSourceData} sourceData
+ * @param {string} platform
+ * @param {SyncPlatformParams} params
+ * @returns {Promise<unknown>}
+ */
 export async function diffPlatform(sourceData, platform, params) {
   switch (platform) {
     case 'wanted':
@@ -65,7 +112,14 @@ export async function diffPlatform(sourceData, platform, params) {
   }
 }
 
+/**
+ * @param {ResumeSourceData} sourceData
+ * @param {string[]} platforms
+ * @param {SyncPlatformParams} params
+ * @returns {Promise<{ success: boolean; dry_run: boolean | undefined; results: Record<string, unknown> }>}
+ */
 export async function syncAllPlatforms(sourceData, platforms, params) {
+  /** @type {Record<string, unknown>} */
   const results = {};
   for (const platform of platforms) {
     results[platform] = await syncPlatform(sourceData, platform, params);
@@ -73,6 +127,12 @@ export async function syncAllPlatforms(sourceData, platforms, params) {
   return { success: true, dry_run: params.dry_run, results };
 }
 
+/**
+ * @param {ResumeSourceData} sourceData
+ * @param {string} platform
+ * @param {SyncPlatformParams} params
+ * @returns {Promise<unknown>}
+ */
 export async function syncPlatform(sourceData, platform, params) {
   const mapped = mapToPlatformFormat(sourceData, platform);
   switch (platform) {
@@ -101,6 +161,10 @@ export async function syncPlatform(sourceData, platform, params) {
   }
 }
 
+/**
+ * @param {ResumeSourceData} source
+ * @param {string} platform
+ */
 export function mapToPlatformFormat(source, platform) {
   switch (platform) {
     case 'wanted':

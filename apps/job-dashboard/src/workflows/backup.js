@@ -1,5 +1,51 @@
+/// <reference path="../../../../packages/types/src/cloudflare-workers.d.ts" />
 import { sendTelegramNotification, escapeHtml } from '../services/notifications.js';
 import { WorkflowEntrypoint } from 'cloudflare:workers';
+
+/**
+ * @typedef {{
+ *   prepare(query: string): {
+ *     all(): Promise<{ results: Array<{ name: string; [key: string]: unknown }> }>;
+ *   };
+ * }} BackupDb
+ *
+ * @typedef {{
+ *   put(key: string, value: string, options?: { expirationTtl?: number; metadata?: Record<string, unknown> }): Promise<void>;
+ *   list(options?: { prefix?: string }): Promise<{ keys: Array<{ name: string }> }>;
+ *   delete(key: string): Promise<void>;
+ * }} BackupKv
+ *
+ * @typedef {{
+ *   JOB_DB: BackupDb;
+ *   SESSIONS: BackupKv;
+ *   TELEGRAM_BOT_TOKEN?: string;
+ *   TELEGRAM_CHAT_ID?: string;
+ *   [key: string]: unknown;
+ * }} BackupEnv
+ *
+ * @typedef {{
+ *   tables?: string[];
+ *   retention?: number;
+ * }} BackupParams
+ *
+ * @typedef {{
+ *   name: string;
+ *   count: number;
+ * }} BackupTableResult
+ *
+ * @typedef {{
+ *   step?: string;
+ *   missing?: string[];
+ *   table?: string;
+ *   error?: string;
+ * }} BackupErrorResult
+ *
+ * @typedef {{
+ *   tables: BackupTableResult[];
+ *   totalRows: number;
+ *   errors: BackupErrorResult[];
+ * }} BackupResults
+ */
 
 /**
  * Backup Workflow
@@ -7,17 +53,20 @@ import { WorkflowEntrypoint } from 'cloudflare:workers';
  * Exports D1 database tables to KV storage with retention management.
  * Supports selective table backup and automatic cleanup of old backups.
  *
- * @param {Object} params
- * @param {string[]} params.tables - Tables to backup (defaults to core tables)
- * @param {number} params.retention - Days to keep backups (default: 7)
+ * @extends {WorkflowEntrypoint<BackupEnv, BackupParams>}
  */
 export class BackupWorkflow extends WorkflowEntrypoint {
+  /**
+   * @param {import('cloudflare:workers').WorkflowEvent<BackupParams>} event
+   * @param {import('cloudflare:workers').WorkflowStep} step
+   */
   async run(event, step) {
     const { tables = ['applications', 'job_search_results', 'config'], retention = 7 } =
       event.payload || {};
 
     const startedAt = new Date().toISOString();
     const dateKey = new Date().toISOString().split('T')[0];
+    /** @type {BackupResults} */
     const results = {
       tables: [],
       totalRows: 0,
@@ -73,7 +122,7 @@ export class BackupWorkflow extends WorkflowEntrypoint {
               rows: [],
               count: 0,
               success: false,
-              error: error.message,
+              error: error instanceof Error ? error.message : String(error),
             };
           }
         }

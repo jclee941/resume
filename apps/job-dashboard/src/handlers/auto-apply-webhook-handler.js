@@ -3,8 +3,74 @@ import { normalizeError } from '@resume/shared/errors';
 import { sendTelegramNotification, escapeHtml } from '../services/notifications.js';
 
 /**
+ * @typedef {{
+ *   id: string | number;
+ *   is_default?: boolean;
+ *   [key: string]: unknown;
+ * }} WantedResume
+ *
+ * @typedef {{
+ *   id: string | number;
+ *   job_id: string;
+ *   position: string;
+ *   company: string;
+ *   match_score: number;
+ *   source_url?: string;
+ * }} CandidateJobRow
+ *
+ * @typedef {{
+ *   id: string | number;
+ *   company: string;
+ *   position: string;
+ *   matchScore: number;
+ * }} AppliedResult
+ *
+ * @typedef {{
+ *   id: string | number;
+ *   company: string;
+ *   position: string;
+ *   error: string;
+ * }} FailedResult
+ *
+ * @typedef {{
+ *   id: string | number;
+ *   company: string;
+ *   position: string;
+ *   matchScore: number;
+ *   reason: string;
+ * }} SkippedResult
+ *
+ * @typedef {{
+ *   applied: AppliedResult[];
+ *   failed: FailedResult[];
+ *   skipped: SkippedResult[];
+ * }} AutoApplyResults
+ *
+ * @typedef {{
+ *   prepare(query: string): {
+ *     bind(...values: unknown[]): {
+ *       all<T = CandidateJobRow>(): Promise<{ results?: T[] }>;
+ *       run(): Promise<unknown>;
+ *     };
+ *   };
+ * }} AutoApplyDb
+ *
+ * @typedef {{
+ *   getCookies(platform: string): Promise<string | null>;
+ * }} AutoApplyAuth
+ *
+ * @typedef {{
+ *   DB?: AutoApplyDb;
+ *   TELEGRAM_BOT_TOKEN?: string;
+ *   TELEGRAM_CHAT_ID?: string | number;
+ *   [key: string]: unknown;
+ * }} AutoApplyEnv
+ */
+
+/**
  * Handler for auto-apply operations.
  * Automatically applies to jobs matching criteria.
+ * @extends {BaseHandler<AutoApplyEnv, AutoApplyAuth>}
  */
 export class AutoApplyWebhookHandler extends BaseHandler {
   /**
@@ -22,7 +88,7 @@ export class AutoApplyWebhookHandler extends BaseHandler {
     }
 
     try {
-      const cookies = await this.auth.getCookies('wanted');
+      const cookies = await /** @type {AutoApplyAuth} */ (this.auth).getCookies('wanted');
       if (!cookies) {
         return this.jsonResponse(
           {
@@ -42,6 +108,7 @@ export class AutoApplyWebhookHandler extends BaseHandler {
         throw new Error(`Failed to list resumes: ${listResponse.status}`);
       }
 
+      /** @type {{ data?: WantedResume[] }} */
       const listData = await listResponse.json();
       const resumes = listData.data || [];
       const mainResume = resumes.find((r) => r.is_default) || resumes[0];
@@ -69,6 +136,7 @@ export class AutoApplyWebhookHandler extends BaseHandler {
         .bind(minMatchScore, maxApplications)
         .all();
 
+      /** @type {CandidateJobRow[]} */
       const candidates = jobs.results || [];
 
       if (candidates.length === 0) {
@@ -82,6 +150,7 @@ export class AutoApplyWebhookHandler extends BaseHandler {
         });
       }
 
+      /** @type {AutoApplyResults} */
       const results = { applied: [], failed: [], skipped: [] };
       const now = new Date().toISOString();
 

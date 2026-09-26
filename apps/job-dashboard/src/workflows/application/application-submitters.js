@@ -3,10 +3,52 @@ import { readPlatformSession } from '../../services/platform-session.js';
 import { submitToAtsDryRunOnly } from './application-platform-catalog.js';
 import { submitWithBrowserRendering } from './browser-rendering-submit.js';
 
+/**
+ * @typedef {{
+ *   id?: string;
+ *   [key: string]: unknown;
+ * }} SubmitResume
+ *
+ * @typedef {{
+ *   env: Record<string, unknown>;
+ *   [key: string]: unknown;
+ * }} SubmitContext
+ *
+ * @typedef {{
+ *   success: boolean;
+ *   error?: string | null;
+ *   platform?: string;
+ *   platformResponse?: unknown;
+ *   requiresJobServer?: boolean;
+ *   requiresBrowserAutomation?: boolean;
+ *   [key: string]: unknown;
+ * }} SubmitResult
+ *
+ * @typedef {{
+ *   sourceUrl?: string;
+ *   job?: Record<string, unknown>;
+ * }} SubmitterOptions
+ *
+ * @typedef {{
+ *   platform: string;
+ *   jobId: string;
+ *   sourceUrl?: string;
+ *   resume?: SubmitResume | null;
+ *   coverLetter?: string;
+ *   job?: Record<string, unknown>;
+ * }} SubmitApplicationParams
+ */
+
+/**
+ * @param {SubmitContext} ctx
+ * @param {SubmitApplicationParams} params
+ * @returns {Promise<SubmitResult>}
+ */
 export async function submitApplication(
   ctx,
   { platform, jobId, sourceUrl, resume, coverLetter, job }
 ) {
+  /** @type {Record<string, () => Promise<SubmitResult> | SubmitResult>} */
   const submitters = {
     wanted: () => submitToWanted(ctx, jobId, resume, coverLetter),
     linkedin: () => submitToLinkedIn(ctx, jobId, resume, coverLetter),
@@ -24,9 +66,20 @@ export async function submitApplication(
   try {
     return await submitter();
   } catch (error) {
-    return { success: false, error: error.message };
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    };
   }
 }
+
+/**
+ * @param {SubmitContext} ctx
+ * @param {string} jobId
+ * @param {SubmitResume | null | undefined} resume
+ * @param {string} [coverLetter]
+ * @returns {Promise<SubmitResult>}
+ */
 export async function submitToWanted(ctx, jobId, resume, coverLetter) {
   const session = await readPlatformSession(ctx.env, 'wanted');
   if (!session) return { success: false, error: 'No Wanted session' };
@@ -48,12 +101,37 @@ export async function submitToWanted(ctx, jobId, resume, coverLetter) {
   }
   return { success: true, platformResponse: await response.json() };
 }
+
+/**
+ * @param {SubmitContext} _ctx
+ * @param {string} _jobId
+ * @param {SubmitResume | null | undefined} _resume
+ * @param {string} [_coverLetter]
+ * @returns {Promise<SubmitResult>}
+ */
 export async function submitToLinkedIn(_ctx, _jobId, _resume, _coverLetter) {
   return browserAutomationRequired('linkedin', 'LinkedIn Easy Apply');
 }
+
+/**
+ * @param {SubmitContext} _ctx
+ * @param {string} _jobId
+ * @param {SubmitResume | null | undefined} _resume
+ * @param {string} [_coverLetter]
+ * @returns {Promise<SubmitResult>}
+ */
 export async function submitToRemember(_ctx, _jobId, _resume, _coverLetter) {
   return browserAutomationRequired('remember', 'Remember application');
 }
+
+/**
+ * @param {SubmitContext} ctx
+ * @param {string} jobId
+ * @param {SubmitResume | null | undefined} resume
+ * @param {string} [coverLetter]
+ * @param {SubmitterOptions} [options]
+ * @returns {Promise<SubmitResult>}
+ */
 export async function submitToJobKorea(ctx, jobId, resume, coverLetter, options = {}) {
   return submitWithBrowserRendering(ctx, {
     platform: 'jobkorea',
@@ -64,6 +142,15 @@ export async function submitToJobKorea(ctx, jobId, resume, coverLetter, options 
     job: options.job,
   });
 }
+
+/**
+ * @param {SubmitContext} ctx
+ * @param {string} jobId
+ * @param {SubmitResume | null | undefined} resume
+ * @param {string} [coverLetter]
+ * @param {SubmitterOptions} [options]
+ * @returns {Promise<SubmitResult>}
+ */
 export async function submitToSaramin(ctx, jobId, resume, coverLetter, options = {}) {
   return submitWithBrowserRendering(ctx, {
     platform: 'saramin',
@@ -74,6 +161,12 @@ export async function submitToSaramin(ctx, jobId, resume, coverLetter, options =
     job: options.job,
   });
 }
+
+/**
+ * @param {string} platform
+ * @param {string} label
+ * @returns {SubmitResult}
+ */
 function browserAutomationRequired(platform, label) {
   return {
     success: false,

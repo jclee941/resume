@@ -5,17 +5,60 @@
 
 import { NotificationService } from '../services/notifications.js';
 
-/** @typedef {import('@resume/types').NotificationJob} NotificationJob */
+/**
+ * @typedef {import('@resume/types').NotificationJob & {
+ *   lastError?: string;
+ * }} DlqNotificationJob
+ */
+
+/**
+ * @typedef {{
+ *   id?: string;
+ *   body: DlqNotificationJob;
+ *   attempts: number;
+ *   ack(): void;
+ *   retry?(options?: unknown): void;
+ * }} QueueMessage
+ */
+
+/**
+ * @typedef {{
+ *   queue?: string;
+ *   messages: readonly QueueMessage[] | QueueMessage[];
+ * }} QueueMessageBatch
+ */
+
+/**
+ * @typedef {{
+ *   send(message: unknown, options?: { delaySeconds?: number }): Promise<void>;
+ * }} NotificationQueueBinding
+ */
+
+/**
+ * @typedef {{
+ *   put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
+ * }} RateLimitKvBinding
+ */
+
+/**
+ * @typedef {import('../services/notifications.js').NotificationEnv & {
+ *   NOTIFICATION_QUEUE: NotificationQueueBinding;
+ *   RATE_LIMIT_KV: RateLimitKvBinding;
+ *   TELEGRAM_BOT_TOKEN?: string;
+ *   TELEGRAM_CHAT_ID?: string;
+ *   [key: string]: unknown;
+ * }} DlqEnv
+ */
 
 const MAX_CRITICAL_RETRIES = 5;
 const BACKOFF_BASE_SECONDS = 30;
 
-/**
- * DLQ consumer for failed notifications
- * @param {MessageBatch<NotificationJob>} batch
- * @param {Env} env
- */
 export default {
+  /**
+   * DLQ consumer for failed notifications
+   * @param {QueueMessageBatch} batch
+   * @param {DlqEnv} env
+   */
   async queue(batch, env) {
     const notificationService = new NotificationService(env);
     const results = {
@@ -63,7 +106,7 @@ export default {
       } catch (error) {
         console.error('DLQ processing failed:', {
           jobId: job.id,
-          error: error.message,
+          error: error instanceof Error ? error.message : String(error),
           timestamp: new Date().toISOString(),
         });
 
@@ -95,9 +138,9 @@ function calculateBackoff(attempts) {
 
 /**
  * Log failed notification to KV for analysis
- * @param {NotificationJob} job
+ * @param {DlqNotificationJob} job
  * @param {number} attempts
- * @param {Env} env
+ * @param {DlqEnv} env
  */
 async function logFailedNotification(job, attempts, env) {
   const logEntry = {
@@ -119,12 +162,12 @@ async function logFailedNotification(job, attempts, env) {
 
 /**
  * Alert admin about critical notification failure
- * @param {NotificationJob} job
+ * @param {DlqNotificationJob} job
  * @param {number} attempts
- * @param {Env} env
+ * @param {DlqEnv} _env
  * @param {NotificationService} service
  */
-async function alertAdmin(job, attempts, env, service) {
+async function alertAdmin(job, attempts, _env, service) {
   const message = `
 🚨 <b>Critical Notification Failed</b>
 
@@ -143,6 +186,9 @@ Manual intervention required.
       parse_mode: 'HTML',
     });
   } catch (error) {
-    console.error('Failed to send admin alert:', error.message);
+    console.error(
+      'Failed to send admin alert:',
+      error instanceof Error ? error.message : String(error)
+    );
   }
 }
