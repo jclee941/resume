@@ -30,7 +30,7 @@ Three overlapping profile sync implementations exist:
 
 ### Phase 1: Create Shared Sync Library
 
-Create `packages/shared/src/sync/` with:
+Create proposed sync package under `packages/shared/src/` with:
 
 - `sync-engine.js` - Core sync orchestration
 - `platform-adapters/` - Platform-specific implementations

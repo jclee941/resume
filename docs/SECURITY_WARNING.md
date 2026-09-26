@@ -10,7 +10,7 @@
 - ✅ **Configuration**: `.gitleaks.toml` with allowlists for redacted docs and
   placeholder patterns
 - ✅ **npm audit**: Runs alongside gitleaks in `security-scan` job
-- ✅ **Docs redacted**: All secret values in `docs/reports/ALL_SYSTEMS_REPORT.md`
+- ✅ **Docs redacted**: All historical secret values in documentation
   replaced with `[REDACTED_ROTATE_REQUIRED]`
 - ✅ **`.env` files gitignored**: `.env`, `.env.secrets`, `.env.local`,
   `.dev.vars` all in `.gitignore`

@@ -15,7 +15,7 @@ and local preflight checks.
 | --------------------- | ------------------------------------------- | --------------------------------------------------- |
 | Wrangler secret guard | `check-wrangler-secrets.go`                 | fails when secret-like values are committed as vars |
 | Vars/secrets policy   | `docs/security/wrangler-vars-vs-secrets.md` | canonical classification guidance                   |
-| Cloudflare config     | `apps/portfolio/wrangler.jsonc`             | production Worker binding surface                   |
+| Cloudflare config     | `wrangler.jsonc`                            | production Worker binding surface                   |
 
 ## CONVENTIONS
 

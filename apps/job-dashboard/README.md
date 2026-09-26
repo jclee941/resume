@@ -52,7 +52,7 @@ production deploys are intentionally disabled.
 
 ```bash
 # View live logs for the merged worker
-npx wrangler tail --config apps/portfolio/wrangler.jsonc --env production
+npx wrangler tail --config wrangler.jsonc --env production
 
 # View deployment history
 npx wrangler deployments list
@@ -75,8 +75,8 @@ npx wrangler secret put JWT_SECRET
 
 ### Binding Shape (informational)
 
-> ℹ️ `apps/job-dashboard/wrangler.jsonc` was removed per ADR 0009 — these
-> bindings are now declared in `apps/portfolio/wrangler.jsonc` on the merged
+> ℹ️ The standalone dashboard Wrangler config was removed per ADR 0009 — these
+> bindings are now declared in root `wrangler.jsonc` on the merged
 > `resume` worker. The snippet below is kept for reference of what bindings
 > the dashboard module expects.
 

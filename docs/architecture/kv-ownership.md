@@ -144,10 +144,10 @@ and are considered shared records. Modifying their schema requires updating
   `compatibility_flags` to a shared base; this doc evolves to reference that
   base.
 - **SSOT-035** (Rate limit consolidation) — moves the `RATE_LIMIT_KV` access
-  pattern from app-local middleware to `packages/shared/rate-limit/`. This
+  pattern from app-local middleware to `packages/shared/src/rate-limit/`. This
   doc's prefix conventions become enforceable as primitive options.
 - **SSOT-052** (`Env` interface SSOT) — types these bindings in
-  `packages/contracts/src/env.ts` so collisions are visible at type-check time.
+  `packages/contracts/src/env.js` so collisions are visible at type-check time.
 
 ---
 

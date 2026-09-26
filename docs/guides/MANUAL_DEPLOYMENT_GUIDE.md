@@ -546,9 +546,9 @@ curl -X POST https://resume.jclee.me/api/vitals \
 **Worker Generation**:
 
 - Script: `apps/portfolio/generate-worker.js`
-- Input: `apps/portfolio/index.html`, `apps/portfolio/styles.css`,
-  `apps/portfolio/data.json`, `apps/portfolio/og-image.png`
-- Output: `apps/portfolio/worker.js` (150.06 KB)
+- Input: `apps/portfolio/index.html`, styles in `apps/portfolio/src/styles/`,
+  data from `packages/data/resumes/master/resume_data.json`, `apps/portfolio/og-image.png`
+- Output: `apps/portfolio/worker.js` (generated; never hand-edit)
 - Process: CSS injection, data injection, OG embedding, minification, CSP
   hashing
 

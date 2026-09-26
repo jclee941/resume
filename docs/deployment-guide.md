@@ -92,7 +92,7 @@ The deployment process follows a strict unidirectional data flow:
 
 1. **Data Update**: Modify `resume_data.json`.
 2. **Sync**: Run `npm run sync:data`. This propagates the JSON to
-   `apps/portfolio/data.json`.
+   `apps/portfolio/` localized data files (`data.json`, `data_en.json`, `data_ja.json`).
 3. **Generation**: `node generate-worker.js` runs. It:
    - Reads `index.html`.
    - Inlines all modular CSS from `src/styles/`.
@@ -182,10 +182,10 @@ Your `.env` file contains 6 primary sections:
 ### 3.3 Wrangler Configuration
 
 The monorepo uses a single active Wrangler configuration file: the root
-`wrangler.jsonc`. The previously separate `apps/job-dashboard/wrangler.jsonc`
+`wrangler.jsonc`. The previously separate dashboard Wrangler config
 was removed when the dashboard was merged in-process into the portfolio
 Worker (see [ADR 0009](adr/0009-single-worker-consolidation.md)), and
-`apps/portfolio/wrangler.jsonc` was later folded into the root config as part
+the portfolio Wrangler config was later folded into the root config as part
 of a worker-configuration SSOT consolidation.
 
 ### 3.4 Managing Production Secrets

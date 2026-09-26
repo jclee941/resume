@@ -86,7 +86,7 @@ Format: `{type}/{short-description}`
 | `ci/`       | CI/CD changes        |
 
 Examples: `feat/parallel-crawling`, `fix/csp-hash-mismatch`,
-`docs/deployment-guide`
+`docs/deployment-guide.md`
 
 ## Commit Messages
 

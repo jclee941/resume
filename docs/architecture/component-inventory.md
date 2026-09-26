@@ -13,11 +13,11 @@
 
 ## Key Files & Directories
 
-- `apps/portfolio/worker.js`: Main entry point for the portfolio application
-  (generated).
+- `apps/portfolio/entry.js`: Main entry point for the portfolio application
+  (Worker).
 - `apps/portfolio/generate-worker.js`: Build script for inlining assets and
   calculating CSP.
-- `packages/cli/src/index.js`: Entry point for the Resume CLI.
+- `packages/cli/bin/run.js`: Entry point for the Resume CLI.
 - `packages/data/resumes/master/resume_data.json`: SSoT resume data.
 - `tests/e2e/`: Playwright end-to-end tests.
 

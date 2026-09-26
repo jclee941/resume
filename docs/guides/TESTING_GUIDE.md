@@ -419,12 +419,12 @@ git push origin master
 
 ### Test Fixtures
 
-Location: `tests/fixtures/`
+Location: `tests/e2e/fixtures/`
 
 **Example**:
 
 ```javascript
-// tests/fixtures/mock-data.json
+// tests/e2e/fixtures/mock-data.js
 {
   "resume": [
     { "title": "Test Project", ... }

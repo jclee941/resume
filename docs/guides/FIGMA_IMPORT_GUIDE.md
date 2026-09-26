@@ -543,5 +543,5 @@ Before finishing your Figma design system:
 
 For questions or help, refer to:
 
-- `docs/architecture/DESIGN_SYSTEM.md` - Full design system documentation
+- `apps/portfolio/DESIGN.md` - Full design system documentation
 - `docs/figma-tokens.json` - Design tokens for Tokens Studio plugin

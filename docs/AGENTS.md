@@ -15,24 +15,23 @@ analysis/report output.
 ```text
 docs/
 ├── adr/            # numbered architecture decisions
-├── analysis/       # audits, gap analysis, generated deep reviews
 ├── api/            # API-specific reference docs
 ├── architecture/   # current system shape and implementation docs
+├── conventions/    # shared engineering conventions and style guides
 ├── guides/         # operational how-to guides
-├── planning/       # roadmap and implementation planning
-├── reports/        # historical completion/status reports
-└── thoughts/       # design explorations and working notes
+├── runbooks/       # incident and operator runbooks
+└── security/       # secret management and security procedures
 ```
 
 ## WHERE TO LOOK
 
-| Task                           | Location                          | Notes                                                    |
-| ------------------------------ | --------------------------------- | -------------------------------------------------------- |
-| Durable architecture decisions | `docs/adr/`                       | numbered ADRs + template                                 |
-| Current system shape           | `docs/architecture/`              | verify against live code before trusting generated files |
-| Operator runbooks              | `docs/guides/`                    | deployment, Cloudflare, monitoring, testing              |
-| Planning / scope               | `docs/planning/`                  | roadmap and execution plans                              |
-| Historical audits              | `docs/analysis/`, `docs/reports/` | useful context, not normative by default                 |
+| Task                           | Location                         | Notes                                                    |
+| ------------------------------ | -------------------------------- | -------------------------------------------------------- |
+| Durable architecture decisions | `docs/adr/`                      | numbered ADRs + template                                 |
+| Current system shape           | `docs/architecture/`             | verify against live code before trusting generated files |
+| Operator runbooks              | `docs/guides/`, `docs/runbooks/` | deployment, Cloudflare, monitoring, testing, runbooks    |
+| Shared conventions             | `docs/conventions/`              | architecture rules, resume phrasing guides               |
+| Security procedures            | `docs/security/`                 | secret rotation, posture, and credential guides          |
 
 ## CONVENTIONS
 
@@ -41,14 +40,14 @@ docs/
 - `docs/adr/` uses numbered filenames plus a template-driven format.
 - `docs/guides/` contains operational docs and keeps many legacy uppercase
   filenames; preserve existing naming where already established.
-- `docs/analysis/` and `docs/reports/` often contain generated or time-bound
-  material; treat them as historical context unless promoted elsewhere.
+- Historical audits and session reports have been archived; consult Git history
+  for time-bound context unless promoted elsewhere.
 - Prefer relative links when linking within the repo.
 
 ## ANTI-PATTERNS
 
 - Never let docs drift silently when code/workflow ownership changes.
-- Never use `docs/analysis/` or `docs/reports/` as the sole source of truth for
+- Never use historical records or audits as the sole source of truth for
   live behavior.
 - Never duplicate the same normative rule across multiple docs when one
   canonical file can own it.

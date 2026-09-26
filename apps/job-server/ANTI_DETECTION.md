@@ -146,7 +146,7 @@ class SessionManager {
 
 ### Current Approach: Puppeteer-Extra + Stealth Plugins
 
-**Location**: `scripts/quick-login.js` (Puppeteer-based)
+**Location**: `scripts/extract-cookies-cdp.js` (DevTools Protocol)
 
 ```javascript
 const puppeteer = require('puppeteer-extra');
@@ -425,7 +425,7 @@ curl https://resume.jclee.me/api/health
 
 ### "Session expired"
 
-1. Run `node scripts/quick-login.js` to refresh
+1. Run `node scripts/extract-cookies-cdp.js` to refresh
 2. Check `~/.opencode/data/sessions.json` TTL
 3. Manual extract cookies if needed
 4. Restart service after refresh
