@@ -11,14 +11,15 @@ export const RESUME_SYNC_CRON = '0 21 * * *';
  * - RESUME_SYNC_CRON  -> ResumeSyncWorkflow (already invocable via HTTP route + queue).
  *   Defaults to dryRun so a scheduled run never pushes to job platforms until the
  *   owner opts in via RESUME_SYNC_CRON_DRY_RUN=false. Refreshes the Wanted
- *   `auth:wanted` KV session first (best-effort — a mint failure must not
- *   abort workflow creation; the workflow simply skips Wanted if it's stale).
+ *   `auth:wanted` KV session first (best-effort — a mint failure is logged but
+ *   must not abort workflow creation; export-wanted then fails with the reason).
  * - anything else     -> the existing cliproxy auto-apply schedule.
  */
 export async function scheduled(controller, env, ctx) {
   if (controller?.cron === RESUME_SYNC_CRON) {
     if (!env.RESUME_SYNC_WORKFLOW) return;
-    await refreshWantedSession(env).catch(() => {});
+    const refresh = await refreshWantedSession(env);
+    if (!refresh.ok) console.warn('[cron] Wanted session refresh failed:', refresh.error);
     const dryRun = String(env.RESUME_SYNC_CRON_DRY_RUN ?? 'true').toLowerCase() !== 'false';
     const run = env.RESUME_SYNC_WORKFLOW.create({
       params: { sections: ['all'], dryRun, source: 'cron' },

@@ -1,11 +1,13 @@
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 
-export async function getMasterResumeData(env, resumeId) {
-  const data = await env.JOB_DB.prepare('SELECT data FROM resumes WHERE id = ?')
+export async function getMasterResumeRecord(env, resumeId) {
+  const row = await env.JOB_DB.prepare('SELECT data, target_resume_id FROM resumes WHERE id = ?')
     .bind(resumeId)
     .first();
 
-  return data?.data ? JSON.parse(data.data) : null;
+  return row?.data
+    ? { data: JSON.parse(row.data), targetResumeId: row.target_resume_id || null }
+    : null;
 }
 
 export async function exportFromPlatform(env, platform, resumeId) {
@@ -24,6 +26,10 @@ export async function exportFromPlatform(env, platform, resumeId) {
 }
 
 export async function exportFromWanted(env, resumeId) {
+  if (!resumeId) {
+    throw new Error('No Wanted resume ID: set targetResumeId on the master resume');
+  }
+
   const session = await env.SESSIONS.get('auth:wanted');
   if (!session) {
     throw new Error('No Wanted session');
