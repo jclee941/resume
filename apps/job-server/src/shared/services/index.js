@@ -40,7 +40,6 @@ export {
   ServiceLocator,
   DynamicImporter,
   StreamProcessor,
-  getCrawlerRegistry,
   lazy,
 } from './lazy-loader.js';
 
