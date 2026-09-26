@@ -1,12 +1,10 @@
 /**
  * @fileoverview Browser-page automation helpers for the JobKorea login flow:
- * form fill, visible-submit click, login/CAPTCHA detection, CAPTCHA image
- * download, and post-login cookie collection. Kept separate from
- * mint-session.js so that module can stay focused on orchestration + the
- * cliproxy vision call. Ported from
+ * form fill, visible-submit click, login/CAPTCHA detection, and post-login
+ * cookie collection. Kept separate from mint-session.js so that module can
+ * stay focused on login orchestration. Ported from
  * apps/job-server/scripts/jobkorea-session/{form-filler,captcha-handler,
- * auth-checker}.js and
- * apps/job-server/scripts/profile-sync/jobkorea-handler/captcha-image.js.
+ * auth-checker}.js.
  * @module handlers/jobkorea/page-helpers
  */
 
@@ -17,10 +15,6 @@ const EMAIL_SELECTORS = [
 ];
 const PASSWORD_SELECTORS = ['input[name="M_PWD"]', 'input[type="password"]'];
 export const SUBMIT_SELECTOR = 'button[type="submit"], input[type="submit"]';
-export const CAPTCHA_SUBMIT_SELECTOR =
-  'button[type="submit"], input[type="submit"], button, input[type="button"]';
-const CAPTCHA_INPUT_SELECTOR =
-  '#gtxt, input[name="gtxt"], input[id*="captcha" i], input[name*="captcha" i]';
 
 /**
  * @param {import('@cloudflare/puppeteer').Page} page
@@ -169,74 +163,6 @@ export async function detectCaptcha(page) {
     },
     false
   );
-}
-
-/**
- * @param {import('@cloudflare/puppeteer').Page} page
- * @returns {Promise<string | null>}
- */
-export async function findCaptchaImageUrl(page) {
-  return page.evaluate(() => {
-    const direct = /** @type {HTMLImageElement | null} */ (
-      document.querySelector('img[src*="captcha"]')
-    );
-    if (direct?.src) return direct.src;
-    const gtxt = document.querySelector('#gtxt, input[name="gtxt"]');
-    const container = gtxt?.closest('div, td, li, p');
-    const img = /** @type {HTMLImageElement | null | undefined} */ (
-      container?.querySelector('img')
-    );
-    if (img?.src) return img.src;
-    if (gtxt) return 'https://www.jobkorea.co.kr/login/captcha.asp';
-    return null;
-  });
-}
-
-/**
- * @param {import('@cloudflare/puppeteer').Page} page
- * @param {string} src
- * @returns {Promise<{ base64: string, mime: string }>}
- */
-export async function downloadCaptchaImage(page, src) {
-  return page.evaluate(
-    /** @param {string} imageSrc */
-    async (imageSrc) => {
-      const res = await fetch(imageSrc, { credentials: 'include' });
-      const blob = await res.blob();
-      const dataUrl = /** @type {string} */ (
-        await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(/** @type {string} */ (reader.result));
-          reader.readAsDataURL(blob);
-        })
-      );
-      const mimeMatch = dataUrl.match(/^data:([^;]+);/);
-      return { base64: dataUrl.split(',')[1], mime: mimeMatch ? mimeMatch[1] : 'image/bmp' };
-    },
-    src
-  );
-}
-
-/**
- * @param {import('@cloudflare/puppeteer').Page} page
- * @param {string} value
- * @returns {Promise<void>}
- */
-export async function fillCaptchaInput(page, value) {
-  const filled = await page.evaluate(
-    /** @param {{ selector: string, value: string }} args */
-    ({ selector, value: text }) => {
-      const el = /** @type {HTMLInputElement | null} */ (document.querySelector(selector));
-      if (!el) return false;
-      el.focus();
-      el.value = text;
-      el.dispatchEvent(new Event('input', { bubbles: true }));
-      el.dispatchEvent(new Event('change', { bubbles: true }));
-      return true;
-    },
-    { selector: CAPTCHA_INPUT_SELECTOR, value }
-  );
-  if (!filled) throw new Error('JobKorea CAPTCHA input not found');
 }
 
 /**

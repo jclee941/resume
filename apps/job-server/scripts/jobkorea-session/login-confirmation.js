@@ -1,10 +1,8 @@
 import { isLoggedIn, getDiagnostics } from './auth-checker.js';
-import { isCliproxyConfigured } from '../profile-sync/jobkorea-handler/captcha-solver.js';
 import { isTransientPageError, sleep, withTimeout } from './page-utils.js';
 import {
   buildCaptchaInstructions,
   detectCaptcha,
-  tryAutomaticCaptchaSolve,
   waitForManualCaptchaSolve,
 } from './captcha-handler.js';
 
@@ -79,23 +77,10 @@ export async function waitForLoginConfirmation(
     );
 
     if (captchaDetected) {
-      const solveResult = await tryAutomaticCaptchaSolve(page, { log, submitAfterSolve: true });
-      if (solveResult.solved) {
-        continue;
-      }
-
       if (headlessEnv === 'true') {
-        if (!isCliproxyConfigured()) {
-          throw new Error(
-            'CAPTCHA/2FA detected but CLIPROXY_BASE is not configured. ' +
-              'Set CLIPROXY_BASE and CLIPROXY_API_KEY environment variables to enable automatic CAPTCHA solving, ' +
-              'or run with HEADLESS=false to solve manually in a browser window.'
-          );
-        }
-        throw new Error(buildCaptchaInstructions(solveResult.reason));
+        throw new Error(buildCaptchaInstructions());
       }
 
-      log(`Automatic CAPTCHA solve failed: ${solveResult.reason}. Falling back to manual solve.`);
       await waitForManualCaptchaSolve(page, { log });
       return true;
     }

@@ -41,9 +41,7 @@ import {
 import {
   handleApproveCommand,
   handleHelpCommand,
-  handlePauseCommand,
   handleRejectCommand,
-  handleResumeCommand,
   handleStatusCommand,
   handleTelegramCallback,
   handleTelegramCommand,
@@ -288,22 +286,6 @@ export class NotificationService {
    */
   async handleRejectCommand(chatId, args) {
     return handleRejectCommand(this, chatId, args);
-  }
-
-  /**
-   * @param {string | number | undefined} [chatId]
-   * @returns {Promise<unknown>}
-   */
-  async handlePauseCommand(chatId) {
-    return handlePauseCommand(this, chatId);
-  }
-
-  /**
-   * @param {string | number | undefined} [chatId]
-   * @returns {Promise<unknown>}
-   */
-  async handleResumeCommand(chatId) {
-    return handleResumeCommand(this, chatId);
   }
 
   /**

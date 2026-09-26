@@ -153,11 +153,7 @@ export function validateWorkerConfiguration(input) {
     [{ pattern: 'resume.jclee.me', custom_domain: true }],
     'production routes mismatch'
   );
-  assert.deepEqual(
-    config.triggers?.crons,
-    ['0 23 * * *', '0 21 * * *'],
-    'production cron mismatch'
-  );
+  assert.deepEqual(config.triggers?.crons, ['0 21 * * *'], 'production cron mismatch');
   assert.equal(config.ai?.binding, 'AI', 'AI binding missing');
   assert.equal(config.browser?.binding, 'MYBROWSER', 'Browser binding missing');
   requireBindings(config, 'd1_databases', ['DB', 'JOB_DB']);

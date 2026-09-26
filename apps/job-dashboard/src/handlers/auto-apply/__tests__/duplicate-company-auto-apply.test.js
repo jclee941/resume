@@ -1,7 +1,6 @@
 import { describe, it, mock } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { createAutoApplyClients } from '../client-factory.js';
 import { isCompanyAlreadyApplied } from '../duplicate-company.js';
 import { runAutoApply } from '../run-handler.js';
 
@@ -59,16 +58,7 @@ function createD1WithExistingCompany(company) {
   };
 }
 
-describe('auto-apply Cliproxy integration', () => {
-  it('creates a Cliproxy client when Worker env contains Cliproxy secrets', () => {
-    const clients = createAutoApplyClients({
-      CLIPROXY_BASE: 'https://cliproxy.example.test/v1',
-      CLIPROXY_API_KEY: 'test-key',
-    });
-
-    assert.equal(typeof clients.cliproxy.searchJobs, 'function');
-  });
-
+describe('auto-apply duplicate company handling', () => {
   it('skips a candidate when the company was already applied through another job id', async () => {
     const db = createD1WithExistingCompany('Existing Enterprise');
     const clients = {
@@ -105,16 +95,16 @@ describe('auto-apply Cliproxy integration', () => {
     assert.equal(db.writes.length, 0);
   });
 
-  it('searches through a Cliproxy client and filters duplicate companies', async () => {
+  it('searches a platform client and filters duplicate companies', async () => {
     const db = createD1WithExistingCompany('Existing Enterprise');
     const clients = {
-      cliproxy: {
+      linkedin: {
         searchJobs: mock.fn(async () => ({
           jobs: [
             {
               id: 'existing-job',
               sourceId: 'existing-job',
-              source: 'cliproxy',
+              source: 'linkedin',
               company: 'Existing Enterprise',
               position: 'Platform Engineer',
               matchScore: 95,
@@ -123,7 +113,7 @@ describe('auto-apply Cliproxy integration', () => {
             {
               id: 'fresh-job',
               sourceId: 'fresh-job',
-              source: 'cliproxy',
+              source: 'linkedin',
               company: 'Fresh Enterprise',
               position: 'Security Engineer',
               matchScore: 92,
@@ -138,7 +128,7 @@ describe('auto-apply Cliproxy integration', () => {
       request: createRequest({
         dryRun: true,
         maxApplications: 2,
-        platforms: ['cliproxy'],
+        platforms: ['linkedin'],
         keywords: ['security'],
       }),
       env: { DB: db },
@@ -149,21 +139,21 @@ describe('auto-apply Cliproxy integration', () => {
     const actions = data.results.jobs.map((job) => job.action);
 
     assert.equal(response.status, 200);
-    assert.equal(clients.cliproxy.searchJobs.mock.callCount(), 1);
+    assert.equal(clients.linkedin.searchJobs.mock.callCount(), 1);
     assert.deepEqual(actions, ['skipped_company_already_applied', 'would_apply']);
     assert.equal(db.writes.length, 1);
   });
 
-  it('rejects non-dry-run Cliproxy runs before searching without explicit approval', async () => {
+  it('rejects non-dry-run runs before searching without explicit approval', async () => {
     const searchJobs = mock.fn(async () => ({ jobs: [] }));
     const response = await runAutoApply({
       request: createRequest({
         dryRun: false,
-        platforms: ['cliproxy'],
+        platforms: ['linkedin'],
         keywords: ['security'],
       }),
       env: { DB: createD1WithExistingCompany('Existing Enterprise') },
-      clients: { cliproxy: { searchJobs } },
+      clients: { linkedin: { searchJobs } },
     });
 
     const data = await response.json();

@@ -27,8 +27,6 @@ var allowedKeys = map[string]bool{
 	"JOBKOREA_PASSWORD":         true,
 	"JOBKOREA_RNO":              true,
 	"JOBKOREA_COOKIES":          true,
-	"CLIPROXY_BASE":             true,
-	"CLIPROXY_API_KEY":          true,
 	"ADMIN_TOKEN":               true,
 	"AUTOMATION_WEBHOOK_SECRET": true,
 	"AUTH_SYNC_SECRET":          true,

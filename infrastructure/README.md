@@ -173,7 +173,6 @@ directory:
 | Cron (UTC)   | KST   | Job                                                                 |
 | ------------ | ----- | ------------------------------------------------------------------- |
 | `0 21 * * *` | 06:00 | Wanted session refresh, then `ResumeSyncWorkflow` (dry-run default) |
-| `0 23 * * *` | 08:00 | cliproxy job discovery and auto-apply (dry-run default)             |
 
 Health check, backup, cleanup, and daily report jobs are Cloudflare Workflows
 in `apps/job-dashboard/src/workflows/`. The former host systemd timers and

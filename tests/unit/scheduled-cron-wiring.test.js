@@ -12,8 +12,6 @@ const cronRouterRaw = fs.readFileSync(
   'utf8'
 );
 
-const AUTO_APPLY_CRON = '0 23 * * *';
-
 function extractResumeSyncCron(src) {
   const m = src.match(/RESUME_SYNC_CRON\s*=\s*'([^']+)'/);
   return m ? m[1] : null;
@@ -32,8 +30,9 @@ describe('resume-sync cron wiring (CF-native Wave 1)', () => {
     expect(resumeSyncCron).toMatch(/^[\d*/, -]+$/);
   });
 
-  test('wrangler.jsonc crons preserve the auto-apply cron', () => {
-    expect(crons).toContain(AUTO_APPLY_CRON);
+  test('wrangler.jsonc declares no cron that scheduled() ignores', () => {
+    const declared = [...crons.matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+    expect(declared).toEqual([resumeSyncCron]);
   });
 
   test('wrangler.jsonc crons include the resume-sync cron (no drift vs index.js)', () => {

@@ -6,7 +6,6 @@ import path from 'node:path';
 import JobKoreaHandler from '../jobkorea-handler.js';
 import { syncJobKoreaProfile } from '../jobkorea-handler/sync.js';
 import { createJobKoreaEntrySlots } from '../jobkorea-handler/section-slots.js';
-import { resolveCliproxyBase } from '../jobkorea-handler/captcha-solver.js';
 import SessionManager from '../../../src/shared/services/session/index.js';
 import {
   assertJobKoreaResumeAccess,
@@ -779,43 +778,6 @@ describe('JobKoreaHandler.loadSession - auth-sync compatibility', () => {
     } finally {
       rmSync(tempDir, { recursive: true, force: true });
     }
-  });
-});
-
-describe('resolveCliproxyBase', () => {
-  it('throws when CLIPROXY_BASE is missing', () => {
-    assert.throws(
-      () => resolveCliproxyBase({}),
-      /CLIPROXY_BASE is required for JobKorea CAPTCHA solving/
-    );
-  });
-
-  it('throws when CLIPROXY_BASE is empty', () => {
-    assert.throws(
-      () => resolveCliproxyBase({ CLIPROXY_BASE: '   ' }),
-      /CLIPROXY_BASE is required for JobKorea CAPTCHA solving/
-    );
-  });
-
-  it('throws when CLIPROXY_BASE does not use HTTP or HTTPS', () => {
-    assert.throws(
-      () => resolveCliproxyBase({ CLIPROXY_BASE: 'ftp://vision.example.test/v1' }),
-      /CLIPROXY_BASE must use https unless it targets localhost/
-    );
-  });
-
-  it('throws when CLIPROXY_BASE is not a valid URL', () => {
-    assert.throws(
-      () => resolveCliproxyBase({ CLIPROXY_BASE: 'https://exa mple.test/v1' }),
-      /CLIPROXY_BASE must be a valid URL/
-    );
-  });
-
-  it('returns a valid normalized CLIPROXY_BASE', () => {
-    assert.strictEqual(
-      resolveCliproxyBase({ CLIPROXY_BASE: ' https://vision.example.test/v1/// ' }),
-      'https://vision.example.test/v1'
-    );
   });
 });
 

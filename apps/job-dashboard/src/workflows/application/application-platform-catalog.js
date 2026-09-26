@@ -3,13 +3,7 @@ import { createDashboardAtsDryRunClient } from './ats-dry-run-client.js';
 export const DEFAULT_APPLICATION_PLATFORMS = ['wanted', 'linkedin', 'remember'];
 export const ATS_DRY_RUN_PLATFORMS = ['greenhouse', 'lever', 'ashby'];
 
-const SEARCH_ONLY_PLATFORMS = ['cliproxy'];
-const DIRECT_APPLICATION_PLATFORMS = [
-  ...DEFAULT_APPLICATION_PLATFORMS,
-  'jobkorea',
-  'saramin',
-  ...SEARCH_ONLY_PLATFORMS,
-];
+const DIRECT_APPLICATION_PLATFORMS = [...DEFAULT_APPLICATION_PLATFORMS, 'jobkorea', 'saramin'];
 const ALL_APPLICATION_PLATFORMS = [...DIRECT_APPLICATION_PLATFORMS, ...ATS_DRY_RUN_PLATFORMS];
 
 /**

@@ -34,15 +34,14 @@ key pattern updates this inventory in the same commit, and every `put()` sets
 
 ### `SESSIONS`
 
-| Key pattern                       | Writer                                                              | Readers                                                   | TTL               |
-| --------------------------------- | ------------------------------------------------------------------- | --------------------------------------------------------- | ----------------- |
-| `auth:<platform>`                 | `services/platform-session.js` (session mint, auth handler)         | session consumers via `decryptPlatformSession`            | set by the writer |
-| `config:auto-apply:paused`        | Telegram `/pause`, `/resume` (`notifications/telegram-commands.js`) | scheduled Cliproxy auto-apply (`0 23 * * *`)              | 1 day             |
-| `config:notification:preferences` | `services/notifications/history-preferences.js`                     | same module                                               | 30 days           |
-| `resume:backup:<backupId>`        | ResumeSyncWorkflow (`workflows/resume-sync-steps.js`)               | none (manual restore aid)                                 | 30 days           |
-| `backup:<date>:<table>`           | BackupWorkflow                                                      | BackupWorkflow retention sweep (`prefix: 'backup:'`)      | retention days    |
-| `jd:health:check`                 | HealthCheckWorkflow KV probe                                        | same probe (read-back)                                    | 60 seconds        |
-| `pf:health:check`                 | none                                                                | portfolio `/health` and `/api/status` (connectivity read) | not written       |
+| Key pattern                       | Writer                                                      | Readers                                                   | TTL               |
+| --------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------- | ----------------- |
+| `auth:<platform>`                 | `services/platform-session.js` (session mint, auth handler) | session consumers via `decryptPlatformSession`            | set by the writer |
+| `config:notification:preferences` | `services/notifications/history-preferences.js`             | same module                                               | 30 days           |
+| `resume:backup:<backupId>`        | ResumeSyncWorkflow (`workflows/resume-sync-steps.js`)       | none (manual restore aid)                                 | 30 days           |
+| `backup:<date>:<table>`           | BackupWorkflow                                              | BackupWorkflow retention sweep (`prefix: 'backup:'`)      | retention days    |
+| `jd:health:check`                 | HealthCheckWorkflow KV probe                                | same probe (read-back)                                    | 60 seconds        |
+| `pf:health:check`                 | none                                                        | portfolio `/health` and `/api/status` (connectivity read) | not written       |
 
 `auth:<platform>` values are AES-GCM ciphertext under the `ENCRYPTION_KEY`
 Worker secret; a value that does not decrypt is treated as absent.

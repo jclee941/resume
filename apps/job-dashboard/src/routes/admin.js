@@ -70,9 +70,9 @@ export function registerAdminRoutes(router, ctx) {
     return jsonResponse(r, r.ok ? 200 : 502);
   });
 
-  // Mint a fresh JobKorea session cookie (email/password + CAPTCHA solve via
-  // cliproxy vision) and store it in KV as `auth:jobkorea` (Wave 3 port of
-  // apps/job-server/scripts/jobkorea-session).
+  // Mint a fresh JobKorea session cookie (email/password login through Browser
+  // Rendering) and store it in KV as `auth:jobkorea` (Wave 3 port of
+  // apps/job-server/scripts/jobkorea-session); a CAPTCHA challenge fails the mint.
   router.post('/api/jobkorea/refresh-session', async () => {
     const r = await refreshJobKoreaSession(env);
     return jsonResponse(r, r.ok ? 200 : 502);

@@ -23,8 +23,8 @@ body:
       label: Reproduction steps
       description: Exact steps that reliably reproduce the bug.
       placeholder: |
-        1. Open a PR in jclee941/<repo>
-        2. Wait for `PR Review (CLIProxyAPI)` workflow to run
+        1. Open https://resume.jclee.me/job/ or run the failing command
+        2. Perform the action that fails
         3. Observe ...
     validations:
       required: true
