@@ -21,6 +21,32 @@ import WantedLoginFlow from './wanted-login-flow.js';
 export { SESSION_STATES, SUPPORTED_SESSION_BROKER_PLATFORMS };
 
 /**
+ * @typedef {Object} SessionBrokerStateEntry
+ * @property {string} [state]
+ * @property {string | null} [lastError]
+ * @property {string | null} [expiresAt]
+ * @property {string | null} [renewedAt]
+ */
+
+/**
+ * @typedef {Object} SessionBrokerServiceOptions
+ * @property {unknown} [sessionStore]
+ * @property {Map<string, SessionBrokerStateEntry>} [stateStore]
+ * @property {string[]} [platforms]
+ * @property {Record<string, () => import('./session-broker-operations.js').LoginFlow>} [loginFlowFactories]
+ * @property {() => number} [now]
+ * @property {(ms: number) => Promise<void>} [sleep]
+ * @property {(() => unknown) | null} [browserFactory]
+ * @property {EncryptionService} [encryptionService]
+ * @property {unknown} [browser]
+ * @property {Console | { log?: (msg: string) => void; error?: (msg: string, ...args: unknown[]) => void }} [logger]
+ * @property {number} [sessionLifetimeMs]
+ * @property {number} [ttlThreshold]
+ * @property {number} [retryAttempts]
+ * @property {number} [retryDelayMs]
+ */
+
+/**
  * SessionBrokerService
  *
  * Dual-mode design:
@@ -35,6 +61,9 @@ export { SESSION_STATES, SUPPORTED_SESSION_BROKER_PLATFORMS };
  *   { state: SESSION_STATES, lastError: string|null, expiresAt, renewedAt }
  */
 export default class SessionBrokerService {
+  /**
+   * @param {SessionBrokerServiceOptions} [options]
+   */
   constructor(options = {}) {
     this.sessionStore = options.sessionStore ?? null;
     this.stateStore = options.stateStore ?? new Map();
@@ -55,6 +84,7 @@ export default class SessionBrokerService {
     this.retryAttempts = options.retryAttempts ?? DEFAULT_RETRY_ATTEMPTS;
     this.retryDelayMs = options.retryDelayMs ?? DEFAULT_RETRY_DELAY_MS;
 
+    /** @type {Record<string, import('./session-broker-operations.js').LoginFlow>} */
     this.loginFlows = {
       wanted: new WantedLoginFlow({
         browser: this.browser,
@@ -64,30 +94,53 @@ export default class SessionBrokerService {
     };
   }
 
+  /**
+   * @param {string} platform
+   */
   getState(platform) {
     return getState(this, platform);
   }
 
+  /**
+   * @param {string} platform
+   */
   getStateEntry(platform) {
     return getStateEntry(this, platform);
   }
 
+  /**
+   * @param {string} platform
+   * @param {string | Partial<SessionBrokerStateEntry>} stateOrEntry
+   */
   setState(platform, stateOrEntry) {
     setState(this, platform, stateOrEntry);
   }
 
+  /**
+   * @param {string} platform
+   */
   async checkSession(platform) {
     return checkSession(this, platform);
   }
 
+  /**
+   * @param {string} platform
+   */
   async renewSession(platform) {
     return renewSession(this, platform);
   }
 
+  /**
+   * @param {string} platform
+   */
   async getValidSession(platform) {
     return getValidSession(this, platform);
   }
 
+  /**
+   * @param {string} platform
+   * @param {string} encryptedSession
+   */
   async validateEncryptedSession(platform, encryptedSession) {
     return validateEncryptedSession(this, platform, encryptedSession);
   }

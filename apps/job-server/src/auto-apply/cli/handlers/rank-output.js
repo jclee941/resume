@@ -4,6 +4,49 @@ import { resolve } from 'node:path';
 import { getResumeBasePath } from '../../../shared/utils/paths.js';
 import { REVIEW_THRESHOLD } from './rank-core.js';
 
+/**
+ * @typedef {Object} EnrichmentStat
+ * @property {number} success
+ * @property {number} empty
+ * @property {number} failed
+ * @property {number} skipped
+ */
+
+/**
+ * @typedef {Record<string, EnrichmentStat>} EnrichmentStats
+ */
+
+/**
+ * @typedef {Object} RankedJob
+ * @property {string} [id]
+ * @property {string} source
+ * @property {string} position
+ * @property {string} company
+ * @property {string} [location]
+ * @property {string} sourceUrl
+ * @property {number} matchPercentage
+ * @property {number} [matchScore]
+ * @property {'auto' | 'review' | 'borderline' | 'skip' | string} tier
+ * @property {string} [applicationPriority]
+ * @property {string[]} skillMatches
+ * @property {string[]} bonusPoints
+ * @property {string} [enrichmentStatus]
+ * @property {string} [enrichmentError]
+ */
+
+/**
+ * @typedef {Object} RankedReport
+ * @property {string} generatedAt
+ * @property {string[]} keywords
+ * @property {number} minScore
+ * @property {number} totalScored
+ * @property {RankedJob[]} worthApplying
+ * @property {EnrichmentStats} [enrichmentStats]
+ */
+
+/**
+ * @param {EnrichmentStats | undefined} stats
+ */
 function printEnrichmentStats(stats) {
   if (!stats) return;
   console.log('🔎 본문 보강 커버리지 (플랫폼별):');
@@ -20,6 +63,9 @@ function printEnrichmentStats(stats) {
   }
 }
 
+/**
+ * @param {RankedReport} report
+ */
 export function printReport(report) {
   console.log(
     `\n📋 스코어링 완료: ${report.totalScored}개 공고 (키워드: ${report.keywords.join(', ')})`
@@ -28,6 +74,7 @@ export function printReport(report) {
   const isStrict = report.minScore >= REVIEW_THRESHOLD;
   const label = isStrict ? '지원 할만한 공고' : '후보 공고(경계선 포함, 추가검토 필요)';
   console.log(`\n🎯 ${label} (>=${report.minScore}%): ${report.worthApplying.length}개\n`);
+  /** @type {Record<string, string>} */
   const emoji = { auto: '🟢', review: '🟡', borderline: '⚪' };
   for (const [index, job] of report.worthApplying.entries()) {
     const tierLabel =
@@ -51,6 +98,11 @@ export function printReport(report) {
   }
 }
 
+/**
+ * @param {RankedReport} report
+ * @param {string} queuePath
+ * @param {number} queueCount
+ */
 export function printNextAction(report, queuePath, queueCount) {
   const autoCount = report.worthApplying.filter((j) => j.tier === 'auto').length;
   const reviewCount = report.worthApplying.filter((j) => j.tier === 'review').length;
@@ -69,6 +121,10 @@ export function printNextAction(report, queuePath, queueCount) {
   }
 }
 
+/**
+ * @param {RankedReport} report
+ * @returns {string}
+ */
 export function writeReport(report) {
   const date = report.generatedAt.slice(0, 10);
   const dir = resolve(getResumeBasePath(), 'applications/_auto-apply-runs');
@@ -78,6 +134,11 @@ export function writeReport(report) {
   return outPath;
 }
 
+/**
+ * @param {import('./rank-submit-queue.js').SubmitQueueItem[]} queue
+ * @param {string} generatedAt
+ * @returns {string}
+ */
 export function writeSubmitQueue(queue, generatedAt) {
   const date = generatedAt.slice(0, 10);
   const dir = resolve(getResumeBasePath(), 'applications/_auto-apply-runs');

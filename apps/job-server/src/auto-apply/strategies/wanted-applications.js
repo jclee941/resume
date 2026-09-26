@@ -1,6 +1,71 @@
 import { ValidationError } from '../../shared/errors/apply-errors.js';
 import { WANTED_PLATFORM } from './wanted-id.js';
 
+/**
+ * @typedef {Record<string, unknown> & {
+ *   application_id?: string | number,
+ *   applicationId?: string | number,
+ *   id?: string | number,
+ *   data?: {
+ *     application_id?: string | number,
+ *     applicationId?: string | number,
+ *     id?: string | number
+ *   }
+ * }} ApplicationIdContainer
+ */
+
+/**
+ * @typedef {Record<string, unknown> & {
+ *   applications?: unknown,
+ *   results?: unknown,
+ *   data?: unknown & {
+ *     applications?: unknown,
+ *     results?: unknown
+ *   }
+ * }} ApplicationListResponse
+ */
+
+/**
+ * @typedef {Record<string, unknown> & {
+ *   job_id?: string | number,
+ *   jobId?: string | number,
+ *   position_id?: string | number,
+ *   positionId?: string | number,
+ *   job?: { id?: string | number }
+ * }} ApplicationEntry
+ */
+
+/**
+ * @typedef {Object} WantedResume
+ * @property {string} [key]
+ * @property {string} [id]
+ * @property {string} [resume_id]
+ * @property {string} [uuid]
+ * @property {boolean} [is_default]
+ */
+
+/**
+ * @typedef {Object} WantedApiClient
+ * @property {(path: string) => Promise<{ data?: WantedResume[]; [key: string]: unknown }>} chaosRequest
+ */
+
+/**
+ * @typedef {Object} ResolveResumeKeyOptions
+ * @property {string} [resumeKey]
+ * @property {string} [resume_key]
+ * @property {string} [resumeId]
+ * @property {string} [resume_id]
+ */
+
+/**
+ * @typedef {Object} ResumeKeyContext
+ * @property {{ resumeKey?: string, resumeId?: string, [key: string]: unknown }} [config]
+ */
+
+/**
+ * @param {ApplicationIdContainer | null | undefined} result
+ * @returns {string | number | null}
+ */
 export function extractApplicationId(result) {
   return (
     result?.application_id ??
@@ -13,6 +78,10 @@ export function extractApplicationId(result) {
   );
 }
 
+/**
+ * @param {ApplicationListResponse | null | undefined} response
+ * @returns {ApplicationEntry[]}
+ */
 export function normalizeApplicationEntries(response) {
   const candidates = [
     response?.applications,
@@ -24,13 +93,18 @@ export function normalizeApplicationEntries(response) {
 
   for (const candidate of candidates) {
     if (Array.isArray(candidate)) {
-      return candidate;
+      return /** @type {ApplicationEntry[]} */ (candidate);
     }
   }
 
   return [];
 }
 
+/**
+ * @param {ApplicationEntry | null | undefined} entry
+ * @param {string | number} targetJobId
+ * @returns {boolean}
+ */
 export function isAppliedJob(entry, targetJobId) {
   const postedJobId =
     entry?.job_id ??
@@ -43,6 +117,12 @@ export function isAppliedJob(entry, targetJobId) {
   return String(postedJobId) === String(targetJobId);
 }
 
+/**
+ * @param {ResumeKeyContext | null | undefined} ctx
+ * @param {WantedApiClient} api
+ * @param {ResolveResumeKeyOptions} [options]
+ * @returns {Promise<string>}
+ */
 export async function resolveResumeKey(ctx, api, options = {}) {
   const explicitKey =
     options.resumeKey ??

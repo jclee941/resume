@@ -16,6 +16,29 @@ import {
 import { executeWantedBrowserApply } from './wanted-browser-apply.js';
 import { getApplicationStatus, validateSession } from './wanted-session.js';
 
+/**
+ * @typedef {Object} WantedStrategyJob
+ * @property {string | number} [id]
+ * @property {string} company
+ * @property {string} title
+ * @property {string} sourceUrl
+ * @property {string} [source]
+ */
+
+/**
+ * @typedef {import('./wanted-browser-apply.js').BrowserApplyContext &
+ *   import('./wanted-api-fallback.js').ApiFallbackContext &
+ *   import('./wanted-retry.js').RetryContext & {
+ *     page?: import('./wanted-browser-apply.js').BrowserApplyPage | null;
+ *     logger?: {
+ *       error?: (msg: string, meta?: unknown) => void;
+ *       debug?: (msg: string) => void;
+ *       info?: (msg: string) => void;
+ *     };
+ *     circuitState?: import('./wanted-api-fallback.js').CircuitState;
+ *   }} WantedStrategyContext
+ */
+
 // Issue #16: closure-bound holder eliminates top-level mutable object binding.
 const _circuitStateHolder = (() => {
   let s = { failures: 0, openedAt: 0, threshold: 5, resetMs: 30000 };
@@ -40,6 +63,11 @@ export function resetCircuitState() {
   _circuitStateHolder.reset();
 }
 
+/**
+ * @this {WantedStrategyContext}
+ * @param {WantedStrategyJob} job
+ * @param {Record<string, unknown>} [options]
+ */
 export async function applyToJob(job, options = {}) {
   if (!job?.id) {
     return {
@@ -113,18 +141,24 @@ export async function applyToJob(job, options = {}) {
 
     return await withRetry(
       () => executeWantedBrowserApply(this, job, payload, resumeKey, retryReporter),
-      {
+      /** @type {Parameters<typeof withRetry>[1] & { logger?: unknown; classifyError?: unknown; reporter?: unknown; platform?: string }} */ ({
         ...RETRY_CONFIG,
         logger: this.logger,
         classifyError: classifyWantedError,
         reporter: retryReporter,
-      }
+      })
     );
   } catch (error) {
     const normalizedError = classifyWantedError(error);
-    const retryable = isRetryableWantedError(error) || Boolean(normalizedError.retryable);
+    const retryable =
+      isRetryableWantedError(/** @type {import('./wanted-retry.js').WantedErrorLike} */ (error)) ||
+      Boolean(normalizedError.retryable);
 
-    if (isAlreadyAppliedWantedError(error)) {
+    if (
+      isAlreadyAppliedWantedError(
+        /** @type {import('./wanted-retry.js').WantedErrorLike} */ (error)
+      )
+    ) {
       return {
         success: true,
         applied: false,
@@ -144,7 +178,7 @@ export async function applyToJob(job, options = {}) {
       jobId: job.id,
       company: job.company,
       title: job.title,
-      status: getErrorStatus(error),
+      status: getErrorStatus(/** @type {import('./wanted-retry.js').WantedErrorLike} */ (error)),
       retryable,
       message: normalizedError.message,
     });
@@ -168,6 +202,10 @@ export async function applyToJob(job, options = {}) {
   }
 }
 
+/**
+ * @this {WantedStrategyContext}
+ * @param {WantedStrategyJob} job
+ */
 export async function applyToWanted(job) {
   return applyToJob.call(this, job, {});
 }

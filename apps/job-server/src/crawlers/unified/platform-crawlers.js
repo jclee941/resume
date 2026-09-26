@@ -21,6 +21,22 @@ export const DEFAULT_CRAWLER_SOURCES = [
   'rallit',
 ];
 
+/**
+ * @typedef {Object} PlatformCrawlerOptions
+ * @property {ConstructorParameters<typeof WantedCrawler>[0]} [wanted]
+ * @property {ConstructorParameters<typeof JobKoreaCrawler>[0]} [jobkorea]
+ * @property {ConstructorParameters<typeof SaraminCrawler>[0]} [saramin]
+ * @property {ConstructorParameters<typeof LinkedInCrawler>[0]} [linkedin]
+ * @property {ConstructorParameters<typeof RememberCrawler>[0]} [remember]
+ * @property {ConstructorParameters<typeof RocketPunchCrawler>[0]} [rocketpunch]
+ * @property {ConstructorParameters<typeof ProgrammersCrawler>[0]} [programmers]
+ * @property {ConstructorParameters<typeof JumpitCrawler>[0]} [jumpit]
+ * @property {ConstructorParameters<typeof RallitCrawler>[0]} [rallit]
+ */
+
+/**
+ * @param {PlatformCrawlerOptions} [options]
+ */
 export function createPlatformCrawlers(options = {}) {
   return {
     wanted: new WantedCrawler(options.wanted),

@@ -5,6 +5,52 @@ import { WANTED_PLATFORM, buildWantedJobUrl } from './wanted-id.js';
 import { extractApplicationId } from './wanted-applications.js';
 import { isAlreadyAppliedWantedError, sleep } from './wanted-retry.js';
 
+/**
+ * @typedef {Object} EvaluateResponse
+ * @property {number} status
+ * @property {boolean} ok
+ * @property {import('./wanted-applications.js').ApplicationIdContainer & { message?: string }} body
+ */
+
+/**
+ * @typedef {Object} BrowserApplyPage
+ * @property {(url: string | null, options?: { waitUntil?: string; timeout?: number }) => Promise<unknown>} goto
+ * @property {(pageFunction: (requestPayload: Record<string, unknown>) => Promise<EvaluateResponse>, arg: Record<string, unknown>) => Promise<EvaluateResponse>} evaluate
+ */
+
+/**
+ * @typedef {Object} ApplicationResult
+ * @property {string} id
+ * @property {string} [status]
+ * @property {string} [notes]
+ */
+
+/**
+ * @typedef {Object} BrowserApplyJob
+ * @property {string | number} [id]
+ * @property {string} company
+ * @property {string} title
+ * @property {string} sourceUrl
+ * @property {string} [source]
+ */
+
+/**
+ * @typedef {Object} BrowserApplyContext
+ * @property {BrowserApplyPage} page
+ * @property {(tag: string, text: string) => Promise<unknown>} [findByText]
+ * @property {{
+ *   addApplication: (job: BrowserApplyJob, opts: { resumeKey: string; notes: string }) => ApplicationResult,
+ *   updateStatus: (id: string, status: string, notes: string) => void
+ * }} appManager
+ */
+
+/**
+ * @param {BrowserApplyContext} ctx
+ * @param {BrowserApplyJob} job
+ * @param {Record<string, unknown>} payload
+ * @param {string} resumeKey
+ * @param {import('./wanted-retry.js').RetryReporter} retryReporter
+ */
 export async function executeWantedBrowserApply(ctx, job, payload, resumeKey, retryReporter) {
   const jobUrl = buildWantedJobUrl(job.id);
 
