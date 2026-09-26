@@ -1,4 +1,7 @@
-const BUILD_LASTMOD = '2026-07-20';
+import { CONTENT_LASTMOD } from '../../worker.js';
+
+// Stamped into worker.js by the build from the last commit touching rendered content.
+const BUILD_LASTMOD = CONTENT_LASTMOD;
 
 // Derive HTTP-format Last-Modified and ETag from BUILD_LASTMOD so they cannot drift.
 const BUILD_LASTMOD_HTTP = (() => {

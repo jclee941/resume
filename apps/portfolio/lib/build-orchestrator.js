@@ -9,6 +9,7 @@ const { processProjectData, encodeBinaryAssets } = require('./data-processor');
 const { buildPortfolioPages, escapePortfolioPages } = require('./localized-page-builder');
 const { buildAndWriteWorker } = require('./worker-writer');
 const { escapeForTemplateLiteral } = require('./html-transformer');
+const { resolveContentLastmod } = require('./content-lastmod');
 
 const RESUME_PDFS = [
   { source: 'resume_final.pdf', asset: 'resume.pdf', buffer: 'resumePdfBuffer' },
@@ -87,6 +88,7 @@ function logBuildStats({
   projectData,
   deployedAt,
   gitSha,
+  contentLastmod,
 }) {
   logger.log('✅ Improved worker.js generated successfully!');
   logger.log('\n📊 Build Statistics:');
@@ -99,6 +101,7 @@ function logBuildStats({
   logger.log(`   - Template cache: ${TEMPLATE_CACHE.dataHash ? 'Active' : 'Empty'}`);
   logger.log(`   - Deployed at: ${deployedAt}`);
   logger.log(`   - Git SHA: ${gitSha}`);
+  logger.log(`   - Content lastmod: ${contentLastmod}`);
 }
 
 async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEmails, logger }) {
@@ -157,10 +160,12 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
 
   const deployedAt = process.env.DEPLOYED_AT || new Date().toISOString();
   const resolvedGitSha = gitSha || 'unknown';
+  const contentLastmod = resolveContentLastmod();
   const { workerSizeKB } = buildAndWriteWorker({
     baseDir,
     deployedAt,
     gitSha: resolvedGitSha,
+    contentLastmod,
     indexHtml: pages.indexHtml,
     indexEnHtml: pages.indexEnHtml,
     indexJaHtml: pages.indexJaHtml,
@@ -172,7 +177,10 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
     serviceWorker: inputs.serviceWorker,
     mainJs: inputs.mainJs,
     robotsTxt: inputs.robotsTxt,
-    sitemapXml: inputs.sitemapXml,
+    sitemapXml: inputs.sitemapXml.replace(
+      /<lastmod>[^<]*<\/lastmod>/g,
+      `<lastmod>${contentLastmod}</lastmod>`
+    ),
     ...assets,
     securityHeaders: securityHeadersModule.generateSecurityHeaders(styleHashes),
     metrics: buildInitialMetrics({ version, deployedAt }),
@@ -194,6 +202,7 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
     projectData,
     deployedAt,
     gitSha: resolvedGitSha,
+    contentLastmod,
   });
 }
 

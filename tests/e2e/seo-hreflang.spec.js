@@ -3,8 +3,11 @@ const resumeData = require('../../packages/data/resumes/master/resume_data.json'
 
 const KOREAN_CANONICAL = 'https://resume.jclee.me/ko/';
 const PREVIOUS_SITEMAP_ETAG = 'W/"resume-sitemap-20260630"';
-const CURRENT_SITEMAP_ETAG = 'W/"resume-sitemap-20260720"';
-const CURRENT_LAST_MODIFIED = 'Mon, 20 Jul 2026 00:00:00 GMT';
+
+async function currentSitemapValidators(request) {
+  const response = await request.get('/sitemap.xml');
+  return { etag: response.headers()['etag'], lastModified: response.headers()['last-modified'] };
+}
 
 test.describe('SEO hreflang canonical alignment', () => {
   test('locale pages advertise /ko/ as the Korean alternate', async ({ page }) => {
@@ -24,35 +27,39 @@ test.describe('SEO hreflang canonical alignment', () => {
     expect(response.status()).toBe(200);
 
     const xml = await response.text();
-    expect(response.headers()['etag']).toBe(CURRENT_SITEMAP_ETAG);
-    expect(response.headers()['last-modified']).toBe(CURRENT_LAST_MODIFIED);
+    const lastmod = xml.match(/<lastmod>(\d{4}-\d{2}-\d{2})<\/lastmod>/)?.[1];
+    expect(lastmod).toBeTruthy();
+    expect(response.headers()['etag']).toBe(`W/"resume-sitemap-${lastmod.replace(/-/g, '')}"`);
+    expect(new Date(response.headers()['last-modified']).toISOString().slice(0, 10)).toBe(lastmod);
     expect(xml).toContain(`<loc>${KOREAN_CANONICAL}</loc>`);
     expect(xml).toContain(`hreflang="ko-KR" href="${KOREAN_CANONICAL}"`);
     expect(xml).not.toContain('hreflang="ko-KR" href="https://resume.jclee.me/"');
   });
 
   test('sitemap cache validators reject the pre-/ko/ ETag', async ({ request }) => {
+    const { etag } = await currentSitemapValidators(request);
     const staleResponse = await request.get('/sitemap.xml', {
       headers: { 'If-None-Match': PREVIOUS_SITEMAP_ETAG },
     });
     expect(staleResponse.status()).toBe(200);
-    expect(staleResponse.headers()['etag']).toBe(CURRENT_SITEMAP_ETAG);
+    expect(staleResponse.headers()['etag']).toBe(etag);
 
     const freshResponse = await request.get('/sitemap.xml', {
-      headers: { 'If-None-Match': CURRENT_SITEMAP_ETAG },
+      headers: { 'If-None-Match': etag },
     });
     expect(freshResponse.status()).toBe(304);
   });
 
   test('sitemap cache validators honor current Last-Modified', async ({ request }) => {
+    const { lastModified } = await currentSitemapValidators(request);
     const staleResponse = await request.get('/sitemap.xml', {
       headers: { 'If-Modified-Since': 'Fri, 05 Jun 2026 00:00:00 GMT' },
     });
     expect(staleResponse.status()).toBe(200);
-    expect(staleResponse.headers()['last-modified']).toBe(CURRENT_LAST_MODIFIED);
+    expect(staleResponse.headers()['last-modified']).toBe(lastModified);
 
     const freshResponse = await request.get('/sitemap.xml', {
-      headers: { 'If-Modified-Since': CURRENT_LAST_MODIFIED },
+      headers: { 'If-Modified-Since': lastModified },
     });
     expect(freshResponse.status()).toBe(304);
   });

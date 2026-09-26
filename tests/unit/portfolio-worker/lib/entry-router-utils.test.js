@@ -25,7 +25,8 @@ function loadEntryRouterUtils() {
     'Response',
     'Headers',
     'URL',
-    `${transformedSource}
+    `const CONTENT_LASTMOD = '2024-01-01';
+${transformedSource}
 module.exports = {
   LAST_MODIFIED,
   SITEMAP_ETAG,

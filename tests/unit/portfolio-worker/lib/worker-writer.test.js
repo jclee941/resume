@@ -119,6 +119,12 @@ describe('worker-writer', () => {
       expect(result).toContain('/* error-handler */');
     });
 
+    it('stamps the content lastmod as a named export for the runtime router', () => {
+      const result = buildWorkerCode({ ...createMinimalOptions(), contentLastmod: '2026-09-20' });
+
+      expect(result.startsWith('export const CONTENT_LASTMOD = "2026-09-20";\n')).toBe(true);
+    });
+
     it('should call generateWorkerPreamble with correct opts', () => {
       buildWorkerCode(createMinimalOptions());
       expect(generateWorkerPreamble).toHaveBeenCalledTimes(1);

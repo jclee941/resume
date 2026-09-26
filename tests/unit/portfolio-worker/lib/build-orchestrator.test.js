@@ -27,6 +27,9 @@ jest.mock('../../../../apps/portfolio/lib/security-headers', () => ({
 jest.mock('../../../../apps/portfolio/lib/templates', () => ({
   injectScriptNoncePlaceholder: jest.fn((html) => html),
 }));
+jest.mock('../../../../apps/portfolio/lib/content-lastmod', () => ({
+  resolveContentLastmod: jest.fn(() => '2026-09-20'),
+}));
 jest.mock('../../../../apps/portfolio/lib/worker-writer', () => ({
   buildAndWriteWorker: jest.fn(),
 }));
@@ -62,6 +65,7 @@ describe('build-orchestrator', () => {
     jest.clearAllMocks();
 
     readBuildInputs.mockResolvedValue({
+      sitemapXml: '<urlset><url><lastmod>2020-01-01</lastmod></url></urlset>',
       indexHtmlRaw: '<html></html>',
       indexEnHtmlRaw: '<html lang="en"></html>',
       projectDataRaw: '{"resume":[],"projects":[]}',
@@ -176,6 +180,15 @@ describe('build-orchestrator', () => {
     it('logs build stats', async () => {
       await runWorkerBuild(buildOpts);
       expect(mockLogger.log).toHaveBeenCalled();
+    });
+
+    it('stamps the content lastmod into the worker and the sitemap', async () => {
+      await runWorkerBuild(buildOpts);
+      const writerCall = buildAndWriteWorker.mock.calls[0][0];
+      expect(writerCall.contentLastmod).toBe('2026-09-20');
+      expect(writerCall.sitemapXml).toBe(
+        '<urlset><url><lastmod>2026-09-20</lastmod></url></urlset>'
+      );
     });
 
     it('passes version to buildAndWriteWorker', async () => {
