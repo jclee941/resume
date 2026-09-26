@@ -1,7 +1,7 @@
 # Context/Profile Sync Automation — Baseline Audit & Improvement Plan
 
 **Date:** 2026-05-10
-**Auditor:** `verify-context-profile-sync.go`
+**Auditor:** `verify-context-profile-sync`
 **Scope:** resume.jclee.me monorepo — portfolio, job-server, job-dashboard, shared packages
 
 ---
@@ -140,7 +140,7 @@
 Run the verification script:
 
 ```bash
-go run tools/scripts/verification/verify-context-profile-sync.go
+npm run verify:profile-sync
 ```
 
 The script exits with code `1` when confirmed gaps or partial truths exist, and `0` when only stale assumptions are found.

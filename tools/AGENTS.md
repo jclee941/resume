@@ -14,13 +14,14 @@ Organized by domain: CI (validation), build (asset generation), scripts (automat
 ```text
 tools/
 ├── ci/                   # CI validation scripts
-│   ├── affected.go       # change-impact detection
+│   ├── affected/         # change-impact detection
 │   ├── validate-cloudflare-native.go  # wrangler config guards
 │   ├── check-env-schema-drift.go      # env contract validation
 │   └── validate-migrations.go         # D1 migration safety
 └── scripts/              # automation suite (build, deploy, verify, enrich, release)
     ├── build/            # asset generation (PDF, PPTX, icons, screenshots)
     ├── deployment/       # deploy helpers and preflight checks
+    ├── local-dev-up/     # local dev environment orchestrator
     ├── verification/     # deterministic validators and remote probes
     ├── release/          # version decisions and GitHub release publication
     ├── enrichment/       # resume data proposal generators
@@ -36,7 +37,7 @@ tools/
 
 | Task               | Location                | Notes                                                |
 | ------------------ | ----------------------- | ---------------------------------------------------- |
-| CI validation      | `ci/`                   | affected.go, wrangler config, env schema, migrations |
+| CI validation      | `ci/`                   | affected, wrangler config, env schema, migrations    |
 | Asset generation   | `scripts/build/`        | PDF, PPTX, icons, screenshots, Docker images         |
 | Deploy helpers     | `scripts/deployment/`   | quick-deploy, staged deploy, monitoring hooks        |
 | Verification       | `scripts/verification/` | validators, remote probes, Lighthouse, smoke tests   |
@@ -70,7 +71,7 @@ tools/
 
 - Never use .sh for new operational scripts — use Go.
 - Never run a module-scoped Go command from the wrong module directory.
-- Never skip `affected.go` in CI.
+- Never skip `affected` in CI.
 - Never treat local deployment helpers as production deploy authority.
 - Never commit secrets, session files, or API tokens.
 

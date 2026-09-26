@@ -316,7 +316,7 @@
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
-│  tools/tools/scripts/verification/verify-deployment.go                          │
+│  tools/scripts/verification/verify-deployment/              │
 └─────────────────────────────────────────────────────────────┘
                            │
               ┌────────────┴────────────┐
@@ -564,7 +564,7 @@ source ~/.env && cd apps/portfolio && npx wrangler whoami
 ### 배포 검증하기
 
 ```bash
-go run ./tools/scripts/verification/verify-deployment.go
+GO111MODULE=off go run ./tools/scripts/verification/verify-deployment
 ```
 
 ---

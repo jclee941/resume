@@ -18,6 +18,7 @@ resume data sync/validation, and supporting review/generation tasks.
 | Data sync        | `sync-resume-data.js`     | SSoT propagation helper   |
 | Data validation  | `validate-resume-data.js` | schema/consistency check  |
 | Version bumping  | `bump-version.js`         | version increment utility |
+| Auto job search  | `auto-job-search/`        | multi-platform job search |
 
 ## CONVENTIONS
 

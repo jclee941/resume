@@ -22,7 +22,7 @@ without pushing to GitHub or depending on remote infrastructure.
 | Tool                  | Location                | Purpose                           |
 | --------------------- | ----------------------- | --------------------------------- |
 | `run-ci-local.go`     | `tools/scripts/`        | Simulate CI pipeline locally      |
-| `local-dev-up.go`     | `tools/scripts/`        | Orchestrate local dev environment |
+| `local-dev-up/`       | `tools/scripts/`        | Orchestrate local dev environment |
 | `cf-bindings-mock.js` | `infrastructure/mocks/` | Mock Cloudflare Worker bindings   |
 
 ---
@@ -34,7 +34,7 @@ without pushing to GitHub or depending on remote infrastructure.
 go run tools/scripts/run-ci-local.go --help
 
 # Start full local dev environment (portfolio + job-server)
-go run tools/scripts/local-dev-up.go --all
+go -C tools/scripts run ./local-dev-up --all
 ```
 
 ---
@@ -113,7 +113,7 @@ Each run generates a timestamped report at
 
 ---
 
-### `local-dev-up.go` — Local Dev Environment Orchestrator
+### `local-dev-up/` — Local Dev Environment Orchestrator
 
 Starts, health-checks, and manages multiple local development services with
 aggregated log output and graceful shutdown.
@@ -122,16 +122,16 @@ aggregated log output and graceful shutdown.
 
 ```bash
 # Start all services (portfolio + job-server)
-go run tools/scripts/local-dev-up.go --all
+go -C tools/scripts run ./local-dev-up --all
 
 # Show local-dev options
-go run tools/scripts/local-dev-up.go
+go -C tools/scripts run ./local-dev-up
 
 # Start portfolio dev server
-go run tools/scripts/local-dev-up.go --portfolio
+go -C tools/scripts run ./local-dev-up --portfolio
 
 # Start specific combination
-go run tools/scripts/local-dev-up.go --portfolio --job-server
+go -C tools/scripts run ./local-dev-up --portfolio --job-server
 ```
 
 #### Service flags
@@ -268,7 +268,7 @@ How local stages map to the real CI pipeline in `.github/workflows/ci.yml`:
 
 | Local Stage  | CI Job(s)                | Local Commands                                                                                          | CI Conditions                                      |
 | ------------ | ------------------------ | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `analyze`    | `analyze`                | `go run ./tools/ci/affected.go`                                                                         | Always runs                                        |
+| `analyze`    | `analyze`                | `GO111MODULE=off go run ./tools/ci/affected`                                                            | Always runs                                        |
 | `validate`   | `validate-cloudflare`    | `go run ./tools/ci/validate-cloudflare-native.go`                                                       | portfolio affected (ADR 0009)                      |
 |              |                          | `npx wrangler types /tmp/portfolio-worker-types.d.ts --config wrangler.jsonc --env production`          |                                                    |
 | `lint`       | `lint`                   | `npm run lint`                                                                                          | Always runs                                        |
@@ -321,7 +321,7 @@ cat .ci-local/ci-report-*.txt | tail -20
 
 ```bash
 # Start the local dev server
-go run tools/scripts/local-dev-up.go --portfolio
+go -C tools/scripts run ./local-dev-up --portfolio
 
 # In another terminal, run E2E tests with debug output
 DEBUG=pw:api npm run test:e2e:smoke
@@ -367,7 +367,7 @@ describe('Worker handler', () => {
 
 ```bash
 # Terminal 1: Start all services
-go run tools/scripts/local-dev-up.go --all
+go -C tools/scripts run ./local-dev-up --all
 
 # Terminal 2: Run CI validation against local stack
 go run tools/scripts/run-ci-local.go --mock
@@ -482,7 +482,7 @@ npm ci
 npm run sync:data
 npm --prefix apps/portfolio run build
 # Then retry
-go run tools/scripts/local-dev-up.go --portfolio
+go -C tools/scripts run ./local-dev-up --portfolio
 ```
 
 ### Job-server skipped: docker-compose not found

@@ -187,7 +187,7 @@ packages/data/resumes/archive/versions/*.docx
 packages/data/resumes/technical/**/*.pdf
 !packages/data/resumes/applications/**/*.pdf
 
-# CI affected-detection cache (regenerated each run by tools/ci/affected.go)
+# CI affected-detection cache (regenerated each run by tools/ci/affected/)
 .affected/
 .affected-review/
 
@@ -236,8 +236,8 @@ applications/_auto-apply-runs/
 
 # Compiled Go helper binaries — all callers use `go run` against the adjacent
 # *.go source, none execute these committed binaries (verified 2026-07-22)
-/tools/scripts/deployment/deploy-helper
-/tools/scripts/deployment/deploy-grafana-configs
+/tools/scripts/deployment/deploy-helper/deploy-helper
+/tools/scripts/deployment/deploy-grafana-configs/deploy-grafana-configs
 /tools/scripts/deployment/deploy-with-monitoring
 /tools/scripts/deployment/quick-deploy
 /tools/scripts/monitoring/monitor-deployment

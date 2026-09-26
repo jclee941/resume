@@ -14,12 +14,13 @@ Automation suite for build, deployment, verification, release, and enrichment. N
 scripts/
 ├── build/              # asset generation (PDF, PPTX, icons, screenshots, Docker)
 ├── deployment/         # deploy helpers and preflight checks
+├── local-dev-up/       # local dev environment orchestrator
 ├── verification/      # deterministic validators and remote probes
 ├── release/           # version decisions and GitHub release publication
 ├── enrichment/        # resume data proposal generators
 ├── onepassword/       # secret-safe local operator wrappers
 ├── security/          # committed security guard scripts
-├── monitoring/        # observability config helpers
+├── monitoring/        # observability config helpers and deployers
 ├── sync/              # data sync and proposal application
 ├── utils/             # shared utilities and SSoT helpers
 └── setup/             # environment setup

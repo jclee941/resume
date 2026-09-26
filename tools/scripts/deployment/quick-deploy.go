@@ -67,6 +67,8 @@ func checkAuth() (string, bool) {
 func runScript(scriptPath string) error {
 	cmd := exec.Command("go", "run", scriptPath)
 	cmd.Dir = projectRoot
+	// Helpers are stdlib-only package directories; GOPATH mode runs them from the repo root.
+	cmd.Env = append(os.Environ(), "GO111MODULE=off")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
@@ -84,7 +86,7 @@ func main() {
 
 	fmt.Println()
 
-	if err := runScript("./tools/scripts/deployment/deploy-helper.go"); err != nil {
+	if err := runScript("./tools/scripts/deployment/deploy-helper"); err != nil {
 		fmt.Printf("%s✗ Deployment failed%s\n", RED, NC)
 		fmt.Printf("%s→ Check logs: ~/.config/.wrangler/logs/%s\n", YELLOW, NC)
 		fmt.Printf("%s→ See troubleshooting: docs/MANUAL_DEPLOYMENT_GUIDE.md%s\n", YELLOW, NC)
@@ -97,7 +99,7 @@ func main() {
 	fmt.Printf("%sRunning deployment verification...%s\n", BLUE, NC)
 	fmt.Println()
 
-	if err := runScript("./tools/scripts/verification/verify-deployment.go"); err != nil {
+	if err := runScript("./tools/scripts/verification/verify-deployment"); err != nil {
 		fmt.Printf("%s✗ Verification failed%s\n", RED, NC)
 		os.Exit(1)
 	}

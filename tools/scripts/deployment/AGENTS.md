@@ -13,9 +13,9 @@ Deployment helper scripts: preflight checks, staged deployment, monitoring hooks
 | Script                      | Purpose                                |
 | --------------------------- | -------------------------------------- |
 | `quick-deploy.go`           | One-command deploy with all checks     |
-| `deploy-helper.go`          | Staged deploy with progress indicators |
+| `deploy-helper/`            | Staged deploy with progress indicators |
 | `deploy-with-monitoring.go` | Deploy with monitoring hooks           |
-| `deploy-grafana-configs.go` | Observability config deploy helper     |
+| `deploy-grafana-configs/`   | Observability config deploy helper     |
 
 ## CONVENTIONS
 

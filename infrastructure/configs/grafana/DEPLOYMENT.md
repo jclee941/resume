@@ -33,13 +33,13 @@ On the **local machine** running the script:
 From the repository root:
 
 ```bash
-go run ./tools/scripts/deploy-monitoring.go
+go -C tools/scripts run ./monitoring/deploy-monitoring
 ```
 
 ### Custom target / SSH key
 
 ```bash
-go run ./tools/scripts/deploy-monitoring.go \
+go -C tools/scripts run ./monitoring/deploy-monitoring \
   -host 192.168.50.215 \
   -user root \
   -ssh-key ~/.ssh/id_rsa
@@ -48,7 +48,7 @@ go run ./tools/scripts/deploy-monitoring.go \
 ### Dry run (preview without making changes)
 
 ```bash
-go run ./tools/scripts/deploy-monitoring.go -dry-run
+go -C tools/scripts run ./monitoring/deploy-monitoring -dry-run
 ```
 
 ---
