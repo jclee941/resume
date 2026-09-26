@@ -775,7 +775,8 @@
     "packages/shared/src/retry/with-retry.js",
     "tools/scripts/utils/resume-sync-runner.js",
     "tools/scripts/utils/sync-resume-data.js",
-    "tools/scripts/utils/verify-resume-sync.mjs"
+    "tools/scripts/utils/verify-resume-sync.mjs",
+    "apps/job-dashboard/src/workflows/daily-report.js"
   ],
   "exclude": ["packages/env/src/__tests__/**"]
 }

@@ -229,8 +229,8 @@ export class NotificationService {
   }
 
   /**
-   * @param {Record<string, unknown>} data
-   * @param {Record<string, unknown>} [options]
+   * @param {Parameters<typeof deliverTelegramNotification>[1]} data
+   * @param {Parameters<typeof deliverTelegramNotification>[2]} [options]
    * @returns {Promise<unknown>}
    */
   async sendTelegramNotification(data, options = {}) {
@@ -398,7 +398,7 @@ export class NotificationService {
 
 /**
  * @param {NotificationEnv} env
- * @param {Record<string, unknown>} message
+ * @param {Parameters<typeof deliverTelegramNotification>[1]} message
  * @returns {Promise<unknown>}
  */
 export async function sendTelegramNotification(env, message) {
