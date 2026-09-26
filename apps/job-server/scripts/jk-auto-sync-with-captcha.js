@@ -37,8 +37,28 @@ if (!process.env.CLIPROXY_API_KEY) {
   process.exit(1);
 }
 
+/**
+ * @typedef {{
+ *   name: string;
+ *   value: string;
+ *   domain?: string;
+ *   path?: string;
+ *   httpOnly?: boolean;
+ *   secure?: boolean;
+ *   sameSite?: 'Lax' | 'Strict' | 'None';
+ *   expires?: number;
+ * }} CookieItem
+ */
+
+/**
+ * @param {unknown} msg
+ * @returns {void}
+ */
 const log = (msg) => console.log(`[jk-auto-sync] ${msg}`);
 
+/**
+ * @returns {CookieItem[]}
+ */
 function loadExistingCookies() {
   for (const p of SESSION_PATHS) {
     if (fs.existsSync(p)) {
@@ -54,6 +74,10 @@ function loadExistingCookies() {
   return [];
 }
 
+/**
+ * @param {CookieItem[]} cookies
+ * @returns {void}
+ */
 function saveCookies(cookies) {
   const session = {
     platform: 'jobkorea',
@@ -155,19 +179,19 @@ async function main() {
       const el = document.querySelector('#gtxt') || document.querySelector('input[name="gtxt"]');
       if (!el) return false;
       el.scrollIntoView({ block: 'center' });
-      el.focus();
-      el.value = text;
+      /** @type {HTMLInputElement} */ (el).focus();
+      /** @type {HTMLInputElement} */ (el).value = text;
       el.dispatchEvent(new Event('input', { bubbles: true }));
       el.dispatchEvent(new Event('change', { bubbles: true }));
-      return el.value === text;
+      return /** @type {HTMLInputElement} */ (el).value === text;
     }, solved.text);
     log(`Filled CAPTCHA "${solved.text}" via ${solved.model} (success: ${ok})`);
     break;
   }
 
   // 4. Fill credentials AFTER CAPTCHA
-  await page.fill('#M_ID, input[name="M_ID"]', EMAIL);
-  await page.fill('#M_PWD, input[name="M_PWD"]', PASSWORD);
+  await page.fill('#M_ID, input[name="M_ID"]', /** @type {string} */ (EMAIL));
+  await page.fill('#M_PWD, input[name="M_PWD"]', /** @type {string} */ (PASSWORD));
   log('Filled credentials');
 
   // 5. Submit — wait for full navigation including network idle
@@ -197,7 +221,7 @@ async function main() {
       timeout: 30000,
     });
   } catch (err) {
-    log(`Resume nav error: ${err.message}`);
+    log(`Resume nav error: ${err instanceof Error ? err.message : String(err)}`);
   }
   log(`Resume URL: ${page.url()}`);
   if (page.url().includes('/Login')) {

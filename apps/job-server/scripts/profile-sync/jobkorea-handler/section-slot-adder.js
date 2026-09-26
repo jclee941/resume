@@ -1,5 +1,19 @@
 import { log } from '../sync-logger.js';
 
+/**
+ * @typedef {{
+ *   force?: boolean;
+ * }} AddJobKoreaEntrySlotsOptions
+ */
+
+/**
+ * @param {{ readSectionIndices(page: import('playwright').Page, prefix: string): Promise<string[]> }} handler
+ * @param {import('playwright').Page} page
+ * @param {string} prefix
+ * @param {number} needed
+ * @param {AddJobKoreaEntrySlotsOptions} [options]
+ * @returns {Promise<void>}
+ */
 export async function addJobKoreaEntrySlots(handler, page, prefix, needed, options = {}) {
   if (needed <= 0) return;
 
@@ -21,7 +35,7 @@ export async function addJobKoreaEntrySlots(handler, page, prefix, needed, optio
         Language: '외국어',
         Project: '개인프로젝트',
       };
-      const label = sectionLabels[pfx];
+      const label = /** @type {Record<string, string>} */ (sectionLabels)[pfx];
       if (!label) return false;
 
       const heading = $('h2')
@@ -53,6 +67,9 @@ export async function addJobKoreaEntrySlots(handler, page, prefix, needed, optio
 
     try {
       await page.waitForFunction(
+        /**
+         * @param {{ pfx: string, prev: number }} arg
+         */
         ({ pfx, prev }) => {
           const seen = new Set();
           const escaped = pfx.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
