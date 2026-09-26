@@ -157,9 +157,31 @@ async function bundleCss(baseDir) {
 }
 
 /**
+ * Source files named in getFilesToRead() plus the bundled script and styles.
+ * @typedef {Object} BuildInputs
+ * @property {string} indexHtmlRaw
+ * @property {string} indexEnHtmlRaw
+ * @property {string} projectDataRaw
+ * @property {string} projectDataEnRaw
+ * @property {string} projectDataJaRaw
+ * @property {string} manifestJson
+ * @property {string} manifestEnJson
+ * @property {string} serviceWorker
+ * @property {string} robotsTxt
+ * @property {string} sitemapXml
+ * @property {Buffer} ogImageBuffer
+ * @property {Buffer} ogImageEnBuffer
+ * @property {Buffer} [ogImageJaBuffer]
+ * @property {Buffer} [resumePdfBuffer]
+ * @property {Buffer} [resumeFullPdfBuffer]
+ * @property {string} mainJs
+ * @property {string} cssContent
+ */
+
+/**
  * Read all build input files and bundle dependent assets.
  * @param {{baseDir: string, logger: {log: (msg: string) => void, warn: (msg: string) => void}}} options - Build options.
- * @returns {Promise<Object.<string, unknown>>} Raw source payload.
+ * @returns {Promise<BuildInputs>} Raw source payload.
  */
 async function readBuildInputs({ baseDir, logger }) {
   logger.log('📂 Reading source files...');
@@ -186,11 +208,11 @@ async function readBuildInputs({ baseDir, logger }) {
   logger.log('📦 Bundling CSS...');
   const cssContent = await bundleCss(baseDir);
 
-  return {
+  return /** @type {BuildInputs} */ ({
     ...fileContents,
     mainJs,
     cssContent,
-  };
+  });
 }
 
 module.exports = {

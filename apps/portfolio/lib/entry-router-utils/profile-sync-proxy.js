@@ -3,6 +3,10 @@ import {
   SINGLE_WORKER_PROFILE_SYNC_STATUS_PATTERN,
 } from './constants.js';
 
+/**
+ * @param {Request} request
+ * @returns {Promise<Request>}
+ */
 async function createSingleWorkerProfileSyncRequest(request) {
   const body = await request
     .clone()
@@ -32,6 +36,11 @@ async function createSingleWorkerProfileSyncRequest(request) {
   });
 }
 
+/**
+ * @param {Request} request
+ * @param {string} syncId
+ * @returns {Request}
+ */
 function createSingleWorkerProfileSyncStatusRequest(request, syncId) {
   const targetUrl = new URL(request.url);
   targetUrl.pathname = `/api/automation/profile-sync/${syncId}`;
@@ -42,10 +51,20 @@ function createSingleWorkerProfileSyncStatusRequest(request, syncId) {
   });
 }
 
+/**
+ * @param {string} pathname
+ * @param {string} method
+ * @returns {boolean}
+ */
 function isSingleWorkerProfileSyncTrigger(pathname, method) {
   return pathname === SINGLE_WORKER_PROFILE_SYNC_PATH && method === 'POST';
 }
 
+/**
+ * @param {string} pathname
+ * @param {string} method
+ * @returns {string | null}
+ */
 function getSingleWorkerProfileSyncStatusId(pathname, method) {
   if (method !== 'GET') {
     return null;

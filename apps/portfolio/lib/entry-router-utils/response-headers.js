@@ -1,5 +1,25 @@
 import { BUILD_ETAG_VERSION, LAST_MODIFIED } from './constants.js';
 
+/**
+ * @typedef {Object} ResponseRequestContext
+ * @property {string | null} [acceptEncoding]
+ * @property {boolean} [varyAcceptLanguage]
+ * @property {string} [language]
+ * @property {string} [source]
+ * @property {boolean} [conditionalRequests]
+ * @property {string} [method]
+ * @property {string | null} [ifNoneMatch]
+ * @property {string | null} [ifModifiedSince]
+ *
+ * Cloudflare Workers extend ResponseInit with encodeBody.
+ * @typedef {ResponseInit & { encodeBody?: 'automatic' | 'manual' }} WorkerResponseInit
+ */
+
+/**
+ * @param {string | null | undefined} existingValue
+ * @param {string[]} valuesToAdd
+ * @returns {string}
+ */
 function mergeVaryHeader(existingValue, valuesToAdd) {
   const merged = new Set(
     String(existingValue || '')
@@ -15,6 +35,10 @@ function mergeVaryHeader(existingValue, valuesToAdd) {
   return Array.from(merged).join(', ');
 }
 
+/**
+ * @param {string} pathname
+ * @returns {string}
+ */
 function getCacheControlForPath(pathname) {
   if (pathname === '/health' || pathname === '/healthz' || pathname === '/metrics') {
     return 'no-cache, no-store, must-revalidate';
@@ -46,6 +70,10 @@ function getCacheControlForPath(pathname) {
   return 'private, no-cache';
 }
 
+/**
+ * @param {string | null | undefined} headerValue
+ * @returns {string[]}
+ */
 function acceptedEncodings(headerValue) {
   return String(headerValue || '')
     .toLowerCase()
@@ -63,13 +91,24 @@ function acceptedEncodings(headerValue) {
     .filter(Boolean);
 }
 
+/**
+ * @param {string} pathname
+ * @param {ResponseRequestContext} requestContext
+ * @returns {string}
+ */
 function buildWeakEtag(pathname, requestContext) {
   const slug = pathname.replace(/[^a-z0-9/_-]/gi, '').replace(/\//g, '_') || 'root';
   const languageScope = requestContext.language ? `-${requestContext.language}` : '';
   return `W/"${slug}${languageScope}-${BUILD_ETAG_VERSION}"`;
 }
 
+/**
+ * @param {string} ifNoneMatch
+ * @param {string | null} currentEtag
+ * @returns {boolean}
+ */
 function etagMatches(ifNoneMatch, currentEtag) {
+  /** @param {unknown} tag */
   const normalize = (tag) => String(tag).trim().replace(/^W\//, '');
   const candidates = String(ifNoneMatch)
     .split(',')
@@ -84,6 +123,10 @@ function etagMatches(ifNoneMatch, currentEtag) {
   return candidates.some((candidate) => normalize(candidate) === current);
 }
 
+/**
+ * @param {string} ifModifiedSince
+ * @returns {boolean}
+ */
 function isNotModifiedSince(ifModifiedSince) {
   const requestTimestamp = Date.parse(ifModifiedSince);
   const lastModifiedTimestamp = Date.parse(LAST_MODIFIED);
@@ -97,6 +140,12 @@ function isNotModifiedSince(ifModifiedSince) {
 // RFC 7232 conditional GET/HEAD: opt-in only, never for unsafe methods or
 // no-store resources. If-None-Match takes precedence over If-Modified-Since —
 // when a client sends both, the date validator is ignored.
+/**
+ * @param {string} cacheControl
+ * @param {ResponseRequestContext} requestContext
+ * @param {string | null} etag
+ * @returns {boolean}
+ */
 function isConditionalRequestFresh(cacheControl, requestContext, etag) {
   if (!requestContext.conditionalRequests) {
     return false;
@@ -122,6 +171,10 @@ function isConditionalRequestFresh(cacheControl, requestContext, etag) {
   return false;
 }
 
+/**
+ * @param {Headers} headers
+ * @returns {Response}
+ */
 function buildNotModifiedResponse(headers) {
   const notModified = new Headers(headers);
   notModified.delete('Content-Type');
@@ -134,6 +187,12 @@ function buildNotModifiedResponse(headers) {
   });
 }
 
+/**
+ * @param {Response} response
+ * @param {string} pathname
+ * @param {ResponseRequestContext} requestContext
+ * @returns {boolean}
+ */
 function canCompressResponse(response, pathname, requestContext) {
   if (response.status === 204 || response.status === 304 || !response.body) {
     return false;
@@ -158,6 +217,12 @@ function canCompressResponse(response, pathname, requestContext) {
   );
 }
 
+/**
+ * @param {Response} response
+ * @param {string} pathname
+ * @param {ResponseRequestContext} [requestContext]
+ * @returns {Response}
+ */
 function applyResponseHeaders(response, pathname, requestContext = {}) {
   const headers = new Headers(response.headers);
   const cacheControl = getCacheControlForPath(pathname);
@@ -191,12 +256,17 @@ function applyResponseHeaders(response, pathname, requestContext = {}) {
   if (canCompressResponse(response, pathname, requestContext)) {
     headers.set('Content-Encoding', 'gzip');
     headers.delete('Content-Length');
-    return new Response(response.body.pipeThrough(new CompressionStream('gzip')), {
-      status: response.status,
-      statusText: response.statusText,
-      headers,
-      encodeBody: 'manual',
-    });
+    return new Response(
+      /** @type {NonNullable<Response['body']>} */ (response.body).pipeThrough(
+        new CompressionStream('gzip')
+      ),
+      /** @type {WorkerResponseInit} */ ({
+        status: response.status,
+        statusText: response.statusText,
+        headers,
+        encodeBody: 'manual',
+      })
+    );
   }
 
   return new Response(response.body, {

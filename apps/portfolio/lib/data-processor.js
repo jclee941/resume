@@ -44,7 +44,7 @@ const {
 /**
  * Validate source data and build reusable HTML fragments.
  * @param {{projectDataRaw: string, projectDataEnRaw?: string, projectDataJaRaw?: string, logger: {log: Function}}} options - Data processing options.
- * @returns {{projectData: Object, dataHash: string, templates: Object}} Processed data payload.
+ * @returns {{projectData: { resume: unknown[], projects: unknown[] }, dataHash: string, templates: Record<string, string>}} Processed data payload.
  */
 function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw, logger }) {
   const projectData = JSON.parse(projectDataRaw);
