@@ -34,7 +34,6 @@
     "auto": "node scripts/auto-all.js",
     "auto:sync": "node scripts/auto-all.js --sync",
     "auto:verify": "node scripts/auto-all.js --verify",
-    "ops:daily-run": "go run ./scripts/ops/auto-daily-run/main.go",
     "ops:monitor": "go run ./scripts/ops/auto-monitor/main.go",
     "ops:maintenance": "GO111MODULE=off go run ./scripts/ops/auto-maintenance",
     "cookies:extract": "node scripts/extract-cookies-cdp.js",

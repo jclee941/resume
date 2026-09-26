@@ -1,4 +1,4 @@
-PQ|# API Reference
+# API Reference
 
 > **Note:** The authoritative OpenAPI spec is at `packages/contracts/openapi.yaml`.
 

@@ -15,7 +15,7 @@ unified platform support, and comprehensive automation features.
 
 ## 🚀 New Features
 
-### 1. Unified Apply System (`src/unified-apply-system.js`)
+### 1. Unified Apply System (`src/shared/services/apply/unified-apply-system.js`)
 
 **693 lines** | **Multi-platform support**
 
@@ -38,7 +38,7 @@ unified platform support, and comprehensive automation features.
 #### Usage
 
 ```javascript
-import { UnifiedApplySystem } from './src/unified-apply-system.js';
+import { UnifiedApplySystem } from './src/shared/services/apply/unified-apply-system.js';
 
 const system = new UnifiedApplySystem({
   enabledPlatforms: ['wanted', 'linkedin', 'jobkorea'],
@@ -302,21 +302,21 @@ export LINKEDIN_PASSWORD="your_password"
 ### 1. Start with Dry-Run
 
 ```bash
-# Always test first
-./auto-daily-run.sh
+# Always test first (dry-run by default)
+node src/auto-apply/cli/index.js unified
 
 # Review results
 node src/auto-apply/cli/index.js list --limit=10
 
 # Then apply
-./auto-daily-run.sh --apply --max=3
+node src/auto-apply/cli/index.js unified --apply --max=3
 ```
 
 ### 2. Monitor Regularly
 
 ```bash
 # Daily monitoring
-./auto-monitor.sh
+npm run ops:monitor
 
 # Check stats
 node src/auto-apply/cli/index.js stats
@@ -326,7 +326,7 @@ node src/auto-apply/cli/index.js stats
 
 ```bash
 # Weekly maintenance
-./auto-maintenance.sh
+npm run ops:maintenance
 
 # Check backups
 ls -la backups/
@@ -361,18 +361,16 @@ node src/auto-apply/cli/index.js ai_unified --max=5
 ```text
 apps/job-server/
 ├── src/
-│   ├── unified-apply-system.js    # Main unified system
-│   ├── lib/
-│   │   └── ai-matcher.js          # AI matching engine
 │   ├── auto-apply/
-│   │   ├── cli.js                 # Enhanced CLI
+│   │   ├── cli/index.js           # Unified auto-apply CLI
 │   │   └── application-manager.js # Application tracking
-│   └── dashboard/
-│       ├── server.js              # Enhanced API
-│       └── simple-server.js       # Lightweight server
-├── auto-daily-run.sh              # Daily automation
-├── auto-monitor.sh                # System monitoring
-├── auto-maintenance.sh            # System maintenance
+│   ├── shared/services/
+│   │   ├── apply/unified-apply-system.js  # Main unified system
+│   │   └── matching/ai-matcher.js         # AI matching engine
+│   └── server/index.js            # Fastify dashboard/API server
+└── scripts/ops/
+    ├── auto-monitor/              # System monitoring (npm run ops:monitor)
+    └── auto-maintenance/          # System maintenance (npm run ops:maintenance)
 ```
 
 ---
@@ -406,10 +404,10 @@ node src/auto-apply/cli/index.js advice
 
 ```bash
 # Dry-run
-./auto-daily-run.sh
+node src/auto-apply/cli/index.js unified
 
 # Real applications (start small!)
-./auto-daily-run.sh --apply --max=3
+node src/auto-apply/cli/index.js unified --apply --max=3
 ```
 
 ### 4. Run with Event Triggers
@@ -470,7 +468,7 @@ curl -X POST https://resume.jclee.me/job/api/workflows/resume-sync/run
 
 - Check logs: `apps/job-server/logs/`
 - Review stats: `node src/auto-apply/cli/index.js stats`
-- Monitor system: `./auto-monitor.sh`
+- Monitor system: `npm run ops:monitor`
 
 ### Getting Help
 

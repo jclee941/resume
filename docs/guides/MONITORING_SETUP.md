@@ -3,7 +3,7 @@
 Complete guide for setting up monitoring infrastructure for Resume Portfolio
 
 **Target Environment**: Proxmox pve3 (192.168.50.100)
-**Services**: Prometheus, Grafana, Loki, automation
+**Services**: Prometheus, Grafana, Loki
 **Last Updated**: 2025-11-20
 
 ## 📋 Prerequisites
@@ -12,8 +12,7 @@ Complete guide for setting up monitoring infrastructure for Resume Portfolio
 - Docker and Docker Compose installed
 - Domain name configured (jclee.me)
 - SSL certificates (Let's Encrypt)
-- Network access to ports: 9090 (Prometheus), 3000 (Grafana), 3100 (Loki), 5678
-  (automation)
+- Network access to ports: 9090 (Prometheus), 3000 (Grafana), 3100 (Loki)
 
 ## 1. Prometheus Setup
 
@@ -525,59 +524,7 @@ curl -G "http://localhost:3100/loki/api/v1/query_range" \
   --data-urlencode 'limit=10'
 ```
 
-## 4. automation Workflow Deployment
-
-### Prerequisites
-
-```bash
-# Set automation API key
-export AUTOMATION_API_KEY="your_automation_api_key"
-export AUTOMATION_URL="https://automation.example.com"
-```
-
-### Deploy Health Check Workflow
-
-```bash
-# Navigate to automation directory
-cd /home/jclee/dev/resume/infrastructure/automation
-
-# Deploy workflow
-go run ./deploy-workflow.go resume-healthcheck-oauth2.json
-
-# Expected output:
-# ✓ Reading workflow file...
-# ✓ Validating JSON...
-# ✓ Uploading to automation...
-# ✅ Workflow deployed successfully!
-#    Workflow ID: 123
-#    Name: Resume Portfolio - Health Check Monitor (OAuth2)
-```
-
-### Configure Slack OAuth2
-
-Follow steps in `infrastructure/automation/SLACK_OAUTH2_SETUP.md`:
-
-1. Create Slack App
-2. Enable OAuth & Permissions
-3. Add OAuth scopes: `chat:write`, `chat:write.public`
-4. Install app to workspace
-5. Copy OAuth token
-6. Add credential to automation
-
-### Activate Workflow
-
-```bash
-# Via automation API
-curl -X PATCH "https://automation.example.com/api/v1/workflows/123" \
-  -H "X-AUTOMATION-API-KEY: $AUTOMATION_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"active": true}'
-
-# Or via UI
-# automation UI → Workflows → Resume Portfolio Health Check → Activate
-```
-
-## 5. Reverse Proxy (Nginx)
+## 4. Reverse Proxy (Nginx)
 
 ### Configuration
 
@@ -634,25 +581,6 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
     }
 }
-
-# automation
-server {
-    listen 443 ssl http2;
-    server_name automation.example.com;
-
-    ssl_certificate /path/to/cert.pem;
-    ssl_certificate_key /path/to/key.pem;
-
-    location / {
-        proxy_pass http://localhost:5678;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-    }
-}
 ```
 
 ### Enable and Test
@@ -670,10 +598,9 @@ sudo systemctl reload nginx
 # Verify SSL
 curl -I https://grafana.jclee.me
 curl -I https://prometheus.jclee.me
-curl -I https://automation.example.com
 ```
 
-## 6. Verification
+## 5. Verification
 
 ### Check All Services
 
@@ -689,10 +616,6 @@ curl -s http://localhost:3000/api/health | jq '.'
 # Loki
 curl -s http://localhost:3100/ready
 # Expected: ready
-
-# automation
-curl -s https://automation.example.com/healthz
-# Expected: {"status":"ok"}
 ```
 
 ### Test End-to-End
@@ -707,17 +630,14 @@ curl -s "http://localhost:9090/api/v1/query?query=up{job=\"resume\"}"
 # 3. Check Grafana dashboard
 # Open: https://grafana.jclee.me
 # Navigate to: Dashboards → Resume Portfolio
-
-# 4. Test automation workflow
-# Temporarily break resume.jclee.me and check Slack for alert
 ```
 
-## 7. Maintenance
+## 6. Maintenance
 
 ### Daily Tasks
 
 - Check Grafana dashboard for anomalies
-- Review Slack alerts from automation
+- Review Grafana alert notifications (Telegram)
 - Monitor disk space on Synology NAS
 
 ### Weekly Tasks
@@ -755,7 +675,7 @@ cd /volume1/docker/loki && docker-compose up -d
 docker ps | grep -E 'prometheus|grafana|loki'
 ```
 
-## 8. Troubleshooting
+## 7. Troubleshooting
 
 ### Prometheus Not Scraping
 
@@ -803,32 +723,12 @@ curl -G "http://localhost:3100/loki/api/v1/query_range" \
   --data-urlencode 'limit=10' | jq '.'
 ```
 
-### automation Workflow Not Running
-
-```bash
-# Check automation logs
-docker logs automation | tail -50
-
-# List workflows
-curl -X GET "https://automation.example.com/api/v1/workflows" \
-  -H "X-AUTOMATION-API-KEY: $AUTOMATION_API_KEY"
-
-# Check workflow status
-curl -X GET "https://automation.example.com/api/v1/workflows/123" \
-  -H "X-AUTOMATION-API-KEY: $AUTOMATION_API_KEY" | jq '.active'
-
-# Test workflow manually
-curl -X POST "https://automation.example.com/api/v1/workflows/123/execute" \
-  -H "X-AUTOMATION-API-KEY: $AUTOMATION_API_KEY"
-```
-
 ## 📚 References
 
 - [Prometheus Configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/)
 - [Grafana Provisioning](https://grafana.com/docs/grafana/latest/administration/provisioning/)
 - [Loki Configuration](https://grafana.com/docs/loki/latest/configuration/)
-- [automation API Documentation](https://docs.automation.io/api/)
-- [Nginx Reverse Proxy Guide](https://docs.nginx.com/nginx/admin-guide/apps/portfolio-server/reverse-proxy/)
+- [Nginx Reverse Proxy Guide](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/)
 
 ## 📝 Next Steps
 

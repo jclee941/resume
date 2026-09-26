@@ -40,51 +40,26 @@ follows a layered architecture where `apps/` contains deployables and
 
 ## System Architecture
 
-````text
-                        ┌─────────────────────────────────────────┐
-                        │           GitHub Repository            │
-                        │         (push to master)               │
-                        └─────────────────┬───────────────────────┘
-                                          │
-                                          ▼
-                        ┌─────────────────────────────────────────┐
-                        │         CI Pipeline (ci.yml)            │
-                        │  analyze → validate-cf → lint →        │
-                        │  typecheck → test-unit → test-e2e →    │
-                        │  security-scan → build                 │
-                        └─────────────────┬───────────────────────┘
-                                          │
-                                          ▼
-                        ┌─────────────────────────────────────────┐
-                        │      Release Pipeline (release.yml)     │
-                        │         Auto-release + ELK ingest        │
-                        └───────────┬─────────────────┬───────────┘
-                                    │                 │
-                    ┌───────────────▼───┐   ┌─────────▼─────────┐
-                    │  CF Workers Builds │   │  verify.yml      │
-                    │    (deploys)       │   │  (health checks) │
-                    └────────┬───────────┘   └──────────────────┘
-                             │
-         ┌───────────────────┼───────────────────┐
-         │                   │                   │
-         JM|         │                   │                   │
-YH|         ▼                   ▼                   ▼
-HV|┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
-XW|│   apps/portfolio│  │ apps/job-server │  │ apps/job-dash   │
-ZQ|│   (CF Worker)   │  │  (Docker/MCP)   │  │  (module)       │
-QK|│                 │  │                 │  │                 │
-XY|│ resume.jclee.me │  │  Local/Docker   │  │  imported into   │
-TH|│  /job/* routes  │  │  MCP+Fastify    │  │  portfolio       │
-QM|│  (internal)     │  │                 │  │                 │
-XT|└────────┬────────┘  └────────┬────────┘  └─────────────────┘
-XQ|         │                   │
-XB|         ▼                   ▼
-KM|┌─────────────────┐  ┌─────────────────┐
-HV|│   packages/data  │  │  External APIs  │
-QS|│   (SSoT sync)    │  │  (Wanted,       │
-WY|│                 │  │   JobKorea)     │
-QB|└─────────────────┘  └─────────────────┘
-WB|```
+```text
+git push (master)
+        │
+        ├─────────────────────────────────┐
+        ▼                                 ▼
+Cloudflare Workers Builds          GitHub Actions ci.yml
+(npm run build, deploy)            (validate: lint, typecheck,
+        │                           tests, contracts, bundle)
+        ▼
+resume Worker (apps/portfolio/entry.js)
+  ├── portfolio routes (resume.jclee.me)
+  ├── /job/* → apps/job-dashboard (in-process module)
+  └── scheduled() ← Cron Triggers (0 21, 0 23 UTC)
+        │
+        ▼
+Workflows · Queues · D1 (DB, JOB_DB) · KV (SESSIONS, RATE_LIMIT_KV, NONCE_KV)
+
+apps/job-server   local/Docker MCP server, crawlers, profile sync
+packages/data     resume SSoT, inlined into the Worker by npm run build
+```
 
 ## Directory Structure
 
@@ -93,7 +68,7 @@ WB|```
 ├── apps/
 │   ├── portfolio/              # CF Worker: cyberpunk terminal portfolio
 │   ├── job-server/             # MCP Server + Fastify for job platform automation
-MS|│   └── job-dashboard/          # Dashboard API module (imported into portfolio worker)
+│   └── job-dashboard/          # Dashboard API module (imported into portfolio worker)
 ├── packages/
 │   ├── cli/                    # Commander.js CLI for resume operations
 │   ├── env/                    # Environment validation + type-safe secrets
@@ -103,37 +78,32 @@ MS|│   └── job-dashboard/          # Dashboard API module (imported into
 │   ├── schemas/                # Runtime Zod validation schemas
 │   └── contracts/              # OpenAPI spec + Worker Env interface
 ├── infrastructure/
-│   ├── automation/             # automation scripts
 │   ├── cloudflare/             # Terraform (Cloudflare resources)
-│   ├── configs/                # Shared configuration files
-│   ├── database/               # D1 migration scripts
-│   ├── docker/                 # Docker configuration and scripts
-│   ├── mocks/                  # Mock services and test utilities
-│   ├── monitoring/             # Grafana, Loki, Prometheus configs
-│   ├── automation/                    # Workflow automation
-│   ├── systemd/                # Systemd service configs
-│   └── workflows/              # Workflow automation exports
+│   ├── configs/                # Alertmanager, Grafana, Prometheus, Tempo configs
+│   ├── database/               # D1 migrations and seeds
+│   ├── docker/                 # Monitoring and session-broker compose files
+│   ├── mocks/                  # Cloudflare binding mocks
+│   └── monitoring/             # Grafana dashboards, SLOs, logging, tracing
 ├── tools/
 │   ├── scripts/                # Build, deploy, monitoring, setup, utils
 │   └── ci/                     # CI helper scripts
 ├── tests/
-│   ├── unit/                   # Jest test suites (33 suites, 712 tests)
-│   ├── e2e/                    # Playwright end-to-end tests (24 files)
-│   └── integration/            # Integration tests (3 files)
+│   ├── unit/                   # Jest unit suites
+│   ├── e2e/                    # Playwright end-to-end tests
+│   └── integration/            # Integration tests
 ├── docs/                       # Architecture, guides, analysis, reports
 ├── ta/                         # Python PPTX analysis scripts
 ├── third_party/                # Vendored external dependencies (npm-managed)
 ├── .github/
-│   ├── workflows/              # 29 CI/CD workflows
-│   └── actions/setup/          # Composite setup action
+│   └── workflows/ci.yml        # Validation-only CI (never deploys)
 ├── package.json                # Root workspace config
-├── wrangler.jsonc              # Portfolio worker config
+├── wrangler.jsonc              # Merged resume Worker config (bindings, crons)
 ├── tsconfig.base.json          # TypeScript base checking config
 ├── eslint.config.cjs           # ESLint flat config
 ├── jest.config.cjs             # Jest test config
 ├── playwright.config.js        # Playwright E2E config
 └── Dockerfile                  # Job server container
-````
+```
 
 ## Data Flow
 
@@ -159,50 +129,45 @@ During build, `generate-worker.js` inlines the HTML, CSS, and data into
 
 ### 2. Job Automation Flow
 
-KM|`text
-XN|apps/job-server/ (crawlers, services)
-           MN|           │
-           WM|           ▼ API calls
-SX|Korean job platforms (Wanted, JobKorea)
-           SM|           │
-           JQ|           ▼ store results
-KK|D1: DB (applications, job cache, sync logs)
-           NZ|           │
-           BM|           ▼
-WB|portfolio worker (imports job-dashboard)
-           HX|           │
-           PR|           ▼ handles internally
-XS|apps/portfolio/entry.js (/job/* routes)
-SQ|`
+```text
+Cron Triggers (0 21, 0 23 UTC) or /job/api/* request
+           │
+           ▼
+resume Worker scheduled()/fetch() → apps/job-dashboard handlers
+           │
+           ▼ Workflows + Queues
+Korean job platforms + cliproxy LLM job discovery and scoring
+           │
+           ▼ store results
+D1 JOB_DB (applications, job cache, sync logs) · KV SESSIONS
+```
 
-SP|Job automation runs in the job-server application, which crawls Korean job
-WS|platforms using stealth techniques (UA rotation, jitter, rebrowser-puppeteer).
-MN|Results are stored in the DB D1 database. The dashboard API is served by the
-HV|job-dashboard module imported directly into the portfolio worker — no Service
-MM|Binding, no separate deployment. `/job/*` requests route via internal function call.
-VB|
+Scheduled job automation runs inside the merged `resume` Worker: Cron Triggers
+invoke `scheduled()`, which routes through
+`apps/job-dashboard/src/handlers/scheduled/` into Cloudflare Workflows and
+Queues. `0 21 * * *` refreshes the Wanted session and starts
+`ResumeSyncWorkflow`; `0 23 * * *` runs cliproxy auto-apply. Both default to
+dry-run. The dashboard API is served by the job-dashboard module imported
+directly into the portfolio worker — no Service Binding, no separate
+deployment. `apps/job-server` remains the local MCP server, crawler, and
+profile-sync runtime.
 
 ### 3. CI/CD Flow
 
 ```text
 git push (master)
            │
-           ▼
-GitHub Actions (ci.yml) - 8 validation jobs
-           │
-           ▼ on success
-release.yml (auto-release)
-           │
-           ├──────────────────┤
-           ▼                  ▼
-CF Workers Builds    verify.yml
-   (deploy)        (health checks)
+           ├──────────────────────────────┐
+           ▼                              ▼
+Cloudflare Workers Builds          GitHub Actions ci.yml (validate)
+(npm run build, deploy)            lint, typecheck, tests, contracts,
+                                   Wrangler bundle dry-run
 ```
 
-The CI pipeline runs eight validation jobs: analyze, validate-cf, lint,
-typecheck, test-unit, test-e2e, security-scan, and build. On success,
-release.yml triggers Cloudflare Workers Builds for deployment and verify.yml for
-health checks.
+Cloudflare Workers Builds is the only deploy path: it runs `npm run build` and
+deploys the merged `resume` Worker on every push to `master`. GitHub Actions
+runs one `validate` job (`.github/workflows/ci.yml`) on pushes and pull
+requests and never deploys.
 
 ## Deployment
 
@@ -227,18 +192,23 @@ See [ADR 0009](adr/0009-single-worker-consolidation.md) (supersedes ADR 0007).
 | `SESSIONS`      | KV    | Both (shared, intentional) | Session storage                           |
 | `RATE_LIMIT_KV` | KV    | Both (shared, intentional) | Domain-wide rate limiting                 |
 | `NONCE_KV`      | KV    | Both (shared, intentional) | CSRF nonce validation                     |
-| `crawl-tasks`   | Queue | Job Dashboard Worker       | Crawl job queue                           |
+| `crawl-tasks`   | Queue | Merged Worker (resume)     | Crawl job queue                           |
+| `notifications` | Queue | Merged Worker (resume)     | Notification delivery                     |
 
 ## Workspaces
 
-| Package | Path | Type | Description |
-| -------------------------- | ------------------ | ------------------------------ | ------------------------------ | ------ | ----------------------------------------------------- |
-| `@resume/portfolio-worker` | `apps/portfolio/` | App | CF Worker: cyberpunk portfolio |
-| `@resume/job-automation` | `apps/job-server/` | App | MCP Server + Fastify (ESM) |
-| ST | | `@resume/job-dashboard-worker` | `apps/job-dashboard/` | Module | Dashboard API module (imported into portfolio worker) |
-| `@resume/shared` | `packages/shared/` | Package | Cross-worker shared kernel |
-| `@resume/cli` | `packages/cli/` | Package | Commander.js CLI (ESM) |
-| `@resume/data` | `packages/data/` | Package | Resume data SSoT |
+| Package                        | Path                  | Type    | Description                                           |
+| ------------------------------ | --------------------- | ------- | ----------------------------------------------------- |
+| `@resume/portfolio-worker`     | `apps/portfolio/`     | App     | CF Worker: cyberpunk portfolio                        |
+| `@resume/job-automation`       | `apps/job-server/`    | App     | MCP Server + Fastify (ESM)                            |
+| `@resume/job-dashboard-worker` | `apps/job-dashboard/` | Module  | Dashboard API module (imported into portfolio worker) |
+| `@resume/shared`               | `packages/shared/`    | Package | Cross-worker shared kernel                            |
+| `@resume/cli`                  | `packages/cli/`       | Package | Commander.js CLI (ESM)                                |
+| `@resume/data`                 | `packages/data/`      | Package | Resume data SSoT                                      |
+| `@resume/env`                  | `packages/env/`       | Package | Runtime environment validation                        |
+| `@resume/types`                | `packages/types/`     | Package | Canonical JSDoc/TS domain types                       |
+| `@resume/schemas`              | `packages/schemas/`   | Package | Zod runtime schemas                                   |
+| `@resume/contracts`            | `packages/contracts/` | Package | OpenAPI spec + Worker env contract                    |
 
 ## Key Design Decisions
 

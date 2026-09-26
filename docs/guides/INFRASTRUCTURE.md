@@ -53,11 +53,6 @@
                 │  │  Loki            │  │
                 │  │  loki.jclee.me   │  │
                 │  └──────────────────┘  │
-                │                        │
-                │  ┌──────────────────┐  │
-                │  │  automation             │  │
-                │  │  automation.example.com    │  │
-                │  └──────────────────┘  │
                 └────────────────────────┘
 ```
 
@@ -65,12 +60,11 @@
 
 일부 서비스는 **내부망 전용**이며 외부 DNS가 등록되어 있지 않습니다.
 
-| Service    | External DNS              | Internal Access     | Recommended               |
-| ---------- | ------------------------- | ------------------- | ------------------------- |
-| Grafana    | ✅ grafana.jclee.me       | 192.168.50.100:3000 | External DNS 사용         |
-| Prometheus | ❌ prometheus.jclee.me    | 192.168.50.100:9090 | Grafana Explore 패널 사용 |
-| Loki       | ❌ loki.jclee.me          | 192.168.50.100:3100 | Grafana Explore 패널 사용 |
-| automation | ✅ automation.example.com | 192.168.50.100:5678 | External DNS 사용         |
+| Service    | External DNS           | Internal Access     | Recommended               |
+| ---------- | ---------------------- | ------------------- | ------------------------- |
+| Grafana    | ✅ grafana.jclee.me    | 192.168.50.100:3000 | External DNS 사용         |
+| Prometheus | ❌ prometheus.jclee.me | 192.168.50.100:9090 | Grafana Explore 패널 사용 |
+| Loki       | ❌ loki.jclee.me       | 192.168.50.100:3100 | Grafana Explore 패널 사용 |
 
 **접근 방법**:
 
@@ -248,106 +242,20 @@ web_vitals_received{job="resume"}
 {job="resume-worker"} | json | path="/health"
 ```
 
-### 5. automation (Automation)
+### 5. Scheduled Automation (Cloudflare Cron Triggers + Workflows)
 
-**URL**: <https://automation.example.com>
-**Location**: Proxmox pve3 (192.168.50.100)
-**Purpose**: Health monitoring and alerting
+Scheduling is Cloudflare-native and lives in the root `wrangler.jsonc`
+(`triggers.crons`). The merged `resume` Worker's `scheduled()` handler routes
+each cron through `apps/job-dashboard/src/handlers/scheduled/`:
 
-> **📖 For detailed workflow documentation**, see
-> [infrastructure/automation/README.md](../../infrastructure/automation/README.md) for:
->
-> - Complete workflow setup guides
-> - GitHub webhook integration
-> - Automated deployment pipeline
-> - OAuth2 credential management
-> - API reference and troubleshooting
+| Cron (UTC)   | KST   | Job                                                                 |
+| ------------ | ----- | ------------------------------------------------------------------- |
+| `0 21 * * *` | 06:00 | Wanted session refresh, then `ResumeSyncWorkflow` (dry-run default) |
+| `0 23 * * *` | 08:00 | cliproxy job discovery and auto-apply (dry-run default)             |
 
-**Active Workflows**:
-
-#### Health Check Monitor (OAuth2)
-
-- **Trigger**: Schedule (every 5 minutes)
-- **Check**: GET <https://resume.jclee.me/health>
-- **Condition**: HTTP status ≠ 200 OR timeout
-- **Action**: Send Slack alert to #general
-
-**Workflow Details**:
-
-```json
-{
-  "name": "Resume Portfolio - Health Check Monitor (OAuth2)",
-  "nodes": [
-    {
-      "name": "Every 5 Minutes",
-      "type": "workflow-nodes.scheduleTrigger",
-      "parameters": {
-        "rule": {
-          "interval": [{ "field": "minutes", "minutesInterval": 5 }]
-        }
-      }
-    },
-    {
-      "name": "Check Resume Health",
-      "type": "workflow-nodes.httpRequest",
-      "parameters": {
-        "url": "https://resume.jclee.me/health",
-        "method": "GET",
-        "options": { "timeout": 10000 }
-      },
-      "continueOnFail": true
-    },
-    {
-      "name": "Is Down?",
-      "type": "workflow-nodes.if",
-      "parameters": {
-        "conditions": {
-          "conditions": [
-            {
-              "leftValue": "={{ $json.statusCode }}",
-              "rightValue": 200,
-              "operator": { "type": "number", "operation": "notEquals" }
-            },
-            {
-              "leftValue": "={{ $json.error }}",
-              "rightValue": "",
-              "operator": { "type": "string", "operation": "notEmpty" }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "name": "Send Slack Alert (OAuth2)",
-      "type": "workflow-nodes.slack",
-      "parameters": {
-        "resource": "message",
-        "operation": "post",
-        "channel": "#general",
-        "text": "🚨 Resume Portfolio Down"
-      },
-      "credentials": {
-        "slackOAuth2Api": {
-          "id": "kQFkSQ7sjQ0osLNA",
-          "name": "Slack OAuth2 API"
-        }
-      }
-    }
-  ]
-}
-```
-
-**Deployment**:
-
-```bash
-# Deploy workflow to automation
-cd infrastructure/automation
-go run ./deploy-workflow.go resume-healthcheck-oauth2.json
-
-# Check workflow status
-curl -X GET "https://automation.example.com/api/v1/workflows" \
-  -H "X-AUTOMATION-API-KEY: your_api_key"
-```
+Health check, backup, cleanup, and daily report jobs are Cloudflare Workflows
+(`apps/job-dashboard/src/workflows/`). Uptime alerting stays in Grafana
+(`infrastructure/configs/grafana/alert-rules.yaml`).
 
 ## 📈 Performance Metrics
 
@@ -412,12 +320,6 @@ npm run deploy:wrangler:root
 ```bash
 # Auto-increment patch (1.0.2 → 1.0.3)
 npm run version:bump
-
-# Minor version (1.0.2 → 1.1.0)
-npm run version:minor
-
-# Major version (1.0.2 → 2.0.0)
-npm run version:major
 ```
 
 **Monitoring Configuration**:
@@ -430,10 +332,6 @@ cp monitoring/grafana-dashboard-resume-portfolio.json \
 # Update Prometheus config
 sudo vim /volume1/docker/prometheus/prometheus.yml
 sudo systemctl restart prometheus
-
-# Update automation workflow
-cd infrastructure/automation
-go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 ```
 
 ### Backup Strategy
@@ -502,7 +400,7 @@ go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 
 ## 🔒 Internal Service Access
 
-> **Note**: Prometheus, Loki, automation do not have public DNS. Access via internal
+> **Note**: Prometheus and Loki do not have public DNS. Access via internal
 > network or Grafana proxy.
 
 | Service        | Public URL                    | Internal Access           | Notes                               |
@@ -510,7 +408,6 @@ go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 | **Grafana**    | ✅ <https://grafana.jclee.me> | 192.168.50.100:3000       | Primary dashboard                   |
 | **Prometheus** | 🔒 Internal Only              | 192.168.50.100:9090       | Metrics only via Grafana datasource |
 | **Loki**       | 🔒 Grafana Proxy              | grafana.jclee.me/loki/... | Log queries via Grafana proxy       |
-| **automation** | 🔒 Internal Only              | 192.168.50.100:5678       | Workflow automation (internal only) |
 
 **Access Methods**:
 
@@ -525,5 +422,4 @@ go run ./deploy-workflow.go resume-healthcheck-oauth2.json
 - **Live Site**: <https://resume.jclee.me>
 - **Grafana**: <https://grafana.jclee.me> (✅ Public)
 - **Prometheus**: 192.168.50.100:9090 (🔒 Internal)
-- **automation**: 192.168.50.100:5678 (🔒 Internal)
 - **GitHub**: <https://github.com/jclee941/resume>

@@ -935,7 +935,7 @@ Endpoints returning lists support pagination:
 
 - **[README.md](./README.md)** - Quick start, deployment, configuration
 - **[AGENTS.md](./AGENTS.md)** - Architecture, handlers, workflows, database schema
-- **[../ARCHITECTURE.md](../ARCHITECTURE.md)** - Job automation system overview
+- **[../job-server/ARCHITECTURE.md](../job-server/ARCHITECTURE.md)** - Job automation system overview
 
 ---
 
