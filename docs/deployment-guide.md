@@ -205,7 +205,7 @@ npx wrangler secret put ADMIN_TOKEN --config wrangler.jsonc
 | ----------------------- | -------------------------------------------------------------------------- | ----------------------------- |
 | `ADMIN_TOKEN`           | Bearer token for accessing protected dashboard API endpoints.              | `openssl rand -hex 32`        |
 | `WEBHOOK_SECRET`        | HMAC secret for verifying that incoming webhooks are from trusted sources. | `openssl rand -hex 32`        |
-| `AUTH_SYNC_SECRET`      | Used by external auth-sync scripts to securely push cookies to the worker. | `openssl rand -hex 32`        |
+| `AUTH_SYNC_SECRET`      | Used by the auth-persistent script to securely push cookies to the worker. | `openssl rand -hex 32`        |
 | `ENCRYPTION_KEY`        | AES-256 key used to encrypt user session data stored in cookies.           | `openssl rand -base64 32`     |
 | `SIGNING_SECRET`        | Used to sign JWTs or secure cookies in the portfolio worker.               | `openssl rand -hex 32`        |
 | `SLACK_WEBHOOK_URL`     | Incoming webhook URL for the designated Slack channel.                     | `https://hooks.slack.com/...` |

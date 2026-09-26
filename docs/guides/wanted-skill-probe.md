@@ -12,7 +12,7 @@ tags.
 
 ## Inputs
 
-- Valid Wanted session cookies from the normal session-broker or auth-sync flow.
+- Valid Wanted session cookies from the normal session-broker or auth-persistent flow.
 - Skill names from the resume SSoT or a failed profile-sync report.
 - A dry-run output path under `.omo/evidence/` for redacted request/response
   evidence.

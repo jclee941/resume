@@ -14,8 +14,6 @@ pipeline orchestration, and profile automation. Run from project root.
 | Script                         | Purpose                                              |
 | ------------------------------ | ---------------------------------------------------- |
 | `auth-persistent.js`           | persistent session management                        |
-| `auth-sync.js`                 | cookies → worker KV (846 lines)                      |
-| `auth-sync/`                   | auth sync helper modules                             |
 | `auto-all.js`                  | run all automation workflows                         |
 | `ci-resume-sync.js`            | CI pipeline resume sync                              |
 | `cookie-inject.js`             | inject cookies into browser                          |

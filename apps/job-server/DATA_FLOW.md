@@ -302,7 +302,7 @@ User Initiates: "Apply to all 80+ jobs"
 ### SessionManager Cookie Lifecycle
 
 ```text
-Session Creation (auth-sync.js)
+Session Creation (auth-persistent.js)
          │
          ▼
 ┌─────────────────────────┐

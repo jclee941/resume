@@ -5,7 +5,7 @@ JavaScript automation helpers and Go-based ops entrypoints. Scripts are
 organized by category with usage examples, security considerations, and
 recommended approaches.
 
-**Last Updated**: 2026-02-11
+**Last Updated**: 2026-09-26
 
 ---
 
@@ -14,7 +14,6 @@ recommended approaches.
 | Script                     | Category      | Status    | Recommended | Purpose                                            |
 | -------------------------- | ------------- | --------- | ----------- | -------------------------------------------------- |
 | `extract-cookies-cdp.js`   | Auth          | ✅ Active | **YES**     | Extract cookies via Chrome DevTools Protocol       |
-| `auth-sync.js`             | Auth          | ✅ Active | **YES**     | Multi-platform auth sync (automated + manual)      |
 | `auth-persistent.js`       | Auth          | ✅ Active | **YES**     | Persistent auth with browser UI                    |
 | `profile-sync/`            | Sync          | ✅ Active | **YES**     | Sync resume_data.json to job platforms (8 modules) |
 | `auto-all.js`              | Orchestration | ✅ Active | **YES**     | Run all automation tasks in sequence               |
@@ -23,7 +22,6 @@ recommended approaches.
 | `skill-tag-map.js`         | Utility       | ✅ Active | YES         | Map SSOT skills to platform skill tags             |
 | `metrics-exporter.js`      | Monitoring    | ✅ Active | YES         | Export application metrics to Prometheus           |
 | `import-cookies-manual.js` | Session       | ⚠️ Manual | NO          | Manually import cookies from file                  |
-| `get-cookies.js`           | Session       | ⚠️ Manual | NO          | Get cookies from Chrome user data dir              |
 | `foreign-apply:dry-run`    | QA            | ✅ Active | **YES**     | Local foreign ATS dry-run walkthrough              |
 
 ---
@@ -138,71 +136,7 @@ node scripts/extract-cookies-cdp.js --ws-url ws://localhost:9222/...
 
 ---
 
-### 2. `auth-sync.js` ⭐ RECOMMENDED
-
-**Status**: Active | **Type**: Hybrid (automated + manual) | **Recommended**:
-YES
-
-Multi-platform authentication sync. Handles both automated login (Wanted) and
-manual Google OAuth (JobKorea/Saramin).
-
-**Usage**:
-
-```bash
-# Sync all platforms (interactive - manual for JobKorea/Saramin)
-node scripts/auth-sync.js
-
-# Sync specific platform only
-node scripts/auth-sync.js --platform wanted     # Automated
-node scripts/auth-sync.js --platform jobkorea   # Opens browser
-
-# Headless mode (Wanted only)
-node scripts/auth-sync.js --headless
-
-# Sync existing sessions without authentication
-node scripts/auth-sync.js --sync-only
-
-# Send to Worker for distribution
-node scripts/auth-sync.js --sync-worker
-```
-
-**Environment Variables**:
-
-- `WANTED_EMAIL` - Wanted account email (for automated login)
-- `WANTED_PASSWORD` - Wanted account password
-- `GOOGLE_EMAIL` - Google account email (for JobKorea/Saramin)
-- `GOOGLE_PASSWORD` - Google account password
-- `JOB_WORKER_URL` - Worker URL (default: <https://resume.jclee.me/job>)
-- `AUTH_SYNC_SECRET` - Secret for sync endpoint
-
-**Supported Platforms**: wanted (automated), jobkorea (manual), saramin (manual)
-
-**Workflow**:
-
-1. **Wanted** → Direct email/password login (automated)
-2. **JobKorea** → Browser opens for manual Google OAuth (blocks automation)
-3. **Saramin** → Browser opens for manual Google OAuth (blocks automation)
-4. **Sync** → Send cookies to Worker via secure endpoint
-
-**Why Use This**:
-
-- ✅ All-in-one multi-platform auth
-- ✅ Handles both automated and manual flows
-- ✅ Syncs to Worker automatically
-- ✅ Uses puppeteer-extra + stealth plugins
-- ✅ Fallback to manual login if automation blocked
-
-**Security Notes**:
-
-- Credentials from environment variables only
-- Never hard-coded in source
-- Sessions stored locally before sync
-- Worker endpoint requires AUTH_SYNC_SECRET
-- Stealth plugins active to minimize detection
-
----
-
-### 3. `auth-persistent.js` ⭐ RECOMMENDED
+### 2. `auth-persistent.js` ⭐ RECOMMENDED
 
 **Status**: Active | **Type**: Persistent UI | **Recommended**: YES
 
@@ -228,7 +162,11 @@ node scripts/auth-persistent.js --refresh 24
 node scripts/auth-persistent.js --sync-worker
 ```
 
-**Environment Variables**: Same as `auth-sync.js`
+**Environment Variables**:
+
+- `JOB_WORKER_URL` - Worker URL used by `--sync-worker` (default:
+  <https://resume.jclee.me/job>)
+- `AUTH_SYNC_SECRET` - Secret for the Worker's `/api/auth/sync` endpoint
 
 **Features**:
 
@@ -255,40 +193,9 @@ node scripts/auth-persistent.js --sync-worker
 
 ---
 
-### 4. `quick-login.js` ⚠️ LEGACY
-
-**Status**: Legacy | **Type**: Puppeteer | **Recommended**: NO
-
-Older Puppeteer-based login. Slower and more bot-detection vulnerable than CDP
-approach. Keep for backwards compatibility.
-
-**Usage**:
-
-```bash
-# Start headless login
-node scripts/quick-login.js
-```
-
-**Environment Variables**:
-
-- `WANTED_EMAIL`
-- `WANTED_PASSWORD`
-- `.env` file (fallback)
-
-**Issues**:
-
-- ❌ Slower than CDP method
-- ❌ Higher bot-detection risk
-- ❌ Lacks stealth plugins
-- ❌ Puppeteer overhead (150MB+)
-
-**Migration Path**: Use `extract-cookies-cdp.js` instead.
-
----
-
 ## Session Management Scripts
 
-### 5. `import-cookies-manual.js` ⚠️ LEGACY
+### 3. `import-cookies-manual.js` ⚠️ LEGACY
 
 **Status**: Manual | **Type**: File import | **Recommended**: NO
 
@@ -314,32 +221,9 @@ node scripts/import-cookies-manual.js --file cookies.json --sync-worker
 
 ---
 
-### 6. `get-cookies.js` ⚠️ LEGACY
-
-**Status**: Manual | **Type**: Browser extraction | **Recommended**: NO
-
-Extract cookies from Chrome user data directory. Requires Chrome to be closed.
-
-**Usage**:
-
-```bash
-# Extract from Chrome profile
-node scripts/get-cookies.js
-
-# Specific profile
-node scripts/get-cookies.js --profile "Default"
-```
-
-**Requirements**:
-
-- Chrome must be completely closed
-- Read access to ~/.config/google-chrome (or equivalent)
-
----
-
 ## Monitoring Scripts
 
-### 7. `metrics-exporter.js` ⭐ RECOMMENDED
+### 4. `metrics-exporter.js` ⭐ RECOMMENDED
 
 **Status**: Active | **Type**: Prometheus exporter | **Recommended**: YES
 
@@ -386,7 +270,7 @@ curl http://localhost:9090/metrics
 CHROME_DEBUG_PORT=9222 node scripts/extract-cookies-cdp.js
 
 # 2. Sync auth to Worker
-node scripts/auth-sync.js --sync-worker
+node scripts/auth-persistent.js --sync-worker
 ```
 
 ### Daily Maintenance
@@ -403,18 +287,7 @@ node scripts/auto-all.js --all
 The following scripts are legacy attempts or experiments. **Do not use in
 production**.
 
-- `extract-cookies.js` - Puppeteer extraction (slow, use CDP)
-- `extract-cookies-from-profile.js` - Chrome profile extraction
-- `extract-cookies-sqlite.js` - Chrome SQLite extraction
-- `extract-cookies-playwright.js` - Playwright extraction
-- `auto-login.js` - First login attempt
-- `direct-login*.js` (v1-v4) - Login iterations
-- `wanted-login-v5.js` - Wanted-specific variant
-- `email-login.js` - Email-based flow
-- `google-oauth-login.js` - Google OAuth (blocked)
 - `cookie-inject.js` - Cookie context injection
-- `debug-login.js` - Debug script
-- `extract-token-debug.js` - Token debugging
 
 ---
 
@@ -454,7 +327,6 @@ production**.
 ```bash
 # Core Commands
 extract-cookies         CHROME_DEBUG_PORT=9222 node scripts/extract-cookies-cdp.js
-auth-sync              node scripts/auth-sync.js
 auth-persistent        node scripts/auth-persistent.js
 profile-sync-dry-run   node scripts/profile-sync/index.js
 profile-sync-apply     node scripts/profile-sync/index.js --apply
