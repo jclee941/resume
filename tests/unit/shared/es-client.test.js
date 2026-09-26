@@ -281,7 +281,7 @@ describe('Elasticsearch Client', () => {
     const path = await import('node:path');
     const sourcePath = path.resolve(
       __dirname,
-      '../../../packages/shared/src/clients/elasticsearch/index.js'
+      '../../../packages/shared/src/clients/elasticsearch/transport.js'
     );
     const content = fs.readFileSync(sourcePath, 'utf8');
 
