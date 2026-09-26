@@ -286,8 +286,9 @@ describe('public-copy source audit allowlist', () => {
       expect(() => validateSourceMapBootstrap(invalid)).toThrow();
   });
 
-  // Base-diff audit only runs in the copy-review workflow, which supplies
-  // PORTFOLIO_COPY_BASE_SHA. Skip it in the default suite instead of failing.
+  // Opt-in base-diff audit: set PORTFOLIO_COPY_BASE_SHA to a full commit SHA to
+  // check that resume copy edits since that commit stay within the allowlist.
+  // No CI job supplies it, so the default suite skips this test.
   const baseDiffTest = /^[0-9a-f]{40}$/.test(process.env.PORTFOLIO_COPY_BASE_SHA || '')
     ? test
     : test.skip;

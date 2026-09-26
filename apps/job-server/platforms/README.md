@@ -21,10 +21,12 @@ platforms/
 
 ## Shared Components (in parent directory)
 
-- `src/ai/` - AI Matcher (OpenCode 3.5 Sonnet)
-- `src/dashboard/` - Unified Dashboard
-- `src/application-manager/` - Application tracking
-- `src/notifiers/` - Slack/Email notifications
+- `src/crawlers/` - Unified crawler orchestration
+- `src/auto-apply/` - Browser submission pipeline
+- `src/shared/` - Services, repositories, clients, and contracts
+- `src/session-broker/` - Wanted session renewal boundary
+
+See [../AGENTS.md](../AGENTS.md) for the full job-server layout.
 
 ## Adding New Platforms
 
