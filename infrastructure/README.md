@@ -1,6 +1,6 @@
 # Resume Portfolio - Infrastructure Configuration
 
-#HP|**Last Updated**: 2026-01-24
+**Last Updated**: 2026-01-24
 **Project**: Resume Portfolio (<https://resume.jclee.me>)
 **Repository**: <https://github.com/jclee941/resume>
 
@@ -8,9 +8,10 @@
 
 ## Overview
 
-PJ|This directory contains all infrastructure configurations, monitoring
-KV|dashboards, alert rules, and automation workflows for the Resume Portfolio
-XN|application.
+This directory contains infrastructure configurations, monitoring
+dashboards, and alert rules for the Resume Portfolio application. Scheduled
+automation is Cloudflare-native (Cron Triggers and Workflows in the root
+`wrangler.jsonc`); no host schedulers live here.
 
 **Infrastructure Topology**
 
@@ -23,10 +24,9 @@ XN|application.
 - Component: Proxmox VE (Proxmox)
 - Proxmox VE (Proxmox) -> Grafana + Loki (Grafana)
 - Proxmox VE (Proxmox) -> Elasticsearch (ES)
-- Proxmox VE (Proxmox) -> Automation (automation)
 - Proxmox VE (Proxmox) -> Docker Host (Docker)
 - Docker Host (Docker) -> job-server MCP (JobServer)
-- Automation (automation) -> job-server MCP (JobServer)
+- Cron Triggers (Cron) -> Portfolio Worker (Portfolio) -> Cloudflare Workflows (Workflows)
 - job-server MCP (JobServer) -> D1 Database (D1)
 - job-server MCP (JobServer) -> KV Namespaces (KV)
 - job-server MCP (JobServer) -> Wanted API (Wanted)
@@ -39,8 +39,8 @@ XN|application.
 - **Application**: Cloudflare Workers (serverless, global CDN)
 - **Monitoring**: Grafana + Prometheus + Loki (hosted on Proxmox pve3
   (192.168.50.100))
-- **Automation**: automation (health checks, deployments)
-  #TX|- **CI/CD**: GitHub Actions → Cloudflare Workers Builds
+- **Automation**: Cloudflare Cron Triggers + Workflows (auto-apply, resume sync)
+- **CI/CD**: GitHub Actions (validation) → Cloudflare Workers Builds (deploy)
 
 ---
 
@@ -48,42 +48,21 @@ XN|application.
 
 ```text
 infrastructure/
-├── README.md                          # This file
-├── AGENTS.md                         # Infrastructure knowledge base
-├── OWNERS                             # File ownership
-├── automation/                        # systemd service files
-│   └── (service definitions)
-├── cloudflare/                        # Terraform IaC for CF resources
-│   └── (Terraform configs)
-├── configs/                          # Configuration files
+├── README.md                 # This file
+├── AGENTS.md                 # Infrastructure knowledge base
+├── OWNERS                    # File ownership
+├── cloudflare/               # Terraform IaC for CF resources
+├── configs/                  # Alertmanager, Grafana, Prometheus, Tempo configs
 │   └── grafana/
 │       ├── README.md
 │       ├── alert-rules.yaml
 │       └── resume-portfolio-dashboard.json  # symlink → monitoring/
-├── database/                          # D1 migration SQL files
-│   └── (migration files)
-├── docker/                           # Docker configs
-│   └── (Dockerfile, docker-compose)
-├── mocks/                            # Test mocks
-│   └── (mock definitions)
-├── monitoring/                       # Grafana dashboard JSON (primary)
-│   ├── README.md
-│   └── grafana-dashboard-resume-portfolio.json
-├── automation/                              # automation workflow exports
-│   ├── resume-healthcheck-workflow.json
-│   ├── resume-healthcheck-oauth2.json
-│   └── workflows/
-│       ├── resume-auto-deploy.json
-│       └── resume-deploy-optimized.json
-├── systemd/                          # systemd service files
-│   └── (service definitions)
-└── workflows/                        # Additional automation workflows
-    ├── 01-site-health-monitor.json
-    ├── 02-github-deployment-webhook.json
-    ├── 03-weekly-job-report.json
-    ├── config.template.json
-    ├── config.example.json
-    └── README.md
+├── database/                 # D1 migrations and seeds
+├── docker/                   # Monitoring and session-broker compose files
+├── mocks/                    # Cloudflare binding mocks
+└── monitoring/               # Grafana dashboards (primary), SLOs, tracing
+    ├── README.md
+    └── grafana-dashboard-resume-portfolio.json
 ```
 
 ---
@@ -97,10 +76,9 @@ infrastructure/
 | **Grafana**    | <https://grafana.jclee.me>           | ✅ Public   | Dashboard visualization |
 | **Prometheus** | 192.168.50.100:9090                  | 🔒 Internal | Metrics storage         |
 | **Loki**       | grafana.jclee.me/loki/...            | 🔒 Proxy    | Log aggregation         |
-| **automation** | 192.168.50.100:5678                  | 🔒 Internal | Workflow automation     |
 | **GitHub**     | <https://github.com/jclee941/resume> | ✅ Public   | Source repository       |
 
-> ⚠️ **Internal Services**: Prometheus, Loki, automation are internal-only (no public
+> ⚠️ **Internal Services**: Prometheus and Loki are internal-only (no public
 > DNS).
 > Access via internal IP or Grafana proxy. See [Access
 > Guide](#internal-service-access) below.
@@ -133,9 +111,8 @@ curl -X POST https://grafana.jclee.me/api/dashboards/db \
 cd /home/jclee/dev/resume
 npm run build && npm test && npm run test:e2e
 
-# Deploy application
-npm run deploy  # Cloudflare Workers via API
-# OR: git push origin master  # Auto-deploys via CI/CD
+# Deploy application (Cloudflare Workers Builds; npm run deploy is disabled)
+git push origin master
 ```
 
 ---
@@ -188,34 +165,19 @@ npm run deploy  # Cloudflare Workers via API
 - **Group By**: alertname, severity
 - **Repeat Interval**: 4 hours
 
-### 3. Automation
+### 3. Scheduled Automation (Cloudflare-native)
 
-**Directory**: `infrastructure/automation/`
+Schedules live in the root `wrangler.jsonc` (`triggers.crons`), not in this
+directory:
 
-**Available Workflows**
+| Cron (UTC)   | KST   | Job                                                                 |
+| ------------ | ----- | ------------------------------------------------------------------- |
+| `0 21 * * *` | 06:00 | Wanted session refresh, then `ResumeSyncWorkflow` (dry-run default) |
+| `0 23 * * *` | 08:00 | cliproxy job discovery and auto-apply (dry-run default)             |
 
-| Workflow                           | Purpose                     | Trigger          |
-| ---------------------------------- | --------------------------- | ---------------- |
-| `resume-healthcheck-workflow.json` | Basic health monitoring     | Schedule (5 min) |
-| `resume-healthcheck-oauth2.json`   | OAuth2-enabled health check | Schedule (5 min) |
-| `resume-auto-deploy.json`          | Automated deployment        | Webhook          |
-| `resume-deploy-optimized.json`     | Optimized deployment flow   | Webhook          |
-
-**Monitoring Workflow Features**
-
-- Health endpoint check every 5 minutes
-- Metrics validation (Prometheus format)
-- Telegram notifications on failures
-- Retry logic (3 attempts)
-
-### 4. Additional Workflows
-
-#MV|**Directory**: `workflows/`
-
-| Workflow                            | Purpose                         |
-| ----------------------------------- | ------------------------------- |
-| `01-site-health-monitor.json`       | Comprehensive site monitoring   |
-| `02-github-deployment-webhook.json` | GitHub deployment notifications |
+Health check, backup, cleanup, and daily report jobs are Cloudflare Workflows
+in `apps/job-dashboard/src/workflows/`. The former host systemd timers and
+workflow-tool exports were retired.
 
 ---
 
@@ -262,19 +224,11 @@ curl -H "Authorization: Bearer $GRAFANA_API_KEY" \
   https://grafana.jclee.me/api/ruler/grafana/api/v1/rules | jq
 ```
 
-### Deploy Automation
-
-1. Open <https://automation.example.com>
-2. Go to **Workflows** → **Import from File**
-3. Select workflow JSON file
-4. Configure credentials (if required)
-5. Activate workflow
-
 ---
 
 ## Internal Service Access
 
-> ⚠️ **Prometheus, Loki, automation** do not have public DNS.
+> ⚠️ **Prometheus and Loki** do not have public DNS.
 > Access via internal network (192.168.50.x) or Grafana proxy.
 
 | Service        | Public Access       | Internal Access           | Notes               |
@@ -282,7 +236,6 @@ curl -H "Authorization: Bearer $GRAFANA_API_KEY" \
 | **Grafana**    | ✅ grafana.jclee.me | 192.168.50.100:3000       | All dashboards      |
 | **Prometheus** | 🔒 Internal Only    | 192.168.50.100:9090       | Use Grafana Explore |
 | **Loki**       | 🔒 Grafana Proxy    | grafana.jclee.me/loki/... | Grafana proxy       |
-| **automation** | 🔒 Internal Only    | 192.168.50.100:5678       | Workflow editor     |
 
 **Access Methods**
 
@@ -294,8 +247,8 @@ curl http://192.168.50.100:9090/api/v1/query?query=up
 # Open: https://grafana.jclee.me → Explore → Select datasource
 
 # Option 3: SSH Tunnel (for remote access)
-ssh -L 9090:192.168.50.100:9090 -L 5678:192.168.50.100:5678 user@gateway
-# Then access: http://localhost:9090 (Prometheus), http://localhost:5678 (automation)
+ssh -L 9090:192.168.50.100:9090 user@gateway
+# Then access: http://localhost:9090 (Prometheus)
 ```
 
 ---
@@ -438,8 +391,8 @@ curl https://resume.jclee.me/metrics | grep error
 
 ## Related Documentation
 
-#YM|- **Main Documentation**: `../../AGENTS.md` (project overview, commands,
-architecture)
+- **Main Documentation**: `../AGENTS.md` (project overview, commands,
+  architecture)
 
 - **Monitoring Guide**: `monitoring/README.md` (comprehensive monitoring
   documentation)
@@ -462,7 +415,7 @@ For issues or questions:
 2. **Review Documentation**:
    - This file: `infrastructure/README.md`
    - Monitoring: `infrastructure/monitoring/README.md`
-     #TH| - Project: `../../README.md`
+   - Project: `../README.md`
 
 3. **Contact**:
    - Email: <qws941@kakao.com>

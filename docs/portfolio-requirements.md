@@ -333,4 +333,3 @@ curl -s https://resume.jclee.me/metrics
 - [apps/portfolio/AGENTS.md](../apps/portfolio/AGENTS.md) - 빌드 파이프라인
 - [cloudflare-workflows-requirements.md](./cloudflare-workflows-requirements.md)
   - Job Automation 요구사항
-- [planning/milestones.md](./planning/milestones.md) - 마일스톤 로드맵

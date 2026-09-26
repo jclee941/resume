@@ -918,25 +918,22 @@ open https://grafana.jclee.me/d/resume-portfolio
 
 ### File Locations
 
-| Component           | Path                                                    |
-| ------------------- | ------------------------------------------------------- |
-| Dashboard Entry     | `apps/job-server/src/dashboard/index.js`                |
-| Auto-Apply Core     | `apps/job-server/src/auto-apply/auto-applier.js`        |
-| Application Manager | `apps/job-server/src/auto-apply/application-manager.js` |
-| CLI Interface       | `apps/job-server/src/auto-apply/cli/index.js`           |
-| MCP Tools           | `apps/job-server/src/tools/`                            |
-| Crawlers            | `apps/job-server/src/crawlers/`                         |
-| Automation          | `infrastructure/automation/`                            |
-| Config File         | `apps/job-server/config.json`                           |
-| Session Data        | `~/.OpenCode/data/wanted-session.json`                  |
-| Logs                | `~/.OpenCode/data/wanted-logs/`                         |
+| Component           | Path                                                                 |
+| ------------------- | -------------------------------------------------------------------- |
+| Dashboard Entry     | `apps/job-server/src/server/index.js`                                |
+| Auto-Apply Core     | `apps/job-server/src/auto-apply/auto-applier.js`                     |
+| Application Manager | `apps/job-server/src/auto-apply/application-manager.js`              |
+| CLI Interface       | `apps/job-server/src/auto-apply/cli/index.js`                        |
+| MCP Tools           | `apps/job-server/src/tools/`                                         |
+| Crawlers            | `apps/job-server/src/crawlers/`                                      |
+| Scheduling          | `wrangler.jsonc` crons, `apps/job-dashboard/src/handlers/scheduled/` |
+| Config File         | `apps/job-server/config.json`                                        |
+| Session Data        | `~/.OpenCode/data/wanted-session.json`                               |
 
 ### Related Documentation
 
 - [AUTO_APPLY_ACTIVATION_GUIDE.md](../guides/AUTO_APPLY_ACTIVATION_GUIDE.md) -
   Korean activation guide
-- [AUTO_APPLY_SYSTEM_STATUS.md](../reports/AUTO_APPLY_SYSTEM_STATUS.md) -
-  Development status
 - [ARCHITECTURE.md](../../apps/job-server/ARCHITECTURE.md) - Internal
   architecture
 - [API_REFERENCE.md](../../apps/job-dashboard/API_REFERENCE.md) - Dashboard API

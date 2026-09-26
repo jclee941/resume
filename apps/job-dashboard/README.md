@@ -802,10 +802,10 @@ const ALLOWED_ORIGINS = [
 - **[AGENTS.md](./AGENTS.md)** - Architecture details, handler classes,
   workflows, D1 schema, KV structure
 - **[SECRETS.md](./SECRETS.md)** - Secret management guide
-- **[../ARCHITECTURE.md](../ARCHITECTURE.md)** - Job automation system overview
+- **[../job-server/ARCHITECTURE.md](../job-server/ARCHITECTURE.md)** - Job automation system overview
 - **[../job-server/DATA_FLOW.md](../job-server/DATA_FLOW.md)** - End-to-end
   request flows
-- **[../SCRIPTS_GUIDE.md](../SCRIPTS_GUIDE.md)** - CLI scripts reference
+- **[../job-server/SCRIPTS_GUIDE.md](../job-server/SCRIPTS_GUIDE.md)** - CLI scripts reference
 
 ---
 

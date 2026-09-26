@@ -87,17 +87,19 @@ Thresholds Reference:
 - > 200 LOC: Assess if natural split points exist (SOFT - this project uses as
   > HARD)
 
-Rule 5: ALL Automation Workflows MUST be Handled by automation
-Do NOT write custom code, standalone scripts, or cron jobs for automation,
-scheduled tasks, webhooks, or API orchestrations.
+Rule 5: Scheduled Automation MUST be Cloudflare-Native
+Do NOT add host schedulers (systemd timers, crontab entries), standalone cron
+scripts, or long-running daemon loops for scheduled tasks, webhooks, or API
+orchestration.
 
-- automation is the SINGLE source of truth for all automation workflows.
-- If a task involves triggering an action on a schedule, connecting multiple
-  third-party APIs, or automating a sequential business process, it MUST be
-  built as a node-based workflow in automation.
-- Your code should only expose modular APIs, Webhooks, or individual functions
-  that automation can consume and orchestrate. Do not hardcode the orchestration logic
-  in the application codebase.
+- Cloudflare Cron Triggers in the root `wrangler.jsonc` (`triggers.crons`) are
+  the single source of truth for schedules; `scheduled()` routes each cron
+  through `apps/job-dashboard/src/handlers/scheduled/`.
+- Multi-step, retryable, or long-running orchestration runs as a Cloudflare
+  Workflow (`apps/job-dashboard/src/workflows/`); fan-out and asynchronous
+  delivery use Queues.
+- Keep schedule wiring out of business logic: handlers and services expose
+  focused functions that the cron router and Workflow steps compose.
 
 [NAMING CONVENTIONS]
 
@@ -142,8 +144,8 @@ When reading, writing, or editing ANY codebase:
 2. If YES — refactor FIRST, then proceed with your task.
 3. If creating a new file — ensure it has exactly one responsibility and stays
    under 200 LOC.
-4. If building an automation/scheduled task — halt coding and move the
-   orchestration logic to automation immediately.
+4. If building an automation/scheduled task — wire it through a Cron Trigger
+   and a Cloudflare Workflow; never add a host scheduler.
 5. If renaming/moving files — update all direct references in
    docs/config/scripts.
 

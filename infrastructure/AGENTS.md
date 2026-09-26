@@ -7,7 +7,9 @@
 ## OVERVIEW
 
 Cloudflare infrastructure (Terraform), D1 database migrations, monitoring
-dashboards (Grafana), and automation workflows.
+dashboards (Grafana), and Docker runtime configs. Scheduled automation is
+Cloudflare-native: Cron Triggers and Workflows declared in the root
+`wrangler.jsonc`.
 
 ## STRUCTURE
 
@@ -16,11 +18,9 @@ infrastructure/
 ├── cloudflare/           # Terraform for DNS, routes, KV/D1 references
 ├── database/             # D1 migrations and seeds
 ├── monitoring/           # Grafana dashboards and alert rules
-├── automation/           # systemd services and workflow exports
 ├── configs/              # Grafana alert configurations
 ├── docker/               # Docker runtime configs
-├── mocks/                # Test mocks
-└── systemd/              # systemd service definitions
+└── mocks/                # Test mocks
 ```
 
 ## AUTHORITY BOUNDARIES
@@ -31,14 +31,13 @@ infrastructure/
 | Production Worker code           | Cloudflare Workers Builds | Build from `master`; local Wrangler is verification/emergency only |
 | D1 schema (migrations 0000-0009) | Migrations                | `database/migrations/*.sql`                                        |
 | Monitoring dashboards            | Grafana UI                | `monitoring/*.json` (reference only)                               |
-| Automation workflows             | Workflow UI               | `automation/*.json` (reference only)                               |
 
 ## CONVENTIONS
 
 - Terraform state is S3-compatible backend (bucket: `terraform-state`).
 - Never run `terraform apply` locally against production.
 - D1 migrations are immutable once deployed; create new migrations for changes.
-- Monitoring and automation exports are reference snapshots, not deployment sources.
+- Monitoring exports are reference snapshots, not deployment sources.
 
 ## ANTI-PATTERNS
 
@@ -46,6 +45,8 @@ infrastructure/
   routine production deployment path.
 - Never hardcode Cloudflare resource IDs in prose.
 - Never edit deployed migrations.
+- Never add host schedulers (systemd timers, crontab entries); schedule through
+  Cloudflare Cron Triggers and Workflows.
 
 ---
 

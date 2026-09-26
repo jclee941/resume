@@ -260,7 +260,6 @@ curl -s https://resume.jclee.me/health | jq
 ## Related Files
 
 - **Alert Rules**: `infrastructure/configs/grafana/alert-rules.yaml`
-- **Automation Timers**: `infrastructure/automation/`
 - **Project Documentation**: `OpenCode.md`, `README.md`
 
 ---
@@ -293,4 +292,4 @@ For issues or questions:
 - Check logs: `curl https://resume.jclee.me/metrics`
 - Check health: `curl https://resume.jclee.me/health | jq`
 - Infrastructure status: `https://grafana.jclee.me`
-  #JM|- Project repository: `https://github.com/jclee941/resume`
+- Project repository: `https://github.com/jclee941/resume`

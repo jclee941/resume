@@ -128,6 +128,6 @@ implements.
 - [`docs/architecture/SSOT_IMPROVEMENT_PLAN.md`](./SSOT_IMPROVEMENT_PLAN.md)
   § SSOT-035 — original consolidation entry.
 - Issue #15 [P1-4] — Cloudflare native rate-limit binding (operator-blocked).
-- [`apps/job-server/src/shared/services/orchestrator/rate-limiter.js`](../../apps/job-server/src/shared/services/orchestrator/rate-limiter.js)
-  — most-mature implementation; the canonical algorithms will mirror its
+- `apps/job-server/src/shared/services/orchestrator/rate-limiter.js` (since
+  removed) — most-mature implementation; the canonical algorithms will mirror its
   shape minus the platform-specific budgets.

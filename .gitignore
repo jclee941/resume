@@ -132,7 +132,6 @@ lighthouserc.js
 logs/
 # Root directory cleanup - compiled binaries (build artifacts)
 /merge-ulw-to-master
-/setup-automation
 /verify-content-integrity
 /verify-health
 
@@ -242,7 +241,6 @@ applications/_auto-apply-runs/
 /tools/scripts/deployment/deploy-with-monitoring
 /tools/scripts/deployment/quick-deploy
 /tools/scripts/monitoring/monitor-deployment
-/apps/job-server/scripts/ops/auto-daily-run/main
 /infrastructure/monitoring/elasticsearch/apply-assets
 /packages/data/resumes/archive/toss/pdf-convert
 /packages/data/resumes/technical/nextrade/convert-to-pdf-docx

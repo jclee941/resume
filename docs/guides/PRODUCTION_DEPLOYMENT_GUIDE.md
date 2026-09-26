@@ -161,23 +161,15 @@ node src/auto-apply/cli/index.js search "DevSecOps" 5
 git push origin master
 
 # 상태 확인
-npm run verify:cli
+npm run verify:production
 ```
 
 ### 자동화 시스템 배포
 
-```bash
-cd apps/job-server
-
-# 프로덕션용 PM2 설정 (선택사항)
-npm install -g pm2
-pm2 start ecosystem.config.js --env production
-
-# 또는 systemd 서비스로 설정
-sudo cp scripts/auto-apply.service /etc/systemd/system/
-sudo systemctl enable auto-apply
-sudo systemctl start auto-apply
-```
+자동 지원(`0 23 * * *`)과 이력서 동기화(`0 21 * * *`)는 같은 `resume` Worker의
+Cloudflare Cron Trigger와 Workflows로 실행됩니다. `git push origin master`로
+Workers Builds가 배포하면 스케줄도 함께 반영되므로 별도 호스트 서비스(PM2,
+systemd)는 필요 없습니다. 두 스케줄 모두 기본값은 dry-run입니다.
 
 ## 6. 모니터링 설정
 
@@ -259,8 +251,8 @@ chmod +x backup-auto-apply.sh
 # 데이터 검증
 go run ./apps/job-server/scripts/ops/auto-monitor/main.go
 
-# 기능 테스트
-go run ./apps/job-server/scripts/ops/auto-daily-run/main.go
+# 기능 테스트 (dry-run)
+npm run auto-apply:dry --workspace=@resume/job-automation
 ```
 
 ## 8. 보안 설정
@@ -417,7 +409,7 @@ const matchScore = await aiMatcher.calculateMatch(resume, jobPosting);
 **배포 완료 후 확인사항:**
 
 - [ ] 시스템 상태: `go run ./apps/job-server/scripts/ops/auto-monitor/main.go`
-- [ ] 자동화 실행: `go run ./apps/job-server/scripts/ops/auto-daily-run/main.go`
+- [ ] 자동화 실행: `npm run auto-apply:dry --workspace=@resume/job-automation`
 - [ ] 워크플로우 실행 확인: `/job/api/workflows/*/run` 호출 결과 점검
 - [ ] 로그 모니터링: `tail -f apps/job-server/logs/*.log`
 
