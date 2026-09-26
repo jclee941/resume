@@ -17,7 +17,6 @@
     "./browser": "./src/browser/index.js",
     "./browser/stealth": "./src/browser/stealth-patches.js",
     "./browser/service": "./src/browser/browser-service.js",
-    "./wanted-client": "./src/wanted-client.js",
     "./clients/wanted": "./src/clients/wanted/index.js",
     "./clients/wanted/http-client": "./src/clients/wanted/http-client.js",
     "./clients/wanted/wanted-api": "./src/clients/wanted/wanted-api.js",
