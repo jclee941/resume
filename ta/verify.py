@@ -203,7 +203,7 @@ def run_verification():
     unique_orgs = set(orgs.values()) - {"N/A", ""}
     if len(unique_orgs) > 1:
         issues.append(f"소속회사 불일치: {orgs}")
-        print(f"  소속회사: ✗ 불일치")
+        print("  소속회사: ✗ 불일치")
         for fname, org in orgs.items():
             if org and org != "N/A":
                 print(f"    - {fname}: {org}")
@@ -215,7 +215,7 @@ def run_verification():
     unique_durations = set(d for d in durations.values() if d and d != "N/A")
     if len(unique_durations) > 1:
         issues.append(f"IT경력 불일치: {durations}")
-        print(f"  IT경력: ✗ 불일치")
+        print("  IT경력: ✗ 불일치")
         for fname, dur in durations.items():
             if dur and dur != "N/A":
                 print(f"    - {fname}: {dur}")
@@ -226,7 +226,7 @@ def run_verification():
     company_counts = {k: len(v["companies"]) for k, v in valid_files.items()}
     if len(set(company_counts.values())) > 1:
         issues.append(f"회사이력 수 불일치: {company_counts}")
-        print(f"  회사이력: ✗ 파일별 수 불일치")
+        print("  회사이력: ✗ 파일별 수 불일치")
         for fname, cnt in company_counts.items():
             print(f"    - {fname}: {cnt}개사")
     else:

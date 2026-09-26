@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 """ta.pptx 비주얼 개선 스크립트"""
 from pptx import Presentation
-from pptx.util import Pt, Emu, Inches
+from pptx.util import Pt
 from pptx.dml.color import RGBColor
-from pptx.oxml.ns import qn, nsdecls
+from pptx.oxml.ns import qn
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from lxml import etree
-import copy, os
+import os
+from pathlib import Path
 
-SRC = '/home/jclee/dev/ta/ta.pptx'
-DST = '/home/jclee/dev/ta/output/ta.pptx'
+TA_DIR = Path(__file__).resolve().parent
+SRC = str(TA_DIR / 'ta.pptx')
+DST = str(TA_DIR / 'output' / 'ta.pptx')
 
 # === Color Palette (Professional Navy) ===
 NAVY      = RGBColor(0x1B, 0x36, 0x5F)   # 헤더 배경
@@ -193,8 +195,9 @@ def main():
             elif name in ('표 148', '표 1') and cols == 6:
                 process_project_table(table)
             else:
-                print(f"    (skipped unknown table)")
+                print("    (skipped unknown table)")
 
+    os.makedirs(os.path.dirname(DST), exist_ok=True)
     prs.save(DST)
     print(f"\n✅ 저장 완료: {DST}")
     print(f"   크기: {os.path.getsize(DST):,} bytes")
