@@ -23,9 +23,9 @@ remains Cloudflare Workers Builds.
 
 ## GITHUB ACTIONS
 
-| Workflow | Purpose | Deploy Authority |
-| --- | --- | --- |
-| `ci.yml` | Lint, typecheck, Node tests, architecture checks, Wrangler dry-run | None |
+| Workflow | Purpose                                                            | Deploy Authority |
+| -------- | ------------------------------------------------------------------ | ---------------- |
+| `ci.yml` | Lint, typecheck, Node tests, architecture checks, Wrangler dry-run | None             |
 
 ## CONVENTIONS
 

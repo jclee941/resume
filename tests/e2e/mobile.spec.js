@@ -177,5 +177,4 @@ test.describe('Mobile Responsiveness', () => {
       expect(tooSmallCount).toBeLessThan(8);
     }
   });
-
 });

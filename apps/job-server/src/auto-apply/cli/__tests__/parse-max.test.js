@@ -20,10 +20,7 @@ describe('parseMaxArgument', () => {
     ['--max=1', '--max=100'],
   ]) {
     it(`rejects duplicate max arguments in order ${args.join(' ')}`, () => {
-      assert.throws(
-        () => parseMaxArgument(args, 5),
-        /--max must be a non-negative safe integer/
-      );
+      assert.throws(() => parseMaxArgument(args, 5), /--max must be a non-negative safe integer/);
     });
   }
 

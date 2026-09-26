@@ -85,9 +85,7 @@ test.describe('Focus Indicators', () => {
     expect(focusResult.hasFocusVisible).toBeTruthy();
     expect(focusResult.focusVisibleRuleExists).toBeTruthy();
     expect(focusResult.stylesheetErrors).toBeInstanceOf(Array);
-    expect(focusResult.stylesheetErrors.every((message) => typeof message === 'string')).toBe(
-      true
-    );
+    expect(focusResult.stylesheetErrors.every((message) => typeof message === 'string')).toBe(true);
 
     const hasComputedOutline =
       focusResult.outlineStyle !== 'none' && parseInt(focusResult.outlineWidth) > 0;

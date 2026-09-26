@@ -35,16 +35,16 @@ tools/
 
 ## WHERE TO LOOK
 
-| Task               | Location                | Notes                                                |
-| ------------------ | ----------------------- | ---------------------------------------------------- |
-| CI validation      | `ci/`                   | affected, wrangler config, env schema, migrations    |
-| Asset generation   | `scripts/build/`        | PDF, PPTX, icons, screenshots, Docker images         |
-| Deploy helpers     | `scripts/deployment/`   | quick-deploy, staged deploy, monitoring hooks        |
-| Verification       | `scripts/verification/` | validators, remote probes, Lighthouse, smoke tests   |
-| Release automation | `scripts/release/`      | version decisions, GitHub release publication        |
-| Data enrichment    | `scripts/enrichment/`   | GitHub/skills/LLM proposal generators                |
-| Secret management  | `scripts/onepassword/`  | 1Password-safe local operator wrappers               |
-| Data sync          | `scripts/utils/`        | SSoT propagation and shared helpers                  |
+| Task               | Location                | Notes                                              |
+| ------------------ | ----------------------- | -------------------------------------------------- |
+| CI validation      | `ci/`                   | affected, wrangler config, env schema, migrations  |
+| Asset generation   | `scripts/build/`        | PDF, PPTX, icons, screenshots, Docker images       |
+| Deploy helpers     | `scripts/deployment/`   | quick-deploy, staged deploy, monitoring hooks      |
+| Verification       | `scripts/verification/` | validators, remote probes, Lighthouse, smoke tests |
+| Release automation | `scripts/release/`      | version decisions, GitHub release publication      |
+| Data enrichment    | `scripts/enrichment/`   | GitHub/skills/LLM proposal generators              |
+| Secret management  | `scripts/onepassword/`  | 1Password-safe local operator wrappers             |
+| Data sync          | `scripts/utils/`        | SSoT propagation and shared helpers                |
 
 ## CHILD GUIDES
 

@@ -92,7 +92,10 @@ async function editProposal(rl, proposal) {
   console.log('Enter JSON for proposedValue. Leave blank to keep unchanged.');
   const value = await rl.question(`${formatValue(proposal.proposedValue)}\n> `);
   if (!value.trim()) return;
-  const edited = { ...updateProposalValue(proposal, JSON.parse(value)), editedAt: new Date().toISOString() };
+  const edited = {
+    ...updateProposalValue(proposal, JSON.parse(value)),
+    editedAt: new Date().toISOString(),
+  };
   delete edited.filePath;
   writeFileSync(proposal.filePath, `${JSON.stringify(edited, null, 2)}\n`);
   console.log('Updated proposal. Review it again before approval.');

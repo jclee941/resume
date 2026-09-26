@@ -34,14 +34,14 @@ production deploy. Operators invoke the two subpackages directly.
 
 ## WHERE TO LOOK
 
-| Task                  | Location                        | Notes                                                     |
-| --------------------- | ------------------------------- | --------------------------------------------------------- |
-| Version decision      | `next-version/policy.go`        | SemVer bump logic, release policy                         |
-| Git inspection        | `next-version/repository.go`    | Tag listing, commit range, remote tip                     |
-| Publish state machine | `publish/transaction.go`        | Idempotent draft → publish flow                           |
-| GitHub API            | `publish/github_client.go`      | Release CRUD, asset upload, tag operations                |
-| Type contracts        | `publish/types.go`              | Release, PublishRequest, Outcome, ReleaseClient interface |
-| Manifest format       | `publish/input.go`              | release-manifest.json schema and loading                  |
+| Task                  | Location                     | Notes                                                     |
+| --------------------- | ---------------------------- | --------------------------------------------------------- |
+| Version decision      | `next-version/policy.go`     | SemVer bump logic, release policy                         |
+| Git inspection        | `next-version/repository.go` | Tag listing, commit range, remote tip                     |
+| Publish state machine | `publish/transaction.go`     | Idempotent draft → publish flow                           |
+| GitHub API            | `publish/github_client.go`   | Release CRUD, asset upload, tag operations                |
+| Type contracts        | `publish/types.go`           | Release, PublishRequest, Outcome, ReleaseClient interface |
+| Manifest format       | `publish/input.go`           | release-manifest.json schema and loading                  |
 
 ## CONVENTIONS
 

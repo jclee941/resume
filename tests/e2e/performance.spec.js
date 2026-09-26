@@ -23,67 +23,71 @@ test.describe('Performance & Core Web Vitals', () => {
     async ({ page }) => {
       await page.goto('/');
 
-    // Wait for LCP to be measured
-    await page.waitForLoadState('load');
-    await page.waitForFunction(
-      () => {
-        const navigationEntry = performance.getEntriesByType('navigation')[0];
+      // Wait for LCP to be measured
+      await page.waitForLoadState('load');
+      await page.waitForFunction(
+        () => {
+          const navigationEntry = performance.getEntriesByType('navigation')[0];
 
-        const navigationLoadEventEnd =
-          navigationEntry === undefined
-            ? 0
-            : (/** @type {PerformanceNavigationTiming} */ (navigationEntry)).loadEventEnd;
+          const navigationLoadEventEnd =
+            navigationEntry === undefined
+              ? 0
+              : /** @type {PerformanceNavigationTiming} */ (navigationEntry).loadEventEnd;
 
-        return performance.getEntriesByType('largest-contentful-paint').length > 0 || navigationLoadEventEnd > 0;
-      },
-      { timeout: 5000 }
-    );
+          return (
+            performance.getEntriesByType('largest-contentful-paint').length > 0 ||
+            navigationLoadEventEnd > 0
+          );
+        },
+        { timeout: 5000 }
+      );
 
-    const lcp = await page.evaluate(() => {
-      return new Promise((resolve) => {
-        // Check for existing LCP entries first (buffered)
-        const existingEntries = performance.getEntriesByType('largest-contentful-paint');
-        if (existingEntries.length > 0) {
-          /** @type {PerformanceEntry & { renderTime?: number, loadTime?: number }} */
-          const lastEntry = existingEntries[existingEntries.length - 1];
-          resolve(lastEntry.renderTime || lastEntry.loadTime);
-          return;
-        }
-
-        // If no buffered entries, observe for new ones with timeout
-        let resolved = false;
-        const observer = new PerformanceObserver((list) => {
-          if (resolved) return;
-          const entries = list.getEntries();
-          if (entries.length > 0) {
+      const lcp = await page.evaluate(() => {
+        return new Promise((resolve) => {
+          // Check for existing LCP entries first (buffered)
+          const existingEntries = performance.getEntriesByType('largest-contentful-paint');
+          if (existingEntries.length > 0) {
             /** @type {PerformanceEntry & { renderTime?: number, loadTime?: number }} */
-            const lastEntry = entries[entries.length - 1];
-            resolved = true;
+            const lastEntry = existingEntries[existingEntries.length - 1];
             resolve(lastEntry.renderTime || lastEntry.loadTime);
+            return;
           }
-        });
-        observer.observe({
-          type: 'largest-contentful-paint',
-          buffered: true,
-        });
 
-        // Timeout fallback - use navigation timing as approximation
-        setTimeout(() => {
-          if (!resolved) {
-            resolved = true;
-            const nav = /** @type {PerformanceNavigationTiming | undefined} */ (
-              performance.getEntriesByType('navigation')[0]
-            );
-            // Use load event end as fallback LCP approximation
-            resolve(nav ? nav.loadEventEnd - nav.startTime : 0);
-          }
-        }, 5000);
+          // If no buffered entries, observe for new ones with timeout
+          let resolved = false;
+          const observer = new PerformanceObserver((list) => {
+            if (resolved) return;
+            const entries = list.getEntries();
+            if (entries.length > 0) {
+              /** @type {PerformanceEntry & { renderTime?: number, loadTime?: number }} */
+              const lastEntry = entries[entries.length - 1];
+              resolved = true;
+              resolve(lastEntry.renderTime || lastEntry.loadTime);
+            }
+          });
+          observer.observe({
+            type: 'largest-contentful-paint',
+            buffered: true,
+          });
+
+          // Timeout fallback - use navigation timing as approximation
+          setTimeout(() => {
+            if (!resolved) {
+              resolved = true;
+              const nav = /** @type {PerformanceNavigationTiming | undefined} */ (
+                performance.getEntriesByType('navigation')[0]
+              );
+              // Use load event end as fallback LCP approximation
+              resolve(nav ? nav.loadEventEnd - nav.startTime : 0);
+            }
+          }, 5000);
+        });
       });
-    });
 
-    // LCP should be under 2.5 seconds (Google's "Good" threshold)
-    expect(lcp).toBeLessThan(2500);
-  });
+      // LCP should be under 2.5 seconds (Google's "Good" threshold)
+      expect(lcp).toBeLessThan(2500);
+    }
+  );
 
   test('should have low Cumulative Layout Shift (CLS)', async ({ page }) => {
     await page.goto('/');
@@ -173,5 +177,4 @@ test.describe('Performance & Core Web Vitals', () => {
     // TTFB should be under 800ms (Google's "Good" threshold)
     expect(ttfb).toBeLessThan(800);
   });
-
 });

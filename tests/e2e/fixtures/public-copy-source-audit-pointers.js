@@ -56,7 +56,13 @@ function diffJsonPointers(before, after) {
     const previous = left.get(pointer);
     const next = right.get(pointer);
     if (leftPresent === rightPresent && (!leftPresent || Object.is(previous, next))) return [];
-    return [{ pointer, before: leftPresent ? publicValue(previous) : undefined, after: rightPresent ? publicValue(next) : undefined }];
+    return [
+      {
+        pointer,
+        before: leftPresent ? publicValue(previous) : undefined,
+        after: rightPresent ? publicValue(next) : undefined,
+      },
+    ];
   });
 }
 
@@ -88,4 +94,10 @@ function auditSource(before, after, locale, nativeOwners = {}) {
   }));
 }
 
-module.exports = { auditSource, decodePointerSegment, diffJsonPointers, flattenJsonPointers, isAllowedPublicCopyPath };
+module.exports = {
+  auditSource,
+  decodePointerSegment,
+  diffJsonPointers,
+  flattenJsonPointers,
+  isAllowedPublicCopyPath,
+};

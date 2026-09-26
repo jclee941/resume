@@ -3,18 +3,53 @@ const { walkAccessible } = require('./public-copy-ledger-extractor-values');
 
 async function extractNonDom(page) {
   return page.evaluate(async () => {
-    const rows = [{ kind: 'document-title', selector: 'document:title', attribute: null, accessiblePath: null, value: document.title }];
+    const rows = [
+      {
+        kind: 'document-title',
+        selector: 'document:title',
+        attribute: null,
+        accessiblePath: null,
+        value: document.title,
+      },
+    ];
     [...document.querySelectorAll('meta')].forEach((element, index) => {
       const key = element.getAttribute('name') || element.getAttribute('property');
       const value = element.getAttribute('content');
-      if (key && value) rows.push({ kind: 'metadata', selector: `meta:${key}:${index}`, attribute: 'content', accessiblePath: null, value });
+      if (key && value)
+        rows.push({
+          kind: 'metadata',
+          selector: `meta:${key}:${index}`,
+          attribute: 'content',
+          accessiblePath: null,
+          value,
+        });
     });
     const flatten = (value, pointer, prefix, kind) => {
-      if (Array.isArray(value)) return value.forEach((item, index) => flatten(item, `${pointer}/${index}`, prefix, kind));
-      if (value && typeof value === 'object') return Object.keys(value).sort().forEach((key) => flatten(value[key], `${pointer}/${String(key).replaceAll('~', '~0').replaceAll('/', '~1')}`, prefix, kind));
-      if (typeof value === 'string' && value.trim()) rows.push({ kind, selector: `${prefix}:${pointer || '/'}`, attribute: null, accessiblePath: null, value });
+      if (Array.isArray(value))
+        return value.forEach((item, index) => flatten(item, `${pointer}/${index}`, prefix, kind));
+      if (value && typeof value === 'object')
+        return Object.keys(value)
+          .sort()
+          .forEach((key) =>
+            flatten(
+              value[key],
+              `${pointer}/${String(key).replaceAll('~', '~0').replaceAll('/', '~1')}`,
+              prefix,
+              kind
+            )
+          );
+      if (typeof value === 'string' && value.trim())
+        rows.push({
+          kind,
+          selector: `${prefix}:${pointer || '/'}`,
+          attribute: null,
+          accessiblePath: null,
+          value,
+        });
     };
-    [...document.querySelectorAll('script[type="application/ld+json"]')].forEach((element, index) => flatten(JSON.parse(element.textContent), '', `jsonld:${index}`, 'jsonld'));
+    [...document.querySelectorAll('script[type="application/ld+json"]')].forEach((element, index) =>
+      flatten(JSON.parse(element.textContent), '', `jsonld:${index}`, 'jsonld')
+    );
     const manifestLink = document.querySelector('link[rel="manifest"]');
     if (manifestLink) {
       const route = new URL(manifestLink.href).pathname;
@@ -30,7 +65,13 @@ async function extractAccessible(page, selectors) {
   for (const selector of selectors) {
     const snapshot = await page.locator(selector).ariaSnapshot();
     for (const item of walkAccessible(YAML.parse(snapshot))) {
-      output.push({ kind: 'accessible-tree', selector, attribute: null, accessiblePath: item.path, value: item.value });
+      output.push({
+        kind: 'accessible-tree',
+        selector,
+        attribute: null,
+        accessiblePath: item.path,
+        value: item.value,
+      });
     }
   }
   return output;

@@ -46,7 +46,8 @@ function walkAccessible(value, pointer = '', output = []) {
 
 function normalizeVolatile(item) {
   if (item.kind === 'jsonld' && item.selector.endsWith('/dateModified')) {
-    if (Number.isNaN(Date.parse(item.value))) throw new Error(`Invalid dateModified: ${item.value}`);
+    if (Number.isNaN(Date.parse(item.value)))
+      throw new Error(`Invalid dateModified: ${item.value}`);
     return { ...item, value: '<DEPLOYED_AT>' };
   }
   if (item.volatile === 'footer-deployed') {

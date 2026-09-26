@@ -74,14 +74,22 @@ function validateOccurrence(item) {
 
 function validateBaseline(document) {
   const keys = Object.keys(document);
-  const expected = ['version', 'capturedAt', 'baseSha', 'expectedHealthSha', 'sourceUrl', 'occurrences'];
+  const expected = [
+    'version',
+    'capturedAt',
+    'baseSha',
+    'expectedHealthSha',
+    'sourceUrl',
+    'occurrences',
+  ];
   if (JSON.stringify(keys) !== JSON.stringify(expected)) fail('root keys');
   if (document.version !== 1) fail('version');
   if (new Date(document.capturedAt).toISOString() !== document.capturedAt) fail('capturedAt');
   if (!/^[0-9a-f]{40}$/.test(document.baseSha)) fail('baseSha');
   if (document.expectedHealthSha !== document.baseSha) fail('health SHA');
   if (document.sourceUrl !== 'https://resume.jclee.me') fail('sourceUrl');
-  if (!Array.isArray(document.occurrences) || document.occurrences.length === 0) fail('occurrences');
+  if (!Array.isArray(document.occurrences) || document.occurrences.length === 0)
+    fail('occurrences');
   document.occurrences.forEach(validateOccurrence);
   const addresses = document.occurrences.map(occurrenceAddress);
   if (new Set(addresses).size !== addresses.length) fail('duplicate address');

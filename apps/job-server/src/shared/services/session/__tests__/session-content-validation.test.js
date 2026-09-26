@@ -133,7 +133,10 @@ describe('session content validation', () => {
     ];
 
     for (const token of tokens) {
-      assert.equal(validate('jobkorea', { cookies: [{ name: 'jkat', value: token }] }).valid, false);
+      assert.equal(
+        validate('jobkorea', { cookies: [{ name: 'jkat', value: token }] }).valid,
+        false
+      );
     }
   });
 

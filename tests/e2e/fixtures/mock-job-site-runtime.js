@@ -52,7 +52,13 @@ function createRequestHandler(port) {
     }
     if (url.pathname === '/stealth/check') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ userAgent: req.headers['user-agent'] || 'unknown', cookies: getCookieCount(), timestamp: Date.now() }));
+      res.end(
+        JSON.stringify({
+          userAgent: req.headers['user-agent'] || 'unknown',
+          cookies: getCookieCount(),
+          timestamp: Date.now(),
+        })
+      );
       return;
     }
 
@@ -105,9 +111,16 @@ function createRequestHandler(port) {
             return;
           }
           const applicationId = `MOCK-${Date.now()}`;
-          addApplication({ id: applicationId, ...applicationData, submittedAt: new Date().toISOString(), userAgent: req.headers['user-agent'] });
+          addApplication({
+            id: applicationId,
+            ...applicationData,
+            submittedAt: new Date().toISOString(),
+            userAgent: req.headers['user-agent'],
+          });
           res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ success: true, applicationId, message: '지원이 완료되었습니다.' }));
+          res.end(
+            JSON.stringify({ success: true, applicationId, message: '지원이 완료되었습니다.' })
+          );
         } catch (err) {
           res.writeHead(500, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ success: false, error: err.message }));

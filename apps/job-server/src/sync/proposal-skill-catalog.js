@@ -5,11 +5,32 @@ export const SKILL_CATEGORY_KEYWORDS = [
   ],
   [
     'cloud',
-    ['aws', 'gcp', 'azure', 'cloudflare', 'docker', 'kubernetes', 'k8s', 'helm', 'linux', 'terraform', 'proxmox'],
+    [
+      'aws',
+      'gcp',
+      'azure',
+      'cloudflare',
+      'docker',
+      'kubernetes',
+      'k8s',
+      'helm',
+      'linux',
+      'terraform',
+      'proxmox',
+    ],
   ],
-  ['devops', ['github actions', 'gitlab ci', 'jenkins', 'ansible', 'argocd', 'ci/cd', 'gitops', 'packer']],
-  ['security', ['siem', 'soar', 'fortigate', 'waf', 'iam', 'zero trust', 'nac', 'ids', 'ips', 'vulnerability']],
-  ['backend', ['node.js', 'nodejs', 'python', 'go', 'postgresql', 'redis', 'api', 'worker', 'typescript']],
+  [
+    'devops',
+    ['github actions', 'gitlab ci', 'jenkins', 'ansible', 'argocd', 'ci/cd', 'gitops', 'packer'],
+  ],
+  [
+    'security',
+    ['siem', 'soar', 'fortigate', 'waf', 'iam', 'zero trust', 'nac', 'ids', 'ips', 'vulnerability'],
+  ],
+  [
+    'backend',
+    ['node.js', 'nodejs', 'python', 'go', 'postgresql', 'redis', 'api', 'worker', 'typescript'],
+  ],
 ];
 
 export const KNOWN_SKILLS = [

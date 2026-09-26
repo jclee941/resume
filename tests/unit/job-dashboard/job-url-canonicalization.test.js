@@ -85,9 +85,7 @@ test('canonicalizes tracking URLs for persistence', async () => {
     assert.deepEqual(
       {
         ...database
-          .prepare(
-            'SELECT source_url, canonical_url FROM job_search_results WHERE id = ?'
-          )
+          .prepare('SELECT source_url, canonical_url FROM job_search_results WHERE id = ?')
           .get('wanted-discovery-1'),
       },
       { source_url: rawUrl, canonical_url: canonicalUrl }
@@ -126,9 +124,7 @@ test('keeps malformed URLs raw', async () => {
     assert.deepEqual(
       {
         ...database
-          .prepare(
-            'SELECT source_url, canonical_url FROM job_search_results WHERE id = ?'
-          )
+          .prepare('SELECT source_url, canonical_url FROM job_search_results WHERE id = ?')
           .get('wanted-discovery-2'),
       },
       { source_url: rawUrl, canonical_url: null }

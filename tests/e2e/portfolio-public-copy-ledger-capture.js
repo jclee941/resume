@@ -1,5 +1,8 @@
 const { expect } = require('@playwright/test');
-const { captureState, dynamicStateDescriptors } = require('./fixtures/public-copy-ledger-extractor');
+const {
+  captureState,
+  dynamicStateDescriptors,
+} = require('./fixtures/public-copy-ledger-extractor');
 const { DYNAMIC_STATE_SHAPE, runtimeCopy } = require('./fixtures/public-copy-ledger-serializer');
 const DESKTOP = { key: 'desktop-1280x900', width: 1280, height: 900, dpr: 1 };
 const MOBILE = { key: 'mobile-375x812', width: 375, height: 812, dpr: 1 };
@@ -11,7 +14,7 @@ async function captureRoute(page, context, routeInfo, occurrences) {
     await expect(toggle).toBeVisible();
     await toggle.click();
     await expect(toggle).toHaveAttribute('aria-expanded', 'true');
-  await expect(current.locator('.nav-links')).toHaveClass(/open/);
+    await expect(current.locator('.nav-links')).toHaveClass(/open/);
   });
   await captureState(
     page,
@@ -44,7 +47,9 @@ async function captureRoute(page, context, routeInfo, occurrences) {
         const control = current.locator(`[data-capability-control="${id}"]`);
         await control.click();
         await expect(control).toHaveAttribute('aria-pressed', 'true');
-        await expect(current.locator('[data-capability-control][aria-pressed="true"]')).toHaveCount(1);
+        await expect(current.locator('[data-capability-control][aria-pressed="true"]')).toHaveCount(
+          1
+        );
         await expect(current.locator('#projects')).toHaveAttribute('data-capability-selected', id);
         await expect(current.locator('[data-capability-status][role="status"]')).toHaveText(
           copy.capabilities[id]

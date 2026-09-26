@@ -19,11 +19,21 @@ test('merges equivalent proposal evidence across proposal generation runs', () =
 
   try {
     writeProposalFiles(
-      generate({ id: 'wanted-123', source: 'wanted', position: 'Backend Engineer', techStack: ['Go'] }),
+      generate({
+        id: 'wanted-123',
+        source: 'wanted',
+        position: 'Backend Engineer',
+        techStack: ['Go'],
+      }),
       options
     );
     writeProposalFiles(
-      generate({ id: 'wanted-456', source: 'wanted', position: 'Platform Engineer', techStack: ['Go'] }),
+      generate({
+        id: 'wanted-456',
+        source: 'wanted',
+        position: 'Platform Engineer',
+        techStack: ['Go'],
+      }),
       options
     );
 
@@ -31,10 +41,10 @@ test('merges equivalent proposal evidence across proposal generation runs', () =
     assert.equal(files.length, 1);
     const persisted = JSON.parse(readFileSync(join(proposalsDir, files[0]), 'utf8'));
     assert.equal(persisted.evidence.length, 2);
-    assert.deepEqual(
-      persisted.sourceRefs.map((sourceRef) => sourceRef.jobId).sort(),
-      ['wanted-123', 'wanted-456']
-    );
+    assert.deepEqual(persisted.sourceRefs.map((sourceRef) => sourceRef.jobId).sort(), [
+      'wanted-123',
+      'wanted-456',
+    ]);
   } finally {
     rmSync(proposalsDir, { force: true, recursive: true });
   }
@@ -53,10 +63,9 @@ test('rejects a conflicting proposal that reuses an existing proposal ID', () =>
     writeProposalFiles([proposal], { proposalsDir });
 
     assert.throws(() =>
-      writeProposalFiles(
-        [{ ...proposal, proposedValue: { level: 'beginner', name: 'Rust' } }],
-        { proposalsDir }
-      )
+      writeProposalFiles([{ ...proposal, proposedValue: { level: 'beginner', name: 'Rust' } }], {
+        proposalsDir,
+      })
     );
   } finally {
     rmSync(proposalsDir, { force: true, recursive: true });

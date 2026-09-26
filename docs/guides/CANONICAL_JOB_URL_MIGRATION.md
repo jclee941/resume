@@ -15,9 +15,9 @@ This order prevents writes from reaching a database that lacks
 
 Migration `0009_add_canonical_job_urls` makes these changes:
 
-| Object | Change |
-| --- | --- |
-| `applications` | Adds nullable `canonical_url` for the credential- and tracking-free job URL. |
+| Object               | Change                                                                                                    |
+| -------------------- | --------------------------------------------------------------------------------------------------------- |
+| `applications`       | Adds nullable `canonical_url` for the credential- and tracking-free job URL.                              |
 | `job_search_results` | Creates the discovery-results table when absent, or adds nullable `canonical_url` to its existing schema. |
 
 Canonical URLs are generated from HTTP(S) source URLs. Fragments, URL user
