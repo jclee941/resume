@@ -1,10 +1,19 @@
+/**
+ * @param {string} text
+ * @returns {string}
+ */
 export function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
 }
 
+/**
+ * @param {string} tech
+ * @returns {string}
+ */
 export function getTechClass(tech) {
+  /** @type {Record<string, string>} */
   const map = {
     Splunk: 'splunk',
     'Webhook Flow': 'webhook',
@@ -22,6 +31,7 @@ export function getTechClass(tech) {
   return map[tech] || '';
 }
 
+/** @type {Record<string, string>} */
 const ICON_PATHS = {
   antenna:
     '<path d="M12 18v4"/><path d="M8.5 14.5a5 5 0 0 1 7 0"/><path d="M5 11a10 10 0 0 1 14 0"/><circle cx="12" cy="12" r="1.5"/>',
@@ -59,6 +69,11 @@ const ICON_PATHS = {
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
+/**
+ * @param {Element} element
+ * @param {string} attrs
+ * @returns {void}
+ */
 function applySvgAttributes(element, attrs) {
   const matches = attrs.matchAll(/([a-zA-Z0-9:-]+)="([^"]*)"/g);
   for (const match of matches) {
@@ -66,6 +81,11 @@ function applySvgAttributes(element, attrs) {
   }
 }
 
+/**
+ * @param {string} name
+ * @param {string} [className='portfolio-icon']
+ * @returns {SVGSVGElement}
+ */
 export function createIconElement(name, className = 'portfolio-icon') {
   const svg = document.createElementNS(SVG_NS, 'svg');
   svg.setAttribute('class', className);

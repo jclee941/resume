@@ -1,3 +1,7 @@
+/**
+ * @param {string} platform
+ * @returns {Promise<void>}
+ */
 export async function runCdpSessionExtraction(platform) {
   const { execSync } = await import('child_process');
   const { fileURLToPath } = await import('url');
@@ -21,14 +25,27 @@ export async function runCdpSessionExtraction(platform) {
   });
 }
 
+/**
+ * @typedef {Object} SessionRefreshHost
+ * @property {(platform: string) => Promise<void> | void} runSessionExtraction
+ * @property {(platform: string) => { timestamp?: number } | null} load
+ * @property {{ error: (...args: unknown[]) => void }} logger
+ */
+
 export const sessionRefreshMethods = {
+  /**
+   * @this {SessionRefreshHost}
+   * @param {string} platform
+   * @returns {Promise<boolean>}
+   */
   async tryRefresh(platform) {
     try {
       await this.runSessionExtraction(platform);
       const session = this.load(platform);
       return !!(session && session.timestamp && Date.now() - session.timestamp < 60000);
     } catch (error) {
-      this.logger.error('[SessionManager.tryRefresh] CDP extraction failed:', error.message);
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error('[SessionManager.tryRefresh] CDP extraction failed:', message);
       return false;
     }
   },

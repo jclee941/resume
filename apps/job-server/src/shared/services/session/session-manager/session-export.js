@@ -1,4 +1,23 @@
+/**
+ * @typedef {Object} SessionDataLike
+ * @property {number} [timestamp]
+ * @property {Record<string, unknown>} [cookies]
+ * @property {Record<string, unknown>} [tokens]
+ */
+
+/**
+ * @typedef {Object} SessionExportHost
+ * @property {(platform: string) => SessionDataLike | null} load
+ * @property {(platform: string, session: unknown) => boolean} save
+ * @property {{ error: (...args: unknown[]) => void }} logger
+ */
+
 export const sessionExportMethods = {
+  /**
+   * @this {SessionExportHost}
+   * @param {string} platform
+   * @returns {string | null}
+   */
   getEncryptedSession(platform) {
     const session = this.load(platform);
     if (!session) return null;
@@ -11,11 +30,18 @@ export const sessionExportMethods = {
       });
       return Buffer.from(payload).toString('base64');
     } catch (e) {
-      this.logger.error('[SessionManager.getEncryptedSession] Failed:', e.message);
+      const message = e instanceof Error ? e.message : String(e);
+      this.logger.error('[SessionManager.getEncryptedSession] Failed:', message);
       return null;
     }
   },
 
+  /**
+   * @this {SessionExportHost}
+   * @param {string} platform
+   * @param {string} encryptedData
+   * @returns {boolean}
+   */
   restoreEncryptedSession(platform, encryptedData) {
     try {
       const payload = JSON.parse(Buffer.from(encryptedData, 'base64').toString('utf8'));
@@ -27,7 +53,8 @@ export const sessionExportMethods = {
 
       return this.save(platform, payload.session);
     } catch (e) {
-      this.logger.error('[SessionManager.restoreEncryptedSession] Failed:', e.message);
+      const message = e instanceof Error ? e.message : String(e);
+      this.logger.error('[SessionManager.restoreEncryptedSession] Failed:', message);
       return false;
     }
   },

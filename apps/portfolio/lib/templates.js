@@ -6,13 +6,21 @@
 const { generateHash } = require('./content-hashing');
 const { CSP_NONCE_PLACEHOLDER } = require('./security-headers');
 
+/**
+ * @param {string} html
+ * @param {string} [placeholder]
+ * @returns {string}
+ */
 function injectScriptNoncePlaceholder(html, placeholder = CSP_NONCE_PLACEHOLDER) {
-  return html.replace(/<script\b([^>]*)>/g, (match, attrs) => {
-    if (/\bnonce\s*=/.test(attrs)) {
-      return match;
+  return html.replace(
+    /<script\b([^>]*)>/g,
+    (/** @type {string} */ match, /** @type {string} */ attrs) => {
+      if (/\bnonce\s*=/.test(attrs)) {
+        return match;
+      }
+      return `<script${attrs} nonce="${placeholder}">`;
     }
-    return `<script${attrs} nonce="${placeholder}">`;
-  });
+  );
 }
 
 /**
@@ -39,9 +47,7 @@ function generateLink(config) {
 /**
  * Extract inline scripts and styles from HTML and generate hashes
  * @param {string} html - HTML content
- * @returns {Object} Object with script and style hashes
- * @returns {string[]} return.scriptHashes - Array of script CSP hashes
- * @returns {string[]} return.styleHashes - Array of style CSP hashes
+ * @returns {{ scriptHashes: string[], styleHashes: string[] }} Object with script and style hashes
  */
 function extractInlineHashes(html) {
   const scriptHashes = [];

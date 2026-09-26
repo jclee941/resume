@@ -1,8 +1,22 @@
+/**
+ * @typedef {Object} D1Database
+ * @property {(query: string) => { bind(...values: unknown[]): { run(): Promise<{ meta?: { changes?: number } }> } }} prepare
+ */
+
 export class ApprovalRequestRepository {
+  /**
+   * @param {D1Database} db
+   */
   constructor(db) {
     this.db = db;
   }
 
+  /**
+   * @param {string} workflowId
+   * @param {string} decision
+   * @param {string} reviewer
+   * @returns {Promise<number>}
+   */
   async decidePendingForWorkflow(workflowId, decision, reviewer) {
     const result = await this.db
       .prepare(

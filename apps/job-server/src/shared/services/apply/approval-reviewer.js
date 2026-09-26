@@ -2,6 +2,36 @@ function toIso(value = Date.now()) {
   return new Date(value).toISOString();
 }
 
+/**
+ * @typedef {{
+ *   reason?: string | null;
+ *   events: unknown[];
+ *   [key: string]: unknown;
+ * }} ApprovalNotesData
+ *
+ * @typedef {{
+ *   notes?: string | null;
+ *   [key: string]: unknown;
+ * }} ApprovalRequestRecord
+ *
+ * @typedef {{
+ *   getApprovalRequestById(id: string): Promise<ApprovalRequestRecord>;
+ *   assertPendingRequest(request: unknown, id: string): void;
+ *   parseApprovalNotes(notes?: string | null): ApprovalNotesData;
+ *   stringifyApprovalNotes(state: unknown): string;
+ *   updateApprovalRequest(id: string, data: Record<string, unknown>): Promise<unknown>;
+ *   applicationRepository: {
+ *     updateStatus(id: string, status: string, reason: string): Promise<unknown>;
+ *     update(id: string, data: Record<string, unknown>): Promise<unknown>;
+ *   };
+ * }} ApprovalReviewerContext
+ */
+
+/**
+ * @param {ApprovalReviewerContext} context
+ * @param {string} applicationId
+ * @param {string} [reviewer='unknown']
+ */
 export async function approveRequest(context, applicationId, reviewer = 'unknown') {
   const request = await context.getApprovalRequestById(applicationId);
   context.assertPendingRequest(request, applicationId);
@@ -37,6 +67,12 @@ export async function approveRequest(context, applicationId, reviewer = 'unknown
   };
 }
 
+/**
+ * @param {ApprovalReviewerContext} context
+ * @param {string} applicationId
+ * @param {string} [reviewer='unknown']
+ * @param {string} [reason='Rejected by reviewer']
+ */
 export async function rejectRequest(
   context,
   applicationId,
@@ -76,6 +112,10 @@ export async function rejectRequest(
   };
 }
 
+/**
+ * @param {ApprovalReviewerContext} context
+ * @param {string} applicationId
+ */
 export async function cancelApproval(context, applicationId) {
   const request = await context.getApprovalRequestById(applicationId);
   context.assertPendingRequest(request, applicationId);

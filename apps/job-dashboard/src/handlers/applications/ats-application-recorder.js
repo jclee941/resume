@@ -1,5 +1,41 @@
 import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
 
+/**
+ * @typedef {Object} AtsApplicationInput
+ * @property {string} [id]
+ * @property {string} [source]
+ * @property {string} [externalJobId]
+ * @property {string} [jobId]
+ * @property {string} [payloadHash]
+ * @property {string} [approvalId]
+ * @property {string} [notes]
+ * @property {string} [sourceUrl]
+ * @property {string} [source_url]
+ * @property {string} [url]
+ * @property {string} [jobUrl]
+ * @property {string} [job_url]
+ * @property {string} [position]
+ * @property {string} [company]
+ * @property {string} [location]
+ * @property {number} [matchScore]
+ * @property {string} [status]
+ * @property {number} [priority]
+ * @property {string} [resumeId]
+ * @property {string} [coverLetter]
+ * @property {string} [createdAt]
+ * @property {string} [updatedAt]
+ */
+
+/**
+ * @typedef {Object} AtsDatabase
+ * @property {(query: string) => { bind(...values: unknown[]): { first(): Promise<unknown> } }} prepare
+ */
+
+/**
+ * @param {{ db: AtsDatabase, insert: (app: Record<string, unknown>) => Promise<unknown> }} repository
+ * @param {AtsApplicationInput} app
+ * @returns {Promise<{ status: string, application: unknown }>}
+ */
 export async function recordAtsApplication(repository, app) {
   const source = String(app?.source || '').trim();
   const externalJobId = String(app?.externalJobId || app?.jobId || '').trim();

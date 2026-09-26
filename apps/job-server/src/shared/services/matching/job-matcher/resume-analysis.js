@@ -2,7 +2,22 @@ import { readFileSync, existsSync } from 'fs';
 import { getResumeMasterMarkdownPath } from '../../../utils/paths.js';
 import { SKILL_CATEGORIES } from './skill-categories.js';
 
+/**
+ * @typedef {{
+ *   keywords: string[];
+ *   weight: number;
+ * }} SkillCategoryConfig
+ */
+
+/**
+ * @param {{ getDefaultPath?: () => string }} [options]
+ * @returns {(resumePath?: string) => string}
+ */
 export function createFileResumeReader({ getDefaultPath = getResumeMasterMarkdownPath } = {}) {
+  /**
+   * @param {string} [resumePath]
+   * @returns {string}
+   */
   return function readResume(resumePath) {
     const defaultPath = getDefaultPath();
     const path = resumePath || defaultPath;
@@ -17,10 +32,19 @@ export function createFileResumeReader({ getDefaultPath = getResumeMasterMarkdow
 
 export const defaultResumeReader = createFileResumeReader();
 
+/**
+ * @param {string} [resumePath]
+ * @returns {string}
+ */
 export function loadResume(resumePath) {
   return defaultResumeReader(resumePath);
 }
 
+/**
+ * @param {string} resumeText
+ * @param {{ skillCategories?: Record<string, SkillCategoryConfig> }} [options]
+ * @returns {Map<string, { keywords: string[]; weight: number; count: number }>}
+ */
 export function extractSkills(resumeText, { skillCategories = SKILL_CATEGORIES } = {}) {
   const skills = new Map();
   const lowerText = resumeText.toLowerCase();
@@ -44,6 +68,10 @@ export function extractSkills(resumeText, { skillCategories = SKILL_CATEGORIES }
   return skills;
 }
 
+/**
+ * @param {string} resumeText
+ * @returns {number}
+ */
 export function extractExperience(resumeText) {
   const match = resumeText.match(/총\s*경력[:\s]*(\d+)년\s*(\d+)?개월?/);
   if (match) {

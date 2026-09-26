@@ -1,3 +1,35 @@
+/**
+ * @typedef {{
+ *   searched: number;
+ *   filtered: number;
+ *   applied: number;
+ *   skipped: number;
+ *   failed: number;
+ *   cached: number;
+ *   startTime: number | null;
+ *   endTime: number | null;
+ * }} OptimizedApplyStats
+ *
+ * @typedef {{
+ *   id?: string | number;
+ *   source?: string;
+ *   company?: string;
+ *   title?: string;
+ *   [key: string]: unknown;
+ * }} OrchestratorJob
+ *
+ * @typedef {{
+ *   measure(name: string, data: Record<string, unknown>): void;
+ *   increment(name: string): void;
+ *   [key: string]: unknown;
+ * }} OrchestratorMetrics
+ *
+ * @typedef {{
+ *   error(message: string): void;
+ *   [key: string]: unknown;
+ * }} OrchestratorLogger
+ */
+
 export function initOptimizedApplyStats() {
   return {
     searched: 0,
@@ -11,6 +43,16 @@ export function initOptimizedApplyStats() {
   };
 }
 
+/**
+ * @param {{
+ *   error: Error;
+ *   job: OrchestratorJob;
+ *   logger: OrchestratorLogger;
+ *   metrics: OrchestratorMetrics;
+ *   startTime: number;
+ *   stats: OptimizedApplyStats;
+ * }} options
+ */
 export function recordApplyFailure({ error, job, logger, metrics, startTime, stats }) {
   const duration = Date.now() - startTime;
 
@@ -27,6 +69,10 @@ export function recordApplyFailure({ error, job, logger, metrics, startTime, sta
   return { job, success: false, error: error.message, duration };
 }
 
+/**
+ * @param {{ listApplications(options?: { fromDate?: string }): Array<{ status?: string }> } | null | undefined} appManager
+ * @returns {number}
+ */
 export function getTodayApplicationCount(appManager) {
   if (!appManager) return 0;
 
@@ -35,6 +81,10 @@ export function getTodayApplicationCount(appManager) {
   return apps.filter((a) => a.status === 'applied').length;
 }
 
+/**
+ * @param {number} ms
+ * @returns {Promise<void>}
+ */
 export function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

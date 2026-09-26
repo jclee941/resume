@@ -6,7 +6,14 @@
 
 /**
  * @template T
- * @param {import('./types.js').ResourcePoolState<T>} state
+ * @typedef {import('./types.js').ResourcePoolState<T> & {
+ *   options: Required<Pick<import('./types.js').ResourcePoolOptions<T>, 'maxAge' | 'idleTimeoutMs' | 'minSize'>>
+ * }} NormalizedResourcePoolState
+ */
+
+/**
+ * @template T
+ * @param {NormalizedResourcePoolState<T>} state
  * @param {(pooled: import('./types.js').PooledResource<T>) => Promise<void>} destroyResource
  * @returns {Promise<number>}
  */
@@ -32,7 +39,8 @@ export async function removeUnhealthyIdleResources(state, destroyResource) {
         const valid = await state.options.validate(pooled.resource);
         if (!valid) toRemove.push(i);
       } catch (error) {
-        state.logger.error('[ResourcePool.healthCheck] Validation failed:', error.message);
+        const message = error instanceof Error ? error.message : String(error);
+        state.logger.error('[ResourcePool.healthCheck] Validation failed:', message);
         toRemove.push(i);
       }
     }
@@ -48,7 +56,7 @@ export async function removeUnhealthyIdleResources(state, destroyResource) {
 
 /**
  * @template T
- * @param {import('./types.js').ResourcePoolState<T>} state
+ * @param {NormalizedResourcePoolState<T>} state
  * @param {import('./types.js').PooledResource<T>} pooled
  * @param {number} pendingRemovalCount
  * @param {number} now

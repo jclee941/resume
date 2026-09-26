@@ -9,10 +9,11 @@
 
 /**
  * Create a mock Telegram API client
- * @param {Object} [config]
+ * @param {Record<string, unknown>} [_config]
  * @returns {Object} Telegram mock
  */
 export function mockTelegramAPI(_config = {}) {
+  /** @type {Array<{ method: string, chatId?: string, text?: string, photo?: string, caption?: string, response: Record<string, unknown> }>} */
   const responses = [];
   let shouldFail = false;
   let failError = new Error('Telegram API error');
@@ -70,7 +71,7 @@ export function mockTelegramAPI(_config = {}) {
       failError = error;
     },
 
-    /** @returns {Array} */
+    /** @returns {Array<{ method: string, chatId?: string, text?: string, photo?: string, caption?: string, response: Record<string, unknown> }>} */
     getResponses() {
       return responses;
     },
@@ -90,19 +91,21 @@ export function mockTelegramAPI(_config = {}) {
 
 /**
  * Create a mock Claude API client
- * @param {Object} [config]
+ * @param {Record<string, unknown>} [_config]
  * @returns {Object} Claude mock
  */
 export function mockClaudeAPI(_config = {}) {
+  /** @type {Array<{ method: string, prompt?: string, system?: string, text?: string, options?: Record<string, unknown> }>} */
   const calls = [];
   let shouldFail = false;
   let failError = new Error('Claude API error');
+  /** @type {string | null} */
   let nextResponse = null;
 
   const api = {
     /**
      * @param {string} prompt
-     * @param {Object} [options]
+     * @param {Record<string, unknown>} [options]
      * @returns {Promise<string>}
      */
     async complete(prompt, options = {}) {
@@ -121,7 +124,7 @@ export function mockClaudeAPI(_config = {}) {
     /**
      * @param {string} system
      * @param {string} prompt
-     * @param {Object} [options]
+     * @param {Record<string, unknown>} [options]
      * @returns {Promise<string>}
      */
     async completeWithSystem(system, prompt, options = {}) {
@@ -162,7 +165,7 @@ export function mockClaudeAPI(_config = {}) {
       failError = error;
     },
 
-    /** @returns {Array} */
+    /** @returns {Array<{ method: string, prompt?: string, system?: string, text?: string, options?: Record<string, unknown> }>} */
     getCalls() {
       return calls;
     },

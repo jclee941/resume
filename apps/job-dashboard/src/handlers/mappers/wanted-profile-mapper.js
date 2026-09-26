@@ -16,6 +16,17 @@ export function parsePeriod(period = '') {
   return { start, end };
 }
 
+/**
+ * @typedef {Object} WantedCareerInput
+ * @property {string} [period]
+ * @property {string} [role]
+ * @property {string} [company]
+ * @property {string} [workType]
+ */
+
+/**
+ * @param {WantedCareerInput} career
+ */
 export function mapCareerToWanted(career) {
   const { start, end } = parsePeriod(career.period);
   const jobRole = normalizeCareerRole(career.role);
@@ -30,6 +41,18 @@ export function mapCareerToWanted(career) {
   };
 }
 
+/**
+ * @typedef {Object} WantedEducationInput
+ * @property {string} [status]
+ * @property {string} [startDate]
+ * @property {string} [endDate]
+ * @property {string} [school]
+ * @property {string} [major]
+ */
+
+/**
+ * @param {WantedEducationInput} education
+ */
 export function mapEducationToWanted(education) {
   const isAttending = normalizeEducationStatus(education.status) === '재학중';
   const startTime = education.startDate ? `${education.startDate.replace('.', '-')}-01` : null;
@@ -48,6 +71,16 @@ export function mapEducationToWanted(education) {
   };
 }
 
+/**
+ * @typedef {Object} WantedCertificationInput
+ * @property {string} [name]
+ * @property {string} [issuer]
+ * @property {string} [date]
+ */
+
+/**
+ * @param {WantedCertificationInput} certification
+ */
 export function mapCertificationToWanted(certification) {
   return {
     title: certification.name,
@@ -57,6 +90,16 @@ export function mapCertificationToWanted(certification) {
   };
 }
 
+/**
+ * @typedef {Object} WantedSsotData
+ * @property {{ name?: string, email?: string, phone?: string }} [personal]
+ * @property {{ position?: string }} [current]
+ * @property {{ totalExperience?: string, expertise?: string[], profileStatement?: string }} [summary]
+ */
+
+/**
+ * @param {WantedSsotData} ssotData
+ */
 export function buildProfileData(ssotData) {
   return {
     name: ssotData.personal?.name,

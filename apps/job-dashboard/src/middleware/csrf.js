@@ -7,12 +7,22 @@ export function generateCsrfToken() {
   return Array.from(array, (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
+/**
+ * @param {string} token
+ * @param {boolean} [isSecure=true]
+ * @returns {string}
+ */
 function csrfCookie(token, isSecure = true) {
   const flags = [`${CSRF_COOKIE}=${token}`, 'Path=/', 'SameSite=Strict', 'Max-Age=3600'];
   if (isSecure) flags.push('Secure');
   return flags.join('; ');
 }
 
+/**
+ * @param {string} a
+ * @param {string} b
+ * @returns {boolean}
+ */
 function timingSafeEqual(a, b) {
   if (a.length !== b.length) return false;
   let result = 0;
@@ -22,6 +32,10 @@ function timingSafeEqual(a, b) {
   return result === 0;
 }
 
+/**
+ * @param {Request} request
+ * @returns {{ ok: true } | { ok: false, status: number, error: string }}
+ */
 export function validateCsrf(request) {
   if (['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
     return { ok: true };
@@ -52,6 +66,11 @@ export function validateCsrf(request) {
   return { ok: true };
 }
 
+/**
+ * @param {Response} response
+ * @param {Request} request
+ * @returns {Response}
+ */
 export function addCsrfCookie(response, request) {
   const cookieHeader = request.headers.get('Cookie') || '';
   const hasToken = cookieHeader.includes(`${CSRF_COOKIE}=`);

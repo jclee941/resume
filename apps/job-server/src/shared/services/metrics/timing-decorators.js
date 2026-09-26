@@ -1,13 +1,25 @@
 /**
+ * @typedef {{
+ *   mark(name: string): void;
+ *   measure(name: string, data: Record<string, unknown>): void;
+ *   [key: string]: unknown;
+ * }} TimingMetrics
+ */
+
+/**
  * Decorator for timing method calls
  * @param {string} [name] - Custom name (default: method name)
- * @returns {Function}
+ * @returns {(target: unknown, propertyKey: string, descriptor: PropertyDescriptor) => PropertyDescriptor}
  */
 export function timed(name) {
   return function (_target, propertyKey, descriptor) {
     const originalMethod = descriptor.value;
-    const metricName = name || propertyKey;
+    const metricName = name || String(propertyKey);
 
+    /**
+     * @this {{ _metrics?: TimingMetrics; [key: string]: unknown }}
+     * @param {unknown[]} args
+     */
     descriptor.value = async function (...args) {
       const metrics = this._metrics;
       if (!metrics) {
@@ -20,7 +32,10 @@ export function timed(name) {
         metrics.measure(metricName, { success: true });
         return result;
       } catch (error) {
-        metrics.measure(metricName, { success: false, error: error.message });
+        metrics.measure(metricName, {
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+        });
         throw error;
       }
     };
@@ -31,9 +46,10 @@ export function timed(name) {
 
 /**
  * Quick timing helper - console.time wrapper
+ * @template T
  * @param {string} label
- * @param {Function} fn
- * @returns {Promise<*>}
+ * @param {() => Promise<T> | T} fn
+ * @returns {Promise<T>}
  */
 export async function withTiming(label, fn) {
   console.time(label);
@@ -47,7 +63,7 @@ export async function withTiming(label, fn) {
 /**
  * Log memory usage
  * @param {string} [label='Memory']
- * @param {Object} [logger=console]
+ * @param {{ log: (...data: unknown[]) => void }} [logger=console]
  */
 export function logMemoryUsage(label = 'Memory', logger = console) {
   const usage = process.memoryUsage();

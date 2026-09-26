@@ -20,10 +20,20 @@ import { EventEmitter } from 'events';
 
 /**
  * @typedef {object} CaptchaDetectorOptions
- * @property {Function} [notifyCallback] - Async callback for notifications
+ * @property {((detection: CaptchaDetection) => Promise<void> | void) | null} [notifyCallback] - Async callback for notifications
  * @property {number} [maxDetectionsBeforePause] - Threshold before auto-pause (default: 3)
  * @property {number} [pauseDurationMs] - Auto-pause duration in ms (default: 60000)
  * @property {number} [rollingWindowMs] - Rolling window for detection count (default: 300000 / 5 min)
+ * @property {{ error: (...args: unknown[]) => void }} [logger]
+ */
+
+/**
+ * @typedef {object} ResolvedCaptchaDetectorOptions
+ * @property {((detection: CaptchaDetection) => Promise<void> | void) | null} notifyCallback
+ * @property {number} maxDetectionsBeforePause
+ * @property {number} pauseDurationMs
+ * @property {number} rollingWindowMs
+ * @property {{ error: (...args: unknown[]) => void }} [logger]
  */
 
 /** Known CAPTCHA signature patterns */
@@ -45,7 +55,7 @@ const CAPTCHA_SIGNATURES = [
   },
 ];
 
-/** @type {CaptchaDetectorOptions} */
+/** @type {ResolvedCaptchaDetectorOptions} */
 const DEFAULT_OPTIONS = {
   notifyCallback: null,
   maxDetectionsBeforePause: 3,
@@ -65,7 +75,7 @@ export class CaptchaDetector extends EventEmitter {
     super();
     this.setMaxListeners(10);
     this.logger = options?.logger ?? console;
-    /** @type {CaptchaDetectorOptions} */
+    /** @type {ResolvedCaptchaDetectorOptions} */
     this.options = { ...DEFAULT_OPTIONS, ...options };
 
     /** @type {CaptchaDetection[]} */
@@ -118,6 +128,7 @@ export class CaptchaDetector extends EventEmitter {
     if (!headers) return null;
 
     // Normalize header keys to lowercase
+    /** @type {Record<string, string>} */
     const normalizedHeaders = {};
     for (const [key, value] of Object.entries(headers)) {
       normalizedHeaders[key.toLowerCase()] = value;

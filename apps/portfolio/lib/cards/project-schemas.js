@@ -1,14 +1,37 @@
 /**
- * Generate per-project schema.org/CreativeWork JSON-LD for a given locale's
- * projects array. Emitted as `<script type="application/ld+json">` blocks that
- * the build later stamps with a CSP nonce (same path as the other inline
- * JSON-LD schemas). This surfaces each project to search engines as structured
- * data without changing the visible layout.
- *
- * @param {Array<Object>} projects - locale-specific projects (data.projects)
- * @returns {string} concatenated <script type="application/ld+json"> blocks, or ''
+ * @typedef {Object} ProjectSchemaData
+ * @property {string} [title]
+ * @property {string} [name]
+ * @property {string} [description]
+ * @property {string[]} [related_skills]
+ * @property {string} [tech]
+ * @property {string} [githubUrl]
+ * @property {string} [repoUrl]
+ * @property {string} [demoUrl]
+ * @property {string} [liveUrl]
+ */
+
+/**
+ * @typedef {{
+ *   '@context': string,
+ *   '@type': string,
+ *   '@id': string,
+ *   name: string,
+ *   description: string,
+ *   keywords: string,
+ *   creator: { '@type': string, name: string, alternateName: string },
+ *   isPartOf: { '@type': string, name: string, url: string },
+ *   url?: string
+ * }} ProjectJsonLd
+ */
+
+/**
+ * @param {ProjectSchemaData} project
+ * @param {number} index
+ * @returns {ProjectJsonLd}
  */
 function buildProjectSchema(project, index) {
+  /** @type {ProjectJsonLd} */
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'CreativeWork',
@@ -37,6 +60,16 @@ function buildProjectSchema(project, index) {
   return schema;
 }
 
+/**
+ * Generate per-project schema.org/CreativeWork JSON-LD for a given locale's
+ * projects array. Emitted as `<script type="application/ld+json">` blocks that
+ * the build later stamps with a CSP nonce (same path as the other inline
+ * JSON-LD schemas). This surfaces each project to search engines as structured
+ * data without changing the visible layout.
+ *
+ * @param {Array<ProjectSchemaData>} projects - locale-specific projects (data.projects)
+ * @returns {string} concatenated <script type="application/ld+json"> blocks, or ''
+ */
 function generateProjectSchemasHtml(projects) {
   if (!Array.isArray(projects) || projects.length === 0) return '';
 

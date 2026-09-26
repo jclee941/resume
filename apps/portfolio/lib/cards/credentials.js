@@ -10,6 +10,11 @@ const STATUS_LABELS = {
   ja: { active: '取得済み', pending: '準備中' },
 };
 
+/**
+ * @param {string|null|undefined} status
+ * @param {'ko'|'en'|'ja'} [locale='en']
+ * @returns {{ statusClass: string, statusLabel: string }}
+ */
 function getCertificationStatus(status, locale = 'en') {
   const normalized = String(status || '').toLowerCase();
   // Pending labels across locales: KO 준비중, JA 準備中, EN Preparing/pursuing.
@@ -34,6 +39,10 @@ function getCertificationStatus(status, locale = 'en') {
 
 // Strip any parenthetical expiry note from a date string, keeping only the
 // acquisition date. e.g. '2020.08 (2023.08 만료)' -> '2020.08'
+/**
+ * @param {string|null|undefined} date
+ * @returns {string}
+ */
 function acquisitionDate(date) {
   if (!date) return '';
   return String(date)
@@ -44,7 +53,7 @@ function acquisitionDate(date) {
 /**
  * Generate certification cards HTML from JSON data.
  * Shows acquired credentials only (no expiry badge / no expiration date).
- * @param {Array} certData - Array of certification objects
+ * @param {Array<import('../../../../packages/types/src/resume.js').ResumeCertification>} certData - Array of certification objects
  * @param {string} _dataHash - Hash of the data for cache validation
  * @param {'ko'|'en'|'ja'} [locale='en'] - Locale for the status badge text
  * @returns {string} HTML string for certification cards

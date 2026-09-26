@@ -1,7 +1,22 @@
+/**
+ * @typedef {{
+ *   success?: boolean;
+ *   skipped?: boolean;
+ *   applied?: boolean;
+ *   [key: string]: unknown;
+ * }} ApplyResult
+ */
+
+/**
+ * @param {unknown} job
+ */
 export function createDryRunResult(job) {
   return { job, success: true, dryRun: true, skipped: true, message: 'Would apply' };
 }
 
+/**
+ * @param {unknown} job
+ */
 export function createDryRunOnlyResult(job) {
   return {
     job,
@@ -13,6 +28,10 @@ export function createDryRunOnlyResult(job) {
   };
 }
 
+/**
+ * @param {ApplyResult[]} results
+ * @param {number} preSkippedCount
+ */
 export function countApplyResults(results, preSkippedCount) {
   return {
     applied: results.filter(

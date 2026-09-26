@@ -1,10 +1,37 @@
 /**
+ * @typedef {{
+ *   data?: {
+ *     viewer?: {
+ *       accounts?: Array<{
+ *         httpRequestsAdaptiveGroups?: Array<{
+ *           sum?: { requests?: number; bytes?: number; cachedRequests?: number; cachedBytes?: number };
+ *           dimensions?: { date?: string };
+ *         }>;
+ *         httpRequestsAdaptive?: Array<{
+ *           edgeResponseStatus: number;
+ *           clientRequestPath?: string;
+ *         }>;
+ *       }>;
+ *     };
+ *   };
+ *   errors?: unknown[];
+ * }} GraphQLAnalyticsResponse
+ */
+
+/**
  * Cloudflare Analytics Service
  *
  * Fetches worker analytics from the Cloudflare GraphQL Analytics API.
  * Uses constructor injection for configuration (accountId, apiKey) and fetch.
  */
 export class CloudflareAnalyticsService {
+  /**
+   * @param {{
+   *   accountId?: string;
+   *   apiKey?: string;
+   *   fetchFn?: typeof fetch;
+   * }} options
+   */
   constructor({ accountId, apiKey, fetchFn = globalThis.fetch }) {
     this.accountId = accountId;
     this.apiKey = apiKey;
@@ -110,14 +137,14 @@ export class CloudflareAnalyticsService {
     } catch (error) {
       return {
         available: false,
-        reason: error.message,
+        reason: error instanceof Error ? error.message : String(error),
       };
     }
   }
 
   /**
    * Transform raw Cloudflare GraphQL response into structured analytics.
-   * @param {Object} rawData - Raw GraphQL response
+   * @param {GraphQLAnalyticsResponse} rawData - Raw GraphQL response
    * @param {string} since - Start date
    * @param {string} until - End date
    * @returns {Object} Formatted analytics
@@ -166,7 +193,9 @@ export class CloudflareAnalyticsService {
     }
 
     // Aggregate status codes from individual requests
+    /** @type {Record<number | string, number>} */
     const statusCodes = {};
+    /** @type {Record<string, number>} */
     const pathCounts = {};
     let successCount = 0;
 

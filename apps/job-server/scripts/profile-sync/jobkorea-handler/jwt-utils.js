@@ -3,6 +3,17 @@
  * The `jkat` cookie is a JWT access token with a ~30-minute lifetime.
  */
 
+/**
+ * @typedef {object} JwtPayload
+ * @property {number} [exp]
+ * @property {number} [iat]
+ * @property {string} [sub]
+ */
+
+/**
+ * @param {string | null | undefined} token
+ * @returns {JwtPayload | null}
+ */
 function parseJwt(token) {
   if (!token || typeof token !== 'string') {
     return null;
@@ -19,6 +30,11 @@ function parseJwt(token) {
   }
 }
 
+/**
+ * @param {string | null | undefined} cookieString
+ * @param {string} name
+ * @returns {string | null}
+ */
 function extractCookieValue(cookieString, name) {
   if (!cookieString || typeof cookieString !== 'string') {
     return null;
@@ -31,6 +47,8 @@ function extractCookieValue(cookieString, name) {
 /**
  * Check if the `jkat` JWT in the cookie string is expired.
  * Returns true if expired or missing.
+ * @param {string | null | undefined} cookieString
+ * @returns {boolean}
  */
 export function isJwtExpired(cookieString) {
   const jkat = extractCookieValue(cookieString, 'jkat');

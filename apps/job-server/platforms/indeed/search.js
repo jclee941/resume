@@ -18,16 +18,20 @@ export const INDEED_DATE_POSTED = {
 };
 
 /**
+ * @typedef {Object} IndeedSearchParams
+ * @property {string} [keyword] - Search keyword/query
+ * @property {string} [location] - Location filter
+ * @property {string} [jobType] - Job type filter
+ * @property {string} [datePosted] - Date posted filter
+ * @property {number} [limit] - Max results per page
+ * @property {number} [offset] - Pagination start index
+ * @property {string} [sort] - Sort by: 'relevance' or 'date'
+ */
+
+/**
  * Build search query parameters for Indeed Korea.
  *
- * @param {object} params - Search parameters
- * @param {string} [params.keyword] - Search keyword/query
- * @param {string} [params.location] - Location filter
- * @param {string} [params.jobType] - Job type filter
- * @param {string} [params.datePosted] - Date posted filter
- * @param {number} [params.limit] - Max results per page
- * @param {number} [params.offset] - Pagination start index
- * @param {string} [params.sort] - Sort by: 'relevance' or 'date'
+ * @param {IndeedSearchParams} params - Search parameters
  * @returns {string} URL query string
  */
 export function buildSearchQuery(params) {
@@ -58,11 +62,18 @@ export function buildSearchQuery(params) {
 }
 
 /**
+ * @typedef {Object} IndeedCrawler
+ * @property {string} apiBase
+ * @property {(url: string) => Promise<string>} fetchHTML
+ * @property {(html: string) => Record<string, unknown>[]} _parseSearchResults
+ */
+
+/**
  * Search jobs on Indeed Korea.
  *
- * @param {object} crawler - Indeed crawler instance with apiBase/fetchHTML
- * @param {object} params - Search parameters
- * @returns {Promise<{success: boolean, source: string, total?: number, jobs: object[], error?: string}>}
+ * @param {IndeedCrawler} crawler - Indeed crawler instance with apiBase/fetchHTML
+ * @param {IndeedSearchParams} [params] - Search parameters
+ * @returns {Promise<{success: boolean, source: string, total?: number, jobs: Record<string, unknown>[], error?: string}>}
  */
 export async function searchJobs(crawler, params = {}) {
   const query = buildSearchQuery(params);
@@ -84,7 +95,7 @@ export async function searchJobs(crawler, params = {}) {
     return {
       success: false,
       source: 'indeed',
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
       jobs: [],
     };
   }
@@ -93,10 +104,10 @@ export async function searchJobs(crawler, params = {}) {
 /**
  * Search by keyword convenience wrapper.
  *
- * @param {object} crawler - Indeed crawler instance
+ * @param {IndeedCrawler} crawler - Indeed crawler instance
  * @param {string} keyword - Search keyword
- * @param {object} options - Additional search options
- * @returns {Promise<object>}
+ * @param {IndeedSearchParams} [options] - Additional search options
+ * @returns {Promise<{success: boolean, source: string, total?: number, jobs: Record<string, unknown>[], error?: string}>}
  */
 export function searchByKeyword(crawler, keyword, options = {}) {
   return searchJobs(crawler, { ...options, keyword });

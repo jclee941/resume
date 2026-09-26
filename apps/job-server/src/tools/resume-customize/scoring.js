@@ -5,6 +5,45 @@
 import { normalize, unique } from './text-processing.js';
 
 /**
+ * @typedef {Object} ScorableCareer
+ * @property {string} [project]
+ * @property {string} [role]
+ * @property {string} [description]
+ * @property {string} [company]
+ */
+
+/**
+ * @typedef {Object} ScorableProject
+ * @property {string} [name]
+ * @property {string} [role]
+ * @property {string} [description]
+ * @property {string[]} [technologies]
+ * @property {string} [os]
+ */
+
+/**
+ * @typedef {Object} SkillItem
+ * @property {string} name
+ * @property {string} [level]
+ * @property {string} [category]
+ * @property {number} [score]
+ */
+
+/**
+ * @typedef {Object} SkillCategory
+ * @property {string} [title]
+ * @property {SkillItem[]} [items]
+ */
+
+/**
+ * @typedef {Object} CategorySummary
+ * @property {string | undefined} title
+ * @property {number} matchedCount
+ * @property {number} totalCount
+ * @property {number} relevance
+ */
+
+/**
  * Score a text block against keywords.
  * @param {string} text
  * @param {string[]} keywords
@@ -18,9 +57,10 @@ export function scoreText(text, keywords) {
 
 /**
  * Score a career entry against keywords.
- * @param {object} career
+ * @template {ScorableCareer} T
+ * @param {T} career
  * @param {string[]} keywords
- * @returns {{ career: object, score: number, matched: string[] }}
+ * @returns {{ career: T, score: number, matched: string[] }}
  */
 export function scoreCareer(career, keywords) {
   const text = [
@@ -35,9 +75,10 @@ export function scoreCareer(career, keywords) {
 
 /**
  * Score a project entry against keywords.
- * @param {object} project
+ * @template {ScorableProject} T
+ * @param {T} project
  * @param {string[]} keywords
- * @returns {{ project: object, score: number, matched: string[] }}
+ * @returns {{ project: T, score: number, matched: string[] }}
  */
 export function scoreProject(project, keywords) {
   const text = [
@@ -53,13 +94,16 @@ export function scoreProject(project, keywords) {
 
 /**
  * Score and sort skills by relevance.
- * @param {object} skills
+ * @param {Record<string, SkillCategory>} skills
  * @param {string[]} keywords
- * @returns {{ matched: Array<{name: string, level: string, score: number}>, unmatched: Array<{name: string, level: string}>, categories: object }}
+ * @returns {{ matched: Array<SkillItem & { score: number, category: string }>, unmatched: Array<SkillItem & { category: string }>, categories: Record<string, CategorySummary> }}
  */
 export function scoreSkills(skills, keywords) {
+  /** @type {Array<SkillItem & { score: number, category: string }>} */
   const matched = [];
+  /** @type {Array<SkillItem & { category: string }>} */
   const unmatched = [];
+  /** @type {Record<string, CategorySummary>} */
   const categories = {};
 
   for (const [catKey, category] of Object.entries(skills || {})) {

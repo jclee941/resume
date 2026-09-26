@@ -53,9 +53,9 @@ export function classifyPage(finalUrl, title, text) {
 
 /**
  * Run the browser probe and return a plain result object (never throws).
- * @param {{BROWSER_SESSION: unknown, MYBROWSER: unknown}} env
- * @param {{withBrowserSession?: Function, url?: string, now?: () => number}} [opts]
- * @returns {Promise<object>}
+ * @param {Parameters<typeof defaultWithBrowserSession>[0]} env
+ * @param {{withBrowserSession?: typeof defaultWithBrowserSession, url?: string, now?: () => number}} [opts]
+ * @returns {Promise<Record<string, unknown>>}
  */
 export async function runBrowserSmoke(env, opts = {}) {
   const {
@@ -78,6 +78,7 @@ export async function runBrowserSmoke(env, opts = {}) {
         } catch {
           text = '';
         }
+        /** @type {Array<{ name: string, type: string, id: string }>} */
         let inputs = [];
         try {
           inputs = await page.evaluate(() =>
@@ -110,11 +111,15 @@ export async function runBrowserSmoke(env, opts = {}) {
 
     return { ok: true, url, ...data, elapsedMs: now() - started };
   } catch (err) {
+    const errorRecord =
+      err && typeof err === 'object'
+        ? /** @type {{ message?: string; code?: string }} */ (err)
+        : null;
     return {
       ok: false,
       url,
-      error: err?.message || String(err),
-      ...(err?.code ? { code: err.code } : {}),
+      error: errorRecord?.message || String(err),
+      ...(errorRecord?.code ? { code: errorRecord.code } : {}),
       elapsedMs: now() - started,
     };
   }

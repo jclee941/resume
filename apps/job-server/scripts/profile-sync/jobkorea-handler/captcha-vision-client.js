@@ -69,6 +69,17 @@ export function isCliproxyConfigured(env = process.env) {
   return !!env.CLIPROXY_BASE?.trim() && !!env.CLIPROXY_API_KEY?.trim();
 }
 
+/**
+ * @typedef {object} CaptchaImage
+ * @property {string} mime
+ * @property {string} base64
+ */
+
+/**
+ * @param {CaptchaImage} image
+ * @param {string} model
+ * @returns {Promise<string>}
+ */
 export async function callVisionModel(image, model) {
   const cliproxyBase = resolveCliproxyBase();
   const cliproxyKey = resolveCliproxyApiKey();
@@ -118,6 +129,10 @@ export async function callVisionModel(image, model) {
   return normalizeCaptchaAnswer(raw);
 }
 
+/**
+ * @param {unknown} raw
+ * @returns {string}
+ */
 export function normalizeCaptchaAnswer(raw) {
   const tokens = String(raw)
     .split(/[^A-Za-z0-9]+/)
@@ -126,6 +141,10 @@ export function normalizeCaptchaAnswer(raw) {
   return candidates.length ? candidates[candidates.length - 1] : '';
 }
 
+/**
+ * @param {string} token
+ * @returns {boolean}
+ */
 function isPlausibleCaptchaAnswer(token) {
   if (token === 'ZZZZZZ') return false;
   if (token.length < 4 || token.length > 8) return false;

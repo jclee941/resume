@@ -1,3 +1,21 @@
+/**
+ * @typedef {{
+ *   min: number;
+ *   max: number;
+ *   unrestricted: boolean;
+ * }} ExperienceRange
+ *
+ * @typedef {{
+ *   summary?: { totalExperience?: string | number };
+ *   careers?: unknown[];
+ *   [key: string]: unknown;
+ * }} ResumeExperienceData
+ */
+
+/**
+ * @param {unknown} value
+ * @returns {ExperienceRange}
+ */
 export function parseExperienceYears(value) {
   const text = String(value || '');
   const rangeMatch = text.match(/(\d+(?:\.\d+)?)\s*[-~]\s*(\d+(?:\.\d+)?)\s*년/);
@@ -28,6 +46,10 @@ export function parseExperienceYears(value) {
   return { min: 0, max: 99, unrestricted: true };
 }
 
+/**
+ * @param {ResumeExperienceData} resumeData
+ * @returns {number}
+ */
 export function getResumeYears(resumeData) {
   const totalExperience = String(resumeData.summary?.totalExperience || '');
   const match = totalExperience.match(/(\d+(?:\.\d+)?)/);
@@ -39,6 +61,11 @@ export function getResumeYears(resumeData) {
   return Math.max(careerCount, 0);
 }
 
+/**
+ * @param {unknown} jobText
+ * @param {number} resumeYears
+ * @returns {{ score: number; range: ExperienceRange }}
+ */
 export function scoreExperienceLevel(jobText, resumeYears) {
   const parsed = parseExperienceYears(jobText);
   if (parsed.unrestricted) {

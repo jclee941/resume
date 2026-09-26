@@ -2,6 +2,23 @@
  * Browser pool metrics and resource estimates.
  */
 
+/**
+ * @typedef {{
+ *   created: number;
+ *   reused: number;
+ *   released: number;
+ *   closed: number;
+ *   queueWaits: number;
+ *   avgWaitTimeMs: number;
+ *   totalWaitTimeMs: number;
+ * }} PoolMetrics
+ *
+ * @typedef {{ inUse?: boolean }} PoolBrowser
+ */
+
+/**
+ * @returns {PoolMetrics}
+ */
 export function createPoolMetrics() {
   return {
     created: 0,
@@ -14,6 +31,11 @@ export function createPoolMetrics() {
   };
 }
 
+/**
+ * @param {PoolMetrics} metrics
+ * @param {Map<unknown, PoolBrowser>} pool
+ * @param {unknown[]} queue
+ */
 export function getPoolMetrics(metrics, pool, queue) {
   const entries = Array.from(pool.values());
   return {
@@ -25,11 +47,18 @@ export function getPoolMetrics(metrics, pool, queue) {
   };
 }
 
+/**
+ * @param {PoolMetrics} metrics
+ * @param {number} waitTimeMs
+ */
 export function recordQueueWait(metrics, waitTimeMs) {
   metrics.totalWaitTimeMs += waitTimeMs;
   metrics.avgWaitTimeMs = metrics.totalWaitTimeMs / metrics.queueWaits;
 }
 
+/**
+ * @param {Map<unknown, unknown>} pool
+ */
 export function getMemoryEstimate(pool) {
   // Rough estimate: ~100MB per browser instance
   return pool.size * 100;

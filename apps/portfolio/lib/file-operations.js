@@ -15,7 +15,7 @@ class FileOperationError extends Error {
    * @param {string} message - Error message
    * @param {string} filePath - Path to the file
    * @param {string} operation - Operation that failed
-   * @param {Error} [cause] - Original error
+   * @param {Error & { code?: string }} [cause] - Original error
    */
   constructor(message, filePath, operation, cause) {
     super(message);
@@ -29,7 +29,7 @@ class FileOperationError extends Error {
 /**
  * Safely read a file with detailed error handling
  * @param {string} filePath - Path to the file
- * @param {string|null} encoding - File encoding (default: 'utf-8', null for binary)
+ * @param {BufferEncoding|null} [encoding='utf-8'] - File encoding (default: 'utf-8', null for binary)
  * @returns {string|Buffer} File contents
  * @throws {FileOperationError} If file reading fails
  */
@@ -49,44 +49,59 @@ function safeReadFile(filePath, encoding = 'utf-8') {
       logger.warn(`Large file detected: ${fileName} (${(stats.size / 1024 / 1024).toFixed(2)}MB)`);
     }
 
-    return fs.readFileSync(filePath, encoding);
+    return /** @type {(p: string, e: BufferEncoding | null) => string | Buffer} */ (
+      fs.readFileSync
+    )(filePath, encoding);
   } catch (err) {
+    const error = err instanceof Error ? err : new Error(String(err));
     throw new FileOperationError(
-      `Failed to read ${fileName}: ${err.message}`,
+      `Failed to read ${fileName}: ${error.message}`,
       filePath,
       'read',
-      err
+      error
     );
   }
 }
 
 /**
  * Read multiple files safely with parallel processing for better performance.
- * @param {Array<{path: string, encoding: string|null, name: string, optional?: boolean}>} files
+ * @param {Array<{path: string, encoding: BufferEncoding|null, name: string, optional?: boolean}>} files
  *   File descriptors. If `optional: true` is set on a file and the read fails
  *   because the path does not exist, the value resolves to `null` (binary) or
  *   `''` (utf-8) instead of raising. This lets the build proceed when generated
  *   artefacts (e.g. `resume_final.pdf` produced by tools/scripts/build/pdf-generator/)
  *   are not present in the working tree — the worker still serves an empty
  *   buffer until the next CI build that produces them.
- * @returns {Object} An object with file contents, keyed by their `name`.
+ * @returns {Record<string, string|Buffer>} An object with file contents, keyed by their `name`.
  * @throws {FileOperationError} If any required file fails to read.
  */
 function readAllFiles(files) {
+  /** @type {Record<string, string|Buffer>} */
   const contents = {};
+  /** @type {FileOperationError[]} */
   const errors = [];
 
   for (const file of files) {
     try {
       contents[file.name] = safeReadFile(file.path, file.encoding);
     } catch (err) {
+      const error =
+        err instanceof FileOperationError
+          ? err
+          : new FileOperationError(
+              err instanceof Error ? err.message : String(err),
+              file.path,
+              'read'
+            );
       const isMissing =
-        err && (err.message?.startsWith('File not found:') || err?.cause?.code === 'ENOENT');
+        error &&
+        (error.message?.startsWith('File not found:') ||
+          /** @type {{ code?: string } | undefined} */ (error.cause)?.code === 'ENOENT');
       if (file.optional && isMissing) {
         contents[file.name] = file.encoding === null ? Buffer.alloc(0) : '';
         continue;
       }
-      errors.push(err);
+      errors.push(error);
     }
   }
 

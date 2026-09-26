@@ -1,3 +1,60 @@
+/**
+ * @typedef {object} WantedCompanyResponse
+ * @property {string | number} [id]
+ * @property {string} [name]
+ * @property {string} [industry_name]
+ * @property {number} [employee_count]
+ * @property {string} [description]
+ * @property {string} [address]
+ * @property {string} [website]
+ * @property {{ origin?: string }} [logo_img]
+ */
+
+/**
+ * @typedef {object} WantedCrawlerLike
+ * @property {string} apiBase
+ * @property {string | null | undefined} [cookies]
+ * @property {(url: string, options?: RequestInit) => Promise<WantedCompanyResponse>} fetchJSON
+ * @property {(url: string, options?: RequestInit) => Promise<Response>} rateLimitedFetch
+ */
+
+/**
+ * @typedef {object} WantedCompanyInfoResult
+ * @property {boolean} success
+ * @property {string} source
+ * @property {{ id?: string | number, name?: string, industry?: string, employeeCount?: number, description?: string, address?: string, website?: string, logoUrl?: string }} [company]
+ * @property {string} [error]
+ */
+
+/**
+ * @typedef {object} WantedAuthResult
+ * @property {boolean} authenticated
+ * @property {string} [reason]
+ * @property {{ id: string | number, email: string, name: string } | null} [user]
+ * @property {string} [error]
+ */
+
+/**
+ * @typedef {object} WantedApplicationData
+ * @property {string | number} [resumeId]
+ * @property {string} [coverLetter]
+ */
+
+/**
+ * @typedef {object} WantedApplyResult
+ * @property {boolean} success
+ * @property {string} [source]
+ * @property {string | number} [applicationId]
+ * @property {string} [status]
+ * @property {string} [appliedAt]
+ * @property {string} [error]
+ */
+
+/**
+ * @param {WantedCrawlerLike} crawler
+ * @param {string | number} companyId
+ * @returns {Promise<WantedCompanyInfoResult>}
+ */
 export async function getWantedCompanyInfo(crawler, companyId) {
   const url = `${crawler.apiBase}/companies/${companyId}`;
 
@@ -22,11 +79,15 @@ export async function getWantedCompanyInfo(crawler, companyId) {
     return {
       success: false,
       source: 'wanted',
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
     };
   }
 }
 
+/**
+ * @param {WantedCrawlerLike} crawler
+ * @returns {Promise<WantedAuthResult>}
+ */
 export async function checkWantedAuth(crawler) {
   if (!crawler.cookies) {
     return { authenticated: false, reason: 'No cookies set' };
@@ -35,7 +96,9 @@ export async function checkWantedAuth(crawler) {
   try {
     const url = 'https://www.wanted.co.kr/api/chaos/me';
     const response = await crawler.rateLimitedFetch(url);
-    const data = await response.json();
+    const data = /** @type {{ user?: { id: string | number, email: string, name: string } }} */ (
+      await response.json()
+    );
 
     return {
       authenticated: !!data.user,
@@ -48,10 +111,19 @@ export async function checkWantedAuth(crawler) {
         : null,
     };
   } catch (error) {
-    return { authenticated: false, error: error.message };
+    return {
+      authenticated: false,
+      error: error instanceof Error ? error.message : String(error),
+    };
   }
 }
 
+/**
+ * @param {WantedCrawlerLike} crawler
+ * @param {string | number} jobId
+ * @param {WantedApplicationData} [applicationData={}]
+ * @returns {Promise<WantedApplyResult>}
+ */
 export async function applyWantedJob(crawler, jobId, applicationData = {}) {
   if (!crawler.cookies) {
     return { success: false, error: 'Authentication required' };
@@ -73,7 +145,7 @@ export async function applyWantedJob(crawler, jobId, applicationData = {}) {
       }),
     });
 
-    const data = await response.json();
+    const data = /** @type {{ id?: string | number, status?: string }} */ (await response.json());
 
     return {
       success: true,
@@ -86,7 +158,7 @@ export async function applyWantedJob(crawler, jobId, applicationData = {}) {
     return {
       success: false,
       source: 'wanted',
-      error: error.message,
+      error: error instanceof Error ? error.message : String(error),
     };
   }
 }

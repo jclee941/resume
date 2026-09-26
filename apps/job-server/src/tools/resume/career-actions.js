@@ -1,3 +1,22 @@
+/**
+ * @typedef {Object} CareerParams
+ * @property {string} [resume_id]
+ * @property {string} [career_id]
+ * @property {Record<string, unknown>} [career]
+ */
+
+/**
+ * @typedef {Object} CareerSessionManager
+ * @property {(resumeId: string, careerId: string, career: Record<string, unknown>) => Promise<unknown>} updateResumeCareer
+ * @property {(resumeId: string, career: Record<string, unknown>) => Promise<unknown>} addResumeCareer
+ * @property {(resumeId: string, careerId: string) => Promise<unknown>} deleteResumeCareer
+ */
+
+/**
+ * @param {CareerParams} params
+ * @param {CareerSessionManager} sessionManager
+ * @returns {Promise<{ success: boolean, message?: string, error?: string, career?: unknown }>}
+ */
 export async function update_career(params, sessionManager) {
   if (!params.resume_id) {
     return {
@@ -30,6 +49,11 @@ export async function update_career(params, sessionManager) {
   };
 }
 
+/**
+ * @param {CareerParams} params
+ * @param {CareerSessionManager} sessionManager
+ * @returns {Promise<{ success: boolean, message?: string, error?: string, career?: unknown }>}
+ */
 export async function add_career(params, sessionManager) {
   if (!params.resume_id) {
     return {
@@ -52,6 +76,11 @@ export async function add_career(params, sessionManager) {
   };
 }
 
+/**
+ * @param {CareerParams} params
+ * @param {CareerSessionManager} sessionManager
+ * @returns {Promise<{ success: boolean, message?: string, error?: string }>}
+ */
 export async function delete_career(params, sessionManager) {
   if (!params.resume_id) {
     return {

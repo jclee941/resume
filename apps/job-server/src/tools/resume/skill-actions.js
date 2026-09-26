@@ -1,3 +1,20 @@
+/**
+ * @typedef {Object} SkillApi
+ * @property {(resumeId: string | number, tagTypeId: string | number) => Promise<Record<string, unknown>>} addResumeSkill
+ * @property {(resumeId: string | number, skillId: string | number) => Promise<unknown>} deleteResumeSkill
+ */
+
+/**
+ * @typedef {Object} SkillParams
+ * @property {string | number} [resume_id]
+ * @property {string | number} [tag_type_id]
+ * @property {string | number} [skill_id]
+ */
+
+/**
+ * @param {SkillParams} params
+ * @param {SkillApi} sessionManager
+ */
 export async function add_skill(params, sessionManager) {
   if (!params.resume_id) {
     return {
@@ -20,6 +37,10 @@ export async function add_skill(params, sessionManager) {
   };
 }
 
+/**
+ * @param {SkillParams} params
+ * @param {SkillApi} sessionManager
+ */
 export async function delete_skill(params, sessionManager) {
   if (!params.resume_id) {
     return {

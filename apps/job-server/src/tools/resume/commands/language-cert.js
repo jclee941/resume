@@ -1,3 +1,21 @@
+/**
+ * @typedef {Object} LanguageCertApi
+ * @property {(resumeId: string | number, certId: string | number, cert: Record<string, unknown>) => Promise<Record<string, unknown>>} updateResumeLanguageCert
+ * @property {(resumeId: string | number, cert: Record<string, unknown>) => Promise<Record<string, unknown>>} addResumeLanguageCert
+ * @property {(resumeId: string | number, certId: string | number) => Promise<unknown>} deleteResumeLanguageCert
+ */
+
+/**
+ * @typedef {Object} LanguageCertParams
+ * @property {string | number} [resume_id]
+ * @property {string | number} [cert_id]
+ * @property {Record<string, unknown>} [language_cert]
+ */
+
+/**
+ * @param {LanguageCertApi} api
+ * @param {LanguageCertParams} params
+ */
 export async function update_language_cert(api, params) {
   if (!params.resume_id) {
     return {
@@ -30,6 +48,10 @@ export async function update_language_cert(api, params) {
   };
 }
 
+/**
+ * @param {LanguageCertApi} api
+ * @param {LanguageCertParams} params
+ */
 export async function add_language_cert(api, params) {
   if (!params.resume_id) {
     return {
@@ -52,6 +74,10 @@ export async function add_language_cert(api, params) {
   };
 }
 
+/**
+ * @param {LanguageCertApi} api
+ * @param {LanguageCertParams} params
+ */
 export async function delete_language_cert(api, params) {
   if (!params.resume_id) {
     return {

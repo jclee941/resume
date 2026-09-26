@@ -1,4 +1,7 @@
-const { TEMPLATE_CACHE } = require('../config');
+const { TEMPLATE_CACHE } =
+  /** @type {{ TEMPLATE_CACHE: { dataHash: string | null, aboutContentHtml: string | null } }} */ (
+    require('../config')
+  );
 const { escapeHtml } = require('../template-sanitizer');
 const logger = require('../../logger');
 
@@ -9,9 +12,14 @@ const ABOUT_LABELS = {
 };
 
 /**
+ * @typedef {Object} AboutData
+ * @property {string[]} [careerHighlights]
+ */
+
+/**
  * Generate about section content HTML from SSoT aboutSection data.
  * Clean layout: localized reader-facing heading + bullet list per block.
- * @param {Object|null} aboutData - aboutSection from data.json
+ * @param {AboutData|null} aboutData - aboutSection from data.json
  * @param {string} dataHash - Hash for cache validation
  * @param {'ko'|'en'|'ja'} [locale='ko'] - Locale for the block heading
  * @returns {string} HTML string for about section content

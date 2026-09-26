@@ -3,6 +3,17 @@ import { existsSync, readFileSync } from 'fs';
 import { dirname } from 'path';
 import { SESSION_PATH, SARAMIN_URLS, parseCookieString } from './constants.js';
 
+/**
+ * @typedef {object} SaraminSessionHost
+ * @property {boolean} [headless]
+ * @property {import('playwright').Browser | null} browser
+ * @property {import('playwright').Page | null} page
+ */
+
+/**
+ * @this {SaraminSessionHost}
+ * @returns {Promise<SaraminSessionHost>}
+ */
 export async function initBrowser() {
   this.browser = await chromium.launch({
     headless: this.headless,
@@ -17,15 +28,22 @@ export async function initBrowser() {
   if (existsSync(SESSION_PATH)) {
     const session = JSON.parse(readFileSync(SESSION_PATH, 'utf-8'));
 
+    /** @type {Parameters<import('playwright').BrowserContext['addCookies']>[0]} */
     let cookiesToAdd = [];
     if (session.cookies) {
       if (Array.isArray(session.cookies)) {
         cookiesToAdd = session.cookies;
       } else if (typeof session.cookies === 'string') {
-        cookiesToAdd = parseCookieString(session.cookies);
+        cookiesToAdd =
+          /** @type {Parameters<import('playwright').BrowserContext['addCookies']>[0]} */ (
+            parseCookieString(session.cookies)
+          );
       }
     } else if (session.cookieString) {
-      cookiesToAdd = parseCookieString(session.cookieString);
+      cookiesToAdd =
+        /** @type {Parameters<import('playwright').BrowserContext['addCookies']>[0]} */ (
+          parseCookieString(session.cookieString)
+        );
     }
 
     if (cookiesToAdd.length > 0) {
@@ -38,6 +56,10 @@ export async function initBrowser() {
   return this;
 }
 
+/**
+ * @this {{ page: import('playwright').Page }}
+ * @returns {Promise<boolean>}
+ */
 export async function checkLogin() {
   await this.page.goto(SARAMIN_URLS.resumeList, {
     waitUntil: 'load',
@@ -46,6 +68,10 @@ export async function checkLogin() {
   return !this.page.url().includes('/login');
 }
 
+/**
+ * @this {{ page: import('playwright').Page }}
+ * @returns {Promise<boolean>}
+ */
 export async function waitForManualLogin() {
   await this.page.goto(SARAMIN_URLS.login, { waitUntil: 'load' });
 

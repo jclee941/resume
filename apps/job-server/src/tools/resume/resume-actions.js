@@ -1,3 +1,61 @@
+/**
+ * @typedef {Object} ResumeProjectDetail
+ * @property {string | number} [id]
+ * @property {string} [title]
+ * @property {string} [description]
+ */
+
+/**
+ * @typedef {Object} ResumeCompanyDetail
+ * @property {string} [name]
+ */
+
+/**
+ * @typedef {Object} ResumeCareerDetail
+ * @property {string | number} [id]
+ * @property {string} [job_role]
+ * @property {string} [title]
+ * @property {ResumeCompanyDetail} [company]
+ * @property {string} [employment_type]
+ * @property {string} [start_time]
+ * @property {string} [end_time]
+ * @property {unknown} [served]
+ * @property {ResumeProjectDetail[]} [projects]
+ */
+
+/**
+ * @typedef {Object} ResumeMeta
+ * @property {string} [title]
+ * @property {string} [lang]
+ * @property {boolean} [is_complete]
+ * @property {string} [key]
+ */
+
+/**
+ * @typedef {Object} ResumeDetailData
+ * @property {ResumeCareerDetail[]} [careers]
+ * @property {ResumeMeta} [resume]
+ * @property {unknown[]} [educations]
+ * @property {unknown[]} [skills]
+ * @property {Record<string, unknown>} [extra]
+ */
+
+/**
+ * @typedef {Object} ResumeCrudApi
+ * @property {() => Promise<unknown>} getResumeList
+ * @property {(resumeId: string | number) => Promise<ResumeDetailData>} getResumeDetail
+ * @property {(resumeId: string | number) => Promise<unknown>} saveResume
+ */
+
+/**
+ * @typedef {Object} ResumeCrudParams
+ * @property {string | number} [resume_id]
+ */
+
+/**
+ * @param {Record<string, unknown>} _params
+ * @param {ResumeCrudApi} sessionManager
+ */
 export async function list_resumes(_params, sessionManager) {
   const resumes = await sessionManager.getResumeList();
   return {
@@ -6,6 +64,10 @@ export async function list_resumes(_params, sessionManager) {
   };
 }
 
+/**
+ * @param {ResumeCrudParams} params
+ * @param {ResumeCrudApi} sessionManager
+ */
 export async function get_resume(params, sessionManager) {
   if (!params.resume_id) {
     return {
@@ -45,6 +107,10 @@ export async function get_resume(params, sessionManager) {
   };
 }
 
+/**
+ * @param {ResumeCrudParams} params
+ * @param {ResumeCrudApi} sessionManager
+ */
 export async function save_resume(params, sessionManager) {
   if (!params.resume_id) {
     return {

@@ -29,6 +29,7 @@ export function createMockLogger() {
  * @returns {Object} Spy logger
  */
 export function createSpyLogger() {
+  /** @type {Array<{ level: string, args: unknown[] }>} */
   const calls = [];
   return {
     info: mock.fn((...args) => calls.push({ level: 'info', args })),
@@ -75,12 +76,12 @@ export function createMockEnv(overrides = {}) {
  * @returns {Object} Fetch mock
  */
 export function createMockFetch() {
-  /** @type {Array<{pattern: RegExp, response: Object|Function, status?: number}>} */
+  /** @type {Array<{pattern: RegExp, response: unknown, status: number}>} */
   const responseQueue = [];
 
   /**
-   * @param {string} pattern - URL pattern to match
-   * @param {Object|Function} response - Response object or function returning response
+   * @param {string | RegExp} pattern - URL pattern to match
+   * @param {unknown} response - Response object or function returning response
    * @param {number} [status=200] - HTTP status code
    */
   function mockResponse(pattern, response, status = 200) {
@@ -94,7 +95,7 @@ export function createMockFetch() {
   /**
    * @param {string} url
    * @param {Object} [options]
-   * @returns {Promise<{ok: boolean, status: number, json: Function}>}
+   * @returns {Promise<{ok: boolean, status: number, json: Function, text: Function}>}
    */
   async function fetchMock(url, options) {
     for (const entry of responseQueue) {

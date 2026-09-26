@@ -1,19 +1,53 @@
 import { EventEmitter } from 'events';
 
+/**
+ * @template TTask, TResult
+ * @typedef {Object} WorkerInstance
+ * @property {(task: TTask) => Promise<TResult> | TResult} process
+ * @property {() => Promise<void> | void} [destroy]
+ */
+
+/**
+ * @typedef {Object} WorkerPoolOptions
+ * @property {number} [maxWorkers]
+ */
+
+/**
+ * @template TTask, TResult
+ * @typedef {Object} PoolQueueEntry
+ * @property {(worker: WorkerInstance<TTask, TResult>) => void} resolve
+ * @property {(err: Error) => void} reject
+ */
+
+/**
+ * @template TTask, TResult
+ */
 export class WorkerPool extends EventEmitter {
+  /** @type {WorkerInstance<TTask, TResult>[]} */
   #workers = [];
+  /** @type {WorkerInstance<TTask, TResult>[]} */
   #available = [];
+  /** @type {PoolQueueEntry<TTask, TResult>[]} */
   #queue = [];
+  /** @type {() => Promise<WorkerInstance<TTask, TResult>> | WorkerInstance<TTask, TResult>} */
   #workerFactory;
   #maxWorkers;
   #isDestroyed = false;
 
+  /**
+   * @param {() => Promise<WorkerInstance<TTask, TResult>> | WorkerInstance<TTask, TResult>} workerFactory
+   * @param {WorkerPoolOptions} [options]
+   */
   constructor(workerFactory, options = {}) {
     super();
     this.#workerFactory = workerFactory;
     this.#maxWorkers = options.maxWorkers || 4;
   }
 
+  /**
+   * @param {TTask} task
+   * @returns {Promise<TResult>}
+   */
   async execute(task) {
     if (this.#isDestroyed) {
       throw new Error('Worker pool destroyed');
@@ -44,8 +78,10 @@ export class WorkerPool extends EventEmitter {
     this.#isDestroyed = true;
 
     while (this.#queue.length > 0) {
-      const { reject } = this.#queue.shift();
-      reject(new Error('Pool destroyed'));
+      const entry = this.#queue.shift();
+      if (entry) {
+        entry.reject(new Error('Pool destroyed'));
+      }
     }
 
     await Promise.all(
@@ -60,9 +96,13 @@ export class WorkerPool extends EventEmitter {
     this.#available = [];
   }
 
+  /**
+   * @returns {Promise<WorkerInstance<TTask, TResult>>}
+   */
   async #acquire() {
     if (this.#available.length > 0) {
-      return this.#available.pop();
+      const worker = this.#available.pop();
+      if (worker) return worker;
     }
 
     if (this.#workers.length < this.#maxWorkers) {
@@ -93,11 +133,16 @@ export class WorkerPool extends EventEmitter {
     });
   }
 
+  /**
+   * @param {WorkerInstance<TTask, TResult>} worker
+   */
   #release(worker) {
     if (this.#queue.length > 0) {
-      const { resolve } = this.#queue.shift();
-      resolve(worker);
-      return;
+      const entry = this.#queue.shift();
+      if (entry) {
+        entry.resolve(worker);
+        return;
+      }
     }
 
     this.#available.push(worker);

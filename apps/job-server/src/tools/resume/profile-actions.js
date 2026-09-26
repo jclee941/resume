@@ -1,4 +1,55 @@
-export async function view(params, sessionManager) {
+/**
+ * @typedef {Object} ProfileExperience
+ * @property {string | number} [id]
+ * @property {string} [company_name]
+ * @property {string} [position]
+ * @property {string} [start_date]
+ * @property {string} [end_date]
+ * @property {boolean} [is_current]
+ */
+
+/**
+ * @typedef {Object} ProfileEducation
+ * @property {string | number} [id]
+ * @property {string} [school_name]
+ * @property {string} [major]
+ * @property {string} [start_date]
+ * @property {string} [end_date]
+ */
+
+/**
+ * @typedef {Object} ProfileSkill
+ * @property {string | number} [id]
+ * @property {string} [name]
+ */
+
+/**
+ * @typedef {Object} ProfileData
+ * @property {string | number} [id]
+ * @property {string} [name]
+ * @property {string} [headline]
+ * @property {string | number} [annual]
+ * @property {ProfileExperience[]} [experiences]
+ * @property {ProfileEducation[]} [educations]
+ * @property {ProfileSkill[]} [skills]
+ */
+
+/**
+ * @typedef {Object} ProfileApi
+ * @property {() => Promise<ProfileData>} getProfile
+ * @property {(profileData: Record<string, unknown>) => Promise<unknown>} updateProfile
+ */
+
+/**
+ * @typedef {Object} ProfileParams
+ * @property {string} [text]
+ */
+
+/**
+ * @param {Record<string, unknown>} _params
+ * @param {ProfileApi} sessionManager
+ */
+export async function view(_params, sessionManager) {
   const profile = await sessionManager.getProfile();
   return {
     success: true,
@@ -27,6 +78,10 @@ export async function view(params, sessionManager) {
   };
 }
 
+/**
+ * @param {ProfileParams} params
+ * @param {ProfileApi} sessionManager
+ */
 export async function update_headline(params, sessionManager) {
   if (!params.text) {
     return {
@@ -43,6 +98,10 @@ export async function update_headline(params, sessionManager) {
   };
 }
 
+/**
+ * @param {ProfileParams} params
+ * @param {ProfileApi} sessionManager
+ */
 export async function update_intro(params, sessionManager) {
   if (!params.text) {
     return {

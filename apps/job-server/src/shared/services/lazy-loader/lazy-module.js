@@ -3,14 +3,19 @@
  * @template T
  */
 export class LazyModule {
+  /** @type {() => Promise<T>} */
   #loader;
+  /** @type {T | null} */
   #module = null;
+  /** @type {Promise<T> | null} */
   #loading = null;
+  /** @type {boolean} */
   #loaded = false;
+  /** @type {Error | null} */
   #error = null;
 
   /**
-   * @param {Function} loader - Async loader function
+   * @param {() => Promise<T>} loader - Async loader function
    */
   constructor(loader) {
     this.#loader = loader;
@@ -37,7 +42,7 @@ export class LazyModule {
    * @returns {Promise<T>}
    */
   async get() {
-    if (this.#loaded) {
+    if (this.#loaded && this.#module !== null) {
       return this.#module;
     }
 
@@ -74,6 +79,9 @@ export class LazyModule {
     this.#error = null;
   }
 
+  /**
+   * @returns {Promise<T>}
+   */
   async #load() {
     try {
       this.#module = await this.#loader();
@@ -81,7 +89,7 @@ export class LazyModule {
       this.#error = null;
       return this.#module;
     } catch (error) {
-      this.#error = error;
+      this.#error = error instanceof Error ? error : new Error(String(error));
       throw error;
     } finally {
       this.#loading = null;

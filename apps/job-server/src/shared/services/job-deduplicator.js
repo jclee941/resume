@@ -5,9 +5,25 @@ import { createHash } from 'crypto';
  * Hash-based deduplication using job URL + title + company with configurable TTL.
  */
 
+/**
+ * @typedef {{
+ *   hash: string;
+ *   firstSeen: number;
+ *   source: string;
+ * }} SeenJobEntry
+ *
+ * @typedef {{
+ *   url?: string;
+ *   title?: string;
+ *   company?: string;
+ *   source?: string;
+ *   [key: string]: unknown;
+ * }} DeduplicationJob
+ */
+
 // Issue #16: closure-bound holder eliminates top-level mutable Map binding.
 // Tests can call clearAll() to reset state.
-/** @type {{ get: () => Map, clear: () => void }} */
+/** @type {{ get: () => Map<string, SeenJobEntry>, clear: () => void }} */
 const _seenJobsHolder = (() => {
   let m = new Map();
   return {
@@ -23,10 +39,7 @@ const DEFAULT_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 /**
  * Generate a deduplication hash for a job.
- * @param {Object} job - Job object
- * @param {string} [job.url] - Job URL
- * @param {string} [job.title] - Job title
- * @param {string} [job.company] - Company name
+ * @param {DeduplicationJob} job - Job object
  * @returns {string} SHA-256 hash
  */
 export function generateJobHash(job) {
@@ -41,7 +54,7 @@ export function generateJobHash(job) {
 
 /**
  * Check if a job has been seen before (is a duplicate).
- * @param {Object} job - Job object with url, title, company
+ * @param {DeduplicationJob} job - Job object with url, title, company
  * @returns {boolean} True if duplicate
  */
 export function isDuplicate(job) {
@@ -51,7 +64,7 @@ export function isDuplicate(job) {
 
 /**
  * Mark a job as seen.
- * @param {Object} job - Job object
+ * @param {DeduplicationJob} job - Job object
  * @returns {string} The hash key used
  */
 export function markSeen(job) {
@@ -67,8 +80,8 @@ export function markSeen(job) {
 /**
  * Deduplicate an array of jobs, returning only unseen ones.
  * Automatically marks returned jobs as seen.
- * @param {Object[]} jobs - Array of job objects
- * @returns {Object[]} Deduplicated jobs (new ones only)
+ * @param {DeduplicationJob[]} jobs - Array of job objects
+ * @returns {DeduplicationJob[]} Deduplicated jobs (new ones only)
  */
 export function deduplicateJobs(jobs) {
   const unique = [];
@@ -100,9 +113,10 @@ export function purgeExpired(ttlMs = DEFAULT_TTL_MS) {
 
 /**
  * Get deduplication stats.
- * @returns {{totalTracked: number, bySource: Object<string, number>}}
+ * @returns {{totalTracked: number, bySource: Record<string, number>}}
  */
 export function getDeduplicationStats() {
+  /** @type {Record<string, number>} */
   const bySource = {};
   for (const entry of _seenJobsHolder.get().values()) {
     bySource[entry.source] = (bySource[entry.source] || 0) + 1;
