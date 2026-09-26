@@ -21,15 +21,14 @@
  * @typedef {{
  *   measure(name: string, data: Record<string, unknown>): void;
  *   increment(name: string): void;
- *   [key: string]: unknown;
  * }} OrchestratorMetrics
  *
  * @typedef {{
  *   error(message: string): void;
- *   [key: string]: unknown;
  * }} OrchestratorLogger
  */
 
+/** @returns {OptimizedApplyStats} */
 export function initOptimizedApplyStats() {
   return {
     searched: 0,

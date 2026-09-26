@@ -35,7 +35,7 @@ import { SKILL_CATEGORIES } from './skill-categories.js';
  * @property {number} [annual_from]
  * @property {number} [annual_to]
  * @property {string} [location]
- * @property {string} [company]
+ * @property {string | null} [company]
  */
 
 /**

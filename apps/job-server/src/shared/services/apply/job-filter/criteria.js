@@ -55,7 +55,7 @@ const DEFAULT_EXCLUDE_KEYWORDS = Object.freeze([
  * }} FilterConfig
  *
  * @typedef {{
- *   company?: string;
+ *   company?: string | null;
  *   position?: string;
  *   description?: string;
  *   matchScore?: number;

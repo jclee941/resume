@@ -38,10 +38,7 @@ import { getTodayApplicationCount, recordApplyFailure, sleep } from './error-han
  *   applyToJob(job: OrchestratorJob): Promise<SingleJobApplyResult>;
  * }} Applier
  *
- * @typedef {{
- *   acquire(): Promise<{ browser: unknown; page: unknown }>;
- *   release(pooled: { browser: unknown; page: unknown }): Promise<void>;
- * }} BrowserPool
+ * @typedef {Pick<import('../../browser-pool/pool-manager.js').BrowserPool, 'acquire' | 'release'>} BrowserPool
  *
  * @typedef {{
  *   appManager?: { listApplications(options?: { fromDate?: string }): Array<{ status?: string }> } | null;

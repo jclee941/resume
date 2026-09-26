@@ -3,7 +3,7 @@ import { calculateMatchScore, createScoringConfig } from './scoring.js';
 
 /**
  * @typedef {import('./scoring.js').ScoringJob & {
- *   company?: string;
+ *   company?: string | null;
  *   due_date?: string | Date;
  *   matchScore?: number;
  *   matchPercentage: number;

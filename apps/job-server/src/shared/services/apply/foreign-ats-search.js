@@ -6,11 +6,22 @@ import { normalizeForeignAtsSearchCriteria } from '../ats/foreign-ats-registry.j
  *   locationTargets?: string | readonly string[];
  * }} SearchApplySourceOptions
  *
+ * Job record a crawler or foreign ATS adapter returns for the apply pipeline.
  * @typedef {{
- *   crawler: { search: (platform: string, keywords: unknown, options?: Record<string, unknown>) => Promise<unknown> };
+ *   company?: string | null;
+ *   title?: string;
+ *   source?: string;
+ *   sourceUrl?: string;
+ *   dryRunOnly?: boolean;
+ *   submissionSkipped?: boolean;
+ *   [key: string]: unknown;
+ * }} ApplySourceJob
+ *
+ * @typedef {{
+ *   crawler: { search: (platform: string, keywords: unknown, options?: Record<string, unknown>) => Promise<ApplySourceJob[]> };
  *   foreignAtsRegistry?: {
  *     supports: (platform: unknown) => boolean;
- *     getAdapter: (platform: unknown) => { search: (criteria: Record<string, unknown>) => Promise<unknown> };
+ *     getAdapter: (platform: unknown) => { search: (criteria: Record<string, unknown>) => Promise<ApplySourceJob[]> };
  *   } | null;
  *   platform: string;
  *   keywords: readonly string[];
@@ -21,7 +32,7 @@ import { normalizeForeignAtsSearchCriteria } from '../ats/foreign-ats-registry.j
 
 /**
  * @param {SearchApplySourceParams} params
- * @returns {Promise<unknown>}
+ * @returns {Promise<ApplySourceJob[]>}
  */
 export async function searchApplySource({
   crawler,

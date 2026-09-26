@@ -20,7 +20,6 @@
  * @typedef {{
  *   info(message: string, ...args: unknown[]): void;
  *   error(message: string, ...args: unknown[]): void;
- *   [key: string]: unknown;
  * }} StrategyLogger
  *
  * @typedef {{
@@ -35,7 +34,7 @@
  * }} StrategyOptions
  *
  * @typedef {{
- *   startTime?: number;
+ *   startTime?: number | null;
  *   cached: number;
  *   searched: number;
  *   [key: string]: unknown;
