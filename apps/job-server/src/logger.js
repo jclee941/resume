@@ -15,9 +15,12 @@ const logger = Logger.create(process.env, {
  * @param {Record<string, unknown>} [context]
  */
 export function log(level, message, context = {}) {
-  const logMethod =
-    level === 'debug' ? 'debug' : level === 'warn' ? 'warn' : level === 'error' ? 'error' : 'info';
-  logger[logMethod](message, null, context);
+  if (level === 'error') {
+    logger.error(message, null, context);
+    return;
+  }
+  const logMethod = level === 'debug' ? 'debug' : level === 'warn' ? 'warn' : 'info';
+  logger[logMethod](message, context);
 }
 
 export { logger };
