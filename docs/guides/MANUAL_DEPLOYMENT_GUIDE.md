@@ -53,7 +53,7 @@ go run ./tools/scripts/deployment/quick-deploy.go
 
 ```bash
 # Step-by-step deployment with progress indicators
-go run ./tools/scripts/deployment/deploy-helper.go
+GO111MODULE=off go run ./tools/scripts/deployment/deploy-helper
 ```
 
 - 6-stage deployment pipeline
@@ -66,7 +66,7 @@ go run ./tools/scripts/deployment/deploy-helper.go
 
 ```bash
 # Verify existing deployment (7 comprehensive checks)
-go run ./tools/scripts/verification/verify-deployment.go
+GO111MODULE=off go run ./tools/scripts/verification/verify-deployment
 ```
 
 - Deployment timestamp check
@@ -88,7 +88,7 @@ export CLOUDFLARE_API_TOKEN=your_token_here
 go run ./tools/scripts/deployment/quick-deploy.go
 
 # Or verify existing deployment
-go run ./tools/scripts/verification/verify-deployment.go
+GO111MODULE=off go run ./tools/scripts/verification/verify-deployment
 ```
 
 ---

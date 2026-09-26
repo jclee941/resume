@@ -376,12 +376,11 @@ cp packages/data/resumes/master/resume_data.json \
 
 ### 10. ALWAYS Use Bazel for Affected Target Analysis
 
-**Status**: ARCHIVED — Bazel facade dropped per ADR-0008. Use `go run
-./tools/ci/affected.go origin/master` instead.
+**Status**: ARCHIVED — Bazel facade dropped per ADR-0008. Use `GO111MODULE=off go run ./tools/ci/affected origin/master` instead.
 
 **References**:
 
-- `tools/ci/affected.go`
+- `tools/ci/affected/`
 
 **Affected Files**:
 
@@ -395,7 +394,7 @@ git diff --name-only origin/master...HEAD | \
   xargs bazel query "rdeps(//..., set($changed_files))"
 
 # Or use CI script
-go run ./tools/ci/affected.go origin/master
+GO111MODULE=off go run ./tools/ci/affected origin/master
 ```
 
 **Why**:

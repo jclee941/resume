@@ -12,7 +12,7 @@ CI validation scripts: change-impact detection, wrangler config guards, environm
 
 | Script                          | Purpose                                                   |
 | ------------------------------- | --------------------------------------------------------- |
-| `affected.go`                   | Detect changed packages for CI work avoidance             |
+| `affected/`                     | Detect changed packages for CI work avoidance             |
 | `validate-cloudflare-native.go` | Wrangler config guard rails (bindings, queues, Workflows) |
 | `check-env-schema-drift.go`     | Environment contract validation                           |
 | `validate-migrations.go`        | D1 migration safety and reversibility                     |
@@ -26,7 +26,7 @@ CI validation scripts: change-impact detection, wrangler config guards, environm
 
 ## ANTI-PATTERNS
 
-- Never skip `affected.go` — causes unnecessary CI work.
+- Never skip `affected` — causes unnecessary CI work.
 - Never treat CI as deploy authority.
 - Never suppress a failing policy to make CI green.
 

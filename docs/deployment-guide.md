@@ -460,7 +460,7 @@ job-dashboard-db --file=migrations/XXXX.sql`
 
 If the "Analyze" job in GitHub Actions takes too long or fails:
 
-- Run `go run ./tools/ci/affected.go` directly for affected-target analysis.
+- Run `GO111MODULE=off go run ./tools/ci/affected` directly for affected-target analysis.
 - Check if the git history is shallow; the job needs a full checkout to compare
   against `master`.
 

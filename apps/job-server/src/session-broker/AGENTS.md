@@ -25,6 +25,9 @@ session-broker/
 │   └── cloak-browser.js             # Anti-fingerprinting wrapper
 ├── server/
 │   └── session-broker-routes.js     # Fastify routes (port 3456)
+├── scripts/                         # Go operational utilities
+│   ├── setup-server/                # Server environment setup and validation
+│   └── verify-e2e/                  # End-to-end broker verification probe
 └── services/
     ├── index.js                     # barrel exports
     ├── session-broker-service.js    # Core orchestrator (dual-mode)

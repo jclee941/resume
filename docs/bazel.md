@@ -101,7 +101,7 @@ bazel query "deps(//apps/portfolio:build)"
 bazel query "rdeps(//..., //packages/data:sources)"
 
 # Find targets affected by changes
-go run ./tools/ci/affected.go origin/master
+GO111MODULE=off go run ./tools/ci/affected origin/master
 ```
 
 ### Build
@@ -163,7 +163,7 @@ The `analyze:affected` stage runs on merge requests:
 analyze:affected:
   stage: analyze
   script:
-    - go run ./tools/ci/affected.go origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME:-master}
+    - GO111MODULE=off go run ./tools/ci/affected origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME:-master}
   artifacts:
     paths:
       - .affected/
@@ -173,7 +173,7 @@ analyze:affected:
 
 ```bash
 # Run analysis
-go run ./tools/ci/affected.go origin/master
+GO111MODULE=off go run ./tools/ci/affected origin/master
 
 # Output files
 .affected/

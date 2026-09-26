@@ -17,22 +17,22 @@ go run ./tools/scripts/deployment/quick-deploy.go
 **What it does**:
 
 1. Validates `CLOUDFLARE_API_TOKEN` is set
-2. Runs `deploy-helper.go` for deployment
-3. Runs `verify-deployment.go` for validation
+2. Runs `deploy-helper` for deployment
+3. Runs `verify-deployment` for validation
 4. Shows production URLs and next steps
 
 **Use when**: You want the simplest, most automated deployment experience
 
 ---
 
-### `deploy-helper.go`
+### `deploy-helper`
 
 **Purpose**: Step-by-step deployment with progress indicators
 **Prerequisites**: `CLOUDFLARE_API_TOKEN` environment variable
 
 ```bash
 export CLOUDFLARE_API_TOKEN=your_token_here
-go run ./tools/scripts/deployment/deploy-helper.go
+GO111MODULE=off go run ./tools/scripts/deployment/deploy-helper
 ```
 
 **What it does** (6 stages):
@@ -48,13 +48,13 @@ go run ./tools/scripts/deployment/deploy-helper.go
 
 ---
 
-### `verify-deployment.go`
+### `verify-deployment`
 
 **Purpose**: Comprehensive deployment verification (7 checks)
 **Prerequisites**: None (read-only, no credentials needed)
 
 ```bash
-go run ./tools/scripts/verification/verify-deployment.go
+GO111MODULE=off go run ./tools/scripts/verification/verify-deployment
 ```
 
 **What it checks** (7 tests):
@@ -84,11 +84,11 @@ go run ./tools/scripts/verification/verify-deployment.go
 
 ## Quick Reference
 
-| Task                   | Command                                                    | Requires Credentials |
-| ---------------------- | ---------------------------------------------------------- | -------------------- |
-| Deploy with all checks | `go run ./tools/scripts/deployment/quick-deploy.go`        | ✅ Yes (API token)   |
-| Deploy step-by-step    | `go run ./tools/scripts/deployment/deploy-helper.go`       | ✅ Yes (API token)   |
-| Verify only            | `go run ./tools/scripts/verification/verify-deployment.go` | ❌ No (read-only)    |
+| Task                   | Command                                                                 | Requires Credentials |
+| ---------------------- | ----------------------------------------------------------------------- | -------------------- |
+| Deploy with all checks | `go run ./tools/scripts/deployment/quick-deploy.go`                     | ✅ Yes (API token)   |
+| Deploy step-by-step    | `GO111MODULE=off go run ./tools/scripts/deployment/deploy-helper`       | ✅ Yes (API token)   |
+| Verify only            | `GO111MODULE=off go run ./tools/scripts/verification/verify-deployment` | ❌ No (read-only)    |
 
 ## Getting Cloudflare API Token
 
@@ -162,7 +162,7 @@ npm run test:e2e  # Run E2E tests
 
 ### Verification checks failing
 
-**Solution**: Check specific failure in `verify-deployment.go` output
+**Solution**: Check specific failure in `verify-deployment` output
 
 - Timestamp not recent? Wait a few minutes for propagation
 - OG image 404? Check if `npm run build` was run

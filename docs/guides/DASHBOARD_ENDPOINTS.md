@@ -78,10 +78,10 @@
 
 ```bash
 # 모니터링 인프라 설치
-go run ./tools/scripts/monitoring/setup-monitoring.go
+go -C tools/scripts run ./monitoring/setup-monitoring
 
 # Grafana 대시보드 배포
-go run ./tools/scripts/deployment/deploy-grafana-configs.go
+go -C tools/scripts run ./deployment/deploy-grafana-configs
 
 # 모니터링 포함 배포
 go run ./tools/scripts/deployment/deploy-with-monitoring.go

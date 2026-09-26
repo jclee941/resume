@@ -50,7 +50,7 @@
   recording
 - **`tools/scripts/build/generate-screenshots.js`** (258 lines) - Screenshot
   generation
-- **`tools/tools/scripts/monitoring/setup-monitoring.go`** (359 lines) -
+- **`tools/scripts/monitoring/setup-monitoring/`** -
   Monitoring setup
 
 ---
