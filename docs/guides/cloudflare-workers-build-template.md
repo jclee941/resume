@@ -18,7 +18,7 @@ Use this template when configuring Cloudflare Workers Builds for this monorepo.
 - Running `npx wrangler deploy` at repo root without `--config` causes `Missing
 entry-point to Worker script or to assets directory`.
 - The Worker config for production is in the root `wrangler.jsonc` (the
-  `apps/portfolio/wrangler.jsonc` this monorepo used before the single-config
+  portfolio-level config this monorepo used before the single-config
   consolidation no longer exists).
 - Explicit `--config` makes monorepo deploy behavior deterministic in local, CI,
   and Cloudflare Builds.

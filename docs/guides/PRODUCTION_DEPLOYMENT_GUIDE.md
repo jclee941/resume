@@ -399,7 +399,7 @@ const matchScore = await aiMatcher.calculateMatch(resume, jobPosting);
 
 문제가 발생하거나 도움이 필요한 경우:
 
-1. 로그 파일 확인: `apps/job-server/logs/`
+1. 서비스 로그 확인: stdout/stderr 콘솔 또는 모니터링 출력
 2. 모니터링 실행: `go run ./apps/job-server/scripts/ops/auto-monitor/main.go`
 3. 문서 참조: `docs/guides/AUTO_APPLY_ACTIVATION_GUIDE.md`
 4. 이슈 리포트: GitHub Issues

@@ -42,7 +42,8 @@ CDP (recommended) > Playwright > SQLite > Profile.
 - All scripts run from project root.
 - Use `auth-persistent.js` for auth flows.
 - `profile-sync/` subdirectory has 8 helper modules + 3 test files.
-- Notification dry-runs should use fixtures under `scripts/__fixtures__/` and
+- Notification dry-runs should use fixtures under
+  `apps/job-server/scripts/__fixtures__/` and
   must not require live Telegram credentials.
 
 ## ANTI-PATTERNS

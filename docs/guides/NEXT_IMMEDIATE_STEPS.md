@@ -386,7 +386,6 @@ After deployment is stable, consider these enhancements:
 - **CI/CD Guide**: `docs/guides/CI_CD_AUTOMATION.md`
 - **Deployment Guide**: `docs/guides/PRODUCTION_DEPLOYMENT_GUIDE.md`
 - **Troubleshooting**: `docs/guides/FINAL_DEPLOYMENT_CHECKLIST.md`
-- **Roadmap**: `docs/planning/NEXT_STEPS_ROADMAP.md`
 
 ### Quick Commands
 

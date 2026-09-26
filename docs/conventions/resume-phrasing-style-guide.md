@@ -113,7 +113,7 @@ to the KO phrasing; the EN wording lives in `resume_data_en.json`).
 ## 8. Embedded Phrasing in Code
 
 Hardcoded resume phrasing in runtime code (e.g.
-`apps/job-server/.../cover-letter-generator/template-selection.js` fallbacks)
+`apps/job-server/src/shared/services/resume/cover-letter-generator/template-selection.js` fallbacks)
 follows Rule 1 (no quantified claims) and the terminology canon. Portfolio UI
 copy (`apps/portfolio/lib/hero-content-data.js`, `lib/i18n.js`,
 `src/scripts/modules/recruiter-enhancements-data.js`) is app copy pinned by

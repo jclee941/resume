@@ -28,7 +28,7 @@ npx eslint . --format json 2>/dev/null | node -e "
 "
 ```
 
-Save the output to `tools/lint-baseline.json`:
+Save the output to a baseline file (e.g. `lint-baseline.json`):
 
 ```json
 {
@@ -86,7 +86,7 @@ Once baseline reaches 0:
 
 1. Change ESLint config: promote all warnings to errors
 2. Remove ratchet mechanism (no longer needed)
-3. Delete `tools/lint-baseline.json`
+3. Delete `lint-baseline.json`
 
 ## Timeline Target
 

@@ -23,7 +23,7 @@
 - **위치**: `apps/portfolio/generate-worker.js:293`
 - **메서드**: POST
 - **용도**: FCP, LCP, CLS, FID 실시간 수집
-- **클라이언트**: `apps/portfolio/lib/performance-metrics.js`
+- **클라이언트**: `apps/portfolio/src/scripts/modules/web-vitals.js`
 
 #### `/api/analytics` - A/B 테스팅 분석
 
@@ -36,7 +36,7 @@
 #### Loki Push API
 
 - **URL**: `https://grafana.jclee.me/api/datasources/proxy/uid/cfakfiakcs0zka/loki/api/v1/push`
-- **위치**: `apps/portfolio/lib/loki-logger.js`
+- **위치**: `packages/shared/src/logger/transports/loki.js`
 - **용도**: 구조화된 로그 전송
 - **보안**: `LOKI_API_KEY` 환경변수 사용 (Grafana Service Account)
 
@@ -63,12 +63,6 @@
   - 구인 공고 관리
   - 지원 현황 추적
   - 통계 대시보드
-
-### 3. Blacklist Dashboard (이미지)
-
-- **PNG**: `apps/portfolio/src/assets/dashboards/blacklist-dashboard.png`
-- **WebP**: `apps/portfolio/src/assets/dashboards/blacklist-dashboard.webp` ✅
-  최적화 완료
 
 ---
 
@@ -128,7 +122,7 @@ curl https://resume.jclee.me/metrics
 ### Core Web Vitals (클라이언트)
 
 ```javascript
-// apps/portfolio/lib/performance-metrics.js
+// apps/portfolio/src/scripts/modules/web-vitals.js
 fetch('/api/vitals', {
   method: 'POST',
   body: JSON.stringify({ lcp, fid, cls, fcp }),

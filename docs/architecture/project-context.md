@@ -46,7 +46,7 @@ otherwise miss._
   `snake_case` standard.
 - **Asset Inlining**: NEVER edit `apps/portfolio/worker.js` manually. All
   changes to the portfolio UI must be made in `apps/portfolio/index.html` or
-  `apps/portfolio/app.js` and built using `npm run build`.
+  `apps/portfolio/src/scripts/main.js` and built using `npm run build`.
 
 ### Testing & Quality
 

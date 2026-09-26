@@ -322,7 +322,7 @@ export default {
 
 ### Step 3: Add Tests
 
-Create `tests/unit/handlers/custom.test.js`:
+Create a unit test under `apps/job-dashboard/src/handlers/__tests__/`:
 
 ```javascript
 import { CustomHandler } from '../../../src/handlers/custom-handler.js';
@@ -730,7 +730,7 @@ global.Response = global.Response || class {};
 ### Testing Handlers
 
 ```javascript
-// tests/unit/handlers/custom.test.js
+// apps/job-dashboard/src/handlers/__tests__/custom-handler.test.js
 import { CustomHandler } from '../../../src/handlers/custom.js';
 
 describe('CustomHandler', () => {

@@ -58,7 +58,7 @@ npm test  # Should show ZERO "Cannot log after tests" errors
 **Solution**:
 
 1. Create `resumes/master/resume_master.md` as single source of truth
-2. Create `scripts/build/generate-resume-variants.js` with templates
+2. Create `tools/scripts/build/generate-resume-variants.js` with templates
 3. Archive old resumes to `resumes/archive/pre-consolidation/`
 4. Add Git tags for version control (e.g., `v1.0-nextrade`)
 
@@ -195,7 +195,7 @@ test('keyboard navigation', async ({ page }) => {
 
 ### H3: Improve Project Card Descriptions (1 hour)
 
-**Files**: `apps/portfolio/data.json`, `apps/portfolio/lib/cards.js`
+**Files**: `packages/data/resumes/master/resume_data.json`, `apps/portfolio/lib/cards.js`
 
 Add "tagline" + "metrics" fields:
 
@@ -230,7 +230,7 @@ Add "tagline" + "metrics" fields:
 
 ### H5: Internal Linking Strategy (1 hour)
 
-**Files**: `apps/portfolio/data.json`
+**Files**: `packages/data/resumes/master/resume_data.json`
 
 Link related skills in project cards:
 
@@ -263,7 +263,7 @@ Add "경력 경로 분석" section documenting 3 career phases:
 
 ### M1: Design System Tokens (1 hour) ⚡ QUICK WIN
 
-Create `docs/architecture/DESIGN_SYSTEM.md`:
+Create design tokens in `apps/portfolio/DESIGN.md`:
 
 ```css
 :root {

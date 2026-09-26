@@ -6,7 +6,7 @@
 > `apps/portfolio/entry.js` and deploys with the merged `resume` worker.
 > For the current deployment path see
 > [`docs/deployment-guide.md`](../../docs/deployment-guide.md) and the
-> portfolio Wrangler config at `apps/portfolio/wrangler.jsonc`.
+> root Wrangler config at `wrangler.jsonc`.
 >
 > This document is preserved as a reference for the binding shape, secrets,
 > and operational runbook that were inherited by the merged worker.

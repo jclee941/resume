@@ -39,7 +39,7 @@ permissions). Rotate to a scoped token with only:
 
 **Was issue**: #15 · **Priority**: P1 · **Estimated time**: ~30 min ·
 **Recipe**: comment block at the top of
-`apps/job-dashboard/src/middleware/rate-limit.js`
+`packages/shared/src/rate-limit/kv-sliding-window.js`
 
 The current KV-backed sliding-window has a non-atomic read-modify-write
 (theoretical race under high concurrency). Cloudflare's native rate-limit
@@ -47,8 +47,7 @@ binding provides atomic semantics.
 
 - [ ] `RATE_LIMITER` binding created in the Cloudflare account dashboard
 - [ ] Binding wired into the root `wrangler.jsonc` (the merged worker's
-      config per ADR 0009 — `apps/portfolio/wrangler.jsonc` and
-      `apps/job-dashboard/wrangler.jsonc` no longer exist)
+      config per ADR 0009 — standalone portfolio and job-dashboard configs no longer exist)
 - [ ] Middleware migrated to consume the binding (recipe is in the file's
       header comment)
 - [ ] KV-based fallback removed once production traffic confirms parity
@@ -59,7 +58,7 @@ binding provides atomic semantics.
 
 **Was issue**: #18 · **Priority**: P3 · **Estimated time**: ~30 min ·
 **Files**: `apps/job-server/scripts/profile-sync/jobkorea-sections.js`,
-`apps/job-server/src/crawlers/jobkorea-crawler.js`
+`apps/job-server/platforms/jobkorea/jobkorea-crawler.js`
 
 JobKorea redesigns periodically. The skills-mapping selectors and the
 `getProfile` selectors must be re-verified against an authenticated live
@@ -70,7 +69,7 @@ session whenever a probe surfaces a regression.
 - [ ] Skill-section selectors verified or updated (source-control the diff)
 - [ ] `getProfile` selectors verified or updated
 - [ ] Inline `TODO` comments removed from both files
-- [ ] `tests/integration/jobkorea-profile-sync.test.js` updated if the fixture
+- [ ] `apps/job-server/scripts/profile-sync/__tests__/jobkorea-sections.test.js` updated if the fixture
       shape changed
 
 ---

@@ -60,11 +60,10 @@ context. ADR files stay in place so their decision history remains intact.
 
 Time-bound audits, session reviews, implementation plans, and retired guidance
 remain in their existing paths where tracked. Treat them as context rather than
-current architecture. The previously removed `docs/reports/` (36 session
-reports), `docs/analysis/` (8 analyses), `docs/planning/` (9 roadmaps),
-`docs/testing/` (2 ULW artifacts), and `docs/thoughts/ledgers/` (3 continuity
-ledgers) remain recoverable through Git history. No history is relocated by this
-index.
+current architecture. The previously removed reports (36 session reports),
+analysis (8 analyses), planning (9 roadmaps), testing (2 ULW artifacts), and
+continuity ledgers directories under docs remain recoverable through Git
+history. No history is relocated by this index.
 
 ## Document Standards
 

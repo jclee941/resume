@@ -26,13 +26,13 @@ Source files (HTML/CSS/JSON) are transformed into a single deployable
 
 **Phase 1: CSS Separation** (Completed 2025-11-07)
 
-- `apps/portfolio/styles.css` contains all CSS (758 lines)
+- Modular CSS under `apps/portfolio/src/styles/` contains all styling
 - `apps/portfolio/index.html` has CSS placeholder: `<!-- CSS_PLACEHOLDER -->`
 - Build script injects CSS at build time
 
 **Phase 2: Data-Driven Templates** (Completed 2025-11-07)
 
-- `apps/portfolio/data.json` contains all project data (resume cards + project
+- `packages/data/resumes/master/resume_data.json` contains all project data (resume cards + project
   cards)
 - `apps/portfolio/index.html` has placeholders: `<!-- RESUME_CARDS_PLACEHOLDER
 -->` and `<!-- PROJECT_CARDS_PLACEHOLDER -->`
@@ -40,8 +40,8 @@ Source files (HTML/CSS/JSON) are transformed into a single deployable
 
 ### Build Pipeline (3 phases)
 
-1. **Edit Content**: Modify `apps/portfolio/data.json` (project data) OR
-   `apps/portfolio/index.html` (structure) OR `apps/portfolio/styles.css`
+1. **Edit Content**: Modify `packages/data/resumes/master/resume_data.json` (project data) OR
+   `apps/portfolio/index.html` (structure) OR `apps/portfolio/src/styles/main.css`
    (styling)
 2. **Generate Worker**: Run `npm run build` (performs 6 transformations)
 3. **Deploy**: Push to `master` branch (Cloudflare Workers Builds Git
@@ -122,7 +122,7 @@ escaping**
 
 ### Data Structure
 
-`apps/portfolio/data.json` format:
+Portfolio data JSON format:
 
 ```json
 {
@@ -289,7 +289,7 @@ Content-Security-Policy:
 - `eslint.config.cjs`: ESLint 9 flat config (modern syntax)
 - `playwright.config.js`: Playwright E2E test configuration
 - `wrangler.jsonc` (root): Cloudflare Workers deployment config for the merged
-  worker (the previous `apps/portfolio/wrangler.jsonc` was consolidated into
+  worker (the previous portfolio-local Wrangler config was consolidated into
   this root config)
 
 ## Git Repository
@@ -312,7 +312,7 @@ git push origin master  # GitHub
 **IMPORTANT - GitHub Private Repository**:
 
 - GitHub repository is PRIVATE (since 2025-11-18)
-- Raw file URLs (in `apps/portfolio/data.json`) still work for authenticated
+- Raw file URLs (in data JSON) still work for authenticated
   users
 - Public resume site (<https://resume.jclee.me>) works via Cloudflare Workers
 - PDF/DOCX download links in portfolio require GitHub authentication

@@ -13,13 +13,13 @@ Working-tree sanitization complete. The following changes are staged for commit:
 - `.env.automation` — replaced plaintext credentials with placeholder template
   (now gitignored).
 - `.env.automation.example` — new template file to bootstrap from.
-- `apps/job-dashboard/.env.secrets` — replaced compromised values with **freshly
+- Local `.env.secrets` in `apps/job-dashboard/` — replaced compromised values with **freshly
   rotated** ADMIN_TOKEN / WEBHOOK_SECRET / ENCRYPTION_KEY (now gitignored, mode
   600).
 - `apps/job-dashboard/.env.secrets.example` — new template file.
-- `apps/portfolio/.tmp/` — entire directory untracked (build artifact, contained
+- Build artifact directory `.tmp/` in `apps/portfolio/` — entire directory untracked (build artifact, contained
   Cloudflare beacon token).
-- `tools/automation/resume-automation.js` — JSDoc comment with plaintext
+- Historical automation script JSDoc comment with plaintext
   password redacted.
 - `docs/guides/CLOUDFLARE_AUTH_METHODS.md` — real CF API key replaced with
   `REVOKED_CF_API_KEY_REPLACE_ME`.
@@ -43,7 +43,7 @@ Working-tree sanitization complete. The following changes are staged for commit:
 The plaintext password `bingogo1l7` was committed to:
 
 - `.env.automation` (TRACKED, in commit `c40d7d1`)
-- `tools/automation/resume-automation.js` JSDoc (TRACKED)
+- Historical automation script JSDoc (TRACKED)
 
 These are accessible via GitHub history at `https://github.com/jclee941/resume`.
 Anyone who cloned the repo before history rewrite has them.
@@ -72,7 +72,7 @@ Cloudflare console: <https://dash.cloudflare.com/profile/api-tokens>
 
 ### Step 3 — Revoke / rotate the leaked third-party tokens
 
-These appeared in `docs/reports/ALL_SYSTEMS_REPORT.md` and elsewhere:
+These appeared in historical reports and elsewhere:
 
 | Token                                   | Service                                                                       | Action                                                       |
 | --------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------ |

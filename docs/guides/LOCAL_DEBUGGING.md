@@ -172,12 +172,12 @@ Queue) backed by local SQLite, JSON files, and filesystem storage.
 
 #### Classes
 
-| Class             | Cloudflare Equivalent | Local Backend                    | Persistence Path                      |
-| ----------------- | --------------------- | -------------------------------- | ------------------------------------- |
-| `MockD1Database`  | `D1Database`          | SQLite via `better-sqlite3`      | `infrastructure/mocks/data/d1.sqlite` |
-| `MockKVNamespace` | `KVNamespace`         | In-memory + JSON file            | `infrastructure/mocks/data/kv-*.json` |
-| `MockR2Bucket`    | `R2Bucket`            | Local filesystem                 | `infrastructure/mocks/data/r2/`       |
-| `MockQueue`       | `Queue`               | In-memory with worker simulation | _(not persisted)_                     |
+| Class             | Cloudflare Equivalent | Local Backend                    | Persistence Path            |
+| ----------------- | --------------------- | -------------------------------- | --------------------------- |
+| `MockD1Database`  | `D1Database`          | SQLite via `better-sqlite3`      | `d1.sqlite` (under dataDir) |
+| `MockKVNamespace` | `KVNamespace`         | In-memory + JSON file            | `kv-*.json` (under dataDir) |
+| `MockR2Bucket`    | `R2Bucket`            | Local filesystem                 | `r2/` (under dataDir)       |
+| `MockQueue`       | `Queue`               | In-memory with worker simulation | _(not persisted)_           |
 
 #### Quick usage
 
@@ -248,7 +248,7 @@ createMockEnv({
 
 #### Data persistence paths
 
-All mock data persists under `infrastructure/mocks/data/` by default:
+All mock data persists under `data/` within `infrastructure/mocks/` by default:
 
 ```text
 infrastructure/mocks/data/
