@@ -17,7 +17,7 @@ Local runs default to `http://localhost:8787`; production verification sets
 | Task                        | Location                                                                           | Notes                               |
 | --------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------- |
 | Baseline portfolio behavior | `portfolio.spec.js`, `portfolio-ui.spec.js`                                        | core UI and interaction coverage    |
-| Dashboard/MCP behavior      | `job-dashboard.spec.js`, `mcp-server.spec.js`, `dashboard.spec.js`                 | job automation and API-facing flows |
+| Dashboard behavior          | `job-dashboard.spec.js`, `dashboard.spec.js`                                       | job automation and API-facing flows |
 | Security and auth checks    | `security.spec.js`, `deploy-verification.spec.js`                                  | policy and endpoint validation      |
 | Accessibility gates         | `accessibility.spec.js`, `accessibility-axe.spec.js`, `accessibility-wcag.spec.js` | a11y compliance checks              |
 | Mobile and performance      | `mobile.spec.js`, `mobile-responsive.spec.js`, `performance.spec.js`               | device and perf expectations        |

@@ -10,7 +10,6 @@ import (
 func main() {
 	var (
 		withPortfolio = flag.Bool("portfolio", false, "start portfolio dev server")
-		withJobServer = flag.Bool("job-server", false, "start job-server via docker-compose")
 		withAll       = flag.Bool("all", false, "start all services")
 	)
 	flag.Parse()
@@ -20,7 +19,7 @@ func main() {
 		ldFatalf("failed to resolve repository root: %v", err)
 	}
 
-	specs, warnings, err := buildServiceSpecs(repoRoot, *withPortfolio, *withJobServer, *withAll)
+	specs, warnings, err := buildServiceSpecs(repoRoot, *withPortfolio, *withAll)
 	if err != nil {
 		ldFatalf("service selection failed: %v", err)
 	}
@@ -30,7 +29,7 @@ func main() {
 	}
 
 	if len(specs) == 0 {
-		ldFatalf("no services selected; use --portfolio, --job-server, or --all")
+		ldFatalf("no services selected; use --portfolio or --all")
 	}
 
 	printer := &linePrinter{}

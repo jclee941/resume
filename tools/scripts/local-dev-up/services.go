@@ -7,18 +7,17 @@ import (
 	"time"
 )
 
-func buildServiceSpecs(repoRoot string, withPortfolio, withJobServer, withAll bool) ([]serviceSpec, []string, error) {
+func buildServiceSpecs(repoRoot string, withPortfolio, withAll bool) ([]serviceSpec, []string, error) {
 	if withAll {
 		withPortfolio = true
-		withJobServer = true
 	}
 
-	if !withPortfolio && !withJobServer {
+	if !withPortfolio {
 		return nil, nil, errors.New("all service flags disabled")
 	}
 
 	warnings := make([]string, 0)
-	specs := make([]serviceSpec, 0, 2)
+	specs := make([]serviceSpec, 0, 1)
 
 	if withPortfolio {
 		specs = append(specs, serviceSpec{
@@ -32,29 +31,6 @@ func buildServiceSpecs(repoRoot string, withPortfolio, withJobServer, withAll bo
 			Color:         ldColorBlue,
 			HealthTimeout: 40 * time.Second,
 		})
-	}
-
-	if withJobServer {
-		composeBinary, ok := firstAvailableBinary("docker-compose", "docker")
-		if !ok {
-			warnings = append(warnings, "job-server skipped: docker-compose/docker not found in PATH")
-		} else {
-			args := []string{"up"}
-			if composeBinary == "docker" {
-				args = []string{"compose", "up"}
-			}
-			specs = append(specs, serviceSpec{
-				Name:          "job-server",
-				DisplayName:   "job-server",
-				URL:           "http://localhost:3456",
-				HealthURL:     "http://localhost:3456/health",
-				Workdir:       filepath.Join(repoRoot, "apps", "job-server"),
-				Command:       composeBinary,
-				Args:          args,
-				Color:         ldColorYellow,
-				HealthTimeout: 90 * time.Second,
-			})
-		}
 	}
 
 	if len(specs) == 0 {

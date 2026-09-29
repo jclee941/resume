@@ -235,7 +235,7 @@ git push origin master # Deploy with new hashes (Cloudflare Workers Builds)
 - **Issues**: <https://github.com/qws941/resume/issues>
 - **Architecture**: `docs/guides/ARCHITECTURE.md`
 - **Testing**: `docs/guides/TESTING_GUIDE.md`
-- **Deployment**: `docs/guides/PRODUCTION_DEPLOYMENT_GUIDE.md`
+- **Deployment**: `docs/guides/MANUAL_DEPLOYMENT_GUIDE.md`
 
 ---
 

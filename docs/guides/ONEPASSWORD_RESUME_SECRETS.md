@@ -40,16 +40,6 @@ Cloudflare deploys should prefer `CLOUDFLARE_API_TOKEN`. The legacy
 `CLOUDFLARE_API_KEY` and `CLOUDFLARE_EMAIL` fields remain only for migration and
 must be rotated if Cloudflare rejects them.
 
-## Required 1Password documents
-
-Session JSON files are stored as separate Document items in the `homelab` vault:
-
-- `resume-sessions-json` for `sessions.json`
-- `resume-wanted-session-json` for `wanted-session.json`
-
-These are runtime session artifacts, not env fields. Keep them out of the repo
-workspace except while explicitly restoring or refreshing local sessions.
-
 ## Bootstrap references
 
 ```bash
@@ -72,7 +62,7 @@ token is missing:
 ```bash
 npm run op:native:run -- --auth service-account \
   --env-file ../../.env.1password -- \
-  node apps/job-server/scripts/profile-sync.js wanted --diff
+  <command>
 ```
 
 For desktop-app auth, pass the 1Password account name or account UUID shown in
@@ -81,7 +71,7 @@ the desktop app:
 ```bash
 npm run op:native:run -- --auth desktop --account "<account-name-or-uuid>" \
   --env-file ../../.env.1password -- \
-  node apps/job-server/scripts/profile-sync.js jobkorea --diff
+  <command>
 ```
 
 The native runner resolves `op://` references through the 1Password Go SDK,
@@ -100,10 +90,7 @@ Then run any command through the secret-safe runner:
 
 ```bash
 npm run op:run -- --env-file ../../.env.1password -- \
-  node apps/job-server/scripts/profile-sync.js wanted --diff
-
-npm run op:run -- --env-file ../../.env.1password -- \
-  node apps/job-server/scripts/profile-sync.js jobkorea --diff
+  <command>
 ```
 
 The CLI runner resolves references with `op read`, injects values into the child
@@ -126,32 +113,6 @@ existing `op://` references, and writes each value into the `homelab/resume`
 item. After a successful seed, remove local plaintext env files that are no
 longer needed.
 
-To store local session files as 1Password documents without printing their
-contents:
-
-```bash
-npm run op:seed:sessions
-```
-
-The session seeder reads `sessions.json` and `wanted-session.json` from the repo
-root, validates that each present file is JSON, then uploads each file through
-stdin to avoid putting session contents in command arguments. Missing files are
-skipped.
-
-To restore those documents back to local files:
-
-```bash
-npm run op:restore:sessions -- --force
-```
-
-Restore writes files with mode `0600`. Without `--force`, restore refuses to
-overwrite an existing local session file.
-
-## Session documents
-
-Session documents remain CLI-based because they are 1Password Document items,
-not env refs. Use `op:seed:sessions` and `op:restore:sessions` for those flows.
-
 ## Verification
 
 These checks should pass without revealing values:
@@ -169,8 +130,6 @@ npm run op:native:run -- --auth service-account --env-file "$tmp" -- \
   node -e "console.log(process.env.WANTED_EMAIL ? 'WANTED_EMAIL loaded' : 'missing')"
 
 rm -f "$tmp"
-
-npm run op:seed:sessions
 ```
 
 If the CLI runner reports `You are not currently signed in`, run `op signin` and

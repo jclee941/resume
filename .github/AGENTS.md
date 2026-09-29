@@ -18,7 +18,7 @@ remains Cloudflare Workers Builds.
 ├── workflows/                 # minimal validation-only CI
 ├── CODEOWNERS                 # review ownership
 ├── PULL_REQUEST_TEMPLATE.md   # PR checklist
-└── dependabot.yml             # npm, pip, Actions, and Docker update policy
+└── dependabot.yml             # npm, pip, and Actions update policy
 ```
 
 ## GITHUB ACTIONS

@@ -15,6 +15,7 @@ context. ADR files stay in place so their decision history remains intact.
 - [ADR 0005: Cloudflare Workers](adr/0005-cloudflare-workers.md)
 - [ADR 0008: Drop the Bazel Facade](adr/0008-drop-bazel-facade.md)
 - [ADR 0009: Single-Worker Consolidation](adr/0009-single-worker-consolidation.md)
+- [ADR 0010: Retire the Local job-server](adr/0010-retire-local-job-server.md)
 
 ## Superseded
 
@@ -39,7 +40,6 @@ context. ADR files stay in place so their decision history remains intact.
 - [Local Debugging](guides/LOCAL_DEBUGGING.md)
 - [Project Structure Map](guides/PROJECT_STRUCTURE_MAP.md)
 - [Manual Deployment](guides/MANUAL_DEPLOYMENT_GUIDE.md)
-- [Production Deployment](guides/PRODUCTION_DEPLOYMENT_GUIDE.md)
 - [Cloudflare GitHub Auto Deploy](guides/CLOUDFLARE_GITHUB_AUTO_DEPLOY.md)
 - [CI/CD Automation](guides/CI_CD_AUTOMATION.md)
 - [Final Deployment Checklist](guides/FINAL_DEPLOYMENT_CHECKLIST.md)

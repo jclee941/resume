@@ -6,9 +6,10 @@
 
 ## OVERVIEW
 
-Resume monorepo: Cloudflare Worker portfolio, job automation runtimes, dashboard
-APIs, shared type/schema/contract packages, content SSoT data, and self-hosted
-automation/observability support.
+Resume monorepo: one Cloudflare Worker (portfolio plus the in-process job
+dashboard), Cloudflare-native job automation (Cron Triggers, Workflows, KV, D1,
+Browser Rendering), shared type/schema/contract packages, content SSoT data, and
+self-hosted observability support.
 
 ## STRUCTURE
 
@@ -16,7 +17,6 @@ automation/observability support.
 ./
 ├── apps/
 │   ├── portfolio/        # public Cloudflare Worker; worker.js is generated
-│   ├── job-server/       # MCP/job automation runtime, crawlers, scripts
 │   └── job-dashboard/    # dashboard Worker, queues, workflows
 ├── packages/
 │   ├── cli/              # resume operator CLI
@@ -41,7 +41,6 @@ automation/observability support.
 | Task                    | Location                                       | Notes                                                                                       |
 | ----------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | Portfolio runtime/build | `apps/portfolio/`                              | edit `entry.js`, HTML, `src/`, or `lib/`; never hand-edit `worker.js`                       |
-| Job automation          | `apps/job-server/`                             | MCP server, crawlers, auto-apply, scripts, platform clients                                 |
 | Dashboard/API workflows | `apps/job-dashboard/`                          | Worker fetch/queue/scheduled entry, handlers, middleware, workflows                         |
 | Resume/content SSoT     | `packages/data/`                               | `resumes/master/resume_data.json` is authoritative resume data                              |
 | Application packets     | `applications/`                                | role-specific resumes, cover letters, previews, run outputs                                 |
@@ -53,7 +52,7 @@ automation/observability support.
 | Tests                   | `tests/`                                       | unit/integration/e2e child guides define test-layer rules                                   |
 | Repository automation   | `.github/`                                     | minimal validation CI; production deploy authority is Cloudflare Workers Builds             |
 | Architecture rules      | `docs/conventions/architecture-rules.md`       | 200-LOC rule, naming, automation SSoT, script language policy                               |
-| Secrets/security        | `docs/security/`, `tools/scripts/onepassword/` | secret rotation and local 1Password/session migration                                       |
+| Secrets/security        | `docs/security/`, `tools/scripts/onepassword/` | secret rotation and local 1Password env tooling                                             |
 
 ## CODE MAP
 
@@ -62,8 +61,6 @@ automation/observability support.
 | `package.json`              | script hub      | `./package.json`                                             | root build/test/sync/deploy command surface                         |
 | `fetch` worker entry        | Worker          | `apps/portfolio/entry.js`                                    | merged edge router for portfolio plus in-process `/job/*` dashboard |
 | `generate-worker.js`        | build generator | `apps/portfolio/`                                            | creates `apps/portfolio/worker.js` from HTML/data/lib modules       |
-| `main()`                    | MCP bootstrap   | `apps/job-server/src/index.js`                               | job-server process entry and shutdown handling                      |
-| server bootstrap            | Node/Fastify    | `apps/job-server/src/server/index.js`                        | dashboard/server-side job automation entry                          |
 | `fetch`/`queue`/`scheduled` | Worker          | `apps/job-dashboard/src/index.js`                            | dashboard request, queue, and scheduled orchestrator                |
 | `Router`                    | class           | `apps/job-dashboard/src/router.js`                           | route matching and Worker request dispatch                          |
 | `QueueWorkflowDispatcher`   | class           | `apps/job-dashboard/src/queues/queue-workflow-dispatcher.js` | queue message to Workflow binding switchboard                       |
@@ -102,8 +99,6 @@ automation/observability support.
   green.
 - Never use `networkidle` as a required Playwright load state for portfolio
   pages; use `domcontentloaded` or explicit waits.
-- Never add new logic under deprecated job-server wrapper modules; import from
-  `apps/job-server/src/shared/` or `@resume/shared/*`.
 - Never define the same domain type in multiple packages; put it in
   `@resume/types` and validate via `@resume/schemas`.
 - Never suppress type errors with `as any`, `@ts-ignore`, or broad unchecked
@@ -114,7 +109,7 @@ automation/observability support.
 
 ## UNIQUE STYLES
 
-- Mixed runtime stack: Cloudflare Workers, Node automation, Go operational
+- Mixed runtime stack: Cloudflare Workers, Go operational
   scripts, and selective Python/PPTX tooling.
 - Deep child AGENTS files already govern hot paths; add new child files only for
   distinct domains, not just large directories.
@@ -127,7 +122,7 @@ automation/observability support.
 ## COMMANDS
 
 ```bash
-npm run automate:ssot       # sync + build + typecheck + job-server node tests
+npm run automate:ssot       # sync + build + typecheck
 npm run automate:full       # full validation pipeline
 npm run build               # sync data and generate portfolio worker
 npm run lint

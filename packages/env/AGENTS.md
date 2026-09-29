@@ -26,8 +26,7 @@ packages/env/
     ├── parse.js              # validator + error class
     ├── schemas/
     │   ├── portfolio.js      # portfolio worker env schema
-    │   ├── job-dashboard.js  # dashboard worker env schema
-    │   └── job-server.js     # job-server runtime env schema
+    │   └── job-dashboard.js  # dashboard worker env schema
     └── __tests__/            # parse.test.js, schemas.test.js
 ```
 
@@ -39,7 +38,6 @@ packages/env/
 | `@resume/env/parse`                 | `src/parse.js`                 | Direct parser access                  |
 | `@resume/env/schemas/portfolio`     | `src/schemas/portfolio.js`     | `portfolioEnvSchema`                  |
 | `@resume/env/schemas/job-dashboard` | `src/schemas/job-dashboard.js` | `jobDashboardEnvSchema`               |
-| `@resume/env/schemas/job-server`    | `src/schemas/job-server.js`    | `jobServerEnvSchema`                  |
 
 ## CONVENTIONS
 

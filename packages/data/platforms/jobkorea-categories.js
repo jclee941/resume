@@ -1,7 +1,6 @@
 /**
  * JobKorea category codes.
- * Extracted from jobkorea-crawler.js to keep platform constants data-driven.
- * @see apps/job-server/platforms/jobkorea/jobkorea-crawler.js
+ * Platform constants kept data-driven.
  */
 export const JOBKOREA_CATEGORIES = Object.freeze({
   SECURITY: '1000239',

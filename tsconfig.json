@@ -17,7 +17,6 @@
   "include": [
     "apps/portfolio/lib/**/*.js",
     "apps/portfolio/src/**/*.js",
-    "apps/job-server/src/**/*.js",
     "apps/job-dashboard/src/**/*.js",
     "packages/cli/**/*.js",
     "packages/data/**/*.js",
@@ -38,7 +37,6 @@
     "apps/portfolio/sw.js",
     "apps/portfolio/.tmp",
     "apps/portfolio/src/scripts/modules/**",
-    "apps/job-server/platforms/**",
     "tests/**",
     ".wrangler",
     "**/*.test.js",

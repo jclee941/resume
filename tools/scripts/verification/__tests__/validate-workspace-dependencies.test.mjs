@@ -9,13 +9,11 @@ const currentRuntimeImports = [
   ['apps/job-dashboard', 'src/utils/env.js', '@resume/env'],
   ['packages/contracts', 'src/env.js', '@resume/types'],
   ['packages/shared', 'src/validation/dashboard.js', 'zod'],
-  ['apps/job-server', 'src/server/plugins/auth.js', 'fastify-plugin'],
 ];
 const dependencyVersions = new Map([
   ['@resume/env', '*'],
   ['@resume/types', '*'],
   ['zod', '^4.4.3'],
-  ['fastify-plugin', '^5.0.0'],
 ]);
 
 function writeFixture(options = {}) {
@@ -172,14 +170,14 @@ describe('Workspace dependency policy', () => {
   it('rejects a malformed dependencies shape', () => {
     const fixtureRoot = writeFixture();
     writeFileSync(
-      path.join(fixtureRoot, 'apps/job-server/package.json'),
-      JSON.stringify({ dependencies: ['fastify-plugin'] })
+      path.join(fixtureRoot, 'packages/shared/package.json'),
+      JSON.stringify({ dependencies: ['zod'] })
     );
 
     try {
       assert.throws(
         () => validateWorkspaceDependencies(fixtureRoot),
-        /apps\/job-server.*dependencies/u
+        /packages\/shared.*dependencies/u
       );
     } finally {
       removeFixture(fixtureRoot);

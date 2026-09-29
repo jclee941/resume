@@ -54,26 +54,6 @@ binding provides atomic semantics.
 
 ---
 
-### JK-PROBE-001 — Verify JobKorea live DOM selectors
-
-**Was issue**: #18 · **Priority**: P3 · **Estimated time**: ~30 min ·
-**Files**: `packages/shared/src/platform-sync/jobkorea/index.js`,
-`apps/job-server/platforms/jobkorea/jobkorea-crawler.js`
-
-JobKorea redesigns periodically. The skills-mapping selectors and the
-`getProfile` selectors must be re-verified against an authenticated live
-session whenever a probe surfaces a regression.
-
-- [ ] Operator runs `node apps/job-server/scripts/profile-sync/probe-jobkorea.js`
-      with a valid session
-- [ ] Skill-section selectors verified or updated (source-control the diff)
-- [ ] `getProfile` selectors verified or updated
-- [ ] Inline `TODO` comments removed from both files
-- [ ] `apps/job-server/scripts/profile-sync/__tests__/jobkorea-sections.test.js` updated if the fixture
-      shape changed
-
----
-
 ### OPS-001 — Trigger `provision-queues.yml` to activate Cloudflare Queues
 
 **Was issue**: #40 · **Priority**: P2 · **Estimated time**: ~10 min

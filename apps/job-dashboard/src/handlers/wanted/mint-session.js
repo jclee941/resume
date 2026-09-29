@@ -2,8 +2,7 @@
  * @fileoverview Mints a Wanted OneID session cookie and stores it in KV as
  * `auth:wanted` — the credential the worker's Wanted sync/crawl paths read
  * directly as a Cookie header (see services/resume-platform-sync/wanted.js).
- * Ported from apps/job-server/scripts/ci-resume-sync.js
- * `mintWantedCookies` so the Cloudflare Worker can self-mint on a schedule.
+ * The Cloudflare Worker self-mints on a schedule.
  * @module handlers/wanted/mint-session
  */
 

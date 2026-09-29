@@ -7,7 +7,7 @@
 ## OVERVIEW
 
 Cloudflare infrastructure (Terraform), D1 database migrations, monitoring
-dashboards (Grafana), and Docker runtime configs. Scheduled automation is
+dashboards (Grafana), and monitoring compose configs. Scheduled automation is
 Cloudflare-native: Cron Triggers and Workflows declared in the root
 `wrangler.jsonc`.
 
@@ -19,7 +19,7 @@ infrastructure/
 ├── database/             # D1 migrations and seeds
 ├── monitoring/           # Grafana dashboards and alert rules
 ├── configs/              # Grafana alert configurations
-├── docker/               # Docker runtime configs
+├── docker/               # Monitoring compose file
 └── mocks/                # Test mocks
 ```
 

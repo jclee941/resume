@@ -12,8 +12,8 @@ The project follows a multi-part architecture:
 
 - **Web Presence**: A Cloudflare Worker-based application serving the resume
   content with optimized assets and security headers.
-- **Job Automation**: MCP Server + Dashboard Worker for stealth job platform
-  automation (crawling, matching, auto-apply).
+- **Job Automation**: Dashboard module inside the Worker, driven by Cron
+  Triggers, Workflows, and Queues (crawling, matching, auto-apply).
 - **CLI Tooling**: A Node.js CLI (`packages/cli/`) for resume build, deployment,
   and verification.
 - **Automation Pipeline**: A robust set of scripts and CI/CD configurations for
@@ -22,7 +22,6 @@ The project follows a multi-part architecture:
 ## Key Components
 
 - `apps/portfolio/`: Core portfolio application logic and assets.
-- `apps/job-server/`: MCP Server + stealth job automation runtime.
 - `apps/job-dashboard/`: Cloudflare Worker serving the job dashboard API.
 - `packages/cli/`: Node.js CLI for resume operations.
 - `packages/data/`: SSoT resume content and schemas.

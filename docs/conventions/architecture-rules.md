@@ -108,7 +108,7 @@ orchestration.
 
 Directory Names (kebab-case): `^[a-z0-9][a-z0-9-]*$`
 
-- Good: `job-server`, `resume-data`, `auth-service`
+- Good: `job-dashboard`, `resume-data`, `auth-service`
 - Bad: `jobServer`, `resume_data`, `AuthService`
 
 File Names (lowercase with dots/hyphens): `^[a-z0-9][a-z0-9.-]*$`

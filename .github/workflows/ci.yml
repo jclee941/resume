@@ -69,7 +69,6 @@ jobs:
       - name: Test workspaces
         run: |
           npm run test:jest
-          npm run test:node
           npm run test:dashboard
           npm run test:schemas
           npm run test:shared

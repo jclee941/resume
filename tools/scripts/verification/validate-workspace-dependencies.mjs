@@ -7,7 +7,6 @@ const AUDITED_PAIRS = [
   { workspace: 'apps/job-dashboard', dependency: '@resume/env' },
   { workspace: 'packages/contracts', dependency: '@resume/types' },
   { workspace: 'packages/shared', dependency: 'zod' },
-  { workspace: 'apps/job-server', dependency: 'fastify-plugin' },
 ];
 const PRODUCTION_EXTENSIONS = new Set(['.cjs', '.js', '.mjs']);
 const EXCLUDED_DIRECTORIES = new Set([

@@ -56,7 +56,7 @@ enrichment/
 
 ```bash
 npm run enrich:github
-npm run enrich:skills
+npm run enrich:skills -- -data=<application-records.json>
 npm run enrich:ai
 npm run enrich:all
 npm run sync:proposals

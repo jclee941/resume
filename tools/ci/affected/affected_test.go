@@ -21,7 +21,7 @@ func TestAnyMatch_PortfolioFiles(t *testing.T) {
 		{"portfolio nested", []string{"apps/portfolio/lib/routes/health.js"}, true},
 		{"data package", []string{"packages/data/resumes/master/resume_data.json"}, true},
 		{"shared package", []string{"packages/shared/src/logger/index.js"}, true},
-		{"unrelated file", []string{"apps/job-server/src/server.js"}, false},
+		{"unrelated file", []string{"tools/ci/affected/affected.go"}, false},
 		{"root config", []string{"package.json"}, false},
 		{"mixed with portfolio", []string{"README.md", "apps/portfolio/worker.js"}, true},
 	}
@@ -47,32 +47,7 @@ func TestAnyMatch_JobDashboardFiles(t *testing.T) {
 		{"dashboard source", []string{"apps/job-dashboard/src/index.js"}, true},
 		{"dashboard routes", []string{"apps/job-dashboard/src/routes/health.js"}, true},
 		{"shared package triggers dashboard", []string{"packages/shared/src/clients/elasticsearch/index.js"}, true},
-		{"job-server does NOT trigger dashboard", []string{"apps/job-server/src/server.js"}, false},
 		{"portfolio does NOT trigger dashboard", []string{"apps/portfolio/entry.js"}, false},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := anyMatch(tt.files, re)
-			if got != tt.want {
-				t.Errorf("anyMatch(%v) = %v, want %v", tt.files, got, tt.want)
-			}
-		})
-	}
-}
-
-func TestAnyMatch_JobServerFiles(t *testing.T) {
-	re := regexp.MustCompile(`^apps/job-server/`)
-
-	tests := []struct {
-		name  string
-		files []string
-		want  bool
-	}{
-		{"job-server source", []string{"apps/job-server/src/server.js"}, true},
-		{"job-server test", []string{"apps/job-server/src/shared/utils.test.js"}, true},
-		{"job-dashboard NOT job-server", []string{"apps/job-dashboard/src/index.js"}, false},
-		{"shared NOT job-server", []string{"packages/shared/src/logger/index.js"}, false},
 	}
 
 	for _, tt := range tests {
@@ -124,19 +99,13 @@ func TestCollectPathBasedTargets(t *testing.T) {
 			name:     "portfolio files",
 			files:    []string{"apps/portfolio/entry.js"},
 			contains: []string{"//apps/portfolio:all"},
-			excludes: []string{"//apps/job-dashboard:all", "//apps/job-server:all"},
+			excludes: []string{"//apps/job-dashboard:all"},
 		},
 		{
 			name:     "job-dashboard files",
 			files:    []string{"apps/job-dashboard/src/index.js"},
 			contains: []string{"//apps/job-dashboard:all"},
-			excludes: []string{"//apps/portfolio:all", "//apps/job-server:all"},
-		},
-		{
-			name:     "job-server files",
-			files:    []string{"apps/job-server/src/server.js"},
-			contains: []string{"//apps/job-server:all"},
-			excludes: []string{"//apps/portfolio:all", "//apps/job-dashboard:all"},
+			excludes: []string{"//apps/portfolio:all"},
 		},
 		{
 			name:     "data package triggers portfolio",
@@ -148,7 +117,6 @@ func TestCollectPathBasedTargets(t *testing.T) {
 			name:     "shared package triggers portfolio AND job-dashboard",
 			files:    []string{"packages/shared/src/logger/index.js"},
 			contains: []string{"//packages/shared:all", "//apps/portfolio:all", "//apps/job-dashboard:all"},
-			excludes: []string{"//apps/job-server:all"},
 		},
 		{
 			name:     "package.json triggers everything",
@@ -190,7 +158,7 @@ func TestCollectPathBasedTargets(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
-// Integration: verify shared changes mark BOTH workers affected
+// Integration: verify shared changes mark both workers affected
 // ---------------------------------------------------------------------------
 
 func TestSharedChangesAffectBothWorkers(t *testing.T) {
@@ -198,40 +166,11 @@ func TestSharedChangesAffectBothWorkers(t *testing.T) {
 
 	portfolioRe := regexp.MustCompile(`^apps/portfolio/|^packages/data/|^packages/shared/`)
 	dashboardRe := regexp.MustCompile(`^apps/job-dashboard/|^packages/shared/`)
-	serverRe := regexp.MustCompile(`^apps/job-server/`)
 
 	if !anyMatch(files, portfolioRe) {
 		t.Error("shared change should mark portfolio as affected")
 	}
 	if !anyMatch(files, dashboardRe) {
 		t.Error("shared change should mark job-dashboard as affected")
-	}
-	if anyMatch(files, serverRe) {
-		t.Error("shared change should NOT mark job-server as affected")
-	}
-}
-
-// ---------------------------------------------------------------------------
-// Regression: job-dashboard vs job-server separation
-// ---------------------------------------------------------------------------
-
-func TestJobDashboardNotJobServer(t *testing.T) {
-	dashboardRe := regexp.MustCompile(`^apps/job-dashboard/|^packages/shared/`)
-	serverRe := regexp.MustCompile(`^apps/job-server/`)
-
-	dashboardFiles := []string{"apps/job-dashboard/src/routes/health.js"}
-	if !anyMatch(dashboardFiles, dashboardRe) {
-		t.Error("job-dashboard file should match dashboardRe")
-	}
-	if anyMatch(dashboardFiles, serverRe) {
-		t.Error("job-dashboard file should NOT match serverRe")
-	}
-
-	serverFiles := []string{"apps/job-server/src/server.js"}
-	if anyMatch(serverFiles, dashboardRe) {
-		t.Error("job-server file should NOT match dashboardRe")
-	}
-	if !anyMatch(serverFiles, serverRe) {
-		t.Error("job-server file should match serverRe")
 	}
 }

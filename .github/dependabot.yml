@@ -48,19 +48,3 @@ updates:
         update-types:
           - 'minor'
           - 'patch'
-
-  # Base images are pinned by digest. tests/unit/session-broker-image.test.js
-  # keeps the session-broker Playwright tag equal to the locked playwright version.
-  - package-ecosystem: 'docker'
-    directories:
-      - '/'
-      - '/infrastructure/docker'
-    schedule:
-      interval: 'weekly'
-    open-pull-requests-limit: 5
-    labels:
-      - 'dependencies'
-      - 'docker'
-    commit-message:
-      prefix: 'chore'
-      include: 'scope'

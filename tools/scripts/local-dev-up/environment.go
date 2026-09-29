@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -16,7 +15,7 @@ func ldResolveRepoRoot() (string, error) {
 
 	cur := wd
 	for {
-		if hasPath(cur, "apps/portfolio") && hasPath(cur, "apps/job-server") {
+		if hasPath(cur, "apps/portfolio") && hasPath(cur, "apps/job-dashboard") {
 			return cur, nil
 		}
 		parent := filepath.Dir(cur)
@@ -30,15 +29,6 @@ func ldResolveRepoRoot() (string, error) {
 func hasPath(base, rel string) bool {
 	_, err := os.Stat(filepath.Join(base, rel))
 	return err == nil
-}
-
-func firstAvailableBinary(candidates ...string) (string, bool) {
-	for _, c := range candidates {
-		if _, err := exec.LookPath(c); err == nil {
-			return c, true
-		}
-	}
-	return "", false
 }
 
 func ldShellJoin(parts []string) string {

@@ -3,7 +3,7 @@
 ## Rollout Order
 
 Apply `infrastructure/database/migrations/0009_add_canonical_job_urls.sql` to
-the target D1 database before deploying a Worker or job-server release that
+the target D1 database before deploying a Worker release that
 writes canonical job URLs. Verify that the migration runner records `0009`,
 then deploy the application release and resume job ingestion or auto-apply
 runs.

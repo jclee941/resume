@@ -16,7 +16,6 @@ type affectedSummary struct {
 	ChangedFilesCount    int              `json:"changed_files_count"`
 	Portfolio            bool             `json:"portfolio"`
 	JobDashboard         bool             `json:"job_dashboard"`
-	JobServer            bool             `json:"job_server"`
 	Data                 bool             `json:"data"`
 	Infra                bool             `json:"infra"`
 	CLI                  bool             `json:"cli"`
@@ -60,8 +59,6 @@ func collectPathBasedTargets(changedFiles []string) []string {
 			targets["//apps/portfolio:all"] = struct{}{}
 		case strings.HasPrefix(file, "apps/job-dashboard/"):
 			targets["//apps/job-dashboard:all"] = struct{}{}
-		case strings.HasPrefix(file, "apps/job-server/"):
-			targets["//apps/job-server:all"] = struct{}{}
 		case strings.HasPrefix(file, "packages/data/"):
 			targets["//packages/data:all"] = struct{}{}
 			targets["//apps/portfolio:all"] = struct{}{}

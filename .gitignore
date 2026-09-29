@@ -58,8 +58,6 @@ sessions.json
 **/cookies.json
 **/credentials.json
 secrets/
-!apps/job-server/src/shared/clients/secrets/
-!apps/job-server/src/shared/clients/secrets/**
 .secrets/
 # Cloudflare wrangler local secrets
 .wrangler/
@@ -123,12 +121,8 @@ test-results/
 downloaded_files/
 applications/security-ir-2026/Jaecheol_Lee_Resume_Security_IR_KR.pdf
 applications/security-ir-2026/resume-security-ir-preview.png
-# Generated dashboards
-apps/job-server/scripts/dashboard.html
-
 # Build/temp artifacts
 .tmp/
-apps/job-server/scripts/profile-sync/jobkorea-handler/browser-template.json
 
 # 1Password secret backups (rotated values awaiting upload)
 /tmp/resume-new-secrets.env

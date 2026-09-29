@@ -8,19 +8,12 @@
 
 Integration tests validate cross-module contracts, failure scenarios, and
 HTML/runtime interaction boundaries that are broader than unit scope but lighter
-than full E2E. Jest discovers 10 files covering the auto-apply pipeline, resume
-sync validation, network failure paths, and Worker HTML rendering.
+than full E2E. Jest discovers the resume sync validation, network failure paths, and Worker HTML rendering.
 
 ## STRUCTURE
 
 ```text
 integration/
-├── auto-apply-error-recovery.test.js
-├── auto-apply-filtering.test.js
-├── auto-apply-io.test.js
-├── auto-apply-limits.test.js
-├── auto-apply-pipeline.test.js
-├── auto-apply-stats.test.js
 ├── network-failure-scenarios.test.js
 ├── resume-sync-validation.test.js
 └── worker-html.test.js

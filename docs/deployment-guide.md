@@ -141,22 +141,6 @@ wrangler deploy --config wrangler.jsonc --env production` uploads the
                 +------------------ [ Workflows / Schedules ] ------------------+
 ```
 
-### 2.5 Job Automation Crawlers
-
-The `job-automation` workspace includes specialized crawlers for various job
-platforms. Understanding these is key for debugging application issues:
-
-- **Wanted**: API-based crawler (Direct JSON fetch). Most stable.
-- **JobKorea**: Puppeteer-based with stealth plugins.
-- **Saramin**: Puppeteer-based with stealth plugins.
-- **LinkedIn**: Fetch-based with regex parsing for "Easy Apply".
-- **Remember**: Browser-based crawler for social recruiting.
-
-Each crawler implements the `BaseCrawler` class, which handles User-Agent
-rotation, request jitter, and automatic retries to avoid bot detection.
-
----
-
 ## 3. Environment Setup
 
 Proper environment configuration is the most critical step for new developers.

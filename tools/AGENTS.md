@@ -38,7 +38,7 @@ tools/
 | Task               | Location                | Notes                                              |
 | ------------------ | ----------------------- | -------------------------------------------------- |
 | CI validation      | `ci/`                   | affected, wrangler config, env schema, migrations  |
-| Asset generation   | `scripts/build/`        | PDF, PPTX, icons, screenshots, Docker images       |
+| Asset generation   | `scripts/build/`        | PDF, PPTX, icons, screenshots                      |
 | Deploy helpers     | `scripts/deployment/`   | quick-deploy, staged deploy, monitoring hooks      |
 | Verification       | `scripts/verification/` | validators, remote probes, Lighthouse, smoke tests |
 | Release automation | `scripts/release/`      | version decisions, GitHub release publication      |

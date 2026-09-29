@@ -307,7 +307,6 @@
 - Pass? (Result) -> ☁️ Cloudflare Workers Builds / (authoritative) (CF)
 - Pass? (Result) -> ❌ CI Failed (Fail)
 - ☁️ Cloudflare Workers Builds / (authoritative) (CF) -> 📦 portfolio worker.js (Worker)
-- ☁️ Cloudflare Workers Builds / (authoritative) (CF) -> 🐳 job-server / (Docker + MCP) (Docker)
 - 📦 portfolio worker.js (Worker) -> 🌐 resume.jclee.me (Live)
 
 ## 🔍 검증 체크리스트 (Verification Checklist)

@@ -55,7 +55,6 @@ npm run test:e2e     # Run E2E tests (requires Playwright browsers)
 resume/
 ├── apps/                       # Deployable applications
 │   ├── portfolio/              # Edge-deployed portfolio (resume.jclee.me)
-│   ├── job-server/             # MCP Server + stealth crawlers
 │   └── job-dashboard/          # Job dashboard worker
 ├── packages/                   # Shared packages
 │   ├── cli/                    # Deployment CLI (Commander.js)
@@ -97,14 +96,14 @@ Format: `type(scope): description`
 
 **Types**: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `ci`
 
-**Scopes**: `portfolio`, `job-automation`, `cli`, `data`, `ci`, `tests`, `infra`
+**Scopes**: `portfolio`, `job-dashboard`, `cli`, `data`, `ci`, `tests`, `infra`
 
 Examples from this repo:
 
 ```text
-feat(job-automation): add 4 Korean platform crawlers
+feat(job-dashboard): add a workflow step for application status sync
 fix(ci): resolve 43 E2E failures from CI run
-docs: add comprehensive job-automation architecture guide
+docs: add a job dashboard architecture guide
 chore: update root AGENTS.md version metadata
 docs(workers): enhance AGENTS.md with handler classes and workflows
 ```
@@ -161,7 +160,7 @@ docs(workers): enhance AGENTS.md with handler classes and workflows
 | -------- | ----------------------- | ---------- |
 | Unit     | `npm test`              | Jest       |
 | E2E      | `npm run test:e2e`      | Playwright |
-| Coverage | `npm run test:coverage` | c8         |
+| Coverage | `npm run test:coverage` | Jest       |
 
 **Requirements**:
 

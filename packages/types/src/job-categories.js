@@ -2,7 +2,7 @@
  * Wanted Korea job-category numeric IDs.
  *
  * SSOT for both:
- *   1. Korean role-name → numeric ID (used by job-server CLI matching)
+ *   1. Korean role-name → numeric ID
  *   2. canonical English key → numeric ID (used by Wanted API client)
  *
  * Pure data, no Node.js APIs — safe for Cloudflare Worker bundles.
