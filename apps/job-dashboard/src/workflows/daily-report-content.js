@@ -1,3 +1,5 @@
+import { escapeHtml } from '../services/notifications/formatters.js';
+
 const STATUS_EMOJI = {
   pending: '⏳',
   saved: '💾',
@@ -107,4 +109,20 @@ ${STATUS_EMOJI.expired} 만료: ${applications.expired}건`,
       },
     ],
   };
+}
+
+/**
+ * Telegram HTML body for a generated report: the headline numbers, then each section.
+ * @param {ReturnType<typeof generateReportContent>} content
+ * @returns {string}
+ */
+export function formatReportMessage(content) {
+  const sections = content.sections.map(
+    (section) => `<b>${escapeHtml(section.title)}</b>\n${escapeHtml(section.content)}`
+  );
+  return [
+    `📊 <b>${escapeHtml(content.title)}</b> (${escapeHtml(content.date)})`,
+    `총 ${content.summary.total}건 ${escapeHtml(content.summary.trend)}`,
+    ...sections,
+  ].join('\n\n');
 }

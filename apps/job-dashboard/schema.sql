@@ -34,14 +34,6 @@ CREATE TABLE IF NOT EXISTS application_timeline (
   FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS sessions (
-  platform TEXT PRIMARY KEY,
-  cookies TEXT,
-  email TEXT,
-  expires_at TEXT,
-  created_at TEXT NOT NULL,
-  updated_at TEXT NOT NULL
-);
 CREATE TABLE IF NOT EXISTS config (
   key TEXT PRIMARY KEY,
   value TEXT NOT NULL,
@@ -209,3 +201,31 @@ CREATE INDEX IF NOT EXISTS idx_notification_history_created ON notification_hist
 
 ALTER TABLE applications ADD COLUMN approved_at TEXT;
 ALTER TABLE applications ADD COLUMN rejected_at TEXT;
+
+CREATE TABLE IF NOT EXISTS sync_logs (
+  id TEXT PRIMARY KEY,
+  sync_type TEXT NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('success', 'partial', 'failed', 'pending')),
+  started_at TEXT NOT NULL DEFAULT (datetime('now')),
+  completed_at TEXT,
+  details TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_sync_logs_sync_type ON sync_logs(sync_type);
+CREATE INDEX IF NOT EXISTS idx_sync_logs_status ON sync_logs(status);
+CREATE INDEX IF NOT EXISTS idx_sync_logs_started_at ON sync_logs(started_at);
+
+CREATE TABLE IF NOT EXISTS health_check_details (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  check_type TEXT NOT NULL,
+  service_name TEXT NOT NULL,
+  status TEXT NOT NULL,
+  latency_ms REAL,
+  consecutive_failures INTEGER NOT NULL DEFAULT 0,
+  escalation_level TEXT NOT NULL DEFAULT 'none',
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_health_check_details_created_at ON health_check_details(created_at);
+CREATE INDEX IF NOT EXISTS idx_health_check_details_check ON health_check_details(check_type, status);

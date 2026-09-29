@@ -1,7 +1,7 @@
 /// <reference path="../../../../packages/types/src/cloudflare-workers.d.ts" />
 import { WorkflowEntrypoint } from 'cloudflare:workers';
-import { sendTelegramNotification, escapeHtml } from '../services/notifications.js';
-import { generateReportContent } from './daily-report-content.js';
+import { sendTelegramNotification } from '../services/notifications.js';
+import { formatReportMessage, generateReportContent } from './daily-report-content.js';
 import {
   calculateTrends,
   getApplicationStats,
@@ -147,27 +147,6 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
 
     report.content = content;
 
-    // Step 6: Save report to database
-    await step.do(
-      'save-report',
-      {
-        retries: { limit: 2, delay: '5 seconds' },
-        timeout: '30 seconds',
-      },
-      async () => {
-        await /** @type {DailyReportDb} */ (this.env.JOB_DB)
-          .prepare(
-            `
-          INSERT INTO reports (id, type, date, data, created_at)
-          VALUES (?, ?, ?, ?, datetime('now'))
-          ON CONFLICT (type, date) DO UPDATE SET data = excluded.data, updated_at = datetime('now')
-        `
-          )
-          .bind(report.id, type, report.date, JSON.stringify(report))
-          .run();
-      }
-    );
-
     await step.do(
       'send-notification',
       {
@@ -175,10 +154,7 @@ export class DailyReportWorkflow extends WorkflowEntrypoint {
         timeout: '30 seconds',
       },
       async () => {
-        await sendTelegramNotification(
-          this.env,
-          `📊 <b>${escapeHtml(content.title)}</b>\n\nDate: ${escapeHtml(content.date)}\nType: ${escapeHtml(type)}`
-        );
+        await sendTelegramNotification(this.env, formatReportMessage(content));
         return { notified: true };
       }
     );

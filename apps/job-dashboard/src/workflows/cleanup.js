@@ -1,5 +1,20 @@
 import { WorkflowEntrypoint } from 'cloudflare:workers';
 
+const DEFAULT_JOB_RESULTS_MAX_AGE_DAYS = 30;
+const DEFAULT_HEALTH_CHECK_MAX_AGE_DAYS = 7;
+
+const PRUNE_SQL = {
+  jobResults: {
+    count: "SELECT COUNT(*) as count FROM job_search_results WHERE created_at < datetime('now', ?)",
+    remove: "DELETE FROM job_search_results WHERE created_at < datetime('now', ?)",
+  },
+  healthChecks: {
+    count:
+      "SELECT COUNT(*) as count FROM health_check_details WHERE created_at < datetime('now', ?)",
+    remove: "DELETE FROM health_check_details WHERE created_at < datetime('now', ?)",
+  },
+};
+
 /**
  * Only plaintext JSON session records carry an inspectable expiry. Encrypted
  * platform sessions and cookie headers are opaque here and expire through
@@ -16,6 +31,32 @@ function isExpiredSessionRecord(raw, now) {
   } catch {
     return false; // malformed JSON is left to its KV TTL like any opaque value
   }
+}
+
+/**
+ * @param {unknown} days
+ * @param {number} fallback
+ * @returns {string} SQLite datetime modifier such as '-30 days'
+ */
+function retentionModifier(days, fallback) {
+  const value = Number(days);
+  return `-${Number.isInteger(value) && value > 0 ? value : fallback} days`;
+}
+
+/**
+ * @param {D1Database} db
+ * @param {{ count: string; remove: string }} sql
+ * @param {string} cutoff
+ * @param {boolean} dryRun
+ * @returns {Promise<{ found: number; deleted: number }>}
+ */
+async function pruneRows(db, sql, cutoff, dryRun) {
+  if (dryRun) {
+    const row = await db.prepare(sql.count).bind(cutoff).first();
+    return { found: row?.count || 0, deleted: 0 };
+  }
+  const result = await db.prepare(sql.remove).bind(cutoff).run();
+  return { found: result.meta.changes, deleted: result.meta.changes };
 }
 
 /**
@@ -37,8 +78,6 @@ function isExpiredSessionRecord(raw, now) {
 
 /**
  * @typedef {Object} CleanupEnv
- * @property {string} SESSION_MAX_AGE
- * @property {string} LOG_MAX_AGE
  * @property {{ list(options?: { prefix?: string }): Promise<{ keys: Array<{ name: string }> }>, get(key: string): Promise<string | null>, delete(key: { name: string } | string): Promise<void> }} SESSIONS
  * @property {D1Database} JOB_DB
  * @property {{ list(): Promise<{ keys: Array<{ name: string, expiration?: number }> }>, delete(key: string): Promise<void> }} RATE_LIMIT_KV
@@ -46,15 +85,17 @@ function isExpiredSessionRecord(raw, now) {
 
 /**
  * @typedef {Object} CleanupParams
- * @property {number} [sessionMaxAge] - Days before sessions expire (default: 7, from env SESSION_MAX_AGE)
- * @property {number} [logMaxAge] - Days before job results expire (default: 30, from env LOG_MAX_AGE)
+ * @property {number} [jobResultsMaxAge] - Days to keep job search results (default 30)
+ * @property {number} [healthCheckMaxAge] - Days to keep health-check history (default 7)
  * @property {boolean} [dryRun] - Preview deletions without executing (default: false)
+ * @property {string} [source]
  */
 
 /**
  * Cleanup Workflow
  *
- * Removes expired sessions, old job results, and stale rate limit entries.
+ * Removes expired plaintext sessions, old job search results, old health-check
+ * history, and stale rate limit entries. The workflow output is the run record.
  * Supports dry-run mode to preview deletions without executing them.
  *
  * @extends {WorkflowEntrypoint<CleanupEnv, CleanupParams>}
@@ -65,25 +106,14 @@ export class CleanupWorkflow extends WorkflowEntrypoint {
    * @param {import('cloudflare:workers').WorkflowStep} step
    */
   async run(event, step) {
-    // Read retention config from env vars or use defaults
-    const DEFAULT_SESSION_MAX_AGE = parseInt(this.env.SESSION_MAX_AGE) || 7;
-    const DEFAULT_LOG_MAX_AGE = parseInt(this.env.LOG_MAX_AGE) || 30;
-
-    const {
-      sessionMaxAge = DEFAULT_SESSION_MAX_AGE,
-      logMaxAge = DEFAULT_LOG_MAX_AGE,
-      dryRun = false,
-    } = event.payload || {};
-
+    const { jobResultsMaxAge, healthCheckMaxAge, dryRun = false } = event.payload || {};
+    const jobResultsCutoff = retentionModifier(jobResultsMaxAge, DEFAULT_JOB_RESULTS_MAX_AGE_DAYS);
+    const healthCheckCutoff = retentionModifier(
+      healthCheckMaxAge,
+      DEFAULT_HEALTH_CHECK_MAX_AGE_DAYS
+    );
     const startedAt = new Date().toISOString();
-    const deletedCounts = {
-      sessions: 0,
-      jobResults: 0,
-      healthChecks: 0,
-      rateLimits: 0,
-    };
 
-    // Step 1: Cleanup expired sessions
     const sessionCleanup = await step.do(
       'cleanup-expired-sessions',
       {
@@ -113,69 +143,25 @@ export class CleanupWorkflow extends WorkflowEntrypoint {
         return { found: toDelete.length, deleted: dryRun ? 0 : deleted };
       }
     );
-    deletedCounts.sessions = sessionCleanup.deleted;
 
-    // Step 2: Cleanup old job search results
     const jobResultsCleanup = await step.do(
       'cleanup-old-job-results',
       {
         retries: { limit: 2, delay: '5 seconds' },
         timeout: '2 minutes',
       },
-      async () => {
-        if (dryRun) {
-          const count = await this.env.JOB_DB.prepare(
-            `
-            SELECT COUNT(*) as count FROM job_search_results 
-            WHERE created_at < datetime('now', '-${logMaxAge} days')
-          `
-          ).first();
-          return { found: count?.count || 0, deleted: 0 };
-        }
-
-        const result = await this.env.JOB_DB.prepare(
-          `
-          DELETE FROM job_search_results 
-          WHERE created_at < datetime('now', '-${logMaxAge} days')
-        `
-        ).run();
-
-        return { found: result.meta.changes, deleted: result.meta.changes };
-      }
+      () => pruneRows(this.env.JOB_DB, PRUNE_SQL.jobResults, jobResultsCutoff, dryRun)
     );
-    deletedCounts.jobResults = jobResultsCleanup.deleted;
 
-    // Step 3: Cleanup old health checks
     const healthChecksCleanup = await step.do(
       'cleanup-old-health-checks',
       {
         retries: { limit: 2, delay: '5 seconds' },
         timeout: '2 minutes',
       },
-      async () => {
-        if (dryRun) {
-          const count = await this.env.JOB_DB.prepare(
-            `
-            SELECT COUNT(*) as count FROM health_checks 
-            WHERE checked_at < datetime('now', '-${sessionMaxAge} days')
-          `
-          ).first();
-          return { found: count?.count || 0, deleted: 0 };
-        }
-
-        const result = await this.env.JOB_DB.prepare(
-          `
-          DELETE FROM health_checks 
-          WHERE checked_at < datetime('now', '-${sessionMaxAge} days')
-        `
-        ).run();
-
-        return { found: result.meta.changes, deleted: result.meta.changes };
-      }
+      () => pruneRows(this.env.JOB_DB, PRUNE_SQL.healthChecks, healthCheckCutoff, dryRun)
     );
-    deletedCounts.healthChecks = healthChecksCleanup.deleted;
 
-    // Step 4: Cleanup expired rate limit keys
     const rateLimitCleanup = await step.do(
       'cleanup-rate-limit-keys',
       {
@@ -203,42 +189,16 @@ export class CleanupWorkflow extends WorkflowEntrypoint {
         return { found: toDelete.length, deleted: dryRun ? 0 : deleted };
       }
     );
-    deletedCounts.rateLimits = rateLimitCleanup.deleted;
-
-    // Step 5: Log cleanup summary
-    await step.do(
-      'log-cleanup',
-      {
-        retries: { limit: 2, delay: '5 seconds' },
-        timeout: '30 seconds',
-      },
-      async () => {
-        if (dryRun) {
-          return { logged: false, reason: 'Dry run mode' };
-        }
-
-        await this.env.JOB_DB.prepare(
-          `
-          INSERT INTO cleanup_logs (sessions_deleted, results_deleted, checks_deleted, rate_limits_deleted, ran_at)
-          VALUES (?, ?, ?, ?, datetime('now'))
-        `
-        )
-          .bind(
-            deletedCounts.sessions,
-            deletedCounts.jobResults,
-            deletedCounts.healthChecks,
-            deletedCounts.rateLimits
-          )
-          .run();
-
-        return { logged: true };
-      }
-    );
 
     return {
       success: true,
       dryRun,
-      deleted: deletedCounts,
+      deleted: {
+        sessions: sessionCleanup.deleted,
+        jobResults: jobResultsCleanup.deleted,
+        healthChecks: healthChecksCleanup.deleted,
+        rateLimits: rateLimitCleanup.deleted,
+      },
       timestamp: startedAt,
       completedAt: new Date().toISOString(),
     };

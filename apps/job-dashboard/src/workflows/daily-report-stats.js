@@ -77,12 +77,12 @@ export async function getPlatformStats(env, type, reportDate) {
   const results = await env.JOB_DB.prepare(
     `
       SELECT 
-        platform,
+        source AS platform,
         COUNT(*) as count,
         SUM(CASE WHEN status = 'interview' OR status = 'offer' THEN 1 ELSE 0 END) as success
       FROM applications
       WHERE ${getReportWindow(type)}
-      GROUP BY platform
+      GROUP BY source
       ORDER BY count DESC
     `
   )
