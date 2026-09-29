@@ -1,6 +1,6 @@
 <!-- Generated from master resume -->
 <!-- Variant: short -->
-<!-- Generated: 2026-07-24T01:35:21.877Z -->
+<!-- Generated: 2026-09-29T03:47:31.374Z -->
 <!-- Description: Short form resume (1-2 pages) -->
 ## 연락처
 
@@ -21,17 +21,17 @@
 
 ### 보유 기술
 
-- **보안**: FortiGate 방화벽, DDoS, IPS, WAF, NAC·DLP, EDR, APT, Splunk SIEM
+- **보안**: FortiGate 방화벽, DDoS, IPS, WAF, SWG, NAC, DLP·nDLP, DRM, SSL VPN, APT, Active Directory, EDR, Splunk SIEM
 - **클라우드**: Docker, Kubernetes, Cloudflare Workers (Edge Computing)
 - **운영 스크립트**: Python·Shell·Ansible·Terraform·워크플로 오케스트레이션
 - **모니터링**: Grafana·Prometheus·Loki (통합 관제 플랫폼)
 - **DevOps**: GitLab EE·CI/CD·Container Registry·Docker Compose
-- **AI/ML**: Claude 기반 운영 보조 도구, ML 기반 위협 예측 및 라우팅 실험
+- **LLM/ML**: LLM 기반 운영 보조·출력 검증, ML 기반 위협 예측 및 라우팅 실험
 
 ### 자격증 및 교육
 
 - **진행 중**: Certified Kubernetes Security Specialist (CKS) 준비
-- 한양사이버대학교 컴퓨터공학과 재학
+- 한양사이버대학교 컴퓨터공학과 (4년제, 2027.02 졸업예정)
 
 ### 금융 보안 전문성
 
@@ -55,14 +55,14 @@
 **업무 개요**
 
 - Splunk ES·FortiGate/FortiManager·Slack/SMS 알림을 연결한 보안 이벤트 대응 아키텍처 설계
-- Python·Docker 기반 자동화 도구와 Claude AI 보조 분석으로 반복 수동 확인·오탐 검토 흐름 정리
+- Python·Docker 기반 자동화 도구와 LLM 출력 검증으로 반복 수동 확인·오탐 검토 흐름 정리
 
 주요 업무
 
 - Splunk ES Saved Search와 FortiGate 이벤트 기준을 연결해 탐지·분류·알림 흐름 설계
 - Webhook relay와 Slack/SMS 알림으로 보안 이벤트 전달 경로 표준화
 - FortiManager JSON-RPC API 기반 방화벽 정책 조회 흐름 구축
-- Claude AI를 활용한 위협 정보 수집·분류 보조와 오탐 흐름 정리
+- LLM을 활용한 위협 정보 수집·분류 보조와 오탐 흐름 정리
 - DR 사이트 점검 및 주기적 DR 테스트
 - 취약점 스캔 결과 정리 및 심각도 기준의 패치 적용
 - 개발팀·거래팀·운영팀과 보안 요구사항 커뮤니케이션
@@ -75,7 +75,7 @@
 - 거래 플랫폼 운영 기준 유지
 - Splunk·Fortinet 연동 환경에서 방화벽 정책 조회·배포 자동화 스크립트 작성
 - Grafana 대시보드로 시스템·컨테이너·로그 지표를 한 화면에 정리
-- Claude AI를 활용한 위협 정보 수집·분류 스크립트 작성으로 수동 분석 의존도 낮춤
+- LLM 기반 위협 정보 수집·분류 스크립트 작성으로 수동 분석 의존도 낮춤
 - 알림 워크플로로 반복 API 호출 자동화 스크립트 정리
 - SIEM 탐지 룰 검토 및 조건 조정으로 오탐 정리
 - 취약점 SLA 기준에 따라 패치 일정을 관리
@@ -193,9 +193,9 @@
 
 ### 보안 솔루션
 
-- 네트워크 보안: 방화벽, DDoS, IPS/IDS, WAF
-- 엔드포인트: NAC·DLP, EDR/EPP, MDM, APT
-- 접근제어: 서버/DB 접근제어, SSL VPN, IPSec, SSL 복호화
+- 네트워크 보안: 방화벽, DDoS, IPS/IDS, WAF, SWG
+- 엔드포인트: NAC, DLP·nDLP, DRM, EDR/EPP, MDM, APT
+- 접근제어: 서버/DB 접근제어, Active Directory, SSL VPN, IPSec, SSL 복호화
 - 모니터링: SIEM, SOAR
 
 ### 클라우드 및 가상화
@@ -212,7 +212,7 @@
 
 ### AI/ML 및 운영 도구
 
-- AI 도구: Claude Code, GitHub Copilot, ChatGPT API
+- LLM 도구: LLM CLI, MCP, LLM API
 - MCP 프로토콜: 서버 통합 (filesystem, github, brave-search, memory, tmux 등)
 - 운영 스크립트 프레임워크: Custom SlashCommand 시스템
 - 관찰성: Universal Observability 아키텍처 (Grafana 중심)

@@ -10,7 +10,8 @@
     "school": "漢陽サイバー大学",
     "major": "コンピュータ工学科",
     "startDate": "2024.03",
-    "status": "在学中",
+    "endDate": "2027.02",
+    "status": "卒業見込み",
     "highSchool": "龍南高校",
     "highSchoolGraduation": "2013",
     "schoolType": "4年制",
@@ -1135,8 +1136,14 @@
   "availability": "求職中 · 現在参画可能、即時参画可",
   "awards": [
     {
+      "id": "hycu-ai-learning-method-contest-encouragement",
+      "name": "2026 HYCU AI学習法コンテスト奨励賞",
+      "organization": "漢陽サイバー大学校",
+      "year": "2026"
+    },
+    {
       "id": "autonomous-driving-competition-excellence",
-      "name": "自律走行コンテスト優秀賞",
+      "name": "自律走行フォーミュレーションコンテスト優秀賞",
       "organization": "漢陽サイバー大学校",
       "year": "2026"
     }

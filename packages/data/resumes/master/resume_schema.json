@@ -74,14 +74,17 @@
           "type": "string",
           "enum": [
             "재학 중",
+            "졸업 예정",
             "졸업",
             "수료",
             "중퇴",
             "Enrolled",
+            "Expected Graduation",
             "Graduated",
             "Completed",
             "Withdrawn",
             "在学中",
+            "卒業見込み",
             "卒業",
             "修了",
             "中退"

@@ -10,7 +10,8 @@
     "school": "Hanyang Cyber University",
     "major": "Department of Computer Engineering",
     "startDate": "2024.03",
-    "status": "Enrolled",
+    "endDate": "2027.02",
+    "status": "Expected Graduation",
     "highSchool": "Yongnam High School",
     "highSchoolGraduation": "2013",
     "schoolType": "4-year",
@@ -1133,8 +1134,14 @@
   "availability": "Open to work · Open to interview requests",
   "awards": [
     {
+      "id": "hycu-ai-learning-method-contest-encouragement",
+      "name": "2026 HYCU AI Learning Method Contest Honorable Mention",
+      "organization": "Hanyang Cyber University",
+      "year": "2026"
+    },
+    {
       "id": "autonomous-driving-competition-excellence",
-      "name": "Autonomous Driving Competition Excellence Award",
+      "name": "Autonomous Driving Formulation Contest Excellence Award",
       "organization": "Hanyang Cyber University",
       "year": "2026"
     }

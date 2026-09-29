@@ -72,10 +72,11 @@
 - **관측성·보안**: Grafana, Prometheus, Loki, Splunk ES, FortiGate, WAF, DLP·nDLP, APT, SWG, IPS, DDoS, DRM, SSL VPN, NAC, Active Directory, EDR
 - **자동화·IaC**: Python, Shell, Ansible, Terraform
 
-## 학력·자격
+## 학력·자격·수상
 
-- 한양사이버대학교 컴퓨터공학과 (2024.03 ~ 재학중)
+- 한양사이버대학교 컴퓨터공학과 (4년제, 2024.03 ~ 2027.02 졸업예정)
 - CompTIA Linux+, LPIC Level 1, 리눅스마스터 2급, 사무자동화산업기사
 - CCNP, RHCSA (만료·갱신 예정), CKS 준비 중
+- 수상: 2026 HYCU AI학습법 공모전 장려상, 자율주행 포뮬레이션 공모전 우수상 (한양사이버대학교, 2026)
 
 상세 경력과 프로젝트는 <https://resume.jclee.me/resume-full.pdf>에서 확인할 수 있습니다.
