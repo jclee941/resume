@@ -227,16 +227,6 @@ openssl rand -hex 32
 wrangler secret put WEBHOOK_SECRET --env production
 ```
 
-#### 4. Cloudflare API Token
-
-```bash
-# Set your Cloudflare API token
-wrangler secret put CLOUDFLARE_API_TOKEN --env production
-
-# Paste your API token when prompted
-# (Used by MCP server to access Cloudflare APIs)
-```
-
 ### Secrets for Development
 
 For local development with `npx wrangler dev`, create a `.dev.vars` file:
@@ -299,103 +289,28 @@ database_name = "job-dashboard-db"
 database_id = "c858dda6-b752-4e12-b60c-2886e9483cc7"  # Use your database ID
 ```
 
-### Step 3: Initialize Database Schema
+### Step 3: Apply the JOB_DB Migrations
 
-The database requires 3 tables. Create migrations:
+The schema is managed as Wrangler D1 migrations in `apps/job-dashboard/migrations/`
+(`migrations_dir` on the `JOB_DB` entry in `wrangler.jsonc`). `0001_init.sql` is the
+baseline, `apps/job-dashboard/schema.sql` is the resulting snapshot, and
+`tests/unit/job-dashboard/migration-lineage.test.js` keeps the two identical.
 
 ```bash
-# Create migrations directory
-mkdir -p apps/job-dashboard/migrations
-
-# Create initial schema migration
-cat > apps/job-dashboard/migrations/0001_init.sql << 'SQLEOF'
--- Applications table
-CREATE TABLE IF NOT EXISTS applications (
-  id TEXT PRIMARY KEY,
-  platform TEXT NOT NULL,
-  job_id TEXT NOT NULL,
-  job_title TEXT NOT NULL,
-  company_name TEXT NOT NULL,
-  status TEXT DEFAULT 'pending',
-  applied_at INTEGER NOT NULL,
-  updated_at INTEGER NOT NULL,
-  url TEXT,
-  notes TEXT,
-  UNIQUE(platform, job_id)
-);
-
--- Job cache table (for deduplication)
-CREATE TABLE IF NOT EXISTS job_cache (
-  id TEXT PRIMARY KEY,
-  platform TEXT NOT NULL,
-  job_id TEXT NOT NULL,
-  job_title TEXT NOT NULL,
-  company_name TEXT NOT NULL,
-  cached_at INTEGER NOT NULL,
-  expires_at INTEGER NOT NULL,
-  UNIQUE(platform, job_id)
-);
-
--- Sync logs table (for audit)
-CREATE TABLE IF NOT EXISTS sync_logs (
-  id TEXT PRIMARY KEY,
-  platform TEXT NOT NULL,
-  sync_type TEXT NOT NULL,
-  status TEXT,
-  message TEXT,
-  started_at INTEGER NOT NULL,
-  completed_at INTEGER,
-  rows_processed INTEGER DEFAULT 0
-);
-
--- Create indexes for performance
-CREATE INDEX IF NOT EXISTS idx_applications_platform ON applications(platform);
-CREATE INDEX IF NOT EXISTS idx_applications_status ON applications(status);
-CREATE INDEX IF NOT EXISTS idx_applications_applied_at ON applications(applied_at DESC);
-CREATE INDEX IF NOT EXISTS idx_job_cache_expires ON job_cache(expires_at);
-CREATE INDEX IF NOT EXISTS idx_sync_logs_platform ON sync_logs(platform);
-SQLEOF
+npx wrangler d1 migrations apply job-dashboard-db --remote
 ```
 
-### Step 4: Apply Migrations to Production
+### Step 4: Confirm No Migration Is Pending
 
 ```bash
-# For production database
-wrangler d1 execute job-dashboard-db \
-  --file apps/job-dashboard/migrations/0001_init.sql \
-  --env production
-
-# Output should confirm tables created
+npx wrangler d1 migrations list job-dashboard-db --remote
+# Expected: No migrations to apply!
 ```
 
-### Step 5: Verify Schema
+### Step 5: Test Database Connectivity
 
 ```bash
-# List all tables
-wrangler d1 execute job-dashboard-db \
-  --command "SELECT name FROM sqlite_master WHERE type='table';" \
-  --env production
-
-# Output should show:
-# applications
-# job_cache
-# sync_logs
-```
-
-### Step 6: Test Database Connectivity
-
-```bash
-# Insert test row
-wrangler d1 execute job-dashboard-db \
-  --command "INSERT INTO applications (id, platform, job_id, job_title, company_name, applied_at, updated_at) VALUES ('test-1', 'wanted', 'job-123', 'Engineer', 'Company', 1000000, 1000000);" \
-  --env production
-
-# Query to verify
-wrangler d1 execute job-dashboard-db \
-  --command "SELECT COUNT(*) as count FROM applications;" \
-  --env production
-
-# Should return 1
+curl -s https://resume.jclee.me/health   # bindings.d1.healthy must be true
 ```
 
 ---
@@ -540,17 +455,6 @@ script_name = "job-dashboard"
 [durable_objects]
 migration_tag = "v1"
 migrations = [{ tag = "v1", new_classes = ["BrowserDurableObject"] }]
-```
-
-### Service Bindings
-
-For inter-worker communication (if using multiple workers):
-
-```toml
-[[services]]
-binding = "MCP_SERVICE"
-service = "job-mcp-server"
-environment = "production"
 ```
 
 ---
@@ -951,11 +855,10 @@ After rollback, investigate the issue:
    wrangler d1 create job-dashboard-db
    ```
 
-3. Run schema initialization:
+3. Apply the migrations:
 
    ```bash
-   wrangler d1 execute job-dashboard-db \
-     --file migrations/0001_init.sql
+   npx wrangler d1 migrations apply job-dashboard-db --local   # or --remote
    ```
 
 ### Issue: "Port 8787 already in use"

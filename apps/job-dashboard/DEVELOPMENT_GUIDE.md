@@ -193,8 +193,8 @@ Wrangler automatically reloads when you save files:
 # 2. Run with environment:
 npx wrangler dev --env local
 
-# 3. Execute schema:
-wrangler d1 execute job-dashboard-db --file migrations/0001_init.sql --env local
+# 3. Apply the migrations (0001_init.sql is the baseline):
+npx wrangler d1 migrations apply job-dashboard-db --local
 ```
 
 ### Working with Local KV
@@ -547,45 +547,26 @@ export function authMiddleware(handler) {
 ### Creating Migrations
 
 ```bash
-# Create new migration file
-touch apps/job-dashboard/migrations/0002_add_column.sql
-
-# Edit file
-cat > apps/job-dashboard/migrations/0002_add_column.sql << 'EOF'
--- Add new column to applications table
-ALTER TABLE applications ADD COLUMN IF NOT EXISTS status_updated_at INTEGER;
-
--- Create index for performance
-CREATE INDEX IF NOT EXISTS idx_status_updated ON applications(status_updated_at
-DESC);
-EOF
+# Creates apps/job-dashboard/migrations/NNNN_add_status_updated_at.sql
+npx wrangler d1 migrations create job-dashboard-db add_status_updated_at
+# Write the change there, then mirror the end state in apps/job-dashboard/schema.sql.
+# tests/unit/job-dashboard/migration-lineage.test.js fails until replaying
+# 0001_init.sql onward reproduces schema.sql.
 ```text
 
 ### Running Migrations Locally
 
 ```bash
-# Using wrangler dev (in-memory, recreates each startup)
-npx wrangler dev
-
-# Run migration once in the session
-wrangler d1 execute job-dashboard-db --file migrations/0002_add_column.sql
+npx wrangler d1 migrations apply job-dashboard-db --local
 ```text
 
 ### Running Migrations in Production
 
 ```bash
-# IMPORTANT: Always backup database first!
-# Production backup: https://dash.cloudflare.com/workers/d1
-
-# Run migration
-wrangler d1 execute job-dashboard-db \
-  --file apps/job-dashboard/migrations/0002_add_column.sql \
-  --env production
-
-# Verify
-wrangler d1 execute job-dashboard-db \
-  --command "PRAGMA table_info(applications);" \
-  --env production
+# D1 Time Travel keeps 30 days of point-in-time restores; note the bookmark first
+npx wrangler d1 time-travel info job-dashboard-db
+npx wrangler d1 migrations apply job-dashboard-db --remote
+npx wrangler d1 migrations list job-dashboard-db --remote   # expect: No migrations to apply!
 ```text
 
 ### Querying Database in Code
