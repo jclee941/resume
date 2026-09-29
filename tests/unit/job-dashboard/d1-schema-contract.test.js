@@ -59,6 +59,18 @@ function workerSqlStatements() {
   });
 }
 
+function missingRequiredColumns(database, sql) {
+  const insert = sql.match(/^\s*INSERT\s+(?:OR\s+\w+\s+)?INTO\s+(\w+)\s*\(([^)]*)\)/i);
+  if (!insert) return [];
+  const listed = new Set(insert[2].split(',').map((column) => column.trim().toLowerCase()));
+  return database
+    .prepare(`PRAGMA table_info(${insert[1]})`)
+    .all()
+    .filter((column) => column.notnull && column.dflt_value === null && !column.pk)
+    .map((column) => column.name)
+    .filter((name) => !listed.has(name.toLowerCase()));
+}
+
 test('every JOB_DB statement in the dashboard Worker compiles against schema.sql', () => {
   const database = new DatabaseSync(':memory:');
   try {
@@ -70,6 +82,10 @@ test('every JOB_DB statement in the dashboard Worker compiles against schema.sql
       try {
         database.prepare(sql);
         compiled += 1;
+        const missing = missingRequiredColumns(database, sql);
+        if (missing.length > 0) {
+          drift.push(`${file}: INSERT omits NOT NULL column(s) ${missing.join(', ')}`);
+        }
       } catch (error) {
         if (!PLACEHOLDER_ARTIFACT.test(error.message)) {
           drift.push(
