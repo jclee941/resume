@@ -6,10 +6,32 @@ const acorn = require('acorn');
 const test = globalThis.test || require('node:test');
 
 const root = path.join(__dirname, '../../..');
-const sourceRoot = path.join(root, 'apps/job-dashboard/src');
+const sourceRoots = ['apps/job-dashboard/src', 'apps/portfolio/lib'].map((dir) =>
+  path.join(root, dir)
+);
 const schemaPath = path.join(root, 'apps/job-dashboard/schema.sql');
 const SQL_START = /^\s*(SELECT|INSERT|UPDATE|DELETE|WITH|REPLACE)\b/i;
-const PLACEHOLDER_ARTIFACT = /syntax error|incomplete input/i;
+// Literals that start with a SQL keyword but are not SQL.
+const NOT_SQL = [
+  [
+    'apps/job-dashboard/src/handlers/sync/profile-sync-status.js',
+    'Update profile sync status failed:',
+  ],
+  ['apps/job-dashboard/src/router.js', 'DELETE'],
+];
+// Statements assembled at runtime (interpolations read as "1"); the second test compiles
+// every shape their builders emit.
+const DYNAMIC = [
+  [
+    'apps/job-dashboard/src/handlers/applications/application-repository.js',
+    'UPDATE applications SET 1 WHERE id = ?',
+  ],
+  [
+    'apps/job-dashboard/src/services/notifications/application-actions.js',
+    "UPDATE applications SET status = ?, 1 = datetime('now') WHERE id = ?",
+  ],
+];
+const KNOWN_UNCOMPILABLE = [...NOT_SQL, ...DYNAMIC].map(([file, text]) => `${file}: ${text}`);
 
 function listSourceFiles(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -48,7 +70,7 @@ function collectSql(node, found) {
 }
 
 function workerSqlStatements() {
-  return listSourceFiles(sourceRoot).flatMap((file) => {
+  return sourceRoots.flatMap(listSourceFiles).flatMap((file) => {
     const ast = acorn.parse(fs.readFileSync(file, 'utf8'), {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -71,12 +93,13 @@ function missingRequiredColumns(database, sql) {
     .filter((name) => !listed.has(name.toLowerCase()));
 }
 
-test('every JOB_DB statement in the dashboard Worker compiles against schema.sql', () => {
+test('every JOB_DB statement in the Worker compiles against schema.sql', () => {
   const database = new DatabaseSync(':memory:');
   try {
     database.exec(fs.readFileSync(schemaPath, 'utf8'));
     const statements = workerSqlStatements();
     const drift = [];
+    const uncompilable = [];
     let compiled = 0;
     for (const { file, sql } of statements) {
       try {
@@ -87,15 +110,63 @@ test('every JOB_DB statement in the dashboard Worker compiles against schema.sql
           drift.push(`${file}: INSERT omits NOT NULL column(s) ${missing.join(', ')}`);
         }
       } catch (error) {
-        if (!PLACEHOLDER_ARTIFACT.test(error.message)) {
-          drift.push(
-            `${file}: ${error.message} :: ${sql.replace(/\s+/g, ' ').trim().slice(0, 120)}`
-          );
-        }
+        const key = `${file}: ${sql.replace(/\s+/g, ' ').trim()}`;
+        if (KNOWN_UNCOMPILABLE.includes(key)) uncompilable.push(key);
+        else drift.push(`${key.slice(0, 160)} :: ${error.message}`);
       }
     }
     assert.ok(compiled >= 50, `only ${compiled} statements compiled; the extractor found too few`);
     assert.deepEqual(drift, []);
+    assert.deepEqual(uncompilable.sort(), [...KNOWN_UNCOMPILABLE].sort());
+  } finally {
+    database.close();
+  }
+});
+
+function recordingDb(changes) {
+  const statements = [];
+  const result = {
+    run: async () => ({ meta: { changes } }),
+    first: async () => null,
+    all: async () => ({ results: [] }),
+  };
+  const db = {
+    prepare(sql) {
+      statements.push(sql);
+      return { ...result, bind: () => result };
+    },
+  };
+  return { db, statements };
+}
+
+test('runtime-assembled JOB_DB writes compile for every shape their builders emit', async () => {
+  const src = path.join(root, 'apps/job-dashboard/src');
+  const { ApplicationRepository } = await import(
+    path.join(src, 'handlers/applications/application-repository.js')
+  );
+  const { approveApplication, rejectApplication } = await import(
+    path.join(src, 'services/notifications/application-actions.js')
+  );
+  const repository = recordingDb(1);
+  const applications = new ApplicationRepository(repository.db);
+  const fieldSets = [{ notes: 'n' }, { priority: 'high' }, { resumeId: 'r' }];
+  for (const fields of [...fieldSets, Object.assign({}, ...fieldSets)]) {
+    await applications.update('app-1', fields, '2026-09-29T00:00:00.000Z');
+  }
+  const decisions = recordingDb(0);
+  await approveApplication({ env: { JOB_DB: decisions.db } }, 'app-1');
+  await rejectApplication({ env: { JOB_DB: decisions.db } }, 'app-1');
+
+  const shapes = [...repository.statements, ...decisions.statements].filter((sql) =>
+    /^\s*UPDATE applications SET/i.test(sql)
+  );
+  assert.equal(shapes.length, 6);
+  assert.ok(shapes.some((sql) => sql.includes('approved_at')));
+  assert.ok(shapes.some((sql) => sql.includes('rejected_at')));
+  const database = new DatabaseSync(':memory:');
+  try {
+    database.exec(fs.readFileSync(schemaPath, 'utf8'));
+    for (const sql of shapes) database.prepare(sql);
   } finally {
     database.close();
   }
