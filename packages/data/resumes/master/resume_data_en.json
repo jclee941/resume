@@ -763,7 +763,7 @@
       "id": "hycu-fsds-autonomous-driving",
       "name": "HYCU FSDS Autonomous Driving",
       "period": "2025.11 ~ 2026.02",
-      "description": "Entry for Hanyang Cyber University's 2026 Autonomous Driving Formula Competition: cone perception and driving control in the Formula Student Driverless Simulator (FSDS). ROS2 perception and control nodes are packaged as Docker containers and validated together with vehicle dynamics and sensor models in the AirSim simulation. Sensor processing was reproduced and debugged with a Gazebo-ROS bridge and rviz2 visualization.",
+      "description": "Won the 2026 Autonomous Driving Formula Competition Excellence Award (Hanyang Cyber University). Implemented cone perception and driving control in the Formula Student Driverless Simulator (FSDS), packaging ROS2 perception and control nodes as Docker containers and validating them with vehicle dynamics and sensor models in the AirSim simulation. Sensor processing was reproduced and debugged with a Gazebo-ROS bridge and rviz2 visualization.",
       "technologies": [
         "Python",
         "ROS",
