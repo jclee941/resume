@@ -27,8 +27,8 @@ job-dashboard/
 │   ├── durable-objects/      # BrowserSessionDO
 │   └── utils/                # dashboard-local helpers
 ├── package.json              # standalone deploy intentionally fails
-├── migrations/               # Wrangler D1 migrations applied to production JOB_DB
-├── schema.sql                # full JOB_DB schema for fresh databases
+├── migrations/               # Wrangler D1 migrations, 0001_init.sql baseline onward
+├── schema.sql                # snapshot the migrations must reproduce
 └── README.md                 # deployment and API reference
 ```
 
@@ -52,7 +52,8 @@ job-dashboard/
 - **D1** (`JOB_DB` / `job-dashboard-db`): the Worker's only database. Schema changes are
   `npx wrangler d1 migrations create job-dashboard-db <name>` then `npx wrangler d1
 migrations apply job-dashboard-db --remote`; mirror the end state in `schema.sql`
-  (tests/unit/job-dashboard/d1-schema-contract.test.js compiles all Worker SQL against it)
+  (migration-lineage.test.js replays 0001_init.sql onward against it;
+  d1-schema-contract.test.js compiles all Worker SQL against it)
 - **KV**: `SESSIONS`, `RATE_LIMIT_KV`, `NONCE_KV` (all with TTL)
 - **Browser**: `MYBROWSER` (Browser Rendering), `BROWSER_SESSION` (Durable Object)
 - **Workflows**: 6 (job-crawling, application, resume-sync, daily-report, health-check, cleanup)
