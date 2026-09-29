@@ -717,7 +717,7 @@
       "id": "observability-platform",
       "name": "Observability Platform",
       "period": "2024.06 ~ 현재",
-      "description": "NVMe 스토리지 기반 Proxmox VE 홈랩의 메트릭은 Prometheus node_exporter로, 로그는 Loki Promtail로 수집합니다. Grafana 대시보드 정의는 코드로 관리해 같은 구성을 다시 배포할 수 있게 했고, Grafana Explore에서 메트릭과 로그를 한 화면에서 조회합니다.",
+      "description": "홈랩 서비스의 메트릭과 로그를 서비스마다 따로 확인해야 해서, 장애가 나면 원인을 찾는 데 여러 화면을 오가야 했습니다. NVMe 스토리지 기반 Proxmox VE 홈랩의 메트릭은 Prometheus node_exporter로, 로그는 Loki Promtail로 수집하고, Grafana 대시보드 정의를 코드로 관리했습니다. 지금은 Grafana Explore 한 화면에서 메트릭과 로그를 함께 조회하고, 같은 대시보드 구성을 코드로 다시 배포할 수 있습니다.",
       "technologies": [
         "Grafana",
         "Prometheus",
@@ -747,7 +747,7 @@
       "id": "security-alert-system",
       "name": "Security Alert System",
       "period": "2025.01 ~ 현재",
-      "description": "FortiGate 보안 이벤트를 Splunk Saved Search와 Webhook으로 Slack에 알리는 도구입니다. CSV 기반 state tracker가 상태가 바뀔 때만 알림을 보내 같은 이벤트의 중복 알림을 막습니다. FortiGate LogID를 severity/category 기준으로 매핑해 Splunk에서 이벤트를 분류하고, 후속 확인 이력도 함께 기록합니다.",
+      "description": "FortiGate 보안 이벤트가 장비 syslog와 Splunk에 나뉘어 쌓여, 이벤트가 발생해도 담당자가 알아차리기까지 시간이 걸렸습니다. Splunk Saved Search와 Webhook으로 이벤트를 Slack에 알리고, CSV 기반 state tracker가 상태가 바뀔 때만 알림을 보내도록 해 중복 알림을 막았습니다. FortiGate LogID를 severity/category 기준으로 매핑해 Splunk에서 이벤트를 분류하고, 후속 확인 이력도 함께 기록합니다.",
       "technologies": [
         "Splunk",
         "Python",
@@ -771,7 +771,7 @@
       "id": "ip-blacklist-platform",
       "name": "IP Blacklist Platform",
       "period": "2024.12 ~ 현재",
-      "description": "AbuseIPDB, Emerging Threats, AlienVault OTX 위협 인텔리전스 피드를 한곳에서 조회하는 도구입니다. 피드마다 소스 어댑터를 두고, SQLAlchemy 모델에서 IP 평판 필드를 정규화했습니다. 스키마 마이그레이션은 Alembic으로 관리해 피드를 추가할 때 데이터베이스 변경과 어댑터 구현을 따로 진행할 수 있게 했습니다.",
+      "description": "악성 IP 하나를 조사하려면 AbuseIPDB, Emerging Threats, AlienVault OTX를 각각 따로 조회해야 했습니다. 피드마다 소스 어댑터를 두고 SQLAlchemy 모델에서 IP 평판 필드를 정규화해, 한곳에서 조회하는 도구를 만들었습니다. 스키마 마이그레이션은 Alembic으로 관리해 피드를 추가할 때 데이터베이스 변경과 어댑터 구현을 따로 진행할 수 있습니다.",
       "technologies": [
         "JavaScript",
         "Flask",
@@ -790,7 +790,7 @@
       "id": "hycu-fsds-autonomous-driving",
       "name": "HYCU FSDS 자율주행",
       "period": "2025.11 ~ 2026.02",
-      "description": "2026 자율주행 포뮬러 경진대회 우수상(한양사이버대학교)을 수상했습니다. Formula Student Driverless Simulator(FSDS) 환경에서 콘 인지와 주행 제어를 구현하고, ROS2 기반 인지·제어 노드를 Docker 컨테이너로 패키징해 AirSim 시뮬레이션에서 차량 동역학과 센서 모델을 함께 검증했습니다. Gazebo-ROS 브릿지와 rviz2 시각화로 센서 처리 과정을 재현하며 디버깅했습니다.",
+      "description": "한양사이버대학교 2026 자율주행 포뮬러 경진대회에서 우수상을 받았습니다. Formula Student Driverless Simulator(FSDS)에서 콘을 인지하고 차량을 주행 제어하는 ROS2 기반 인지·제어 노드를 만들어 Docker 컨테이너로 패키징했습니다. AirSim 시뮬레이션에서 차량 동역학과 센서 모델로 검증하고, Gazebo-ROS 브릿지와 rviz2 시각화로 센서 처리 과정을 디버깅했습니다.",
       "technologies": [
         "Python",
         "ROS",
@@ -810,7 +810,7 @@
       "id": "resume-portfolio",
       "name": "Resume Portfolio",
       "period": "2024.01 ~ 현재",
-      "description": "한국어·영어·일본어 이력서 데이터(SSoT)로 포트폴리오 사이트를 생성해 Cloudflare Workers에 배포합니다. JSON-LD와 OpenGraph 메타데이터도 같은 데이터에서 만들어 사이트와 PDF, GitHub의 내용 차이를 줄였습니다. 빌드·테스트는 GitHub Actions에서 검증하고, 운영 로그는 Cloudflare Workers Logs와 Loki에서 확인합니다.",
+      "description": "이력서, PDF, GitHub에 적힌 경력·프로젝트 내용이 조금씩 달라서, 한 곳을 고치면 나머지를 따로 맞춰야 했습니다. 한국어·영어·일본어 이력서 데이터(SSoT)에서 포트폴리오 사이트와 JSON-LD·OpenGraph 메타데이터를 생성해 Cloudflare Workers에 배포하도록 바꿨습니다. 빌드·테스트는 GitHub Actions에서 검증하고, 운영 로그는 Cloudflare Workers Logs와 Loki에서 확인합니다.",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
@@ -833,7 +833,7 @@
       "name": "Terraform Homelab IaC",
       "period": "2024.06 ~ 현재",
       "githubUrl": "https://github.com/jclee941/terraform",
-      "description": "Proxmox VM/LXC, Cloudflare DNS·Workers·WAF, k3s bootstrap 리소스를 Terraform module로 관리합니다. PR마다 plan 결과를 검증한 뒤 적용하므로, GUI에서 직접 바꾸던 변경이 Git 이력으로 남습니다.",
+      "description": "홈랩 설정을 GUI에서 직접 바꾸다 보니 변경 이력이 남지 않아, 무엇이 언제 바뀌었는지 추적하거나 다시 만들기 어려웠습니다. Proxmox VM/LXC, Cloudflare DNS·Workers·WAF, k3s bootstrap 리소스를 Terraform module로 옮기고, PR마다 plan 결과를 검증한 뒤 적용하게 했습니다. 이제 인프라 변경은 Git 이력으로 남고, 같은 구성을 코드로 다시 만들 수 있습니다.",
       "highlights": [
         "NVMe 기반 Proxmox 마이그레이션 이후 변경 이력을 Git으로 추적하는 IaC 전환",
         "DNS·Edge 설정의 코드 관리",
@@ -855,7 +855,7 @@
       "name": "SafetyWallet (CF Workers PWA)",
       "period": "2026.01 ~ 2026.04",
       "githubUrl": "https://github.com/jclee941/safetywallet",
-      "description": "현장 작업자의 안전 매뉴얼, 교육 이수 내역, 비상 연락망을 종이 대신 조회하는 Cloudflare Workers 기반 PWA와 Next.js 관리 화면입니다. D1(SQLite)에 작업자 프로필·교육 이수 상태·비상 연락처를 저장하고, 교육 만료 알림 같은 비동기 작업은 Workers Queue로 분리했습니다. 매뉴얼 PDF 원본은 Workers KV에 두고, Service Worker Cache API로 네트워크가 약한 현장 단말에서도 오프라인으로 조회할 수 있게 했습니다. 관리 화면은 Next.js와 TypeScript로 만들었고, JWT(짧은 수명의 access token + HttpOnly refresh token) 세션 인증과 역할 기반 접근 제어(RBAC)로 작업자와 관리자 권한을 나눴습니다.",
+      "description": "현장 작업자의 안전 매뉴얼, 교육 이수 내역, 비상 연락망이 종이로 관리돼 현장에서 바로 찾아보기 어려웠고, 관리자는 서류를 하나씩 확인해야 했습니다. Cloudflare Workers 기반 PWA와 Next.js 관리 화면을 만들고, D1(SQLite)에 작업자 프로필·교육 이수 상태·비상 연락처를, Workers KV에 매뉴얼 PDF 원본을 저장했습니다. 교육 만료 알림은 Workers Queue로 분리했고, Service Worker Cache API로 네트워크가 약한 현장에서도 매뉴얼을 오프라인으로 볼 수 있습니다. 관리 화면은 Next.js와 TypeScript로 만들었고, JWT(짧은 수명의 access token + HttpOnly refresh token) 세션 인증과 역할 기반 접근 제어(RBAC)로 작업자와 관리자 권한을 나눴습니다.",
       "highlights": [
         "현장 단말에서 바로 조회하는 Cloudflare Workers Edge 배포",
         "D1·KV·Cache API로 역할을 나눈 저장 구조",
@@ -890,7 +890,7 @@
       "name": "jclee-bot GitHub App",
       "period": "2026.04 ~ 현재",
       "githubUrl": "https://github.com/jclee941/jclee-bot",
-      "description": "jclee-bot은 CLIProxyAPI를 거친 LLM PR 리뷰와 시크릿 스캔·actionlint·문서 정책 검사 결과를 Check Run으로 함께 게시하는 GitHub App입니다. LLM 리뷰와 정책 검사 결과를 PR 화면 한 곳에서 확인하고, 리뷰 코멘트는 한국어를 우선으로 작성합니다. 실행 로그는 ELK로 수집합니다.",
+      "description": "여러 저장소의 PR 리뷰를 LLM에 맡기면서, 그 결과를 같은 PR에서 독립적인 검사와 함께 확인할 방법이 필요했습니다. jclee-bot은 CLIProxyAPI를 거친 LLM PR 리뷰와 시크릿 스캔·actionlint·문서 정책 검사 결과를 Check Run으로 함께 게시하는 GitHub App입니다. 리뷰 코멘트는 한국어를 우선으로 작성하고, 실행 로그는 ELK로 수집합니다.",
       "highlights": [
         "CLIProxyAPI 기반 LLM PR 리뷰 생성",
         "시크릿 스캔·actionlint·문서 정책 Check Run으로 LLM 출력 검증",
@@ -913,7 +913,7 @@
       "name": "AI 콘텐츠 자동화 파이프라인",
       "period": "2026.06 ~ 현재",
       "githubUrl": null,
-      "description": "스크립트 작성, 음성 합성(TTS), 영상 생성, 업로드를 단계별로 나눠 실행하는 콘텐츠 제작 파이프라인입니다. Python worker와 n8n workflow가 각 단계를 실행하고, 작업 상태와 산출물 메타데이터는 Supabase PostgreSQL/Storage에 저장합니다. 외부 생성 API 호출은 재시도할 수 있는 작업 단위로 나눴고, 채널별 후처리 규칙은 워크플로 설정으로 관리합니다.",
+      "description": "여러 채널용 콘텐츠를 만들 때 스크립트 작성, 음성 합성, 영상 생성, 업로드를 각각 따로 실행해 실행 기록과 로그가 여러 도구에 나뉘었습니다. Python worker와 n8n workflow가 각 단계를 실행하고, 작업 상태와 산출물 메타데이터는 Supabase PostgreSQL/Storage에 저장하도록 파이프라인을 구성했습니다. 외부 생성 API 호출은 재시도할 수 있는 작업 단위로 나눴고, 채널별 후처리 규칙은 워크플로 설정으로 관리합니다.",
       "highlights": [
         "Python worker와 n8n workflow로 스크립트 생성, TTS, 영상 생성, 업로드 단계를 분리",
         "Supabase PostgreSQL/Storage에 작업 상태와 산출물 메타데이터를 저장",
@@ -937,7 +937,7 @@
       "name": "Bug Bounty Recon Toolkit",
       "period": "2025.10 ~ 현재",
       "githubUrl": "https://github.com/jclee941/bug",
-      "description": "버그바운티 정찰 단계(서브도메인 발견, 알림, 취약점 스캔)를 자동으로 실행하는 도구입니다. Subfinder, httpx, Nuclei를 Go 기반 파이프라인과 Makefile CLI로 묶어 cron으로 주기 실행하고, 결과 분석은 Python으로 합니다. 새 서브도메인이 발견되면 Slack으로 알리고, Nuclei 결과는 severity별로 저장합니다.",
+      "description": "버그바운티 정찰(서브도메인 발견, 알림, 취약점 스캔)을 대상마다 손으로 반복해야 했습니다. Subfinder, httpx, Nuclei를 Go 기반 파이프라인과 Makefile CLI로 묶어 cron으로 주기 실행하고, 결과 분석은 Python으로 합니다. 새 서브도메인이 발견되면 Slack으로 알리고, Nuclei 결과는 severity별로 저장합니다.",
       "highlights": [
         "여러 대상을 병렬로 스캔하는 동시성 설계",
         "취약점을 발견하면 바로 알리는 매칭·알림 연동",
@@ -960,7 +960,7 @@
       "name": "Firewall Policy Automation",
       "period": "2026.06 ~ 현재",
       "githubUrl": "https://github.com/jclee941/firewall",
-      "description": "방화벽 정책 요청서와 방화벽 대역표를 수작업으로 대조하던 절차를 Excel VBA 도구로 바꾼 프로젝트입니다. 정책 요청 행, 방화벽 목록, 대역 기준표를 한 통합 문서 안에서 검증하므로 대상 방화벽 판단과 검토 기록이 자동으로 남습니다.",
+      "description": "방화벽 정책 요청이 들어올 때마다 요청서와 방화벽 대역표를 손으로 대조해 대상 방화벽을 판단해야 했습니다. 정책 요청 행, 방화벽 목록, 대역 기준표를 한 통합 문서 안에서 검증하는 Excel VBA 도구를 만들었습니다. 운영자는 기존 Excel 양식을 그대로 쓰고, 대상 방화벽 판단과 검토 기록은 행 단위로 자동으로 남습니다.",
       "highlights": [
         "정책 요청서와 방화벽 대역표를 같은 입력 형식으로 정리",
         "대상 방화벽 판단 내역을 행 단위로 추적",
@@ -982,7 +982,7 @@
       "name": "tmux Productivity Suite",
       "period": "2026.06 ~ 현재",
       "githubUrl": "https://github.com/jclee941/tmux",
-      "description": "터미널 세션, 프로젝트별 작업 레이아웃, Slack 브리지를 tmux로 관리하는 개인 도구입니다. Bash 설정, YAML 레이아웃, Bun/TypeScript TUI를 한 저장소에서 관리하고, 세션 복구와 프로젝트 전환을 스크립트로 처리합니다.",
+      "description": "프로젝트를 바꿀 때마다 터미널 세션과 작업 레이아웃을 손으로 다시 구성해야 했습니다. tmux 세션, 프로젝트별 레이아웃, Slack 브리지를 Bash 설정, YAML 레이아웃, Bun/TypeScript TUI로 묶어 한 저장소에서 관리합니다. 세션 복구와 프로젝트 전환은 스크립트와 키 바인딩으로 처리합니다.",
       "highlights": [
         "프로젝트별 tmux 세션과 레이아웃 관리",
         "YAML 기반 작업 공간 정의와 터미널 UI",
@@ -1004,7 +1004,7 @@
       "id": "mcp-servers",
       "name": "PlayMCP 도구 서버",
       "period": "2026.06 ~ 현재",
-      "description": "AI 에이전트가 호출하는 MCP 도구 서버입니다. meetup-coordinator와 nunchi-translator를 PlayMCP 호환 MCP 서버로 구현해 Kakao Cloud에 배포했습니다. 각 도구는 inputSchema·outputSchema로 입력과 출력을 검증하고, 요청을 stateless로 처리합니다.",
+      "description": "AI 에이전트가 호출할 도구를 만들면서, 에이전트가 보낸 입력과 도구의 출력이 약속한 형식을 지키는지 확인할 방법이 필요했습니다. meetup-coordinator와 nunchi-translator를 PlayMCP 호환 MCP 서버로 구현해 Kakao Cloud에 배포했습니다. 각 도구는 inputSchema·outputSchema로 입력과 출력을 검증하고, 요청을 stateless로 처리합니다.",
       "tagline": "MCP 도구 서버",
       "technologies": [
         "TypeScript",
