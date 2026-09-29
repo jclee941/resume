@@ -91,31 +91,6 @@ function truncatedRows(targetFields, mergedFields) {
     .map((field) => field.name.replace(/\.Index_Name$/, ''));
 }
 
-/** Resume-level fields left out of the review: personal data and long free text. */
-const PRIVATE_FORM_FIELD =
-  /User_Name|Email|Cellphone|Phone|Address|Birth|M_Career_Text|Introduce|Attach|GitHub|Homepage|Photo/i;
-
-/**
- * Short resume-level values of the live form (no row, index, InputStat, or personal fields),
- * for review.
- * @param {FormField[]} fields
- * @returns {Record<string, string>}
- */
-function formSettings(fields) {
-  return Object.fromEntries(
-    fields
-      .filter(
-        (field) =>
-          !field.name.includes('[') &&
-          !/\.[Ii]ndex$|^InputStat[._]/.test(field.name) &&
-          !PRIVATE_FORM_FIELD.test(field.name) &&
-          String(field.value ?? '').length > 0 &&
-          String(field.value ?? '').length <= 40
-      )
-      .map((field) => [field.name, String(field.value ?? '')])
-  );
-}
-
 /**
  * Award names in the live form, for review.
  * @param {FormField[]} fields
@@ -222,7 +197,6 @@ export async function syncJobKoreaFromSsot(env, ssot, options) {
       inputStat: inputStatFlags(editor.fields),
       liveRowFields: liveRowFieldNames(editor.fields),
       liveAwards: liveAwardNames(editor.fields),
-      formSettings: formSettings(editor.fields),
       formFieldCount: editor.fields.length,
       mergedFieldCount: mergedFields.length,
       rows: describeReplacedRows(editor.fields, mergedFields),
