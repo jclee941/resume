@@ -10,7 +10,8 @@
     "school": "한양사이버대학교",
     "major": "컴퓨터공학과",
     "startDate": "2024.03",
-    "status": "재학 중",
+    "endDate": "2027.02",
+    "status": "졸업 예정",
     "highSchool": "용남고등학교",
     "highSchoolGraduation": "2013",
     "schoolType": "4년제",
@@ -1049,8 +1050,14 @@
   },
   "awards": [
     {
+      "id": "hycu-ai-learning-method-contest-encouragement",
+      "name": "2026 HYCU AI학습법 공모전 장려상",
+      "organization": "한양사이버대학교",
+      "year": "2026"
+    },
+    {
       "id": "autonomous-driving-competition-excellence",
-      "name": "자율주행 경진대회 우수상",
+      "name": "자율주행 포뮬레이션 공모전 우수상",
       "organization": "한양사이버대학교",
       "year": "2026"
     }
