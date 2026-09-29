@@ -1,3 +1,4 @@
+import { refreshJobKoreaSession } from '../jobkorea/mint-session.js';
 import { refreshWantedSession } from '../wanted/mint-session.js';
 
 // CF-native migration Wave 1: the resume-sync Cron Trigger.
@@ -9,12 +10,12 @@ export const RESUME_SYNC_CRON = '0 21 * * *';
  * Route a Cloudflare scheduled() invocation by its matched cron expression.
  * - RESUME_SYNC_CRON  -> ResumeSyncWorkflow (already invocable via HTTP route + queue).
  *   Defaults to dryRun so a scheduled run never pushes to job platforms until the
- *   owner opts in via RESUME_SYNC_CRON_DRY_RUN=false. Refreshes the Wanted
- *   `auth:wanted` KV session first (best-effort — a mint failure is logged but
- *   must not abort workflow creation; export-wanted then fails with the reason).
+ *   owner opts in via RESUME_SYNC_CRON_DRY_RUN=false. Refreshes the Wanted and
+ *   JobKorea `auth:<platform>` KV sessions first (best-effort — a mint failure is logged but
+ *   must not abort workflow creation; the platform sync step then reports the reason).
  * - anything else     -> logged and ignored; wrangler.jsonc declares no other cron.
  * @param {{ cron?: string }} controller
- * @param {Parameters<typeof refreshWantedSession>[0] & {
+ * @param {Parameters<typeof refreshWantedSession>[0] & Parameters<typeof refreshJobKoreaSession>[0] & {
  *   RESUME_SYNC_WORKFLOW?: { create(options: { params: unknown }): Promise<unknown> };
  *   RESUME_SYNC_CRON_DRY_RUN?: string;
  * }} env
@@ -24,11 +25,15 @@ export const RESUME_SYNC_CRON = '0 21 * * *';
 export async function scheduled(controller, env, ctx) {
   if (controller?.cron === RESUME_SYNC_CRON) {
     if (!env.RESUME_SYNC_WORKFLOW) return;
-    const refresh = await refreshWantedSession(env);
-    if (!refresh.ok) console.warn('[cron] Wanted session refresh failed:', refresh.error);
+    const [wanted, jobkorea] = await Promise.all([
+      refreshWantedSession(env),
+      refreshJobKoreaSession(env),
+    ]);
+    if (!wanted.ok) console.warn('[cron] Wanted session refresh failed:', wanted.error);
+    if (!jobkorea.ok) console.warn('[cron] JobKorea session refresh failed:', jobkorea.error);
     const dryRun = String(env.RESUME_SYNC_CRON_DRY_RUN ?? 'true').toLowerCase() !== 'false';
     const run = env.RESUME_SYNC_WORKFLOW.create({
-      params: { sections: ['all'], dryRun, source: 'cron' },
+      params: { dryRun, source: 'cron' },
     });
     ctx.waitUntil(run);
     await run;

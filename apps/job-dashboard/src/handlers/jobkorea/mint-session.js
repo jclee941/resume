@@ -9,7 +9,7 @@
  * @module handlers/jobkorea/mint-session
  */
 
-import { withBrowserSession as defaultWithBrowserSession } from '../browser/browser-service.js';
+import { withBrowserSession as defaultWithBrowserSession } from '../../services/browser-session.js';
 import { writePlatformSession } from '../../services/platform-session.js';
 import {
   SUBMIT_SELECTOR,
@@ -31,7 +31,7 @@ export const JOBKOREA_SESSION_TTL_S = 60 * 60 * 6; // 6h
  *   JOBKOREA_USERNAME?: string;
  *   JOBKOREA_EMAIL?: string;
  *   JOBKOREA_PASSWORD?: string;
- *   BROWSER_SESSION: import('../browser/browser-service.js').DurableObjectNamespaceBinding;
+ *   BROWSER_SESSION: import('../../services/browser-session.js').DurableObjectNamespaceBinding;
  *   MYBROWSER: import('@cloudflare/puppeteer').ConnectOptions | import('@cloudflare/puppeteer').BrowserWorker;
  *   SESSIONS?: { put: Function };
  *   [key: string]: unknown;

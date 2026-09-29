@@ -8,7 +8,7 @@ beforeAll(async () => {
 
 // Regression: the 0 21 * * * cron starts ResumeSyncWorkflow without resumeId, which
 // made D1 reject bind(undefined) on every run. Platform calls must use the stored
-// Wanted target resume ID, not the master key.
+// Wanted target resume ID, not the master key, and each platform reports its own outcome.
 describe('ResumeSyncWorkflow resume identifiers', () => {
   let ResumeSyncWorkflow;
   let originalFetch;
@@ -41,7 +41,7 @@ describe('ResumeSyncWorkflow resume identifiers', () => {
   function createEnv({ targetResumeId = 'W-100' } = {}) {
     const binds = [];
     const row = {
-      data: JSON.stringify({ careers: [], skills: [] }),
+      data: JSON.stringify({ personal: { name: 'Tester' }, careers: [], skills: [] }),
       target_resume_id: targetResumeId,
     };
     return {
@@ -50,12 +50,12 @@ describe('ResumeSyncWorkflow resume identifiers', () => {
         prepare: () => ({
           bind: (...values) => {
             binds.push(values);
-            return { first: async () => row };
+            return { first: async () => row, run: async () => ({}) };
           },
         }),
       },
       ENCRYPTION_KEY: TEST_ENCRYPTION_KEY,
-      SESSIONS: { get: async () => wantedSession },
+      SESSIONS: { get: async (key) => (key === 'auth:wanted' ? wantedSession : null) },
     };
   }
 
@@ -64,32 +64,42 @@ describe('ResumeSyncWorkflow resume identifiers', () => {
     return new ResumeSyncWorkflow({}, env).run({ instanceId: 'sync-1', payload }, step);
   }
 
-  test('cron payload defaults to the master resume and exports the stored Wanted target', async () => {
+  test('cron payload defaults to the master resume and reads the stored Wanted target', async () => {
     const env = createEnv();
 
-    const result = await run(env, { sections: ['all'], dryRun: true, source: 'cron' });
+    const result = await run(env, { dryRun: true, source: 'cron' });
 
-    expect(result).toMatchObject({ success: true, dryRun: true });
     expect(env.binds[0]).toEqual(['master']);
+    expect(result.platforms).toEqual(['wanted', 'jobkorea']);
+    expect(result.results.wanted).toMatchObject({ success: true, dryRun: true });
+    expect(result.results.jobkorea.error).toMatch('auth:jobkorea');
     expect(global.fetch.mock.calls[0][0]).toBe(
-      'https://www.wanted.co.kr/api/chaos/resumes/v1/W-100'
+      'https://www.wanted.co.kr/api/chaos/resumes/v2/W-100'
     );
   });
 
   test('explicit targetResumeId overrides the stored target', async () => {
     const env = createEnv();
 
-    await run(env, { resumeId: 'master', targetResumeId: 'W-200', dryRun: true });
+    await run(env, {
+      resumeId: 'master',
+      targetResumeId: 'W-200',
+      dryRun: true,
+      platforms: ['wanted'],
+    });
 
     expect(global.fetch.mock.calls[0][0]).toBe(
-      'https://www.wanted.co.kr/api/chaos/resumes/v1/W-200'
+      'https://www.wanted.co.kr/api/chaos/resumes/v2/W-200'
     );
   });
 
-  test('missing Wanted target fails with an actionable error instead of calling Wanted', async () => {
+  test('missing Wanted target is reported without calling Wanted', async () => {
     const env = createEnv({ targetResumeId: null });
 
-    await expect(run(env, { dryRun: true })).rejects.toThrow('No Wanted resume ID');
+    const result = await run(env, { dryRun: true, platforms: ['wanted'] });
+
+    expect(result.success).toBe(false);
+    expect(result.results.wanted.error).toMatch('No Wanted target resume ID');
     expect(global.fetch).not.toHaveBeenCalled();
   });
 });

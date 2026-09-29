@@ -21,7 +21,9 @@ services/
 ├── remember-client.js         # Remember platform adapter
 ├── notifications.js           # notification orchestration facade
 ├── notifications/             # delivery, formatting, Telegram actions
-├── browser/                   # browser/proxy support
+├── browser-session.js         # Browser Rendering session borrow/release (BROWSER_SESSION DO)
+├── platform-session.js        # encrypted KV platform sessions (auth:<platform>)
+├── resume-platform-sync/      # Worker-native resume sync (Wanted, JobKorea)
 └── rate-limiter/              # token-bucket service + tests
 ```
 

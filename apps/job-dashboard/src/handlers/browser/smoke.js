@@ -13,7 +13,7 @@
  * @module handlers/browser/smoke
  */
 
-import { withBrowserSession as defaultWithBrowserSession } from './browser-service.js';
+import { withBrowserSession as defaultWithBrowserSession } from '../../services/browser-session.js';
 
 const DEFAULT_URL = 'https://example.com';
 

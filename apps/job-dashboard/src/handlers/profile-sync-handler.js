@@ -1,7 +1,9 @@
 import { BaseHandler } from './base-handler.js';
 import { normalizeError } from '@resume/shared/errors';
-import { buildProfileData } from './mappers/index.js';
-import { syncWantedProfile } from './sync/wanted-profile-sync.js';
+import {
+  RESUME_SYNC_PLATFORMS,
+  syncResumePlatform,
+} from '../services/resume-platform-sync/index.js';
 import {
   getProfileSyncStatusResponse,
   updateProfileSyncStatusResponse,
@@ -20,68 +22,67 @@ import {
 
 /**
  * @typedef {{
- *   DB?: ProfileSyncDb;
- *   [key: string]: unknown;
- * } & import('../services/notifications.js').NotificationEnv} ProfileSyncEnv
+ *   JOB_DB?: ProfileSyncDb;
+ * } & import('../services/resume-platform-sync/index.js').ResumePlatformSyncEnv &
+ *   import('../services/notifications.js').NotificationEnv} ProfileSyncEnv
  */
 
 /**
  * @typedef {{
- *   getCookies(platform: string): Promise<string | null>;
- * }} ProfileSyncAuth
+ *   resumeId?: string;
+ *   targetResumeId?: string | null;
+ *   ssotData?: import('../services/resume-platform-sync/index.js').ResumePlatformSsot | null;
+ *   platforms?: string[];
+ *   dryRun?: boolean;
+ * }} ProfileSyncRequestBody
  */
 
 /**
- * @typedef {{
- *   error?: unknown;
- *   authenticated?: boolean;
- *   method?: string;
- *   dispatched?: boolean;
- *   syncResults?: { failed?: unknown[] };
- *   [key: string]: unknown;
- * }} ProfileSyncPlatformResult
- */
-
-/**
- * @extends {BaseHandler<ProfileSyncEnv, ProfileSyncAuth>}
+ * @extends {BaseHandler<ProfileSyncEnv>}
  */
 export class ProfileSyncHandler extends BaseHandler {
+  /** Platform sync entry point; tests replace it to avoid live platform calls. */
+  syncPlatform = syncResumePlatform;
+
   /**
+   * Sync the master resume (JOB_DB `resumes`) to job platforms inside the Worker,
+   * reading platform sessions from KV. Defaults to a dry run.
    * @param {Request} request
    * @returns {Promise<Response>}
    */
   async triggerProfileSync(request) {
-    /** @type {{ resumeId?: string; targetResumeId?: string | null; ssotData?: import('./sync/wanted-profile-changes.js').SsotData | null; platforms?: string[]; dryRun?: boolean; callbackUrl?: string }} */
+    /** @type {ProfileSyncRequestBody} */
     const body = await request.json().catch(() => ({}));
     const logicalResumeId = body.resumeId || 'master';
-    let targetResumeId = body.targetResumeId || null;
-    let ssotData = body.ssotData || null;
     const platforms =
-      Array.isArray(body.platforms) && body.platforms.length > 0 ? body.platforms : ['wanted'];
+      Array.isArray(body.platforms) && body.platforms.length > 0
+        ? body.platforms
+        : [...RESUME_SYNC_PLATFORMS];
     const dryRun = body.dryRun !== false;
-    const callbackUrl = body.callbackUrl;
-    const db = this.env?.DB;
+    const db = this.env?.JOB_DB;
 
     if (!db) {
       return this.jsonResponse({ success: false, error: 'Database not configured' }, 503);
     }
 
     try {
-      if (!ssotData) {
+      let ssotData = body.ssotData || null;
+      let targetResumeId = body.targetResumeId || null;
+      if (!ssotData || !targetResumeId) {
         const stored = await db
           .prepare('SELECT data, target_resume_id FROM resumes WHERE id = ?')
           .bind(logicalResumeId)
           .first();
-
-        if (!stored?.data) {
-          return this.jsonResponse(
-            { success: false, error: 'No stored master resume found. Upload resume JSON first.' },
-            404
-          );
+        if (!ssotData) {
+          if (!stored?.data) {
+            return this.jsonResponse(
+              { success: false, error: 'No stored master resume found. Upload resume JSON first.' },
+              404
+            );
+          }
+          ssotData = JSON.parse(stored.data);
         }
-
-        ssotData = JSON.parse(stored.data);
-        targetResumeId = targetResumeId || stored.target_resume_id || null;
+        targetResumeId = targetResumeId || stored?.target_resume_id || null;
       }
 
       if (!ssotData?.personal) {
@@ -93,8 +94,6 @@ export class ProfileSyncHandler extends BaseHandler {
 
       const now = new Date().toISOString();
       const syncId = `sync_${Date.now()}`;
-      const profileData = buildProfileData(ssotData);
-
       await db
         .prepare(
           `INSERT INTO profile_syncs (id, platforms, profile_data, status, dry_run, created_at, updated_at)
@@ -103,116 +102,35 @@ export class ProfileSyncHandler extends BaseHandler {
         .bind(
           syncId,
           JSON.stringify(platforms),
-          JSON.stringify({ logicalResumeId, targetResumeId, profileData }),
+          JSON.stringify({ logicalResumeId, targetResumeId }),
           'running',
           dryRun ? 1 : 0,
           now,
           now
         )
-        .run()
-        .catch(
-          /** @param {unknown} e */
-          (e) => {
-            console.error('[ProfileSync] Failed to create sync record:', normalizeError(e).message);
-          }
-        );
+        .run();
 
-      /** @type {Record<string, ProfileSyncPlatformResult>} */
+      /** @type {Record<string, import('../services/resume-platform-sync/index.js').PlatformSyncOutcome>} */
       const results = {};
-
-      if (platforms.includes('wanted')) {
-        results.wanted = await syncWantedProfile(
-          {
-            auth: /** @type {ProfileSyncAuth} */ (this.auth),
-          },
-          ssotData,
-          profileData,
+      for (const platform of platforms) {
+        results[platform] = await this.syncPlatform(this.env, platform, ssotData, {
           dryRun,
-          targetResumeId
-        );
+          targetResumeId,
+        });
       }
 
-      const otherPlatforms = platforms.filter((platform) => platform !== 'wanted');
-      if (otherPlatforms.length > 0 && callbackUrl) {
-        /** @type {{ syncId: string; platforms: string[]; profileData: unknown; dryRun: boolean; timestamp: string; platformAuth?: Record<string, { authenticated: boolean }> }} */
-        const callbackPayload = {
-          syncId,
-          platforms: otherPlatforms,
-          profileData,
-          dryRun,
-          timestamp: now,
-        };
-
-        /** @type {Record<string, { authenticated: boolean }>} */
-        const platformAuth = {};
-        for (const platform of otherPlatforms) {
-          const cookies = await /** @type {ProfileSyncAuth} */ (this.auth).getCookies(platform);
-          platformAuth[platform] = { authenticated: !!cookies };
-        }
-        callbackPayload.platformAuth = platformAuth;
-
-        /** @type {(Response & { error?: string }) | { ok: false; error: string; status?: number }} */
-        const callbackResponse = await fetch(callbackUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(callbackPayload),
-          signal: AbortSignal.timeout(30000),
-        }).catch((err) => ({ ok: false, error: err.message }));
-
-        const callbackResult = callbackResponse.ok
-          ? await callbackResponse.json().catch(() => ({}))
-          : null;
-
-        for (const platform of otherPlatforms) {
-          results[platform] = callbackResponse.ok
-            ? {
-                method: 'callback',
-                dispatched: true,
-                automationResult: callbackResult,
-              }
-            : {
-                method: 'callback',
-                error: callbackResponse.error || `HTTP ${callbackResponse.status}`,
-              };
-        }
-      } else {
-        for (const platform of otherPlatforms) {
-          const cookies = await /** @type {ProfileSyncAuth} */ (this.auth).getCookies(platform);
-          results[platform] = {
-            method: 'callback_required',
-            authenticated: !!cookies,
-            wouldUpdate: profileData,
-            message: 'Browser automation required (provide callbackUrl)',
-          };
-        }
-      }
-
-      const hasFailures = Object.values(results).some((result) => {
-        if (!result) return false;
-        if (result.error) return true;
-        if (result.authenticated === false) return true;
-        if (result.method === 'callback' && result.dispatched === false) return true;
-        return Array.isArray(result?.syncResults?.failed) && result.syncResults.failed.length > 0;
-      });
+      const success = Object.values(results).every((result) => result.success);
       const status = dryRun
-        ? hasFailures
-          ? 'dry_run_failed'
-          : 'dry_run_complete'
-        : hasFailures
-          ? 'partial_failed'
-          : 'completed';
-      const success = !hasFailures;
-
+        ? success
+          ? 'dry_run_complete'
+          : 'dry_run_failed'
+        : success
+          ? 'completed'
+          : 'partial_failed';
       await db
         .prepare('UPDATE profile_syncs SET status = ?, result = ?, updated_at = ? WHERE id = ?')
-        .bind(status, JSON.stringify(results), now, syncId)
-        .run()
-        .catch(
-          /** @param {unknown} e */
-          (e) => {
-            console.error('[ProfileSync] Failed to update sync status:', normalizeError(e).message);
-          }
-        );
+        .bind(status, JSON.stringify(results), new Date().toISOString(), syncId)
+        .run();
 
       return this.jsonResponse({
         success,
@@ -228,7 +146,6 @@ export class ProfileSyncHandler extends BaseHandler {
         resumeId: logicalResumeId,
         targetResumeId,
         platforms,
-        profileData,
         platformResults: results,
       });
     } catch (error) {
