@@ -333,12 +333,11 @@ Notify job inside `ci.yml`; see
 
 ### 6.3 Automated Maintenance (Schedules)
 
-The worker declares 3 Cron Triggers in `wrangler.jsonc` (`triggers.crons`), routed by
+The worker declares 2 Cron Triggers in `wrangler.jsonc` (`triggers.crons`), routed by
 `apps/job-dashboard/src/handlers/scheduled/cron-router.js`:
 
 - `0 21 * * *`: **Resume Sync + Cleanup** - Refreshes platform sessions, then starts `ResumeSyncWorkflow` (dry-run by default) and `CleanupWorkflow`.
-- `0 * * * *`: **Health Check** - Starts `HealthCheckWorkflow` hourly.
-- `0 0 * * 1`: **Weekly Report** - Starts `DailyReportWorkflow` with `type: weekly`.
+- `0 * * * *`: **Health Check + Weekly Report** - Starts `HealthCheckWorkflow` hourly; at 00:00 UTC on Mondays it also starts `DailyReportWorkflow` with `type: weekly`.
 
 ---
 

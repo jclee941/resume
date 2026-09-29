@@ -29,12 +29,8 @@ describe('scheduled cron wiring', () => {
   const constantValues = constants.map((c) => c.value);
   const declared = productionCrons(wranglerRaw);
 
-  test('cron-router.js exports the resume-sync, health-check and weekly-report crons', () => {
-    expect(constants.map((c) => c.name).sort()).toEqual([
-      'HEALTH_CHECK_CRON',
-      'RESUME_SYNC_CRON',
-      'WEEKLY_REPORT_CRON',
-    ]);
+  test('cron-router.js exports the resume-sync and hourly crons', () => {
+    expect(constants.map((c) => c.name).sort()).toEqual(['HEALTH_CHECK_CRON', 'RESUME_SYNC_CRON']);
     for (const value of constantValues) expect(value).toMatch(/^[\d*/, -]+$/);
     expect(new Set(constantValues).size).toBe(constantValues.length);
   });

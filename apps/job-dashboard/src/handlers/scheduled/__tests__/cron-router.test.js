@@ -3,7 +3,9 @@ import { afterEach, beforeEach, describe, it } from 'node:test';
 
 import * as cronRouter from '../cron-router.js';
 
-const { HEALTH_CHECK_CRON, RESUME_SYNC_CRON, WEEKLY_REPORT_CRON, scheduled } = cronRouter;
+const { HEALTH_CHECK_CRON, RESUME_SYNC_CRON, scheduled } = cronRouter;
+const MONDAY_MIDNIGHT = Date.UTC(2026, 9, 5, 0, 0);
+const TUESDAY_AFTERNOON = Date.UTC(2026, 8, 29, 14, 0);
 
 const BINDINGS = [
   'RESUME_SYNC_WORKFLOW',
@@ -52,14 +54,12 @@ describe('cron-router', () => {
     console.warn = originalWarn;
   });
 
-  it('exports the three cron expressions and keeps the default export shape', () => {
+  it('exports the two cron expressions and keeps the default export shape', () => {
     assert.equal(RESUME_SYNC_CRON, '0 21 * * *');
     assert.equal(HEALTH_CHECK_CRON, '0 * * * *');
-    assert.equal(WEEKLY_REPORT_CRON, '0 0 * * 1');
     assert.deepEqual(Object.keys(cronRouter.default).sort(), [
       'HEALTH_CHECK_CRON',
       'RESUME_SYNC_CRON',
-      'WEEKLY_REPORT_CRON',
       'scheduled',
     ]);
   });
@@ -77,20 +77,26 @@ describe('cron-router', () => {
     for (const promise of waited) assert.ok(promise instanceof Promise);
   });
 
-  it('health-check cron starts only the health check workflow', async () => {
-    const { calls, env, ctx, waited } = createHarness();
-    await scheduled({ cron: HEALTH_CHECK_CRON }, env, ctx);
-    assert.deepEqual(calls, [{ name: 'HEALTH_CHECK_WORKFLOW', params: { source: 'cron' } }]);
-    assert.equal(waited.length, 1);
+  it('the hourly cron starts only the health check outside Monday 00:00 UTC', async () => {
+    const mondayOneAm = MONDAY_MIDNIGHT + 3_600_000;
+    const tuesdayMidnight = MONDAY_MIDNIGHT + 86_400_000;
+    for (const scheduledTime of [TUESDAY_AFTERNOON, mondayOneAm, tuesdayMidnight, undefined]) {
+      const { calls, env, ctx, waited } = createHarness();
+      await scheduled({ cron: HEALTH_CHECK_CRON, scheduledTime }, env, ctx);
+      assert.deepEqual(calls, [{ name: 'HEALTH_CHECK_WORKFLOW', params: { source: 'cron' } }]);
+      assert.equal(waited.length, 1);
+    }
   });
 
-  it('weekly cron starts only the weekly report', async () => {
+  it('the hourly cron also starts the weekly report at 00:00 UTC on Mondays', async () => {
+    assert.equal(new Date(MONDAY_MIDNIGHT).getUTCDay(), 1);
     const { calls, env, ctx, waited } = createHarness();
-    await scheduled({ cron: WEEKLY_REPORT_CRON }, env, ctx);
+    await scheduled({ cron: HEALTH_CHECK_CRON, scheduledTime: MONDAY_MIDNIGHT }, env, ctx);
     assert.deepEqual(calls, [
+      { name: 'HEALTH_CHECK_WORKFLOW', params: { source: 'cron' } },
       { name: 'DAILY_REPORT_WORKFLOW', params: { type: 'weekly', source: 'cron' } },
     ]);
-    assert.equal(waited.length, 1);
+    assert.equal(waited.length, 2);
   });
 
   it('unknown or missing cron starts nothing and warns', async () => {
