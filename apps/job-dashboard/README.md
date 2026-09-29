@@ -134,7 +134,6 @@ npx wrangler secret put JWT_SECRET
       "binding": "HEALTH_CHECK_WORKFLOW",
       "class_name": "HealthCheckWorkflow",
     },
-    { "name": "backup-workflow", "binding": "BACKUP_WORKFLOW", "class_name": "BackupWorkflow" },
     { "name": "cleanup-workflow", "binding": "CLEANUP_WORKFLOW", "class_name": "CleanupWorkflow" },
   ],
 }
@@ -238,7 +237,6 @@ job-dashboard/
 │       ├── resume-sync.js          # Per-platform resume sync (Wanted, JobKorea)
 │       ├── daily-report.js         # Daily report
 │       ├── health-check.js         # Health monitoring
-│       ├── backup.js               # D1→KV backup
 │       └── cleanup.js              # Data cleanup
 ├── wrangler.jsonc                  # Worker config
 ├── package.json                    # Dependencies (minimal)
@@ -547,8 +545,9 @@ const image = await env.R2.get(`screenshots/2026-02-11/123.png`);
 | `ResumeSyncWorkflow`  | Event trigger | Resume sync to platforms     |
 | `DailyReportWorkflow` | Event trigger | Stats report via Telegram    |
 | `HealthCheckWorkflow` | Event trigger | Health monitoring            |
-| `BackupWorkflow`      | Event trigger | D1→KV backup                 |
 | `CleanupWorkflow`     | Event trigger | Stale data cleanup           |
+
+D1 Time Travel (native point-in-time restore) is the D1 backup; there is no backup workflow.
 
 ### Example: Trigger Resume Sync
 

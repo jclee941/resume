@@ -85,7 +85,6 @@
  * @property {WorkflowNamespace} [RESUME_SYNC_WORKFLOW]
  * @property {WorkflowNamespace} [DAILY_REPORT_WORKFLOW]
  * @property {WorkflowNamespace} [HEALTH_CHECK_WORKFLOW]
- * @property {WorkflowNamespace} [BACKUP_WORKFLOW]
  * @property {WorkflowNamespace} [CLEANUP_WORKFLOW]
  * @property {string} ENVIRONMENT
  * @property {string} [ELASTICSEARCH_INDEX]

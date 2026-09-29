@@ -242,8 +242,9 @@ their respective names in the Cloudflare dashboard:
   boards.
 - `DailyReportWorkflow`: Generates the daily PDF/HTML activity summary.
 - `HealthCheckWorkflow`: Monitors database and API availability.
-- `BackupWorkflow`: Performs automated daily snapshots of D1 to KV.
 - `CleanupWorkflow`: Purges stale records and temporary files.
+
+D1 Time Travel (native point-in-time restore) is the D1 backup; there is no backup workflow.
 
 ---
 
@@ -350,13 +351,12 @@ Notify job inside `ci.yml`; see
 
 ### 6.3 Automated Maintenance (Schedules)
 
-The worker includes 5 scheduled workflow triggers for operational tasks:
+The worker declares 3 Cron Triggers in `wrangler.jsonc` (`triggers.crons`), routed by
+`apps/job-dashboard/src/handlers/scheduled/cron-router.js`:
 
-- `*/5 * * * *`: **Health Check** - Pings all dependencies and logs uptime.
-- `0 0 * * 1-5`: **Auth Refresh** - Rotates platform session cookies.
-- `0 9 * * *`: **Daily Report** - Aggregates stats and sends a Slack summary.
-- `0 3 * * *`: **Backup** - Syncs D1 database state to KV for redundancy.
-- `0 4 * * SUN`: **Cleanup** - Purges expired job caches and old logs.
+- `0 21 * * *`: **Resume Sync + Cleanup** - Refreshes platform sessions, then starts `ResumeSyncWorkflow` (dry-run by default) and `CleanupWorkflow`.
+- `0 * * * *`: **Health Check** - Starts `HealthCheckWorkflow` hourly.
+- `0 0 * * 1`: **Weekly Report** - Starts `DailyReportWorkflow` with `type: weekly`.
 
 ---
 

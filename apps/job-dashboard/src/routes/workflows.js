@@ -19,6 +19,8 @@ import { jsonResponse } from '../middleware/cors.js';
  *     APPLICATION_WORKFLOW: WorkflowBinding;
  *     RESUME_SYNC_WORKFLOW: WorkflowBinding;
  *     DAILY_REPORT_WORKFLOW: WorkflowBinding;
+ *     HEALTH_CHECK_WORKFLOW: WorkflowBinding;
+ *     CLEANUP_WORKFLOW: WorkflowBinding;
  *   };
  *   apps: {
  *     decideWorkflowApprovals(req: WorkflowRequest, decision: string): Promise<Response> | Response;
@@ -57,6 +59,18 @@ export function registerWorkflowRoutes(router, ctx) {
     return jsonResponse({ instanceId: instance.id, status: 'started' });
   });
 
+  router.post('/api/workflows/health-check', async (req) => {
+    const body = await req.json().catch(() => ({}));
+    const instance = await env.HEALTH_CHECK_WORKFLOW.create({ params: body });
+    return jsonResponse({ instanceId: instance.id, status: 'started' });
+  });
+
+  router.post('/api/workflows/cleanup', async (req) => {
+    const body = await req.json().catch(() => ({}));
+    const instance = await env.CLEANUP_WORKFLOW.create({ params: body });
+    return jsonResponse({ instanceId: instance.id, status: 'started' });
+  });
+
   router.get('/api/workflows/:workflowType/:instanceId', async (req) => {
     const { workflowType, instanceId } = req.params;
     /** @type {Record<string, WorkflowBinding | undefined>} */
@@ -65,6 +79,8 @@ export function registerWorkflowRoutes(router, ctx) {
       application: env.APPLICATION_WORKFLOW,
       'resume-sync': env.RESUME_SYNC_WORKFLOW,
       'daily-report': env.DAILY_REPORT_WORKFLOW,
+      'health-check': env.HEALTH_CHECK_WORKFLOW,
+      cleanup: env.CLEANUP_WORKFLOW,
     };
 
     const workflow = workflowBindings[workflowType];

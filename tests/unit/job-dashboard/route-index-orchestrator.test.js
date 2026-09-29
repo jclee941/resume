@@ -66,7 +66,6 @@ describe('job-dashboard route index orchestrator', () => {
       'ResumeSyncWorkflow',
       'DailyReportWorkflow',
       'HealthCheckWorkflow',
-      'BackupWorkflow',
       'CleanupWorkflow',
       'BrowserSessionDO',
     ]) {

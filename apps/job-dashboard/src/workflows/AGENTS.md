@@ -7,7 +7,7 @@
 ## OVERVIEW
 
 Workflow modules orchestrate background execution for crawling, application,
-resume sync, reporting, health checks, backup, and cleanup.
+resume sync, reporting, health checks, and cleanup.
 
 ## STRUCTURE
 
@@ -20,7 +20,6 @@ workflows/
 ├── resume-sync.js         # resume sync workflow (one step per platform)
 ├── daily-report.js        # daily summary workflow
 ├── health-check.js        # runtime health workflow
-├── backup.js              # backup orchestration
 └── cleanup.js             # stale-data cleanup workflow
 ```
 

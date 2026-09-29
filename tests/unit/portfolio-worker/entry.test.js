@@ -20,7 +20,6 @@ describe('entry.js merged-worker contract', () => {
     expect(source).toMatch(/ResumeSyncWorkflow/);
     expect(source).toMatch(/DailyReportWorkflow/);
     expect(source).toMatch(/HealthCheckWorkflow/);
-    expect(source).toMatch(/BackupWorkflow/);
     expect(source).toMatch(/CleanupWorkflow/);
   });
 
