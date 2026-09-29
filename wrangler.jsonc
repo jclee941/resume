@@ -35,7 +35,6 @@
   ],
   "vars": {
     "ENVIRONMENT": "production",
-    "ELASTICSEARCH_INDEX": "resume-logs-worker",
   },
   "routes": [{ "pattern": "resume.jclee.me", "custom_domain": true }],
   "triggers": {
@@ -128,7 +127,6 @@
       "name": "resume-preview",
       "vars": {
         "ENVIRONMENT": "preview",
-        "ELASTICSEARCH_INDEX": "resume-logs-worker-preview",
       },
       "assets": {
         "directory": "apps/portfolio/assets",

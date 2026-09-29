@@ -14,10 +14,6 @@ jest.mock('../../../../apps/portfolio/lib/metrics', () => ({
   generateMetrics: jest.fn(function generateMetrics() {}),
 }));
 
-jest.mock('../../../../apps/portfolio/lib/es-logger', () => ({
-  logToElasticsearch: jest.fn(async function logToElasticsearch() {}),
-}));
-
 jest.mock('../../../../apps/portfolio/lib/auth', () => ({
   generateAuthHelpers: jest.fn(() => '// generated auth helpers'),
 }));

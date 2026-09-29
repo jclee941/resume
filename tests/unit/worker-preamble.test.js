@@ -23,7 +23,6 @@ describe('Worker Preamble', () => {
     initHistogramBucketsStr: 'function initHistogramBuckets() { return {}; }',
     generateHistogramLinesStr: 'function generateHistogramLines() { return ""; }',
     generateMetricsStr: 'function generateMetrics() { return ""; }',
-    logToElasticsearchStr: 'async function logToElasticsearch() {}',
     rateLimitConfigJson: '{"api":{"limit":30,"window":60}}',
     authHelpersStr: 'async function verifySession() { return null; }',
   };
@@ -153,10 +152,6 @@ describe('Worker Preamble', () => {
   describe('Embedded Code', () => {
     it('should contain auth helpers from opts', () => {
       expect(code).toContain('verifySession');
-    });
-
-    it('should contain ES logger code', () => {
-      expect(code).toContain('logToElasticsearch');
     });
 
     it('should contain deployedAt timestamp', () => {
