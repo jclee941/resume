@@ -6,7 +6,7 @@
 
 ## OVERVIEW
 
-Cloudflare infrastructure (Terraform), D1 database migrations, monitoring
+Cloudflare infrastructure (Terraform), monitoring
 dashboards (Grafana), and monitoring compose configs. Scheduled automation is
 Cloudflare-native: Cron Triggers and Workflows declared in the root
 `wrangler.jsonc`.
@@ -16,7 +16,6 @@ Cloudflare-native: Cron Triggers and Workflows declared in the root
 ```text
 infrastructure/
 ├── cloudflare/           # Terraform for DNS, routes, KV/D1 references
-├── database/             # D1 migrations and seeds
 ├── monitoring/           # Grafana dashboards and alert rules
 ├── configs/              # Grafana alert configurations
 ├── docker/               # Monitoring compose file
@@ -25,12 +24,12 @@ infrastructure/
 
 ## AUTHORITY BOUNDARIES
 
-| Scope                            | Owner                     | Changes Via                                                        |
-| -------------------------------- | ------------------------- | ------------------------------------------------------------------ |
-| DNS and Cloudflare declarations  | Terraform files           | Review `cloudflare/*.tf`; no active apply workflow                 |
-| Production Worker code           | Cloudflare Workers Builds | Build from `master`; local Wrangler is verification/emergency only |
-| D1 schema (migrations 0000-0009) | Migrations                | `database/migrations/*.sql`                                        |
-| Monitoring dashboards            | Grafana UI                | `monitoring/*.json` (reference only)                               |
+| Scope                           | Owner                     | Changes Via                                                             |
+| ------------------------------- | ------------------------- | ----------------------------------------------------------------------- |
+| DNS and Cloudflare declarations | Terraform files           | Review `cloudflare/*.tf`; no active apply workflow                      |
+| Production Worker code          | Cloudflare Workers Builds | Build from `master`; local Wrangler is verification/emergency only      |
+| D1 schema (`JOB_DB`)            | Wrangler D1 migrations    | `apps/job-dashboard/migrations/*.sql` + `apps/job-dashboard/schema.sql` |
+| Monitoring dashboards           | Grafana UI                | `monitoring/*.json` (reference only)                                    |
 
 ## CONVENTIONS
 

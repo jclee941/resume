@@ -11,14 +11,6 @@ describe('@resume/cli command modules', () => {
     assert.equal(mod.verify.length, 0); // no required args
   });
 
-  it('db command module loads without errors', async () => {
-    const mod = await import('../commands/db.js');
-    assert.ok(mod, 'module should load');
-    // db module exports at least one named function
-    const exportCount = Object.keys(mod).length;
-    assert.ok(exportCount > 0, 'db module exports something');
-  });
-
   it('deploy command module loads without errors', async () => {
     const mod = await import('../commands/deploy.js');
     assert.ok(mod, 'module should load');
