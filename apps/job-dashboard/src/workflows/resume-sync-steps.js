@@ -15,8 +15,9 @@ export async function recordSyncHistory(
   { syncId, resumeId, platforms, results, success, dryRun }
 ) {
   await env.JOB_DB.prepare(
-    `INSERT INTO resume_sync_history (id, resume_id, platforms, changes, status, dry_run, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`
+    `INSERT OR REPLACE INTO resume_sync_history
+       (id, resume_id, platforms, changes, status, dry_run, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`
   )
     .bind(
       syncId,

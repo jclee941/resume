@@ -51,6 +51,7 @@ describe('ops workflows against the schema.sql database', () => {
   let logHealthMetrics;
   let getConsecutiveFailures;
   let QueueWorkflowDispatcher;
+  let recordSyncHistory;
 
   beforeAll(async () => {
     jest.unstable_mockModule(
@@ -69,6 +70,7 @@ describe('ops workflows against the schema.sql database', () => {
     ({ logHealthMetrics, getConsecutiveFailures } = await import(
       path.join(src, 'workflows/health-check/metrics.js')
     ));
+    ({ recordSyncHistory } = await import(path.join(src, 'workflows/resume-sync-steps.js')));
     ({ QueueWorkflowDispatcher } = await import(
       path.join(src, 'queues/queue-workflow-dispatcher.js')
     ));
@@ -179,6 +181,25 @@ describe('ops workflows against the schema.sql database', () => {
       { check_type: 'kv', service_name: 'SESSIONS', status: 'healthy' },
     ]);
     expect(await getConsecutiveFailures(env)).toBe(1);
+  });
+
+  test('resume sync history records a run once even when the step retries', async () => {
+    const db = createD1();
+    const run = {
+      syncId: 'sync-1',
+      resumeId: 'master',
+      platforms: ['wanted', 'jobkorea'],
+      results: { wanted: { success: true }, jobkorea: { success: true } },
+      success: true,
+      dryRun: true,
+    };
+
+    await recordSyncHistory({ JOB_DB: db }, run);
+    await recordSyncHistory({ JOB_DB: db }, run);
+
+    expect(
+      db.database.prepare('SELECT id, status, dry_run FROM resume_sync_history').all()
+    ).toEqual([{ id: 'sync-1', status: 'completed', dry_run: 1 }]);
   });
 
   test('queued cleanup messages start the workflow with the params it reads', async () => {
