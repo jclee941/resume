@@ -35,11 +35,7 @@ describe('@resume/shared package exports', () => {
 
   test('logger exports the console transport and the package drops the ES surface', async () => {
     const mod = await import('@resume/shared/logger');
-    const pkg = JSON.parse(
-      await (
-        await import('node:fs/promises')
-      ).readFile(new URL('../../../packages/shared/package.json', import.meta.url), 'utf8')
-    );
+    const pkg = require('../../../packages/shared/package.json');
 
     expect(mod.createConsoleTransport).toBeDefined();
     expect(mod.createElasticsearchTransport).toBeUndefined();
