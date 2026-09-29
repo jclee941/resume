@@ -42,38 +42,38 @@
       "Fortinet",
       "オブザーバビリティ"
     ],
-    "profileStatement": "本認可審査と監査対応で「なぜそのように決定したか」をデータとして残すことに集中してきたセキュリティ・インフラエンジニアです。KAI閉鎖網OA運用から出発し、FSDC金融監督院監査、ネクストレード構築と金融委員会本認可、自動化段階まで同じ原則を継続してきました。FortiGate HA・ネットワーク分離、Splunk ES検知ルール、Slack/SMS通知、FortiManager API照会を一つの対応体系としてつなぎ、担当者が機器コンソールを往復しながら確認していた手順を短縮しました。AIが書いたコードや通知も同じ検証基準を通すべきだと考え、LLM PRレビュー自動化(jclee-bot)とMCPサーバを自ら運用し、AI出力物の検証境界を設計しています。現在はセキュリティ・インフラエンジニアリングとSIEMエンジニアリングのポジションでのご提案・面接を優先的に検討しています。",
+    "profileStatement": "金融業界のセキュリティ基盤構築とSIEM検知・通知の自動化を担当してきたセキュリティ・インフラエンジニアです。KAI閉鎖網のOA運用から始まり、FSDCで金融監督院監査に対応し、ネクストレードでは構築段階の金融委員会本認可対応から自動化段階まで続けて担当しました。FortiGate HA・ネットワーク分離の環境でSplunk ES検知ルール、Slack/SMS通知、FortiManager API照会をつなぎ、担当者が機器コンソールを行き来して確認していた手順を減らしました。個人プロジェクトとして、LLMのPRレビューをシークレットスキャン・ポリシー検査と一緒に投稿するjclee-botとMCPサーバを運用しています。セキュリティ・インフラエンジニアリングとSIEMエンジニアリングのポジションでのご提案・面接を優先的に検討しています。",
     "coreCompetencies": [
       "FortiGate HA・ネットワーク分離・エンドポイントセキュリティの運用記録を本認可審査の資料として提出し、審査の質疑に直接回答した経験",
-      "Splunk ES Saved Search・Webhook・Slack/SMS通知を一つにつなぎ、セキュリティイベントを認知・分類・通知まで一度に処理する運用体系",
-      "FortiManager API照会スクリプトでファイアウォールポリシーの変更履歴と照会内容を追跡可能にした自動化",
-      "FSDC金監院定期監査に対応するDLPポリシー運営体系と監査成果物テンプレート",
+      "Splunk ES Saved Searchで検知したセキュリティイベントをWebhookとSlack/SMS通知で担当者に届けるフローの構成",
+      "FortiManager APIスクリプトでファイアウォールポリシーの変更履歴と照会結果を記録する自動化",
+      "FSDCの金融監督院監査にDLPポリシー運用記録と監査成果物テンプレートで対応し、同じテンプレートを次の監査で再利用した経験",
       "DLP・nDLP・APT・SWG・IPS・DDoS・DRM・SSL VPN・NAC・Active Directoryのポリシー確認、運用、障害対応経験",
-      "Grafana・Prometheus・Lokiでメトリクスとログを同一画面で追跡するオブザーバビリティ基盤",
-      "Terraform・Ansibleで機器・Edge・ホームラボ構成をPR可能なコードで管理するIaC",
-      "LLM PRレビューにシークレットスキャン・actionlint・ドキュメントポリシーのCheck Runを組み合わせて出力を検証するjclee-botを運営し、PlayMCP互換MCPサーバをKakao Cloudにデプロイ",
+      "Grafana・Prometheus・Lokiでメトリクスとログを同じ画面で照会できるようにしたオブザーバビリティ基盤",
+      "Terraform・Ansibleで機器・Edge・ホームラボの構成をコードで管理し、PRレビューを経て変更するIaC運用",
+      "LLM PRレビューとシークレットスキャン・actionlint・ドキュメントポリシーのCheck Runを一緒に投稿するjclee-botの運用、PlayMCP互換MCPサーバのKakao Cloudへのデプロイ",
       "JADXでAndroidクライアントのUI・報酬処理フローを追跡し、mitmproxyキャプチャからエンドポイント・認証ヘッダー・リクエスト/レスポンスJSONフィールドを整理したモバイルアプリ・API分析"
     ],
     "aboutSection": {
       "careerHighlights": [
-        "運用現場から出発し、反復対応をスクリプトとIaCとして残す方式を一貫して維持してきました。",
-        "金融業界の本認可と監査対応でセキュリティ統制と変更内容をデータで提示できる資料体系を構築しました。",
-        "NAC・ファイアウォールポリシー、Splunk ES検知ルール、Slack/SMS通知条件を運用者がそのまま実行できる手順にしました。",
-        "Linux・Python・Ansible・Terraform・Splunk SPL・Cloudflare Workersを問題解決の流れの中で組み合わせて使用します。",
-        "Proxmox・Grafana・k3s・1Password・MCPをホームラボでまず運用し、実適用の可能性を検証します。",
-        "AIが書いたコードや通知は、検証されるまでは暫定値として扱います。LLMレビュー自動化とMCPツール境界を自ら作り、検証手順を固定します。"
+        "繰り返し発生する運用作業は、スクリプトとIaCに移して再利用できるようにしました。",
+        "金融委員会の本認可審査と金融監督院の監査に、セキュリティ統制の状況と変更履歴を資料として提出しました。",
+        "NAC・ファイアウォールポリシー、Splunk ES検知ルール、Slack/SMS通知条件を、運用者がそのまま実行できる手順書として残しました。",
+        "主にLinux・Python・Ansible・Terraform・Splunk SPL・Cloudflare Workersを使います。",
+        "Proxmox・Grafana・k3s・1Password・MCPはまずホームラボで運用し、その後に業務で使うかを判断します。",
+        "LLMが生成したコードとレビューは、検証を経てから反映します。jclee-botでは、LLMレビューとシークレットスキャン・ポリシー検査の結果を同じPRに投稿します。"
       ],
       "techPhilosophy": [
-        "「観測できなければ、改善できない」",
-        "手作業 → 自動化パイプライン → MCPツール",
-        "Infrastructure as Code、GitOps、宣言的構成",
-        "Defense in Depth: ネットワーク → ID → ワークロード → データ"
+        "観測できないシステムは運用できない。",
+        "手作業 → 運用スクリプト → IaC、一段階ずつ移す。",
+        "Defense in Depth: ネットワーク → ID → ワークロード → データ。",
+        "ポリシー、インフラ、運用手順もコードレビューできる形で残す。"
       ],
       "currentFocus": [
-        "Splunk ES・Slack/SMS通知・FortiManager APIをつないだセキュリティイベント自動化フロー",
-        "Cloudflare Workers Edge上のポートフォリオ構築、IaC、ログ確認",
+        "Splunk ES・Slack/SMS通知・FortiManager APIをつないだセキュリティイベント自動化の構成",
+        "Cloudflare Workersポートフォリオの運用とログ確認",
         "MCPツールで反復的なセキュリティ対応項目を分類する実験",
-        "GitOpsとPolicy as Codeの実験による対応手順のコード化"
+        "GitOpsでポリシー管理と対応手順をコード化する実験"
       ]
     },
     "totalExperience": "在職合計"
@@ -100,14 +100,14 @@
       "teamSize": "情報セキュリティ自動化セル",
       "myRole": "SIEM・ファイアウォールポリシー自動化設計",
       "workType": "フリーランス",
-      "description": "ネクストレード売買システムを対象に、Splunk ES Saved Search、webhook relay、Slack/SMS通知、FortiManager JSON-RPC API照会を一つのセキュリティ運用アーキテクチャに組み上げました。FortiGateイベントとポリシー照会をSplunk中心に集約し、Python/Dockerベースのstate trackerで状態遷移を追跡しています。検知ルール、通知条件、ポリシー照会結果は変更履歴とともに記録し、後のレビューで参照できるようにしています。",
+      "description": "ネクストレード売買システムのセキュリティイベントがSplunk ES Saved Searchで検知されると、Webhook relay → Slack/SMS通知 → FortiManager JSON-RPC API照会へとつながるように設計しました。FortiGateイベントとポリシー照会結果はSplunkに集め、Python・Dockerベースのstate trackerがイベントの状態変化を追跡するようにしました。検知ルール、通知条件、ファイアウォールポリシー照会結果は、変更履歴とあわせて記録しました。",
       "wantedSummary": "Splunk-Fortinet連携とFortiManager APIによるセキュリティイベント分析・ファイアウォールポリシー照会の自動化経験",
       "note": "アイティセンCTS所属、ネクストレード セキュリティ運用アーキテクチャ自動化を担当",
       "projects": [
         {
           "id": "nextrade-security-operations",
           "name": "ネクストレード セキュリティ運用アーキテクチャ自動化",
-          "description": "Splunk ESで検知したセキュリティイベントをwebhook relay経由でSlack/SMS通知へ流し、FortiManager JSON-RPC APIから関連ファイアウォールポリシーを照会する流れを設計しました。コンソール中心だった確認手順をSplunk-Fortinetの検知・分類・照会フローに置き換えました。",
+          "description": "売買システムのセキュリティイベントがSplunk ESで検知されると、Webhook relayとSlack/SMS通知で届き、FortiManager JSON-RPC APIで関連するファイアウォールポリシーを照会するように構成しました。担当者が機器コンソールを行き来して確認していた手順を、Splunkで検知・分類してFortiManager APIで照会する順序に変えました。",
           "period": "2025.03 ~ 2026.02",
           "techStack": [
             "Splunk ES",
@@ -116,9 +116,9 @@
             "Python"
           ],
           "achievements": [
-            "Splunk ESとFortiGateのイベント分類・通知基準を統一しました。",
-            "Webhook relayとSlack/SMS通知を検知後ハンドオフの単一経路とし、担当者による差が出ないようにしました。",
-            "FortiManager API照会により、誤検知レビューに必要なポリシー情報を同じ対応フローで確認できます。"
+            "Splunk ESとFortiGateのイベントに同じ分類・通知基準を適用",
+            "Webhook relayとSlack/SMS通知で検知結果を担当者に届ける経路を統一",
+            "誤検知レビュー時にFortiManager APIで関連ファイアウォールポリシーをあわせて照会"
           ]
         }
       ]
@@ -128,20 +128,20 @@
       "company": "(株)ガオンヌリ情報システム",
       "period": "2024.03 ~ 2025.02",
       "duration": "1年",
-      "project": "ネクストレード売買決済システム構築",
-      "role": "セキュリティ構築担当",
+      "project": "ネクストレード売買システム構築",
+      "role": "セキュリティ基盤エンジニア",
       "client": "ネクストレード(株)",
       "teamSize": "セキュリティ構築セル",
       "myRole": "セキュリティインフラ構築担当",
       "workType": "フリーランス",
-      "description": "ネクストレード売買決済システムの構築段階として、金融委員会本認可審査の資料整備、ネットワーク分離、アクセス制御ポリシー設計、FortiGate HA構成と障害復旧プロセスまで一連のオーナーシップで担当しました。",
-      "wantedSummary": "ネクストレード セキュリティインフラ構築 | FortiGate HA・FortiManager・Ansible\n→ 金融委員会本認可審査対応、HAセキュリティ構成",
-      "note": "ガオンヌリ情報システム所属、ネクストレード売買決済システム構築へ派遣",
+      "description": "ネクストレード売買システムの構築段階で、ファイアウォール1台の障害が取引停止につながらないようFortiGate FGCP active-passive HAを構成し、その上にネットワーク分離とエンドポイントセキュリティ統制を適用しました。金融委員会本認可審査にはセキュリティアーキテクチャと運用記録を文書で提出し、審査の質疑に回答しました。運用移行に備えて、ファイアウォールポリシーと機器設定の変更をAnsible Role・FortiManager基準で追跡する手順を文書化し、VMwareベースの仮想ファイアウォールの障害対応手順も同じ基準で作成しました。",
+      "wantedSummary": "金融委員会本認可審査に合わせてFortiGate HAとネットワーク分離を構成し、運用手順を文書化した経験",
+      "note": "ガオンヌリ情報システムとして、ネクストレード売買システム構築を担当",
       "projects": [
         {
           "id": "nextrade-security-infrastructure",
           "name": "ネクストレード セキュリティ基盤構築",
-          "description": "証券売買システムを支えるセキュリティ構成を構築段階から整えました。\n• FGCP（FortiGate Clustering Protocol）によるActive-Passive HAでサービス継続性を確保\n• Ansible Roleでセキュリティ機器の初期設定とポリシー配布を統一し、機器ごとの設定ずれを残さない方針で展開",
+          "description": "売買システムのセキュリティ基盤構築段階でFortiGate FGCP active-passive HAを構成し、ネットワーク分離とエンドポイントセキュリティ統制を適用しました。金融委員会本認可審査にはセキュリティアーキテクチャと運用記録を文書で提出し、運用移行後もファイアウォールポリシーの変更履歴をAnsible Role・FortiManager基準で追跡できるよう手順を文書化しました。",
           "period": "2024.03 ~ 2025.02",
           "techStack": [
             "FortiGate",
@@ -151,13 +151,13 @@
             "VMware"
           ],
           "achievements": [
-            "FortiGate FGCPアクティブ-パッシブHA構成により、サービス継続性を単一ノードの状態に依存しない形にしました。",
-            "ネットワーク分離とエンドポイントセキュリティ統制は韓国金融委員会本認可審査で参照される構成として設計・文書化しました。",
-            "Ansible Roleでポリシー展開を揃え、新規機器が運用フェーズに渡る前に構成差分が出ないよう担保しています。"
+            "FortiGate FGCP active-passive HA構成でファイアウォールの単一障害点を解消",
+            "金融委員会本認可審査の基準を満たすよう、ネットワーク分離構成とエンドポイントセキュリティ統制を文書化",
+            "Ansible Roleベースのポリシー配布で機器ごとの手動設定の不一致を解消"
           ]
         }
       ],
-      "continuousEngagement": "ネクストレード売買決済システムトラック: ガオンヌリ情報システム構築段階 2024.03 ~ 2025.02 → アイティセンCTS自動化段階 2025.03 ~ 2026.02、同一顧客社の連続実施",
+      "continuousEngagement": "ネクストレード売買システムトラック: ガオンヌリ情報システム構築段階 2024.03 ~ 2025.02 → アイティセンCTS自動化段階 2025.03 ~ 2026.02、同一顧客での連続担当",
       "jobkoreaJobCode": "1000238"
     },
     {
@@ -171,14 +171,14 @@
       "teamSize": "インフラ運用チーム(規模非公開)",
       "myRole": "インフラ・情報セキュリティ運用担当",
       "workType": "正社員",
-      "description": "金融セキュリティデータセンター(FSDC)環境でインフラ運用を担当し、金融監督院定期監査に対応する体制を維持しました。Python運用スクリプトで反復作業を集約し、DLPポリシー運用とPostgreSQLアクセス制御クエリのチューニングを並行で進めました。",
-      "wantedSummary": "金融セキュリティデータセンター(FSDC)インフラ運用の標準化と監査対応経験",
-      "note": "Quantec投資一任正社員、AI Trading Platformインフラ運用",
+      "description": "金融セキュリティデータセンター(FSDC)でAIトレーディングプラットフォームのインフラを運用し、金融監督院の定期監査に対応しました。反復作業はPython運用スクリプトで処理し、DLPポリシーと監査成果物はテンプレートで管理しました。PostgreSQLアクセス制御クエリのチューニング、PBプラットフォームPOC検証、バックアップ・データ保護ポリシーの管理も担当しました。",
+      "wantedSummary": "FSDCのインフラ運用と金融監督院監査対応の成果物を整理した経験",
+      "note": "クォンテック投資一任の正社員、AI Trading Platformのインフラ運用",
       "projects": [
         {
           "id": "quantec-ai-trading-platform",
           "name": "Quantec AI Trading Platformインフラ運用",
-          "description": "手動運用と監査対応の繰り返しをPythonスクリプトに置き換え、PostgreSQLアクセス制御クエリのチューニングを進めました。PBプラットフォームPOCの性能検証とローンチ支援まで担当しています。",
+          "description": "金融セキュリティデータセンター(FSDC)でAIトレーディングプラットフォームのインフラを運用しました。Python運用スクリプトで反復作業を処理し、DLPポリシーと監査成果物テンプレートで金融監督院の定期監査に対応しました。PostgreSQLアクセス制御クエリのチューニングとPBプラットフォームPOC検証の結果は、運用記録として残しました。",
           "period": "2022.08 ~ 2024.03",
           "techStack": [
             "Python",
@@ -188,9 +188,9 @@
             "FSDC"
           ],
           "achievements": [
-            "DLPポリシー運用と監査成果物は金融監督院定期監査のテンプレートに合わせ、毎回同じ資料体裁で提出できる形にしています。",
-            "PostgreSQLアクセス制御クエリは監査のワークロードでも例外扱いにならない水準まで調整しました。",
-            "PBプラットフォームPOCは性能検証からシステムローンチまで支援し、調整したクエリ内容は本番のアクセス制御ポリシーに反映しました。"
+            "DLPポリシー運用記録と監査成果物テンプレートで金融監督院の定期監査に対応",
+            "監査と運用を並行しながらDBアクセス制御クエリをチューニング",
+            "PBプラットフォームPOC検証とシステムローンチの支援"
           ]
         }
       ],
@@ -202,18 +202,18 @@
       "period": "2021.09 ~ 2022.04",
       "duration": "8か月",
       "project": "国民大学 次世代情報システム",
-      "role": "システムエンジニア",
+      "role": "ネットワークセキュリティエンジニア",
       "client": "国民大学校",
       "teamSize": "統合セキュリティ構築チーム(規模非公開)",
       "myRole": "ネットワークセキュリティ構築担当",
       "workType": "正社員(派遣)",
-      "description": "国民大学校次世代情報システムにNSX-Tマイクロセグメンテーションを設計・適用し、東西トラフィックの可視化と制御を確保しました。NAC・DLP連携とWazuh連携を並行で立ち上げ、月次の障害対応手順まで含めて運用に乗せています。",
+      "description": "国民大学校次世代情報システムの構築で、境界ファイアウォールでは制御しにくいサーバ間の東西トラフィックにVMware NSX-Tマイクロセグメンテーションを適用し、ポリシーの単位をワークロードまで細分化しました。NSX-T DFWとManagerを基準にポリシーの適用・変更手順を整理し、NAC・DLPとWazuhを連携してホストレベルのセキュリティイベントを収集しました。vSphere連携の仮想ネットワークセキュリティポリシーは、運用移管用の手順書として作成しました。",
       "note": "ジョイントリー所属、国民大学校次世代情報システム構築へ派遣",
       "projects": [
         {
           "id": "kookmin-next-system",
           "name": "国民大学校 次世代情報システム",
-          "description": "SDNベースのネットワーク仮想化とマイクロセグメンテーションを、国民大学校次世代情報システム基盤に実装しました。\n• VMware NSX-T分散ファイアウォール(DFW)によるサーバー間トラフィック制御\n• NAC・DLP連携とWazuh連携でホストレベル監視を補完",
+          "description": "大学キャンパスネットワークのサーバ間東西トラフィックにNSX-TマイクロセグメンテーションとDFW分散ファイアウォールポリシーを適用し、ポリシーの単位をワークロードまで細分化しました。ポリシー変更はNSX-T Managerで管理するよう手順を整理し、NAC・DLPとWazuhの連携でホストレベルのセキュリティイベントを収集しました。",
           "period": "2021.09 ~ 2022.04",
           "techStack": [
             "VMware NSX-T",
@@ -223,9 +223,9 @@
             "Wazuh"
           ],
           "achievements": [
-            "東西トラフィックの盲点をNSX-Tマイクロセグメンテーションで埋め、サーバ間通信をファイアウォール境界の前提に置き直しました。",
-            "NSX-T DFWポリシーをワークロード側に持たせ、可視性と制御をログから推定するのではなくポリシーで担保する形にしました。",
-            "NSX-T Managerを単一のポリシー管理点とし、変更承認ワークフローとガバナンスを同じ流れで運用しています。"
+            "NSX-Tマイクロセグメンテーションの設計・適用でサーバ間の東西トラフィックを制御",
+            "NSX-T DFW分散ファイアウォールポリシーでサーバ間通信の許可範囲を定義",
+            "NSX-T Managerの集中管理でサーバごとのポリシー不一致を整理"
           ]
         }
       ],
@@ -237,17 +237,17 @@
       "period": "2020.08 ~ 2021.08",
       "duration": "1年",
       "project": "コンタクトセンター インフラ",
-      "role": "システムエンジニア",
+      "role": "インフラ運用エンジニア",
       "client": "メタネットMプラットフォーム",
       "teamSize": "インフラ運用チーム(規模非公開)",
       "myRole": "インフラ運用担当",
       "workType": "SI+SM",
-      "description": "コンタクトセンターの在宅勤務環境では、サーバ設定のばらつきとリモートアクセスの可視性不足が同時に進行していました。AnsibleとPythonで新規端末登録とスイッチ点検を再現可能な手順に置き換え、FortiGate VPN基盤も各新規サイトで同じベースラインで立ち上げられるよう整えました。",
+      "description": "コンタクトセンターの在宅勤務移行の過程で、VPN/NAC運用と端末登録手順を担当しました。PythonとAnsibleベースのスクリプトで新規端末登録、スイッチ点検、サーバ設定などの反復作業を処理し、NACポリシースクリプトで登録手順を簡素化しました。FortiGateログベースのVPNセッション監視ダッシュボードで異常なアクセスパターンを確認し、在宅勤務サイトごとのセキュリティ構成を文書化しました。",
       "projects": [
         {
           "id": "contact-center-remote-work",
           "name": "コンタクトセンター リモートワーク基盤",
-          "description": "コンタクトセンター向けVPNインフラを設計と標準化の両輪で整えました。\n• PythonとAnsible連携で各サーバの設定手順を同じフローに同期\n• VPNセッション監視と異常アクセス検知ダッシュボードで、これまでブラックボックスだった接続面を可視化",
+          "description": "在宅勤務移行で端末登録と現場点検が集中した時期に、PythonとAnsibleで新規端末登録・スイッチ点検・サーバ設定を再現可能な手順に置き換えました。NACポリシー運用スクリプトで登録手順を簡素化し、FortiGateログベースのVPNセッション監視ダッシュボードで異常なアクセスパターンを確認できるようにしました。",
           "period": "2020.08 ~ 2021.08",
           "techStack": [
             "Ansible",
@@ -257,9 +257,9 @@
             "FortiGate"
           ],
           "achievements": [
-            "Ansibleで反復設定手順を標準化しました。",
-            "NACポリシー運用スクリプトにより、新規端末登録はチケットキューからワンステップの運用に切り替えました。",
-            "FortiGateログベースの検知ダッシュボードで、VPNセッション異常を事後レポートだけでなく運用中に把握できるようにしました。"
+            "Ansibleで反復設定手順を標準化",
+            "NACポリシー運用スクリプトで新規端末登録の反復作業を削減",
+            "FortiGateログベースのダッシュボードでVPNセッションの異常兆候を確認"
           ]
         }
       ],
@@ -271,18 +271,18 @@
       "period": "2018.10 ~ 2019.10",
       "duration": "1年",
       "project": "韓国航空宇宙産業（KAI）",
-      "role": "IT支援 / OA運用",
+      "role": "IT/OA運用エンジニア",
       "client": "韓国航空宇宙産業(KAI)",
       "teamSize": "現場IT運用チーム(規模非公開)",
       "myRole": "サーバー運用担当",
       "workType": "正社員(派遣)",
-      "description": "KAI閉鎖網のIT支援・OA運用として、交換部品の調達に時間のかかる環境でハードウェア故障を早期に掴む必要がありました。Linuxサーバのパッチ、ファイアウォール/IDSポリシー、WSUSを手動運用しつつ、ログ分析のサイクルを確立して故障兆候を事前に拾える体制を作りました。",
+      "description": "韓国航空宇宙産業(KAI)の閉鎖網でLinuxサーバ、ファイアウォールポリシー、パッチ運用を担当しました。システムログを分析してハードウェア障害の兆候を早期に確認し、ファイアウォールポリシーの変更履歴とアクセスログは監査対応資料として保管しました。WSUSベースのWindowsパッチとLinuxセキュリティアップデートを計画どおりに適用し、納品情報の流出防止ガイドラインの点検も同じ運用手順に含めました。",
       "note": "エムティデータ所属、韓国航空宇宙産業(KAI) IT インフラ現場運用へ派遣",
       "projects": [
         {
           "id": "kai-infrastructure-operations",
           "name": "KAI インフラ運用",
-          "description": "閉域網という制約下で可用性をどう保つかが課題でした。\n• システムログの定期分析でハードウェア障害の兆候を早期に把握\n• 内部セキュリティ監査基準に従い、監査サイクルごとに一貫した証跡を維持",
+          "description": "航空宇宙産業の閉鎖網環境でLinuxサーバとファイアウォールポリシーを運用しました。Linuxログ分析でハードウェア障害の兆候を早期に確認し、WSUSで閉鎖網サーバのセキュリティアップデートを計画どおりに適用しました。ファイアウォールポリシーの変更履歴とアクセスログは、セキュリティ監査資料として保管しました。",
           "period": "2018.10 ~ 2019.10",
           "techStack": [
             "Linux",
@@ -291,9 +291,9 @@
             "WSUS"
           ],
           "achievements": [
-            "閉域網環境でLinuxサーバの可用性を維持しました。",
-            "firewall-cmd解析で未使用ルールを洗い出し、運用ルールに蓄積していた過去のリスクを取り除きました。",
-            "WSUSベースの定期パッチサイクルを設計し、適用遅延がそのまま脆弱性露出期間にならないよう運用していました。"
+            "閉鎖網環境でLinuxサーバの可用性を維持",
+            "ファイアウォールポリシーの再設計で未使用ルールを整理",
+            "WSUSベースの定期パッチでパッチ遅延を防止"
           ]
         }
       ],
@@ -313,7 +313,7 @@
       ],
       "os": "Linux, Docker",
       "role": "セキュリティエンジニアリング",
-      "description": "Splunk ESの通知とFortiManager APIのポリシー照会をまとめたセキュリティイベント自動化アーキテクチャです。\n• Splunk ES Saved SearchからSlack/SMS通知を即時発火\n• FortiManager APIでファイアウォールポリシーを照会し、コンソール待ちの応答経路を解消"
+      "description": "Splunk ESとSlack/SMS通知を連携してセキュリティイベントの検知から担当者への通知までの手順を整理し、FortiManager APIでファイアウォールポリシーを照会するツールを開発しました。"
     },
     {
       "id": "nextrade-security-infrastructure",
@@ -327,7 +327,7 @@
       ],
       "os": "Linux, VMware",
       "role": "セキュリティ基盤設計",
-      "description": "証券売買システムのセキュリティ構成を構築し、運用フェーズへの引き継ぎに備えました。\n• FGCP（FortiGate Clustering Protocol）によるActive-Passive HAで単一ノード障害から継続性を確保\n• Ansible Roleで初期設定とポリシー配布を統一し、機器ごとの設定ずれを次のレビューで検出できる形に"
+      "description": "FortiGate HAでファイアウォールの単一障害点をなくし、Ansible Roleでセキュリティ機器の初期設定を揃えて、構築成果物を運用手順に引き継ぎました。"
     },
     {
       "id": "kookmin-next-system",
@@ -341,7 +341,7 @@
       ],
       "os": "Linux, vSphere",
       "role": "ネットワーク仮想化",
-      "description": "ワークロードの可視性を軸に据えたSDNネットワーク仮想化です。\n• VMware NSX-T分散ファイアウォール（DFW）で東西トラフィックをログだけでなくポリシーで制御\n• NSX-T Manager基準の中央管理で、ポリシー変更と監査ログを一元把握"
+      "description": "境界ファイアウォールでは制御しにくい東西トラフィックにNSX-Tマイクロセグメンテーションを適用してポリシーをサーバ単位まで細分化し、セキュリティポリシーはNSX-T Managerで集中管理しました。"
     },
     {
       "id": "contact-center-remote-work",
@@ -356,7 +356,7 @@
       ],
       "os": "Linux",
       "role": "在宅勤務インフラ",
-      "description": "コンタクトセンターのリモートアクセス向けにVPNインフラを設計し、運用チケットに並んでいく設定ずれ問題を解消する方向で標準化しました。\n• PythonとAnsibleでサーバ設定手順を全拠点で同期\n• VPNセッション監視と異常検知ダッシュボードでブラックボックスだった接続面を可視化"
+      "description": "PythonとAnsibleの運用スクリプトで在宅勤務サーバの設定を揃え、異常アクセス検知ダッシュボードでVPNセッションを確認しました。"
     },
     {
       "id": "kai-infrastructure-operations",
@@ -370,13 +370,13 @@
       ],
       "os": "Linux",
       "role": "システム運用",
-      "description": "交換部品の調達に時間のかかる閉域網で可用性をどう保つかに焦点を当てました。\n• サーバログの定期分析でハードウェア障害兆候を事前の段階で拾う\n• 内部監査基準に従い、設定が毎回同じ証拠体裁で監査サイクルにのる形を維持"
+      "description": "閉鎖網環境でログ分析によりハードウェア障害の兆候を早期に確認し、監査対応用のログをセキュリティガイドラインに沿って管理しました。"
     }
   ],
   "careerGap": {
     "period": "2019.11 ~ 2020.07",
     "reason": "Linuxシステム学習に専念し、関連資格を取得しました。",
-    "result": "RHCSA、CompTIA Linux+、LPIC-1、Linux Master 2級を取得"
+    "result": "RHCSA、CompTIA Linux+、LPIC-1、リナックスマスター2級を取得"
   },
   "certifications": [
     {
@@ -388,7 +388,7 @@
       "credentialId": null,
       "credentialUrl": null,
       "status": "active",
-      "note": "更新予定: CCNP SecurityまたはCCIE学習中"
+      "note": "更新予定: CCNP SecurityまたはCCIEを学習中"
     },
     {
       "id": "rhcsa",
@@ -399,7 +399,7 @@
       "credentialId": null,
       "credentialUrl": null,
       "status": "active",
-      "note": "更新予定: CKA/CKS (Kubernetes) 学習優先"
+      "note": "更新予定: CKA/CKS(Kubernetes)の学習を優先"
     },
     {
       "id": "comptia-linux-plus",
@@ -448,7 +448,7 @@
       "date": null,
       "expirationDate": null,
       "status": "準備中",
-      "note": "2026 H2取得目標: コンテナ・ランタイムセキュリティ"
+      "note": "2026年下半期の取得目標: コンテナ・ランタイムセキュリティ"
     }
   ],
   "skills": {
@@ -692,7 +692,7 @@
       "id": "observability-platform",
       "name": "Observability Platform",
       "period": "2024.06 ~ 現在",
-      "description": "ホームラボをNVMeストレージ基盤のProxmox VEへ移した後も、メトリクスとログはサービスごとに散らばり、障害時の原因究明が画面の切り替えで時間を奪う構造でした。Prometheus node_exporterでProxmox VM/CTのメトリクスを集め、Loki Promtailでログを取り込み、Grafanaダッシュボード定義をコード管理することでIaC再現性を確保しています。Grafana ExploreでPromQLとLogQLを交差クエリし、メトリクスとログを同じ画面で分析できる体制を運用中です。",
+      "description": "NVMeストレージ基盤のProxmox VEホームラボのメトリクスはPrometheus node_exporterで、ログはLoki Promtailで収集しています。Grafanaダッシュボードの定義はコードで管理して同じ構成を再デプロイできるようにし、Grafana Exploreでメトリクスとログを同じ画面で照会しています。",
       "technologies": [
         "Grafana",
         "Prometheus",
@@ -722,7 +722,7 @@
       "id": "security-alert-system",
       "name": "Security Alert System",
       "period": "2025.01 ~ 現在",
-      "description": "FortiGateのセキュリティイベントが機器のsyslogとSplunkに分かれ、担当者認知と応答ハンドオフを一貫して保ちにくい状態でした。Splunk Saved SearchとWebhookをつなぎ、検知ルールにマッチしたイベントをSlackへ通知する経路に切り替えました。認知・分類・通知のフローは一つの場所に揃え、担当者応答も同じ流れで動くよう標準化しています。",
+      "description": "FortiGateのセキュリティイベントを、Splunk Saved SearchとWebhookでSlackに通知するツールです。CSVベースのstate trackerが状態の変化時だけ通知を送り、同じイベントの重複通知を防ぎます。FortiGate LogIDをseverity/category基準でマッピングしてSplunkでイベントを分類し、その後の確認履歴もあわせて記録します。",
       "technologies": [
         "Splunk",
         "Python",
@@ -746,7 +746,7 @@
       "id": "ip-blacklist-platform",
       "name": "IP Blacklist Platform",
       "period": "2024.12 ~ 現在",
-      "description": "脅威インテリジェンスフィードがAbuseIPDB、Emerging Threats、AlienVault OTXなど複数の外部ソースに散らばり、悪性IPを一件分析するたびにソース別の照会を繰り返す状況でした。Flask Blueprintsにソース別アダプタを切り出し、SQLAlchemyとAlembicマイグレーションでスキーマバージョンを管理、Next.jsフロントエンドでIPごとの信頼度・頻度・分布を交差比較できる構成にしました。再現可能なパイプラインの先に複数の脅威フィードを集約し、一元的に照会・交差分析できるツールとして運用中です。",
+      "description": "AbuseIPDB、Emerging Threats、AlienVault OTXの脅威インテリジェンスフィードを一か所で照会するツールです。フィードごとにソースアダプタを置き、SQLAlchemyモデルでIPレピュテーションのフィールドを正規化しました。スキーママイグレーションはAlembicで管理し、フィード追加時のデータベース変更とアダプタ実装を分けて進められるようにしました。",
       "technologies": [
         "JavaScript",
         "Flask",
@@ -765,7 +765,7 @@
       "id": "hycu-fsds-autonomous-driving",
       "name": "HYCU FSDS自律走行",
       "period": "2025.11 ~ 2026.02",
-      "description": "Formula Student Driverless Simulatorでコーン認識と走行制御を一つのノードグラフに統合する必要があり、Dockerを再現性の単位として据えました。ROSベースの認識・制御ノードをコンテナに組み込み、AirSimシミュレーション環境で検証しています。漢陽サイバー大学校自律走行コンテストに参加しました。",
+      "description": "漢陽サイバー大学の2026 自律走行フォーミュラコンテストに出場した課題で、Formula Student Driverless Simulator(FSDS)環境でコーン認識と走行制御を実装しました。ROS2ベースの認識・制御ノードをDockerコンテナにパッケージングし、AirSimシミュレーションで車両ダイナミクスとセンサーモデルをあわせて検証しました。Gazebo-ROSブリッジとrviz2の可視化でセンサー処理を再現しながらデバッグしました。",
       "technologies": [
         "Python",
         "ROS",
@@ -785,7 +785,7 @@
       "id": "resume-portfolio",
       "name": "Resume Portfolio",
       "period": "2024.01 ~ 現在",
-      "description": "経歴・プロジェクト・運用指標が履歴書・PDF・GitHubに散らばり、採用担当者が強みを短時間で把握しづらい状況でした。Cloudflare Workers Edgeに単一SSoTベースの履歴書サイトを載せ、MCP運用ツールと応募支援パイプラインをmonorepoに統合しています。履歴書・志望動機生成・応募支援・可観測性を同じリポジトリで運用する構成です。このサイトはCloudflare Workersで稼働しています（edge runtime、バンドル）。",
+      "description": "韓国語・英語・日本語の履歴書データ(SSoT)からポートフォリオサイトを生成し、Cloudflare Workersにデプロイしています。JSON-LDとOpenGraphのメタデータも同じデータから生成し、サイト・PDF・GitHubの内容の差を減らしました。ビルドとテストはGitHub Actionsで検証し、運用ログはCloudflare Workers LogsとLokiで確認しています。",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
@@ -808,11 +808,11 @@
       "name": "Terraform Homelab IaC",
       "period": "2024.06 ~ 現在",
       "githubUrl": "https://github.com/jclee941/terraform",
-      "description": "NVMe基盤のProxmox VE、Cloudflare DNS/Workers、k3sのホームラボをGUIで運用しており、変更履歴はスクリーンショット、再構築は記憶に頼る状態でした。Terraform moduleでProxmox VM/LXC、Cloudflare DNS/Workers/WAF、k3s bootstrapリソースをコード化し、PR単位でplan検証する運用に切り替えています。GUIだけでの変更は減らし、インフラの変更履歴をGitレビューで追える形に移行しました。",
+      "description": "Proxmox VM/LXC、Cloudflare DNS・Workers・WAF、k3s bootstrapリソースをTerraform moduleで管理しています。PRごとにplan結果を検証してから適用するため、GUIで直接行っていた変更がGit履歴に残ります。",
       "highlights": [
         "NVMe移行後のProxmox変更をGitで追跡するIaC移行",
-        "DNS・Edge設定の一貫性確保のためのコード化管理",
-        "k3sクラスタ再構築をコード化した再現可能なプロビジョニング",
+        "DNS・Edge設定のコード管理",
+        "コードで再構築するk3sクラスタのプロビジョニング",
         "PRごとにplan検証を走らせるCIパイプライン"
       ],
       "technologies": [
@@ -830,11 +830,11 @@
       "name": "SafetyWallet (CF Workers PWA)",
       "period": "2026.01 ~ 2026.04",
       "githubUrl": "https://github.com/jclee941/safetywallet",
-      "description": "現場では安全マニュアル、教育修了証憑、緊急連絡網が紙で管理されており、参照するたびにバインダーまで歩く運用でした。Cloudflare Workers基盤のPWAとNext.js管理画面で同じ記録をホストする構成にしました。D1に作業者プロフィール、KVキャッシュとR2にはマニュアル本体を置き、ネットワークが出ない現場でもオフラインでマニュアル参照できる体制を運用しています。",
+      "description": "現場作業者の安全マニュアル、教育修了記録、緊急連絡網を紙の代わりに照会できる、Cloudflare Workers基盤のPWAとNext.js管理画面です。D1(SQLite)に作業者プロフィール・教育修了状況・緊急連絡先を保存し、教育期限の通知のような非同期処理はWorkers Queueに分離しました。マニュアルのPDF原本はWorkers KVに置き、Service Worker Cache APIでネットワークの弱い現場端末でもオフラインで照会できるようにしました。管理画面はNext.jsとTypeScriptで作り、JWT(短寿命のアクセストークン + HttpOnlyリフレッシュトークン)のセッション認証とロールベースアクセス制御(RBAC)で作業者と管理者の権限を分けました。",
       "highlights": [
         "現場端末から直接参照するCloudflare Workers Edgeデプロイ",
-        "D1・KV・Cache APIを階層に分けてオフライン参照を支えるストレージ構成",
-        "ネットワーク制約環境でもマニュアルアクセス可能にしたオフライン対応",
+        "D1・KV・Cache APIで役割を分けたストレージ構成",
+        "ネットワークが切れてもマニュアルを見られるオフライン照会",
         "現場作業者と管理者の権限を分けたRBAC + JWT設計"
       ],
       "technologies": [
@@ -865,12 +865,12 @@
       "name": "jclee-bot GitHub App",
       "period": "2026.04 ~ 現在",
       "githubUrl": "https://github.com/jclee941/jclee-bot",
-      "description": "jclee-botはCLIProxyAPI経由のLLM PRレビューと、シークレットスキャン・actionlint・ドキュメントポリシーの結果をCheck Runとして併せて公開します。生成レビューと独立したポリシー検証を一つの画面で確認し、韓国語優先のレビューコメントと実行ログをリポジトリごとに同じ基準で残します。",
+      "description": "jclee-botは、CLIProxyAPIを経由したLLM PRレビューと、シークレットスキャン・actionlint・ドキュメントポリシーの検査結果をCheck Runとして一緒に投稿するGitHub Appです。LLMレビューとポリシー検査の結果をPR画面の一か所で確認でき、レビューコメントは韓国語を優先して作成します。実行ログはELKで収集しています。",
       "highlights": [
         "CLIProxyAPI経由のLLM PRレビュー生成",
         "シークレットスキャン・actionlint・ドキュメントポリシーCheck RunでLLM出力を検証",
         "韓国語優先レビューコメントと変更説明の生成",
-        "ELK可観測性とGitHub Actions実行ログの連携"
+        "GitHub Actions実行ログとELKの連携"
       ],
       "technologies": [
         "Python",
@@ -888,7 +888,7 @@
       "name": "AIコンテンツ自動化パイプライン",
       "period": "2026.06 ~ 現在",
       "githubUrl": null,
-      "description": "複数チャネル向けコンテンツ制作が、スクリプト作成、音声合成、動画生成、アップロードに分かれていて、実行経路とログがツールごとに散らばっていました。Python worker、n8n workflow、Supabase PostgreSQL/Storageを軸にジョブキューと成果物メタデータを分離し、TTSと動画生成APIを段階別サービスとしてつなぐMSA型パイプラインに再構成しています。再試行、状態追跡、チャネル別後処理はワークフローレイヤーで扱い、API連携とオーケストレーションの両面で再利用可能な構造です。",
+      "description": "スクリプト作成、音声合成(TTS)、動画生成、アップロードを段階ごとに分けて実行するコンテンツ制作パイプラインです。Python workerとn8n workflowが各段階を実行し、ジョブの状態と成果物のメタデータはSupabase PostgreSQL/Storageに保存します。外部生成APIの呼び出しは再試行できるジョブ単位に分け、チャネル別の後処理ルールはワークフロー設定で管理しています。",
       "highlights": [
         "Python workerとn8n workflowでスクリプト生成、TTS、動画生成、アップロード段階を分離",
         "Supabase PostgreSQL/Storageにジョブ状態と成果物メタデータを保存",
@@ -912,12 +912,12 @@
       "name": "Bug Bounty Recon Toolkit",
       "period": "2025.10 ~ 現在",
       "githubUrl": "https://github.com/jclee941/bug",
-      "description": "バグバウンティの偵察（サブドメイン発見 → 通知 → 脆弱性スキャン）は、毎回同じ三つのツールを手で回す運用でした。Goベース偵察パイプラインとPython結果分析をつなぎ、Subfinder、httpx、Nucleiを連結、cronで日次スケジュールを運用しています。偵察はワークフローに置き換え、新規ドメイン変更は次の手動実行まで待たず即時に拾えるようにしました。",
+      "description": "バグバウンティの偵察段階(サブドメイン発見、通知、脆弱性スキャン)を自動で実行するツールです。Subfinder、httpx、NucleiをGoベースのパイプラインとMakefile CLIでまとめてcronで定期実行し、結果の分析はPythonで行います。新しいサブドメインが見つかるとSlackで通知し、Nucleiの結果はseverity別に保存します。",
       "highlights": [
         "定期偵察スキャンのための並行性設計",
         "脆弱性を見つけたらすぐ通知するマッチング・通知連携",
         "cronで定期実行する偵察・通知ワークフロー",
-        "検知結果をMITRE ATT&CKで整列し、リスク判断を支援"
+        "検知結果をMITRE ATT&CK基準で分類"
       ],
       "technologies": [
         "JavaScript",
@@ -935,11 +935,11 @@
       "name": "Firewall Policy Automation",
       "period": "2026.06 ~ 現在",
       "githubUrl": "https://github.com/jclee941/firewall",
-      "description": "ファイアウォールポリシー申請書とレンジ表が別々のExcelシートで管理され、結合点がレビュー記録の抜け落ちる箇所になっていました。Excel VBAのワークフローで申請行、ファイアウォール一覧、レンジ条件を同じブック内で検証する形にし、対象ファイアウォールの判断とレビュー記録を同じファイルで追跡できる構成にしました。",
+      "description": "ファイアウォールポリシー申請書とファイアウォールのIP範囲表を手作業で突き合わせていた手順を、Excel VBAツールに置き換えたプロジェクトです。申請行、ファイアウォール一覧、IP範囲の基準表を一つのブックの中で検証するため、対象ファイアウォールの判断とレビュー記録が自動で残ります。",
       "highlights": [
-        "申請書とファイアウォールレンジ表を同じ入力契約で整理",
-        "対象ファイアウォール判断の行単位トレーサビリティ",
-        "既存Excel形式の中で運用者が確認できるVBAフロー",
+        "申請書とファイアウォールのIP範囲表を同じ入力形式で整理",
+        "対象ファイアウォール判断の行単位の追跡",
+        "運用者が既存のExcel形式のまま確認できるVBAツール",
         "ファイアウォールポリシーレビューの反復作業を削減"
       ],
       "technologies": [
@@ -957,12 +957,12 @@
       "name": "tmux Productivity Suite",
       "period": "2026.06 ~ 現在",
       "githubUrl": "https://github.com/jclee941/tmux",
-      "description": "ターミナルセッション、プロジェクト別レイアウト、Slackブリッジといった反復開発運用が、あちこちのbash aliasとメモファイルに散らばっていました。tmuxを軸としたスイートでこれらをバージョン管理される資産にまとめ、Bash設定、YAMLレイアウト、Bun/TypeScript TUIを一体で運用しています。コンテキスト切替とセッション復旧をワークフローとして扱える構成です。",
+      "description": "ターミナルセッション、プロジェクト別の作業レイアウト、Slackブリッジをtmuxで管理する個人ツールです。Bash設定、YAMLレイアウト、Bun/TypeScript TUIを一つのリポジトリで管理し、セッション復旧とプロジェクト切り替えをスクリプトで処理しています。",
       "highlights": [
         "プロジェクト別tmuxセッションとレイアウト管理",
         "YAMLベースのワークスペース定義とターミナルUI",
         "反復作業の入口をスクリプトとキーバインドで統合",
-        "個人運用ツールもバージョン管理と検証対象として管理"
+        "設定とスクリプトをGitでバージョン管理"
       ],
       "technologies": [
         "TypeScript",
@@ -979,8 +979,8 @@
       "id": "mcp-servers",
       "name": "PlayMCPツールサーバ",
       "period": "2026.06 ~ 現在",
-      "description": "AIエージェントが呼び出すツールの境界を扱うプロジェクトです。meetup-coordinatorとnunchi-translatorをPlayMCP互換MCPサーバとしてTypeScript/Bunで実装し、Kakao Cloudにデプロイしました。各ツールはinputSchema・outputSchemaとステートレスなリクエスト処理で入出力契約を検証します。",
-      "tagline": "AIツール境界設計",
+      "description": "AIエージェントが呼び出すMCPツールサーバです。meetup-coordinatorとnunchi-translatorをPlayMCP互換MCPサーバとして実装し、Kakao Cloudにデプロイしました。各ツールはinputSchema・outputSchemaで入力と出力を検証し、リクエストをステートレスに処理します。",
+      "tagline": "MCPツールサーバ",
       "technologies": [
         "TypeScript",
         "Bun",
@@ -998,7 +998,7 @@
       "id": "resume-portfolio",
       "name": "resume-portfolio",
       "url": "https://github.com/jclee941/resume",
-      "description": "履歴書データと公開ポートフォリオを単一SSoTで管理する個人monorepoです。採用担当者が応募者の強みを短時間で把握できるように作りました。",
+      "description": "履歴書データ(SSoT)と公開ポートフォリオ、関連する自動化スクリプトをまとめて管理する個人monorepoです。",
       "techStack": [
         "TypeScript",
         "Cloudflare Workers",
@@ -1024,14 +1024,14 @@
     "contact": "連絡先"
   },
   "achievements": [
-    "ネクストレード取引システムのセキュリティインフラを設計・運用し、韓国金融委員会本認可審査に技術側で応えました。FortiGate FGCPアクティブ-パッシブHA、ネットワーク分離、エンドポイントセキュリティ統制までを一貫した体制で支えています。",
-    "Splunk ES検知ルール、通知ワークフロー、FortiManager APIポリシー照会を一つのセキュリティイベント認知・分類・通知フローにつなげ、コンソール確認への依存を減らしました。",
-    "ホームラボをNVMeストレージ基盤のProxmox VEへ移し替え、Prometheus node_exporterとLoki Promtailでメトリクスとログを収集、GrafanaダッシュボードJSONをコードで管理する体制に引き上げました。",
-    "Slack、GitHub Actions、Cloudflareフックを一つの共通ワークフローにまとめ、エラーハンドリングと再試行の基準を統一して、新しい通知チャネルを連携する手順を簡素化しました。",
-    "メタネットのコンタクトセンター在宅勤務移行では、NAC例外申請・端末登録・現場点検の手順をAnsibleプレイブックと再利用可能な運用チェックリストで標準化しました。",
-    "FortiGate SSL-VPN環境でエンドポイント保護エージェントとVPNクライアント間のプロファイル競合をtcpdumpで原因切り分けし、FortiClientプロファイル分離ポリシーで解消し、新規サイトのVLANサブネット設計まで進めました。",
-    "KAI閉域網のLinuxサーバファイアウォールポリシーで、firewall-cmd解析により未使用の重複ルールを抽出・整理し、次の監査サイクルに向けてルールベースを薄くしました。",
-    "CLIProxyAPI経由のLLM PRレビューとシークレットスキャン・actionlint・ドキュメントポリシーCheck Runをまとめたjclee-botを運営し、スキーマで入出力契約を検証するMCPサーバをKakao Cloudにデプロイしました。",
+    "ネクストレード売買システムにFortiGate FGCP active-passive HA、ネットワーク分離、エンドポイントセキュリティを構築・運用し、金融委員会本認可審査にセキュリティ運用記録を提出しました。",
+    "Splunk ES検知ルール、通知ワークフロー、FortiManager APIポリシー照会をつなぎ、機器コンソールで直接確認していた作業を減らしました。",
+    "ホームラボをNVMeストレージ基盤のProxmox VEで再構成し、Prometheus node_exporterとLoki Promtailでメトリクスとログを収集しながら、GrafanaダッシュボードのJSONをコードで管理しました。",
+    "Slack・GitHub Actions・Cloudflare Webhookを一つの共通ワークフローにまとめ、エラー処理と再試行の基準を揃えて、新しい通知チャネルを連携する手順を減らしました。",
+    "コンタクトセンターの在宅勤務移行で、NAC例外申請・端末登録・現場点検の手順をAnsibleプレイブックと再利用できる運用チェックリストで標準化しました。",
+    "FortiGate SSL-VPN環境でエンドポイント保護エージェントとVPNクライアントのプロファイル競合をtcpdumpで原因分析し、FortiClientプロファイル分離ポリシーで解決しました。",
+    "KAI閉鎖網のLinuxサーバのファイアウォールポリシーで、未使用の重複ルールをfirewall-cmdの解析で特定・整理し、変更履歴を残しました。",
+    "CLIProxyAPIベースのLLM PRレビューとシークレットスキャン・actionlint・ドキュメントポリシーのCheck Runを一緒に投稿するjclee-botを運用し、スキーマで入力と出力を検証するMCPサーバをKakao Cloudにデプロイしました。",
     "JADXでAndroidクライアントのUIと報酬処理フローを追跡し、mitmproxyキャプチャ分析コードでエンドポイント・認証ヘッダー・リクエスト/レスポンスJSONフィールドを整理しました。"
   ],
   "infrastructure": [
@@ -1069,7 +1069,7 @@
       "id": "supabase",
       "icon": "🗄️",
       "title": "Supabase",
-      "description": "BaaS（PostgreSQL + Auth）",
+      "description": "内部BaaS（PostgreSQL + Auth）",
       "status": "running"
     },
     {
@@ -1097,7 +1097,7 @@
       "id": "cloudflare-workers",
       "icon": "⚡",
       "title": "Cloudflare Workers",
-      "description": "Edge ランタイム / デプロイ確認 / health-check 検証済み",
+      "description": "Edgeランタイム / グローバル配信 / health-check検証",
       "status": "running",
       "url": "https://resume.jclee.me"
     },
@@ -1105,7 +1105,7 @@
       "id": "workflow-automation",
       "icon": "🔄",
       "title": "Automation",
-      "description": "n8n・Python基盤の通知/コンテンツ/監視自動化パイプライン。",
+      "description": "n8n・Python基盤の通知/コンテンツ自動化パイプライン",
       "status": "運用中"
     },
     {
@@ -1162,38 +1162,38 @@
   "platformVariants": {
     "wanted": {
       "headline": "情報セキュリティエンジニア",
-      "about": "金融業界のセキュリティ基盤・SIEMエンジニアリングとセキュリティ自動化を担当してきた情報セキュリティエンジニアです。ネクストレード売買決済システム構築と金融委員会本認可、FSDC金融監督院監査対応を通じて、FortiGate HA・ネットワーク分離、Splunk ES検知、FortiManager API照会を一つの対応アーキテクチャにつなげました。繰り返されるセキュリティ対応はスクリプトとIaCとして残し、監査・障害の場面で根拠をデータで提示することに集中しています。\n\n[検討ポジション]\nセキュリティ自動化、セキュリティ基盤、SIEMエンジニアリングのポジションでのご提案・面接を優先的に検討しています。繰り返し対応を文書・スクリプト・API連携で減らし、監査・障害の場面で説明できる運用記録を残すチームに合います。\n\n[主な経験]\n- ネクストレード売買決済システム: Splunk ES Saved Search検知 → Webhook relay → Slack/SMS通知 → FortiManager API照会へとつながるセキュリティイベント対応アーキテクチャを設計し、検知履歴とポリシー照会結果を同じ対応フローで確認\n- ネクストレードセキュリティ基盤構築: FortiGate HA・ネットワーク分離・エンドポイントセキュリティで単一障害点を解消、Ansible Roleベースの設定管理、金融委員会本認可審査資料の提出\n- FSDC(金融セキュリティデータセンター): 金融監督院監査対応、DBアクセス制御クエリチューニング、DLPポリシー成果物管理\n- AI検証自動化: LLM PRレビューと独立したCheck Runポリシー検証を公開するjclee-bot、PlayMCP互換MCPサーバ、CLIProxyAPIを運営\n- モバイルアプリ・API分析: JADXでAndroidクライアントのUIと報酬処理フローを追跡し、mitmproxyキャプチャからエンドポイント・認証ヘッダー・リクエスト/レスポンスJSONフィールドを整理\n- ネットワーク/システム: NSX-Tマイクロセグメンテーション、Wazuh・NAC・VPN、Linux、Python・Ansible自動化スクリプト\n\n[技術/資格]\nSplunk ES、FortiGate/FortiManager、FortiAnalyzer、Ansible、Python、Terraform、Docker、Linux、Grafana/Prometheus/Loki、Elasticsearch/Kibana、CCNP、RHCSA\n\nポートフォリオ: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
+      "about": "金融業界のセキュリティ基盤構築とSIEM検知・通知の自動化を担当してきた情報セキュリティエンジニアです。ネクストレード売買システムの構築段階でFortiGate HA・ネットワーク分離を構成して金融委員会本認可審査に対応し、自動化段階ではSplunk ES検知、Slack/SMS通知、FortiManager API照会をつなぎました。FSDCでは金融監督院監査に対応しました。繰り返し発生するセキュリティ対応は、スクリプトとIaCとして残しています。\n\n[検討ポジション]\nセキュリティ自動化、セキュリティ基盤、SIEMエンジニアリングのポジションでのご提案・面接を優先的に検討しています。\n\n[主な経験]\n- ネクストレード セキュリティ運用自動化: Splunk ES Saved Search検知 → Webhook relay → Slack/SMS通知 → FortiManager API照会のフローを設計し、検知履歴とポリシー照会結果をあわせて確認\n- ネクストレード セキュリティ基盤構築: FortiGate HAでファイアウォールの単一障害点を解消、ネットワーク分離・エンドポイントセキュリティの構成、Ansible Roleによる設定管理、金融委員会本認可審査資料の提出\n- FSDC(金融セキュリティデータセンター): 金融監督院監査対応、DBアクセス制御クエリのチューニング、DLPポリシー成果物の管理\n- LLM出力検証: LLM PRレビューとポリシー検査を一緒に投稿するjclee-bot、PlayMCP互換MCPサーバ、CLIProxyAPIの運用\n- モバイルアプリ・API分析: JADXでAndroidクライアントのUIと報酬処理フローを追跡し、mitmproxyキャプチャからエンドポイント・認証ヘッダー・リクエスト/レスポンスのJSONフィールドを整理\n- ネットワーク/システム: NSX-Tマイクロセグメンテーション、Wazuh・NAC・VPN、Linux、Python・Ansible自動化スクリプト\n\n[技術/資格]\nSplunk ES、FortiGate/FortiManager、FortiAnalyzer、Ansible、Python、Terraform、Docker、Linux、Grafana/Prometheus/Loki、Elasticsearch/Kibana、CCNP、RHCSA\n\nポートフォリオ: https://resume.jclee.me\nGitHub: https://github.com/jclee941"
     },
     "jobkorea": {
       "headline": "情報セキュリティエンジニア",
-      "about": "[希望ポジション]\n韓国航空宇宙産業(KAI)閉鎖網運用から出発し、ネットワーク・セキュリティ基盤構築、金融業界の売買システムセキュリティ、監査対応を経て、現在はセキュリティ運用自動化まで担当してきたセキュリティ基盤・自動化エンジニアです。セキュリティ基盤、SIEMエンジニアリング、セキュリティ自動化、金融情報セキュリティの役割の提案と面接を優先的に検討します。FortiGate HA・ネットワーク分離、Splunk ES検知ルール、Slack/SMS通知、FortiManager API照会を一つの対応アーキテクチャにつなげて繰り返し対応を減らし、金融委員会本認可・金融監督院監査・障害対応の場面でデータで説明できる運用記録を残してきました。\n\n[経歴要約]\n- エムティデータ (2018.10~2019.10): 韓国航空宇宙産業(KAI)閉鎖網Linuxサーバ・OA運用。ファイアウォールポリシー変更履歴管理、WSUSパッチ、アクセスログの監査対応資料蓄積\n- メタネットMプラットフォーム (2020.08~2021.08): コンタクトセンター在宅勤務インフラ運用。VPN・NAC運用、Python・Ansibleスクリプト、FortiGateログベースのVPNセッション監視ダッシュボード\n- ジョイントリー (2021.09~2022.04): 国民大学校次世代情報システムのネットワークセキュリティ構築。VMware NSX-Tマイクロセグメンテーション、DFW分散ファイアウォール、NAC・DLP・Wazuh連携、vSphere\n- Quantec投資一任 (2022.08~2024.03): 金融セキュリティデータセンター(FSDC) AI Trading Platformインフラ運用、金融監督院監査対応。DLPポリシー成果物、PostgreSQLアクセス制御クエリチューニング、Python運用スクリプト\n- ガオンヌリ情報システム (2024.03~2025.02): ネクストレード売買決済システムのセキュリティ基盤構築、金融委員会本認可対応。FortiGate FGCP active-passive HA、ネットワーク分離、エンドポイントセキュリティ、Ansible Role、FortiManager、VMware\n- アイティセンCTS (2025.03~2026.02): ネクストレード セキュリティ運用アーキテクチャ自動化(SIEM・ファイアウォールポリシー自動化設計)。Splunk ES Saved Search、webhook relay、Slack/SMS通知、FortiManager API照会、Python・Docker state tracker\n- AI検証自動化 (2026.05~現在): LLM PRレビューとCheck Run検証をまとめたjclee-bot、PlayMCP互換MCPサーバ、CLIProxyAPIを運営\n- モバイルリバースエンジニアリング (2026.05~現在): JADXでAndroidクライアントのUI・報酬処理フローを追跡し、mitmproxyキャプチャ分析コードでエンドポイント・認証ヘッダー・リクエスト/レスポンスJSONフィールドを整理\n\n[技術/資格]\n- SIEM・セキュリティ: FortiGate、FortiManager、FortiAnalyzer、Splunk ES、NAC、DLP、Wazuh、NSX-T、MITRE ATT&CK\n- オブザーバビリティ: Grafana、Prometheus、Loki、Elasticsearch/Kibana、OpenTelemetry\n- 自動化・IaC: Python、Bash、Go、Ansible、Terraform、GitHub Actions、GitLab CI/CD\n- インフラ・クラウド: Linux、Docker、Kubernetes、k3s、Proxmox VE、VMware、Cloudflare Workers\n- 資格: CCNP、RHCSA、CompTIA Linux+、LPIC-1、リナックスマスター2級\n\nポートフォリオ: https://resume.jclee.me"
+      "about": "[希望ポジション]\n韓国航空宇宙産業(KAI)の閉鎖網運用から始まり、ネットワーク・セキュリティ基盤の構築、金融業界の売買システムのセキュリティ、監査対応を担当してきたセキュリティ基盤エンジニアです。ネクストレードではFortiGate HA・ネットワーク分離を構築し、Splunk ES検知ルール、Slack/SMS通知、FortiManager API照会をつないで、機器コンソールで繰り返していた確認作業を減らしました。金融委員会の本認可審査と金融監督院の監査には、運用記録を根拠資料として提出しました。セキュリティ基盤、SIEMエンジニアリング、金融情報セキュリティのポジションでのご提案・面接を優先的に検討しています。\n\n[経歴要約]\n- エムティデータ (2018.10~2019.10): 韓国航空宇宙産業(KAI)閉鎖網のLinuxサーバ・OA運用。ファイアウォールポリシー変更履歴の管理、WSUSパッチ、アクセスログの監査対応資料の管理\n- メタネットMプラットフォーム (2020.08~2021.08): コンタクトセンターの在宅勤務インフラ運用。VPN・NAC運用、Python・Ansibleスクリプト、FortiGateログベースのVPNセッション監視ダッシュボード\n- ジョイントリー (2021.09~2022.04): 国民大学校次世代情報システムのネットワークセキュリティ構築。VMware NSX-Tマイクロセグメンテーション、DFW分散ファイアウォール、NAC・DLP・Wazuh連携、vSphere\n- クォンテック投資一任 (2022.08~2024.03): 金融セキュリティデータセンター(FSDC)のAIトレーディングプラットフォームのインフラ運用、金融監督院監査対応。DLPポリシー成果物、PostgreSQLアクセス制御クエリのチューニング、Python運用スクリプト\n- ガオンヌリ情報システム (2024.03~2025.02): ネクストレード売買システムのセキュリティ基盤構築、金融委員会本認可対応。FortiGate FGCP active-passive HA、ネットワーク分離、エンドポイントセキュリティ、Ansible Role、FortiManager、VMware\n- アイティセンCTS (2025.03~2026.02): ネクストレード セキュリティ運用アーキテクチャ構築(SIEM・ファイアウォールポリシー対応設計)。Splunk ES Saved Search、Webhook relay、Slack/SMS通知、FortiManager API照会、Python・Docker state tracker\n- LLM出力検証 (2026.05~現在): LLM PRレビューとCheck Run検証を一緒に投稿するjclee-bot、PlayMCP互換MCPサーバ、CLIProxyAPIの運用\n- モバイルリバースエンジニアリング (2026.05~現在): JADXでAndroidクライアントのUI・報酬処理フローを追跡し、mitmproxyキャプチャ分析コードでエンドポイント・認証ヘッダー・リクエスト/レスポンスのJSONフィールドを整理\n\n[技術/資格]\n- SIEM・セキュリティ: FortiGate、FortiManager、FortiAnalyzer、Splunk ES、NAC、DLP、Wazuh、NSX-T、MITRE ATT&CK\n- オブザーバビリティ: Grafana、Prometheus、Loki、Elasticsearch/Kibana、OpenTelemetry\n- 運用スクリプト・IaC: Python、Bash、Go、Ansible、Terraform、GitHub Actions、GitLab CI/CD\n- インフラ・クラウド: Linux、Docker、Kubernetes、k3s、Proxmox VE、VMware、Cloudflare Workers\n- 資格: CCNP、RHCSA、CompTIA Linux+、LPIC-1、リナックスマスター2級\n\nポートフォリオ: https://resume.jclee.me"
     }
   },
   "coverLetter": {
     "ja": {
-      "headline": "説明可能なセキュリティ・インフラシステムを設計するエンジニア",
+      "headline": "金融業界のセキュリティ基盤とSIEM自動化を担当してきたセキュリティエンジニア",
       "paragraphs": [
-        "キャリアの出発点は、韓国航空宇宙産業(KAI)の閉鎖網IT環境で、LinuxサーバのパッチスケジュールをExcelで管理していた現場でした。毎週同じ作業を繰り返す中で確信したのは、セキュリティエンジニアリングの価値は事故を願わないことではなく、反復可能な手順と自動化と記録でリスクを下げることにある、という点です。RHCSA、LPIC-1、Linuxマスター2級を連続取得してLinux基盤を再構築し、その土台を現場の自動化経験へつなげました。",
-        "メタネットMプラットフォームでは、AnsibleとPythonでコンタクトセンターのNACポリシー展開手順を一つのレビュー可能なワークフローに整理しました。ジョイントリーでは国民大学校の次世代情報システムにNSX-Tマイクロセグメンテーションを適用し、東西トラフィックの盲点を塞ぎ、NACとDLPの検知ポリシーを同じ基準で再整備しています。ツールは入れ替わっても、手が繰り返しかかる作業は標準化の対象という視点は変わっていません。",
-        "クォンテック投資一任の金融セキュリティデータセンター(FSDC)で金融監督院の定期監査に対応する中で学んだのは、セキュリティ基盤は一度整えれば終わるものではなく、監査や障害の場面で現状と変更内容をデータで示せるかどうかが重要だ、という点です。DBアクセス制御クエリチューニングもPBプラットフォームPOC検証も、結局はシステム状態をデータで説明し、変更ごとに記録を残す営みでした。",
-        "直前の経歴では、ガオンヌリで構築段階を担当し、ITCEN CTSの自動化段階まで連続して担当したネクストレード取引所セキュリティトラックに携わりました。ネットワーク分離とエンドポイントセキュリティを構築し、韓国金融委員会本認可審査の技術対応を行い、Ansible Roleでセキュリティ機器設定を揃えました。Splunk ES検知ルール、通知ワークフロー、FortiManager APIポリシー照会を一つの運用体制にまとめ、検知から通知の送信までを自動でつなげました。",
-        "次のステップでは、標準化の対象をセキュリティ機器や自動化スクリプトから、MCPツールとEdgeランタイムまで広げています。個人のホームラボではCloudflare Workers、MCP、Grafana、1PasswordをTerraformでIaC化し、反復的なセキュリティ対応項目をMCPツールが先に整理するパターンを試しています。次のキャリアでも、ツールより先に解くべきセキュリティ課題を据え、その問題を標準化可能な構造に変える役割を担いたいと考えています。"
+        "最初の業務は、韓国航空宇宙産業(KAI)の閉鎖網でサーバのパッチスケジュールをExcelで管理することでした。同じ確認作業を繰り返す中で、繰り返す仕事は手順と記録に残しておかないと、担当者が変わったときに同じ結果にならないことを学びました。その後RHCSA、LPIC-1、リナックスマスター2級を取得しながらLinuxの学習を続け、次の職場ではその知識を運用自動化に活かしました。",
+        "メタネットMプラットフォームでは、AnsibleとPythonでコンタクトセンターのNACポリシー展開を再現可能な手順に変えました。ジョイントリーでは国民大学校の次世代情報システムにNSX-Tマイクロセグメンテーションを適用して東西トラフィックのポリシーを細分化し、NACとDLPの検知ポリシーを整理し直しました。どちらの職場でも、繰り返す手作業はスクリプトと文書に残しました。",
+        "クォンテック投資一任の金融セキュリティデータセンター(FSDC)では、金融監督院の定期監査に対応しました。監査では設定そのものより、現在の状態と変更履歴を資料で示せるかが重要だったため、DBアクセス制御クエリのチューニングとPBプラットフォームPOC検証も変更記録を残しながら進めました。",
+        "直前は、ネクストレード売買システムのセキュリティ業務を、ガオンヌリ情報システムでの構築段階からアイティセンCTSでの自動化段階まで続けて担当しました。ネットワーク分離とエンドポイントセキュリティを構築し、Ansible Roleで機器設定を管理しながら金融委員会本認可審査に対応しました。自動化段階ではSplunk ES検知ルール、通知ワークフロー、FortiManager APIポリシー照会をつなぎ、イベント検知から通知送信までが自動で流れるようにしました。",
+        "現在は個人のホームラボでCloudflare Workers、MCP、Grafana、1Passwordの構成をTerraformで管理し、反復的なセキュリティ対応項目をMCPツールで先に分類する方法を試しています。次の職場でも、まず解くべきセキュリティ課題を定義し、それを手順とコードで解決して運用記録を残す役割を担いたいと考えています。"
       ],
-      "closing": "繰り返し作業を減らし、運用記録を残すやり方で、貴社のセキュリティインフラが解くべき次の問題を一緒に整理していきます。"
+      "closing": "繰り返し作業を減らし、運用記録を残すやり方で、貴社のセキュリティインフラ業務を担当いたします。"
     }
   },
   "careerSummary": {
     "ja": {
       "headline": "セキュリティ基盤・SIEM経歴サマリー",
       "paragraphs": [
-        "ITCEN CTS (2025.03 ~ 2026.02): Nextrade取引所で、Splunk ES検知ルール、Slack/SMS通知フロー、FortiManager APIによるファイアウォールポリシー照会を接続したセキュリティ運用アーキテクチャを設計しました。",
-        "Gaonnuri Information Systems (2024.03 ~ 2025.02): Nextradeセキュリティ基盤構築で、FortiGate HA、ネットワーク分離、エンドポイントセキュリティ、Ansible Roleベースの設定標準化、韓国金融委員会本認可審査対応を担当しました。",
-        "Quantec Investment Management (2022.08 ~ 2024.03): 金融セキュリティデータセンター(FSDC)でインフラ運用、金融監督機関の監査対応、DBアクセス制御クエリ調整、PBプラットフォームPOC検証を担当しました。",
-        "Jointree (2021.09 ~ 2022.04): 国民大学校情報システム基盤で、VMware NSX-Tマイクロセグメンテーション、DFWポリシー、NAC・DLP、Wazuh連携モニタリングを担当しました。",
-        "Metanet M Platform (2020.08 ~ 2021.08): コンタクトセンターのリモートワーク基盤で、SSL-VPN・NAC運用、端末登録手順、Python/Ansible運用スクリプト、FortiGate VPNセッション監視を担当しました。",
-        "MT Data (2018.10 ~ 2019.10): KAI閉域網のLinux/OA環境で、パッチ運用、ファイアウォールポリシー変更履歴、現場IT支援を担当しました。"
+        "アイティセンCTS (2025.03 ~ 2026.02): ネクストレード売買システムで、Splunk ES検知ルール、Slack/SMS通知ワークフロー、FortiManager APIによるファイアウォールポリシー照会をつないだセキュリティ運用アーキテクチャを設計しました。",
+        "ガオンヌリ情報システム (2024.03 ~ 2025.02): ネクストレードのセキュリティ基盤構築段階で、FortiGate HA、ネットワーク分離、エンドポイントセキュリティの構築、Ansible Roleによる設定管理、金融委員会本認可対応を担当しました。",
+        "クォンテック投資一任 (2022.08 ~ 2024.03): 金融セキュリティデータセンター(FSDC)で、インフラ運用、金融監督院監査対応、DBアクセス制御クエリのチューニング、PBプラットフォームPOC検証を担当しました。",
+        "ジョイントリー (2021.09 ~ 2022.04): 国民大学校次世代情報システムの構築で、VMware NSX-TマイクロセグメンテーションとDFWポリシーを設計し、NAC・DLP・Wazuh連携でセキュリティイベントの確認手順を作りました。",
+        "メタネットMプラットフォーム (2020.08 ~ 2021.08): コンタクトセンターの在宅勤務環境で、SSL-VPN・NAC運用と端末登録手順を担当し、Python・Ansible運用スクリプトとFortiGate VPNセッション監視で手作業を減らしました。",
+        "エムティデータ (2018.10 ~ 2019.10): 韓国航空宇宙産業(KAI)の閉鎖網で、Linuxログ分析、WSUSパッチ、ファイアウォールポリシー変更履歴の追跡、OA運用支援を担当しました。"
       ],
-      "closing": "DLP・nDLP・APT・SWG・IPS・DDoS・DRM・SSL VPN・NAC・Active Directoryを運用し、基盤構築・検知・通知・監査対応の記録を文書とシステムに残してきました。"
+      "closing": "DLP・nDLP・APT・SWG・IPS・DDoS・DRM・SSL VPN・NAC・ADを含むセキュリティ機器とアクセス制御を運用し、構築・検知・通知・監査対応の過程は文書に残しました。"
     }
   }
 }

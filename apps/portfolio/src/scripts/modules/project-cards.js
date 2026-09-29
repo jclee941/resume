@@ -33,7 +33,7 @@ function caseStudyCopy(lang) {
     return {
       title: 'Operational case studies',
       description:
-        'A closer look at selected projects — the operating context and how each was built.',
+        'A closer look at selected projects: the operating context and how each was built.',
       gridLabel: 'Case studies',
       cta: 'Review details',
     };
