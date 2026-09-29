@@ -13,6 +13,10 @@ import { JOBKOREA_SESSION_EXPIRED, withJobKoreaEditor } from './jobkorea-editor.
 const REVIEWED_FIELD =
   /^(UnivSchool\[[^\]]+\]\.(Schl_Name|Entc_YM|Grad_YM|Grad_Type_Code)|Award\[[^\]]+\]\.(Award_Name|Award_Inst_Name|Award_Year)|Award\.[Ii]ndex)$/;
 
+/** Sections a save replaces wholesale (smartMergeFields), keyed by real JobKorea row keys. */
+const REPLACED_SECTIONS = ['Career', 'License', 'Award'];
+const REPLACED_ROW_NAME = /^(Career|License|Award)\[[^\]]+\]\.Index_Name$/;
+
 /** Edit-page tokens the save echoes back when the live form does not carry them. */
 const DEFAULT_EDIT_TOKENS = { IsEditPage: 'True', IsCompleteSave: 'True', LastEditDateTicks: '' };
 
@@ -22,7 +26,7 @@ const DEFAULT_EDIT_TOKENS = { IsEditPage: 'True', IsCompleteSave: 'True', LastEd
  *   Parameters<typeof withJobKoreaEditor>[0] & { JOBKOREA_RNO?: string }} JobKoreaSyncEnv
  * @typedef {Parameters<typeof buildJobKoreaFormData>[0] &
  *   Parameters<typeof assertJobKoreaCareerPayloadCoverage>[0]} JobKoreaSsot
- * @typedef {{ dryRun: boolean; withEditor?: typeof withJobKoreaEditor }} JobKoreaSyncOptions
+ * @typedef {{ dryRun: boolean; withEditor?: typeof withJobKoreaEditor; now?: number }} JobKoreaSyncOptions
  * @typedef {{ platform: 'jobkorea'; success: boolean; dryRun: boolean; error?: string; code?: string; [key: string]: unknown }} JobKoreaSyncResult
  */
 
@@ -42,6 +46,49 @@ export function describeReviewedChanges(baseFields, mergedFields) {
       after: String(field.value ?? ''),
     }))
     .filter((change) => change.before !== change.after);
+}
+
+/**
+ * @param {FormField[]} fields
+ * @param {string} section
+ * @returns {string[]}
+ */
+function rowKeys(fields, section) {
+  const indexName = `${section}.index`.toLowerCase();
+  return fields
+    .filter((field) => field.name.toLowerCase() === indexName)
+    .flatMap((field) => String(field.value ?? '').split(','))
+    .map((key) => key.trim())
+    .filter(Boolean);
+}
+
+/**
+ * Live vs saved row keys of the sections a save replaces wholesale, for review.
+ * @param {FormField[]} baseFields
+ * @param {FormField[]} mergedFields
+ * @returns {Record<string, { live: string[]; saved: string[] }>}
+ */
+function describeReplacedRows(baseFields, mergedFields) {
+  return Object.fromEntries(
+    REPLACED_SECTIONS.map((section) => [
+      section,
+      { live: rowKeys(baseFields, section), saved: rowKeys(mergedFields, section) },
+    ])
+  );
+}
+
+/**
+ * Rows of the replaced sections that the merge dropped because the live row carries
+ * more fields than the SSoT overlay; saving would leave only their forced date fields.
+ * @param {FormField[]} targetFields
+ * @param {FormField[]} mergedFields
+ * @returns {string[]}
+ */
+function truncatedRows(targetFields, mergedFields) {
+  const merged = new Set(mergedFields.map((field) => field.name));
+  return targetFields
+    .filter((field) => REPLACED_ROW_NAME.test(field.name) && !merged.has(field.name))
+    .map((field) => field.name.replace(/\.Index_Name$/, ''));
 }
 
 /**
@@ -66,7 +113,7 @@ function parseSaveResult(text) {
  * @returns {Promise<JobKoreaSyncResult>}
  */
 export async function syncJobKoreaFromSsot(env, ssot, options) {
-  const { dryRun, withEditor = withJobKoreaEditor } = options;
+  const { dryRun, withEditor = withJobKoreaEditor, now = Date.now() } = options;
   const cookieString = await readPlatformSession(env, 'jobkorea');
   if (!cookieString) {
     return {
@@ -99,19 +146,29 @@ export async function syncJobKoreaFromSsot(env, ssot, options) {
     }
     const targetFields = buildJobKoreaFormData(
       ssot,
-      deriveJobKoreaSectionIndices(editor.fields)
+      deriveJobKoreaSectionIndices(editor.fields, now)
     ).map(({ name, value }) => ({ name: String(name), value }));
     const mergedFields = smartMergeFields(editor.fields, targetFields, {
       ...DEFAULT_EDIT_TOKENS,
       ...editor.tokens,
     });
-    assertJobKoreaCareerPayloadCoverage(ssot, mergedFields, { dryRun });
-
     const summary = {
       formFieldCount: editor.fields.length,
       mergedFieldCount: mergedFields.length,
+      rows: describeReplacedRows(editor.fields, mergedFields),
       changes: describeReviewedChanges(editor.fields, mergedFields),
     };
+    const truncated = truncatedRows(targetFields, mergedFields);
+    if (truncated.length > 0) {
+      return {
+        platform: 'jobkorea',
+        success: false,
+        dryRun,
+        error: `JobKorea rows would lose live fields in the save: ${truncated.join(', ')}`,
+        ...summary,
+      };
+    }
+    assertJobKoreaCareerPayloadCoverage(ssot, mergedFields, { dryRun });
     if (dryRun) return { platform: 'jobkorea', success: true, dryRun: true, ...summary };
 
     const response = await editor.save(buildSavePayload(mergedFields));
