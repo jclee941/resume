@@ -1,6 +1,6 @@
 <!-- Generated from master resume -->
 <!-- Variant: short -->
-<!-- Generated: 2026-09-29T03:47:31.374Z -->
+<!-- Generated: 2026-09-29T05:57:34.470Z -->
 <!-- Description: Short form resume (1-2 pages) -->
 ## 연락처
 
@@ -9,9 +9,6 @@
 - 주소: 대한민국
 - GitHub: github.com/jclee941
 - LinkedIn: linkedin.com/in/jclee0109
-
----
-
 
 ---
 
@@ -40,9 +37,6 @@
 - **Zero Trust 구조 경험**: 다층 망분리 및 Air-Gap 환경 구축
 - **재해복구 업무 경험**: DR 사이트 점검·운영 및 주기적 DR 테스트
 - **금융권 보안**: 거래 데이터 처리 환경의 보안 운영
-
----
-
 
 ---
 
@@ -186,9 +180,6 @@
 
 ---
 
-
----
-
 ## 기술 스택
 
 ### 보안 솔루션
@@ -229,5 +220,3 @@
 - Routing/Switching: OSPF, BGP, VLAN, VxLAN
 - Load Balancing: F5, HAProxy, Nginx
 - SDN: VMware NSX-T, OpenFlow
-
----
