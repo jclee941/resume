@@ -64,7 +64,7 @@ export function classifyPage(finalUrl, title, text) {
 /**
  * Run the browser probe and return a plain result object (never throws).
  * @param {Parameters<typeof defaultWithBrowserSession>[0]} env
- * @param {{withBrowserSession?: typeof defaultWithBrowserSession, url?: string, cookies?: SmokeCookie[], now?: () => number}} [opts]
+ * @param {{withBrowserSession?: typeof defaultWithBrowserSession, url?: string, cookies?: SmokeCookie[], screenshot?: boolean, now?: () => number}} [opts]
  * @returns {Promise<Record<string, unknown>>}
  */
 export async function runBrowserSmoke(env, opts = {}) {
@@ -72,6 +72,7 @@ export async function runBrowserSmoke(env, opts = {}) {
     withBrowserSession = defaultWithBrowserSession,
     url = DEFAULT_URL,
     cookies = [],
+    screenshot = false,
     now = () => Date.now(),
   } = opts;
   const started = now();
@@ -105,7 +106,7 @@ export async function runBrowserSmoke(env, opts = {}) {
         } catch {
           inputs = [];
         }
-        /** @type {{ scripts: string[]; photoImages: Array<{ className: string; src: string }> }} */
+        /** @type {{ scripts: string[]; photoImages: Array<{ className: string; src: string; width: number; height: number }> }} */
         let resources = { scripts: [], photoImages: [] };
         try {
           resources = await page.evaluate(() => {
@@ -128,12 +129,20 @@ export async function runBrowserSmoke(env, opts = {}) {
                   /photo|picture|profile/i.test(`${img.getAttribute('src') || ''} ${img.className}`)
                 )
                 .slice(0, 10)
-                .map((img) => ({ className: String(img.className), src: hostPath(img.src) })),
+                .map((img) => ({
+                  className: String(img.className),
+                  src: hostPath(img.src),
+                  width: img.naturalWidth,
+                  height: img.naturalHeight,
+                })),
             };
           });
         } catch {
           resources = { scripts: [], photoImages: [] };
         }
+        const image = screenshot
+          ? await page.screenshot({ type: 'jpeg', quality: 60, encoding: 'base64' })
+          : undefined;
         return {
           finalUrl,
           title,
@@ -141,6 +150,7 @@ export async function runBrowserSmoke(env, opts = {}) {
           textSample: text.slice(0, 240),
           inputs,
           ...resources,
+          ...(image ? { screenshot: image } : {}),
         };
       } finally {
         try {
