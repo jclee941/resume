@@ -46,7 +46,7 @@ func TestAnyMatch_JobDashboardFiles(t *testing.T) {
 	}{
 		{"dashboard source", []string{"apps/job-dashboard/src/index.js"}, true},
 		{"dashboard routes", []string{"apps/job-dashboard/src/routes/health.js"}, true},
-		{"shared package triggers dashboard", []string{"packages/shared/src/clients/elasticsearch/index.js"}, true},
+		{"shared package triggers dashboard", []string{"packages/shared/src/logger/transports/console.js"}, true},
 		{"portfolio does NOT trigger dashboard", []string{"apps/portfolio/entry.js"}, false},
 	}
 
@@ -162,7 +162,7 @@ func TestCollectPathBasedTargets(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestSharedChangesAffectBothWorkers(t *testing.T) {
-	files := []string{"packages/shared/src/clients/elasticsearch/index.js"}
+	files := []string{"packages/shared/src/logger/transports/console.js"}
 
 	portfolioRe := regexp.MustCompile(`^apps/portfolio/|^packages/data/|^packages/shared/`)
 	dashboardRe := regexp.MustCompile(`^apps/job-dashboard/|^packages/shared/`)

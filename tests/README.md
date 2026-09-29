@@ -13,7 +13,6 @@ This directory holds the automated test suites for the resume project.
 
 ```bash
 npm test
-npm run test:node
 npm run test:e2e:smoke
 ```
 

@@ -19,7 +19,7 @@ export function createMockEnv(options = {}) {
   const queue = new MockQueue({ name: 'crawl-tasks', worker: options.queueWorker });
 
   const env = {
-    DB: db,
+    JOB_DB: db,
     SESSIONS: sessionsKv,
     RATE_LIMIT_KV: rateLimitKv,
     NONCE_KV: nonceKv,
@@ -36,8 +36,6 @@ export function createMockEnv(options = {}) {
   }
 
   if (options.includeDefaultAliases !== false) {
-    env.job_dashboard_db = db;
-    env.JOB_DASHBOARD_DB = db;
     env.BUCKET = r2;
   }
 
