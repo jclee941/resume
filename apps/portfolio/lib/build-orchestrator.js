@@ -135,6 +135,7 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
     projectDataRaw: inputs.projectDataRaw,
     projectDataEnRaw: inputs.projectDataEnRaw,
     projectDataJaRaw: inputs.projectDataJaRaw,
+    profilePhotoBuffer: inputs.profilePhotoBuffer,
     logger,
   });
   const assets = encodeBinaryAssets({

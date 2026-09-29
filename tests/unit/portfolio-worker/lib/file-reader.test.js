@@ -38,10 +38,15 @@ describe('file-reader', () => {
   });
 
   describe('getFilesToRead', () => {
-    it('returns an array of 15 file specs', () => {
+    it('returns an array of 16 file specs', () => {
       const files = getFilesToRead('/base');
       expect(Array.isArray(files)).toBe(true);
-      expect(files).toHaveLength(15);
+      expect(files).toHaveLength(16);
+      expect(files.find((file) => file.name === 'profilePhotoBuffer')).toMatchObject({
+        path: '/base/assets/profile-photo.jpg',
+        encoding: null,
+        optional: true,
+      });
     });
 
     it('each file spec has path, encoding, and name', () => {

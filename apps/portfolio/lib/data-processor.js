@@ -3,6 +3,8 @@
  * @module data-processor
  */
 
+const crypto = require('crypto');
+
 const { TEMPLATE_CACHE } = require('./config');
 const { validatePortfolioData } = require('./validators');
 const { calculateDataHash } = require('./content-hashing');
@@ -43,10 +45,21 @@ const {
 
 /**
  * Validate source data and build reusable HTML fragments.
- * @param {{projectDataRaw: string, projectDataEnRaw?: string, projectDataJaRaw?: string, logger: {log: Function}}} options - Data processing options.
+ * @param {{projectDataRaw: string, projectDataEnRaw?: string, projectDataJaRaw?: string, profilePhotoBuffer?: Buffer, logger: {log: Function}}} options - Data processing options.
  * @returns {{projectData: { resume: unknown[], projects: unknown[] }, dataHash: string, templates: Record<string, string>}} Processed data payload.
  */
-function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw, logger }) {
+function processProjectData({
+  projectDataRaw,
+  projectDataEnRaw,
+  projectDataJaRaw,
+  profilePhotoBuffer,
+  logger,
+}) {
+  // Served from assets/ via the /assets/* route; the content hash busts the immutable cache.
+  const photoVersion = profilePhotoBuffer
+    ? crypto.createHash('sha256').update(profilePhotoBuffer).digest('hex').slice(0, 12)
+    : '';
+  const photo = photoVersion ? `/assets/profile-photo.jpg?v=${photoVersion}` : undefined;
   const projectData = JSON.parse(projectDataRaw);
   const projectDataEn = projectDataEnRaw ? JSON.parse(projectDataEnRaw) : null;
   const projectDataJa = projectDataJaRaw ? JSON.parse(projectDataJaRaw) : null;
@@ -132,9 +145,9 @@ function processProjectData({ projectDataRaw, projectDataEnRaw, projectDataJaRaw
       `${dataHash}:ja-about`,
       'ja'
     ),
-    profileBentoHtml: generateProfileBento(projectData, 'ko'),
-    profileBentoEnHtml: generateProfileBento(projectDataEn || projectData, 'en'),
-    profileBentoJaHtml: generateProfileBento(projectDataJa || projectData, 'ja'),
+    profileBentoHtml: generateProfileBento(projectData, 'ko', photo),
+    profileBentoEnHtml: generateProfileBento(projectDataEn || projectData, 'en', photo),
+    profileBentoJaHtml: generateProfileBento(projectDataJa || projectData, 'ja', photo),
     achievementsHtml: generateAchievementsSection(projectData),
     achievementsEnHtml: generateAchievementsSection(projectDataEn || projectData),
     achievementsJaHtml: generateAchievementsSection(projectDataJa || projectData),

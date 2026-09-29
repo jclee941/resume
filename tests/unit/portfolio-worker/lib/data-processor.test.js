@@ -146,6 +146,30 @@ describe('data-processor', () => {
       expect(cards.generateContactGrid).toHaveBeenCalledWith(data.contact);
     });
 
+    it('should pass one content-versioned /assets/ photo URL to every profile bento', () => {
+      const data = createValidData();
+      const run = (bytes) => {
+        cards.generateProfileBento.mockClear();
+        processProjectData({
+          projectDataRaw: JSON.stringify(data),
+          profilePhotoBuffer: Buffer.from(bytes),
+          logger: mockLogger,
+        });
+        return cards.generateProfileBento.mock.calls.map(([, locale, photo]) => [locale, photo]);
+      };
+
+      const first = run('jpeg-a');
+      const [, url] = first[0];
+      expect(url).toMatch(/^\/assets\/profile-photo\.jpg\?v=[0-9a-f]{12}$/);
+      expect(first).toEqual([
+        ['ko', url],
+        ['en', url],
+        ['ja', url],
+      ]);
+      expect(run('jpeg-a')[0][1]).toBe(url);
+      expect(run('jpeg-b')[0][1]).not.toBe(url);
+    });
+
     it('should generate EN variants using EN data when available', () => {
       const data = createValidData({
         resumeEn: [{ title: 'EN Resume' }],

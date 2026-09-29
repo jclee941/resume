@@ -68,6 +68,23 @@ describe('cards/profile generateProfileBento', () => {
     expect(html).toContain('(졸업 예정) 2024.03 ~ 2027.02');
   });
 
+  it('renders the profile photo first, with a localized alt text', () => {
+    const photo = '/assets/profile-photo.jpg?v=0123456789ab';
+    const ko = generateProfileBento({ ...full, hero: { title: '이재철' } }, 'ko', photo);
+    const en = generateProfileBento({ ...full, hero: { title: 'Jaecheol Lee' } }, 'en', photo);
+
+    expect(ko.indexOf('profile-card--photo')).toBeLessThan(ko.indexOf('profile-card__label'));
+    expect(ko).toContain(`src="${photo}" alt="이재철 증명사진"`);
+    expect(en).toContain('alt="Photo of Jaecheol Lee"');
+  });
+
+  it('omits the photo card without a photo and escapes the photo URL', () => {
+    expect(generateProfileBento(full, 'ko')).not.toContain('<img');
+    expect(generateProfileBento(full, 'ko', '/a.jpg?"><script>')).toContain(
+      'src="/a.jpg?&quot;&gt;&lt;script&gt;"'
+    );
+  });
+
   it('omits the award year when the official award name already carries it', () => {
     const html = generateProfileBento({
       awards: [

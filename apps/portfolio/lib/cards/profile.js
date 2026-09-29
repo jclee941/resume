@@ -9,6 +9,7 @@ const PROFILE_LABELS = {
     awards: '수상',
     openSource: '오픈소스',
     military: '병역',
+    photoAlt: (/** @type {string} */ name) => `${name} 증명사진`,
   },
   en: {
     education: 'Education',
@@ -16,6 +17,7 @@ const PROFILE_LABELS = {
     awards: 'Awards',
     openSource: 'Open source',
     military: 'Military service',
+    photoAlt: (/** @type {string} */ name) => `Photo of ${name}`,
   },
   ja: {
     education: '学歴',
@@ -23,6 +25,7 @@ const PROFILE_LABELS = {
     awards: '受賞',
     openSource: 'オープンソース',
     military: '兵役',
+    photoAlt: (/** @type {string} */ name) => `${name}の証明写真`,
   },
 };
 
@@ -73,6 +76,7 @@ const PROFILE_LABELS = {
  * @property {ProfileAward[]} [awards]
  * @property {ProfileOssContribution[]} [ossContributions]
  * @property {ProfileMilitary} [military]
+ * @property {{ title?: string }} [hero]
  */
 
 /**
@@ -92,12 +96,21 @@ function profileLabels(locale) {
  * @param {ProfileBentoData | null | undefined} data - data.json (uses education, languages, awards,
  *   ossContributions, military).
  * @param {'ko'|'en'|'ja'} [locale='ko'] - Locale for card labels.
+ * @param {string} [photo] - Versioned profile photo URL (/assets/*); rendered as the first card.
  * @returns {string} HTML for the profile bento, or '' if nothing to show.
  */
-function generateProfileBento(data, locale = 'ko') {
+function generateProfileBento(data, locale = 'ko', photo) {
   if (!data) return '';
   const labels = profileLabels(locale);
   const cards = [];
+
+  // Profile photo (static asset URL built from the repo photo)
+  if (photo) {
+    const name = String(data.hero?.title || '');
+    cards.push(`<div class="profile-card profile-card--photo">
+        <img class="profile-card__photo" src="${escapeHtml(photo)}" alt="${escapeHtml(labels.photoAlt(name))}" width="100" height="128" loading="lazy" decoding="async">
+      </div>`);
+  }
 
   // Education
   if (data.education && data.education.school) {
