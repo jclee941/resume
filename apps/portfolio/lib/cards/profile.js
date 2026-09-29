@@ -32,6 +32,7 @@ const PROFILE_LABELS = {
  * @property {string} [major]
  * @property {string} [status]
  * @property {string} [startDate]
+ * @property {string} [endDate]
  */
 
 /**
@@ -103,7 +104,8 @@ function generateProfileBento(data, locale = 'ko') {
     const e = data.education;
     const major = e.major ? ` · ${escapeHtml(String(e.major))}` : '';
     const status = e.status ? ` (${escapeHtml(String(e.status))})` : '';
-    const period = e.startDate ? ` ${escapeHtml(String(e.startDate))}` : '';
+    const end = e.endDate ? ` ~ ${escapeHtml(String(e.endDate))}` : '';
+    const period = e.startDate ? ` ${escapeHtml(String(e.startDate))}${end}` : '';
     cards.push(`<div class="profile-card">
         <span class="profile-card__label">${labels.education}</span>
         <p class="profile-card__value">${escapeHtml(String(e.school))}${major}${status}${period}</p>
