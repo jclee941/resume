@@ -84,7 +84,7 @@ describe('auto-apply duplicate company handling', () => {
           },
         ],
       }),
-      env: { DB: db },
+      env: { JOB_DB: db },
       clients,
     });
 
@@ -131,7 +131,7 @@ describe('auto-apply duplicate company handling', () => {
         platforms: ['linkedin'],
         keywords: ['security'],
       }),
-      env: { DB: db },
+      env: { JOB_DB: db },
       clients,
     });
 
@@ -152,7 +152,7 @@ describe('auto-apply duplicate company handling', () => {
         platforms: ['linkedin'],
         keywords: ['security'],
       }),
-      env: { DB: createD1WithExistingCompany('Existing Enterprise') },
+      env: { JOB_DB: createD1WithExistingCompany('Existing Enterprise') },
       clients: { linkedin: { searchJobs } },
     });
 
@@ -179,6 +179,6 @@ describe('auto-apply duplicate company handling', () => {
       },
     };
 
-    assert.equal(await isCompanyAlreadyApplied({ DB: db }, 'Preview Enterprise'), false);
+    assert.equal(await isCompanyAlreadyApplied({ JOB_DB: db }, 'Preview Enterprise'), false);
   });
 });

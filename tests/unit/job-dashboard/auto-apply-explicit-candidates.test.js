@@ -69,7 +69,7 @@ describe('job-dashboard explicit auto-apply candidates', () => {
     const response = await runAutoApply({
       request: createRequest(makeRealSubmitBody(candidate, { maxDepth: 2 })),
       env: {
-        DB: db,
+        JOB_DB: db,
         ENCRYPTION_KEY: TEST_ENCRYPTION_KEY,
         SESSIONS: { get: jest.fn(async () => wantedSession) },
       },
@@ -113,7 +113,7 @@ describe('job-dashboard explicit auto-apply candidates', () => {
           }),
         ],
       }),
-      env: { DB: createMockDb() },
+      env: { JOB_DB: createMockDb() },
       clients: createClients(),
     });
     const body = await parseJson(response);
@@ -131,7 +131,7 @@ describe('job-dashboard explicit auto-apply candidates', () => {
     const emptyDb = createMockDb();
     const empty = await runAutoApply({
       request: createRequest({ dryRun: true, maxDepth: 0, candidates: [] }),
-      env: { DB: emptyDb },
+      env: { JOB_DB: emptyDb },
       clients: createClients(),
     });
     expect(await parseJson(empty)).toMatchObject({
@@ -143,7 +143,7 @@ describe('job-dashboard explicit auto-apply candidates', () => {
 
     const malformed = await runAutoApply({
       request: createRequest({ dryRun: false, maxDepth: -1, candidates: [{ id: 'bad' }] }),
-      env: { DB: createMockDb() },
+      env: { JOB_DB: createMockDb() },
       clients: createClients(),
     });
     expect(malformed.status).toBe(400);

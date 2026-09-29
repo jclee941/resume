@@ -34,7 +34,7 @@ describe('job-dashboard auto-apply run handler edge cases', () => {
 
     const response = await runAutoApply({
       request: createRequest(makeRealSubmitBody()),
-      env: { DB: createMockDb() },
+      env: { JOB_DB: createMockDb() },
       clients,
     });
     const body = await parseJson(response);
@@ -69,7 +69,7 @@ describe('job-dashboard auto-apply run handler edge cases', () => {
     const response = await runAutoApply({
       request: createRequest(makeApprovalIdOnlyBody()),
       env: {
-        DB: createMockDb(),
+        JOB_DB: createMockDb(),
         ENCRYPTION_KEY: TEST_ENCRYPTION_KEY,
         SESSIONS: {
           get: jest.fn(async () => wantedSession),

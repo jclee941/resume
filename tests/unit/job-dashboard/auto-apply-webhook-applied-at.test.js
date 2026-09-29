@@ -19,7 +19,7 @@ describe('job-dashboard auto-apply webhook applied timestamp', () => {
   test('sets applied_at when a successful non-dry-run apply marks application applied', async () => {
     const db = createWebhookDb();
     const auth = { getCookies: jest.fn(async () => 'wanted-session=stub') };
-    const handler = new AutoApplyWebhookHandler({ DB: db }, auth);
+    const handler = new AutoApplyWebhookHandler({ JOB_DB: db }, auth);
     global.fetch = jest.fn(async (url) => {
       if (url.includes('/resumes/v1/list')) {
         return Response.json({ data: [{ id: 123, is_default: true }] });

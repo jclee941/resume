@@ -20,7 +20,7 @@ import { sendTelegramNotification, escapeHtml } from '../services/notifications.
  * }} ReportDb
  *
  * @typedef {{
- *   DB?: ReportDb;
+ *   JOB_DB?: ReportDb;
  *   TELEGRAM_BOT_TOKEN?: string;
  *   TELEGRAM_CHAT_ID?: string | number;
  *   [key: string]: unknown;
@@ -39,7 +39,7 @@ export class ReportHandler extends BaseHandler {
    * @returns {Promise<Response>}
    */
   async triggerDailyReport(_request) {
-    const db = this.env?.DB;
+    const db = this.env?.JOB_DB;
     if (!db) {
       return this.jsonResponse({ success: false, error: 'Database not configured' }, 503);
     }

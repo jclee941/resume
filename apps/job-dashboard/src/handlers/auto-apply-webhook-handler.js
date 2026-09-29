@@ -60,7 +60,7 @@ import { sendTelegramNotification, escapeHtml } from '../services/notifications.
  * }} AutoApplyAuth
  *
  * @typedef {{
- *   DB?: AutoApplyDb;
+ *   JOB_DB?: AutoApplyDb;
  *   TELEGRAM_BOT_TOKEN?: string;
  *   TELEGRAM_CHAT_ID?: string | number;
  *   [key: string]: unknown;
@@ -82,7 +82,7 @@ export class AutoApplyWebhookHandler extends BaseHandler {
     const body = await request.json().catch(() => ({}));
     const { minMatchScore = 70, maxApplications = 5, dryRun = true } = body;
 
-    const db = this.env?.DB;
+    const db = this.env?.JOB_DB;
     if (!db) {
       return this.jsonResponse({ success: false, error: 'Database not configured' }, 503);
     }

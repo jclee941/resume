@@ -159,7 +159,7 @@ describe('job-dashboard Cloudflare native auto-apply safety gates', () => {
 
 function createNativeEnv({ create, autoApplyEnabled = true }) {
   return {
-    DB: createConfigDb(autoApplyEnabled),
+    JOB_DB: createConfigDb(autoApplyEnabled),
     APPLICATION_WORKFLOW: { create },
   };
 }

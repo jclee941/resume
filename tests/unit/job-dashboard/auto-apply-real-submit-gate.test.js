@@ -18,7 +18,7 @@ describe('job-dashboard auto-apply real submit gate', () => {
     const clients = createClients(makeJob());
     const response = await runAutoApply({
       request: createRequest({ dryRun: false, platforms: ['wanted'] }),
-      env: { DB: createMockDb() },
+      env: { JOB_DB: createMockDb() },
       clients,
     });
     const body = await parseJson(response);

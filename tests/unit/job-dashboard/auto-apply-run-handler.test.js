@@ -15,7 +15,7 @@ describe('job-dashboard auto-apply run handler', () => {
       await import('../../../apps/job-dashboard/src/workflows/application/job-search-and-scoring.js'));
   });
   const run = (body, { db = createMockDb(), clients = createClients(makeJob()) } = {}) =>
-    runAutoApply({ request: createRequest(body), env: { DB: db }, clients });
+    runAutoApply({ request: createRequest(body), env: { JOB_DB: db }, clients });
   test('runAutoApply returns decision trace for dry-run matches', async () => {
     const db = createMockDb();
     const clients = createClients(makeJob());

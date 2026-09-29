@@ -19,7 +19,7 @@ describe('job-dashboard auto-apply application metadata', () => {
     const clients = createClients(makeJob({ adapterBacked: true }));
     const response = await runAutoApply({
       request: createRequest({ dryRun: true, platforms: ['wanted'], runId: 'run-auto-apply-1' }),
-      env: { DB: db },
+      env: { JOB_DB: db },
       clients,
     });
     const body = await parseJson(response);

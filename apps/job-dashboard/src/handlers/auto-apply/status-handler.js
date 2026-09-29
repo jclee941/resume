@@ -105,7 +105,7 @@ async function getSafeWantedSession(env) {
  * @returns {Promise<number>}
  */
 async function getPendingApprovalCount(env) {
-  const db = env?.DB || env?.JOB_DB;
+  const db = env?.JOB_DB;
   if (!db) return 0;
 
   try {
