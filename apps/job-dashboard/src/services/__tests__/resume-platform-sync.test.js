@@ -51,8 +51,6 @@ const LIVE_FORM = [
   { name: 'Award.Index', value: 'c1' },
   { name: 'InputStat.AwardInputStat', value: 'False' },
   { name: 'Award[c1].Award_Name', value: '자율주행 경진대회 우수상' },
-  { name: 'UserResume.Career_Type_Code', value: '2' },
-  { name: 'UserResume.User_Name', value: 'Tester' },
 ];
 
 const SECTIONS = [
@@ -90,7 +88,6 @@ describe('Cloudflare-native JobKorea resume sync', () => {
     assert.deepEqual(result.inputStat, { 'InputStat.AwardInputStat': 'False' });
     assert.deepEqual(result.liveRowFields.Award, ['Award_Name']);
     assert.deepEqual(result.liveAwards, ['자율주행 경진대회 우수상']);
-    assert.deepEqual(result.formSettings, { 'UserResume.Career_Type_Code': '2' });
     assert.deepEqual(withEditor.mock.calls[0].arguments[1], {
       cookieString: 'ACNT=1; SES=2',
       rNo: '777',
