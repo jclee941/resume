@@ -180,7 +180,7 @@ export async function syncActivities(api, resume_id, sourceData, remoteActivitie
       return true;
     }
 
-    return ra.activity_type === 'CERTIFICATE';
+    return ra.activity_type === 'CERTIFICATE' || ra.activity_type === 'AWARD';
   });
   for (const activity of toDeleteActivities) {
     await api.resumeActivity.delete(resume_id, activity.id);
