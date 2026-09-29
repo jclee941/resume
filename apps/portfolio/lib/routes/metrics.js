@@ -23,6 +23,12 @@ function generateMetricsPostRoute() {
             throw new Error('Invalid metrics object');
           }
 
+          // Log to Loki for observability
+          ctx.waitUntil(logToElasticsearch(env, \`Metrics: \${JSON.stringify(metricsData).slice(0, 200)}\`, 'INFO', {
+            path: '/api/metrics',
+            method: 'POST'
+          }));
+
           metrics.requests_success++;
           return new Response(JSON.stringify({ status: 'ok' }), {
             headers: {
@@ -34,7 +40,7 @@ function generateMetricsPostRoute() {
             }
           });
         } catch (err) {
-          console.error(\`Metrics error: \${err.message}\`);
+          ctx.waitUntil(logToElasticsearch(env, \`Metrics error: \${err.message}\`, 'ERROR'));
           return new Response(JSON.stringify({ error: 'Invalid data' }), {
             status: 400,
             headers: {
@@ -85,6 +91,12 @@ function generateMetricsGetRoute() {
             }
           };
           
+          ctx.waitUntil(logToElasticsearch(env, \`Metrics GET: \${metrics.requests_total} requests, \${metrics.vitals_received} vitals\`, 'INFO', {
+            path: '/api/metrics',
+            method: 'GET',
+            requests_total: metrics.requests_total
+          }));
+          
           return new Response(JSON.stringify(metricsResponse), {
             headers: {
               ...SECURITY_HEADERS,
@@ -95,7 +107,7 @@ function generateMetricsGetRoute() {
             }
           });
         } catch (err) {
-          console.error(\`Metrics GET error: \${err.message}\`);
+          ctx.waitUntil(logToElasticsearch(env, \`Metrics GET error: \${err.message}\`, 'ERROR'));
           return new Response(JSON.stringify({ error: 'Failed to retrieve metrics', status: 'error' }), {
             status: 500,
             headers: {

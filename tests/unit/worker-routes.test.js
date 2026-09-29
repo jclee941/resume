@@ -95,8 +95,8 @@ describe('Worker Routes', () => {
       expect(code).toContain('/assets/');
     });
 
-    it('should not reference Elasticsearch logging', () => {
-      expect(code).not.toContain('logToElasticsearch');
+    it('should contain Elasticsearch logging', () => {
+      expect(code).toContain('logToElasticsearch');
     });
   });
 
@@ -492,14 +492,17 @@ describe('Worker Routes', () => {
       expect(code).not.toContain('INSERT INTO');
     });
 
-    it('logs an unhandled request error with console.error', async () => {
+    it('logs an unhandled request error with console.error and ships it to Elasticsearch', async () => {
       const failure = new Error('boom');
       const body = code.trimEnd().replace(/\};$/, '').trimEnd().replace(/\}$/, '');
       const run = new Function(
         'thrown',
         'request',
         'url',
+        'env',
+        'ctx',
         'metrics',
+        'logToElasticsearch',
         'applyNonceToHeaders',
         'SECURITY_HEADERS',
         'rateLimitHeaders',
@@ -507,13 +510,17 @@ describe('Worker Routes', () => {
         `return (async () => { try { throw thrown; ${body} })();`
       );
       const metrics = { requests_error: 0 };
+      const shipped = [];
       const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
       try {
         const response = await run(
           failure,
-          { method: 'GET' },
+          { method: 'GET', headers: new Headers() },
           { pathname: '/boom' },
+          {},
+          { waitUntil: () => {} },
           metrics,
+          async (_env, message, level) => shipped.push({ message, level }),
           (headers) => headers,
           {},
           {},
@@ -522,6 +529,7 @@ describe('Worker Routes', () => {
         expect(response.status).toBe(500);
         expect(metrics.requests_error).toBe(1);
         expect(errorSpy).toHaveBeenCalledWith('[worker 1.0.0] GET /boom failed:', failure.stack);
+        expect(shipped).toEqual([{ message: 'Error: boom', level: 'ERROR' }]);
       } finally {
         errorSpy.mockRestore();
       }

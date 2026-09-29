@@ -6,6 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 const metricsModule = require('./metrics');
+const esLoggerModule = require('./es-logger');
 const authModule = require('./auth');
 const { generateWorkerPreamble } = require('./worker-preamble');
 const {
@@ -86,6 +87,7 @@ function buildWorkerCode(options) {
     initHistogramBucketsStr: metricsModule.initHistogramBuckets.toString(),
     generateHistogramLinesStr: metricsModule.generateHistogramLines.toString(),
     generateMetricsStr: metricsModule.generateMetrics.toString(),
+    logToElasticsearchStr: esLoggerModule.logToElasticsearch.toString(),
     rateLimitConfigJson: JSON.stringify(options.rateLimitConfig),
     authHelpersStr: authModule.generateAuthHelpers(),
   };

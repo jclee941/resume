@@ -188,10 +188,9 @@ describe('routes/observability', () => {
       expect(result).toContain('204');
     });
 
-    it('reports violations through console.warn', () => {
+    it('logs to Elasticsearch with WARN level', () => {
       const result = generateCspViolationRoute();
-      expect(result).toContain('console.warn');
-      expect(result).not.toContain('logToElasticsearch');
+      expect(result).toContain('WARN');
     });
 
     it('handles both legacy and modern CSP report formats', () => {
@@ -217,7 +216,7 @@ describe('routes/observability', () => {
 
   describe('generateCspViolationRoute execution (Reporting API payload)', () => {
     async function runReport(contentType, body) {
-      const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      const logged = [];
       const fn = new Function(
         'request',
         'url',
@@ -227,6 +226,7 @@ describe('routes/observability', () => {
         'SECURITY_HEADERS',
         'rateLimitHeaders',
         'corsHeaders',
+        'logToElasticsearch',
         'hasJsonContentType',
         `return (async () => {${generateCspViolationRoute()}\n return null;})();`
       );
@@ -235,26 +235,23 @@ describe('routes/observability', () => {
         headers: { get: (h) => (h === 'Content-Type' ? contentType : '') },
         json: async () => body,
       };
+      const logToElasticsearch = (_e, msg, _lvl, fields) => {
+        logged.push({ msg, fields });
+      };
       // The route returns 204 with a null body, which native Response accepts.
-      let res;
-      let logged;
-      try {
-        res = await fn(
-          request,
-          { pathname: '/api/csp-violation' },
-          {},
-          { waitUntil: (p) => p },
-          { requests_success: 0 },
-          {},
-          {},
-          {},
-          (req) => (req.headers.get('Content-Type') || '').includes('application/json'),
-          globalThis.Response
-        );
-        logged = warnSpy.mock.calls.map(([msg, fields]) => ({ msg, fields }));
-      } finally {
-        warnSpy.mockRestore();
-      }
+      const res = await fn(
+        request,
+        { pathname: '/api/csp-violation' },
+        {},
+        { waitUntil: (p) => p },
+        { requests_success: 0 },
+        {},
+        {},
+        {},
+        logToElasticsearch,
+        (req) => (req.headers.get('Content-Type') || '').includes('application/json'),
+        globalThis.Response
+      );
       return { res, logged };
     }
 

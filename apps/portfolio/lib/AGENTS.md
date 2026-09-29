@@ -20,7 +20,7 @@ lib/
 ├── worker-preamble.js, worker-routes/, worker-routes.js     # bundle emitters
 ├── entry-router-utils/, entry-router-utils.js               # edge routing helpers
 ├── routes/                                                   # runtime endpoints
-└── metrics/, metrics.js, tracing.js            # observability
+└── metrics/, metrics.js, tracing.js, es-logger.js            # observability
 ```
 
 ## CONVENTIONS

@@ -20,7 +20,10 @@ function validConfiguration() {
     compatibility_date: '2026-04-29',
     build: { command: 'npm run build', cwd: '.' },
     assets: { directory: 'apps/portfolio/assets', binding: 'ASSETS' },
-    vars: { ENVIRONMENT: 'production' },
+    vars: {
+      ENVIRONMENT: 'production',
+      ELASTICSEARCH_INDEX: 'resume-logs-worker',
+    },
     routes: [{ pattern: 'resume.jclee.me', custom_domain: true }],
     triggers: { crons: ['0 21 * * *', '0 * * * *', '0 0 * * 1'] },
     migrations: [{ tag: 'v1', new_classes: ['BrowserSessionDO'] }],
@@ -58,7 +61,10 @@ function validConfiguration() {
     env: {
       preview: {
         name: 'resume-preview',
-        vars: { ENVIRONMENT: 'preview' },
+        vars: {
+          ENVIRONMENT: 'preview',
+          ELASTICSEARCH_INDEX: 'resume-logs-worker-preview',
+        },
         assets: { directory: 'apps/portfolio/assets', binding: 'ASSETS' },
         routes: [],
         triggers: { crons: [] },

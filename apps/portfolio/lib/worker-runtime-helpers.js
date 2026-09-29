@@ -1,8 +1,35 @@
 /**
+ * @param {{ logToElasticsearchStr: string }} options
  * @returns {string}
  */
-function buildWorkerRuntimeHelpers() {
+function buildWorkerRuntimeHelpers({ logToElasticsearchStr }) {
   return String.raw`
+function buildDocument(message, level, labels, job) {
+  const now = new Date();
+  return {
+    '@timestamp': now.toISOString(),
+    message,
+    level: level.toLowerCase(),
+    service: job,
+    ...labels,
+  };
+}
+
+function buildEsHeaders(env) {
+  const headers = { 'Content-Type': 'application/x-ndjson' };
+  const cfId = env?.CF_ACCESS_CLIENT_ID;
+  const cfSecret = env?.CF_ACCESS_CLIENT_SECRET;
+  if (cfId) headers['CF-Access-Client-Id'] = cfId;
+  if (cfSecret) headers['CF-Access-Client-Secret'] = cfSecret;
+  const apiKey = env?.ELASTICSEARCH_API_KEY;
+  if (apiKey) headers['Authorization'] = 'ApiKey ' + apiKey;
+  return headers;
+}
+
+const DEFAULT_TIMEOUT_MS = 5000;
+
+${logToElasticsearchStr}
+
 const ipCache = new Map();
 const RATE_LIMIT_POLICIES = {
   api: { limit: 30, windowMs: 60 * 1000 },

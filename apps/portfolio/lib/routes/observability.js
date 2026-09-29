@@ -96,6 +96,11 @@ function generateVitalsRoute() {
 
           metrics.vitals_received++;
 
+          ctx.waitUntil(logToElasticsearch(env, \`Web Vitals: LCP=\${vitals.lcp}ms FID=\${vitals.fid}ms CLS=\${vitals.cls}\`, 'INFO', {
+            path: '/api/vitals',
+            method: 'POST'
+          }));
+
           metrics.requests_success++;
           return new Response(JSON.stringify({ status: 'ok' }), {
             headers: {
@@ -107,7 +112,7 @@ function generateVitalsRoute() {
             }
           });
         } catch (err) {
-          console.error(\`Vitals error: \${err.message}\`);
+          ctx.waitUntil(logToElasticsearch(env, \`Vitals error: \${err.message}\`, 'ERROR'));
           return new Response(JSON.stringify({ error: 'Invalid data' }), {
             status: 400,
             headers: {
@@ -150,6 +155,15 @@ function generateTrackRoute() {
             throw new Error('Missing event field');
           }
           
+          // Log to Loki for observability
+          ctx.waitUntil(logToElasticsearch(env, \`Track: \${trackingData.event} - \${trackingData.type || 'N/A'}\`, 'INFO', {
+            path: '/api/track',
+            event: trackingData.event,
+            type: trackingData.type,
+            language: trackingData.language,
+            href: trackingData.href || ''
+          }));
+          
           metrics.requests_success++;
           return new Response('', {
             status: 204,
@@ -160,7 +174,7 @@ function generateTrackRoute() {
             }
           }); // No Content (fire-and-forget)
         } catch (err) {
-          console.error(\`Tracking error: \${err.message}\`);
+          ctx.waitUntil(logToElasticsearch(env, \`Tracking error: \${err.message}\`, 'ERROR'));
           return new Response('', {
             status: 204,
             headers: {
@@ -198,6 +212,14 @@ function generateAnalyticsRoute() {
             throw new Error('Invalid analytics object');
           }
 
+          // Log to Loki for observability
+          ctx.waitUntil(logToElasticsearch(env, \`Analytics: \${analyticsData.event || 'unknown'}\`, 'INFO', {
+            path: '/api/analytics',
+            method: 'POST',
+            event: analyticsData.event,
+            variant: analyticsData.variant
+          }));
+
           metrics.requests_success++;
           return new Response(JSON.stringify({ status: 'ok' }), {
             headers: {
@@ -209,7 +231,7 @@ function generateAnalyticsRoute() {
             }
           });
         } catch (err) {
-          console.error(\`Analytics error: \${err.message}\`);
+          ctx.waitUntil(logToElasticsearch(env, \`Analytics error: \${err.message}\`, 'ERROR'));
           return new Response(JSON.stringify({ error: 'Invalid data' }), {
             status: 400,
             headers: {
@@ -276,14 +298,14 @@ function generateCspViolationRoute() {
           for (const entry of entries) {
             const n = normalizeOne(entry);
             if (!n) continue;
-            console.warn(\`CSP Violation: \${n.violatedDirective || n.type || 'unknown'}\`, {
+            ctx.waitUntil(logToElasticsearch(env, \`CSP Violation: \${n.violatedDirective || n.type || 'unknown'}\`, 'WARN', {
               path: '/api/csp-violation',
               reportType: n.type,
               blockedUri: n.blockedUri,
               violatedDirective: n.violatedDirective,
               documentUri: n.documentUri,
               sourceFile: n.sourceFile,
-            });
+            }));
           }
 
           metrics.requests_success++;
@@ -296,7 +318,7 @@ function generateCspViolationRoute() {
             }
           });
         } catch (err) {
-          console.error(\`CSP report error: \${err.message}\`);
+          ctx.waitUntil(logToElasticsearch(env, \`CSP report error: \${err.message}\`, 'ERROR'));
           return new Response(null, {
             status: 204,
             headers: {
