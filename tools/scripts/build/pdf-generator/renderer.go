@@ -62,6 +62,23 @@ func pandocPDFArgs(source, output, font string) []string {
 	return pandocPDFArgsForProfile(source, output, font, defaultPDFLayout)
 }
 
+// resumePhotoPath is the photo placed beside the name on resumes built from the
+// master resume; per-company application resumes keep their submitted form.
+const resumePhotoPath = "packages/data/resumes/master/profile-photo.jpg"
+
+// usesResumePhoto reports whether a source is a master-derived resume.
+func usesResumePhoto(source string) bool {
+	rel := source
+	if filepath.IsAbs(source) {
+		if r, err := filepath.Rel(projectRoot, source); err == nil {
+			rel = r
+		}
+	}
+	rel = filepath.ToSlash(rel)
+	return strings.HasPrefix(rel, "packages/data/resumes/master/") ||
+		strings.HasPrefix(rel, "packages/data/resumes/generated/")
+}
+
 func pandocPDFArgsForProfile(source, output, font string, layout PDFLayoutProfile) []string {
 	args := []string{
 		source,
@@ -84,6 +101,12 @@ func pandocPDFArgsForProfile(source, output, font string, layout PDFLayoutProfil
 		"--metadata", "lang=ko-KR",
 		"--lua-filter", "tools/scripts/build/strip-emoji.lua",
 	)
+	if usesResumePhoto(source) {
+		args = append(args,
+			"--metadata", "photo="+resumePhotoPath,
+			"--lua-filter", "tools/scripts/build/resume-photo.lua",
+		)
+	}
 	return args
 }
 

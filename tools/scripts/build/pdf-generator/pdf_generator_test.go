@@ -56,6 +56,24 @@ func TestPandocArgumentsPreserveCurrentDefaults(t *testing.T) {
 	}
 }
 
+func TestPandocArgumentsPlaceThePhotoOnlyOnMasterDerivedResumes(t *testing.T) {
+	t.Parallel()
+
+	for _, source := range []string{
+		"packages/data/resumes/master/resume_summary.md",
+		"packages/data/resumes/generated/resume_short.md",
+	} {
+		args := strings.Join(pandocPDFArgs(source, "resume.pdf", fontNanum), "\x00")
+		if !strings.Contains(args, "photo="+resumePhotoPath) || !strings.Contains(args, "resume-photo.lua") {
+			t.Fatalf("%s: pandoc arguments miss the resume photo: %v", source, args)
+		}
+	}
+	args := strings.Join(pandocPDFArgs("packages/data/resumes/applications/toss/toss_devops_engineer_resume.md", "resume.pdf", fontNanum), "\x00")
+	if strings.Contains(args, "resume-photo.lua") {
+		t.Fatalf("application resumes must keep their submitted form: %v", args)
+	}
+}
+
 func TestNamedLayoutProfilePreservesPandocArguments(t *testing.T) {
 	t.Parallel()
 
