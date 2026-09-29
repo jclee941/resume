@@ -22,7 +22,6 @@ follows a layered architecture where `apps/` contains deployables and
 | Build          | npm workspaces     | Monorepo management      |
 | Languages      | JavaScript         | Primary (.js)            |
 | Languages      | TypeScript         | Types only (.ts)         |
-| Frameworks     | Fastify            | ESM, job-server          |
 | Frameworks     | Commander.js       | CLI tooling              |
 | Frameworks     | Playwright         | E2E testing              |
 | Frameworks     | Jest               | Unit testing             |
@@ -31,7 +30,6 @@ follows a layered architecture where `apps/` contains deployables and
 | Infrastructure | Cloudflare Queues  | Job queue                |
 | Infrastructure | Cloudflare Workers | Edge compute             |
 | Infrastructure | Terraform          | IaC for Cloudflare       |
-| Infrastructure | Docker             | Job server container     |
 | CI/CD          | GitHub Actions     | Validation pipeline      |
 | CI/CD          | CF Workers Builds  | Deploy authority         |
 | Monitoring     | Grafana            | Metrics visualization    |
@@ -57,7 +55,6 @@ resume Worker (apps/portfolio/entry.js)
         ▼
 Workflows · Queues · D1 (DB, JOB_DB) · KV (SESSIONS, RATE_LIMIT_KV, NONCE_KV)
 
-apps/job-server   local/Docker MCP server, crawlers, profile sync
 packages/data     resume SSoT, inlined into the Worker by npm run build
 ```
 
@@ -67,7 +64,6 @@ packages/data     resume SSoT, inlined into the Worker by npm run build
 ./
 ├── apps/
 │   ├── portfolio/              # CF Worker: cyberpunk terminal portfolio
-│   ├── job-server/             # MCP Server + Fastify for job platform automation
 │   └── job-dashboard/          # Dashboard API module (imported into portfolio worker)
 ├── packages/
 │   ├── cli/                    # Commander.js CLI for resume operations
@@ -81,7 +77,7 @@ packages/data     resume SSoT, inlined into the Worker by npm run build
 │   ├── cloudflare/             # Terraform (Cloudflare resources)
 │   ├── configs/                # Alertmanager, Grafana, Prometheus, Tempo configs
 │   ├── database/               # D1 migrations and seeds
-│   ├── docker/                 # Monitoring and session-broker compose files
+│   ├── docker/                 # Monitoring compose file
 │   ├── mocks/                  # Cloudflare binding mocks
 │   └── monitoring/             # Grafana dashboards, SLOs, logging, tracing
 ├── tools/
@@ -149,8 +145,8 @@ Queues. `0 21 * * *` refreshes the Wanted session and starts
 `ResumeSyncWorkflow` (dry-run by default); auto-apply runs only when requested
 through the dashboard API. The dashboard API is served by the job-dashboard module imported
 directly into the portfolio worker — no Service Binding, no separate
-deployment. `apps/job-server` remains the local MCP server, crawler, and
-profile-sync runtime.
+deployment. The retired local job-server runtime is recorded in [ADR
+0010](adr/0010-retire-local-job-server.md).
 
 ### 3. CI/CD Flow
 
@@ -199,7 +195,6 @@ See [ADR 0009](adr/0009-single-worker-consolidation.md) (supersedes ADR 0007).
 | Package                        | Path                  | Type    | Description                                           |
 | ------------------------------ | --------------------- | ------- | ----------------------------------------------------- |
 | `@resume/portfolio-worker`     | `apps/portfolio/`     | App     | CF Worker: cyberpunk portfolio                        |
-| `@resume/job-automation`       | `apps/job-server/`    | App     | MCP Server + Fastify (ESM)                            |
 | `@resume/job-dashboard-worker` | `apps/job-dashboard/` | Module  | Dashboard API module (imported into portfolio worker) |
 | `@resume/shared`               | `packages/shared/`    | Package | Cross-worker shared kernel                            |
 | `@resume/cli`                  | `packages/cli/`       | Package | Commander.js CLI (ESM)                                |
@@ -214,7 +209,7 @@ See [ADR 0009](adr/0009-single-worker-consolidation.md) (supersedes ADR 0007).
 ### Layer-based Monorepo
 
 The project uses npm workspaces to organize code into two logical layers:
-`apps/` contains deployable applications (portfolio worker, job-server,
+`apps/` contains deployable applications (portfolio worker,
 job-dashboard) while `packages/` contains shared libraries (CLI, data). This
 separation enforces clean boundaries between deployables and reusable code.
 
@@ -226,14 +221,6 @@ literals, computes CSP hashes, and inlines content into `worker.js`. This
 approach eliminates runtime I/O and ensures consistent content delivery from the
 edge.
 
-### Hexagonal Architecture (Job Server)
-
-The job-server application follows hexagonal architecture principles. Business
-logic lives in `services/` (domain), while external integrations reside in
-`clients/` (adapters). Dependencies point inward: clients implement interfaces
-defined by services. This isolation enables testing without real API calls and
-simplifies swapping implementations.
-
 ### Single-Worker Architecture (Post-Consolidation)
 
 The portfolio worker (`apps/portfolio/entry.js`) imports the job-dashboard
@@ -243,17 +230,10 @@ function call `jobWorker.fetch(request, env, ctx)` — no Service Binding
 round-trip. The merged `resume` worker registers all 7 Workflow classes and the
 `BrowserSessionDO` Durable Object directly. A single `wrangler deploy` per push
 to `master` updates the entire system. Shared concerns (Elasticsearch client,
-Logger, error types, user-agent parsing, phone formatting, job categories,
+Logger, error types, user-agent parsing, job categories,
 browser automation, Wanted API client) live in `@resume/shared`. See [ADR
 0009](adr/0009-single-worker-consolidation.md) for the full architecture
 rationale (supersedes ADR 0007).
-
-### Stealth Crawling
-
-Job automation uses anti-detection measures including User-Agent rotation,
-random jitter (1s+ delay between requests), and rebrowser-puppeteer for browser
-fingerprinting evasion. These techniques reduce the likelihood of being blocked
-by Korean job platforms during automated data collection.
 
 ## Related Documentation
 

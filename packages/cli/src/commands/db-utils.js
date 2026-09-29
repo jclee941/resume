@@ -26,7 +26,7 @@ export function executeD1(sql, options = {}) {
   try {
     const cmd = `npx wrangler d1 execute ${DB_NAME} ${envFlag} ${remoteFlag} --command="${sql.replace(/"/g, '\\"')}"`;
     return execSync(cmd, {
-      cwd: resolve(process.cwd(), 'apps/job-server/workers'),
+      cwd: process.cwd(),
       encoding: 'utf-8',
       stdio: ['pipe', 'pipe', 'pipe'],
     });
@@ -58,7 +58,7 @@ export function executeD1File(filePath, options = {}) {
   try {
     const cmd = `npx wrangler d1 execute ${DB_NAME} ${envFlag} ${remoteFlag} --file="${filePath}"`;
     return execSync(cmd, {
-      cwd: resolve(process.cwd(), 'apps/job-server/workers'),
+      cwd: process.cwd(),
       encoding: 'utf-8',
       stdio: ['pipe', 'pipe', 'pipe'],
     });

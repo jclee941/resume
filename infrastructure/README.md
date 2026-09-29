@@ -25,14 +25,11 @@ automation is Cloudflare-native (Cron Triggers and Workflows in the root
 - Proxmox VE (Proxmox) -> Grafana + Loki (Grafana)
 - Proxmox VE (Proxmox) -> Elasticsearch (ES)
 - Proxmox VE (Proxmox) -> Docker Host (Docker)
-- Docker Host (Docker) -> job-server MCP (JobServer)
 - Cron Triggers (Cron) -> Portfolio Worker (Portfolio) -> Cloudflare Workflows (Workflows)
-- job-server MCP (JobServer) -> D1 Database (D1)
-- job-server MCP (JobServer) -> KV Namespaces (KV)
-- job-server MCP (JobServer) -> Wanted API (Wanted)
-- job-server MCP (JobServer) -> JobKorea (JK)
 - Portfolio Worker (Portfolio) -> D1 Database (D1)
 - Portfolio Worker (Portfolio) -> KV Namespaces (KV)
+- Portfolio Worker (Portfolio) -> Wanted API (Wanted)
+- Portfolio Worker (Portfolio) -> JobKorea (JK)
 
 **Infrastructure Stack**
 
@@ -58,7 +55,7 @@ infrastructure/
 │       ├── alert-rules.yaml
 │       └── resume-portfolio-dashboard.json  # symlink → monitoring/
 ├── database/                 # D1 migrations and seeds
-├── docker/                   # Monitoring and session-broker compose files
+├── docker/                   # Monitoring compose file
 ├── mocks/                    # Cloudflare binding mocks
 └── monitoring/               # Grafana dashboards (primary), SLOs, tracing
     ├── README.md

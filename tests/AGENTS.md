@@ -53,7 +53,7 @@ tests/
 
 - `*.test.js` = Jest/Node unit/integration tests.
 - `*.spec.js` = Playwright E2E tests.
-- Node `--test` at depth 5+ for isolated module tests (job-server, schemas, env, shared, tools, CLI).
+- Node `--test` at depth 5+ for isolated module tests (schemas, env, shared, tools, CLI).
 - Root `npm test` runs its Jest, Node-test, and Go command chain sequentially.
 
 ## ANTI-PATTERNS

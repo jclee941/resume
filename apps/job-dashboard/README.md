@@ -376,13 +376,13 @@ curl https://resume.jclee.me/job/api/workflows/abc123/status \
 
 ### Supported Platforms
 
-| Platform     | Search | Job Details | Auto-Apply | Notes                                              |
-| ------------ | :----: | :---------: | :--------: | -------------------------------------------------- |
-| **Wanted**   |   ✅   |     ✅      |     ✅     | Full API support via Chaos API                     |
-| **LinkedIn** |   ✅   |     ⚠️      |     ❌     | Search works; Apply requires Puppeteer (see below) |
-| **Remember** |   ✅   |     ⚠️      |     ❌     | Search works; Apply requires Puppeteer (see below) |
-| **JobKorea** |   ❌   |     ❌      |     ❌     | Use job-server CLI instead                         |
-| **Saramin**  |   ❌   |     ❌      |     ❌     | Use job-server CLI instead                         |
+| Platform     | Search | Job Details | Auto-Apply | Notes                                                  |
+| ------------ | :----: | :---------: | :--------: | ------------------------------------------------------ |
+| **Wanted**   |   ✅   |     ✅      |     ✅     | Full API support via Chaos API                         |
+| **LinkedIn** |   ✅   |     ⚠️      |     ❌     | Search works; Apply requires Puppeteer (see below)     |
+| **Remember** |   ✅   |     ⚠️      |     ❌     | Search works; Apply requires Puppeteer (see below)     |
+| **JobKorea** |   ❌   |     ❌      |     ❌     | Session renewal only (`/api/jobkorea/refresh-session`) |
+| **Saramin**  |   ❌   |     ❌      |     ❌     | Not supported                                          |
 
 ### ⚠️ Important Limitations
 
@@ -391,11 +391,8 @@ curl https://resume.jclee.me/job/api/workflows/abc123/status \
 The dashboard workflow will return an error with `requiresJobServer: true` if
 you attempt to apply to these platforms.
 
-**Workarounds**:
-
-1. Use job-server CLI: `npm run auto-apply -- --platforms=linkedin,remember
---apply`
-2. Trigger via automation webhook (integrates with job-server)
+There is no local fallback runner; these platforms stay unsupported for
+auto-apply.
 
 **Job Details Cache**: The `ApplicationWorkflow` can fetch job details from
 Wanted API directly, but LinkedIn/Remember require cached data from previous
@@ -800,10 +797,6 @@ const ALLOWED_ORIGINS = [
 - **[AGENTS.md](./AGENTS.md)** - Architecture details, handler classes,
   workflows, D1 schema, KV structure
 - **[SECRETS.md](./SECRETS.md)** - Secret management guide
-- **[../job-server/ARCHITECTURE.md](../job-server/ARCHITECTURE.md)** - Job automation system overview
-- **[../job-server/DATA_FLOW.md](../job-server/DATA_FLOW.md)** - End-to-end
-  request flows
-- **[../job-server/SCRIPTS_GUIDE.md](../job-server/SCRIPTS_GUIDE.md)** - CLI scripts reference
 
 ---
 

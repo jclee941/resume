@@ -1,6 +1,6 @@
 /**
  * Contract tests for Logger, RequestContext, LogLevel, generateRequestId.
- * Source: apps/job-server/src/shared/logger/index.js
+ * Source: packages/shared/src/logger/index.js
  *
  * Wave 0 — lock public API surface before shared package extraction.
  *

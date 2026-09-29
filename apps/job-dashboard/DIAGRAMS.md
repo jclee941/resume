@@ -1,6 +1,6 @@
 # Architecture Diagrams
 
-Visual representations of the job-automation workers system, request flows, and
+Visual representations of the job dashboard system, request flows, and
 component interactions.
 
 ## Table of Contents
@@ -21,7 +21,6 @@ High-level overview of all major components and their relationships:
 
 - Type: flowchart
 - Component: 🌐 Browser (Browser)
-- Component: 🔧 MCP Server (MCP)
 - Component: 💻 CLI Tool (CLI)
 - Component: Fetch Handler (Fetch)
 - Component: Middleware Stack / 7 Layers (Middleware)
@@ -38,7 +37,6 @@ High-level overview of all major components and their relationships:
 - Component: ☁️ Cloudflare API (CF)
 - Component: 🪝 Webhooks (Webhooks)
 - 🌐 Browser (Browser) -> Fetch Handler (Fetch)
-- 🔧 MCP Server (MCP) -> Fetch Handler (Fetch)
 - 💻 CLI Tool (CLI) -> Fetch Handler (Fetch)
 - Fetch Handler (Fetch) -> Middleware Stack / 7 Layers (Middleware)
 - Middleware Stack / 7 Layers (Middleware) -> Router / 30+ Endpoints (Router)
@@ -61,7 +59,6 @@ High-level overview of all major components and their relationships:
 **Client Layer**:
 
 - **Browser**: Frontend dashboard accessing `/job/*` routes
-- **MCP Server**: Tool interface for job application automation
 - **CLI Tool**: Command-line deployment and management
 
 **Cloudflare Worker**:

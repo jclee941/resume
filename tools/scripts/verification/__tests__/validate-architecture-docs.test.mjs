@@ -25,12 +25,24 @@ test('characterizes ADR filenames, metadata styles, template, and index coverage
   const boldStyleCount = documents.filter((text) => /^\*\*Status:\*\*/m.test(text)).length;
 
   // Then: the known baseline is explicit before governance normalization.
-  assert.deepEqual(ids, ['0001', '0002', '0003', '0004', '0005', '0006', '0007', '0008', '0009']);
+  assert.deepEqual(ids, [
+    '0001',
+    '0002',
+    '0003',
+    '0004',
+    '0005',
+    '0006',
+    '0007',
+    '0008',
+    '0009',
+    '0010',
+  ]);
   assert.equal(dashStyleCount, 7);
-  assert.equal(boldStyleCount, 2);
+  assert.equal(boldStyleCount, 3);
   assert.equal(existsSync(join(ADR_DIR, 'template.md')), true);
   assert.equal(index.includes('0008-drop-bazel-facade.md'), true);
   assert.equal(index.includes('0009-single-worker-consolidation.md'), true);
+  assert.equal(index.includes('0010-retire-local-job-server.md'), true);
 });
 
 function validateFixture(t, options = {}, mode = 'governance-only') {
@@ -47,7 +59,7 @@ test('accepts both metadata styles, partial note, chain, and free-text supersess
   assert.equal(result.status, 'ok');
   assert.deepEqual(
     result.adrs.map(({ id }) => id),
-    ['0001', '0002', '0003', '0004', '0005', '0006', '0007', '0008', '0009']
+    ['0001', '0002', '0003', '0004', '0005', '0006', '0007', '0008', '0009', '0010']
   );
 });
 

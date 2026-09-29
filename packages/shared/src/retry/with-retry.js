@@ -13,7 +13,6 @@
  * This module is the canonical home for the simple "retry with backoff" loop
  * that previously lived duplicated in:
  *   - apps/job-dashboard/src/utils/retry.js
- *   - apps/job-server/src/shared/utils/retry.js
  */
 
 import { withCircuitBreaker } from './circuit-breaker.js';

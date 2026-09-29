@@ -14,7 +14,7 @@ module.exports = {
     '!packages/shared/src/auth/**', // Cookie/HMAC/SessionStore — covered by integration only
     '!packages/shared/src/crypto/**', // Node + WebCrypto adapters — platform-specific
     '!packages/shared/src/rate-limit/**', // Worker DO-bound, exercised in deployed tests
-    '!packages/shared/src/retry/**', // Circuit breaker / HTTP retry covered in apps/job-server
+    '!packages/shared/src/retry/**', // Circuit breaker / HTTP retry
     '!packages/shared/src/browser/**', // Stealth patches require live Puppeteer
     '!packages/shared/src/cli/**', // CLI bootstrap covered in packages/cli
     '!**/node_modules/**',

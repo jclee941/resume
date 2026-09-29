@@ -154,7 +154,7 @@ module.exports = [
   },
   {
     files: ['apps/portfolio/**/*.{js,mjs}'],
-    rules: crossAppImportRule(['job-server', 'job-dashboard']),
+    rules: crossAppImportRule(['job-dashboard']),
   },
   {
     files: ['apps/portfolio/entry.js'],
@@ -163,10 +163,6 @@ module.exports = [
         'error',
         {
           patterns: [
-            {
-              regex: 'job-server',
-              message: 'Cross-app import. Use @resume/shared/* instead.',
-            },
             {
               regex: 'job-dashboard/(?!src/index\\.js$)',
               message: 'Only the ADR 0009 job-dashboard worker entry import is allowed here.',
@@ -177,12 +173,8 @@ module.exports = [
     },
   },
   {
-    files: ['apps/job-server/**/*.{js,mjs}'],
-    rules: crossAppImportRule(['job-dashboard', 'portfolio']),
-  },
-  {
     files: ['apps/job-dashboard/**/*.{js,mjs}'],
-    rules: crossAppImportRule(['job-server', 'portfolio']),
+    rules: crossAppImportRule(['portfolio']),
   },
   {
     files: ['tests/**/*.test.js', 'tests/**/*.spec.js', 'tests/**/*.test.ts', 'tests/**/*.spec.ts'],
@@ -201,18 +193,6 @@ module.exports = [
     languageOptions: {
       globals: {
         ...globals.jest,
-      },
-    },
-  },
-  {
-    // JobKorea profile-sync automation calls page.evaluate(() => ...); the
-    // callback body executes inside the target page's browser context,
-    // where the JobKorea site itself loads jQuery as the global `$` - it is
-    // not a Node/local identifier and is genuinely defined at runtime.
-    files: ['apps/job-server/scripts/profile-sync/**/*.js'],
-    languageOptions: {
-      globals: {
-        $: 'readonly',
       },
     },
   },

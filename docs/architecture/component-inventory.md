@@ -6,7 +6,6 @@
 | ------------- | --------------------- | ----------- | ------------------------------------------------ |
 | Web Worker    | `apps/portfolio/`     | Web/Backend | Cloudflare Worker serving the resume site.       |
 | Job Dashboard | `apps/job-dashboard/` | Web/Backend | Cloudflare Worker serving the job dashboard API. |
-| Job Server    | `apps/job-server/`    | Backend     | MCP Server + stealth job automation runtime.     |
 | Resume CLI    | `packages/cli/`       | CLI         | Node.js tool for resume build and deployment.    |
 | Resume Data   | `packages/data/`      | Data        | SSoT resume content and schemas.                 |
 | Automation    | `tools/scripts/`      | Tooling/Ops | Deployment and maintenance scripts.              |

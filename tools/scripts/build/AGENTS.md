@@ -6,7 +6,7 @@
 
 ## OVERVIEW
 
-Asset generation pipeline for PDF, PPTX, icons, screenshots, Docker images, and
+Asset generation pipeline for PDF, PPTX, icons, screenshots, and
 resume variants. Output ownership and tracking are format/location specific.
 
 ## SCRIPTS
@@ -18,7 +18,6 @@ resume variants. Output ownership and tracking are format/location specific.
 | `generate-icons.js` | Sharp | favicon variants |
 | `generate-screenshots.js` | Playwright | portfolio screenshots |
 | `generate-resume-variants.js` | Node | role-specific resumes |
-| `docker-build.go` | Docker | container images |
 | `optimize-images.js` | Sharp | image compression |
 
 ## OUTPUT LOCATIONS

@@ -12,7 +12,7 @@ Automation suite for build, deployment, verification, release, and enrichment. N
 
 ```text
 scripts/
-├── build/              # asset generation (PDF, PPTX, icons, screenshots, Docker)
+├── build/              # asset generation (PDF, PPTX, icons, screenshots)
 ├── deployment/         # deploy helpers and preflight checks
 ├── local-dev-up/       # local dev environment orchestrator
 ├── verification/      # deterministic validators and remote probes

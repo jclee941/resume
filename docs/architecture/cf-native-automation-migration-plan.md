@@ -34,6 +34,7 @@ Deferred — **owner-gated by necessity, not preference** (Waves 1–5):
 - **Wave 2 — infrastructure EXECUTED and live smoke validated** (commit `63b72a38`, CI green): `BrowserSessionDO` is a session broker over `@cloudflare/puppeteer` `sessions()`/`limits()`/`acquire()` with a `withBrowserSession()` drop-in. The admin smoke path proved cross-worker `connect(sessionId)` reuse, page navigation, and release against live Browser Rendering; production crawler wiring remains pending.
 - **2026-09-29 — scheduling widened**: `wrangler.jsonc` now declares three crons routed by `cron-router.js`: `0 21 * * *` (resume sync + cleanup), `0 * * * *` (health check), `0 0 * * 1` (weekly report). `BackupWorkflow` (D1→KV copy, never run) is retired; D1 Time Travel is the backup.
 - Waves 3–5 (wire crawlers through the broker) additionally need the **captcha strategy**, **Browser-Rendering anti-bot risk**, and **`@cloudflare/puppeteer` CDP `Network.setCookie`** decisions resolved (see Open Questions).
+- **2026-09-29 — local job-server retired**: the owner decided "(C) job-server 로컬 자동화 전면 폐기"; `apps/job-server` (`@resume/job-automation`), the Docker/session-broker files, the local session scripts, and the orphaned shared modules are removed. Automation now runs only in the Worker (Cron Triggers, Workflows, KV, D1, Browser Rendering); see ADR 0010.
 
 ## Migration Waves
 

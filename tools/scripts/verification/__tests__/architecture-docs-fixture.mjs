@@ -14,6 +14,7 @@ const ADRS = [
   ],
   ['0008', '**Status:** Accepted\n**Supersedes:** legacy files in the repository'],
   ['0009', '**Status:** Accepted\n**Supersedes:** [ADR 0007](./0007-decision.md)'],
+  ['0010', '**Status:** Accepted'],
 ];
 
 export function createFixture(root, options = {}) {

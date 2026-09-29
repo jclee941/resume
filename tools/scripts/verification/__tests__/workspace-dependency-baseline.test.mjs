@@ -11,12 +11,6 @@ const baselineImports = [
   ['apps/job-dashboard', 'src/utils/env.js', '@resume/env', 'packages/env'],
   ['packages/contracts', 'src/env.js', '@resume/types', 'packages/types'],
   ['packages/shared', 'src/validation/dashboard.js', 'zod', 'node_modules/zod'],
-  [
-    'apps/job-server',
-    'src/server/plugins/auth.js',
-    'fastify-plugin',
-    'node_modules/fastify-plugin',
-  ],
 ];
 
 // This characterization test reads the baseline commit via `git show`, so it

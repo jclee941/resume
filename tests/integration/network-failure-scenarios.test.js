@@ -23,13 +23,6 @@ describe('Network Failure Scenarios', () => {
     expect(source).toContain("console.error('Rate limit KV error:', error);");
   });
 
-  test('R2 screenshot writes should be guarded by binding availability', () => {
-    const source = readWorkerFile('apps/job-server/src/crawlers/stealth-browser-crawler.js');
-
-    expect(source).toContain('this.screenshotOnError && this.env.SCREENSHOTS');
-    expect(source).toContain('await this.env.SCREENSHOTS.put');
-  });
-
   test('timeout handling should use AbortSignal timeout in webhook handlers', () => {
     const resumeSync = readWorkerFile('apps/job-dashboard/src/handlers/resume-sync-handler.js');
     const autoApply = readWorkerFile(

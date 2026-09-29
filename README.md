@@ -43,10 +43,10 @@
 
 ### 채용 작업 자동화
 
-Node.js 기반 MCP(Model Context Protocol) 서버에 도구·리소스·프롬프트를 등록하고,
-채용 정보 수집과 지원 관리 작업을 대시보드의 큐·워크플로우로 구성합니다.
+채용 정보 수집과 지원 관리 작업을 Cron Trigger, Queue, Workflow로 구성해
+Cloudflare Worker 안에서 실행합니다.
 
-[MCP 서버](apps/job-server/src/index.js) · [대시보드 런타임](apps/job-dashboard/src/index.js) · [워크플로우](apps/job-dashboard/src/workflows/)
+[대시보드 런타임](apps/job-dashboard/src/index.js) · [워크플로우](apps/job-dashboard/src/workflows/)
 
 ### 타입과 입력 검증
 
@@ -67,7 +67,7 @@ GitHub Actions는 코드 검증을, Cloudflare Workers Builds는 프로덕션 �
 
 | 역할                | 사용 기술                                        |
 | ------------------- | ------------------------------------------------ |
-| 웹 서비스·실행 환경 | Cloudflare Workers · Node.js · Docker            |
+| 웹 서비스·실행 환경 | Cloudflare Workers · Node.js                     |
 | 데이터·비동기 작업  | D1 · Queues · Workflows                          |
 | 코드·데이터 계약    | JavaScript · TypeScript · Zod · OpenAPI          |
 | 자동화·운영         | Go · Python · GitHub Actions · 1Password         |
@@ -117,7 +117,6 @@ npm run dev
 | 살펴볼 내용                 | 시작 경로                                  |
 | --------------------------- | ------------------------------------------ |
 | 공개 포트폴리오·요청 라우팅 | [apps/portfolio/](apps/portfolio/)         |
-| MCP 서버·채용 자동화        | [apps/job-server/](apps/job-server/)       |
 | 대시보드 API·큐·워크플로우  | [apps/job-dashboard/](apps/job-dashboard/) |
 | 이력서 콘텐츠 원본          | [packages/data/](packages/data/)           |
 | 공통 타입·스키마·API 계약   | [packages/](packages/)                     |

@@ -33,7 +33,7 @@ without pushing to GitHub or depending on remote infrastructure.
 # See all CI simulation options
 go run tools/scripts/run-ci-local.go --help
 
-# Start full local dev environment (portfolio + job-server)
+# Start the local dev environment (portfolio Worker)
 go -C tools/scripts run ./local-dev-up --all
 ```
 
@@ -121,7 +121,7 @@ aggregated log output and graceful shutdown.
 #### Usage
 
 ```bash
-# Start all services (portfolio + job-server)
+# Start all services (portfolio Worker)
 go -C tools/scripts run ./local-dev-up --all
 
 # Show local-dev options
@@ -129,25 +129,20 @@ go -C tools/scripts run ./local-dev-up
 
 # Start portfolio dev server
 go -C tools/scripts run ./local-dev-up --portfolio
-
-# Start specific combination
-go -C tools/scripts run ./local-dev-up --portfolio --job-server
 ```
 
 #### Service flags
 
-| Flag           | Default | Description                                                   |
-| -------------- | ------- | ------------------------------------------------------------- |
-| `--portfolio`  | `false` | Start portfolio dev server (`npm start` in `apps/portfolio/`) |
-| `--job-server` | `false` | Start job-server via docker-compose (`apps/job-server/`)      |
-| `--all`        | `false` | Enable all services                                           |
+| Flag          | Default | Description                                                   |
+| ------------- | ------- | ------------------------------------------------------------- |
+| `--portfolio` | `false` | Start portfolio dev server (`npm start` in `apps/portfolio/`) |
+| `--all`       | `false` | Enable all services                                           |
 
 #### Service details
 
-| Service    | URL                     | Health Endpoint | Health Timeout | Command                                     |
-| ---------- | ----------------------- | --------------- | -------------- | ------------------------------------------- |
-| portfolio  | `http://localhost:8787` | `/`             | 40s            | `npm start` (in `apps/portfolio/`)          |
-| job-server | `http://localhost:3456` | `/health`       | 90s            | `docker-compose up` (in `apps/job-server/`) |
+| Service   | URL                     | Health Endpoint | Health Timeout | Command                            |
+| --------- | ----------------------- | --------------- | -------------- | ---------------------------------- |
+| portfolio | `http://localhost:8787` | `/`             | 40s            | `npm start` (in `apps/portfolio/`) |
 
 #### Features
 
@@ -161,7 +156,6 @@ go -C tools/scripts run ./local-dev-up --portfolio --job-server
 #### Prerequisites
 
 - **portfolio**: Node.js installed, `npm ci` run
-- **job-server**: `docker-compose` or `docker compose` available in PATH
 
 ---
 
@@ -483,18 +477,6 @@ npm run sync:data
 npm --prefix apps/portfolio run build
 # Then retry
 go -C tools/scripts run ./local-dev-up --portfolio
-```
-
-### Job-server skipped: docker-compose not found
-
-**Symptom**: `WARN job-server skipped: docker-compose/docker not found in PATH`
-
-**Fix**: Install Docker and docker-compose.
-
-```bash
-# Verify installation
-docker --version
-docker compose version
 ```
 
 ### `cf-bindings-mock.js` import fails

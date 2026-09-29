@@ -27,33 +27,6 @@ Base URL: `https://resume.jclee.me`
 | ------ | -------- | ----------------------------------------------------------------------- |
 | ANY    | `/job/*` | Dispatched from portfolio entry worker to the dashboard worker handler. |
 
-## MCP Server (Job Automation)
-
-Source: `apps/job-server/src/tools`
-
-### Tool Modules (Top-Level Entries)
-
-- `auth-integrated.js`
-- `auth.js`
-- `get-categories.js`
-- `get-company.js`
-- `get-job-detail.js`
-- `job-matcher.js`
-- `optimize-resume.js`
-- `profile.js`
-- `resume-customize.js`
-- `resume-generator.js`
-- `resume-sync.js`
-- `resume.js`
-- `search-jobs.js`
-- `search-keyword.js`
-- `unified-resume-sync.js`
-
-### Tool Directories
-
-- `commands/`
-- `resume/`
-
 ## Dashboard Worker API
 
 Base URL (routed through portfolio): `https://resume.jclee.me/job`

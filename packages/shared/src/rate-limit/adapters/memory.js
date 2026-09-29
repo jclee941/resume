@@ -6,8 +6,7 @@
  * Node process can cap distinct callers (per-platform, per-user, per-IP)
  * without any out-of-process I/O.
  *
- * Used by `apps/job-server` for the in-process crawl orchestrator. For
- * Worker-edge HTTP middleware see `./kv.js`.
+ * For Worker-edge HTTP middleware see `./kv.js`.
  *
  * Each key is independent. The factory functions return objects with the
  * same `tryConsume` / `tryRecord` / `retryAfterMs` API as the underlying

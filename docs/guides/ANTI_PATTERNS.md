@@ -104,125 +104,7 @@ SHA256("console.log('hello');"); // Different hash!
 
 ---
 
-### 3. NEVER Use Naked Playwright/Puppeteer
-
-**Affected Files**:
-
-- `apps/job-server/src/crawlers/*`
-
-**Rule**: Always use `BaseCrawler` class instead of direct `chromium.launch()`
-or `puppeteer.launch()`.
-
-**Why It Breaks**:
-
-Job sites (Wanted, Saramin, JobKorea) have **bot detection**. Direct browser
-launch is immediately flagged:
-
-```javascript
-// ❌ WRONG - Detected as bot
-const browser = await chromium.launch();
-const page = await browser.newPage();
-await page.goto('https://www.wanted.co.kr/');
-// → Blocked by Cloudflare/DataDome
-
-// ✅ CORRECT - Uses stealth mode
-class WantedCrawler extends BaseCrawler {
-  async crawl() {
-    await this.page.goto('https://www.wanted.co.kr/');
-    // → Bypasses detection with stealth patches
-  }
-}
-```
-
-**What BaseCrawler Provides**:
-
-- User-Agent rotation
-- Fingerprint randomization
-- `playwright-stealth` plugin
-- Cookie persistence via `SessionManager`
-
-**References**:
-
-- `apps/job-server/src/crawlers/AGENTS.md:44`
-- `apps/job-server/src/AGENTS.md:92`
-
----
-
-### 4. NEVER Cross Client Boundaries
-
-**Affected Files**:
-
-- `apps/job-server/src/shared/clients/*`
-
-**Rule**: Each client (`wanted/`, `saramin/`, `jobkorea/`) is **isolated**. Do
-NOT import across client directories.
-
-**Why It Breaks**:
-
-Creates circular dependencies and violates separation of concerns:
-
-```javascript
-// ❌ WRONG - Violates isolation
-// File: apps/job-server/src/shared/clients/wanted/api.js
-import { saraminLogin } from '../saramin/auth.js'; // Cross-boundary import
-
-// ✅ CORRECT - Use shared services
-// File: apps/job-server/src/shared/clients/wanted/api.js
-import { SessionManager } from '../../services/session/index.js';
-```
-
-**Architecture**:
-
-```text
-clients/
-├── wanted/       # Isolated - only imports from shared/services/
-├── saramin/      # Isolated - only imports from shared/services/
-├── jobkorea/     # Isolated - only imports from shared/services/
-└── secrets/      # Isolated - credential storage only
-```
-
-**References**:
-
-- `apps/job-server/src/shared/clients/AGENTS.md:35-36`
-
----
-
-### 5. NEVER Store Credentials in Client Code
-
-**Affected Files**:
-
-- `apps/job-server/src/shared/clients/secrets/*`
-
-**Rule**: Credentials (cookies, tokens, API keys) MUST go in `secrets/`
-directory, never in client implementation files.
-
-**Why It Breaks**:
-
-Security risk + merge conflicts + accidental commits:
-
-```javascript
-// ❌ WRONG - Credentials in code
-// File: apps/job-server/src/shared/clients/wanted/api.js
-const cookies = [
-  { name: '_wts', value: 'abc123...' }, // SECURITY RISK!
-];
-
-// ✅ CORRECT - Use SessionManager
-// File: apps/job-server/src/shared/clients/wanted/api.js
-import { SessionManager } from '../../services/session/index.js';
-
-const session = await SessionManager.load('wanted');
-const cookies = session.cookies;
-```
-
-**References**:
-
-- `apps/job-server/src/shared/clients/AGENTS.md:36`
-- `apps/job-server/src/AGENTS.md:93`
-
----
-
-### 6. NEVER Hardcode API Keys in `.env`
+### 3. NEVER Hardcode API Keys in `.env`
 
 **Affected Files**:
 
@@ -255,48 +137,7 @@ echo "CLOUDFLARE_API_TOKEN=abc123..." >> .env.local
 
 ## 🟡 WARNING (Will Cause Issues)
 
-### 7. NEVER Instantiate Services Directly in Routes
-
-**Affected Files**:
-
-- `apps/job-server/src/server/routes/*`
-
-**Rule**: Use Fastify decorators for services, never `new Service()` in route
-handlers.
-
-**Why It Breaks**:
-
-Breaks dependency injection and makes testing impossible:
-
-```javascript
-// ❌ WRONG - Direct instantiation
-// File: apps/job-server/src/server/routes/jobs.js
-fastify.get('/jobs', async (request, reply) => {
-  const jobService = new JobService(); // New instance every request!
-  return jobService.getJobs();
-});
-
-// ✅ CORRECT - Use decorated service
-// File: apps/job-server/src/server/routes/jobs.js
-fastify.get('/jobs', async (request, reply) => {
-  return request.server.jobService.getJobs(); // Shared instance
-});
-```
-
-**Setup** (in server initialization):
-
-```javascript
-// File: apps/job-server/src/server/index.js
-fastify.decorate('jobService', new JobService());
-```
-
-**References**:
-
-- `apps/job-server/src/server/routes/AGENTS.md:44`
-
----
-
-### 8. NEVER Hardcode Paths in Build Scripts
+### 4. NEVER Hardcode Paths in Build Scripts
 
 **Affected Files**:
 
@@ -328,7 +169,7 @@ npm run build
 
 ---
 
-### 9. NEVER Skip Data Sync After Resume Changes
+### 5. NEVER Skip Data Sync After Resume Changes
 
 **Affected Files**:
 
@@ -374,7 +215,7 @@ cp packages/data/resumes/master/resume_data.json \
 
 ## 🟢 BEST PRACTICES
 
-### 10. ALWAYS Use Bazel for Affected Target Analysis
+### 6. ALWAYS Use Bazel for Affected Target Analysis
 
 **Status**: ARCHIVED — Bazel facade dropped per ADR-0008. Use `GO111MODULE=off go run ./tools/ci/affected origin/master` instead.
 
@@ -409,7 +250,7 @@ GO111MODULE=off go run ./tools/ci/affected origin/master
 
 ---
 
-### 11. ALWAYS Get OWNERS Approval Before Merging
+### 7. ALWAYS Get OWNERS Approval Before Merging
 
 **Affected Files**:
 
@@ -453,8 +294,6 @@ Before deploying changes, verify:
 - [ ] No manual edits to `apps/portfolio/worker.js`
 - [ ] Resume data changes synced with `npm run sync:data`
 - [ ] No `.trim()` calls before CSP hash calculations
-- [ ] All new crawlers extend `BaseCrawler`
-- [ ] No cross-client imports in `apps/job-server/src/shared/clients/`
 - [ ] Secrets in `.env.local`, not `.env`
 - [ ] Build scripts use relative paths
 - [ ] Affected Bazel targets tested

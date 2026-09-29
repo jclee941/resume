@@ -4,7 +4,6 @@ import assert from 'node:assert/strict';
 import { validateEnv, EnvValidationError } from '../parse.js';
 import { portfolioEnvSchema } from '../schemas/portfolio.js';
 import { jobDashboardEnvSchema } from '../schemas/job-dashboard.js';
-import { jobServerEnvSchema } from '../schemas/job-server.js';
 
 describe('portfolioEnvSchema', () => {
   it('accepts an empty env (every key is optional today)', () => {
@@ -68,39 +67,5 @@ describe('jobDashboardEnvSchema', () => {
         }),
       EnvValidationError
     );
-  });
-});
-
-describe('jobServerEnvSchema', () => {
-  it('accepts an empty env (everything optional in job-server today)', () => {
-    const env = validateEnv(jobServerEnvSchema, {});
-    assert.equal(typeof env, 'object');
-  });
-
-  it('rejects malformed SESSION_ENCRYPTION_KEY (must be 64-char hex)', () => {
-    assert.throws(
-      () => validateEnv(jobServerEnvSchema, { SESSION_ENCRYPTION_KEY: 'short' }),
-      EnvValidationError
-    );
-  });
-
-  it('accepts a 64-char hex SESSION_ENCRYPTION_KEY', () => {
-    const key = 'a'.repeat(64);
-    const env = validateEnv(jobServerEnvSchema, { SESSION_ENCRYPTION_KEY: key });
-    assert.equal(env.SESSION_ENCRYPTION_KEY, key);
-  });
-
-  it('rejects bad LOG_LEVEL', () => {
-    assert.throws(
-      () => validateEnv(jobServerEnvSchema, { LOG_LEVEL: 'verbose' }),
-      EnvValidationError
-    );
-  });
-
-  it('accepts each valid LOG_LEVEL', () => {
-    for (const level of ['DEBUG', 'INFO', 'WARN', 'ERROR']) {
-      const env = validateEnv(jobServerEnvSchema, { LOG_LEVEL: level });
-      assert.equal(env.LOG_LEVEL, level);
-    }
   });
 });

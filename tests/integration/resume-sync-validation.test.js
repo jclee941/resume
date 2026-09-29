@@ -1,5 +1,3 @@
-const fs = require('fs');
-const path = require('path');
 const {
   INVALID_RESUME_BAD_CAREER,
   INVALID_RESUME_BAD_PHONE,
@@ -7,8 +5,6 @@ const {
   INVALID_RESUME_WRONG_TYPES,
   VALID_RESUME_DATA,
 } = require('./resume-sync-validation-fixtures.js');
-
-const PROJECT_ROOT = path.join(__dirname, '../../');
 
 describe('Resume Sync Validation', () => {
   const importValidation = () => import('@resume/shared/validation');
@@ -125,34 +121,6 @@ describe('Resume Sync Validation', () => {
     expect(formatErrorsForMCP(validation.errors)).toEqual([]);
   });
 
-  test('imports resume sync tool successfully', async () => {
-    const resumeSync = await import(
-      path.join(PROJECT_ROOT, 'apps/job-server/src/tools/resume-sync.js')
-    );
-    expect(typeof resumeSync.resumeSyncTool).toBe('object');
-    expect(typeof resumeSync.resumeSyncTool.execute).toBe('function');
-    expect(resumeSync.resumeSyncTool.name).toBe('wanted_resume_sync');
-  });
-
-  test('base command imports validation adapter', () => {
-    const content = readProjectFile('apps/job-server/src/tools/commands/base-command.js');
-    expect(content.includes("from '@resume/shared/validation'")).toBe(true);
-    expect(content.includes('validateResumeData')).toBe(true);
-    expect(content.includes('formatErrorsForMCP')).toBe(true);
-    expect(content.includes('validateLocalData')).toBe(true);
-  });
-
-  test('import and sync commands extend base command', () => {
-    const importCommand = readProjectFile('apps/job-server/src/tools/commands/import-command.js');
-    const syncCommand = readProjectFile('apps/job-server/src/tools/commands/sync-command.js');
-    expect(
-      importCommand.includes('extends BaseCommand') || importCommand.includes('BaseCommand')
-    ).toBe(true);
-    expect(syncCommand.includes('extends BaseCommand') || syncCommand.includes('BaseCommand')).toBe(
-      true
-    );
-  });
-
   test('builds MCP-compliant validation error response', async () => {
     const { validateResumeData, formatErrorsForMCP, masterSchema } = await importValidation();
     const validation = validateResumeData(INVALID_RESUME_MISSING_REQUIRED, masterSchema);
@@ -169,7 +137,3 @@ describe('Resume Sync Validation', () => {
     expect(typeof errorResponse.hint).toBe('string');
   });
 });
-
-function readProjectFile(relativePath) {
-  return fs.readFileSync(path.join(PROJECT_ROOT, relativePath), 'utf-8');
-}

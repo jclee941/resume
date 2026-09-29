@@ -4,7 +4,7 @@ import { validateAdrSupersession } from './architecture-docs-adr-links.mjs';
 import { CURRENT_DOCS, validateCurrentDocs } from './architecture-docs-current-state.mjs';
 import { validateIndex } from './architecture-docs-index.mjs';
 
-const EXPECTED_IDS = Array.from({ length: 9 }, (_, index) => String(index + 1).padStart(4, '0'));
+const EXPECTED_IDS = Array.from({ length: 10 }, (_, index) => String(index + 1).padStart(4, '0'));
 
 /**
  * @typedef {Object} DiagnosticItem

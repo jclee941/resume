@@ -1,7 +1,0 @@
-export {
-  DEFAULT_SESSION_TTL_MS,
-  RENEWABLE_SESSION_PLATFORMS,
-  SESSION_PLATFORM_TTL_MS,
-  SUPPORTED_SESSION_PLATFORMS,
-  getSessionTtlMs,
-} from '@resume/shared/session';

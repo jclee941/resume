@@ -173,7 +173,7 @@ describe('deterministic resume sync contract', () => {
     assert.equal(scripts['build:portfolio'], 'npm run build');
     assert.equal(
       scripts['automate:ssot'],
-      'npm run sync:pdf && npm run build && npm run typecheck && npm run test:node'
+      'npm run sync:pdf && npm run build && npm run typecheck'
     );
     assert.equal(
       scripts['automate:full'],

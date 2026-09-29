@@ -10,7 +10,7 @@
 
 ## OVERVIEW
 
-Shared runtime utilities consumed by `apps/job-server`, `apps/job-dashboard`, and other packages. Provides validation, error handling, logging, HTTP clients (Wanted, Elasticsearch), browser automation, retry/circuit-breaker, crypto, rate-limiting, session management, and auth helpers.
+Shared runtime utilities consumed by `apps/job-dashboard`, and other packages. Provides validation, error handling, logging, HTTP clients (Wanted, Elasticsearch), browser automation, retry/circuit-breaker, crypto, rate-limiting, session management, and auth helpers.
 
 ## STRUCTURE
 

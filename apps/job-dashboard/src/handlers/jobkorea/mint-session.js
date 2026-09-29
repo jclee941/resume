@@ -5,7 +5,7 @@
  * no public token endpoint. Page automation lives in ./page-helpers.js; this
  * module owns login orchestration. Nothing solves CAPTCHAs automatically, so a
  * CAPTCHA challenge fails the mint with JOBKOREA_CAPTCHA_REQUIRED and the
- * session has to be renewed manually. Ported from apps/job-server/scripts/jobkorea-session.
+ * session has to be renewed manually.
  * @module handlers/jobkorea/mint-session
  */
 

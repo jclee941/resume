@@ -48,7 +48,6 @@ func main() {
 	namingDriftTargets := []string{
 		filepath.Join(rootDir, "README.md"),
 		filepath.Join(rootDir, "docs/deployment-guide.md"),
-		filepath.Join(rootDir, "apps/job-server/AGENTS.md"),
 		filepath.Join(rootDir, "apps/job-dashboard/AGENTS.md"),
 		filepath.Join(rootDir, "apps/job-dashboard/README.md"),
 	}

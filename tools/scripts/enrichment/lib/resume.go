@@ -176,7 +176,7 @@ func DerefString(s *string) string {
 	return *s
 }
 
-// ApplicationRecord represents a job application record from job-server storage.
+// ApplicationRecord represents a job application record from an exported application history.
 type ApplicationRecord struct {
 	ID             string   `json:"id"`
 	Company        string   `json:"company"`

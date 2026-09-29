@@ -1,88 +1,40 @@
 # Project Structure & File Purpose Guide
 
-## 1. Core Architecture (Ports-and-Adapters)
+## 1. Runtime
 
-### Shared Domain Services (`src/shared/services/`)
+One Cloudflare Worker serves everything. `apps/portfolio/entry.js` routes the
+public portfolio and forwards `/job/*` to the in-process dashboard module in
+`apps/job-dashboard/src/index.js` (ADR 0009).
 
-Core business logic, decoupled from HTTP/CLI adapters.
+| Area               | Path                                         | Purpose                                      |
+| :----------------- | :------------------------------------------- | :------------------------------------------- |
+| **Portfolio**      | `apps/portfolio/`                            | Worker entry, HTML, `lib/`, generated bundle |
+| **Dashboard**      | `apps/job-dashboard/src/`                    | Handlers, routes, workflows, queues, views   |
+| **Scheduled runs** | `apps/job-dashboard/src/handlers/scheduled/` | Cron Trigger dispatch into Workflows         |
 
-| Service      | Path        | Purpose                    | Key Files                         |
-| :----------- | :---------- | :------------------------- | :-------------------------------- |
-| **Session**  | `session/`  | Authentication persistence | `session-manager.js`              |
-| **Matching** | `matching/` | Job/Resume matching engine | `job-matcher.js`, `ai-matcher.js` |
-| **Apply**    | `apply/`    | Orchestration facade       | `unified-apply-system.js`         |
-| **Auth**     | `auth/`     | Identity management        | `auth-service.js`                 |
-| **Stats**    | `stats/`    | Analytics aggregation      | `stats-service.js`                |
-| **Slack**    | `slack/`    | Notification integration   | `slack-service.js`                |
+## 2. Dashboard Layers
 
-### External Clients (`src/shared/clients/`)
+Handlers call services, services call repositories and clients.
 
-Wrappers for external APIs.
+| Layer         | Path                                | Purpose                              |
+| :------------ | :---------------------------------- | :----------------------------------- |
+| **Routes**    | `apps/job-dashboard/src/routes/`    | Route registration                   |
+| **Handlers**  | `apps/job-dashboard/src/handlers/`  | Request handlers, auto-apply control |
+| **Workflows** | `apps/job-dashboard/src/workflows/` | Cloudflare Workflow classes          |
+| **Services**  | `apps/job-dashboard/src/services/`  | Platform clients, notifications      |
+| **Queues**    | `apps/job-dashboard/src/queues/`    | Queue message to Workflow dispatch   |
 
-| Client     | Path      | Purpose                      |
-| :--------- | :-------- | :--------------------------- |
-| **Wanted** | `wanted/` | Wanted Korea API (SNS/Chaos) |
+## 3. Shared Packages
 
-## 2. Adapters (Interfaces)
+| Package     | Path                | Purpose                                   |
+| :---------- | :------------------ | :---------------------------------------- |
+| **shared**  | `packages/shared/`  | Errors, logger, retry, crypto, rate-limit |
+| **types**   | `packages/types/`   | Canonical JSDoc/TS domain types           |
+| **schemas** | `packages/schemas/` | Zod runtime schemas                       |
+| **env**     | `packages/env/`     | Environment validation                    |
+| **data**    | `packages/data/`    | Resume SSoT and proposals                 |
 
-### HTTP Server (`src/server/`)
-
-Fastify-based REST API for Dashboard & Webhooks.
-
-| Route         | File                   | Purpose                  |
-| :------------ | :--------------------- | :----------------------- |
-| **Dashboard** | `routes/dashboard.js`  | Frontend stats & config  |
-| **Profile**   | `routes/profile.js`    | User profile aggregation |
-| **AI**        | `routes/ai.js`         | LLM-based operations     |
-| **Webhooks**  | `routes/automation.js` | automation triggers      |
-
-### CLI (`src/auto-apply/cli/index.js`)
-
-Command-line interface for automation pipelines.
-
-### MCP Tools (`src/tools/`)
-
-AI Agent interfaces for Model Context Protocol.
-
-| Tool       | File             | Actions                |
-| :--------- | :--------------- | :--------------------- |
-| **Resume** | `resume.js`      | CRUD operations        |
-| **Sync**   | `resume-sync.js` | Pipeline orchestration |
-| **Auth**   | `auth.js`        | Session control        |
-
-## 3. Infrastructure & Clients (`src/shared/clients/`)
-
-External API clients and infrastructure wrappers.
-
-| Component   | Path       | Purpose                       |
-| :---------- | :--------- | :---------------------------- |
-| **D1**      | `d1/`      | Cloudflare D1 query wrapper   |
-| **Secrets** | `secrets/` | Infisical/Env secrets manager |
-| **Wanted**  | `wanted/`  | Wanted Korea API client       |
-
-## 4. Automation Engines
-
-### Crawlers (`src/crawlers/`)
-
-Playwright-based scraping engines.
-
-| Crawler      | File                  | Target                 |
-| :----------- | :-------------------- | :--------------------- |
-| **Unified**  | `index.js`            | Factory & Orchestrator |
-| **Wanted**   | `wanted-crawler.js`   | Wanted Korea           |
-| **Saramin**  | `saramin-crawler.js`  | Saramin                |
-| **LinkedIn** | `linkedin-crawler.js` | LinkedIn Easy Apply    |
-
-### Auto-Apply (`src/auto-apply/`)
-
-Submission automation logic.
-
-| Component   | File                     | Purpose                   |
-| :---------- | :----------------------- | :------------------------ |
-| **Applier** | `auto-applier.js`        | Browser interaction logic |
-| **Manager** | `application-manager.js` | State tracking            |
-
-## 5. Resume CLI (`packages/cli/`)
+## 4. Resume CLI (`packages/cli/`)
 
 Workspace CLI package for resume operations.
 

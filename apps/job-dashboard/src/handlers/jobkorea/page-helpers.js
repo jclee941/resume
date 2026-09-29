@@ -2,9 +2,7 @@
  * @fileoverview Browser-page automation helpers for the JobKorea login flow:
  * form fill, visible-submit click, login/CAPTCHA detection, and post-login
  * cookie collection. Kept separate from mint-session.js so that module can
- * stay focused on login orchestration. Ported from
- * apps/job-server/scripts/jobkorea-session/{form-filler,captcha-handler,
- * auth-checker}.js.
+ * stay focused on login orchestration.
  * @module handlers/jobkorea/page-helpers
  */
 
