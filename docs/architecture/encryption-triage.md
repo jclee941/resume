@@ -1,8 +1,8 @@
 # Encryption Implementation Triage — SSOT-033 / Issue #42
 
-**Status**: Active triage · **Owner**: Platform/Security · **Last Updated**: 2026-05-05
+**Status**: Resolved · **Owner**: Platform/Security · **Last Updated**: 2026-09-29
 
-> **2026-09-29:** `apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)). Its paths below no longer exist, and the items that target them are closed.
+> **2026-09-29:** `apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)), and the Node implementation `packages/shared/src/crypto/node.js` (with `SESSION_ENCRYPTION_KEY`) was removed with it. `@resume/shared/crypto` now exports only the WebCrypto AES-GCM helpers the Worker uses. Nothing in this triage remains open.
 
 This document maps every cryptographic implementation in the monorepo, decides
 which are runtime-justified divergences (Web Crypto vs Node `crypto`) versus
