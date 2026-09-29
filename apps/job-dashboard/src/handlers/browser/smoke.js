@@ -14,6 +14,16 @@
  */
 
 import { withBrowserSession as defaultWithBrowserSession } from '../../services/browser-session.js';
+import { readPlatformSession } from '../../services/platform-session.js';
+import { toJobKoreaBrowserCookies } from '../../services/resume-platform-sync/jobkorea-editor.js';
+
+/** Stored platform sessions a smoke probe may replay, and the host each belongs to. */
+/** @type {Record<string, string>} */
+const SMOKE_SESSION_HOSTS = { jobkorea: 'jobkorea.co.kr' };
+
+/**
+ * @typedef {{ name: string; value: string; domain: string; path: string }} SmokeCookie
+ */
 
 const DEFAULT_URL = 'https://example.com';
 
@@ -54,13 +64,14 @@ export function classifyPage(finalUrl, title, text) {
 /**
  * Run the browser probe and return a plain result object (never throws).
  * @param {Parameters<typeof defaultWithBrowserSession>[0]} env
- * @param {{withBrowserSession?: typeof defaultWithBrowserSession, url?: string, now?: () => number}} [opts]
+ * @param {{withBrowserSession?: typeof defaultWithBrowserSession, url?: string, cookies?: SmokeCookie[], now?: () => number}} [opts]
  * @returns {Promise<Record<string, unknown>>}
  */
 export async function runBrowserSmoke(env, opts = {}) {
   const {
     withBrowserSession = defaultWithBrowserSession,
     url = DEFAULT_URL,
+    cookies = [],
     now = () => Date.now(),
   } = opts;
   const started = now();
@@ -69,6 +80,7 @@ export async function runBrowserSmoke(env, opts = {}) {
     const data = await withBrowserSession(env, async (browser) => {
       const page = await browser.newPage();
       try {
+        if (cookies.length > 0) await page.setCookie(...cookies);
         await page.goto(url, { waitUntil: 'domcontentloaded' });
         const finalUrl = typeof page.url === 'function' ? page.url() : url;
         const title = await page.title();
@@ -93,12 +105,42 @@ export async function runBrowserSmoke(env, opts = {}) {
         } catch {
           inputs = [];
         }
+        /** @type {{ scripts: string[]; photoImages: Array<{ className: string; src: string }> }} */
+        let resources = { scripts: [], photoImages: [] };
+        try {
+          resources = await page.evaluate(() => {
+            /** @param {string} value */
+            const hostPath = (value) => {
+              try {
+                const parsed = new URL(value);
+                return parsed.host + parsed.pathname;
+              } catch {
+                return '';
+              }
+            };
+            return {
+              scripts: Array.from(document.scripts)
+                .map((script) => hostPath(script.src))
+                .filter(Boolean)
+                .slice(0, 40),
+              photoImages: Array.from(document.querySelectorAll('img'))
+                .filter((img) =>
+                  /photo|picture|profile/i.test(`${img.getAttribute('src') || ''} ${img.className}`)
+                )
+                .slice(0, 10)
+                .map((img) => ({ className: String(img.className), src: hostPath(img.src) })),
+            };
+          });
+        } catch {
+          resources = { scripts: [], photoImages: [] };
+        }
         return {
           finalUrl,
           title,
           pageKind: classifyPage(finalUrl, title, text),
           textSample: text.slice(0, 240),
           inputs,
+          ...resources,
         };
       } finally {
         try {
@@ -123,4 +165,28 @@ export async function runBrowserSmoke(env, opts = {}) {
       elapsedMs: now() - started,
     };
   }
+}
+
+/**
+ * Cookies of a stored platform session, for a smoke probe of that platform's own pages.
+ * @param {Parameters<typeof readPlatformSession>[0]} env
+ * @param {string} session platform whose KV session (auth:<platform>) to replay
+ * @param {string} url probe target; must be on the session's host
+ * @returns {Promise<{ ok: true; cookies: SmokeCookie[] } | { ok: false; status: number; error: string }>}
+ */
+export async function smokeCookiesFor(env, session, url) {
+  const host = Object.hasOwn(SMOKE_SESSION_HOSTS, session) ? SMOKE_SESSION_HOSTS[session] : '';
+  const target = URL.canParse(url) ? new URL(url) : null;
+  if (!host || !target || !(target.hostname === host || target.hostname.endsWith(`.${host}`))) {
+    return {
+      ok: false,
+      status: 400,
+      error: `session=${session} cookies are only sent to ${host || 'a supported platform host'}`,
+    };
+  }
+  const cookieString = await readPlatformSession(env, session);
+  if (!cookieString) {
+    return { ok: false, status: 404, error: `No ${session} session in KV (auth:${session})` };
+  }
+  return { ok: true, cookies: toJobKoreaBrowserCookies(cookieString) };
 }

@@ -1,6 +1,6 @@
 import { jsonResponse } from '../middleware/cors.js';
 import { getConfig, saveConfig } from '../services/config.js';
-import { runBrowserSmoke } from '../handlers/browser/smoke.js';
+import { runBrowserSmoke, smokeCookiesFor } from '../handlers/browser/smoke.js';
 import { refreshWantedSession } from '../handlers/wanted/mint-session.js';
 import { refreshJobKoreaSession } from '../handlers/jobkorea/mint-session.js';
 import { enqueueTask } from '../queues/queue-enqueuer.js';
@@ -10,6 +10,7 @@ import { getQueueCapability, parseQueueRequest, QUEUE_NAME } from '../queues/que
  * @typedef {import('../router.js').RouteHandler} RouteHandler
  *
  * @typedef {Parameters<typeof runBrowserSmoke>[0]
+ *   & Parameters<typeof smokeCookiesFor>[0]
  *   & Parameters<typeof refreshWantedSession>[0]
  *   & Parameters<typeof refreshJobKoreaSession>[0]
  *   & Parameters<typeof enqueueTask>[0]
@@ -41,9 +42,19 @@ export function registerAdminRoutes(router, ctx) {
   // CF-native: live validation harness for the Wave 2 Browser Rendering broker.
   // Optional ?url= lets an admin probe a real target (e.g. JobKorea/Wanted) to
   // observe live page state (content / login / captcha / blocked) before Wave 3.
+  // ?session=jobkorea replays the stored KV session, only on that platform's host.
   router.get('/api/browser/smoke', async (req) => {
-    const target = new URL(req.url).searchParams.get('url');
-    const result = await runBrowserSmoke(env, target ? { url: target } : {});
+    const params = new URL(req.url).searchParams;
+    const target = params.get('url');
+    const session = params.get('session');
+    /** @type {NonNullable<Parameters<typeof runBrowserSmoke>[1]>} */
+    const opts = target ? { url: target } : {};
+    if (session) {
+      const replay = await smokeCookiesFor(env, session, target || '');
+      if (!replay.ok) return jsonResponse({ ok: false, error: replay.error }, replay.status);
+      opts.cookies = replay.cookies;
+    }
+    const result = await runBrowserSmoke(env, opts);
     return jsonResponse(result, result.ok ? 200 : 502);
   });
 

@@ -1,6 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { runBrowserSmoke, classifyPage } from '../smoke.js';
+import { encrypt } from '@resume/shared/crypto';
+import { runBrowserSmoke, classifyPage, smokeCookiesFor } from '../smoke.js';
 
 const env = { BROWSER_SESSION: {}, MYBROWSER: {} };
 
@@ -106,5 +107,82 @@ describe('runBrowserSmoke', () => {
     assert.equal(result.ok, false);
     assert.equal(result.error, 'nav failed');
     assert.equal(calls.closed, true);
+  });
+});
+
+describe('runBrowserSmoke with a replayed session', () => {
+  it('sets the cookies before navigating and lists scripts and photo images', async () => {
+    const order = [];
+    const resources = {
+      scripts: ['www.jobkorea.co.kr/Scripts/User/Resume/edit.js'],
+      photoImages: [{ className: 'photo', src: 'file2.jobkorea.co.kr/Net/UserPhoto/1.jpg' }],
+    };
+    const evaluations = ['text', [], resources];
+    const page = {
+      setCookie: async (...cookies) => order.push(['setCookie', cookies.length]),
+      goto: async (url) => order.push(['goto', url]),
+      url: () => 'https://www.jobkorea.co.kr/User/Resume/View?rNo=1',
+      title: async () => 'Resume',
+      evaluate: async () => evaluations.shift(),
+      close: async () => {},
+    };
+    const cookies = [{ name: 'A', value: '1', domain: '.jobkorea.co.kr', path: '/' }];
+
+    const result = await runBrowserSmoke(env, {
+      withBrowserSession: async (_env, fn) => fn({ newPage: async () => page }),
+      url: 'https://www.jobkorea.co.kr/User/Resume/View?rNo=1',
+      cookies,
+    });
+
+    assert.deepEqual(order, [
+      ['setCookie', 1],
+      ['goto', 'https://www.jobkorea.co.kr/User/Resume/View?rNo=1'],
+    ]);
+    assert.deepEqual(result.scripts, resources.scripts);
+    assert.deepEqual(result.photoImages, resources.photoImages);
+  });
+});
+
+describe('smokeCookiesFor', () => {
+  const ENCRYPTION_KEY = btoa('0123456789abcdef0123456789abcdef');
+
+  async function sessionEnv(cookie) {
+    const stored = cookie ? await encrypt(cookie, { ENCRYPTION_KEY }) : null;
+    return {
+      ENCRYPTION_KEY,
+      SESSIONS: { get: async (key) => (key === 'auth:jobkorea' ? stored : null) },
+    };
+  }
+
+  it('replays the JobKorea session only on jobkorea.co.kr', async () => {
+    const env = await sessionEnv('ACNT=1; SES=2');
+
+    const ok = await smokeCookiesFor(
+      env,
+      'jobkorea',
+      'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=1'
+    );
+    const foreign = await smokeCookiesFor(env, 'jobkorea', 'https://example.com/?jobkorea.co.kr');
+    const unknown = await smokeCookiesFor(env, 'wanted', 'https://www.wanted.co.kr/');
+
+    assert.equal(ok.ok, true);
+    assert.deepEqual(
+      ok.cookies.map((cookie) => [cookie.name, cookie.domain]),
+      [
+        ['ACNT', '.jobkorea.co.kr'],
+        ['SES', '.jobkorea.co.kr'],
+      ]
+    );
+    assert.deepEqual([foreign.ok, foreign.status], [false, 400]);
+    assert.deepEqual([unknown.ok, unknown.status], [false, 400]);
+  });
+
+  it('reports a missing KV session', async () => {
+    const result = await smokeCookiesFor(
+      await sessionEnv(null),
+      'jobkorea',
+      'https://www.jobkorea.co.kr/'
+    );
+    assert.deepEqual([result.ok, result.status], [false, 404]);
   });
 });
