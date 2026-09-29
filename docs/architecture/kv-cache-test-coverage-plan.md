@@ -2,6 +2,8 @@
 
 **Status**: Active plan · **Owner**: Platform · **Last Updated**: 2026-05-05
 
+> **2026-09-29:** `apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)), so the three-tier cache this plan meant to promote no longer exists. Step 1 is void; step 2 (tests for the direct KV calls in `apps/job-dashboard`) still applies to the files that remain. `workflows/backup.js` was removed with BackupWorkflow (D1 Time Travel covers backups).
+
 This document inventories the KV-cache code paths in the monorepo and
 prescribes the unit tests that are still missing for deterministic CI
 coverage of read/write/TTL/expiry/failure semantics.

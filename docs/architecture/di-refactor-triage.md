@@ -1,6 +1,8 @@
 # Per-Service DI Refactor Triage — Issue #16 / P0-5
 
-**Status**: Active triage · **Owner**: Platform · **Last Updated**: 2026-05-05
+**Status**: Closed · **Owner**: Platform · **Last Updated**: 2026-09-29
+
+> **2026-09-29:** every inventoried service lived in `apps/job-server`, which was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)). Nothing in this triage remains to migrate.
 
 This document inventories the seven job-server services that currently use
 the **closure-bound holder pattern** as a containment for module-level

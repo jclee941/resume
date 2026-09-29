@@ -5,6 +5,10 @@
 **Version:** package.json `1.8.0`
 **Original Status:** Documentation only — each task intended as a separate PR.
 
+## 2026-09-29 Update
+
+`apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)) and the Elasticsearch logging path was removed. Items below that target `apps/job-server` paths or the ES logger are closed; the rest apply only to the packages and Workers that remain.
+
 ## 2026-04-27 Execution Update
 
 The owner asked to execute the plan in one session. The following Epics

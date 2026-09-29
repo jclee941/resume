@@ -4,6 +4,8 @@
 **Auditor:** `verify-context-profile-sync`
 **Scope:** resume.jclee.me monorepo — portfolio, job-server, job-dashboard, shared packages
 
+> **2026-09-29:** `apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)). Its paths below no longer exist, and the items that target them are closed.
+
 ---
 
 ## Baseline Results

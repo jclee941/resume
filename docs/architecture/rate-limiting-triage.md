@@ -2,6 +2,8 @@
 
 **Status**: Active triage · **Owner**: Platform · **Last Updated**: 2026-05-05
 
+> **2026-09-29:** `apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)). Its paths below no longer exist, and the items that target them are closed.
+
 This document maps every rate-limiting strategy in the monorepo, identifies
 the genuinely-different deployment contexts vs the duplicated token-bucket
 logic, and prescribes the canonical primitives.

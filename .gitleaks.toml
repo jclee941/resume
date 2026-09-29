@@ -151,7 +151,8 @@ paths = [
     '''.*\.example$''',
     '''\.env\.example''',
     '''infrastructure/.*\.sample''',
-    # Test fixtures (must use known-fake patterns like 0123456789abcdef)
+    # Known-fake test fixtures of the session-broker retired by ADR 0010; kept
+    # so gitleaks history scans of older commits stay clean
     '''apps/job-server/src/session-broker/__tests__/.*\.test\.js''',
     # Backup files (excluded by .gitignore but be defensive)
     '''.*\.backup-.*''',

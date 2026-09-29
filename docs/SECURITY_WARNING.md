@@ -4,12 +4,12 @@
 **Updated:** 2026-03-28
 **Status:** 🟢 SECURE (GitHub Actions integration)
 
-## 0. CI Secret Scanning (Active)
+## 0. Secret Scanning (Active)
 
-- ✅ **Gitleaks** runs on every push/PR via `security-scan` job in CI pipeline
+- ✅ **Gitleaks** runs as a pre-commit hook on staged files (`.pre-commit-config.yaml`)
 - ✅ **Configuration**: `.gitleaks.toml` with allowlists for redacted docs and
   placeholder patterns
-- ✅ **npm audit**: Runs alongside gitleaks in `security-scan` job
+- ✅ **npm audit**: CI Validate runs `npm run security:audit` on every push and PR
 - ✅ **Docs redacted**: All historical secret values in documentation
   replaced with `[REDACTED_ROTATE_REQUIRED]`
 - ✅ **`.env` files gitignored**: `.env`, `.env.secrets`, `.env.local`,
@@ -64,10 +64,10 @@ GitLab now uses OAuth2 client credentials flow. To rotate:
 
 ## 2. Hardcoded Passwords (Fixed)
 
-- ✅ `apps/job-server/scripts/*.js`: Hardcoded password replaced with
-  `process.env.WANTED_PASSWORD`.
-- **Action**: Ensure `WANTED_PASSWORD` is set in your environment variables
-  (e.g., `~/.bashrc` or CI secrets).
+- ✅ The hardcoded Wanted password in the former job-server scripts was
+  replaced with `WANTED_PASSWORD`; those scripts were removed with the local
+  job-server ([ADR 0010](adr/0010-retire-local-job-server.md)).
+- The `resume` Worker reads `WANTED_PASSWORD` from Cloudflare Worker Secrets.
 
 ## 3. Deployment Security
 
