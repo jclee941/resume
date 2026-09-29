@@ -6,7 +6,7 @@ const JOBKOREA_RESUME_SAVE_PATH = '/User/Resume/Save';
 const RESUME_FORM_SELECTOR = '#frm1';
 const FORM_WAIT_TIMEOUT_MS = 20_000;
 const EDIT_TOKEN_NAMES = ['IsEditPage', 'LastEditDateTicks'];
-/** Sections the SSoT sync fills; JobKorea ignores rows of a section not added to the resume. */
+/** Sections the SSoT sync fills; a section not added to the resume keeps none of its rows. */
 const SYNCED_SECTION_IDS = [
   'InputStat_CareerInputStat',
   'InputStat_LicenseInputStat',
@@ -14,16 +14,20 @@ const SYNCED_SECTION_IDS = [
   'InputStat_SchoolInputStat',
 ];
 const SECTION_ADD_LABEL = '필드추가';
-const SECTION_ACTIVATION_TIMEOUT_MS = 10_000;
+const SECTION_ADD_TIMEOUT_MS = 5_000;
 
 /**
  * @typedef {{ name: string; value: string }} SerializedField
  * @typedef {{ name: string; value: string; domain: string; path: string }} BrowserCookie
  * @typedef {{ status: number; text: string }} JobKoreaSaveResponse
+ * @typedef {{ syncId: string; flag: string | null; label: string | null }} SectionState
+ * @typedef {{ syncId: string; before: SectionState; after: SectionState }} SectionAddition
+ * @typedef {import('@cloudflare/puppeteer').Page} EditorPage
  * @typedef {{
  *   fields: SerializedField[];
  *   tokens: Record<string, string>;
- *   activatedSections: string[];
+ *   sections: SectionAddition[];
+ *   dialogs: string[];
  *   save(body: string): Promise<JobKoreaSaveResponse>;
  * }} JobKoreaEditor
  */
@@ -50,19 +54,86 @@ export function toJobKoreaBrowserCookies(cookieString) {
 }
 
 /**
+ * Hidden InputStat flag and add/remove button label of each synced section (runs in the page).
+ * @param {string[]} syncIds
+ * @returns {SectionState[]}
+ */
+function readSectionStates(syncIds) {
+  return syncIds.map((syncId) => {
+    const flag = document.getElementById(syncId);
+    const button = document.querySelector(`button[data-sync_id="${syncId}"]`);
+    return {
+      syncId,
+      flag: flag instanceof HTMLInputElement ? flag.value : null,
+      label: button?.textContent?.trim() ?? null,
+    };
+  });
+}
+
+/**
+ * Add the synced sections the resume does not have yet (button still reads 필드추가) and
+ * report every section before and after; the after-state is the outcome of the add.
+ * @param {EditorPage} page
+ * @param {{ adding: boolean }} dialogState
+ * @returns {Promise<SectionAddition[]>}
+ */
+async function addSyncedSections(page, dialogState) {
+  const before = await page.evaluate(readSectionStates, SYNCED_SECTION_IDS);
+  const pending = before.filter((state) => state.label === SECTION_ADD_LABEL).map((s) => s.syncId);
+  if (pending.length > 0) {
+    dialogState.adding = true;
+    await page.evaluate(
+      (syncIds, addLabel) => {
+        for (const syncId of syncIds) {
+          const button = document.querySelector(`button[data-sync_id="${syncId}"]`);
+          if (button instanceof HTMLButtonElement && button.textContent?.trim() === addLabel) {
+            button.click();
+          }
+        }
+      },
+      pending,
+      SECTION_ADD_LABEL
+    );
+    await page
+      .waitForFunction(
+        (syncIds, addLabel) =>
+          syncIds.every(
+            (syncId) =>
+              document.querySelector(`button[data-sync_id="${syncId}"]`)?.textContent?.trim() !==
+              addLabel
+          ),
+        { timeout: SECTION_ADD_TIMEOUT_MS },
+        pending,
+        SECTION_ADD_LABEL
+      )
+      .then(
+        () => undefined,
+        () => undefined
+      );
+    dialogState.adding = false;
+  }
+  const after = await page.evaluate(readSectionStates, SYNCED_SECTION_IDS);
+  return before.map((state, index) => ({
+    syncId: state.syncId,
+    before: state,
+    after: after[index],
+  }));
+}
+
+/**
  * @param {{ url(): string; title(): Promise<string> }} page
- * @param {string[]} alerts
+ * @param {string[]} dialogs
  * @returns {Promise<Error & { code?: string }>}
  */
-async function editorMissingError(page, alerts) {
+async function editorMissingError(page, dialogs) {
   const path = new URL(page.url()).pathname;
   const title = await page.title().catch(() => '');
-  const alert = alerts.length > 0 ? `, alert=${alerts.join(' | ')}` : '';
+  const alert = dialogs.length > 0 ? `, alert=${dialogs.join(' | ')}` : '';
   /** @type {Error & { code?: string }} */
   const error = new Error(
     `JobKorea resume form ${RESUME_FORM_SELECTOR} not found (path=${path}, title=${title}${alert})`
   );
-  if (/\/login/i.test(path) || alerts.some((message) => message.includes('세션'))) {
+  if (/\/login/i.test(path) || dialogs.some((message) => message.includes('세션'))) {
     error.code = JOBKOREA_SESSION_EXPIRED;
   }
   return error;
@@ -91,10 +162,13 @@ export async function withJobKoreaEditor(
     async (browser) => {
       const page = await browser.newPage();
       /** @type {string[]} */
-      const alerts = [];
+      const dialogs = [];
+      const dialogState = { adding: false };
       page.on('dialog', (dialog) => {
-        alerts.push(dialog.message());
-        dialog.dismiss().catch(() => {});
+        dialogs.push(dialog.message());
+        const answer =
+          dialogState.adding && dialog.type() === 'confirm' ? dialog.accept() : dialog.dismiss();
+        answer.catch(() => {});
       });
       try {
         await page.setCookie(...toJobKoreaBrowserCookies(cookieString));
@@ -104,38 +178,9 @@ export async function withJobKoreaEditor(
         await page
           .waitForSelector(RESUME_FORM_SELECTOR, { timeout: FORM_WAIT_TIMEOUT_MS })
           .catch(async () => {
-            throw await editorMissingError(page, alerts);
+            throw await editorMissingError(page, dialogs);
           });
-        const activatedSections = await page.evaluate(
-          (syncIds, addLabel) => {
-            /** @type {string[]} */
-            const clicked = [];
-            for (const syncId of syncIds) {
-              const button = document.querySelector(`button[data-sync_id="${syncId}"]`);
-              if (button instanceof HTMLButtonElement && button.textContent?.trim() === addLabel) {
-                button.click();
-                clicked.push(syncId);
-              }
-            }
-            return clicked;
-          },
-          SYNCED_SECTION_IDS,
-          SECTION_ADD_LABEL
-        );
-        if (activatedSections.length > 0) {
-          await page.waitForFunction(
-            (syncIds, addLabel) =>
-              syncIds.every(
-                (syncId) =>
-                  document
-                    .querySelector(`button[data-sync_id="${syncId}"]`)
-                    ?.textContent?.trim() !== addLabel
-              ),
-            { timeout: SECTION_ACTIVATION_TIMEOUT_MS },
-            activatedSections,
-            SECTION_ADD_LABEL
-          );
-        }
+        const sections = await addSyncedSections(page, dialogState);
         const { fields, tokens } = await page.evaluate(
           (selector, tokenNames) => {
             const form = document.querySelector(selector);
@@ -160,7 +205,8 @@ export async function withJobKoreaEditor(
         return await fn({
           fields,
           tokens,
-          activatedSections,
+          sections,
+          dialogs,
           save: (body) =>
             page.evaluate(
               async (path, payload) => {

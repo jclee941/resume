@@ -49,7 +49,16 @@ const LIVE_FORM = [
   { name: 'UnivSchool[c3].Grad_Type_Code', value: '4' },
   { name: 'UnivSchool[c3].Grade', value: '4.0' },
   { name: 'Award.Index', value: 'c1' },
+  { name: 'InputStat.AwardInputStat', value: 'False' },
   { name: 'Award[c1].Award_Name', value: '자율주행 경진대회 우수상' },
+];
+
+const SECTIONS = [
+  {
+    syncId: 'InputStat_AwardInputStat',
+    before: { syncId: 'InputStat_AwardInputStat', flag: 'False', label: '필드추가' },
+    after: { syncId: 'InputStat_AwardInputStat', flag: 'True', label: '필드삭제' },
+  },
 ];
 
 function fakeEditor({
@@ -59,7 +68,7 @@ function fakeEditor({
 } = {}) {
   const save = mock.fn(async () => ({ status: 200, text: saveText }));
   const withEditor = mock.fn(async (_env, _session, fn) =>
-    fn({ fields, tokens, activatedSections: ['InputStat_AwardInputStat'], save })
+    fn({ fields, tokens, sections: SECTIONS, dialogs: [], save })
   );
   return { save, withEditor };
 }
@@ -74,7 +83,9 @@ describe('Cloudflare-native JobKorea resume sync', () => {
     assert.equal(result.success, true);
     assert.equal(result.dryRun, true);
     assert.deepEqual(result.rows.Award, { live: ['c1'], saved: ['c1', '1_1000'] });
-    assert.deepEqual(result.activatedSections, ['InputStat_AwardInputStat']);
+    assert.deepEqual(result.sections, SECTIONS);
+    assert.deepEqual(result.inputStat, { 'InputStat.AwardInputStat': 'False' });
+    assert.deepEqual(result.liveRowFields.Award, ['Award_Name']);
     assert.deepEqual(withEditor.mock.calls[0].arguments[1], {
       cookieString: 'ACNT=1; SES=2',
       rNo: '777',
@@ -97,7 +108,7 @@ describe('Cloudflare-native JobKorea resume sync', () => {
     const env = await envWithSessions({ jobkorea: 'ACNT=1' }, { JOBKOREA_RNO: '777' });
     const { save, withEditor } = fakeEditor();
 
-    const result = await syncJobKoreaFromSsot(env, SSOT, { dryRun: false, withEditor });
+    const result = await syncJobKoreaFromSsot(env, SSOT, { dryRun: false, withEditor, now: 1000 });
 
     assert.equal(result.success, true);
     const body = new URLSearchParams(save.mock.calls[0].arguments[0]);
@@ -105,6 +116,8 @@ describe('Cloudflare-native JobKorea resume sync', () => {
     assert.equal(body.get('UnivSchool[c3].Grad_YM'), '202702');
     assert.equal(body.get('UnivSchool[c3].Grade'), '4.0');
     assert.equal(body.get('LastEditDateTicks'), '638000');
+    assert.equal(body.get('InputStat.AwardInputStat'), 'True');
+    assert.deepEqual(body.getAll('Award.index'), ['c1', '1_1000']);
   });
 
   it('refuses a save that would drop live fields from a replaced row', async () => {
@@ -175,6 +188,7 @@ function fakeEditorPage({
   alert,
   url = 'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=42',
 } = {}) {
+  let sectionReads = 0;
   let onDialog = () => {};
   const page = {
     on: mock.fn((event, handler) => {
@@ -188,16 +202,26 @@ function fakeEditorPage({
       if (!formFound) throw new Error('timeout');
     }),
     waitForFunction: mock.fn(async () => {}),
-    evaluate: mock.fn(async (_fn, first, second) =>
-      Array.isArray(first)
-        ? ['InputStat_AwardInputStat']
-        : Array.isArray(second)
-          ? {
-              fields: [{ name: 'UnivSchool.Index', value: 'c3' }],
-              tokens: { LastEditDateTicks: '638000' },
-            }
-          : { status: 200, text: `saved ${first} ${second}` }
-    ),
+    evaluate: mock.fn(async (_fn, first, second) => {
+      if (Array.isArray(first) && second === undefined) {
+        sectionReads += 1;
+        return [
+          {
+            syncId: 'InputStat_AwardInputStat',
+            flag: sectionReads === 1 ? 'False' : 'True',
+            label: sectionReads === 1 ? '필드추가' : '필드삭제',
+          },
+        ];
+      }
+      if (Array.isArray(first)) return undefined;
+      if (Array.isArray(second)) {
+        return {
+          fields: [{ name: 'UnivSchool.Index', value: 'c3' }],
+          tokens: { LastEditDateTicks: '638000' },
+        };
+      }
+      return { status: 200, text: `saved ${first} ${second}` };
+    }),
     url: () => url,
     title: async () => '로그인 | 잡코리아',
     close: mock.fn(async () => {}),
@@ -216,7 +240,13 @@ describe('JobKorea editor over Browser Rendering', () => {
       async (editor) => {
         assert.deepEqual(editor.fields, [{ name: 'UnivSchool.Index', value: 'c3' }]);
         assert.deepEqual(editor.tokens, { LastEditDateTicks: '638000' });
-        assert.deepEqual(editor.activatedSections, ['InputStat_AwardInputStat']);
+        assert.deepEqual(editor.sections, [
+          {
+            syncId: 'InputStat_AwardInputStat',
+            before: { syncId: 'InputStat_AwardInputStat', flag: 'False', label: '필드추가' },
+            after: { syncId: 'InputStat_AwardInputStat', flag: 'True', label: '필드삭제' },
+          },
+        ]);
         return editor.save('a=1');
       },
       { withBrowserSession }

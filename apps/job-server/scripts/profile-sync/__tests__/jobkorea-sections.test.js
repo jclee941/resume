@@ -707,7 +707,10 @@ describe('mapAwardToFormFields', () => {
     assert.strictEqual(byName.get('Award[c7].Award_Name'), '우수상');
     assert.strictEqual(byName.get('Award[c7].Award_Inst_Name'), '한양사이버대학교');
     assert.strictEqual(byName.get('Award[c7].Award_Year'), '2026');
-    assert.strictEqual(byName.get('Award.index'), 'c7');
+    assert.deepStrictEqual(
+      fields.filter((field) => field.name === 'Award.index').map((field) => field.value),
+      ['c7']
+    );
   });
   it('uses JobKorea timestamp-based Award indices from the live DOM', () => {
     const fields = mapAwardToFormFields(
@@ -723,7 +726,10 @@ describe('mapAwardToFormFields', () => {
 
     assert.strictEqual(byName.get('Award[1_1778240625462].Award_Name'), '우수상');
     assert.strictEqual(byName.get('Award[2_1778240625463].Award_Name'), '공로상');
-    assert.strictEqual(byName.get('Award.index'), '1_1778240625462,2_1778240625463');
+    assert.deepStrictEqual(
+      fields.filter((field) => field.name === 'Award.index').map((field) => field.value),
+      ['1_1778240625462', '2_1778240625463']
+    );
     assert.ok(!byName.has('Award[c1].Award_Name'));
     assert.ok(!byName.has('Award[c2].Award_Name'));
   });
