@@ -24,9 +24,9 @@ packages/shared/src/
 │   └── wanted/          # Wanted.kr API client (HTTP, jobs, profile, resume)
 ├── browser/             # Cloudflare Puppeteer browser adapter + stealth patches
 ├── retry/               # HTTP retry + circuit breaker
-├── crypto/              # Webcrypto + Node crypto adapters
+├── crypto/              # WebCrypto AES-GCM helpers
 ├── rate-limit/          # Token bucket, sliding window, KV-backed limiters
-├── session/             # Session store, cookies, constants
+├── session/             # Session cookies, constants, normalization
 ├── auth/                # Cookie auth, HMAC signing
 ├── normalize/           # Data normalization
 ├── platform-sync/       # Wanted + JobKorea resume mapping/sync (Worker-safe, fetch only)
@@ -50,7 +50,7 @@ packages/shared/src/
 | `@resume/shared/retry`            | HTTP retry + circuit breaker              |
 | `@resume/shared/crypto`           | Webcrypto + Node adapters                 |
 | `@resume/shared/rate-limit`       | Token bucket, sliding window, KV limiters |
-| `@resume/shared/session`          | Session store, cookies, constants         |
+| `@resume/shared/session`          | Session cookies, constants, normalization |
 | `@resume/shared/auth`             | Cookie auth, HMAC signing                 |
 | `@resume/shared/normalize`        | Data normalization                        |
 | `@resume/shared/platform-sync/*`  | Wanted/JobKorea resume mapping and sync   |

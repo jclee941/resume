@@ -19,8 +19,3 @@ export {
   serializeCookie,
 } from './cookies.js';
 export { normalizePlatformSession } from './normalization.js';
-export {
-  createFileSessionStore,
-  createMemorySessionStore,
-  isPlatformSessionValid,
-} from './store.js';
