@@ -1,6 +1,11 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
-import { formatYYYY_MM, formatYYYY_MM_DD, formatYYYYMM, parsePeriod } from '@resume/shared/platform-sync/date-formatters';
+import {
+  formatYYYY_MM,
+  formatYYYY_MM_DD,
+  formatYYYYMM,
+  parsePeriod,
+} from '@resume/shared/platform-sync/date-formatters';
 
 describe('date formatters', () => {
   it('formats dotted year-month as YYYYMM', () => {
