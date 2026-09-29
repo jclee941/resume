@@ -111,7 +111,7 @@ function indexedSectionName(groupKey) {
  * @returns {boolean}
  */
 function canReplaceRepeatableSection(sectionName) {
-  return sectionName === 'Career' || sectionName === 'License';
+  return sectionName === 'Career' || sectionName === 'License' || sectionName === 'Award';
 }
 
 /**
@@ -182,7 +182,8 @@ export function smartMergeFields(baseFields, targetFields, tokens = {}) {
   // Fields that must always overlay even inside an "incomplete" section, because
   // JobKorea server-side validation rejects a stale/mis-formatted base value
   // (e.g. UnivSchool date fields stored dotted as "2024.03" instead of "202403").
-  const FORCE_OVERLAY = /\.(Entc_YM|Grad_YM|CSYM|CEYM|Lc_YYMM)$/;
+  // Grad_Type_Code travels with Grad_YM so a 졸업예정 status never pairs with a stale code.
+  const FORCE_OVERLAY = /\.(Entc_YM|Grad_YM|Grad_Type_Code|CSYM|CEYM|Lc_YYMM)$/;
 
   /** @type {Map<string, string | number | boolean>} */
   const merged = new Map();
