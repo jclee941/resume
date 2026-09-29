@@ -871,7 +871,7 @@ test.describe('Job Dashboard API', () => {
 ### Console Logging
 
 ```javascript
-// Use ECS format for logs (compatible with Elasticsearch)
+// Use ECS format for logs (compatible with Grafana/Loki)
 function logECS(level, message, extra = {}) {
   const log = {
     '@timestamp': new Date().toISOString(),

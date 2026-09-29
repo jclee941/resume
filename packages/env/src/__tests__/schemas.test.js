@@ -16,9 +16,9 @@ describe('portfolioEnvSchema', () => {
     assert.equal(env.RATE_LIMIT_RPM, 60);
   });
 
-  it('rejects bad ELASTICSEARCH_URL', () => {
+  it('rejects bad LOKI_URL', () => {
     assert.throws(
-      () => validateEnv(portfolioEnvSchema, { ELASTICSEARCH_URL: 'not a url' }),
+      () => validateEnv(portfolioEnvSchema, { LOKI_URL: 'not a url' }),
       EnvValidationError
     );
   });

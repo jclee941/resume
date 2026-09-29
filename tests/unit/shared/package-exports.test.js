@@ -33,12 +33,18 @@ describe('@resume/shared package exports', () => {
     expect(mod.generateRequestId).toBeDefined();
   });
 
-  test('./es-client exports elasticsearch logging functions', async () => {
-    const mod = await import('@resume/shared/es-client');
+  test('logger exports the console transport and the package drops the ES surface', async () => {
+    const mod = await import('@resume/shared/logger');
+    const pkg = JSON.parse(
+      await (
+        await import('node:fs/promises')
+      ).readFile(new URL('../../../packages/shared/package.json', import.meta.url), 'utf8')
+    );
 
-    expect(mod.logToElasticsearch).toBeDefined();
-    expect(mod.flush).toBeDefined();
-    expect(mod.logEvent).toBeDefined();
-    expect(mod.logError).toBeDefined();
+    expect(mod.createConsoleTransport).toBeDefined();
+    expect(mod.createElasticsearchTransport).toBeUndefined();
+    expect(pkg.exports['./es-client']).toBeUndefined();
+    expect(pkg.exports['./logger/transports/elasticsearch']).toBeUndefined();
+    await expect(import('@resume/shared/es-client')).rejects.toThrow();
   });
 });

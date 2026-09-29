@@ -1,10 +1,6 @@
 const { generateHistogramLines, initHistogramBuckets } = require('./histogram');
 
 /**
- * @typedef {typeof globalThis & { __esLogFailures?: number, __esLogTotal?: number }} GlobalWithEsLog
- */
-
-/**
  * Generate Prometheus metrics in exposition format.
  * Enhanced with Cloudflare metrics, Web Vitals, histograms, and geographic labels.
  * @param {import('./collector').WorkerMetrics} metrics
@@ -138,14 +134,6 @@ http_success_rate_percent{job="resume"} ${successRate}
 # HELP worker_info Worker information with version and deployment metadata
 # TYPE worker_info gauge
 worker_info{job="resume",version="${metrics.version || 'unknown'}",deployed_at="${metrics.deployed_at || 'unknown'}"} 1
-
-# HELP es_log_failures_total Cumulative count of Elasticsearch log writes that failed (P2-19)
-# TYPE es_log_failures_total counter
-es_log_failures_total{job="resume"} ${typeof (/** @type {GlobalWithEsLog} */ (globalThis).__esLogFailures) === 'number' ? /** @type {GlobalWithEsLog} */ (globalThis).__esLogFailures : 0}
-
-# HELP es_log_total Cumulative count of successful Elasticsearch log writes
-# TYPE es_log_total counter
-es_log_total{job="resume"} ${typeof (/** @type {GlobalWithEsLog} */ (globalThis).__esLogTotal) === 'number' ? /** @type {GlobalWithEsLog} */ (globalThis).__esLogTotal : 0}
 
 # HELP http_requests_by_country HTTP requests by country
 # TYPE http_requests_by_country counter

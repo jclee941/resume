@@ -14,10 +14,6 @@ export const portfolioEnvSchema = z.object({
   DEPLOYED_AT: z.string().min(1).optional(),
 
   // ===== Optional logging =====
-  ELASTICSEARCH_URL: z.string().url().optional(),
-  ELASTICSEARCH_API_KEY: z.string().optional(),
-  CF_ACCESS_CLIENT_ID: z.string().optional(),
-  CF_ACCESS_CLIENT_SECRET: z.string().optional(),
   LOKI_URL: z.string().url().optional(),
   LOKI_API_KEY: z.string().optional(),
 

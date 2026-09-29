@@ -3,12 +3,12 @@
  *
  * The canonical Logger must:
  *   1. Accept zero/one/many transports via constructor options.
- *   2. Default to the Elasticsearch transport (back-compat with existing
- *      `@resume/shared/logger` consumers that pass nothing).
+ *   2. Default to the console transport (Workers Logs persists console
+ *      output) for `@resume/shared/logger` consumers that pass nothing.
  *   3. Dispatch every emitted log entry to every configured transport.
  *   4. Not crash when a transport throws — failures must be isolated.
- *   5. Expose Loki and Elasticsearch as separate subpath exports so apps can
- *      swap transports without rewriting their logger usage.
+ *   5. Expose Loki as an opt-in subpath export so apps can swap transports
+ *      without rewriting their logger usage.
  */
 
 let Logger, RequestContext;
@@ -21,22 +21,17 @@ beforeAll(async () => {
 
 describe('Logger pluggable transports — SSOT-038', () => {
   describe('Transport subpath exports', () => {
-    test('@resume/shared/logger/transports/elasticsearch exposes a factory', async () => {
-      const mod = await import('@resume/shared/logger/transports/elasticsearch');
-      expect(typeof mod.createElasticsearchTransport).toBe('function');
-    });
-
     test('@resume/shared/logger/transports/loki exposes a factory', async () => {
       const mod = await import('@resume/shared/logger/transports/loki');
       expect(typeof mod.createLokiTransport).toBe('function');
     });
 
-    test('elasticsearch factory returns a transport with a send() function', async () => {
-      const { createElasticsearchTransport } =
-        await import('@resume/shared/logger/transports/elasticsearch');
-      const t = createElasticsearchTransport();
+    test('logger barrel exposes the console transport factory and no ES transport', async () => {
+      const mod = await import('@resume/shared/logger');
+      const t = mod.createConsoleTransport();
       expect(typeof t.send).toBe('function');
-      expect(t.name).toBe('elasticsearch');
+      expect(t.name).toBe('console');
+      expect(mod.createElasticsearchTransport).toBeUndefined();
     });
 
     test('loki factory returns a transport with a send() function', async () => {
@@ -244,31 +239,85 @@ describe('Logger pluggable transports — SSOT-038', () => {
     });
   });
 
-  describe('Default transport behaviour (back-compat)', () => {
-    test('with no transports supplied and no ELASTICSEARCH_URL, info() is still a silent no-op', async () => {
-      const logger = new Logger({}, { service: 'default-test' });
-      await expect(logger.info('hi')).resolves.not.toThrow();
+  describe('Default transport behaviour', () => {
+    let logSpy, warnSpy, debugSpy, errorSpy;
+
+    beforeEach(() => {
+      logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+      warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      debugSpy = jest.spyOn(console, 'debug').mockImplementation(() => {});
+      errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     });
 
-    test('with no transports supplied but ELASTICSEARCH_URL set, the ES transport is used (fetch is invoked at flush)', async () => {
-      const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue({ ok: true });
-      const env = {
-        ELASTICSEARCH_URL: 'https://es.example.com',
-        ELASTICSEARCH_API_KEY: 'api-key',
-        ELASTICSEARCH_INDEX: 'logs-default',
-      };
-      const logger = new Logger(env, { service: 'es-default' });
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
 
-      // immediate=true on error path forces a fetch without batching
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      await logger.error('Failure', new Error('boom'));
+    test('default transport is the console transport', () => {
+      const logger = new Logger({}, { service: 'default-test' });
+      expect(logger.transports.map((t) => t.name)).toEqual(['console']);
+    });
 
-      expect(fetchSpy).toHaveBeenCalled();
-      const [calledUrl] = fetchSpy.mock.calls[0];
-      expect(String(calledUrl)).toContain('https://es.example.com');
+    test('info() writes one JSON console.log line with level, service, message and labels', async () => {
+      const logger = new Logger({}, { service: 'svc-info', context: { component: 'auth' } });
 
-      fetchSpy.mockRestore();
-      consoleSpy.mockRestore();
+      await logger.info('hello', { user: 'alice' });
+
+      expect(logSpy).toHaveBeenCalledTimes(1);
+      expect(JSON.parse(logSpy.mock.calls[0][0])).toEqual({
+        level: 'INFO',
+        service: 'svc-info',
+        message: 'hello',
+        component: 'auth',
+        user: 'alice',
+      });
+      expect(warnSpy).not.toHaveBeenCalled();
+      expect(debugSpy).not.toHaveBeenCalled();
+    });
+
+    test('warn() uses console.warn and debug() uses console.debug', async () => {
+      const logger = new Logger({}, { service: 'svc-levels' });
+
+      await logger.warn('careful');
+      await logger.debug('trace');
+
+      expect(warnSpy).toHaveBeenCalledTimes(1);
+      expect(JSON.parse(warnSpy.mock.calls[0][0])).toMatchObject({
+        level: 'WARN',
+        service: 'svc-levels',
+        message: 'careful',
+      });
+      expect(debugSpy).toHaveBeenCalledTimes(1);
+      expect(JSON.parse(debugSpy.mock.calls[0][0]).level).toBe('DEBUG');
+      expect(logSpy).not.toHaveBeenCalled();
+    });
+
+    test('error() and fatal() produce only the logger console.error line, not a second transport line', async () => {
+      const logger = new Logger({}, { service: 'svc-err' });
+
+      await logger.error('Boom', new Error('detail'));
+      await logger.fatal('Crash', new Error('detail'));
+
+      expect(errorSpy).toHaveBeenCalledTimes(2);
+      expect(logSpy).not.toHaveBeenCalled();
+      expect(warnSpy).not.toHaveBeenCalled();
+      expect(debugSpy).not.toHaveBeenCalled();
+    });
+
+    test('logResponse() emits a JSON line at INFO for 2xx and WARN for 4xx', async () => {
+      const reqCtx = new RequestContext({ method: 'GET', path: '/x', requestId: 'req-9' });
+      const logger = new Logger({}, { service: 'svc-resp', reqCtx });
+
+      await logger.logResponse({ status: 200 });
+      await logger.logResponse({ status: 404 });
+
+      expect(JSON.parse(logSpy.mock.calls[0][0])).toMatchObject({
+        level: 'INFO',
+        service: 'svc-resp',
+      });
+      expect(JSON.parse(logSpy.mock.calls[0][0]).message).toMatch(/^GET 200 \d+ms$/);
+      expect(JSON.parse(warnSpy.mock.calls[0][0]).level).toBe('WARN');
+      expect(JSON.parse(warnSpy.mock.calls[0][0]).message).toMatch(/^GET 404 \d+ms$/);
     });
   });
 
@@ -319,61 +368,6 @@ describe('Logger pluggable transports — SSOT-038', () => {
 
       expect(fetchSpy).not.toHaveBeenCalled();
       fetchSpy.mockRestore();
-    });
-  });
-
-  describe('ES transport behaviour', () => {
-    test('es transport posts to /{index}/_doc with ApiKey auth on immediate entries', async () => {
-      const { createElasticsearchTransport } =
-        await import('@resume/shared/logger/transports/elasticsearch');
-      const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue({ ok: true });
-
-      const transport = createElasticsearchTransport();
-      await transport.send({
-        level: 'ERROR',
-        message: 'es-msg',
-        service: 'es-test',
-        labels: { foo: 'bar' },
-        env: {
-          ELASTICSEARCH_URL: 'https://es.example.com',
-          ELASTICSEARCH_API_KEY: 'es-key',
-          ELASTICSEARCH_INDEX: 'logs-es-test',
-        },
-        immediate: true,
-      });
-
-      expect(fetchSpy).toHaveBeenCalledTimes(1);
-      const [calledUrl, init] = fetchSpy.mock.calls[0];
-      expect(String(calledUrl)).toContain('logs-es-test/_doc');
-      expect(init.headers.Authorization).toBe('ApiKey es-key');
-
-      fetchSpy.mockRestore();
-    });
-
-    test('es transport is a silent no-op when ELASTICSEARCH_URL or ELASTICSEARCH_API_KEY is missing', async () => {
-      const { createElasticsearchTransport } =
-        await import('@resume/shared/logger/transports/elasticsearch');
-      const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue({ ok: true });
-
-      const transport = createElasticsearchTransport();
-      await transport.send({
-        level: 'INFO',
-        message: 'noop',
-        service: 'svc',
-        labels: {},
-        env: {},
-        immediate: true,
-      });
-
-      expect(fetchSpy).not.toHaveBeenCalled();
-      fetchSpy.mockRestore();
-    });
-
-    test('es transport flush() delegates to underlying ES flush', async () => {
-      const { createElasticsearchTransport } =
-        await import('@resume/shared/logger/transports/elasticsearch');
-      const transport = createElasticsearchTransport();
-      await expect(transport.flush({}, { job: 'svc' })).resolves.not.toThrow();
     });
   });
 
@@ -451,14 +445,6 @@ describe('Logger pluggable transports — SSOT-038', () => {
       expect(body.streams[0].stream.job).toBe('default');
 
       fetchSpy.mockRestore();
-    });
-
-    test('es transport flush() works with default options arg', async () => {
-      const { createElasticsearchTransport } =
-        await import('@resume/shared/logger/transports/elasticsearch');
-      const transport = createElasticsearchTransport();
-      // calling flush(env) without options exercises the `options = {}` default branch
-      await expect(transport.flush({})).resolves.not.toThrow();
     });
 
     test('flush() swallows transport failures and never throws', async () => {

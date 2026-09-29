@@ -15,5 +15,5 @@ export {
   parseTraceId,
 } from './formatters.js';
 export { createDefaultTransports, dispatchToTransports, flushTransports } from './transports.js';
-export { createElasticsearchTransport } from './transports/elasticsearch.js';
+export { createConsoleTransport } from './transports/console.js';
 export { createLokiTransport } from './transports/loki.js';

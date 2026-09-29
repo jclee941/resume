@@ -6,8 +6,6 @@ SIGNING_SECRET=replace-with-local-secret
 CF_API_KEY=replace-with-api-key
 CF_EMAIL=replace-with-email
 AUTOMATION_WEBHOOK_URL=
-ELASTICSEARCH_URL=https://elasticsearch.example.local
-ELASTICSEARCH_API_KEY=replace-with-es-api-key
 
 # === @resume/env required keys (validated at boot via packages/env) ===
 # AES-GCM 256-bit symmetric key, base64-encoded (32 raw bytes).
