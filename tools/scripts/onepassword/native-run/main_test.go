@@ -14,7 +14,7 @@ func TestParseArgs_acceptsServiceAccountAuthAndCommand(t *testing.T) {
 		"--env-file", "op-refs.fixture",
 		"--auth", "service-account",
 		"--",
-		"npm", "run", "test:node",
+		"npm", "run", "test:dashboard",
 	}
 
 	// When
@@ -33,7 +33,7 @@ func TestParseArgs_acceptsServiceAccountAuthAndCommand(t *testing.T) {
 	if cfg.account != "" {
 		t.Fatalf("account = %q, want empty account for service-account auth", cfg.account)
 	}
-	wantCommand := []string{"npm", "run", "test:node"}
+	wantCommand := []string{"npm", "run", "test:dashboard"}
 	if !reflect.DeepEqual(cfg.command, wantCommand) {
 		t.Fatalf("command = %#v, want %#v", cfg.command, wantCommand)
 	}

@@ -182,10 +182,10 @@ import { createMockEnv, resetMockData } from './infrastructure/mocks/cf-bindings
 const env = createMockEnv();
 
 // Use D1
-await env.DB.exec('CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT)');
-const stmt = env.DB.prepare('INSERT INTO users VALUES (?1, ?2)').bind('1', 'Alice');
+await env.JOB_DB.exec('CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT)');
+const stmt = env.JOB_DB.prepare('INSERT INTO users VALUES (?1, ?2)').bind('1', 'Alice');
 await stmt.run();
-const user = await env.DB.prepare('SELECT * FROM users WHERE id = ?1').bind('1').first();
+const user = await env.JOB_DB.prepare('SELECT * FROM users WHERE id = ?1').bind('1').first();
 
 // Use KV
 await env.SESSIONS.put('session-abc', JSON.stringify({ userId: '1' }), { expirationTtl: 3600 });
@@ -222,23 +222,22 @@ createMockEnv({
   // Additional KV binding names
   kvBindings: ['MY_CUSTOM_KV', 'CACHE_KV'],
 
-  // Include default aliases like JOB_DASHBOARD_DB, BUCKET (default: true)
+  // Include default aliases like BUCKET (default: true)
   includeDefaultAliases: true,
 });
 ```
 
 #### Default bindings
 
-| Binding Name                            | Type  | Description      |
-| --------------------------------------- | ----- | ---------------- |
-| `DB`                                    | D1    | Primary database |
-| `SESSIONS`                              | KV    | Session storage  |
-| `RATE_LIMIT_KV`                         | KV    | Rate limiting    |
-| `NONCE_KV`                              | KV    | Nonce tracking   |
-| `R2`                                    | R2    | Object storage   |
-| `CRAWL_TASKS`                           | Queue | Task queue       |
-| `job_dashboard_db` / `JOB_DASHBOARD_DB` | D1    | Alias for `DB`   |
-| `BUCKET`                                | R2    | Alias for `R2`   |
+| Binding Name    | Type  | Description      |
+| --------------- | ----- | ---------------- |
+| `JOB_DB`        | D1    | Primary database |
+| `SESSIONS`      | KV    | Session storage  |
+| `RATE_LIMIT_KV` | KV    | Rate limiting    |
+| `NONCE_KV`      | KV    | Nonce tracking   |
+| `R2`            | R2    | Object storage   |
+| `CRAWL_TASKS`   | Queue | Task queue       |
+| `BUCKET`        | R2    | Alias for `R2`   |
 
 #### Data persistence paths
 
@@ -342,15 +341,17 @@ describe('Worker handler', () => {
   });
 
   afterAll(() => {
-    env.DB.close();
+    env.JOB_DB.close();
     resetMockData();
   });
 
   it('should store and retrieve data', async () => {
-    await env.DB.exec('CREATE TABLE items (id TEXT, value TEXT)');
-    await env.DB.prepare('INSERT INTO items VALUES (?1, ?2)').bind('key1', 'value1').run();
+    await env.JOB_DB.exec('CREATE TABLE items (id TEXT, value TEXT)');
+    await env.JOB_DB.prepare('INSERT INTO items VALUES (?1, ?2)').bind('key1', 'value1').run();
 
-    const result = await env.DB.prepare('SELECT * FROM items WHERE id = ?1').bind('key1').first();
+    const result = await env.JOB_DB.prepare('SELECT * FROM items WHERE id = ?1')
+      .bind('key1')
+      .first();
 
     expect(result.value).toBe('value1');
   });
