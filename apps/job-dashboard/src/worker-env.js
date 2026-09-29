@@ -10,12 +10,10 @@
  *   >
  *   & NonNullable<Parameters<typeof import('./services/auth.js').verifyAdminAuth>[1]>
  *   & Parameters<typeof import('./services/auth.js').verifyWebhookSignature>[1]
- *   & ConstructorParameters<typeof import('./handlers/auth.js').AuthHandler>[2]
+ *   & ConstructorParameters<typeof import('./handlers/auth.js').AuthHandler>[0]
  *   & {
- *     JOB_DB: ConstructorParameters<typeof import('./handlers/auth.js').AuthHandler>[0]
- *       & ConstructorParameters<typeof import('./handlers/applications/index.js').ApplicationsHandler>[0]
+ *     JOB_DB: ConstructorParameters<typeof import('./handlers/applications/index.js').ApplicationsHandler>[0]
  *       & ConstructorParameters<typeof import('./handlers/stats.js').StatsHandler>[0];
- *     SESSIONS: NonNullable<ConstructorParameters<typeof import('./handlers/auth.js').AuthHandler>[1]>;
  *   }
  *   & ConstructorParameters<typeof import('./handlers/webhooks.js').WebhookHandler>[0]
  *   & ConstructorParameters<typeof import('./handlers/auto-apply/handler.js').AutoApplyHandler>[0]

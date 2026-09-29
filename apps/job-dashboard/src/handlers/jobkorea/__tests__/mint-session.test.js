@@ -158,7 +158,8 @@ describe('refreshJobKoreaSession', () => {
     assert.equal(putCalls[0].key, AUTH_JOBKOREA_KEY);
     assert.doesNotMatch(putCalls[0].value, /PLAY_SESSION/);
     assert.equal(await decrypt(putCalls[0].value, { ENCRYPTION_KEY }), 'PLAY_SESSION=sess-abc');
-    assert.deepEqual(putCalls[0].opts, { expirationTtl: JOBKOREA_SESSION_TTL_S });
+    assert.equal(putCalls[0].opts.expirationTtl, JOBKOREA_SESSION_TTL_S);
+    assert.match(putCalls[0].opts.metadata.updatedAt, /^\d{4}-\d{2}-\d{2}T/);
   });
 
   it('returns ok:false and never throws when creds are missing', async () => {

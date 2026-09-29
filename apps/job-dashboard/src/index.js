@@ -130,7 +130,7 @@ export default /** @satisfies {import('./worker-env.js').DashboardWorker} */ ({
       }
     }
 
-    const auth = new AuthHandler(env.JOB_DB, env.SESSIONS, env);
+    const auth = new AuthHandler(env);
     const apps = new ApplicationsHandler(env.JOB_DB, auth);
     const stats = new StatsHandler(env.JOB_DB);
     const webhooks = new WebhookHandler(env, auth);

@@ -165,7 +165,8 @@ describe('refreshWantedSession', () => {
       await decrypt(putCalls[0].value, { ENCRYPTION_KEY }),
       'WWW_ONEID_ACCESS_TOKEN=fresh-token'
     );
-    assert.deepEqual(putCalls[0].opts, { expirationTtl: WANTED_SESSION_TTL_S });
+    assert.equal(putCalls[0].opts.expirationTtl, WANTED_SESSION_TTL_S);
+    assert.match(putCalls[0].opts.metadata.updatedAt, /^\d{4}-\d{2}-\d{2}T/);
   });
 
   it('does not store a token rejected by the Wanted profile API', async () => {
