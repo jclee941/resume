@@ -71,22 +71,27 @@ function readSectionStates(syncIds) {
 }
 
 /**
- * Add the synced sections the resume does not have yet (button still reads 필드추가) and
- * report every section before and after; the after-state is the outcome of the add.
+ * Add the synced sections the resume does not have yet and report every section before
+ * and after. Only the hidden InputStat flag tells whether a section is on the resume: the
+ * button reads 필드추가 either way, and clicking it on an added section asks to delete it.
  * @param {EditorPage} page
- * @param {{ adding: boolean }} dialogState
  * @returns {Promise<SectionAddition[]>}
  */
-async function addSyncedSections(page, dialogState) {
+async function addSyncedSections(page) {
   const before = await page.evaluate(readSectionStates, SYNCED_SECTION_IDS);
-  const pending = before.filter((state) => state.label === SECTION_ADD_LABEL).map((s) => s.syncId);
+  const pending = before.filter((state) => state.flag === 'False').map((state) => state.syncId);
   if (pending.length > 0) {
-    dialogState.adding = true;
     await page.evaluate(
       (syncIds, addLabel) => {
         for (const syncId of syncIds) {
+          const flag = document.getElementById(syncId);
           const button = document.querySelector(`button[data-sync_id="${syncId}"]`);
-          if (button instanceof HTMLButtonElement && button.textContent?.trim() === addLabel) {
+          if (
+            flag instanceof HTMLInputElement &&
+            flag.value === 'False' &&
+            button instanceof HTMLButtonElement &&
+            button.textContent?.trim() === addLabel
+          ) {
             button.click();
           }
         }
@@ -96,21 +101,18 @@ async function addSyncedSections(page, dialogState) {
     );
     await page
       .waitForFunction(
-        (syncIds, addLabel) =>
-          syncIds.every(
-            (syncId) =>
-              document.querySelector(`button[data-sync_id="${syncId}"]`)?.textContent?.trim() !==
-              addLabel
-          ),
+        (syncIds) =>
+          syncIds.every((syncId) => {
+            const flag = document.getElementById(syncId);
+            return flag instanceof HTMLInputElement && flag.value === 'True';
+          }),
         { timeout: SECTION_ADD_TIMEOUT_MS },
-        pending,
-        SECTION_ADD_LABEL
+        pending
       )
       .then(
         () => undefined,
         () => undefined
       );
-    dialogState.adding = false;
   }
   const after = await page.evaluate(readSectionStates, SYNCED_SECTION_IDS);
   return before.map((state, index) => ({
@@ -163,12 +165,9 @@ export async function withJobKoreaEditor(
       const page = await browser.newPage();
       /** @type {string[]} */
       const dialogs = [];
-      const dialogState = { adding: false };
       page.on('dialog', (dialog) => {
         dialogs.push(dialog.message());
-        const answer =
-          dialogState.adding && dialog.type() === 'confirm' ? dialog.accept() : dialog.dismiss();
-        answer.catch(() => {});
+        dialog.dismiss().catch(() => {});
       });
       try {
         await page.setCookie(...toJobKoreaBrowserCookies(cookieString));
@@ -180,7 +179,7 @@ export async function withJobKoreaEditor(
           .catch(async () => {
             throw await editorMissingError(page, dialogs);
           });
-        const sections = await addSyncedSections(page, dialogState);
+        const sections = await addSyncedSections(page);
         const { fields, tokens } = await page.evaluate(
           (selector, tokenNames) => {
             const form = document.querySelector(selector);

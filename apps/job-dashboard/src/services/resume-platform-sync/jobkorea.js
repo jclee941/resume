@@ -91,6 +91,42 @@ function truncatedRows(targetFields, mergedFields) {
     .map((field) => field.name.replace(/\.Index_Name$/, ''));
 }
 
+/** Resume-level fields left out of the review: personal data and long free text. */
+const PRIVATE_FORM_FIELD =
+  /User_Name|Email|Cellphone|Phone|Address|Birth|M_Career_Text|Introduce|Attach|GitHub|Homepage|Photo/i;
+
+/**
+ * Short resume-level values of the live form (no row, index, InputStat, or personal fields),
+ * for review.
+ * @param {FormField[]} fields
+ * @returns {Record<string, string>}
+ */
+function formSettings(fields) {
+  return Object.fromEntries(
+    fields
+      .filter(
+        (field) =>
+          !field.name.includes('[') &&
+          !/\.[Ii]ndex$|^InputStat[._]/.test(field.name) &&
+          !PRIVATE_FORM_FIELD.test(field.name) &&
+          String(field.value ?? '').length > 0 &&
+          String(field.value ?? '').length <= 40
+      )
+      .map((field) => [field.name, String(field.value ?? '')])
+  );
+}
+
+/**
+ * Award names in the live form, for review.
+ * @param {FormField[]} fields
+ * @returns {string[]}
+ */
+function liveAwardNames(fields) {
+  return fields
+    .filter((field) => /^Award\[[^\]]+\]\.Award_Name$/.test(field.name))
+    .map((field) => String(field.value ?? ''));
+}
+
 /**
  * The live form's section InputStat flags, for review.
  * @param {FormField[]} fields
@@ -185,6 +221,8 @@ export async function syncJobKoreaFromSsot(env, ssot, options) {
       ...(editor.dialogs.length > 0 ? { dialogs: editor.dialogs } : {}),
       inputStat: inputStatFlags(editor.fields),
       liveRowFields: liveRowFieldNames(editor.fields),
+      liveAwards: liveAwardNames(editor.fields),
+      formSettings: formSettings(editor.fields),
       formFieldCount: editor.fields.length,
       mergedFieldCount: mergedFields.length,
       rows: describeReplacedRows(editor.fields, mergedFields),
@@ -202,6 +240,15 @@ export async function syncJobKoreaFromSsot(env, ssot, options) {
     }
     assertJobKoreaCareerPayloadCoverage(ssot, mergedFields, { dryRun });
     if (dryRun) return { platform: 'jobkorea', success: true, dryRun: true, ...summary };
+    if (editor.dialogs.length > 0) {
+      return {
+        platform: 'jobkorea',
+        success: false,
+        dryRun: false,
+        error: `JobKorea showed a dialog while the form was prepared; refusing to save: ${editor.dialogs.join(' | ')}`,
+        ...summary,
+      };
+    }
 
     const response = await editor.save(buildSavePayload(mergedFields));
     const saveResult = parseSaveResult(response.text);

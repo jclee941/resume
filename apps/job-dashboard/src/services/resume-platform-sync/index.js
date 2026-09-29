@@ -8,7 +8,7 @@ export const RESUME_SYNC_PLATFORMS = Object.freeze(['wanted', 'jobkorea']);
 /** @type {Record<string, string>} */
 const UNSUPPORTED_REASONS = {
   saramin:
-    'Saramin has no Cloudflare-native resume sync: no Saramin login is configured (no SARAMIN_* secret and no auth:saramin session)',
+    'Saramin is not synced: the account signs in through Naver, and Naver put the ID under protection when an automated login was tried',
 };
 
 /**
