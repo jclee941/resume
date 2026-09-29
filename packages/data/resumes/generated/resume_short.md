@@ -1,6 +1,6 @@
 <!-- Generated from master resume -->
 <!-- Variant: short -->
-<!-- Generated: 2026-09-29T05:57:34.470Z -->
+<!-- Generated: 2026-09-29T06:42:41.666Z -->
 <!-- Description: Short form resume (1-2 pages) -->
 ## 연락처
 
@@ -18,25 +18,19 @@
 
 ### 보유 기술
 
-- **보안**: FortiGate 방화벽, DDoS, IPS, WAF, SWG, NAC, DLP·nDLP, DRM, SSL VPN, APT, Active Directory, EDR, Splunk SIEM
-- **클라우드**: Docker, Kubernetes, Cloudflare Workers (Edge Computing)
-- **운영 스크립트**: Python·Shell·Ansible·Terraform·워크플로 오케스트레이션
-- **모니터링**: Grafana·Prometheus·Loki (통합 관제 플랫폼)
-- **DevOps**: GitLab EE·CI/CD·Container Registry·Docker Compose
-- **LLM/ML**: LLM 기반 운영 보조·출력 검증, ML 기반 위협 예측 및 라우팅 실험
+- **보안**: FortiGate 방화벽, DDoS, IPS, WAF, SWG, NAC, DLP·nDLP, DRM, SSL VPN, APT, Active Directory, EDR, Splunk ES
+- **인프라**: Linux, Docker, Kubernetes, VMware vSphere·NSX-T, Proxmox VE, Cloudflare Workers
+- **운영 스크립트·IaC**: Python, Bash, Ansible, Terraform
+- **관측성**: Grafana, Prometheus, Loki, Elasticsearch/Kibana
+- **CI/CD**: GitHub Actions, GitLab CI/CD, Docker Compose
+- **LLM**: LLM PR 리뷰 검증(jclee-bot), MCP 서버
 
-### 자격증 및 교육
+### 금융 보안 경험
 
-- **진행 중**: Certified Kubernetes Security Specialist (CKS) 준비
-- 한양사이버대학교 컴퓨터공학과 (4년제, 2027.02 졸업예정)
-
-### 금융 보안 전문성
-
-- **금융감독원 감사 대응**: 정기/수시 감사 대응 자료와 운영 근거 정리
-- **금융위 본인가 대응**: 금융위원회 다자간매매체결회사 본인가 심사 보안 분야 대응
-- **Zero Trust 구조 경험**: 다층 망분리 및 Air-Gap 환경 구축
-- **재해복구 업무 경험**: DR 사이트 점검·운영 및 주기적 DR 테스트
-- **금융권 보안**: 거래 데이터 처리 환경의 보안 운영
+- **금융감독원 감사 대응**: FSDC 정기·수시 감사 대응 자료와 운영 기록 정리
+- **금융위 본인가 대응**: 넥스트레이드(다자간매매체결회사) 본인가 심사 보안 분야 대응
+- **망분리**: 외부·거래·내부·개발·관리망 다층 망분리와 Air-Gap 구성
+- **재해복구**: DR 사이트 점검·운영과 주기적 DR 테스트
 
 ---
 
@@ -44,138 +38,121 @@
 
 ### ㈜아이티센 CTS | 보안 인프라 엔지니어
 
-2025.03 ~ 2026.02 | 넥스트레이드 보안 운영 아키텍처 자동화 (정보보안팀)
-
-**업무 개요**
-
-- Splunk ES·FortiGate/FortiManager·Slack/SMS 알림을 연결한 보안 이벤트 대응 아키텍처 설계
-- Python·Docker 기반 자동화 도구와 LLM 출력 검증으로 반복 수동 확인·오탐 검토 흐름 정리
+2025.03 ~ 2026.02 | 넥스트레이드 보안 운영 아키텍처 자동화 (정보보안팀 자동화 셀, 프리랜서)
 
 주요 업무
 
-- Splunk ES Saved Search와 FortiGate 이벤트 기준을 연결해 탐지·분류·알림 흐름 설계
-- Webhook relay와 Slack/SMS 알림으로 보안 이벤트 전달 경로 표준화
-- FortiManager JSON-RPC API 기반 방화벽 정책 조회 흐름 구축
-- LLM을 활용한 위협 정보 수집·분류 보조와 오탐 흐름 정리
-- DR 사이트 점검 및 주기적 DR 테스트
-- 취약점 스캔 결과 정리 및 심각도 기준의 패치 적용
-- 개발팀·거래팀·운영팀과 보안 요구사항 커뮤니케이션
-- 긴급 인시던트 발생 시 탐지 근거·정책 조회·알림 이력을 연결한 원인 분석
+- Splunk ES Saved Search로 탐지한 보안 이벤트가 Webhook relay → Slack/SMS 알림 → FortiManager JSON-RPC API 조회로 이어지는 흐름 설계
+- FortiGate 이벤트와 정책 조회 결과를 Splunk로 모으고 Python·Docker 기반 state tracker로 이벤트 상태 추적
+- LLM을 활용한 위협 정보 수집·분류 보조와 오탐 검토 절차 정리
+- DR 사이트 점검과 주기적 DR 테스트
+- 취약점 스캔 결과 정리와 심각도 기준 패치 적용
+- 개발팀·거래팀·운영팀과 보안 요구사항 협의
+- 인시던트 발생 시 탐지 근거·정책 조회·알림 이력을 연결한 원인 분석
 
 주요 성과
 
-- 보안 이벤트 탐지 룰, 알림 조건, 방화벽 정책 조회 결과를 감사 대응 가능한 근거로 구조화
-- 금융감독원 감사 자료 준비 및 대응
-- 거래 플랫폼 운영 기준 유지
-- Splunk·Fortinet 연동 환경에서 방화벽 정책 조회·배포 자동화 스크립트 작성
-- Grafana 대시보드로 시스템·컨테이너·로그 지표를 한 화면에 정리
-- LLM 기반 위협 정보 수집·분류 스크립트 작성으로 수동 분석 의존도 낮춤
-- 알림 워크플로로 반복 API 호출 자동화 스크립트 정리
-- SIEM 탐지 룰 검토 및 조건 조정으로 오탐 정리
-- 취약점 SLA 기준에 따라 패치 일정을 관리
+- 탐지 룰, 알림 조건, 방화벽 정책 조회 결과를 변경 이력과 함께 기록해 감사 대응 자료로 활용
+- 금융감독원 감사 자료 준비와 대응
+- Splunk·Fortinet 연동 환경의 방화벽 정책 조회·배포 스크립트 작성
+- Grafana 대시보드로 시스템·컨테이너·로그 지표를 한 화면에서 확인
+- SIEM 탐지 룰 검토와 조건 조정으로 오탐 정리
+- 취약점 SLA 기준에 따른 패치 일정 관리
 - DR 복구 절차 스크립트화와 주기적 훈련
 
 ---
 
-### ㈜가온누리정보시스템 | 프리랜서 인프라 엔지니어
+### ㈜가온누리정보시스템 | 보안 인프라 엔지니어
 
-2024.03 ~ 2025.02 | 넥스트레이드 매매체결시스템 구축 프로젝트
-
-**프로젝트 규모**
-
-- 신규 구축 인프라: 정보보안 장비
-- 금융시스템: 매매체결시스템
-- 사용자 목표: 사내 임직원 전반
+2024.03 ~ 2025.02 | 넥스트레이드 매매체결시스템 구축 (보안 구축 셀, 프리랜서)
 
 주요 업무
 
-- 보안 아키텍처 구축: 다층 망분리(외부/거래/내부/개발/관리) 및 Air-Gap 설정
-- 보안 솔루션(시스템/네트워크/엔드포인트) 설치 및 연동 작업
+- FortiGate FGCP active-passive HA 구성과 다층 망분리(외부·거래·내부·개발·관리망), Air-Gap 설정
+- 시스템·네트워크·엔드포인트 보안 솔루션 설치와 연동
 - Python 기반 방화벽·NAC·DLP 정책 운영 스크립트 작성
-- 금융위 본인가 심사 대응 자료 준비 및 보안 체크리스트 이행
+- Ansible Role·FortiManager 기준의 방화벽 정책·장비 설정 변경 절차 문서화
+- 금융위 본인가 심사 대응 자료 준비와 보안 체크리스트 이행
 - DR 사이트 구성
 
 주요 성과
 
-- 방화벽 정책 운영 스크립트 작성 (Python)
+- FortiGate HA로 방화벽 단일 장애점 제거
+- 금융위 본인가 심사 보안 분야 질의 대응과 자료 정리
 - EPP/DLP 설정 조정으로 단말 보안 에이전트 정책 정비
-- 구축 기간 동안 보안 운영 점검 내역과 심사 자료를 정리
-- 금융위 본인가 심사 보안 분야 질의와 대응 자료를 정리
-- 다층 망분리 구성
 - NAC 정책 배포 스크립트 작성
 - DR 복구 절차 스크립트화
-- DB 접근제어 쿼리 튜닝
-- PB 플랫폼 POC 검증
 
 ---
 
-### ㈜콴텍투자일임 | 인프라 엔지니어
+### ㈜콴텍투자일임 | 정보보안 담당자
 
-2022.08 ~ 2024.03 | Quantec AI Trading Platform / FSDC 운영
+2022.08 ~ 2024.03 | Quantec AI Trading Platform / FSDC 운영 (정규직)
 
 주요 업무
 
-- 금융보안데이터센터(FSDC) 서버 인프라 운영
-- Python 기반 인프라 운영 스크립트 개발
-- 금융감독원 정기 감사 대응 및 DLP 정책 운영
-- DB 접근제어 쿼리 튜닝
-- PB 플랫폼 POC 검증 및 시스템 런칭
+- 금융보안데이터센터(FSDC) AI 트레이딩 플랫폼 서버 인프라 운영
+- Python 운영 스크립트 개발
+- 금융감독원 정기 감사 대응과 DLP 정책 운영
+- PostgreSQL 접근제어 쿼리 튜닝
+- PB 플랫폼 POC 검증과 시스템 런칭 지원
+- 백업·데이터 보호 정책 관리
 
 ---
 
-### ㈜조인트리 | 인프라·시스템 엔지니어
+### ㈜조인트리 | 네트워크 보안 엔지니어
 
-2021.09 ~ 2022.04 | 국민대학교 차세대 정보시스템
+2021.09 ~ 2022.04 | 국민대학교 차세대 정보시스템 (정규직 파견)
 
 주요 업무
 
-- UTM, VMware NSX-T 기반 네트워크 세분화
-- NAC·DLP·APT 등 보안 솔루션 통합 운영
-- OSS 기반 보안 모니터링 구성
+- UTM과 VMware NSX-T 마이크로세그멘테이션(DFW) 기반 네트워크 세분화
+- NAC·DLP·APT 보안 솔루션 통합 운영
+- Wazuh 등 오픈소스 기반 보안 모니터링 구성
 
 주요 성과
 
-- 네트워크 세분화 및 장애 대응 기준 정비
-- APT·NAC·DLP 통합 침입 탐지·모니터링 체계 구축
-- DLP 룰 재설계로 오탐 흐름 정비
-- 이중화 구성으로 서비스 가용성 강화
+- 서버 간 동서 트래픽 정책을 워크로드 단위로 세분화
+- NAC·DLP·Wazuh 연동으로 호스트 수준 보안 이벤트 수집
+- DLP 룰 재설계로 오탐 정리
+- 이중화 구성과 장애 대응 기준 정비
 
 ---
 
-### ㈜메타넷엠플랫폼 | 인프라·시스템 엔지니어
+### ㈜메타넷엠플랫폼 | 인프라 운영 엔지니어
 
-2020.08 ~ 2021.08 | 콜센터 인프라
+2020.08 ~ 2021.08 | 컨택센터 인프라 (SI+SM)
 
 주요 업무
 
-- 재택근무 전환을 위한 원격 접속 환경 구축
-- SSL VPN·NAC 솔루션 통합
-- Ansible 기반 정책 자동 배포
-- Python 기반 네트워크 스위치 자동 점검 시스템 개발
+- 재택근무 전환을 위한 원격 접속 환경(SSL VPN·NAC) 구축
+- Ansible 기반 NAC 정책 배포
+- Python 기반 네트워크 스위치 점검 스크립트 개발
+- 신규 단말 등록과 현장 점검 절차 운영
 
 주요 성과
 
-- Python으로 네트워크 점검 운영 스크립트
-- 백신-VPN 충돌 원인 분석 및 해결, 대응 절차 정리
-- Ansible로 NAC 정책 배포 스크립트
+- FortiGate SSL-VPN 환경의 백신-VPN 프로파일 충돌을 tcpdump로 원인 분석하고 FortiClient 프로파일 분리로 해결
+- NAC 예외 요청·단말 등록·현장 점검 절차를 Ansible 플레이북과 운영 체크리스트로 표준화
+- FortiGate 로그 기반 VPN 세션 모니터링 대시보드 구성
 - 신규 사이트 네트워크 구성
 
 ---
 
-### ㈜엠티데이타 | 서버·시스템 엔지니어
+### ㈜엠티데이타 | IT/OA 운영 엔지니어
 
-2018.10 ~ 2019.10 | 한국항공우주산업(KAI)
+2018.10 ~ 2019.10 | 한국항공우주산업(KAI) (정규직 파견)
 
 주요 업무
 
-- Linux 서버 운영 및 보안 패치
-- 방화벽·IDS 정책 관리 및 로그 분석
+- 폐쇄망 Linux 서버 운영과 WSUS 기반 보안 패치
+- 방화벽·IDS 정책 관리와 로그 분석
 - DB 접근제어 솔루션 초기 구성
 
 주요 성과
 
-- 방화벽 정책 분석 및 정비 (중복 룰 정리)
-- 제조망-개발망 물리적 분리 운영
+- firewall-cmd 파싱으로 미사용 중복 방화벽 규칙 정리
+- 제조망-개발망 물리적 분리 환경 운영
 - 정기 취약점 점검 절차 정리
 
 ---
@@ -184,39 +161,21 @@
 
 ### 보안 솔루션
 
-- 네트워크 보안: 방화벽, DDoS, IPS/IDS, WAF, SWG
-- 엔드포인트: NAC, DLP·nDLP, DRM, EDR/EPP, MDM, APT
-- 접근제어: 서버/DB 접근제어, Active Directory, SSL VPN, IPSec, SSL 복호화
-- 모니터링: SIEM, SOAR
+- 네트워크 보안: FortiGate, FortiManager, FortiAnalyzer, DDoS, IPS/IDS, WAF, SWG
+- 엔드포인트: NAC, DLP·nDLP, DRM, EDR/EPP, APT
+- 접근제어: 서버/DB 접근제어, Active Directory, SSL VPN, SSL 복호화
+- 탐지·분석: Splunk ES, Wazuh, MITRE ATT&CK
 
-### 클라우드 및 가상화
+### 인프라 및 가상화
 
-- 가상화: VMware vSphere, NSX-T, Proxmox VE, Hyper-V
-- 컨테이너: Docker, Kubernetes, Helm
+- 가상화: VMware vSphere, NSX-T, Proxmox VE
+- 컨테이너: Docker, Kubernetes, Helm, k3s
+- Edge: Cloudflare Workers, Cloudflare WAF
 
 ### 운영 스크립트 및 개발
 
-- Languages: Python, Shell Script, PowerShell, Node.js, TypeScript, JavaScript
-- IaC: Ansible, Terraform, CloudFormation
-- CI/CD: Jenkins, GitLab CI, GitLab CI/CD, Watchtower
-- 모니터링: Prometheus, Grafana, Loki, ELK Stack, Tempo, Splunk
-
-### AI/ML 및 운영 도구
-
-- LLM 도구: LLM CLI, MCP, LLM API
-- MCP 프로토콜: 서버 통합 (filesystem, github, brave-search, memory, tmux 등)
-- 운영 스크립트 프레임워크: Custom SlashCommand 시스템
-- 관찰성: Universal Observability 아키텍처 (Grafana 중심)
-
-### 컨테이너 및 오케스트레이션
-
-- 컨테이너 플랫폼: Docker, Portainer API, Docker Compose
-- 레지스트리: Private Docker Registry (registry.jclee.me)
-- 배포 전략: Multi-Port Deployment, Blue-Green, Canary
-- 운영 스크립트: Watchtower 기반 업데이트와 재배포 절차
-
-### 네트워크
-
-- Routing/Switching: OSPF, BGP, VLAN, VxLAN
-- Load Balancing: F5, HAProxy, Nginx
-- SDN: VMware NSX-T, OpenFlow
+- 언어: Python, Bash, Go, Node.js, TypeScript, JavaScript
+- IaC: Ansible, Terraform
+- CI/CD: GitHub Actions, GitLab CI/CD
+- 관측성: Grafana, Prometheus, Loki, OpenTelemetry, Elasticsearch/Kibana
+- 데이터베이스: PostgreSQL, MySQL, Redis

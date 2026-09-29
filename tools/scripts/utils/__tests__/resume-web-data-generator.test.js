@@ -219,16 +219,16 @@ describe('generateWebData → resume[].stats (the ACTUAL static-card render path
     );
     assert.equal(
       generateWebData(enSsot, 'en').resume[4].description,
-      'The contact-center remote-work environment was drifting in two places at once: server configurations differed by node, and remote-access activity lacked a centralized view. Python and Ansible runbooks reduced configuration drift, and FortiGate VPN infrastructure gave new contact-center sites a shared baseline.'
+      enSsot.careers[4].description
     );
   });
 
   it('S2e: actual English locale cards use concrete security infrastructure copy', () => {
     const out = generateWebData(enSsot, 'en');
 
-    assert.match(out.resume[0].description, /Splunk ES Saved Searches/);
-    assert.match(out.resume[0].description, /Slack\/SMS alerting/);
-    assert.match(out.resume[0].description, /FortiManager JSON-RPC API policy lookups/);
+    assert.match(out.resume[0].description, /Splunk ES Saved Search/);
+    assert.match(out.resume[0].description, /Slack\/SMS notification/);
+    assert.match(out.resume[0].description, /FortiManager JSON-RPC API lookup/);
     assert.deepEqual(out.resume[0].stats, [
       'Splunk ES',
       'Detection & Response',
