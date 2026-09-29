@@ -1,6 +1,6 @@
 <!-- Generated from master resume -->
 <!-- Variant: general -->
-<!-- Generated: 2026-09-29T07:16:20.519Z -->
+<!-- Generated: 2026-09-29T13:45:02.467Z -->
 <!-- Description: General purpose resume for all industries -->
 <!--
   NOTICE (repo hygiene, 2026-07-22): This file is HAND-WRITTEN, not generated.
@@ -15,9 +15,6 @@
     - tools/scripts/build/generate-resume-variants.js to derive
       resume_general.md / resume_technical.md / resume_security.md /
       resume_short.md
-    - apps/job-server AI job-matching, ranking, auto-apply, and resume
-      optimization tooling (via getResumeMasterMarkdownPath() /
-      config.paths.resume) as the resume text fed to AI prompts
   When editing career facts (roles, dates, employers), verify they match
   resume_data.json — do not let this copy become the source of truth.
 -->

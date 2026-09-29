@@ -11,9 +11,6 @@
     - tools/scripts/build/generate-resume-variants.js to derive
       resume_general.md / resume_technical.md / resume_security.md /
       resume_short.md
-    - apps/job-server AI job-matching, ranking, auto-apply, and resume
-      optimization tooling (via getResumeMasterMarkdownPath() /
-      config.paths.resume) as the resume text fed to AI prompts
   When editing career facts (roles, dates, employers), verify they match
   resume_data.json — do not let this copy become the source of truth.
 -->
