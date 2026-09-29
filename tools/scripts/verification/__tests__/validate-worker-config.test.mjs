@@ -22,7 +22,7 @@ function validConfiguration() {
     assets: { directory: 'apps/portfolio/assets', binding: 'ASSETS' },
     vars: { ENVIRONMENT: 'production' },
     routes: [{ pattern: 'resume.jclee.me', custom_domain: true }],
-    triggers: { crons: ['0 21 * * *', '0 * * * *', '0 0 * * 1'] },
+    triggers: { crons: ['0 21 * * *', '0 * * * *'] },
     migrations: [{ tag: 'v1', new_classes: ['BrowserSessionDO'] }],
     ai: { binding: 'AI' },
     browser: { binding: 'MYBROWSER' },

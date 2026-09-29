@@ -248,11 +248,10 @@ Scheduling is Cloudflare-native and lives in the root `wrangler.jsonc`
 (`triggers.crons`). The merged `resume` Worker's `scheduled()` handler routes
 each cron through `apps/job-dashboard/src/handlers/scheduled/`:
 
-| Cron (UTC)   | KST       | Job                                                                                                  |
-| ------------ | --------- | ---------------------------------------------------------------------------------------------------- |
-| `0 21 * * *` | 06:00     | Wanted + JobKorea session refresh, then `ResumeSyncWorkflow` (dry-run default) and `CleanupWorkflow` |
-| `0 * * * *`  | hourly    | `HealthCheckWorkflow`                                                                                |
-| `0 0 * * 1`  | Mon 09:00 | `DailyReportWorkflow` (`type: weekly`)                                                               |
+| Cron (UTC)   | KST    | Job                                                                                                  |
+| ------------ | ------ | ---------------------------------------------------------------------------------------------------- |
+| `0 21 * * *` | 06:00  | Wanted + JobKorea session refresh, then `ResumeSyncWorkflow` (dry-run default) and `CleanupWorkflow` |
+| `0 * * * *`  | hourly | `HealthCheckWorkflow`; Mondays 00:00 UTC (09:00 KST) also `DailyReportWorkflow` (`type: weekly`)     |
 
 Every scheduled job is a Cloudflare Workflow (`apps/job-dashboard/src/workflows/`); a
 failed workflow start fails the cron run. D1 Time Travel is the D1 backup. Uptime alerting stays in Grafana

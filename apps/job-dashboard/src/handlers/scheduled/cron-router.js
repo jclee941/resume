@@ -3,7 +3,6 @@ import { refreshWantedSession } from '../wanted/mint-session.js';
 
 export const RESUME_SYNC_CRON = '0 21 * * *';
 export const HEALTH_CHECK_CRON = '0 * * * *';
-export const WEEKLY_REPORT_CRON = '0 0 * * 1';
 
 /**
  * @typedef {{ create(options: { params: unknown }): Promise<unknown> }} WorkflowStarter
@@ -42,17 +41,31 @@ async function resumeSyncStarts(env) {
 }
 
 /**
+ * The weekly report rides the hourly trigger instead of a Cron Trigger of its own.
+ * @param {number | undefined} scheduledTime
+ * @returns {boolean}
+ */
+function isWeeklyReportHour(scheduledTime) {
+  if (typeof scheduledTime !== 'number') return false;
+  const at = new Date(scheduledTime);
+  return at.getUTCDay() === 1 && at.getUTCHours() === 0;
+}
+
+/**
  * @param {string | undefined} cron
  * @param {CronEnv} env
+ * @param {number | undefined} scheduledTime
  * @returns {Promise<WorkflowStart[]>}
  */
-async function planStarts(cron, env) {
+async function planStarts(cron, env, scheduledTime) {
   if (cron === RESUME_SYNC_CRON) return resumeSyncStarts(env);
   if (cron === HEALTH_CHECK_CRON) {
-    return [{ binding: 'HEALTH_CHECK_WORKFLOW', params: { source: 'cron' } }];
-  }
-  if (cron === WEEKLY_REPORT_CRON) {
-    return [{ binding: 'DAILY_REPORT_WORKFLOW', params: { type: 'weekly', source: 'cron' } }];
+    /** @type {WorkflowStart[]} */
+    const starts = [{ binding: 'HEALTH_CHECK_WORKFLOW', params: { source: 'cron' } }];
+    if (isWeeklyReportHour(scheduledTime)) {
+      starts.push({ binding: 'DAILY_REPORT_WORKFLOW', params: { type: 'weekly', source: 'cron' } });
+    }
+    return starts;
   }
   console.warn('[cron] No scheduled handler for cron:', cron);
   return [];
@@ -81,18 +94,18 @@ function describeReason(reason) {
  * Route a Cloudflare scheduled() invocation by its matched cron expression.
  * - RESUME_SYNC_CRON   -> ResumeSyncWorkflow (dryRun unless RESUME_SYNC_CRON_DRY_RUN=false,
  *   after a best-effort Wanted/JobKorea session refresh) plus CleanupWorkflow.
- * - HEALTH_CHECK_CRON  -> HealthCheckWorkflow.
- * - WEEKLY_REPORT_CRON -> DailyReportWorkflow with type 'weekly'.
+ * - HEALTH_CHECK_CRON  -> HealthCheckWorkflow, plus DailyReportWorkflow with type 'weekly'
+ *   when the scheduled time is Monday 00:00 UTC.
  * - anything else      -> logged and ignored.
  * Every start is attempted; if any rejects (or its binding is missing) the run throws
  * after all have settled so Cloudflare records the cron invocation as failed.
- * @param {{ cron?: string } | undefined} controller
+ * @param {{ cron?: string; scheduledTime?: number } | undefined} controller
  * @param {CronEnv} env
  * @param {CronContext} ctx
  * @returns {Promise<void>}
  */
 export async function scheduled(controller, env, ctx) {
-  const starts = await planStarts(controller?.cron, env);
+  const starts = await planStarts(controller?.cron, env, controller?.scheduledTime);
   const runs = starts.map((start) => {
     const run = startWorkflow(env, start);
     ctx.waitUntil(run);
@@ -110,4 +123,4 @@ export async function scheduled(controller, env, ctx) {
   }
 }
 
-export default { scheduled, RESUME_SYNC_CRON, HEALTH_CHECK_CRON, WEEKLY_REPORT_CRON };
+export default { scheduled, RESUME_SYNC_CRON, HEALTH_CHECK_CRON };
