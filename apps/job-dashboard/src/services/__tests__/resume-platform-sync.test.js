@@ -66,7 +66,7 @@ describe('Cloudflare-native JobKorea resume sync', () => {
     const env = await envWithSessions({ jobkorea: 'ACNT=1; SES=2' }, { JOBKOREA_RNO: '777' });
     const client = fakeJobKoreaClient();
     const createClient = mock.fn(() => client);
-    const readBrowserForm = mock.fn(async () => []);
+    const readBrowserForm = mock.fn(async () => [{ name: 'UnivSchool[c3].Grade', value: '4.0' }]);
 
     const result = await syncJobKoreaFromSsot(env, SSOT, {
       dryRun: true,
@@ -110,6 +110,49 @@ describe('Cloudflare-native JobKorea resume sync', () => {
     );
     assert.equal(saveOptions.tokens.LastEditDateTicks, '638000');
     assert.ok(saveOptions.baseFields.some((f) => f.name === 'UnivSchool[c3].Grade'));
+  });
+
+  it('saves from the live browser form when the edit-page fetch fails', async () => {
+    const env = await envWithSessions({ jobkorea: 'ACNT=1' }, { JOBKOREA_RNO: '777' });
+    const client = fakeJobKoreaClient();
+    client.fetchEditPageTokens = mock.fn(async () => ({
+      IsEditPage: 'True',
+      IsCompleteSave: 'True',
+      LastEditDateTicks: '',
+    }));
+    client.fetchEditPageBaseFields = mock.fn(async () => {
+      throw new Error('JobKorea edit-page base fields were empty');
+    });
+
+    const result = await syncJobKoreaFromSsot(env, SSOT, {
+      dryRun: false,
+      createClient: () => client,
+      readBrowserForm: async () => [
+        { name: 'LastEditDateTicks', value: '639000' },
+        { name: 'UnivSchool.Index', value: 'c3' },
+        { name: 'UnivSchool[c3].Schl_Name', value: '한양사이버대학교' },
+      ],
+    });
+
+    assert.equal(result.success, true);
+    assert.match(String(result.rawFieldsError), /base fields were empty/);
+    const [, saveOptions] = client.saveResume.mock.calls[0].arguments;
+    assert.equal(saveOptions.tokens.LastEditDateTicks, '639000');
+  });
+
+  it('refuses to save when the browser shows no resume form fields', async () => {
+    const env = await envWithSessions({ jobkorea: 'ACNT=1' }, { JOBKOREA_RNO: '777' });
+    const client = fakeJobKoreaClient();
+
+    const result = await syncJobKoreaFromSsot(env, SSOT, {
+      dryRun: false,
+      createClient: () => client,
+      readBrowserForm: async () => [],
+    });
+
+    assert.equal(result.success, false);
+    assert.match(result.error, /resume form was empty/);
+    assert.equal(client.saveResume.mock.callCount(), 0);
   });
 
   it('reports a missing KV session or resume number instead of calling JobKorea', async () => {
@@ -159,6 +202,26 @@ describe('Cloudflare-native JobKorea form reader', () => {
     assert.equal(
       page.goto.mock.calls[0].arguments[0],
       'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=42'
+    );
+    assert.equal(page.close.mock.callCount(), 1);
+  });
+
+  it('names the page it landed on when the resume form never appears', async () => {
+    const page = {
+      setCookie: mock.fn(async () => {}),
+      goto: mock.fn(async () => {}),
+      waitForSelector: mock.fn(async () => {
+        throw new Error('timeout');
+      }),
+      url: () => 'https://www.jobkorea.co.kr/Login/Login_Tot.asp?re_url=x',
+      title: async () => '로그인 | 잡코리아',
+      close: mock.fn(async () => {}),
+    };
+    const withBrowserSession = async (_env, fn) => fn({ newPage: async () => page });
+
+    await assert.rejects(
+      readJobKoreaFormViaBrowser({}, { cookieString: 'A=1', rNo: '42' }, { withBrowserSession }),
+      /#frm1 not found \(path=\/Login\/Login_Tot\.asp, title=로그인 \| 잡코리아\)/
     );
     assert.equal(page.close.mock.callCount(), 1);
   });

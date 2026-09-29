@@ -141,6 +141,30 @@ describe('JobKoreaAPIClient', () => {
     assert.strictEqual(requests[0].options.headers.Cookie, 'NEW=2; OTHER=3');
   });
 
+  it('loads the edit page as a document request, like the browser', async () => {
+    const requests = [];
+    global.fetch = async (url, options) => {
+      requests.push({ url, options });
+      return jsonResponse('<form id="frm1"><input name="LastEditDateTicks" value="42"></form>', {
+        url: 'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=9',
+      });
+    };
+
+    const client = new JobKoreaAPIClient({ cookieString: 'JKSESSION=abc', rNo: '9' });
+    const tokens = await client.fetchEditPageTokens();
+    const fields = await client.fetchEditPageBaseFields();
+
+    assert.strictEqual(requests.length, 2);
+    for (const { url, options } of requests) {
+      assert.strictEqual(String(url), 'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=9');
+      assert.match(options.headers.Accept, /text\/html/);
+      assert.strictEqual(options.headers['X-Requested-With'], undefined);
+      assert.strictEqual(options.headers.Cookie, 'JKSESSION=abc');
+    }
+    assert.strictEqual(tokens.LastEditDateTicks, '42');
+    assert.deepStrictEqual(fields, [{ name: 'LastEditDateTicks', value: '42' }]);
+  });
+
   it('rejects login pages when fetching edit-page base fields', async () => {
     global.fetch = async () =>
       jsonResponse('<html>login</html>', { url: 'https://www.jobkorea.co.kr/Login/Login_Tot.asp' });

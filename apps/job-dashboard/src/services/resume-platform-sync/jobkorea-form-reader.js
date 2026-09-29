@@ -52,7 +52,14 @@ export async function readJobKoreaFormViaBrowser(
         await page.goto(`${JOBKOREA_RESUME_EDIT_URL}?RNo=${encodeURIComponent(rNo)}`, {
           waitUntil: 'domcontentloaded',
         });
-        await page.waitForSelector(RESUME_FORM_SELECTOR, { timeout: FORM_WAIT_TIMEOUT_MS });
+        await page
+          .waitForSelector(RESUME_FORM_SELECTOR, { timeout: FORM_WAIT_TIMEOUT_MS })
+          .catch(async () => {
+            const title = await page.title().catch(() => '');
+            throw new Error(
+              `JobKorea resume form ${RESUME_FORM_SELECTOR} not found (path=${new URL(page.url()).pathname}, title=${title})`
+            );
+          });
         return await page.evaluate((selector) => {
           const form = document.querySelector(selector);
           if (!(form instanceof HTMLFormElement)) return [];
