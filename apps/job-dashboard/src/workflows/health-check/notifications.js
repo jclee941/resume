@@ -69,7 +69,7 @@ export async function notifyHealthFailure(workflow, healthEvaluation, startedAt)
  * }} params
  * @returns {string}
  */
-function buildHealthFailureMessage({
+export function buildHealthFailureMessage({
   healthEvaluation,
   escalationLevel,
   consecutiveFailures,
@@ -88,7 +88,7 @@ function buildHealthFailureMessage({
   }
 
   message +=
-    `\n\n<b>Consecutive Failures</b>: ${consecutiveFailures + 1}\n` +
+    `\n\n<b>Consecutive Failures</b>: ${consecutiveFailures}\n` +
     `<b>Escalation</b>: ${escalationLevel}\n` +
     `<b>Checked at</b>: ${startedAt}`;
 

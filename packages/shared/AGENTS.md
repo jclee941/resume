@@ -31,7 +31,6 @@ packages/shared/src/
 ├── normalize/           # Data normalization
 ├── platform-sync/       # Wanted + JobKorea resume mapping/sync (Worker-safe, fetch only)
 ├── ua.js                # User-Agent utilities
-├── phone.js             # Phone number utilities
 ├── employment-types.js  # Employment type constants
 └── job-categories.js    # Job category mappings
 ```
@@ -48,14 +47,13 @@ packages/shared/src/
 | `@resume/shared/browser/stealth`  | Stealth patches                           |
 | `@resume/shared/clients/wanted/*` | Wanted endpoints (jobs, profile, resume)  |
 | `@resume/shared/retry`            | HTTP retry + circuit breaker              |
-| `@resume/shared/crypto`           | Webcrypto + Node adapters                 |
+| `@resume/shared/crypto`           | WebCrypto AES-GCM helpers                 |
 | `@resume/shared/rate-limit`       | Token bucket, sliding window, KV limiters |
 | `@resume/shared/session`          | Session cookies, constants, normalization |
 | `@resume/shared/auth`             | Cookie auth, HMAC signing                 |
 | `@resume/shared/normalize`        | Data normalization                        |
 | `@resume/shared/platform-sync/*`  | Wanted/JobKorea resume mapping and sync   |
 | `@resume/shared/ua`               | User-Agent utilities                      |
-| `@resume/shared/phone`            | Phone number utilities                    |
 | `@resume/shared/employment-types` | Employment type constants                 |
 | `@resume/shared/job-categories`   | Job category mappings                     |
 
