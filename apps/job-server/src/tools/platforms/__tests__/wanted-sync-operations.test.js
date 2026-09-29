@@ -125,7 +125,7 @@ describe('wanted sync operations', () => {
     ]);
   });
 
-  it('syncActivities preserves non-certificate remote activities by default', async () => {
+  it('syncActivities prunes stale certificates and awards but keeps other activity types by default', async () => {
     const api = createApiMock();
     const sourceData = {
       certifications: [
@@ -145,7 +145,7 @@ describe('wanted sync operations', () => {
     await syncActivities(api, 'resume-1', sourceData, remoteActivities);
 
     assert.strictEqual(api.resumeActivity.update.mock.calls.length, 3);
-    assert.strictEqual(api.resumeActivity.delete.mock.calls.length, 0);
+    assert.deepStrictEqual(getMockArgs(api.resumeActivity.delete), [['resume-1', 'award-1']]);
   });
 
   it('syncActivities deletes foreign activity types when SYNC_STRICT=true', async () => {
