@@ -14,11 +14,6 @@
 *.yaml text eol=lf
 *.toml text eol=lf
 *.sh text eol=lf
-*.bazel text eol=lf
-
-# Generated files (do not diff, mark as generated for GitHub stats)
-typescript/portfolio-worker/worker.js linguist-generated=true -diff
-typescript/portfolio-worker/worker-dev.js linguist-generated=true -diff
 
 # Binary files
 *.png binary
@@ -33,10 +28,3 @@ typescript/portfolio-worker/worker-dev.js linguist-generated=true -diff
 
 # Lock files (do not diff)
 package-lock.json -diff linguist-generated=true
-
-# Bazel
-*.bzl text eol=lf
-MODULE.bazel text eol=lf
-WORKSPACE text eol=lf
-BUILD.bazel text eol=lf
-apps/portfolio/.dev.vars export-ignore

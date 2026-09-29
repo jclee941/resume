@@ -6,8 +6,6 @@ node_modules/
 dist/
 build/
 coverage/
-typescript/portfolio-worker/worker.js
-typescript/job-automation/workers/dist/
 
 # Wrangler
 .wrangler/
@@ -20,9 +18,6 @@ test-results/
 # Generated files
 *.min.js
 *.min.css
-
-# Archives
-resumes/archive/
 
 # Cache
 .cache/
