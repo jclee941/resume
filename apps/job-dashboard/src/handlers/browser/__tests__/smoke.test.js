@@ -115,7 +115,14 @@ describe('runBrowserSmoke with a replayed session', () => {
     const order = [];
     const resources = {
       scripts: ['www.jobkorea.co.kr/Scripts/User/Resume/edit.js'],
-      photoImages: [{ className: 'photo', src: 'file2.jobkorea.co.kr/Net/UserPhoto/1.jpg' }],
+      photoImages: [
+        {
+          className: 'photo',
+          src: 'file2.jobkorea.co.kr/Net/UserPhoto/1.jpg',
+          width: 150,
+          height: 210,
+        },
+      ],
     };
     const evaluations = ['text', [], resources];
     const page = {
@@ -124,6 +131,7 @@ describe('runBrowserSmoke with a replayed session', () => {
       url: () => 'https://www.jobkorea.co.kr/User/Resume/View?rNo=1',
       title: async () => 'Resume',
       evaluate: async () => evaluations.shift(),
+      screenshot: async (options) => (options.encoding === 'base64' ? 'SU1H' : null),
       close: async () => {},
     };
     const cookies = [{ name: 'A', value: '1', domain: '.jobkorea.co.kr', path: '/' }];
@@ -132,6 +140,7 @@ describe('runBrowserSmoke with a replayed session', () => {
       withBrowserSession: async (_env, fn) => fn({ newPage: async () => page }),
       url: 'https://www.jobkorea.co.kr/User/Resume/View?rNo=1',
       cookies,
+      screenshot: true,
     });
 
     assert.deepEqual(order, [
@@ -140,6 +149,7 @@ describe('runBrowserSmoke with a replayed session', () => {
     ]);
     assert.deepEqual(result.scripts, resources.scripts);
     assert.deepEqual(result.photoImages, resources.photoImages);
+    assert.equal(result.screenshot, 'SU1H');
   });
 });
 

@@ -49,6 +49,7 @@ export function registerAdminRoutes(router, ctx) {
     const session = params.get('session');
     /** @type {NonNullable<Parameters<typeof runBrowserSmoke>[1]>} */
     const opts = target ? { url: target } : {};
+    if (params.get('screenshot') === '1') opts.screenshot = true;
     if (session) {
       const replay = await smokeCookiesFor(env, session, target || '');
       if (!replay.ok) return jsonResponse({ ok: false, error: replay.error }, replay.status);
