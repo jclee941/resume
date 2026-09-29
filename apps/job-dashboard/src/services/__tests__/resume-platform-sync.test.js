@@ -6,9 +6,9 @@ import { syncResumePlatform } from '../resume-platform-sync/index.js';
 import { syncJobKoreaFromSsot } from '../resume-platform-sync/jobkorea.js';
 import { syncWantedFromSsot } from '../resume-platform-sync/wanted.js';
 import {
-  readJobKoreaFormViaBrowser,
   toJobKoreaBrowserCookies,
-} from '../resume-platform-sync/jobkorea-form-reader.js';
+  withJobKoreaEditor,
+} from '../resume-platform-sync/jobkorea-editor.js';
 
 const ENCRYPTION_KEY = btoa('0123456789abcdef0123456789abcdef');
 
@@ -42,42 +42,36 @@ async function envWithSessions(sessions, extra = {}) {
   };
 }
 
-function fakeJobKoreaClient() {
-  return {
-    fetchEditPageTokens: mock.fn(async () => ({
-      IsEditPage: 'True',
-      IsCompleteSave: 'True',
-      LastEditDateTicks: '638000',
-    })),
-    fetchEditPageBaseFields: mock.fn(async () => [
-      { name: 'UnivSchool.Index', value: 'c3' },
-      { name: 'UnivSchool[c3].Schl_Name', value: '한양사이버대학교' },
-      { name: 'UnivSchool[c3].Grad_YM', value: '202802' },
-      { name: 'UnivSchool[c3].Grad_Type_Code', value: '4' },
-      { name: 'Award.Index', value: 'c1' },
-      { name: 'Award[c1].Award_Name', value: '자율주행 경진대회 우수상' },
-    ]),
-    saveResume: mock.fn(async () => ({ success: true, result: {}, rawResponse: '{}' })),
-  };
+const LIVE_FORM = [
+  { name: 'UnivSchool.Index', value: 'c3' },
+  { name: 'UnivSchool[c3].Schl_Name', value: '한양사이버대학교' },
+  { name: 'UnivSchool[c3].Grad_YM', value: '202802' },
+  { name: 'UnivSchool[c3].Grad_Type_Code', value: '4' },
+  { name: 'UnivSchool[c3].Grade', value: '4.0' },
+  { name: 'Award.Index', value: 'c1' },
+  { name: 'Award[c1].Award_Name', value: '자율주행 경진대회 우수상' },
+];
+
+function fakeEditor({
+  fields = LIVE_FORM,
+  tokens = { LastEditDateTicks: '638000' },
+  saveText = '{"saveResult":{"IsSuccess":true}}',
+} = {}) {
+  const save = mock.fn(async () => ({ status: 200, text: saveText }));
+  const withEditor = mock.fn(async (_env, _session, fn) => fn({ fields, tokens, save }));
+  return { save, withEditor };
 }
 
 describe('Cloudflare-native JobKorea resume sync', () => {
-  it('previews the education and award changes without saving on a dry run', async () => {
+  it('previews the education and award changes from the live editor form', async () => {
     const env = await envWithSessions({ jobkorea: 'ACNT=1; SES=2' }, { JOBKOREA_RNO: '777' });
-    const client = fakeJobKoreaClient();
-    const createClient = mock.fn(() => client);
-    const readBrowserForm = mock.fn(async () => [{ name: 'UnivSchool[c3].Grade', value: '4.0' }]);
+    const { save, withEditor } = fakeEditor();
 
-    const result = await syncJobKoreaFromSsot(env, SSOT, {
-      dryRun: true,
-      createClient,
-      readBrowserForm,
-    });
+    const result = await syncJobKoreaFromSsot(env, SSOT, { dryRun: true, withEditor });
 
     assert.equal(result.success, true);
     assert.equal(result.dryRun, true);
-    assert.deepEqual(createClient.mock.calls[0].arguments[0].rNo, '777');
-    assert.deepEqual(readBrowserForm.mock.calls[0].arguments[1], {
+    assert.deepEqual(withEditor.mock.calls[0].arguments[1], {
       cookieString: 'ACNT=1; SES=2',
       rNo: '777',
     });
@@ -89,111 +83,114 @@ describe('Cloudflare-native JobKorea resume sync', () => {
       '2026 HYCU AI학습법 공모전 장려상',
     ]);
     assert.deepEqual(changes['Award[c2].Award_Name'], [null, '자율주행 포뮬레이션 공모전 우수상']);
-    assert.equal(client.saveResume.mock.callCount(), 0);
+    assert.equal(save.mock.callCount(), 0);
   });
 
-  it('saves the merged form with the live base fields when applying', async () => {
+  it('saves the merged form from the editor page, keeping live fields and form tokens', async () => {
     const env = await envWithSessions({ jobkorea: 'ACNT=1' }, { JOBKOREA_RNO: '777' });
-    const client = fakeJobKoreaClient();
+    const { save, withEditor } = fakeEditor();
 
-    const result = await syncJobKoreaFromSsot(env, SSOT, {
-      dryRun: false,
-      createClient: () => client,
-      readBrowserForm: async () => [{ name: 'UnivSchool[c3].Grade', value: '4.0' }],
-    });
+    const result = await syncJobKoreaFromSsot(env, SSOT, { dryRun: false, withEditor });
 
     assert.equal(result.success, true);
-    assert.equal(client.saveResume.mock.callCount(), 1);
-    const [targetFields, saveOptions] = client.saveResume.mock.calls[0].arguments;
-    assert.ok(
-      targetFields.some((f) => f.name === 'UnivSchool[c3].Grad_Type_Code' && f.value === '5')
-    );
-    assert.equal(saveOptions.tokens.LastEditDateTicks, '638000');
-    assert.ok(saveOptions.baseFields.some((f) => f.name === 'UnivSchool[c3].Grade'));
+    const body = new URLSearchParams(save.mock.calls[0].arguments[0]);
+    assert.equal(body.get('UnivSchool[c3].Grad_Type_Code'), '5');
+    assert.equal(body.get('UnivSchool[c3].Grad_YM'), '202702');
+    assert.equal(body.get('UnivSchool[c3].Grade'), '4.0');
+    assert.equal(body.get('LastEditDateTicks'), '638000');
   });
 
-  it('saves from the live browser form when the edit-page fetch fails', async () => {
+  it('reports the message JobKorea returns when it rejects the save', async () => {
     const env = await envWithSessions({ jobkorea: 'ACNT=1' }, { JOBKOREA_RNO: '777' });
-    const client = fakeJobKoreaClient();
-    client.fetchEditPageTokens = mock.fn(async () => ({
-      IsEditPage: 'True',
-      IsCompleteSave: 'True',
-      LastEditDateTicks: '',
-    }));
-    client.fetchEditPageBaseFields = mock.fn(async () => {
-      throw new Error('JobKorea edit-page base fields were empty');
+    const { withEditor } = fakeEditor({
+      saveText: '{"saveResult":{"IsSuccess":false,"ErrorMessage":"담당직무를 입력해주세요"}}',
     });
 
-    const result = await syncJobKoreaFromSsot(env, SSOT, {
-      dryRun: false,
-      createClient: () => client,
-      readBrowserForm: async () => [
-        { name: 'LastEditDateTicks', value: '639000' },
-        { name: 'UnivSchool.Index', value: 'c3' },
-        { name: 'UnivSchool[c3].Schl_Name', value: '한양사이버대학교' },
-      ],
-    });
+    const result = await syncJobKoreaFromSsot(env, SSOT, { dryRun: false, withEditor });
 
-    assert.equal(result.success, true);
-    assert.match(String(result.rawFieldsError), /base fields were empty/);
-    const [, saveOptions] = client.saveResume.mock.calls[0].arguments;
-    assert.equal(saveOptions.tokens.LastEditDateTicks, '639000');
+    assert.equal(result.success, false);
+    assert.equal(result.error, '담당직무를 입력해주세요');
   });
 
-  it('refuses to save when the browser shows no resume form fields', async () => {
+  it('refuses to save when the editor form is empty', async () => {
     const env = await envWithSessions({ jobkorea: 'ACNT=1' }, { JOBKOREA_RNO: '777' });
-    const client = fakeJobKoreaClient();
+    const { save, withEditor } = fakeEditor({ fields: [] });
 
-    const result = await syncJobKoreaFromSsot(env, SSOT, {
-      dryRun: false,
-      createClient: () => client,
-      readBrowserForm: async () => [],
-    });
+    const result = await syncJobKoreaFromSsot(env, SSOT, { dryRun: false, withEditor });
 
     assert.equal(result.success, false);
     assert.match(result.error, /resume form was empty/);
-    assert.equal(client.saveResume.mock.callCount(), 0);
+    assert.equal(save.mock.callCount(), 0);
   });
 
-  it('reports a missing KV session or resume number instead of calling JobKorea', async () => {
-    const createClient = mock.fn(fakeJobKoreaClient);
+  it('reports a missing KV session as expired, or a missing resume number, without opening the editor', async () => {
+    const { withEditor } = fakeEditor();
     const noSession = await syncJobKoreaFromSsot(
       await envWithSessions({}, { JOBKOREA_RNO: '1' }),
       SSOT,
-      {
-        dryRun: true,
-        createClient,
-      }
+      { dryRun: true, withEditor }
     );
     const noRno = await syncJobKoreaFromSsot(await envWithSessions({ jobkorea: 'A=1' }), SSOT, {
       dryRun: true,
-      createClient,
+      withEditor,
     });
 
     assert.match(noSession.error, /auth:jobkorea/);
+    assert.equal(noSession.code, 'JOBKOREA_SESSION_EXPIRED');
     assert.match(noRno.error, /JOBKOREA_RNO/);
-    assert.equal(createClient.mock.callCount(), 0);
+    assert.equal(withEditor.mock.callCount(), 0);
   });
 });
 
-describe('Cloudflare-native JobKorea form reader', () => {
-  it('scopes cookies to jobkorea.co.kr and serializes the resume form', async () => {
-    const page = {
-      setCookie: mock.fn(async () => {}),
-      goto: mock.fn(async () => {}),
-      waitForSelector: mock.fn(async () => {}),
-      evaluate: mock.fn(async () => [{ name: 'UnivSchool.Index', value: 'c3' }]),
-      close: mock.fn(async () => {}),
-    };
-    const withBrowserSession = mock.fn(async (_env, fn) => fn({ newPage: async () => page }));
+function fakeEditorPage({
+  formFound = true,
+  alert,
+  url = 'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=42',
+} = {}) {
+  let onDialog = () => {};
+  const page = {
+    on: mock.fn((event, handler) => {
+      if (event === 'dialog') onDialog = handler;
+    }),
+    setCookie: mock.fn(async () => {}),
+    goto: mock.fn(async () => {
+      if (alert) onDialog({ message: () => alert, dismiss: async () => {} });
+    }),
+    waitForSelector: mock.fn(async () => {
+      if (!formFound) throw new Error('timeout');
+    }),
+    evaluate: mock.fn(async (_fn, first, second) =>
+      Array.isArray(second)
+        ? {
+            fields: [{ name: 'UnivSchool.Index', value: 'c3' }],
+            tokens: { LastEditDateTicks: '638000' },
+          }
+        : { status: 200, text: `saved ${first} ${second}` }
+    ),
+    url: () => url,
+    title: async () => '로그인 | 잡코리아',
+    close: mock.fn(async () => {}),
+  };
+  const withBrowserSession = mock.fn(async (_env, fn) => fn({ newPage: async () => page }));
+  return { page, withBrowserSession };
+}
 
-    const fields = await readJobKoreaFormViaBrowser(
+describe('JobKorea editor over Browser Rendering', () => {
+  it('opens the editor with jobkorea.co.kr cookies, reads the form, and saves from the page', async () => {
+    const { page, withBrowserSession } = fakeEditorPage();
+
+    const outcome = await withJobKoreaEditor(
       {},
       { cookieString: 'A=1; B=x=y', rNo: '42' },
+      async (editor) => {
+        assert.deepEqual(editor.fields, [{ name: 'UnivSchool.Index', value: 'c3' }]);
+        assert.deepEqual(editor.tokens, { LastEditDateTicks: '638000' });
+        return editor.save('a=1');
+      },
       { withBrowserSession }
     );
 
-    assert.deepEqual(fields, [{ name: 'UnivSchool.Index', value: 'c3' }]);
+    assert.deepEqual(outcome, { status: 200, text: 'saved /User/Resume/Save a=1' });
     assert.deepEqual(
       page.setCookie.mock.calls[0].arguments,
       toJobKoreaBrowserCookies('A=1; B=x=y')
@@ -206,22 +203,23 @@ describe('Cloudflare-native JobKorea form reader', () => {
     assert.equal(page.close.mock.callCount(), 1);
   });
 
-  it('names the page it landed on when the resume form never appears', async () => {
-    const page = {
-      setCookie: mock.fn(async () => {}),
-      goto: mock.fn(async () => {}),
-      waitForSelector: mock.fn(async () => {
-        throw new Error('timeout');
-      }),
-      url: () => 'https://www.jobkorea.co.kr/Login/Login_Tot.asp?re_url=x',
-      title: async () => '로그인 | 잡코리아',
-      close: mock.fn(async () => {}),
-    };
-    const withBrowserSession = async (_env, fn) => fn({ newPage: async () => page });
+  it('flags an expired session from the JobKorea alert when the form never appears', async () => {
+    const { page, withBrowserSession } = fakeEditorPage({
+      formFound: false,
+      alert: '세션이 만료 되었습니다.',
+      url: 'https://www.jobkorea.co.kr/Login/Login_ToT.asp',
+    });
 
     await assert.rejects(
-      readJobKoreaFormViaBrowser({}, { cookieString: 'A=1', rNo: '42' }, { withBrowserSession }),
-      /#frm1 not found \(path=\/Login\/Login_Tot\.asp, title=로그인 \| 잡코리아\)/
+      withJobKoreaEditor({}, { cookieString: 'A=1', rNo: '42' }, async () => 'unreachable', {
+        withBrowserSession,
+      }),
+      (error) => {
+        assert.equal(error.code, 'JOBKOREA_SESSION_EXPIRED');
+        assert.match(error.message, /path=\/Login\/Login_ToT\.asp/);
+        assert.match(error.message, /alert=세션이 만료 되었습니다\./);
+        return true;
+      }
     );
     assert.equal(page.close.mock.callCount(), 1);
   });

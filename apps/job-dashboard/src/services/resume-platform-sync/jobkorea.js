@@ -2,55 +2,29 @@ import {
   buildJobKoreaFormData,
   deriveJobKoreaSectionIndices,
 } from '@resume/shared/platform-sync/jobkorea';
-import { JobKoreaAPIClient } from '@resume/shared/platform-sync/jobkorea/api-client';
 import {
-  mergeBaseFields,
+  buildSavePayload,
   smartMergeFields,
 } from '@resume/shared/platform-sync/jobkorea/api-payload';
 import { assertJobKoreaCareerPayloadCoverage } from '@resume/shared/platform-sync/jobkorea/career-guards';
-import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 import { readPlatformSession } from '../platform-session.js';
-import { readJobKoreaFormViaBrowser } from './jobkorea-form-reader.js';
+import { JOBKOREA_SESSION_EXPIRED, withJobKoreaEditor } from './jobkorea-editor.js';
 
 const REVIEWED_FIELD =
   /^(UnivSchool\[[^\]]+\]\.(Schl_Name|Entc_YM|Grad_YM|Grad_Type_Code)|Award\[[^\]]+\]\.(Award_Name|Award_Inst_Name|Award_Year)|Award\.[Ii]ndex)$/;
 
+/** Edit-page tokens the save echoes back when the live form does not carry them. */
+const DEFAULT_EDIT_TOKENS = { IsEditPage: 'True', IsCompleteSave: 'True', LastEditDateTicks: '' };
+
 /**
  * @typedef {{ name: string; value?: string | number | boolean | null }} FormField
  * @typedef {Parameters<typeof readPlatformSession>[0] &
- *   Parameters<typeof readJobKoreaFormViaBrowser>[0] & { JOBKOREA_RNO?: string }} JobKoreaSyncEnv
+ *   Parameters<typeof withJobKoreaEditor>[0] & { JOBKOREA_RNO?: string }} JobKoreaSyncEnv
  * @typedef {Parameters<typeof buildJobKoreaFormData>[0] &
  *   Parameters<typeof assertJobKoreaCareerPayloadCoverage>[0]} JobKoreaSsot
- * @typedef {Pick<JobKoreaAPIClient, 'fetchEditPageTokens' | 'fetchEditPageBaseFields' | 'saveResume'>} JobKoreaClient
- * @typedef {{
- *   dryRun: boolean;
- *   readBrowserForm?: typeof readJobKoreaFormViaBrowser;
- *   createClient?: (options: { cookieString: string; rNo: string; userAgent: string }) => JobKoreaClient;
- * }} JobKoreaSyncOptions
+ * @typedef {{ dryRun: boolean; withEditor?: typeof withJobKoreaEditor }} JobKoreaSyncOptions
+ * @typedef {{ platform: 'jobkorea'; success: boolean; dryRun: boolean; error?: string; code?: string; [key: string]: unknown }} JobKoreaSyncResult
  */
-
-/**
- * @param {{ cookieString: string; rNo: string; userAgent: string }} options
- * @returns {JobKoreaClient}
- */
-function createJobKoreaClient(options) {
-  return new JobKoreaAPIClient(options);
-}
-
-/**
- * The save echoes the edit-page tokens; values from the live form win over the page scrape.
- * @param {{ IsEditPage: string; IsCompleteSave: string; LastEditDateTicks: string }} tokens
- * @param {FormField[]} baseFields
- */
-function withFormTokens(tokens, baseFields) {
-  /** @param {string} name */
-  const formValue = (name) => String(baseFields.find((field) => field.name === name)?.value ?? '');
-  return {
-    ...tokens,
-    IsEditPage: formValue('IsEditPage') || tokens.IsEditPage,
-    LastEditDateTicks: formValue('LastEditDateTicks') || tokens.LastEditDateTicks,
-  };
-}
 
 /**
  * Education and award fields whose value the save would change, for review.
@@ -71,25 +45,35 @@ export function describeReviewedChanges(baseFields, mergedFields) {
 }
 
 /**
- * Sync the SSoT resume to the JobKorea resume (JOBKOREA_RNO) with the KV
- * `auth:jobkorea` session: preserve the live form, overlay SSoT sections, save.
+ * @param {string} text
+ * @returns {{ IsSuccess?: boolean; ErrorMessage?: string } | null}
+ */
+function parseSaveResult(text) {
+  try {
+    return JSON.parse(text)?.saveResult ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Sync the SSoT resume to the JobKorea resume (JOBKOREA_RNO) inside the Browser
+ * Rendering editor with the KV `auth:jobkorea` session: keep the live form, overlay
+ * the SSoT sections, and save from the editor page.
  * @param {JobKoreaSyncEnv} env
  * @param {JobKoreaSsot} ssot
  * @param {JobKoreaSyncOptions} options
- * @returns {Promise<{ platform: 'jobkorea'; success: boolean; dryRun: boolean; error?: string; [key: string]: unknown }>}
+ * @returns {Promise<JobKoreaSyncResult>}
  */
 export async function syncJobKoreaFromSsot(env, ssot, options) {
-  const {
-    dryRun,
-    readBrowserForm = readJobKoreaFormViaBrowser,
-    createClient = createJobKoreaClient,
-  } = options;
+  const { dryRun, withEditor = withJobKoreaEditor } = options;
   const cookieString = await readPlatformSession(env, 'jobkorea');
   if (!cookieString) {
     return {
       platform: 'jobkorea',
       success: false,
       dryRun,
+      code: JOBKOREA_SESSION_EXPIRED,
       error:
         'No JobKorea session in KV (auth:jobkorea); mint one with POST /job/api/jobkorea/refresh-session',
     };
@@ -104,53 +88,45 @@ export async function syncJobKoreaFromSsot(env, ssot, options) {
     };
   }
 
-  const client = createClient({ cookieString, rNo, userAgent: DEFAULT_USER_AGENT });
-  const pageTokens = await client.fetchEditPageTokens();
-  /** @type {Array<{ name: string; value: string }>} */
-  let rawFields = [];
-  let rawFieldsError = '';
-  try {
-    rawFields = await client.fetchEditPageBaseFields();
-  } catch (error) {
-    rawFieldsError = error instanceof Error ? error.message : String(error);
-  }
-  const browserFields = await readBrowserForm(env, { cookieString, rNo });
-  if (browserFields.length === 0) {
-    return {
-      platform: 'jobkorea',
-      success: false,
-      dryRun,
-      error:
-        'JobKorea resume form was empty in the browser; refusing to save without the live form',
-      ...(rawFieldsError ? { rawFieldsError } : {}),
-    };
-  }
-  const baseFields = mergeBaseFields(rawFields, browserFields);
-  const tokens = withFormTokens(pageTokens, baseFields);
-  const targetFields = buildJobKoreaFormData(ssot, deriveJobKoreaSectionIndices(baseFields)).map(
-    ({ name, value }) => ({ name: String(name), value })
-  );
-  const mergedFields = smartMergeFields(baseFields, targetFields, tokens);
-  assertJobKoreaCareerPayloadCoverage(ssot, mergedFields, { dryRun });
+  return withEditor(env, { cookieString, rNo }, async (editor) => {
+    if (editor.fields.length === 0) {
+      return {
+        platform: 'jobkorea',
+        success: false,
+        dryRun,
+        error: 'JobKorea resume form was empty; refusing to save without the live form',
+      };
+    }
+    const targetFields = buildJobKoreaFormData(
+      ssot,
+      deriveJobKoreaSectionIndices(editor.fields)
+    ).map(({ name, value }) => ({ name: String(name), value }));
+    const mergedFields = smartMergeFields(editor.fields, targetFields, {
+      ...DEFAULT_EDIT_TOKENS,
+      ...editor.tokens,
+    });
+    assertJobKoreaCareerPayloadCoverage(ssot, mergedFields, { dryRun });
 
-  const summary = {
-    rawFieldCount: rawFields.length,
-    ...(rawFieldsError ? { rawFieldsError } : {}),
-    browserFieldCount: browserFields.length,
-    mergedFieldCount: mergedFields.length,
-    changes: describeReviewedChanges(baseFields, mergedFields),
-  };
-  if (dryRun) return { platform: 'jobkorea', success: true, dryRun: true, ...summary };
-
-  const saved = await client.saveResume(targetFields, { tokens, baseFields });
-  if (!saved.success) {
-    return {
-      platform: 'jobkorea',
-      success: false,
-      dryRun: false,
-      error: saved.result?.saveResult?.ErrorMessage || 'JobKorea rejected the resume save',
-      ...summary,
+    const summary = {
+      formFieldCount: editor.fields.length,
+      mergedFieldCount: mergedFields.length,
+      changes: describeReviewedChanges(editor.fields, mergedFields),
     };
-  }
-  return { platform: 'jobkorea', success: true, dryRun: false, ...summary };
+    if (dryRun) return { platform: 'jobkorea', success: true, dryRun: true, ...summary };
+
+    const response = await editor.save(buildSavePayload(mergedFields));
+    const saveResult = parseSaveResult(response.text);
+    if (saveResult?.IsSuccess !== true) {
+      return {
+        platform: 'jobkorea',
+        success: false,
+        dryRun: false,
+        error:
+          saveResult?.ErrorMessage ||
+          `JobKorea did not confirm the save (status=${response.status}): ${response.text.slice(0, 160)}`,
+        ...summary,
+      };
+    }
+    return { platform: 'jobkorea', success: true, dryRun: false, ...summary };
+  });
 }

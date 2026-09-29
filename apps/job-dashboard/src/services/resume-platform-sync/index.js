@@ -1,4 +1,5 @@
 import { syncJobKoreaFromSsot } from './jobkorea.js';
+export { JOBKOREA_SESSION_EXPIRED } from './jobkorea-editor.js';
 import { syncWantedFromSsot } from './wanted.js';
 
 /** Platforms whose resume sync runs inside the Worker. */
@@ -13,8 +14,17 @@ const UNSUPPORTED_REASONS = {
 /**
  * @typedef {Parameters<typeof syncWantedFromSsot>[0] & Parameters<typeof syncJobKoreaFromSsot>[0]} ResumePlatformSyncEnv
  * @typedef {Parameters<typeof syncWantedFromSsot>[1] & Parameters<typeof syncJobKoreaFromSsot>[1]} ResumePlatformSsot
- * @typedef {{ platform: string; success: boolean; dryRun?: boolean; error?: string; [key: string]: unknown }} PlatformSyncOutcome
+ * @typedef {{ platform: string; success: boolean; dryRun?: boolean; error?: string; code?: string; [key: string]: unknown }} PlatformSyncOutcome
  */
+
+/**
+ * @param {unknown} error
+ * @returns {string | undefined}
+ */
+function errorCode(error) {
+  const code = /** @type {{ code?: unknown } | null | undefined} */ (error)?.code;
+  return typeof code === 'string' ? code : undefined;
+}
 
 /**
  * Run one platform's resume sync. Never throws: failures come back as
@@ -35,6 +45,7 @@ export async function syncResumePlatform(env, platform, ssot, options) {
       success: false,
       dryRun: options.dryRun,
       error: error instanceof Error ? error.message : String(error),
+      ...(errorCode(error) ? { code: errorCode(error) } : {}),
     };
   }
   return {

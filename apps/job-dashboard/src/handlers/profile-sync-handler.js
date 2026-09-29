@@ -1,9 +1,11 @@
 import { BaseHandler } from './base-handler.js';
 import { normalizeError } from '@resume/shared/errors';
 import {
+  JOBKOREA_SESSION_EXPIRED,
   RESUME_SYNC_PLATFORMS,
   syncResumePlatform,
 } from '../services/resume-platform-sync/index.js';
+import { refreshJobKoreaSession } from './jobkorea/mint-session.js';
 import {
   getProfileSyncStatusResponse,
   updateProfileSyncStatusResponse,
@@ -24,6 +26,7 @@ import {
  * @typedef {{
  *   JOB_DB?: ProfileSyncDb;
  * } & import('../services/resume-platform-sync/index.js').ResumePlatformSyncEnv &
+ *   Parameters<typeof refreshJobKoreaSession>[0] &
  *   import('../services/notifications.js').NotificationEnv} ProfileSyncEnv
  */
 
@@ -43,6 +46,9 @@ import {
 export class ProfileSyncHandler extends BaseHandler {
   /** Platform sync entry point; tests replace it to avoid live platform calls. */
   syncPlatform = syncResumePlatform;
+
+  /** JobKorea session mint (Browser Rendering login); tests replace it. */
+  refreshJobKoreaSession = refreshJobKoreaSession;
 
   /**
    * Sync the master resume (JOB_DB `resumes`) to job platforms inside the Worker,
@@ -113,10 +119,18 @@ export class ProfileSyncHandler extends BaseHandler {
       /** @type {Record<string, import('../services/resume-platform-sync/index.js').PlatformSyncOutcome>} */
       const results = {};
       for (const platform of platforms) {
-        results[platform] = await this.syncPlatform(this.env, platform, ssotData, {
-          dryRun,
-          targetResumeId,
-        });
+        const options = { dryRun, targetResumeId };
+        let result = await this.syncPlatform(this.env, platform, ssotData, options);
+        if (result.code === JOBKOREA_SESSION_EXPIRED) {
+          const refreshed = await this.refreshJobKoreaSession(this.env);
+          result = refreshed.ok
+            ? await this.syncPlatform(this.env, platform, ssotData, options)
+            : {
+                ...result,
+                error: `${result.error}; JobKorea session refresh failed: ${refreshed.error}`,
+              };
+        }
+        results[platform] = result;
       }
 
       const success = Object.values(results).every((result) => result.success);
