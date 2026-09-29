@@ -6,6 +6,15 @@ const JOBKOREA_RESUME_SAVE_PATH = '/User/Resume/Save';
 const RESUME_FORM_SELECTOR = '#frm1';
 const FORM_WAIT_TIMEOUT_MS = 20_000;
 const EDIT_TOKEN_NAMES = ['IsEditPage', 'LastEditDateTicks'];
+/** Sections the SSoT sync fills; JobKorea ignores rows of a section not added to the resume. */
+const SYNCED_SECTION_IDS = [
+  'InputStat_CareerInputStat',
+  'InputStat_LicenseInputStat',
+  'InputStat_AwardInputStat',
+  'InputStat_SchoolInputStat',
+];
+const SECTION_ADD_LABEL = '필드추가';
+const SECTION_ACTIVATION_TIMEOUT_MS = 10_000;
 
 /**
  * @typedef {{ name: string; value: string }} SerializedField
@@ -14,6 +23,7 @@ const EDIT_TOKEN_NAMES = ['IsEditPage', 'LastEditDateTicks'];
  * @typedef {{
  *   fields: SerializedField[];
  *   tokens: Record<string, string>;
+ *   activatedSections: string[];
  *   save(body: string): Promise<JobKoreaSaveResponse>;
  * }} JobKoreaEditor
  */
@@ -96,6 +106,36 @@ export async function withJobKoreaEditor(
           .catch(async () => {
             throw await editorMissingError(page, alerts);
           });
+        const activatedSections = await page.evaluate(
+          (syncIds, addLabel) => {
+            /** @type {string[]} */
+            const clicked = [];
+            for (const syncId of syncIds) {
+              const button = document.querySelector(`button[data-sync_id="${syncId}"]`);
+              if (button instanceof HTMLButtonElement && button.textContent?.trim() === addLabel) {
+                button.click();
+                clicked.push(syncId);
+              }
+            }
+            return clicked;
+          },
+          SYNCED_SECTION_IDS,
+          SECTION_ADD_LABEL
+        );
+        if (activatedSections.length > 0) {
+          await page.waitForFunction(
+            (syncIds, addLabel) =>
+              syncIds.every(
+                (syncId) =>
+                  document
+                    .querySelector(`button[data-sync_id="${syncId}"]`)
+                    ?.textContent?.trim() !== addLabel
+              ),
+            { timeout: SECTION_ACTIVATION_TIMEOUT_MS },
+            activatedSections,
+            SECTION_ADD_LABEL
+          );
+        }
         const { fields, tokens } = await page.evaluate(
           (selector, tokenNames) => {
             const form = document.querySelector(selector);
@@ -120,6 +160,7 @@ export async function withJobKoreaEditor(
         return await fn({
           fields,
           tokens,
+          activatedSections,
           save: (body) =>
             page.evaluate(
               async (path, payload) => {

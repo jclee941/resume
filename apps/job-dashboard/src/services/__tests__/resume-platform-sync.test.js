@@ -58,7 +58,9 @@ function fakeEditor({
   saveText = '{"saveResult":{"IsSuccess":true}}',
 } = {}) {
   const save = mock.fn(async () => ({ status: 200, text: saveText }));
-  const withEditor = mock.fn(async (_env, _session, fn) => fn({ fields, tokens, save }));
+  const withEditor = mock.fn(async (_env, _session, fn) =>
+    fn({ fields, tokens, activatedSections: ['InputStat_AwardInputStat'], save })
+  );
   return { save, withEditor };
 }
 
@@ -72,6 +74,7 @@ describe('Cloudflare-native JobKorea resume sync', () => {
     assert.equal(result.success, true);
     assert.equal(result.dryRun, true);
     assert.deepEqual(result.rows.Award, { live: ['c1'], saved: ['c1', '1_1000'] });
+    assert.deepEqual(result.activatedSections, ['InputStat_AwardInputStat']);
     assert.deepEqual(withEditor.mock.calls[0].arguments[1], {
       cookieString: 'ACNT=1; SES=2',
       rNo: '777',
@@ -184,13 +187,16 @@ function fakeEditorPage({
     waitForSelector: mock.fn(async () => {
       if (!formFound) throw new Error('timeout');
     }),
+    waitForFunction: mock.fn(async () => {}),
     evaluate: mock.fn(async (_fn, first, second) =>
-      Array.isArray(second)
-        ? {
-            fields: [{ name: 'UnivSchool.Index', value: 'c3' }],
-            tokens: { LastEditDateTicks: '638000' },
-          }
-        : { status: 200, text: `saved ${first} ${second}` }
+      Array.isArray(first)
+        ? ['InputStat_AwardInputStat']
+        : Array.isArray(second)
+          ? {
+              fields: [{ name: 'UnivSchool.Index', value: 'c3' }],
+              tokens: { LastEditDateTicks: '638000' },
+            }
+          : { status: 200, text: `saved ${first} ${second}` }
     ),
     url: () => url,
     title: async () => '로그인 | 잡코리아',
@@ -210,6 +216,7 @@ describe('JobKorea editor over Browser Rendering', () => {
       async (editor) => {
         assert.deepEqual(editor.fields, [{ name: 'UnivSchool.Index', value: 'c3' }]);
         assert.deepEqual(editor.tokens, { LastEditDateTicks: '638000' });
+        assert.deepEqual(editor.activatedSections, ['InputStat_AwardInputStat']);
         return editor.save('a=1');
       },
       { withBrowserSession }
@@ -225,6 +232,10 @@ describe('JobKorea editor over Browser Rendering', () => {
       page.goto.mock.calls[0].arguments[0],
       'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=42'
     );
+    assert.deepEqual(page.waitForFunction.mock.calls[0].arguments.slice(2), [
+      ['InputStat_AwardInputStat'],
+      '필드추가',
+    ]);
     assert.equal(page.close.mock.callCount(), 1);
   });
 

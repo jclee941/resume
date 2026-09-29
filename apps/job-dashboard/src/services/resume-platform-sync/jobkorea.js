@@ -153,6 +153,7 @@ export async function syncJobKoreaFromSsot(env, ssot, options) {
       ...editor.tokens,
     });
     const summary = {
+      activatedSections: editor.activatedSections,
       formFieldCount: editor.fields.length,
       mergedFieldCount: mergedFields.length,
       rows: describeReplacedRows(editor.fields, mergedFields),
