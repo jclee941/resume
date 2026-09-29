@@ -83,6 +83,12 @@ function getFilesToRead(baseDir) {
       optional: true,
     },
     {
+      path: path.join(baseDir, 'assets', 'profile-photo.jpg'),
+      encoding: null,
+      name: 'profilePhotoBuffer',
+      optional: true,
+    },
+    {
       path: path.join(
         baseDir,
         '..',
@@ -172,6 +178,7 @@ async function bundleCss(baseDir) {
  * @property {Buffer} ogImageBuffer
  * @property {Buffer} ogImageEnBuffer
  * @property {Buffer} [ogImageJaBuffer]
+ * @property {Buffer} [profilePhotoBuffer]
  * @property {Buffer} [resumePdfBuffer]
  * @property {Buffer} [resumeFullPdfBuffer]
  * @property {string} mainJs

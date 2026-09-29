@@ -23,7 +23,7 @@ portfolio/
 ├── src/styles/          # design tokens and modular CSS
 ├── src/scripts/         # browser bootstrap and feature modules
 ├── sw.js                # asset service worker; never caches HTML
-└── assets/              # static binding, including copied resume PDFs
+└── assets/              # static binding: fonts, icons, copied resume PDFs and photo
 ```
 
 ## WHERE TO LOOK
@@ -45,8 +45,11 @@ portfolio/
   reorder the hash pipeline casually.
 - Keep `/job/*`, queue, scheduled, Workflow, and Durable Object exports compatible
   with `apps/job-dashboard/src/index.js`.
-- Inline normal assets at build time. Only `/resume.pdf` and `/resume-full.pdf`
-  use `env.ASSETS` at runtime.
+- Inline text assets at build time and never inline large base64 images. Binary
+  files live in `assets/`: the resume PDFs are served by the assets binding and
+  `/assets/*` (fonts, icons, profile photo) goes through the Worker to `env.ASSETS`.
+- `assets/profile-photo.jpg` is a byte copy of
+  `packages/data/resumes/master/profile-photo.jpg`; a unit test enforces it.
 - Keep locale intent aligned across source shells and canonical resume data.
 - `sw.js` may cache static assets but must not cache nonce-bearing HTML.
 
@@ -57,7 +60,7 @@ portfolio/
 - Never hardcode design tokens outside `src/styles/variables.css`.
 - Never add light-mode or animation behavior without updating design,
   reduced-motion, and accessibility contracts together.
-- Never add runtime asset fetches outside the documented PDF exception.
+- Never add runtime asset fetches outside the PDF and `/assets/*` routes.
 
 ## COMMANDS
 

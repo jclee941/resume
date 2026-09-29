@@ -20,6 +20,16 @@
   box-shadow: var(--shadow-sm);
 }
 
+.profile-card--photo {
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-card__photo {
+  display: block;
+  border-radius: var(--radius-md);
+}
+
 .profile-card__label {
   color: var(--color-accent-strong);
   font-size: var(--text-xs);

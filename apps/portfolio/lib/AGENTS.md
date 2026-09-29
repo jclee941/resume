@@ -33,7 +33,7 @@ lib/
 - Use `@resume/schemas` or `@resume/shared/validation` at untrusted boundaries.
 - Keep route families explicit about cache, security headers, status codes, and
   `ctx.waitUntil()` telemetry.
-- The PDF routes are the only runtime `env.ASSETS` fetch exception.
+- The PDF and `/assets/*` routes are the only runtime `env.ASSETS` fetch paths.
 
 ## ANTI-PATTERNS
 
