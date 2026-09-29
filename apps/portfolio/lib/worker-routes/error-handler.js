@@ -16,25 +16,7 @@ function generateErrorHandler(opts) {
         tracestate: request.headers.get('tracestate') || undefined,
       }, { immediate: true }));
 
-      ctx.waitUntil((async () => {
-        try {
-          await env.DB.prepare(
-            'INSERT INTO error_logs (message, stack, url, method, status_code, client_ip, country, colo, worker_version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
-          ).bind(
-            err.message || 'Unknown error',
-            err.stack || '',
-            url.pathname,
-            request.method,
-            500,
-            clientIp,
-            request.cf?.country || '',
-            request.cf?.colo || '',
-            '${opts.version}'
-          ).run();
-        } catch (dbErr) {
-          console.error('[D1] Error log INSERT failed:', dbErr.message || dbErr);
-        }
-      })());
+      console.error('[worker ${opts.version}] ' + request.method + ' ' + url.pathname + ' failed:', err && err.stack ? err.stack : err);
 
       return new Response('Internal Server Error', {
         status: 500,

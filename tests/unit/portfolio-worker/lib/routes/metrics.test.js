@@ -1,12 +1,11 @@
 /**
  * @file Unit tests for routes/metrics.js
- * @description Tests for generateMetricsPostRoute, generateMetricsGetRoute, generateMetricsSnapshotRoute
+ * @description Tests for generateMetricsPostRoute, generateMetricsGetRoute
  */
 
 const {
   generateMetricsPostRoute,
   generateMetricsGetRoute,
-  generateMetricsSnapshotRoute,
 } = require('../../../../../apps/portfolio/lib/routes/metrics');
 
 describe('routes/metrics', () => {
@@ -68,44 +67,6 @@ describe('routes/metrics', () => {
     it('sets max-age=60', () => {
       const result = generateMetricsGetRoute();
       expect(result).toContain('max-age=60');
-    });
-  });
-
-  describe('generateMetricsSnapshotRoute', () => {
-    it('returns a string', () => {
-      const result = generateMetricsSnapshotRoute();
-      expect(typeof result).toBe('string');
-    });
-
-    it('contains /api/metrics/snapshot route', () => {
-      const result = generateMetricsSnapshotRoute();
-      expect(result).toContain('/api/metrics/snapshot');
-    });
-
-    it('checks content-type for non-JSON', () => {
-      const result = generateMetricsSnapshotRoute();
-      expect(result).toContain('application/json');
-    });
-
-    it('returns 415 for non-JSON', () => {
-      const result = generateMetricsSnapshotRoute();
-      expect(result).toContain('415');
-    });
-
-    it('calculates snapshot metrics', () => {
-      const result = generateMetricsSnapshotRoute();
-      expect(result).toContain('uptime');
-    });
-
-    it('uses DB.prepare for INSERT', () => {
-      const result = generateMetricsSnapshotRoute();
-      expect(result).toContain('DB');
-      expect(result).toContain('prepare');
-    });
-
-    it('returns snapshot saved status', () => {
-      const result = generateMetricsSnapshotRoute();
-      expect(result).toContain('saved');
     });
   });
 });

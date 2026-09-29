@@ -30,7 +30,6 @@ const {
   generateCspViolationRoute,
   generateMetricsPostRoute,
   generateMetricsGetRoute,
-  generateMetricsSnapshotRoute,
 } = require('./routes');
 
 /**
@@ -116,7 +115,6 @@ function buildWorkerCode(options) {
     generateCspViolationRoute() +
     generateMetricsPostRoute() +
     generateMetricsGetRoute() +
-    generateMetricsSnapshotRoute() +
     generateSeoRoutes() +
     generateFaviconRedirect() +
     generate404() +

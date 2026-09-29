@@ -48,7 +48,6 @@ jest.mock('../../../../apps/portfolio/lib/routes', () => ({
   generateCspViolationRoute: jest.fn(() => '/* csp-violation-route */\n'),
   generateMetricsPostRoute: jest.fn(() => '/* metrics-post-route */\n'),
   generateMetricsGetRoute: jest.fn(() => '/* metrics-get-route */\n'),
-  generateMetricsSnapshotRoute: jest.fn(() => '/* metrics-snapshot-route */\n'),
 }));
 
 const fs = require('fs');
@@ -113,7 +112,6 @@ describe('worker-writer', () => {
       expect(result).toContain('/* csp-violation-route */');
       expect(result).toContain('/* metrics-post-route */');
       expect(result).toContain('/* metrics-get-route */');
-      expect(result).toContain('/* metrics-snapshot-route */');
       expect(result).toContain('/* seo-routes */');
       expect(result).toContain('/* 404 */');
       expect(result).toContain('/* error-handler */');
@@ -236,7 +234,6 @@ describe('worker-writer', () => {
       expect(routes.generateMetricsGetRoute).toHaveBeenCalledTimes(1);
       expect(routes.generateMetricsPostRoute).toHaveBeenCalledTimes(1);
       expect(routes.generateMetricsGetRoute).toHaveBeenCalledTimes(1);
-      expect(routes.generateMetricsSnapshotRoute).toHaveBeenCalledTimes(1);
     });
   });
 
