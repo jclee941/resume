@@ -183,6 +183,18 @@ describe('ops workflows against the schema.sql database', () => {
     expect(await getConsecutiveFailures(env)).toBe(1);
   });
 
+  test('the failure streak counts consecutive failed runs however far apart they ran', async () => {
+    const db = createD1();
+    const env = { JOB_DB: db };
+    seedHealthDetail(db, '-5 hours');
+    for (const age of ['-3 hours', '-2 hours', '-70 minutes']) seedHealthDetail(db, age, 'down');
+
+    expect(await getConsecutiveFailures(env)).toBe(3);
+
+    seedHealthDetail(db, '-5 minutes');
+    expect(await getConsecutiveFailures(env)).toBe(0);
+  });
+
   test('resume sync history records a run once even when the step retries', async () => {
     const db = createD1();
     const run = {

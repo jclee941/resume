@@ -25,6 +25,7 @@ import { getEscalationLevel } from './evaluation.js';
  * @typedef {Object} HealthD1PreparedStatement
  * @property {(...params: unknown[]) => unknown} bind
  * @property {() => Promise<{ cnt?: number } | null>} first
+ * @property {() => Promise<{ results?: Array<{ status?: string }> }>} all
  */
 
 /**
@@ -119,20 +120,22 @@ function buildHealthMetricBatch({
 }
 
 /**
+ * Count the failed HTTP checks recorded since the last healthy one (capped at 20), so the
+ * streak follows consecutive runs whatever the cron interval is.
  * @param {HealthWorkflowEnv} env
  */
 export async function getConsecutiveFailures(env) {
   try {
-    const row = await env.JOB_DB.prepare(
+    const { results = [] } = await env.JOB_DB.prepare(
       `
-      SELECT COUNT(*) as cnt FROM health_check_details
+      SELECT status FROM health_check_details
       WHERE check_type = 'http'
-      AND status != 'healthy'
-      AND created_at > datetime('now', '-1 hour')
+      ORDER BY id DESC
+      LIMIT 20
     `
-    ).first();
-
-    return row?.cnt || 0;
+    ).all();
+    const lastHealthy = results.findIndex((row) => row.status === 'healthy');
+    return lastHealthy === -1 ? results.length : lastHealthy;
   } catch {
     return 0;
   }
