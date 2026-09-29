@@ -593,12 +593,6 @@ name = "health-check-workflow"
 main = "src/workflows/health-check.js"
 binding = "HEALTH_CHECK_WORKFLOW"
 
-# Backup workflow
-[[workflows]]
-name = "backup-workflow"
-main = "src/workflows/backup.js"
-binding = "BACKUP_WORKFLOW"
-
 # Cleanup workflow
 [[workflows]]
 name = "cleanup-workflow"

@@ -37,7 +37,6 @@ import {
   ResumeSyncWorkflow,
   DailyReportWorkflow,
   HealthCheckWorkflow,
-  BackupWorkflow,
   CleanupWorkflow,
 } from './workflows/index.js';
 import { BrowserSessionDO } from './durable-objects/browser-session-do.js';
@@ -49,7 +48,6 @@ export {
   ResumeSyncWorkflow,
   DailyReportWorkflow,
   HealthCheckWorkflow,
-  BackupWorkflow,
   CleanupWorkflow,
   BrowserSessionDO,
 };

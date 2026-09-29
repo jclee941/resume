@@ -7,7 +7,6 @@ import jobWorker, {
   ResumeSyncWorkflow,
   DailyReportWorkflow,
   HealthCheckWorkflow,
-  BackupWorkflow,
   CleanupWorkflow,
   BrowserSessionDO,
 } from '../job-dashboard/src/index.js';
@@ -37,7 +36,6 @@ export {
   ResumeSyncWorkflow,
   DailyReportWorkflow,
   HealthCheckWorkflow,
-  BackupWorkflow,
   CleanupWorkflow,
   BrowserSessionDO,
 };

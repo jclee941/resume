@@ -1,10 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-// CF-native migration Wave 1 guard: the resume-sync Cron Trigger is declared in two
-// places that must not drift — the RESUME_SYNC_CRON constant in the worker's
-// scheduled() dispatch, and the triggers.crons array in wrangler.jsonc. If they
-// diverge, the scheduled() branch silently never matches and resume-sync never runs.
+// The Cron Triggers are declared in two places that must not drift: the exported
+// *_CRON constants in the worker's scheduled() router, and the production
+// triggers.crons array in wrangler.jsonc. If they diverge, a scheduled() branch
+// silently never matches (or a declared cron is ignored).
 const root = path.join(__dirname, '../..');
 const wranglerRaw = fs.readFileSync(path.join(root, 'wrangler.jsonc'), 'utf8');
 const cronRouterRaw = fs.readFileSync(
@@ -12,36 +12,49 @@ const cronRouterRaw = fs.readFileSync(
   'utf8'
 );
 
-function extractResumeSyncCron(src) {
-  const m = src.match(/RESUME_SYNC_CRON\s*=\s*'([^']+)'/);
-  return m ? m[1] : null;
+function extractCronConstants(src) {
+  return [...src.matchAll(/export const (\w+_CRON)\s*=\s*'([^']+)'/g)].map((m) => ({
+    name: m[1],
+    value: m[2],
+  }));
 }
 
-function cronArrays(src) {
-  return [...src.matchAll(/"crons"\s*:\s*\[([^\]]*)\]/g)].map((m) => m[1]);
+function productionCrons(src) {
+  const match = src.match(/"crons"\s*:\s*\[([^\]]*)\]/);
+  return match ? [...match[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]) : [];
 }
 
-describe('resume-sync cron wiring (CF-native Wave 1)', () => {
-  const resumeSyncCron = extractResumeSyncCron(cronRouterRaw);
-  const crons = cronArrays(wranglerRaw).join(' | ');
+describe('scheduled cron wiring', () => {
+  const constants = extractCronConstants(cronRouterRaw);
+  const constantValues = constants.map((c) => c.value);
+  const declared = productionCrons(wranglerRaw);
 
-  test('index.js declares a RESUME_SYNC_CRON constant', () => {
-    expect(resumeSyncCron).toBeTruthy();
-    expect(resumeSyncCron).toMatch(/^[\d*/, -]+$/);
+  test('cron-router.js exports the resume-sync, health-check and weekly-report crons', () => {
+    expect(constants.map((c) => c.name).sort()).toEqual([
+      'HEALTH_CHECK_CRON',
+      'RESUME_SYNC_CRON',
+      'WEEKLY_REPORT_CRON',
+    ]);
+    for (const value of constantValues) expect(value).toMatch(/^[\d*/, -]+$/);
+    expect(new Set(constantValues).size).toBe(constantValues.length);
   });
 
-  test('wrangler.jsonc declares no cron that scheduled() ignores', () => {
-    const declared = [...crons.matchAll(/"([^"]+)"/g)].map((m) => m[1]);
-    expect(declared).toEqual([resumeSyncCron]);
+  test('every declared production cron has an exported constant', () => {
+    expect(declared.filter((cron) => !constantValues.includes(cron))).toEqual([]);
   });
 
-  test('wrangler.jsonc crons include the resume-sync cron (no drift vs index.js)', () => {
-    expect(crons).toContain(resumeSyncCron);
+  test('every exported cron constant is declared in wrangler.jsonc production crons', () => {
+    expect(constantValues.filter((cron) => !declared.includes(cron))).toEqual([]);
+  });
+
+  test('production crons are unique', () => {
+    expect(new Set(declared).size).toBe(declared.length);
   });
 
   test('the resume-sync branch is guarded and defaults to dryRun', () => {
-    expect(cronRouterRaw).toContain('controller?.cron === RESUME_SYNC_CRON');
+    expect(cronRouterRaw).toContain('cron === RESUME_SYNC_CRON');
     expect(cronRouterRaw).toContain('RESUME_SYNC_WORKFLOW');
     expect(cronRouterRaw).toContain('RESUME_SYNC_CRON_DRY_RUN');
+    expect(cronRouterRaw).toContain("?? 'true'");
   });
 });

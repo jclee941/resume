@@ -25,7 +25,7 @@ function validConfiguration() {
       ELASTICSEARCH_INDEX: 'resume-logs-worker',
     },
     routes: [{ pattern: 'resume.jclee.me', custom_domain: true }],
-    triggers: { crons: ['0 21 * * *'] },
+    triggers: { crons: ['0 21 * * *', '0 * * * *', '0 0 * * 1'] },
     migrations: [{ tag: 'v1', new_classes: ['BrowserSessionDO'] }],
     ai: { binding: 'AI' },
     browser: { binding: 'MYBROWSER' },
@@ -47,7 +47,6 @@ function validConfiguration() {
       ['resume-sync-workflow', 'RESUME_SYNC_WORKFLOW', 'ResumeSyncWorkflow'],
       ['daily-report-workflow', 'DAILY_REPORT_WORKFLOW', 'DailyReportWorkflow'],
       ['health-check-workflow', 'HEALTH_CHECK_WORKFLOW', 'HealthCheckWorkflow'],
-      ['backup-workflow', 'BACKUP_WORKFLOW', 'BackupWorkflow'],
       ['cleanup-workflow', 'CLEANUP_WORKFLOW', 'CleanupWorkflow'],
     ].map(([name, binding, class_name]) => ({ name, binding, class_name })),
     queues: {

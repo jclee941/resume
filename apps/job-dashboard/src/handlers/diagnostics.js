@@ -48,7 +48,6 @@ import {
  *   RESUME_SYNC_WORKFLOW?: import('./diagnostics-probes.js').WorkflowCheckBinding;
  *   DAILY_REPORT_WORKFLOW?: import('./diagnostics-probes.js').WorkflowCheckBinding;
  *   HEALTH_CHECK_WORKFLOW?: import('./diagnostics-probes.js').WorkflowCheckBinding;
- *   BACKUP_WORKFLOW?: import('./diagnostics-probes.js').WorkflowCheckBinding;
  *   CLEANUP_WORKFLOW?: import('./diagnostics-probes.js').WorkflowCheckBinding;
  *   [key: string]: unknown;
  * }} DiagnosticsEnv
@@ -135,7 +134,6 @@ export class DiagnosticsHandler {
       'RESUME_SYNC_WORKFLOW',
       'DAILY_REPORT_WORKFLOW',
       'HEALTH_CHECK_WORKFLOW',
-      'BACKUP_WORKFLOW',
       'CLEANUP_WORKFLOW',
     ];
     for (const name of workflowChecks) {

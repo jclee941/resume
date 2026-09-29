@@ -59,7 +59,6 @@ import { parse, printParseErrorCode } from 'jsonc-parser';
 
 const REQUIRED_WORKFLOWS = [
   ['APPLICATION_WORKFLOW', 'application-workflow', 'ApplicationWorkflow'],
-  ['BACKUP_WORKFLOW', 'backup-workflow', 'BackupWorkflow'],
   ['CLEANUP_WORKFLOW', 'cleanup-workflow', 'CleanupWorkflow'],
   ['DAILY_REPORT_WORKFLOW', 'daily-report-workflow', 'DailyReportWorkflow'],
   ['HEALTH_CHECK_WORKFLOW', 'health-check-workflow', 'HealthCheckWorkflow'],
@@ -153,7 +152,11 @@ export function validateWorkerConfiguration(input) {
     [{ pattern: 'resume.jclee.me', custom_domain: true }],
     'production routes mismatch'
   );
-  assert.deepEqual(config.triggers?.crons, ['0 21 * * *'], 'production cron mismatch');
+  assert.deepEqual(
+    config.triggers?.crons,
+    ['0 21 * * *', '0 * * * *', '0 0 * * 1'],
+    'production cron mismatch'
+  );
   assert.equal(config.ai?.binding, 'AI', 'AI binding missing');
   assert.equal(config.browser?.binding, 'MYBROWSER', 'Browser binding missing');
   requireBindings(config, 'd1_databases', ['DB', 'JOB_DB']);

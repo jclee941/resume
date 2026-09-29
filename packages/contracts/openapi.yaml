@@ -565,6 +565,28 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
 
+  /api/workflows/health-check:
+    post:
+      tags: [Workflows]
+      summary: Trigger health-check Cloudflare Workflow
+      operationId: triggerHealthCheckWorkflow
+      responses:
+        '202':
+          description: Workflow started
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/workflows/cleanup:
+    post:
+      tags: [Workflows]
+      summary: Trigger cleanup Cloudflare Workflow
+      operationId: triggerCleanupWorkflow
+      responses:
+        '202':
+          description: Workflow started
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
   /api/workflows/{workflowType}/{instanceId}:
     get:
       tags: [Workflows]
