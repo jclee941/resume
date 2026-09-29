@@ -765,7 +765,7 @@
       "id": "hycu-fsds-autonomous-driving",
       "name": "HYCU FSDS自律走行",
       "period": "2025.11 ~ 2026.02",
-      "description": "漢陽サイバー大学の2026 自律走行フォーミュラコンテストに出場した課題で、Formula Student Driverless Simulator(FSDS)環境でコーン認識と走行制御を実装しました。ROS2ベースの認識・制御ノードをDockerコンテナにパッケージングし、AirSimシミュレーションで車両ダイナミクスとセンサーモデルをあわせて検証しました。Gazebo-ROSブリッジとrviz2の可視化でセンサー処理を再現しながらデバッグしました。",
+      "description": "2026 自律走行フォーミュラコンテスト優秀賞(漢陽サイバー大学)を受賞しました。Formula Student Driverless Simulator(FSDS)環境でコーン認識と走行制御を実装し、ROS2ベースの認識・制御ノードをDockerコンテナにパッケージングして、AirSimシミュレーションで車両ダイナミクスとセンサーモデルをあわせて検証しました。Gazebo-ROSブリッジとrviz2の可視化でセンサー処理を再現しながらデバッグしました。",
       "technologies": [
         "Python",
         "ROS",

@@ -790,7 +790,7 @@
       "id": "hycu-fsds-autonomous-driving",
       "name": "HYCU FSDS 자율주행",
       "period": "2025.11 ~ 2026.02",
-      "description": "한양사이버대학교 2026 자율주행 포뮬러 경진대회 출전 과제로, Formula Student Driverless Simulator(FSDS) 환경에서 콘 인지와 주행 제어를 구현했습니다. ROS2 기반 인지·제어 노드를 Docker 컨테이너로 패키징하고, AirSim 시뮬레이션에서 차량 동역학과 센서 모델을 함께 검증했습니다. Gazebo-ROS 브릿지와 rviz2 시각화로 센서 처리 과정을 재현하며 디버깅했습니다.",
+      "description": "2026 자율주행 포뮬러 경진대회 우수상(한양사이버대학교)을 수상했습니다. Formula Student Driverless Simulator(FSDS) 환경에서 콘 인지와 주행 제어를 구현하고, ROS2 기반 인지·제어 노드를 Docker 컨테이너로 패키징해 AirSim 시뮬레이션에서 차량 동역학과 센서 모델을 함께 검증했습니다. Gazebo-ROS 브릿지와 rviz2 시각화로 센서 처리 과정을 재현하며 디버깅했습니다.",
       "technologies": [
         "Python",
         "ROS",
