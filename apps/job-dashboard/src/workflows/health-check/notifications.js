@@ -46,7 +46,7 @@ const ESCALATION_EMOJI = {
  * @returns {Promise<{ notified: boolean; escalationLevel: EscalationLevel; consecutiveFailures: number }>}
  */
 export async function notifyHealthFailure(workflow, healthEvaluation, startedAt) {
-  const consecutiveFailures = await workflow.getConsecutiveFailures();
+  const consecutiveFailures = (await workflow.getConsecutiveFailures()) + 1;
   const escalationLevel = getEscalationLevel(consecutiveFailures);
   const message = buildHealthFailureMessage({
     healthEvaluation,
@@ -57,7 +57,7 @@ export async function notifyHealthFailure(workflow, healthEvaluation, startedAt)
 
   await sendTelegramNotification(workflow.env, message);
 
-  return { notified: true, escalationLevel, consecutiveFailures: consecutiveFailures + 1 };
+  return { notified: true, escalationLevel, consecutiveFailures };
 }
 
 /**

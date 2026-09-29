@@ -50,6 +50,7 @@ describe('ops workflows against the schema.sql database', () => {
   let getPlatformStats;
   let logHealthMetrics;
   let getConsecutiveFailures;
+  let notifyHealthFailure;
   let QueueWorkflowDispatcher;
   let recordSyncHistory;
 
@@ -69,6 +70,9 @@ describe('ops workflows against the schema.sql database', () => {
     ({ getPlatformStats } = await import(path.join(src, 'workflows/daily-report-stats.js')));
     ({ logHealthMetrics, getConsecutiveFailures } = await import(
       path.join(src, 'workflows/health-check/metrics.js')
+    ));
+    ({ notifyHealthFailure } = await import(
+      path.join(src, 'workflows/health-check/notifications.js')
     ));
     ({ recordSyncHistory } = await import(path.join(src, 'workflows/resume-sync-steps.js')));
     ({ QueueWorkflowDispatcher } = await import(
@@ -183,16 +187,65 @@ describe('ops workflows against the schema.sql database', () => {
     expect(await getConsecutiveFailures(env)).toBe(1);
   });
 
-  test('the failure streak counts consecutive failed runs however far apart they ran', async () => {
-    const db = createD1();
-    const env = { JOB_DB: db };
-    seedHealthDetail(db, '-5 hours');
-    for (const age of ['-3 hours', '-2 hours', '-70 minutes']) seedHealthDetail(db, age, 'down');
+  test('the failure streak counts runs, not service rows, in any service order', async () => {
+    const service = (url, healthy) => ({
+      url,
+      status: healthy ? 200 : 503,
+      latencyMs: 20,
+      healthy,
+    });
+    const run = (first, second) => ({
+      overallHealth: first && second ? 'healthy' : 'critical',
+      services: [
+        service('https://resume.jclee.me/health', first),
+        service('https://resume.jclee.me/job/health', second),
+      ],
+      bindings: { d1: { healthy: true, latencyMs: 3 }, kv: { healthy: true, latencyMs: 2 } },
+    });
+    for (const [first, second] of [
+      [false, true],
+      [true, false],
+      [false, false],
+    ]) {
+      const env = { JOB_DB: createD1() };
+      const workflow = { env, getConsecutiveFailures: () => getConsecutiveFailures(env) };
+      const streaks = [];
+      for (let i = 0; i < 3; i += 1) {
+        const logged = await logHealthMetrics(workflow, run(first, second));
+        streaks.push([logged.consecutiveFailures, await getConsecutiveFailures(env)]);
+      }
+      expect(streaks).toEqual([
+        [1, 1],
+        [2, 2],
+        [3, 3],
+      ]);
+      expect((await logHealthMetrics(workflow, run(true, true))).consecutiveFailures).toBe(0);
+      expect(await getConsecutiveFailures(env)).toBe(0);
+      expect((await logHealthMetrics(workflow, run(first, second))).consecutiveFailures).toBe(1);
+    }
+  });
 
-    expect(await getConsecutiveFailures(env)).toBe(3);
-
-    seedHealthDetail(db, '-5 minutes');
-    expect(await getConsecutiveFailures(env)).toBe(0);
+  test('the failure notification escalates on the run it reports', async () => {
+    const env = { JOB_DB: createD1() };
+    const workflow = { env, getConsecutiveFailures: () => getConsecutiveFailures(env) };
+    const failed = {
+      overallHealth: 'critical',
+      services: [
+        { url: 'https://resume.jclee.me/health', status: 503, latencyMs: 20, healthy: false },
+      ],
+      bindings: { d1: { healthy: true, latencyMs: 3 }, kv: { healthy: true, latencyMs: 2 } },
+    };
+    const levels = [];
+    for (let i = 0; i < 3; i += 1) {
+      const notice = await notifyHealthFailure(workflow, failed, new Date().toISOString());
+      levels.push([notice.consecutiveFailures, notice.escalationLevel]);
+      await logHealthMetrics(workflow, failed);
+    }
+    expect(levels).toEqual([
+      [1, 'warning'],
+      [2, 'warning'],
+      [3, 'critical'],
+    ]);
   });
 
   test('resume sync history records a run once even when the step retries', async () => {
