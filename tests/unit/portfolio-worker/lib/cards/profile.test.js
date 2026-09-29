@@ -14,7 +14,9 @@ describe('cards/profile generateProfileBento', () => {
       { name: 'Korean', level: 'Native' },
       { name: 'English', level: 'Working proficiency' },
     ],
-    awards: [{ name: '자율주행 경진대회 우수상', organization: '한양사이버대학교', year: '2026' }],
+    awards: [
+      { name: '자율주행 포뮬레이션 공모전 우수상', organization: '한양사이버대학교', year: '2026' },
+    ],
     ossContributions: [{ name: 'resume-portfolio', url: 'https://github.com/jclee941/resume' }],
     military: { status: '사회복무요원', period: '2014.12 - 2016.12' },
   };
@@ -49,9 +51,21 @@ describe('cards/profile generateProfileBento', () => {
     const html = generateProfileBento(full);
     expect(html).toContain('한양사이버대학교');
     expect(html).toContain('Korean');
-    expect(html).toContain('자율주행 경진대회 우수상');
+    expect(html).toContain('자율주행 포뮬레이션 공모전 우수상');
     expect(html).toContain('resume-portfolio');
     expect(html).toContain('사회복무요원');
+  });
+
+  it('shows the expected graduation month after the start month', () => {
+    const html = generateProfileBento({
+      education: {
+        school: '한양사이버대학교',
+        status: '졸업 예정',
+        startDate: '2024.03',
+        endDate: '2027.02',
+      },
+    });
+    expect(html).toContain('(졸업 예정) 2024.03 ~ 2027.02');
   });
 
   it('links OSS contributions with safe https url + noopener', () => {
