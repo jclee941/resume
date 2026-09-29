@@ -337,14 +337,26 @@ describe('JobKorea API payload helpers', () => {
     ]);
   });
 
-  it('derives existing single-entry school keys regardless of index casing', () => {
-    assert.deepStrictEqual(
-      deriveJobKoreaSectionIndices([
+  it('derives school keys and stored-then-new row keys for replaced sections', () => {
+    const indices = deriveJobKoreaSectionIndices(
+      [
         { name: 'UnivSchool.Index', value: 'c3' },
         { name: 'HighSchool.index', value: 'c7,c8' },
-      ]),
-      { school: 'c3', highSchool: 'c7' }
+        { name: 'Career.index', value: 'c14,c844' },
+        { name: 'Award.index', value: '1_1790657372229' },
+      ],
+      1000
     );
-    assert.deepStrictEqual(deriveJobKoreaSectionIndices([]), {});
+
+    assert.strictEqual(indices.school, 'c3');
+    assert.strictEqual(indices.highSchool, 'c7');
+    assert.deepStrictEqual(indices.career.slice(0, 3), ['c14', 'c844', '1_1000']);
+    assert.deepStrictEqual(indices.license.slice(0, 1), ['1_1000']);
+    assert.deepStrictEqual(indices.award.slice(0, 2), ['1_1000', '2_1001']);
+    assert.deepStrictEqual(Object.keys(deriveJobKoreaSectionIndices([], 5)).sort(), [
+      'award',
+      'career',
+      'license',
+    ]);
   });
 });

@@ -67,10 +67,11 @@ describe('Cloudflare-native JobKorea resume sync', () => {
     const env = await envWithSessions({ jobkorea: 'ACNT=1; SES=2' }, { JOBKOREA_RNO: '777' });
     const { save, withEditor } = fakeEditor();
 
-    const result = await syncJobKoreaFromSsot(env, SSOT, { dryRun: true, withEditor });
+    const result = await syncJobKoreaFromSsot(env, SSOT, { dryRun: true, withEditor, now: 1000 });
 
     assert.equal(result.success, true);
     assert.equal(result.dryRun, true);
+    assert.deepEqual(result.rows.Award, { live: ['c1'], saved: ['c1', '1_1000'] });
     assert.deepEqual(withEditor.mock.calls[0].arguments[1], {
       cookieString: 'ACNT=1; SES=2',
       rNo: '777',
@@ -82,7 +83,10 @@ describe('Cloudflare-native JobKorea resume sync', () => {
       '자율주행 경진대회 우수상',
       '2026 HYCU AI학습법 공모전 장려상',
     ]);
-    assert.deepEqual(changes['Award[c2].Award_Name'], [null, '자율주행 포뮬레이션 공모전 우수상']);
+    assert.deepEqual(changes['Award[1_1000].Award_Name'], [
+      null,
+      '자율주행 포뮬레이션 공모전 우수상',
+    ]);
     assert.equal(save.mock.callCount(), 0);
   });
 
@@ -98,6 +102,27 @@ describe('Cloudflare-native JobKorea resume sync', () => {
     assert.equal(body.get('UnivSchool[c3].Grad_YM'), '202702');
     assert.equal(body.get('UnivSchool[c3].Grade'), '4.0');
     assert.equal(body.get('LastEditDateTicks'), '638000');
+  });
+
+  it('refuses a save that would drop live fields from a replaced row', async () => {
+    const env = await envWithSessions({ jobkorea: 'ACNT=1' }, { JOBKOREA_RNO: '777' });
+    const liveCareer = Array.from({ length: 80 }, (_, i) => ({
+      name: `Career[c14].Field${i}`,
+      value: 'kept',
+    }));
+    const { save, withEditor } = fakeEditor({
+      fields: [...LIVE_FORM, { name: 'Career.index', value: 'c14' }, ...liveCareer],
+    });
+    const ssot = {
+      ...SSOT,
+      careers: [{ company: 'Example', period: '2020.01 ~ 2021.01', role: 'Engineer' }],
+    };
+
+    const result = await syncJobKoreaFromSsot(env, ssot, { dryRun: false, withEditor, now: 1000 });
+
+    assert.equal(result.success, false);
+    assert.match(result.error, /would lose live fields in the save: Career\[c14\]/);
+    assert.equal(save.mock.callCount(), 0);
   });
 
   it('reports the message JobKorea returns when it rejects the save', async () => {
