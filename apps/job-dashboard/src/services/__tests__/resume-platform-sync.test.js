@@ -51,6 +51,8 @@ const LIVE_FORM = [
   { name: 'Award.Index', value: 'c1' },
   { name: 'InputStat.AwardInputStat', value: 'False' },
   { name: 'Award[c1].Award_Name', value: '자율주행 경진대회 우수상' },
+  { name: 'UserResume.Career_Type_Code', value: '2' },
+  { name: 'UserResume.User_Name', value: 'Tester' },
 ];
 
 const SECTIONS = [
@@ -65,10 +67,11 @@ function fakeEditor({
   fields = LIVE_FORM,
   tokens = { LastEditDateTicks: '638000' },
   saveText = '{"saveResult":{"IsSuccess":true}}',
+  dialogs = [],
 } = {}) {
   const save = mock.fn(async () => ({ status: 200, text: saveText }));
   const withEditor = mock.fn(async (_env, _session, fn) =>
-    fn({ fields, tokens, sections: SECTIONS, dialogs: [], save })
+    fn({ fields, tokens, sections: SECTIONS, dialogs, save })
   );
   return { save, withEditor };
 }
@@ -86,6 +89,8 @@ describe('Cloudflare-native JobKorea resume sync', () => {
     assert.deepEqual(result.sections, SECTIONS);
     assert.deepEqual(result.inputStat, { 'InputStat.AwardInputStat': 'False' });
     assert.deepEqual(result.liveRowFields.Award, ['Award_Name']);
+    assert.deepEqual(result.liveAwards, ['자율주행 경진대회 우수상']);
+    assert.deepEqual(result.formSettings, { 'UserResume.Career_Type_Code': '2' });
     assert.deepEqual(withEditor.mock.calls[0].arguments[1], {
       cookieString: 'ACNT=1; SES=2',
       rNo: '777',
@@ -141,6 +146,17 @@ describe('Cloudflare-native JobKorea resume sync', () => {
     assert.equal(save.mock.callCount(), 0);
   });
 
+  it('refuses to save when JobKorea showed a dialog while the form was prepared', async () => {
+    const env = await envWithSessions({ jobkorea: 'ACNT=1' }, { JOBKOREA_RNO: '777' });
+    const { save, withEditor } = fakeEditor({ dialogs: ['경력을 삭제하시겠습니까?'] });
+
+    const result = await syncJobKoreaFromSsot(env, SSOT, { dryRun: false, withEditor });
+
+    assert.equal(result.success, false);
+    assert.match(result.error, /refusing to save: 경력을 삭제하시겠습니까\?/);
+    assert.equal(save.mock.callCount(), 0);
+  });
+
   it('reports the message JobKorea returns when it rejects the save', async () => {
     const env = await envWithSessions({ jobkorea: 'ACNT=1' }, { JOBKOREA_RNO: '777' });
     const { withEditor } = fakeEditor({
@@ -190,13 +206,19 @@ function fakeEditorPage({
 } = {}) {
   let sectionReads = 0;
   let onDialog = () => {};
+  const clicked = [];
+  const dialog = {
+    message: () => alert,
+    dismiss: mock.fn(async () => {}),
+    accept: mock.fn(async () => {}),
+  };
   const page = {
     on: mock.fn((event, handler) => {
       if (event === 'dialog') onDialog = handler;
     }),
     setCookie: mock.fn(async () => {}),
     goto: mock.fn(async () => {
-      if (alert) onDialog({ message: () => alert, dismiss: async () => {} });
+      if (alert) onDialog(dialog);
     }),
     waitForSelector: mock.fn(async () => {
       if (!formFound) throw new Error('timeout');
@@ -206,14 +228,18 @@ function fakeEditorPage({
       if (Array.isArray(first) && second === undefined) {
         sectionReads += 1;
         return [
+          { syncId: 'InputStat_CareerInputStat', flag: 'True', label: '필드추가' },
           {
             syncId: 'InputStat_AwardInputStat',
             flag: sectionReads === 1 ? 'False' : 'True',
-            label: sectionReads === 1 ? '필드추가' : '필드삭제',
+            label: '필드추가',
           },
         ];
       }
-      if (Array.isArray(first)) return undefined;
+      if (Array.isArray(first)) {
+        clicked.push(...first);
+        return undefined;
+      }
       if (Array.isArray(second)) {
         return {
           fields: [{ name: 'UnivSchool.Index', value: 'c3' }],
@@ -227,12 +253,12 @@ function fakeEditorPage({
     close: mock.fn(async () => {}),
   };
   const withBrowserSession = mock.fn(async (_env, fn) => fn({ newPage: async () => page }));
-  return { page, withBrowserSession };
+  return { page, withBrowserSession, clicked, dialog };
 }
 
 describe('JobKorea editor over Browser Rendering', () => {
   it('opens the editor with jobkorea.co.kr cookies, reads the form, and saves from the page', async () => {
-    const { page, withBrowserSession } = fakeEditorPage();
+    const { page, withBrowserSession, clicked } = fakeEditorPage();
 
     const outcome = await withJobKoreaEditor(
       {},
@@ -242,9 +268,14 @@ describe('JobKorea editor over Browser Rendering', () => {
         assert.deepEqual(editor.tokens, { LastEditDateTicks: '638000' });
         assert.deepEqual(editor.sections, [
           {
+            syncId: 'InputStat_CareerInputStat',
+            before: { syncId: 'InputStat_CareerInputStat', flag: 'True', label: '필드추가' },
+            after: { syncId: 'InputStat_CareerInputStat', flag: 'True', label: '필드추가' },
+          },
+          {
             syncId: 'InputStat_AwardInputStat',
             before: { syncId: 'InputStat_AwardInputStat', flag: 'False', label: '필드추가' },
-            after: { syncId: 'InputStat_AwardInputStat', flag: 'True', label: '필드삭제' },
+            after: { syncId: 'InputStat_AwardInputStat', flag: 'True', label: '필드추가' },
           },
         ]);
         return editor.save('a=1');
@@ -262,11 +293,26 @@ describe('JobKorea editor over Browser Rendering', () => {
       page.goto.mock.calls[0].arguments[0],
       'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=42'
     );
+    assert.deepEqual(clicked, ['InputStat_AwardInputStat']);
     assert.deepEqual(page.waitForFunction.mock.calls[0].arguments.slice(2), [
       ['InputStat_AwardInputStat'],
-      '필드추가',
     ]);
     assert.equal(page.close.mock.callCount(), 1);
+  });
+
+  it('dismisses every dialog, including JobKorea delete confirmations', async () => {
+    const { withBrowserSession, dialog } = fakeEditorPage({ alert: '경력을 삭제하시겠습니까?' });
+
+    const dialogs = await withJobKoreaEditor(
+      {},
+      { cookieString: 'A=1', rNo: '42' },
+      async (editor) => editor.dialogs,
+      { withBrowserSession }
+    );
+
+    assert.deepEqual(dialogs, ['경력을 삭제하시겠습니까?']);
+    assert.equal(dialog.dismiss.mock.callCount(), 1);
+    assert.equal(dialog.accept.mock.callCount(), 0);
   });
 
   it('flags an expired session from the JobKorea alert when the form never appears', async () => {
