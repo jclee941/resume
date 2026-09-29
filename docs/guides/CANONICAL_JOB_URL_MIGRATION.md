@@ -1,39 +1,24 @@
 # Canonical Job URL Migration
 
-## Rollout Order
+## Current State
 
-Apply `infrastructure/database/migrations/0009_add_canonical_job_urls.sql` to
-the target D1 database before deploying a Worker release that
-writes canonical job URLs. Verify that the migration runner records `0009`,
-then deploy the application release and resume job ingestion or auto-apply
-runs.
-
-This order prevents writes from reaching a database that lacks
-`applications.canonical_url` or `job_search_results.canonical_url`.
-
-## Migration Inventory
-
-Migration `0009_add_canonical_job_urls` makes these changes:
-
-| Object               | Change                                                                                                    |
-| -------------------- | --------------------------------------------------------------------------------------------------------- |
-| `applications`       | Adds nullable `canonical_url` for the credential- and tracking-free job URL.                              |
-| `job_search_results` | Creates the discovery-results table when absent, or adds nullable `canonical_url` to its existing schema. |
+Production `JOB_DB` (`job-dashboard-db`) received the nullable
+`applications.canonical_url` and `job_search_results.canonical_url` columns on
+2026-09-29 through `apps/job-dashboard/migrations/0004_health_check_details_and_canonical_urls.sql`,
+recorded in Wrangler's `d1_migrations` table. Fresh databases get both columns
+from `apps/job-dashboard/schema.sql`.
 
 Canonical URLs are generated from HTTP(S) source URLs. Fragments, URL user
 credentials, tracking parameters, and credential-bearing query parameters are
 not persisted in `canonical_url`; the raw `source_url` remains available for
 the original navigation target.
 
-## Rollback
+## Changing the Columns
 
-Stop job ingestion and application writers before applying
-`0009_add_canonical_job_urls.down.sql`. The down migration removes only the
-two `canonical_url` columns and preserves `job_search_results` with its rows.
-
-The static D1 migration cannot safely determine whether 0009 created
-`job_search_results` or inherited it from an earlier schema, so rollback never
-drops that table. After the down migration, deploy or revert to an application
-release that does not write canonical URL columns. The auto-apply helper's
-pre-0009 fallback is only a temporary compatibility path for its metadata
-probe; other application write paths require the migration.
+Create a new migration with `npx wrangler d1 migrations create job-dashboard-db <name>`,
+mirror the end state in `apps/job-dashboard/schema.sql` (the D1 schema contract
+test compiles every Worker SQL statement against it), and apply it with
+`npx wrangler d1 migrations apply job-dashboard-db --remote` before deploying a
+Worker release that depends on the change. To drop the columns, stop the
+application and job-ingestion writers first; the auto-apply recorder still falls
+back to a pre-canonical insert when the column is missing.

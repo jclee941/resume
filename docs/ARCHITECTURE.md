@@ -53,7 +53,7 @@ resume Worker (apps/portfolio/entry.js)
   └── scheduled() ← Cron Triggers (0 21, 0 23 UTC)
         │
         ▼
-Workflows · Queues · D1 (DB, JOB_DB) · KV (SESSIONS, RATE_LIMIT_KV, NONCE_KV)
+Workflows · Queues · D1 (JOB_DB) · KV (SESSIONS, RATE_LIMIT_KV, NONCE_KV)
 
 packages/data     resume SSoT, inlined into the Worker by npm run build
 ```
@@ -76,7 +76,6 @@ packages/data     resume SSoT, inlined into the Worker by npm run build
 ├── infrastructure/
 │   ├── cloudflare/             # Terraform (Cloudflare resources)
 │   ├── configs/                # Alertmanager, Grafana, Prometheus, Tempo configs
-│   ├── database/               # D1 migrations and seeds
 │   ├── docker/                 # Monitoring compose file
 │   ├── mocks/                  # Cloudflare binding mocks
 │   └── monitoring/             # Grafana dashboards, SLOs, logging, tracing
@@ -227,7 +226,7 @@ The portfolio worker (`apps/portfolio/entry.js`) imports the job-dashboard
 worker module in-process: `import jobWorker from
 '../job-dashboard/src/index.js'`. `/job/*` requests are routed via direct
 function call `jobWorker.fetch(request, env, ctx)` — no Service Binding
-round-trip. The merged `resume` worker registers all 7 Workflow classes and the
+round-trip. The merged `resume` worker registers all 6 Workflow classes and the
 `BrowserSessionDO` Durable Object directly. A single `wrangler deploy` per push
 to `master` updates the entire system. Shared concerns (Elasticsearch client,
 Logger, error types, user-agent parsing, job categories,

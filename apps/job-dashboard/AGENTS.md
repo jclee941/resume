@@ -23,35 +23,39 @@ job-dashboard/
 │   ├── routes/               # declarative route registrars
 │   ├── services/             # dashboard-local integrations
 │   ├── views/                # self-contained dashboard UI
-│   ├── workflows/            # 7 Cloudflare Workflow classes
+│   ├── workflows/            # 6 Cloudflare Workflow classes
 │   ├── durable-objects/      # BrowserSessionDO
 │   └── utils/                # dashboard-local helpers
 ├── package.json              # standalone deploy intentionally fails
-├── migrations/               # D1 migrations
+├── migrations/               # Wrangler D1 migrations applied to production JOB_DB
+├── schema.sql                # full JOB_DB schema for fresh databases
 └── README.md                 # deployment and API reference
 ```
 
 ## WHERE TO LOOK
 
-| Task                   | Location                   | Notes                                               |
-| ---------------------- | -------------------------- | --------------------------------------------------- |
-| Source composition     | `src/AGENTS.md`            | HTTP/queue/scheduled entry and exports              |
-| Request routing        | `src/index.js`             | strips `/job` prefix after portfolio entry forwards |
-| Handler contracts      | `src/handlers/AGENTS.md`   | adapter patterns and route-to-handler wiring        |
-| Middleware policy      | `src/middleware/AGENTS.md` | CORS/CSRF ordering and auth behavior                |
-| Queue rules            | `src/queues/AGENTS.md`     | message shape, retry, and DLQ handling              |
-| Route tables           | `src/routes/AGENTS.md`     | declarative path registration                       |
-| Service boundaries     | `src/services/AGENTS.md`   | auth, clients, config, notifications                |
-| Workflow orchestration | `src/workflows/AGENTS.md`  | idempotency, gates, and step contracts              |
-| Dashboard UI           | `src/views/AGENTS.md`      | HTML/CSS/JS escaping and inline assets              |
-| DB migrations          | `migrations/`              | D1 schema and data migrations                       |
+| Task                   | Location                    | Notes                                                |
+| ---------------------- | --------------------------- | ---------------------------------------------------- |
+| Source composition     | `src/AGENTS.md`             | HTTP/queue/scheduled entry and exports               |
+| Request routing        | `src/index.js`              | strips `/job` prefix after portfolio entry forwards  |
+| Handler contracts      | `src/handlers/AGENTS.md`    | adapter patterns and route-to-handler wiring         |
+| Middleware policy      | `src/middleware/AGENTS.md`  | CORS/CSRF ordering and auth behavior                 |
+| Queue rules            | `src/queues/AGENTS.md`      | message shape, retry, and DLQ handling               |
+| Route tables           | `src/routes/AGENTS.md`      | declarative path registration                        |
+| Service boundaries     | `src/services/AGENTS.md`    | auth, clients, config, notifications                 |
+| Workflow orchestration | `src/workflows/AGENTS.md`   | idempotency, gates, and step contracts               |
+| Dashboard UI           | `src/views/AGENTS.md`       | HTML/CSS/JS escaping and inline assets               |
+| DB migrations          | `migrations/`, `schema.sql` | wrangler d1 migrations; mirror each change in schema |
 
 ## BINDINGS & STORAGE
 
-- **D1** (`JOB_DB` / `job-dashboard-db`): dashboard schema owned by migrations
+- **D1** (`JOB_DB` / `job-dashboard-db`): the Worker's only database. Schema changes are
+  `npx wrangler d1 migrations create job-dashboard-db <name>` then `npx wrangler d1
+migrations apply job-dashboard-db --remote`; mirror the end state in `schema.sql`
+  (tests/unit/job-dashboard/d1-schema-contract.test.js compiles all Worker SQL against it)
 - **KV**: `SESSIONS`, `RATE_LIMIT_KV`, `NONCE_KV` (all with TTL)
 - **Browser**: `MYBROWSER` (Browser Rendering), `BROWSER_SESSION` (Durable Object)
-- **Workflows**: 7 (job-crawling, application, resume-sync, daily-report, health-check, backup, cleanup)
+- **Workflows**: 6 (job-crawling, application, resume-sync, daily-report, health-check, cleanup)
 
 ## CONVENTIONS
 

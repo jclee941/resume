@@ -17,18 +17,16 @@ cli/
 ├── src/
 │   └── commands/
 │       ├── deploy.js   # deployment command
-│       ├── verify.js   # verification command
-│       └── db.js       # D1 migration management
+│       └── verify.js   # verification command
 └── package.json
 ```
 
 ## COMMANDS
 
-| Command  | Description                      | Subcommands                                       |
-| -------- | -------------------------------- | ------------------------------------------------- |
-| `deploy` | Deploy services                  | `--worker-file`, `--dir`, `--env`                 |
-| `verify` | Verify service health            | -                                                 |
-| `db`     | D1 database migration management | `migrate`, `rollback`, `status`, `seed`, `create` |
+| Command  | Description           | Subcommands                       |
+| -------- | --------------------- | --------------------------------- |
+| `deploy` | Deploy services       | `--worker-file`, `--dir`, `--env` |
+| `verify` | Verify service health | -                                 |
 
 ## CONVENTIONS
 

@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-const migrationsDir = "infrastructure/database/migrations"
+const migrationsDir = "apps/job-dashboard/migrations"
 
 func main() {
 	fmt.Println("🔍 Validating D1 migration files...")

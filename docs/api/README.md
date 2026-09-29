@@ -51,8 +51,11 @@ Binary: `resume-cli` (entrypoint: `packages/cli/bin/run.js`)
 
 ### Commands
 
-| Command                  | Description                                             |
-| ------------------------ | ------------------------------------------------------- |
-| `resume-cli deploy`      | Deploy services/workers using Wrangler wrapper options. |
-| `resume-cli db status`   | Show D1 migration status.                               |
-| `resume-cli db rollback` | Roll back one or more D1 migrations.                    |
+| Command             | Description                                             |
+| ------------------- | ------------------------------------------------------- |
+| `resume-cli deploy` | Deploy services/workers using Wrangler wrapper options. |
+
+D1 schema changes use Wrangler's native migrations for `JOB_DB`:
+`npx wrangler d1 migrations list job-dashboard-db --remote` and
+`npx wrangler d1 migrations apply job-dashboard-db --remote` (files in
+`apps/job-dashboard/migrations/`).
