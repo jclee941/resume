@@ -21,7 +21,6 @@ export { attachWorkflowApproval, WORKFLOW_APPROVAL };
  *   targetUrl?: string;
  *   finalUrl?: string;
  *   visibleAction?: string;
- *   requiresJobServer?: boolean;
  *   requiresBrowserAutomation?: boolean;
  *   browserRequired?: boolean;
  *   requiresBrowserRendering?: boolean;
@@ -188,7 +187,6 @@ async function submitApprovedApplication(ctx, workflow, job, resumeId) {
  */
 function requiresDeferredBrowserAction(result) {
   return Boolean(
-    result?.requiresJobServer === true ||
     result?.requiresBrowserAutomation === true ||
     result?.browserRequired === true ||
     result?.requiresBrowserRendering === true

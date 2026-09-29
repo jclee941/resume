@@ -22,12 +22,7 @@ const ADMIN_ROUTES = [
   '/api/jobkorea',
 ];
 
-const NO_AUTH_ROUTES = [
-  '/api/auth/sync',
-  '/api/auth/login',
-  '/api/auth/logout',
-  '/api/auth/profile',
-];
+const NO_AUTH_ROUTES = ['/api/auth/login', '/api/auth/logout', '/api/auth/profile'];
 
 /** @type {string[]} */
 const WEBHOOK_ROUTES = [];

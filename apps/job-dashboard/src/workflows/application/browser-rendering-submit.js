@@ -281,7 +281,6 @@ function browserRenderingRequired(platform, targetUrl, reason) {
     browserRendered: false,
     requiresBrowserRendering: true,
     requiresBrowserRenderingBinding: reason.includes('MYBROWSER'),
-    requiresJobServer: false,
     requiresBrowserAutomation: false,
     networkWrite: false,
   };

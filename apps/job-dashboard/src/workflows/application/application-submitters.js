@@ -22,7 +22,6 @@ import { submitWithBrowserRendering } from './browser-rendering-submit.js';
  *   error?: string | null;
  *   platform?: string;
  *   platformResponse?: unknown;
- *   requiresJobServer?: boolean;
  *   requiresBrowserAutomation?: boolean;
  *   [key: string]: unknown;
  * }} SubmitResult
@@ -173,9 +172,8 @@ export async function submitToSaramin(ctx, jobId, resume, coverLetter, options =
 function browserAutomationRequired(platform, label) {
   return {
     success: false,
-    error: `${label} requires browser automation. Cloudflare native workflow recorded a handoff instead of retrying local CLI submission.`,
+    error: `${label} requires browser automation; the workflow recorded a handoff instead of submitting.`,
     platform,
-    requiresJobServer: true,
     requiresBrowserAutomation: true,
   };
 }

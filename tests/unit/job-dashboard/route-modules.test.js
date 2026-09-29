@@ -55,11 +55,10 @@ describe('job-dashboard route modules', () => {
         patterns: ['/health', '/api/health', '/api/status', '/api/health/notifications'],
       },
       auth: {
-        count: 7,
+        count: 6,
         patterns: [
           '/api/auth/status',
           '/api/auth/set',
-          '/api/auth/sync',
           '/api/auth/:platform',
           '/api/auth/profile',
           '/api/auth/login',
@@ -148,14 +147,14 @@ describe('job-dashboard route modules', () => {
   });
 
   describe('total route count across all modules', () => {
-    test('all modules together register exactly 54 routes', () => {
+    test('all modules together register exactly 53 routes', () => {
       let totalRoutes = 0;
       for (const mod of modules) {
         const src = fs.readFileSync(path.join(ROUTES_DIR, `${mod}.js`), 'utf8');
         const routeCalls = src.match(/router\.(get|post|put|delete)\(/g) || [];
         totalRoutes += routeCalls.length;
       }
-      expect(totalRoutes).toBe(54);
+      expect(totalRoutes).toBe(53);
     });
   });
 });

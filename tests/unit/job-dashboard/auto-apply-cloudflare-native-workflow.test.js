@@ -146,7 +146,6 @@ function createWorkflowHarness() {
         expect(platform).toBe('jobkorea');
         return {
           success: false,
-          requiresJobServer: true,
           requiresBrowserAutomation: true,
           error: 'JobKorea requires browser automation',
         };

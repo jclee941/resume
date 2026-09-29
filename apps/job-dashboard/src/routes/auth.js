@@ -30,7 +30,6 @@ export function registerAuthRoutes(router, ctx) {
 
   router.get('/api/auth/status', (req) => auth.getStatus(req));
   router.post('/api/auth/set', (req) => auth.setAuth(req));
-  router.post('/api/auth/sync', (req) => auth.syncFromScript(req));
   router.delete('/api/auth/:platform', (req) => auth.clearAuth(req));
   router.get('/api/auth/profile', (req) => auth.getProfile(req));
 

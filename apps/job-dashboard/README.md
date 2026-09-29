@@ -294,11 +294,6 @@ curl https://resume.jclee.me/job/api/auth/status \
 curl -X POST https://resume.jclee.me/job/api/auth/logout \
   -H "Authorization: Bearer <token>"
 
-# Sync cookies from script
-curl -X POST https://resume.jclee.me/job/api/auth/sync \
-  -H "Authorization: Bearer <token>" \
-  -d '{"platform": "wanted", "cookies": "..."}'
-
 # Validate token
 curl -X POST https://resume.jclee.me/job/api/auth/validate \
   -H "Authorization: Bearer <token>"
@@ -388,7 +383,7 @@ curl https://resume.jclee.me/job/api/workflows/abc123/status \
 
 **LinkedIn and Remember Auto-Apply**: These platforms require browser automation
 (Puppeteer) for job applications, which is not available in Cloudflare Workers.
-The dashboard workflow will return an error with `requiresJobServer: true` if
+The dashboard workflow will return an error with `requiresBrowserAutomation: true` if
 you attempt to apply to these platforms.
 
 There is no local fallback runner; these platforms stay unsupported for
