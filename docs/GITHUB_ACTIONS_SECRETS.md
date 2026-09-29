@@ -80,29 +80,6 @@ echo "CLOUDFLARE_ACCOUNT_ID" | grep -E '^[a-f0-9]{32}$' && echo "✅ Valid" || e
 
 ## Optional Secrets (RECOMMENDED)
 
-### 3. AUTH_SYNC_SECRET (Optional but Recommended)
-
-**Purpose**: Secure endpoint authentication for profile synchronization
-
-**How to generate it**:
-
-```bash
-# Generate a secure random string
-openssl rand -base64 32
-# Or
-python3 -c "import secrets; print(secrets.token_urlsafe(32))"
-```
-
-**Where used**:
-
-- `maintenance.yml`: auth-refresh job
-
-**Format**: Base64-encoded random string (32+ characters)
-
-**Default behavior if not set**: Job will fail with "missing AUTH_SYNC_SECRET"
-
----
-
 ### 4. ENCRYPTION_KEY (Optional but Recommended)
 
 **Purpose**: Encrypt session tokens and sensitive data in transit
@@ -285,7 +262,6 @@ want notifications.
 **Cause**: SECRET value has incorrect format
 **Solution**:
 
-- For `AUTH_SYNC_SECRET`: Use output from `openssl rand -base64 32`
 - For `ENCRYPTION_KEY`: Use output from `openssl rand -hex 32`
 
 ---
@@ -358,7 +334,6 @@ wrangler deployments list --name resume-portfolio
 | CLOUDFLARE_ACCOUNT_ID  | ✅     | ✅              | ✅            |            |
 | GITHUB_TOKEN           | ✅     |                 | ✅            |            |
 | AUTOMATION_WEBHOOK_URL | ✅     | ✅              |               |            |
-| AUTH_SYNC_SECRET       |        | ✅              |               |            |
 | ENCRYPTION_KEY         |        | ✅              |               |            |
 | TF_STATE_URL           |        | ✅              | ✅            |            |
 | TF_STATE_USERNAME      |        | ✅              | ✅            |            |
@@ -377,9 +352,6 @@ Value: [your token from Cloudflare]
 
 Name: CLOUDFLARE_ACCOUNT_ID
 Value: [32-char hex from Cloudflare]
-
-Name: AUTH_SYNC_SECRET
-Value: [output from: openssl rand -base64 32]
 
 Name: ENCRYPTION_KEY
 Value: [output from: openssl rand -hex 32]

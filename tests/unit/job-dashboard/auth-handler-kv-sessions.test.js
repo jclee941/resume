@@ -41,7 +41,6 @@ function createForbiddenDb() {
 function createEnv(kv) {
   return {
     ENCRYPTION_KEY: TEST_ENCRYPTION_KEY,
-    AUTH_SYNC_SECRET: 'sync-secret',
     SESSIONS: kv,
     JOB_DB: createForbiddenDb(),
   };
@@ -131,22 +130,5 @@ describe('AuthHandler keeps platform sessions only in KV', () => {
 
     expect(response.status).toBe(200);
     expect(kv.store.has('auth:wanted')).toBe(false);
-  });
-
-  test('syncFromScript writes the KV session with the requested lifetime', async () => {
-    const kv = createKv();
-    const response = await createHandler(createEnv(kv)).syncFromScript(
-      jsonRequest(
-        { platform: 'jobkorea', cookies: 'JK=synced', expiresIn: 2 * 60 * 60 * 1000 },
-        { 'X-Auth-Sync-Secret': 'sync-secret' }
-      )
-    );
-    const body = await response.json();
-
-    expect(response.status).toBe(200);
-    expect(body.expiresAt).toMatch(ISO);
-    const stored = kv.store.get('auth:jobkorea');
-    expect(await decrypt(stored.value, { ENCRYPTION_KEY: TEST_ENCRYPTION_KEY })).toBe('JK=synced');
-    expect(stored.expiration - Math.floor(Date.now() / 1000)).toBeGreaterThan(7000);
   });
 });

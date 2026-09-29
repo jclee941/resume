@@ -466,22 +466,6 @@ paths:
         '401':
           $ref: '#/components/responses/Unauthorized'
 
-  /api/auth/sync:
-    post:
-      tags: [Auth]
-      summary: Ingest platform cookies from external script (requires X-Auth-Sync-Secret)
-      operationId: syncAuth
-      parameters:
-        - in: header
-          name: X-Auth-Sync-Secret
-          schema:
-            type: string
-          required: true
-      responses:
-        '200': { description: Synced }
-        '401': { description: Invalid secret }
-        '503': { description: AUTH_SYNC_SECRET not configured }
-
   /api/auth/set:
     post:
       tags: [Auth]

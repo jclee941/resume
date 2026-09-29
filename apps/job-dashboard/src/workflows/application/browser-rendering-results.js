@@ -72,7 +72,6 @@ export function completedResult(status, details) {
     status,
     browserRendered: true,
     requiresBrowserRendering: false,
-    requiresJobServer: false,
     requiresBrowserAutomation: false,
     networkWrite: status !== 'already_applied',
   };
@@ -114,7 +113,6 @@ export function renderedReviewResult(
     status: applyControl ? 'apply-button-detected' : loginControl ? 'login-required' : 'rendered',
     browserRendered: true,
     requiresBrowserRendering: true,
-    requiresJobServer: false,
     requiresBrowserAutomation: false,
   };
 }

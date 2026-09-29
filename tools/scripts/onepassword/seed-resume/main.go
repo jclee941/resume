@@ -29,7 +29,6 @@ var allowedKeys = map[string]bool{
 	"JOBKOREA_COOKIES":          true,
 	"ADMIN_TOKEN":               true,
 	"AUTOMATION_WEBHOOK_SECRET": true,
-	"AUTH_SYNC_SECRET":          true,
 	"SESSION_ENCRYPTION_KEY":    true,
 	"CLOUDFLARE_ACCOUNT_ID":     true,
 	"CLOUDFLARE_API_KEY":        true,

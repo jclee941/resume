@@ -1,4 +1,3 @@
-import { verifySecret } from '../services/auth.js';
 import { normalizeError } from '@resume/shared/errors';
 import {
   platformSessionKey,
@@ -8,7 +7,6 @@ import {
 
 const SESSION_KEY_PREFIX = platformSessionKey('');
 const DEFAULT_SESSION_TTL_MS = 24 * 60 * 60 * 1000;
-const SYNC_PLATFORMS = ['wanted', 'saramin', 'jobkorea', 'linkedin'];
 
 /**
  * @typedef {{ email?: string | null; updatedAt?: string }} SessionMetadata
@@ -28,7 +26,6 @@ const SYNC_PLATFORMS = ['wanted', 'saramin', 'jobkorea', 'linkedin'];
  *
  * @typedef {{
  *   ENCRYPTION_KEY?: string;
- *   AUTH_SYNC_SECRET?: string;
  *   SESSIONS: SessionKv;
  *   [key: string]: unknown;
  * }} AuthEnv
@@ -202,48 +199,5 @@ export class AuthHandler {
         500
       );
     }
-  }
-
-  /**
-   * Sync auth from the local auth-persistent script (--sync-worker)
-   * Requires X-Auth-Sync-Secret header matching AUTH_SYNC_SECRET env var
-   * @param {Request} request
-   * @returns {Promise<Response>}
-   */
-  async syncFromScript(request) {
-    // Fail-closed: AUTH_SYNC_SECRET env var must be configured. Without it, this
-    // endpoint must NOT accept requests — it ingests platform cookies and writes
-    // them to KV. Returning 503 instead of 401 distinguishes misconfiguration
-    // from a wrong secret in client logs.
-    if (!this.env.AUTH_SYNC_SECRET) {
-      return this.jsonResponse(
-        { error: 'AUTH_SYNC_SECRET not configured — endpoint disabled' },
-        503
-      );
-    }
-    const secret = request.headers.get('X-Auth-Sync-Secret');
-    if (!verifySecret(secret, this.env.AUTH_SYNC_SECRET)) {
-      return this.jsonResponse({ error: 'Unauthorized' }, 401);
-    }
-
-    const body = await request.json();
-    const { platform, cookies, email, expiresIn } = body;
-
-    if (!platform || !cookies) {
-      return this.jsonResponse({ error: 'Platform and cookies required' }, 400);
-    }
-
-    if (!SYNC_PLATFORMS.includes(platform)) {
-      return this.jsonResponse({ error: `Invalid platform: ${platform}` }, 400);
-    }
-
-    const ttlSeconds = Math.floor((expiresIn || DEFAULT_SESSION_TTL_MS) / 1000);
-    await writePlatformSession(this.env, platform, cookies, ttlSeconds, { email: email || null });
-
-    return this.jsonResponse({
-      success: true,
-      message: `Auth synced for ${platform}`,
-      expiresAt: new Date(Date.now() + ttlSeconds * 1000).toISOString(),
-    });
   }
 }
