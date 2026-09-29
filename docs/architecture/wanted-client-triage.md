@@ -1,6 +1,8 @@
 # Wanted Client Triage — SSOT-037 / Issue #46
 
-**Status**: Active triage · **Owner**: Platform · **Last Updated**: 2026-05-05
+**Status**: Resolved · **Owner**: Platform · **Last Updated**: 2026-09-29
+
+> **2026-09-29:** B was promoted to `packages/shared/src/clients/wanted/` and A (`packages/shared/src/wanted-client.js`) was deleted. The job-server copy went with `apps/job-server` ([ADR 0010](../adr/0010-retire-local-job-server.md)).
 
 This document maps the two Wanted-platform API clients in the monorepo,
 identifies their overlap and divergence, and prescribes the consolidation

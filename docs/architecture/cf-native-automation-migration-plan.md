@@ -1,6 +1,8 @@
 # Cloudflare-Native Automation Migration Plan
 
 > Generated from an adversarial 4-surface audit (2026-07-21). Status: ACTIVE PLAN — Waves 0–2 have executed work; see Execution Status.
+>
+> **2026-09-29:** `apps/job-server` and its session-broker were retired ([ADR 0010](../adr/0010-retire-local-job-server.md)). The per-surface tables below are the 2026-07-21 audit snapshot; the job-server and session-broker paths they name no longer exist.
 
 ## Executive Summary
 

@@ -2,6 +2,8 @@
 
 **Status**: Active triage · **Owner**: Platform · **Last Updated**: 2026-05-05
 
+> **2026-09-29:** `apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)). Its paths below no longer exist, and the items that target them are closed.
+
 This document enumerates every error class in the monorepo, identifies which
 are functionally identical, which are intentionally divergent, and prescribes
 the consolidation path. It is the prerequisite "triage doc" called out in the
