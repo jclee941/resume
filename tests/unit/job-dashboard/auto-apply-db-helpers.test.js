@@ -62,12 +62,12 @@ describe('job-dashboard auto-apply DB helpers', () => {
     expect(fallbackDb.queries).toHaveLength(0);
   });
 
-  test('all helper queries fall back to DB when JOB_DB is absent', async () => {
-    const fallbackDb = createRecordingDb();
+  test('helper queries never use the portfolio DB binding', async () => {
+    const portfolioDb = createRecordingDb();
 
-    await exerciseAllDbHelpers({ DB: fallbackDb });
+    await exerciseAllDbHelpers({ DB: portfolioDb });
 
-    expect(fallbackDb.queries).toHaveLength(4);
+    expect(portfolioDb.queries).toHaveLength(0);
   });
 
   test.each([

@@ -35,7 +35,7 @@ describe('job-dashboard auto-apply discovery failures', () => {
 
     const response = await runAutoApply({
       request: createRequest({ dryRun: true, platforms: ['wanted'] }),
-      env: { DB: db },
+      env: { JOB_DB: db },
       clients,
     });
     const body = await parseJson(response);
@@ -70,7 +70,7 @@ describe('job-dashboard auto-apply discovery failures', () => {
 
     const response = await runAutoApply({
       request: createRequest({ dryRun: true, platforms: ['wanted', 'linkedin'] }),
-      env: { DB: db },
+      env: { JOB_DB: db },
       clients,
     });
     const body = await parseJson(response);
@@ -103,7 +103,7 @@ describe('job-dashboard auto-apply discovery failures', () => {
 
     const response = await runAutoApply({
       request: createRequest({ dryRun: true, platforms: ['wanted', 'linkedin'] }),
-      env: { DB: db },
+      env: { JOB_DB: db },
       clients,
     });
     const body = await parseJson(response);

@@ -145,7 +145,7 @@ describe('application status contract', () => {
     const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
     try {
-      const response = await new ReportHandler({ DB: db }, null).triggerDailyReport({});
+      const response = await new ReportHandler({ JOB_DB: db }, null).triggerDailyReport({});
       const payload = await response.json();
       const highPrioritySql = db.statements
         .map((statement) => statement.sql)

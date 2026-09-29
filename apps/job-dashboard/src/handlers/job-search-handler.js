@@ -12,7 +12,7 @@ import { canonicalizeJobUrl } from '../job-url-canonicalization.js';
  * }} JobSearchDb
  *
  * @typedef {{
- *   DB?: JobSearchDb;
+ *   JOB_DB?: JobSearchDb;
  *   [key: string]: unknown;
  * }} JobSearchEnv
  *
@@ -58,7 +58,7 @@ export class JobSearchHandler extends BaseHandler {
           .filter(Boolean);
 
     const cleanedKeywords = keywordList.slice(0, 5);
-    const db = this.env?.DB;
+    const db = this.env?.JOB_DB;
 
     if (!db) {
       return this.jsonResponse({ success: false, error: 'Database not configured' }, 503);

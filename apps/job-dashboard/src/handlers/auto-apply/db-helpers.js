@@ -15,7 +15,6 @@ import { insertApplicationRecord } from './application-recorder.js';
  *
  * @typedef {{
  *   JOB_DB?: D1DatabaseLike;
- *   DB?: D1DatabaseLike;
  *   [key: string]: unknown;
  * }} DbEnv
  *
@@ -64,7 +63,7 @@ const DEFAULT_KEYWORDS = ['DevOps', 'SRE', 'Platform Engineer', '보안'];
  * @returns {D1DatabaseLike | undefined}
  */
 function getDb(env) {
-  return env?.JOB_DB || env?.DB;
+  return env?.JOB_DB;
 }
 
 /**

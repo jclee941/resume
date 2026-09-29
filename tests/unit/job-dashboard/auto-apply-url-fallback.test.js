@@ -26,7 +26,7 @@ test('retains canonical URLs when only auto-apply metadata columns are missing',
   };
 
   await recordApplication(
-    { DB: db },
+    { JOB_DB: db },
     {
       job: {
         id: '42',

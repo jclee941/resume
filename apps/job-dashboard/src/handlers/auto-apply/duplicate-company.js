@@ -4,12 +4,12 @@
  */
 
 /**
- * @param {{ DB?: D1Database, JOB_DB?: D1Database } | null | undefined} env
+ * @param {{ JOB_DB?: D1Database } | null | undefined} env
  * @param {string | null | undefined} company
  * @returns {Promise<boolean>}
  */
 export async function isCompanyAlreadyApplied(env, company) {
-  const db = env?.DB || env?.JOB_DB;
+  const db = env?.JOB_DB;
   const normalizedCompany = normalizeCompany(company);
   if (!db || !normalizedCompany) return false;
 

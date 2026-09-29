@@ -20,7 +20,7 @@ import { TelegramWebhookHandler } from './telegram-webhook-handler.js';
  * }} WebhookDb
  *
  * @typedef {{
- *   DB?: WebhookDb;
+ *   JOB_DB?: WebhookDb;
  *   TELEGRAM_BOT_TOKEN?: string;
  *   TELEGRAM_CHAT_ID?: string | number;
  *   [key: string]: unknown;

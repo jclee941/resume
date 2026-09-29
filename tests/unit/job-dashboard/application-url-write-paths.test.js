@@ -55,7 +55,7 @@ test('stores raw and canonical URLs when importing direct Wanted search results'
     path.join(__dirname, '../../../apps/job-dashboard/src/handlers/job-search-handler.js')
   );
   const db = createCapturingDb();
-  const handler = new JobSearchHandler({ DB: db });
+  const handler = new JobSearchHandler({ JOB_DB: db });
   handler.fetchWantedJobs = async () => [
     { id: '42', company: 'Example', position: 'Platform Engineer' },
   ];
@@ -105,7 +105,7 @@ test('stores raw and canonical URLs for auto-apply application records', async (
   const db = createCapturingDb();
 
   await recordApplication(
-    { DB: db },
+    { JOB_DB: db },
     {
       job: { id: '42', sourceUrl: rawUrl, position: 'Platform Engineer', company: 'Example' },
       source: 'wanted',
@@ -125,7 +125,7 @@ test('falls back to the pre-0009 application schema without canonical URLs', asy
   const db = createPreCanonicalDb();
 
   await recordApplication(
-    { DB: db },
+    { JOB_DB: db },
     {
       job: { id: '42', sourceUrl: rawUrl, position: 'Platform Engineer', company: 'Example' },
       source: 'wanted',
