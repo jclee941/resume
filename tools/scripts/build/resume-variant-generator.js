@@ -13,6 +13,7 @@ const {
   filterSections,
   emphasizeContent,
   truncateContent,
+  joinSections,
 } = require('./resume-variant-content');
 
 /**
@@ -85,7 +86,7 @@ async function generateVariant(name, config, sections) {
     const filtered = filterSections(sections, config);
 
     // Convert to string
-    let content = Object.values(filtered).join('\n\n---\n\n');
+    let content = joinSections(Object.values(filtered));
 
     // Apply emphasis
     if (config.emphasis) {

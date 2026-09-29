@@ -73,10 +73,33 @@ function emphasizeContent(content, keywords) {
   return scored
     .filter(
       (item) =>
-        item.score > 0 || item.line.startsWith('#') || item.line.startsWith('-')
+        item.score > 0 ||
+        item.line.startsWith('#') ||
+        item.line.startsWith('-') ||
+        item.line.trim() === ''
     )
     .map((item) => item.line)
-    .join('\n');
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n');
+}
+
+/**
+ * Join section bodies with one horizontal rule between them. Master sections end
+ * with their own "---" divider, which would otherwise stack with the joining rule
+ * and, without blank lines around it, read as a Pandoc YAML metadata delimiter.
+ * @param {string[]} bodies
+ * @returns {string}
+ */
+function joinSections(bodies) {
+  return bodies
+    .map((body) =>
+      body
+        .replace(/^(?:\s*---\s*\n)+/, '')
+        .replace(/(?:\n\s*---\s*)+\s*$/, '')
+        .trim()
+    )
+    .filter(Boolean)
+    .join('\n\n---\n\n');
 }
 
 /**
@@ -107,4 +130,4 @@ function truncateContent(content, maxLength) {
   return `${truncated  }\n\n---\n\n*(Resume truncated for brevity)*`;
 }
 
-module.exports = {filterSections, emphasizeContent, truncateContent};
+module.exports = {filterSections, emphasizeContent, truncateContent, joinSections};
