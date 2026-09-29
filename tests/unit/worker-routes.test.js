@@ -486,8 +486,9 @@ describe('Worker Routes', () => {
       expect(code).toContain('catch');
     });
 
-    it('should contain D1 error logging INSERT', () => {
-      expect(code).toContain('INSERT');
+    it('logs the failure to Workers Logs instead of a D1 table', () => {
+      expect(code).toContain('console.error');
+      expect(code).not.toContain('INSERT INTO');
     });
 
     it('should contain 500 Internal Server Error', () => {
