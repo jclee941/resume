@@ -2,6 +2,8 @@
 
 **Status**: Active audit · **Owner**: Platform · **Last Updated**: 2026-05-05
 
+> **2026-09-29:** `tests/e2e/mcp-server.spec.js` no longer exists; the MCP server it covered was retired with `apps/job-server` ([ADR 0010](../adr/0010-retire-local-job-server.md)).
+
 This document inventories every skipped E2E test under `tests/e2e/`, classifies
 each skip into one of four buckets (remove / fix now / keep with documented
 guard / file follow-up), and prescribes the per-test action.

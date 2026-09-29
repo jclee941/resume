@@ -3,7 +3,7 @@
 > **Note:** The authoritative OpenAPI spec is at `packages/contracts/openapi.yaml`.
 
 This document summarizes public and internal API surfaces for the portfolio
-worker, job dashboard worker, MCP server tools, and CLI commands.
+worker, job dashboard worker, and CLI commands.
 
 ## Portfolio Worker (Edge)
 

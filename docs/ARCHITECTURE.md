@@ -7,9 +7,9 @@ cyberpunk terminal portfolio and automates Korean job platform workflows.
 ## Overview
 
 The resume monorepo is a personal portfolio and job automation system built on
-Cloudflare Workers edge computing. It consists of three deployable applications:
-a cyberpunk-themed terminal portfolio, a job automation server with MCP tools,
-and a dashboard API. The system uses npm workspaces for package management and
+Cloudflare Workers edge computing. One Worker serves two applications: a
+cyberpunk-themed terminal portfolio and the job dashboard API, whose automation
+runs on Cron Triggers, Workflows, Queues, D1, and KV. The system uses npm workspaces for package management and
 follows a layered architecture where `apps/` contains deployables and
 `packages/` contains shared libraries.
 
