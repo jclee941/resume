@@ -79,7 +79,8 @@ export function mapToWantedFormat(source) {
   const currentPosition = source.current?.position || source.careers?.[0]?.role || '';
   const totalExperience = source.summary?.totalExperience || '';
   const expertise = source.summary?.expertise || [];
-  const isAttending = normalizeEducationStatus(source.education?.status) === '재학중';
+  const educationStatus = normalizeEducationStatus(source.education?.status);
+  const isAttending = educationStatus === '재학중';
 
   const wantedVariant = source.platformVariants?.wanted || {};
 
@@ -141,7 +142,11 @@ export function mapToWantedFormat(source) {
         degree: '학사',
         start_time: parseDate(source.education?.startDate),
         end_time: isAttending ? null : parseDate(source.education?.endDate),
-        description: isAttending ? `재학중 (${source.education?.startDate || ''} ~ )` : null,
+        description: isAttending
+          ? `재학중 (${source.education?.startDate || ''} ~ )`
+          : educationStatus === '졸업예정'
+            ? `졸업예정 (${source.education?.endDate || ''})`
+            : null,
       },
     ],
     skills: flattenSkills(source.skills).slice(0, 20),
