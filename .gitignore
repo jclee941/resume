@@ -18,15 +18,12 @@ tools/scripts/build/*
 !tools/scripts/build/AGENTS.md
 !tools/scripts/build/pdf-generator/
 !tools/scripts/build/pdf-generator/**
-!tools/scripts/build/__init__.py
-!tools/scripts/build/pptx_layouts.py
-!tools/scripts/build/pptx_publication.py
-!tools/scripts/build/pptx_ta.py
-!tools/scripts/build/test_pptx_profiles.py
-!tools/scripts/build/test_pptx_publication.py
+!tools/scripts/build/*.js
+!tools/scripts/build/*.go
+!tools/scripts/build/*.py
+!tools/scripts/build/*.tex
+!tools/scripts/build/*.lua
 !tools/scripts/build/requirements.txt
-!tools/scripts/build/generate-resume-variants.js
-!tools/scripts/build/resume-variant-*.js
 *.tsbuildinfo
 
 # Generated files — portfolio worker bundle and propagated SSoT snapshots
@@ -34,11 +31,8 @@ apps/portfolio/worker.js
 apps/portfolio/data.json
 apps/portfolio/data_en.json
 apps/portfolio/data_ja.json
-apps/portfolio/dashboard.html
-apps/portfolio/dashboard.html.backup
 apps/portfolio/.wrangler/
 *.generated.*
-*.tsbuildinfo
 # NOTE: manifest*.json, sitemap.xml, og-image*.png, og-image*.webp are
 # hand-maintained build inputs and SHOULD remain tracked in git — the build
 # pipeline (apps/portfolio/lib/file-reader.js) reads them as required inputs.
@@ -51,15 +45,7 @@ apps/portfolio/.wrangler/
 .env.*
 !.env.example
 !.env.*.example
-.env.local
-.env.*.local
-.env.automation
-.env.secrets
-.env.production
-.env.staging
-.env.development
 .dev.vars
-.dev.vars.local
 .dev.vars.*
 !.dev.vars.example
 *.secrets
@@ -69,8 +55,6 @@ apps/portfolio/.wrangler/
 !tools/**/*-secrets.*
 *-session.json
 sessions.json
-jobkorea-session.json
-wanted-session.json
 **/cookies.json
 **/credentials.json
 secrets/
@@ -79,11 +63,9 @@ secrets/
 .secrets/
 # Cloudflare wrangler local secrets
 .wrangler/
-**/.wrangler/
 
 # 1Password / secret manager local cache
 .op-session
-.env.1password
 .doppler-cache
 .infisical-cache
 .keyflare-cache
@@ -114,37 +96,19 @@ yarn-error.log*
 coverage/
 .nyc_output/
 
-# Bazel output directories
-bazel-bin
-bazel-out
-bazel-resume
-bazel-testlogs
-
 # -----------------------------------------------------------------------------
 # Local binaries
 bin/
 !packages/cli/bin/
 !packages/cli/bin/**
 
-# Legacy standalone configs
-lighthouserc.js
-
 # Logs directory
 logs/
 # Root directory cleanup - compiled binaries (build artifacts)
 /merge-ulw-to-master
-/verify-content-integrity
-/verify-health
-
-# Go build artifacts
-/deploy-auto-apply
-/deploy-workflow
-/setup-api-key
 
 # Wrangler generated types
 /worker-configuration.d.ts
-# Temporary session data (may contain credentials)
-sessions.json
 
 # Git artifacts
 /--head=HEAD
@@ -153,7 +117,6 @@ sessions.json
 .opencode/
 
 # Tooling artifacts
-.wrangler/
 .playwright-mcp/
 test-results/
 *.backup-*
@@ -165,8 +128,6 @@ apps/job-server/scripts/dashboard.html
 
 # Build/temp artifacts
 .tmp/
-**/.tmp/
-apps/portfolio/.tmp/
 apps/job-server/scripts/profile-sync/jobkorea-handler/browser-template.json
 
 # 1Password secret backups (rotated values awaiting upload)
