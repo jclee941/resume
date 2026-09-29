@@ -130,6 +130,8 @@ export function saveJobKoreaSession(session, options = {}) {
   } catch {
     saved = false;
   }
-  savePlatformSession(normalized, options.filePath || legacyOpencodeSessionFile);
+  savePlatformSession(normalized, options.filePath || legacyOpencodeSessionFile, {
+    mirrorRepo: options.mirrorRepo,
+  });
   return saved;
 }

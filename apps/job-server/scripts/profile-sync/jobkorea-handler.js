@@ -14,8 +14,8 @@ export default class JobKoreaHandler {
     return loadJobKoreaSession(options);
   }
 
-  saveSession(cookies) {
-    saveJobKoreaSession(cookies);
+  saveSession(cookies, options = {}) {
+    saveJobKoreaSession(cookies, options);
   }
 
   computeChanges(currentFields, targetFields) {

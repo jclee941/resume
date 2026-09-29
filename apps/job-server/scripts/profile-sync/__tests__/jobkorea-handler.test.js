@@ -628,9 +628,13 @@ describe('createJobKoreaEntrySlots', () => {
 describe('JobKoreaHandler.saveSession', () => {
   let handler;
   let savedData;
+  let sessionDir;
+  let sessionOptions;
 
   beforeEach(() => {
     handler = new JobKoreaHandler();
+    sessionDir = mkdtempSync(path.join(tmpdir(), 'jobkorea-save-session-'));
+    sessionOptions = { filePath: path.join(sessionDir, 'jobkorea.json'), mirrorRepo: false };
     savedData = null;
     mock.method(SessionManager, 'load', () => null);
     mock.method(SessionManager, 'save', (_platform, data) => {
@@ -641,6 +645,7 @@ describe('JobKoreaHandler.saveSession', () => {
 
   afterEach(() => {
     mock.restoreAll();
+    rmSync(sessionDir, { recursive: true, force: true });
   });
 
   it('preserves existing session metadata when updating cookies', () => {
@@ -658,7 +663,7 @@ describe('JobKoreaHandler.saveSession', () => {
       { name: 'NET_SessionId', value: 'abc123' },
       { name: 'SES_ID', value: 'xyz789' },
     ];
-    handler.saveSession(newCookies);
+    handler.saveSession(newCookies, sessionOptions);
 
     assert.strictEqual(savedData.platform, 'jobkorea');
     assert.strictEqual(savedData.expiresAt, '2026-04-01T00:00:00.000Z');
@@ -671,7 +676,7 @@ describe('JobKoreaHandler.saveSession', () => {
 
   it('populates defaults when no existing session file', () => {
     const cookies = [{ name: 'test', value: 'val' }];
-    handler.saveSession(cookies);
+    handler.saveSession(cookies, sessionOptions);
 
     assert.strictEqual(savedData.platform, 'jobkorea');
     assert.ok(savedData.expiresAt);
@@ -687,7 +692,7 @@ describe('JobKoreaHandler.saveSession', () => {
       { name: 'B', value: '2' },
       { name: 'C', value: '3' },
     ];
-    handler.saveSession(cookies);
+    handler.saveSession(cookies, sessionOptions);
 
     assert.strictEqual(savedData.cookieString, 'A=1; B=2; C=3');
     assert.strictEqual(savedData.cookieCount, 3);
@@ -701,7 +706,7 @@ describe('JobKoreaHandler.saveSession', () => {
       { name: 'ACNT_COOKIE', value: 'updated456' },
       { name: 'SES_ID', value: 'new789' },
     ];
-    handler.saveSession(newCookies);
+    handler.saveSession(newCookies, sessionOptions);
 
     assert.ok(!Array.isArray(savedData), 'saved session must be an object, not array');
     assert.strictEqual(savedData.platform, 'jobkorea');
