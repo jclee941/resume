@@ -9,8 +9,8 @@ export const PROJECTS = [
     stack: ['Splunk', 'FortiGate', 'FortiManager', 'Python', 'Claude AI'],
     metrics: [
       { value: 'Splunk ES', label: '탐지 룰', icon: 'search' },
-      { value: 'Webhook', label: 'Slack/SMS 알림', icon: 'eye' },
-      { value: 'API', label: 'FortiManager 정책 조회', icon: 'zap' },
+      { value: 'Slack/SMS', label: '알림', icon: 'eye' },
+      { value: 'FortiManager', label: 'API 정책 조회', icon: 'zap' },
     ],
     description:
       '넥스트레이드 매매체결시스템의 보안 이벤트는 장비 콘솔에서 하나씩 확인해야 해서, 탐지부터 담당자 통보까지 시간이 걸렸습니다. Splunk ES 탐지 룰에서 Webhook relay, Slack/SMS 알림, FortiManager API 정책 조회로 이어지는 경로를 구성하고, Python·Docker 기반 state tracker로 이벤트 상태를 추적했습니다. 반복되는 오탐 검토에는 Claude AI 보조 분석을 사용했고, 탐지 룰·알림 조건·정책 조회 결과는 변경 이력과 함께 기록했습니다.',
@@ -51,7 +51,7 @@ export const PROJECTS = [
     stack: ['FortiGate', 'Ansible', 'VMware'],
     metrics: [
       { value: '다층', label: '망분리', icon: 'network' },
-      { value: 'HA', label: 'FortiGate FGCP', icon: 'sync' },
+      { value: 'FortiGate', label: 'HA 클러스터', icon: 'sync' },
       { value: '금융위', label: '본인가 대응', icon: 'check' },
     ],
     description:
