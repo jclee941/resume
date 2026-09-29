@@ -553,6 +553,7 @@
     "apps/job-server/src/tools/resume-customize.js",
     "apps/portfolio/lib/cards/evidence.js",
     "apps/portfolio/lib/cards/project-review.js",
+    "apps/portfolio/lib/es-logger.js",
     "apps/portfolio/src/scripts/client-globals.d.ts",
     "apps/portfolio/lib/japanese-template/index.js",
     "apps/portfolio/lib/metrics.js",

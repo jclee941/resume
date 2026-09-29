@@ -10,6 +10,12 @@ function generateErrorHandler(opts) {
   return `
     } catch (err) {
       metrics.requests_error++;
+      ctx.waitUntil(logToElasticsearch(env, \`Error: \${err.message}\`, 'ERROR', {
+        route: url.pathname,
+        traceparent: request.headers.get('traceparent') || undefined,
+        tracestate: request.headers.get('tracestate') || undefined,
+      }, { immediate: true }));
+
       console.error('[worker ${opts.version}] ' + request.method + ' ' + url.pathname + ' failed:', err && err.stack ? err.stack : err);
 
       return new Response('Internal Server Error', {
