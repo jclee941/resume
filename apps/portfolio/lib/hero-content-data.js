@@ -5,11 +5,11 @@ const HERO_CONTENT = {
     role: 'Security & Infrastructure Engineer',
     availability: '보안·인프라 엔지니어 면접 제안을 환영합니다.',
     positioning:
-      '넥스트레이드 보안 인프라 구축과 SIEM 탐지·알림 경험, jclee-bot LLM 출력 검증, 공개 프로젝트를 정리했습니다.',
+      '넥스트레이드 보안 인프라 구축과 SIEM 탐지·알림 자동화 경력, jclee-bot 등 공개 프로젝트를 한 페이지에 모았습니다.',
     proofLabel: '핵심 이력 요약',
     proofItems: [
-      'FortiGate HA·망분리·엔드포인트 보안을 운영했습니다.',
-      '넥스트레이드 보안 인프라를 구축하고, Splunk ES 탐지·알림과 jclee-bot LLM 출력 검증을 운영했습니다.',
+      '넥스트레이드 매매체결시스템에 FortiGate HA·망분리·엔드포인트 보안을 구축하고 운영했습니다.',
+      'Splunk ES 탐지 룰, Slack/SMS 알림, FortiManager API 조회를 연결해 보안 이벤트 대응을 자동화했습니다.',
     ],
     publicProofLabel: '공개 자동화 프로젝트',
     publicProofLinks: [
@@ -19,8 +19,8 @@ const HERO_CONTENT = {
         'Idle Outpost',
         'JADX 디컴파일과 mitmproxy 캡처로 모바일 클라이언트·API 흐름 분석',
       ],
-      ['#projects', 'Grafana', '메트릭·로그 관측성으로 장애와 보안 신호를 함께 확인'],
-      ['#projects', 'ELK', '보안 이벤트 수집·분류·추적으로 대응 이력을 남김'],
+      ['#projects', 'Grafana', '메트릭과 로그를 한 화면에서 보는 관측성 구성'],
+      ['#projects', 'ELK', '보안 이벤트 수집·분류·추적과 대응 이력 기록'],
     ],
     reviewLabel: '바로 확인하기',
     reviewLinks: [
@@ -33,7 +33,7 @@ const HERO_CONTENT = {
     packetStatus: '채용 제안 문의 가능',
     packetItems: [
       ['대상 역할', '보안 엔지니어링 · 인프라 · SIEM'],
-      ['주요 경력', '넥스트레이드 구축·운영 · FSDC 감사 대응 · 프로젝트 로그'],
+      ['주요 경력', '넥스트레이드 구축·자동화 · FSDC 감사 대응 · KAI 폐쇄망 운영'],
     ],
     quickTitle: '직무별 경력·프로젝트',
     quickDesc: '관심 직무를 선택하면 관련 경력과 프로젝트로 이동합니다.',
@@ -53,11 +53,11 @@ const HERO_CONTENT = {
     role: 'Security & Infrastructure Engineer',
     availability: 'Open to interview requests for security and infrastructure engineering roles',
     positioning:
-      'Nextrade security infrastructure, SIEM operations, the jclee-bot LLM output verifier, public projects, and a resume PDF are gathered here.',
+      'Nextrade security infrastructure, SIEM alert automation, and public projects such as jclee-bot on one page.',
     proofLabel: 'Résumé at a glance',
     proofItems: [
       'Target role: Security & Infrastructure Engineer',
-      'Recent role: exchange security infrastructure and LLM output verification (jclee-bot)',
+      'Recent role: Nextrade exchange security infrastructure build and SIEM alert automation',
     ],
     publicProofLabel: 'Public automation projects',
     publicProofLinks: [
@@ -67,11 +67,11 @@ const HERO_CONTENT = {
         'Idle Outpost',
         'JADX decompilation and mitmproxy captures trace mobile client and API flows',
       ],
-      ['#projects', 'Grafana', 'Metrics and logs provide observability for incidents and signals'],
+      ['#projects', 'Grafana', 'observability setup that shows metrics and logs on one screen'],
       [
         '#projects',
         'ELK',
-        'Security event collection, triage, and tracking keep the response trail',
+        'security event collection, triage, and tracking with a recorded response history',
       ],
     ],
     reviewLabel: 'Jump straight in',
@@ -85,7 +85,10 @@ const HERO_CONTENT = {
     packetStatus: 'Open to interview requests',
     packetItems: [
       ['Target role', 'Security & Infrastructure Engineer'],
-      ['Recent work', 'Exchange build/automation · audit response · resume PDF'],
+      [
+        'Recent work',
+        'Nextrade build and automation · FSDC audit response · KAI closed-network operations',
+      ],
     ],
     quickTitle: 'Browse by role',
     quickDesc: 'Pick a role and jump straight to the matching career and project work.',
@@ -106,11 +109,11 @@ const HERO_CONTENT = {
     role: 'Security & Infrastructure Engineer',
     availability: 'セキュリティ・インフラエンジニア職の面接依頼を歓迎',
     positioning:
-      '直近のセキュリティ基盤構築とLLM出力検証自動化(jclee-bot)、公開プロジェクト、履歴書PDFを1ページにまとめました。',
+      'ネクストレードのセキュリティ基盤構築、SIEM通知の自動化、jclee-botなどの公開プロジェクトを1ページにまとめました。',
     proofLabel: '経歴サマリー',
     proofItems: [
       '希望職種: Security & Infrastructure Engineer',
-      '直近役割: 取引所セキュリティ基盤とLLM出力検証(jclee-bot)',
+      '直近役割: ネクストレード取引所のセキュリティ基盤構築とSIEM通知の自動化',
     ],
     publicProofLabel: '公開自動化プロジェクト',
     publicProofLinks: [
@@ -120,8 +123,8 @@ const HERO_CONTENT = {
         'Idle Outpost',
         'JADXデコンパイルとmitmproxyキャプチャでモバイルクライアント・APIフローを分析',
       ],
-      ['#projects', 'Grafana', 'メトリクスとログの可観測性で障害とセキュリティ信号を確認'],
-      ['#projects', 'ELK', 'セキュリティイベント収集・トリアージ・追跡で対応履歴を保持'],
+      ['#projects', 'Grafana', 'メトリクスとログを同じ画面で確認する可観測性構成'],
+      ['#projects', 'ELK', 'セキュリティイベント収集・分類・追跡と対応履歴の記録'],
     ],
     reviewLabel: 'すぐに確認',
     reviewLinks: [
@@ -134,7 +137,7 @@ const HERO_CONTENT = {
     packetStatus: '面接依頼を受付中',
     packetItems: [
       ['希望職種', 'Security & Infrastructure Engineer'],
-      ['主要経歴', '取引所構築・自動化、監査対応、履歴書PDF'],
+      ['主要経歴', '取引所の構築・自動化、FSDC監査対応、KAI閉鎖網の運用'],
     ],
     quickTitle: '職務別に見る',
     quickDesc: '役割を選ぶと、関連する経歴とプロジェクトへ移動できます。',

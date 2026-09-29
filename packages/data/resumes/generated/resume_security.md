@@ -1,6 +1,6 @@
 <!-- Generated from master resume -->
 <!-- Variant: security -->
-<!-- Generated: 2026-09-29T07:01:20.249Z -->
+<!-- Generated: 2026-09-29T07:16:20.522Z -->
 <!-- Description: Security and compliance focus -->
 ## 연락처
 

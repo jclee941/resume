@@ -690,7 +690,7 @@
       "id": "observability-platform",
       "name": "Observability Platform",
       "period": "2024.06 ~ Present",
-      "description": "Metrics from the NVMe-backed Proxmox VE homelab are collected with Prometheus node_exporter and logs with Loki Promtail. Grafana dashboard definitions are managed as code so the same setup can be redeployed, and Grafana Explore shows metrics and logs on one screen.",
+      "description": "Metrics and logs for homelab services had to be checked service by service, so finding the cause of an incident meant switching between several screens. Metrics from the NVMe-backed Proxmox VE homelab are collected with Prometheus node_exporter and logs with Loki Promtail, and Grafana dashboard definitions are managed as code. Metrics and logs are now queried together on one Grafana Explore screen, and the same dashboards can be redeployed from code.",
       "technologies": [
         "Grafana",
         "Prometheus",
@@ -720,7 +720,7 @@
       "id": "security-alert-system",
       "name": "Security Alert System",
       "period": "2025.01 ~ Present",
-      "description": "A tool that sends FortiGate security events to Slack through Splunk Saved Search and webhooks. A CSV-based state tracker alerts only when an event's state changes, which prevents duplicate alerts for the same event. FortiGate LogIDs are mapped to severity and category so Splunk can classify events, and follow-up checks are recorded alongside.",
+      "description": "FortiGate security events piled up separately in device syslog and Splunk, so it took time before an operator noticed an event. Splunk Saved Search and webhooks now send events to Slack, and a CSV-based state tracker alerts only when an event's state changes, which prevents duplicate alerts. FortiGate LogIDs are mapped to severity and category so Splunk can classify events, and follow-up checks are recorded alongside.",
       "technologies": [
         "Splunk",
         "Python",
@@ -744,7 +744,7 @@
       "id": "ip-blacklist-platform",
       "name": "IP Blacklist Platform",
       "period": "2024.12 ~ Present",
-      "description": "A tool that queries AbuseIPDB, Emerging Threats, and AlienVault OTX threat intelligence feeds in one place. Each feed has its own source adapter, and SQLAlchemy models normalize IP reputation fields. Schema migrations are managed with Alembic, so adding a feed keeps the database change separate from the adapter implementation.",
+      "description": "Investigating one malicious IP meant querying AbuseIPDB, Emerging Threats, and AlienVault OTX separately. Each feed got its own source adapter, and SQLAlchemy models normalize IP reputation fields, so the feeds can be queried in one place. Schema migrations are managed with Alembic, so adding a feed keeps the database change separate from the adapter implementation.",
       "technologies": [
         "JavaScript",
         "Flask",
@@ -763,7 +763,7 @@
       "id": "hycu-fsds-autonomous-driving",
       "name": "HYCU FSDS Autonomous Driving",
       "period": "2025.11 ~ 2026.02",
-      "description": "Won the 2026 Autonomous Driving Formula Competition Excellence Award (Hanyang Cyber University). Implemented cone perception and driving control in the Formula Student Driverless Simulator (FSDS), packaging ROS2 perception and control nodes as Docker containers and validating them with vehicle dynamics and sensor models in the AirSim simulation. Sensor processing was reproduced and debugged with a Gazebo-ROS bridge and rviz2 visualization.",
+      "description": "Won the Excellence Award at Hanyang Cyber University's 2026 Autonomous Driving Formula Competition. Built ROS2 perception and control nodes for cone detection and driving control in the Formula Student Driverless Simulator (FSDS) and packaged them as Docker containers. Validated them against vehicle dynamics and sensor models in the AirSim simulation and debugged sensor processing with a Gazebo-ROS bridge and rviz2 visualization.",
       "technologies": [
         "Python",
         "ROS",
@@ -783,7 +783,7 @@
       "id": "resume-portfolio",
       "name": "Resume Portfolio",
       "period": "2024.01 ~ Present",
-      "description": "Builds the portfolio site from Korean, English, and Japanese resume data (SSoT) and deploys it to Cloudflare Workers. JSON-LD and OpenGraph metadata come from the same data, which reduces content differences between the site, the PDFs, and GitHub. Builds and tests are verified in GitHub Actions, and runtime logs are checked in Cloudflare Workers Logs and Loki.",
+      "description": "The career and project details on the resume, the PDFs, and GitHub had drifted apart, so fixing one place meant updating the others by hand. The portfolio site and its JSON-LD and OpenGraph metadata are now generated from Korean, English, and Japanese resume data (SSoT) and deployed to Cloudflare Workers. Builds and tests are verified in GitHub Actions, and runtime logs are checked in Cloudflare Workers Logs and Loki.",
       "technologies": [
         "Cloudflare Workers",
         "HTML/CSS",
@@ -806,7 +806,7 @@
       "name": "Terraform Homelab IaC",
       "period": "2024.06 ~ Present",
       "githubUrl": "https://github.com/jclee941/terraform",
-      "description": "Manages Proxmox VM/LXC, Cloudflare DNS, Workers, and WAF, and k3s bootstrap resources as Terraform modules. Each PR's plan output is verified before apply, so changes that used to be made directly in GUIs now leave a Git history.",
+      "description": "Homelab settings were changed directly in GUIs and left no history, which made changes hard to trace or rebuild. Proxmox VM/LXC, Cloudflare DNS, Workers, and WAF, and k3s bootstrap resources moved into Terraform modules, and every PR's plan output is verified before apply. Infrastructure changes now leave a Git history, and the same setup can be rebuilt from code.",
       "highlights": [
         "IaC migration that tracks Proxmox changes in Git after the NVMe move",
         "DNS and Edge settings managed as code",
@@ -828,7 +828,7 @@
       "name": "SafetyWallet (CF Workers PWA)",
       "period": "2026.01 ~ 2026.04",
       "githubUrl": "https://github.com/jclee941/safetywallet",
-      "description": "A Cloudflare Workers PWA and Next.js admin screen that replace paper for field workers' safety manuals, training records, and emergency contacts. D1 (SQLite) stores worker profiles, training status, and emergency contacts, and asynchronous jobs such as training-expiry reminders run on Workers Queue. Manual PDFs are stored in Workers KV, and the Service Worker Cache API lets field devices on weak networks open them offline. The admin screen is built with Next.js and TypeScript, and JWT sessions (short-lived access token plus HttpOnly refresh token) with role-based access control (RBAC) separate worker and admin permissions.",
+      "description": "Field workers' safety manuals, training records, and emergency contacts were kept on paper, so they were hard to look up on site and managers had to check each document by hand. Built a Cloudflare Workers PWA and a Next.js admin screen: D1 (SQLite) stores worker profiles, training status, and emergency contacts, and Workers KV stores the manual PDFs. Training-expiry reminders run on Workers Queue, and the Service Worker Cache API keeps manuals available offline on weak field networks. The admin screen uses Next.js and TypeScript, and JWT sessions (short-lived access token plus HttpOnly refresh token) with role-based access control (RBAC) separate worker and admin permissions.",
       "highlights": [
         "Cloudflare Workers Edge deployment that field devices query directly",
         "Storage split by role across D1, KV, and the Cache API",
@@ -863,7 +863,7 @@
       "name": "jclee-bot GitHub App",
       "period": "2026.04 ~ Present",
       "githubUrl": "https://github.com/jclee941/jclee-bot",
-      "description": "jclee-bot is a GitHub App that posts LLM PR reviews routed through CLIProxyAPI together with secret-scan, actionlint, and docs-policy check results as Check Runs. LLM reviews and policy check results appear in one place on the PR, and review comments are written in Korean first. Run logs are collected in ELK.",
+      "description": "PR reviews across several repositories were delegated to an LLM, and the results needed to be checked against independent checks on the same PR. jclee-bot is a GitHub App that posts LLM PR reviews routed through CLIProxyAPI together with secret-scan, actionlint, and docs-policy results as Check Runs. Review comments are written in Korean first, and run logs are collected in ELK.",
       "highlights": [
         "LLM PR reviews via CLIProxyAPI",
         "Check Runs verify LLM output with secret scan, actionlint, and docs policy",
@@ -886,7 +886,7 @@
       "name": "AI Content Automation Pipeline",
       "period": "2026.06 ~ Present",
       "githubUrl": null,
-      "description": "A content production pipeline that runs script writing, speech synthesis (TTS), video generation, and upload as separate steps. Python workers and n8n workflows run each step, and job status and artifact metadata are stored in Supabase PostgreSQL/Storage. External generation API calls are split into retryable job units, and channel-specific post-processing rules are managed in workflow configuration.",
+      "description": "Producing content for several channels meant running script writing, speech synthesis, video generation, and upload separately, so run records and logs ended up in different tools. Python workers and n8n workflows now run each step, and job status and artifact metadata are stored in Supabase PostgreSQL/Storage. External generation API calls are split into retryable job units, and channel-specific post-processing rules are managed in workflow configuration.",
       "highlights": [
         "Separated script generation, TTS, video generation, and upload steps with Python workers and n8n workflows",
         "Stored job status and artifact metadata in Supabase PostgreSQL/Storage",
@@ -910,7 +910,7 @@
       "name": "Bug Bounty Recon Toolkit",
       "period": "2025.10 ~ Present",
       "githubUrl": "https://github.com/jclee941/bug",
-      "description": "A tool that runs bug-bounty reconnaissance steps (subdomain discovery, notification, vulnerability scanning) automatically. Subfinder, httpx, and Nuclei are chained with a Go pipeline and a Makefile CLI that cron runs on a schedule, and results are analyzed with Python. New subdomains trigger a Slack notification, and Nuclei results are stored by severity.",
+      "description": "Bug-bounty reconnaissance (subdomain discovery, notification, vulnerability scanning) had to be repeated by hand for each target. Subfinder, httpx, and Nuclei are chained with a Go pipeline and a Makefile CLI that cron runs on a schedule, and results are analyzed with Python. New subdomains trigger a Slack notification, and Nuclei results are stored by severity.",
       "highlights": [
         "Concurrent scanning of multiple targets",
         "Matching and notification that alert as soon as a vulnerability is found",
@@ -933,7 +933,7 @@
       "name": "Firewall Policy Automation",
       "period": "2026.06 ~ Present",
       "githubUrl": "https://github.com/jclee941/firewall",
-      "description": "A project that replaced the manual cross-check between firewall policy request forms and firewall range tables with an Excel VBA tool. Request rows, the firewall list, and range criteria are validated inside one workbook, so the target-firewall decision and review record are kept automatically.",
+      "description": "Every firewall policy request meant cross-checking the request form against the firewall range table by hand to decide the target firewall. Built an Excel VBA tool that validates request rows, the firewall list, and range criteria inside one workbook. Operators keep their existing Excel format, and the target-firewall decision and review record are kept row by row automatically.",
       "highlights": [
         "Request forms and firewall range tables organized into the same input format",
         "Row-level tracking of target-firewall decisions",
@@ -955,7 +955,7 @@
       "name": "tmux Productivity Suite",
       "period": "2026.06 ~ Present",
       "githubUrl": "https://github.com/jclee941/tmux",
-      "description": "A personal tool that manages terminal sessions, per-project layouts, and a Slack bridge with tmux. Bash configuration, YAML layouts, and a Bun/TypeScript TUI live in one repository, and session recovery and project switching run through scripts.",
+      "description": "Switching projects meant rebuilding terminal sessions and work layouts by hand. tmux sessions, per-project layouts, and a Slack bridge are managed in one repository with Bash configuration, YAML layouts, and a Bun/TypeScript TUI. Session recovery and project switching run through scripts and key bindings.",
       "highlights": [
         "Project-specific tmux sessions and layout management",
         "YAML-defined workspaces and terminal UI",
@@ -977,7 +977,7 @@
       "id": "mcp-servers",
       "name": "PlayMCP Tool Servers",
       "period": "2026.06 ~ Present",
-      "description": "MCP tool servers called by AI agents. meetup-coordinator and nunchi-translator are implemented as PlayMCP-compatible MCP servers and deployed on Kakao Cloud. Each tool validates input and output with inputSchema and outputSchema and handles requests statelessly.",
+      "description": "Building tools for AI agents to call required a way to check that agent inputs and tool outputs keep their agreed format. meetup-coordinator and nunchi-translator are implemented as PlayMCP-compatible MCP servers and deployed on Kakao Cloud. Each tool validates input and output with inputSchema and outputSchema and handles requests statelessly.",
       "tagline": "MCP tool servers",
       "technologies": [
         "TypeScript",

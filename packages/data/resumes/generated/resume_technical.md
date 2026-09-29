@@ -1,6 +1,6 @@
 <!-- Generated from master resume -->
 <!-- Variant: technical -->
-<!-- Generated: 2026-09-29T07:01:20.249Z -->
+<!-- Generated: 2026-09-29T07:16:20.521Z -->
 <!-- Description: Technical infrastructure focus -->
 ## 연락처
 
@@ -179,8 +179,8 @@
 
 #### HYCU FSDS 자율주행 | Python · ROS2 · Docker · AirSim
 
-- 2026 자율주행 포뮬러 경진대회 우수상(한양사이버대학교)을 수상했습니다. FSDS 환경에서 콘 인지와 주행 제어를 구현했습니다.
-- ROS2 인지·제어 노드를 Docker로 패키징하고 AirSim 시뮬레이션에서 검증했습니다.
+- 한양사이버대학교 2026 자율주행 포뮬러 경진대회에서 우수상을 받았습니다.
+- FSDS에서 콘을 인지하고 차량을 주행 제어하는 ROS2 인지·제어 노드를 Docker로 패키징해 AirSim 시뮬레이션에서 검증했습니다.
 
 #### 그 밖의 프로젝트
 
