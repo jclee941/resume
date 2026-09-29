@@ -73,6 +73,19 @@ import { WANTED_HEADLINE_LIMIT } from './constants.js';
  */
 
 /**
+ * Wanted resume education `status` (the editor's 졸업 상태 options) by normalized SSoT status.
+ * @type {Record<string, string>}
+ */
+const WANTED_EDUCATION_STATUS = {
+  재학중: 'ENROLLED',
+  졸업예정: 'EXPECTED_GRADUATION',
+  졸업: 'GRADUATED',
+  수료: 'COMPLETED',
+  중퇴: 'WITHDRAWN',
+  휴학: 'LEAVE_OF_ABSENCE',
+};
+
+/**
  * @param {WantedFormatSource} source
  */
 export function mapToWantedFormat(source) {
@@ -81,6 +94,7 @@ export function mapToWantedFormat(source) {
   const expertise = source.summary?.expertise || [];
   const educationStatus = normalizeEducationStatus(source.education?.status);
   const isAttending = educationStatus === '재학중';
+  const wantedEducationStatus = WANTED_EDUCATION_STATUS[educationStatus];
 
   const wantedVariant = source.platformVariants?.wanted || {};
 
@@ -142,11 +156,8 @@ export function mapToWantedFormat(source) {
         degree: '학사',
         start_time: parseDate(source.education?.startDate),
         end_time: isAttending ? null : parseDate(source.education?.endDate),
-        description: isAttending
-          ? `재학중 (${source.education?.startDate || ''} ~ )`
-          : educationStatus === '졸업예정'
-            ? `졸업예정 (${source.education?.endDate || ''})`
-            : null,
+        ...(wantedEducationStatus ? { status: wantedEducationStatus } : {}),
+        description: isAttending ? `재학중 (${source.education?.startDate || ''} ~ )` : null,
       },
     ],
     skills: flattenSkills(source.skills).slice(0, 20),

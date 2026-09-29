@@ -141,7 +141,7 @@ describe('unifiedResumeSyncTool', () => {
     assert.ok(result.preview.wanted.educations[0].description.includes('재학중'));
   });
 
-  it('maps an expected graduation to its end date and a 졸업예정 description', async () => {
+  it('maps an expected graduation to its end date and the EXPECTED_GRADUATION status', async () => {
     const data = clone(BASE_RESUME_DATA);
     data.education.status = '졸업 예정';
     data.education.endDate = '2027.02';
@@ -153,7 +153,8 @@ describe('unifiedResumeSyncTool', () => {
     });
 
     assert.strictEqual(result.preview.wanted.educations[0].end_time, '2027-02-01');
-    assert.strictEqual(result.preview.wanted.educations[0].description, '졸업예정 (2027.02)');
+    assert.strictEqual(result.preview.wanted.educations[0].status, 'EXPECTED_GRADUATION');
+    assert.strictEqual(result.preview.wanted.educations[0].description, null);
   });
 
   it('handles parseDate edge behavior through preview output', async () => {
