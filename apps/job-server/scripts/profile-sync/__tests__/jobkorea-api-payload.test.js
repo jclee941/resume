@@ -342,7 +342,8 @@ describe('JobKorea API payload helpers', () => {
       [
         { name: 'UnivSchool.Index', value: 'c3' },
         { name: 'HighSchool.index', value: 'c7,c8' },
-        { name: 'Career.index', value: 'c14,c844' },
+        { name: 'Career.index', value: 'c14' },
+        { name: 'Career.index', value: 'c844' },
         { name: 'Award.index', value: '1_1790657372229' },
       ],
       1000
