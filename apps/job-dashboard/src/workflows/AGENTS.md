@@ -17,8 +17,7 @@ workflows/
 ├── job-crawling.js        # crawl orchestration
 ├── application.js         # ApplicationWorkflow class
 ├── application/           # scoring, gates, platform submitters, Browser Rendering
-├── resume-sync.js         # resume sync workflow
-├── resume-sync-helpers.js # shared sync helpers
+├── resume-sync.js         # resume sync workflow (one step per platform)
 ├── daily-report.js        # daily summary workflow
 ├── health-check.js        # runtime health workflow
 ├── backup.js              # backup orchestration
@@ -29,8 +28,8 @@ workflows/
 
 - Keep steps idempotent so retries do not duplicate side effects.
 - Make input/output contracts explicit between workflow stages.
-- Keep helper logic in `resume-sync-helpers.js` style modules when reuse is
-  real.
+- Platform sync logic lives in `services/resume-platform-sync/`; workflows only
+  sequence steps and record outcomes.
 - Emit structured progress/status suitable for API status polling.
 - Explicit candidate runs should skip search and preserve candidate platform
   source after normalization.

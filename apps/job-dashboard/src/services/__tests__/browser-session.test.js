@@ -1,7 +1,7 @@
 import { describe, it, mock } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { withBrowserSession } from '../browser-service.js';
+import { withBrowserSession } from '../browser-session.js';
 
 function createFakeStub({ acquireBody, releaseBody } = {}) {
   const calls = [];

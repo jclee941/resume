@@ -9,7 +9,7 @@
  * Browser Rendering behaviour — cross-worker session-connect, keep_alive
  * reuse, and concurrency accounting — is NOT yet verified against the real
  * Cloudflare runtime, only unit-tested with a fake puppeteer. Wave 3 wires a
- * real crawler through handlers/browser/browser-service.js after that
+ * real crawler through services/browser-session.js after that
  * validation happens.
  *
  * Binding: BROWSER_SESSION in wrangler.jsonc

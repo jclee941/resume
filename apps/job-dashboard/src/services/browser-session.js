@@ -5,7 +5,7 @@
  * yet — this is a drop-in for future callers, added in Wave 3 once live
  * Browser Rendering behaviour has been validated.
  *
- * @module handlers/browser/browser-service
+ * @module services/browser-session
  */
 
 import puppeteerDefault from '@cloudflare/puppeteer';

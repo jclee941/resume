@@ -235,8 +235,7 @@ job-dashboard/
 │       ├── index.js                # Barrel exports
 │       ├── job-crawling.js         # Job search pipeline
 │       ├── application.js          # Auto-apply submission
-│       ├── resume-sync.js          # Daily sync
-│       ├── resume-sync-helpers.js  # Resume sync helpers
+│       ├── resume-sync.js          # Per-platform resume sync (Wanted, JobKorea)
 │       ├── daily-report.js         # Daily report
 │       ├── health-check.js         # Health monitoring
 │       ├── backup.js               # D1→KV backup

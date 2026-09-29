@@ -18,7 +18,7 @@ import { sendTelegramNotification } from '../../services/notifications.js';
  */
 export async function getProfileSyncStatusResponse(handler, request) {
   const syncId = request.params?.syncId;
-  const db = handler.env?.DB;
+  const db = handler.env?.JOB_DB;
 
   if (!db) {
     return handler.jsonResponse({ success: false, error: 'Database not configured' }, 503);
@@ -63,7 +63,7 @@ export async function updateProfileSyncStatusResponse(handler, request) {
   /** @type {ProfileSyncStatusUpdate} */
   const body = await request.json().catch(() => ({}));
   const { syncId, status, result } = body;
-  const db = handler.env?.DB;
+  const db = handler.env?.JOB_DB;
 
   if (!db) {
     return handler.jsonResponse({ success: false, error: 'Database not configured' }, 503);
