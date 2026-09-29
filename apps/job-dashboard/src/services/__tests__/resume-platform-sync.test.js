@@ -61,6 +61,8 @@ const SECTIONS = [
   },
 ];
 
+const PHOTO = { dropped: true, image: true, flags: [{ name: 'Photo_Stat', value: 'True' }] };
+
 function fakeEditor({
   fields = LIVE_FORM,
   tokens = { LastEditDateTicks: '638000' },
@@ -69,7 +71,7 @@ function fakeEditor({
 } = {}) {
   const save = mock.fn(async () => ({ status: 200, text: saveText }));
   const withEditor = mock.fn(async (_env, _session, fn) =>
-    fn({ fields, tokens, sections: SECTIONS, dialogs, save })
+    fn({ fields, tokens, sections: SECTIONS, dialogs, photo: PHOTO, save })
   );
   return { save, withEditor };
 }
@@ -88,6 +90,7 @@ describe('Cloudflare-native JobKorea resume sync', () => {
     assert.deepEqual(result.inputStat, { 'InputStat.AwardInputStat': 'False' });
     assert.deepEqual(result.liveRowFields.Award, ['Award_Name']);
     assert.deepEqual(result.liveAwards, ['자율주행 경진대회 우수상']);
+    assert.deepEqual(result.photo, PHOTO);
     assert.deepEqual(withEditor.mock.calls[0].arguments[1], {
       cookieString: 'ACNT=1; SES=2',
       rNo: '777',
@@ -222,6 +225,7 @@ function fakeEditorPage({
     }),
     waitForFunction: mock.fn(async () => {}),
     evaluate: mock.fn(async (_fn, first, second) => {
+      if (first === undefined) return { dropped: false, image: false, flags: [] };
       if (Array.isArray(first) && second === undefined) {
         sectionReads += 1;
         return [
@@ -263,6 +267,7 @@ describe('JobKorea editor over Browser Rendering', () => {
       async (editor) => {
         assert.deepEqual(editor.fields, [{ name: 'UnivSchool.Index', value: 'c3' }]);
         assert.deepEqual(editor.tokens, { LastEditDateTicks: '638000' });
+        assert.deepEqual(editor.photo, { dropped: false, image: false, flags: [] });
         assert.deepEqual(editor.sections, [
           {
             syncId: 'InputStat_CareerInputStat',

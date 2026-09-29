@@ -193,6 +193,7 @@ export async function syncJobKoreaFromSsot(env, ssot, options) {
     });
     const summary = {
       sections: editor.sections,
+      photo: editor.photo,
       ...(editor.dialogs.length > 0 ? { dialogs: editor.dialogs } : {}),
       inputStat: inputStatFlags(editor.fields),
       liveRowFields: liveRowFieldNames(editor.fields),

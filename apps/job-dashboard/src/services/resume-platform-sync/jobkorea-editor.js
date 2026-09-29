@@ -23,11 +23,13 @@ const SECTION_ADD_TIMEOUT_MS = 5_000;
  * @typedef {{ syncId: string; flag: string | null; label: string | null }} SectionState
  * @typedef {{ syncId: string; before: SectionState; after: SectionState }} SectionAddition
  * @typedef {import('@cloudflare/puppeteer').Page} EditorPage
+ * @typedef {{ dropped: boolean; image: boolean; flags: Array<{ name: string; value: string }> }} PhotoState
  * @typedef {{
  *   fields: SerializedField[];
  *   tokens: Record<string, string>;
  *   sections: SectionAddition[];
  *   dialogs: string[];
+ *   photo: PhotoState;
  *   save(body: string): Promise<JobKoreaSaveResponse>;
  * }} JobKoreaEditor
  */
@@ -68,6 +70,26 @@ function readSectionStates(syncIds) {
       label: button?.textContent?.trim() ?? null,
     };
   });
+}
+
+/**
+ * Whether the resume shows a photo: the picture widget, its image, and the hidden photo flags
+ * (runs in the page).
+ * @returns {PhotoState}
+ */
+function readPhotoState() {
+  const picture = document.querySelector('div.picture');
+  const image = document.querySelector('div.picture .image img');
+  return {
+    dropped: Boolean(picture?.classList.contains('dropped')),
+    image: Boolean(image?.getAttribute('src')),
+    flags: [...document.querySelectorAll('input.dev-photo, input[class*="dev-photo"]')].map(
+      (input) => ({
+        name: input.getAttribute('name') || '',
+        value: input instanceof HTMLInputElement ? input.value : '',
+      })
+    ),
+  };
 }
 
 /**
@@ -180,6 +202,7 @@ export async function withJobKoreaEditor(
             throw await editorMissingError(page, dialogs);
           });
         const sections = await addSyncedSections(page);
+        const photo = await page.evaluate(readPhotoState);
         const { fields, tokens } = await page.evaluate(
           (selector, tokenNames) => {
             const form = document.querySelector(selector);
@@ -206,6 +229,7 @@ export async function withJobKoreaEditor(
           tokens,
           sections,
           dialogs,
+          photo,
           save: (body) =>
             page.evaluate(
               async (path, payload) => {
