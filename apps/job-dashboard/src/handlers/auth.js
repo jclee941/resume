@@ -1,43 +1,48 @@
-import { encrypt, decrypt } from '@resume/shared/crypto';
 import { verifySecret } from '../services/auth.js';
 import { normalizeError } from '@resume/shared/errors';
-import { writePlatformSession } from '../services/platform-session.js';
+import {
+  platformSessionKey,
+  readPlatformSession,
+  writePlatformSession,
+} from '../services/platform-session.js';
+
+const SESSION_KEY_PREFIX = platformSessionKey('');
+const DEFAULT_SESSION_TTL_MS = 24 * 60 * 60 * 1000;
+const SYNC_PLATFORMS = ['wanted', 'saramin', 'jobkorea', 'linkedin'];
 
 /**
- * @typedef {{
- *   prepare(query: string): {
- *     bind(...values: unknown[]): {
- *       run(): Promise<unknown>;
- *       all(): Promise<{ results: Array<{ platform: string; email: string | null; expires_at: string | null; updated_at: string | null }> }>;
- *       first(): Promise<{ cookies: string; expires_at: string | null } | null>;
- *     };
- *     all(): Promise<{ results: Array<{ platform: string; email: string | null; expires_at: string | null; updated_at: string | null }> }>;
- *     first(): Promise<{ cookies: string; expires_at: string | null } | null>;
- *     run(): Promise<unknown>;
- *   };
- * }} AuthDb
+ * @typedef {{ email?: string | null; updatedAt?: string }} SessionMetadata
  *
  * @typedef {{
- *   delete(key: string): Promise<void> | Promise<unknown>;
- * }} AuthKv
+ *   get(key: string): Promise<string | null>;
+ *   put(
+ *     key: string,
+ *     value: string,
+ *     options?: { expirationTtl?: number; metadata?: SessionMetadata }
+ *   ): Promise<void>;
+ *   delete(key: string): Promise<void>;
+ *   list(options: { prefix: string }): Promise<{
+ *     keys: Array<{ name: string; expiration?: number; metadata?: unknown }>;
+ *   }>;
+ * }} SessionKv
  *
  * @typedef {{
  *   ENCRYPTION_KEY?: string;
  *   AUTH_SYNC_SECRET?: string;
- *   SESSIONS: { put: Function };
+ *   SESSIONS: SessionKv;
  *   [key: string]: unknown;
  * }} AuthEnv
  */
 
+/**
+ * Platform login sessions. The only store is KV `auth:<platform>`, written
+ * and read through services/platform-session.js (AES-GCM at rest).
+ */
 export class AuthHandler {
   /**
-   * @param {AuthDb} db
-   * @param {AuthKv | null} kv
    * @param {AuthEnv} env
    */
-  constructor(db, kv, env) {
-    this.db = db;
-    this.kv = kv;
+  constructor(env) {
     this.env = env;
   }
 
@@ -54,23 +59,23 @@ export class AuthHandler {
   }
 
   /**
+   * A platform counts as authenticated only while its stored session decrypts.
    * @param {Request} [_request]
    * @returns {Promise<Response>}
    */
   async getStatus(_request) {
-    const sessions = await this.db
-      .prepare('SELECT platform, email, expires_at, updated_at FROM sessions')
-      .all();
+    const { keys } = await this.env.SESSIONS.list({ prefix: SESSION_KEY_PREFIX });
 
     /** @type {Record<string, { authenticated: boolean; email: string | null; expiresAt: string | null; updatedAt: string | null }>} */
     const status = {};
-    for (const session of sessions.results) {
-      const isExpired = session.expires_at && new Date(session.expires_at) < new Date();
-      status[session.platform] = {
-        authenticated: !isExpired,
-        email: session.email,
-        expiresAt: session.expires_at,
-        updatedAt: session.updated_at,
+    for (const key of keys) {
+      const platform = key.name.slice(SESSION_KEY_PREFIX.length);
+      const metadata = /** @type {SessionMetadata | undefined} */ (key.metadata);
+      status[platform] = {
+        authenticated: (await readPlatformSession(this.env, platform)) !== null,
+        email: metadata?.email ?? null,
+        expiresAt: key.expiration ? new Date(key.expiration * 1000).toISOString() : null,
+        updatedAt: metadata?.updatedAt ?? null,
       };
     }
 
@@ -89,25 +94,9 @@ export class AuthHandler {
       return this.jsonResponse({ error: 'Platform and cookies required' }, 400);
     }
 
-    const encryptedCookies = await encrypt(cookies, this.env);
-    const now = new Date().toISOString();
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-
-    await this.db
-      .prepare(
-        `
-      INSERT OR REPLACE INTO sessions (platform, cookies, email, expires_at, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `
-      )
-      .bind(platform, encryptedCookies, email || null, expiresAt, now, now)
-      .run();
-
-    if (this.kv) {
-      // KV keeps one encrypted copy under auth:<platform>; every reader decrypts
-      // through services/platform-session.js.
-      await writePlatformSession(this.env, platform, cookies, 86400);
-    }
+    await writePlatformSession(this.env, platform, cookies, DEFAULT_SESSION_TTL_MS / 1000, {
+      email: email || null,
+    });
 
     return this.jsonResponse({
       success: true,
@@ -122,15 +111,7 @@ export class AuthHandler {
   async clearAuth(request) {
     const { platform } = request.params;
 
-    await this.db.prepare('DELETE FROM sessions WHERE platform = ?').bind(platform).run();
-
-    if (this.kv) {
-      await this.kv.delete(`session:${platform}`);
-      await this.kv.delete(`auth:${platform}`);
-      if (platform === 'wanted') {
-        await this.kv.delete('wanted:session');
-      }
-    }
+    await this.env.SESSIONS.delete(platformSessionKey(platform));
 
     return this.jsonResponse({
       success: true,
@@ -143,17 +124,7 @@ export class AuthHandler {
    * @returns {Promise<string | null>}
    */
   async getCookies(platform) {
-    const result = await this.db
-      .prepare('SELECT cookies, expires_at FROM sessions WHERE platform = ?')
-      .bind(platform)
-      .first();
-
-    if (!result) return null;
-
-    const isExpired = result.expires_at && new Date(result.expires_at) < new Date();
-    if (isExpired) return null;
-
-    return decrypt(result.cookies, this.env);
+    return readPlatformSession(this.env, platform);
   }
 
   /**
@@ -242,7 +213,7 @@ export class AuthHandler {
   async syncFromScript(request) {
     // Fail-closed: AUTH_SYNC_SECRET env var must be configured. Without it, this
     // endpoint must NOT accept requests — it ingests platform cookies and writes
-    // them to D1/KV. Returning 503 instead of 401 distinguishes misconfiguration
+    // them to KV. Returning 503 instead of 401 distinguishes misconfiguration
     // from a wrong secret in client logs.
     if (!this.env.AUTH_SYNC_SECRET) {
       return this.jsonResponse(
@@ -250,7 +221,6 @@ export class AuthHandler {
         503
       );
     }
-    // Verify secret
     const secret = request.headers.get('X-Auth-Sync-Secret');
     if (!verifySecret(secret, this.env.AUTH_SYNC_SECRET)) {
       return this.jsonResponse({ error: 'Unauthorized' }, 401);
@@ -263,36 +233,17 @@ export class AuthHandler {
       return this.jsonResponse({ error: 'Platform and cookies required' }, 400);
     }
 
-    // Validate platform
-    const allowedPlatforms = ['wanted', 'saramin', 'jobkorea', 'linkedin'];
-    if (!allowedPlatforms.includes(platform)) {
+    if (!SYNC_PLATFORMS.includes(platform)) {
       return this.jsonResponse({ error: `Invalid platform: ${platform}` }, 400);
     }
 
-    // Encrypt and store
-    const encryptedCookies = await encrypt(cookies, this.env);
-    const now = new Date().toISOString();
-    const ttl = expiresIn || 24 * 60 * 60 * 1000; // Default 24h
-    const expiresAt = new Date(Date.now() + ttl).toISOString();
-
-    await this.db
-      .prepare(
-        `
-      INSERT OR REPLACE INTO sessions (platform, cookies, email, expires_at, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `
-      )
-      .bind(platform, encryptedCookies, email || null, expiresAt, now, now)
-      .run();
-
-    if (this.kv) {
-      await writePlatformSession(this.env, platform, cookies, Math.floor(ttl / 1000));
-    }
+    const ttlSeconds = Math.floor((expiresIn || DEFAULT_SESSION_TTL_MS) / 1000);
+    await writePlatformSession(this.env, platform, cookies, ttlSeconds, { email: email || null });
 
     return this.jsonResponse({
       success: true,
       message: `Auth synced for ${platform}`,
-      expiresAt,
+      expiresAt: new Date(Date.now() + ttlSeconds * 1000).toISOString(),
     });
   }
 }

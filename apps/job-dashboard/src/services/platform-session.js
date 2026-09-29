@@ -17,16 +17,21 @@ export function platformSessionKey(platform) {
 }
 
 /**
+ * The KV metadata records when the session was written (and any non-secret
+ * detail the caller passes, e.g. the account email) so status views need no
+ * decryption and no second store.
  * @param {{ SESSIONS: { put: Function }, ENCRYPTION_KEY?: string }} env
  * @param {string} platform
  * @param {string} value cookie header or serialized session JSON
  * @param {number} ttlSeconds
+ * @param {{ email?: string | null }} [metadata]
  * @returns {Promise<void>}
  */
-export async function writePlatformSession(env, platform, value, ttlSeconds) {
+export async function writePlatformSession(env, platform, value, ttlSeconds, metadata = {}) {
   const ciphertext = await encrypt(value, env);
   await env.SESSIONS.put(platformSessionKey(platform), ciphertext, {
     expirationTtl: ttlSeconds,
+    metadata: { ...metadata, updatedAt: new Date().toISOString() },
   });
 }
 

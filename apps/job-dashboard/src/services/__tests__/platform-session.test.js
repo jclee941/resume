@@ -33,7 +33,8 @@ describe('platform session storage', () => {
     assert.equal(key, platformSessionKey('wanted'));
     assert.equal(key, 'auth:wanted');
     assert.doesNotMatch(stored, /WWW_ONEID_ACCESS_TOKEN/);
-    assert.deepEqual(options, { expirationTtl: 3600 });
+    assert.equal(options.expirationTtl, 3600);
+    assert.match(options.metadata.updatedAt, /^\d{4}-\d{2}-\d{2}T/);
     assert.equal(await readPlatformSession(env, 'wanted'), 'WWW_ONEID_ACCESS_TOKEN=abc');
   });
 
