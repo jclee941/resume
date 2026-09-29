@@ -4,7 +4,7 @@
  *
  * Wave 0 — lock public API surface before shared package extraction.
  *
- * Strategy: Pass env={} (no ELASTICSEARCH_URL) so all ES calls are silent no-ops.
+ * Strategy: Pass env={}; the default console transport writes JSON lines to console.
  */
 
 let Logger, RequestContext, LogLevel, generateRequestId;
@@ -163,7 +163,7 @@ describe('Logger Contract Tests', () => {
   // ─── Logger ────────────────────────────────────────────────────────────
 
   describe('Logger', () => {
-    const env = {}; // No ELASTICSEARCH_URL → all ES calls are silent no-ops
+    const env = {};
 
     test('constructor stores env, service defaults to "default", minLevel defaults to "DEBUG"', () => {
       const logger = new Logger(env);
@@ -306,29 +306,19 @@ describe('Logger Contract Tests', () => {
       consoleSpy.mockRestore();
     });
 
-    test('error() includes http.response.status_code when passed HttpError', async () => {
-      const esEnv = {
-        ELASTICSEARCH_URL: 'https://es.example.com',
-        ELASTICSEARCH_API_KEY: 'api-key',
-        ELASTICSEARCH_INDEX: 'logger-test-index',
-      };
-      const logger = new Logger(esEnv, { service: 'http-err-test' });
+    test('error() dispatches http.response.status_code label when passed HttpError', async () => {
+      const sent = [];
+      const transport = { name: 'capture', send: (entry) => sent.push(entry) };
+      const logger = new Logger(env, { service: 'http-err-test', transports: [transport] });
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      const fetchSpy = jest.spyOn(globalThis, 'fetch').mockResolvedValue({
-        ok: true,
-        json: jest.fn().mockResolvedValue({ result: 'created' }),
-      });
 
       const { HttpError } = await import('@resume/shared/errors');
       await logger.error('Request failed', new HttpError(429, 'Too Many Requests'));
 
-      expect(fetchSpy).toHaveBeenCalledTimes(1);
-      const [, init] = fetchSpy.mock.calls[0];
-      const body = JSON.parse(init.body);
-      expect(body.http.response.status_code).toBe(429);
+      expect(sent).toHaveLength(1);
+      expect(sent[0].labels.http.response.status_code).toBe(429);
 
       consoleSpy.mockRestore();
-      fetchSpy.mockRestore();
     });
   });
 });

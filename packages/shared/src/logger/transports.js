@@ -1,4 +1,4 @@
-import { createElasticsearchTransport } from './transports/elasticsearch.js';
+import { createConsoleTransport } from './transports/console.js';
 
 /**
  * @param {Array<{name: string, send: Function, flush?: Function}>} [transports]
@@ -7,7 +7,7 @@ import { createElasticsearchTransport } from './transports/elasticsearch.js';
 function createDefaultTransports(transports) {
   return Array.isArray(transports) && transports.length > 0
     ? transports
-    : [createElasticsearchTransport()];
+    : [createConsoleTransport()];
 }
 
 /**

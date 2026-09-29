@@ -15,8 +15,6 @@ export const jobDashboardEnvSchema = z.object({
   // ===== Optional logging =====
   LOKI_URL: z.string().url().optional(),
   LOKI_API_KEY: z.string().optional(),
-  ELASTICSEARCH_URL: z.string().url().optional(),
-  ELASTICSEARCH_API_KEY: z.string().optional(),
 
   // ===== Optional Google OAuth (only required when /api/auth/login is in use) =====
   GOOGLE_OAUTH_CLIENT_ID: z.string().optional(),

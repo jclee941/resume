@@ -8,7 +8,7 @@
 # Notes:
 #   - Grafana public dashboards require the feature toggle in grafana.ini.
 #   - Anonymous auth is Viewer-only; admin access uses basic auth fallback.
-#   - Update ELASTICSEARCH_URL and GRAFANA_ADMIN_PASSWORD via .env or export.
+#   - Update GRAFANA_ADMIN_PASSWORD via .env or export.
 
 services:
   grafana:
@@ -20,8 +20,6 @@ services:
     environment:
       # Admin password — override via .env or shell export; never commit real values
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-changeme}
-      # Elasticsearch URL consumed by provisioned datasources
-      - ELASTICSEARCH_URL=${ELASTICSEARCH_URL:-http://localhost:9200}
     volumes:
       - grafana-data:/var/lib/grafana
       - ../configs/grafana/grafana.ini:/etc/grafana/grafana.ini:ro

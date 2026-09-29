@@ -10,7 +10,7 @@
 
 ## OVERVIEW
 
-Shared runtime utilities consumed by `apps/job-dashboard`, and other packages. Provides validation, error handling, logging, HTTP clients (Wanted, Elasticsearch), browser automation, retry/circuit-breaker, crypto, rate-limiting, session management, and auth helpers.
+Shared runtime utilities consumed by `apps/job-dashboard` and other packages. Provides validation, error handling, logging, HTTP clients (Wanted), browser automation, retry/circuit-breaker, crypto, rate-limiting, session management, and auth helpers.
 
 ## STRUCTURE
 
@@ -44,7 +44,6 @@ packages/shared/src/
 | `@resume/shared/errors`           | Custom error classes                      |
 | `@resume/shared/cookies`          | Cookie utilities                          |
 | `@resume/shared/logger`           | Structured logging                        |
-| `@resume/shared/es-client`        | Elasticsearch client                      |
 | `@resume/shared/browser`          | Cloudflare Browser Rendering adapter      |
 | `@resume/shared/browser/stealth`  | Stealth patches                           |
 | `@resume/shared/clients/wanted/*` | Wanted endpoints (jobs, profile, resume)  |
@@ -65,7 +64,7 @@ packages/shared/src/
 - Subpath exports defined in `package.json` exports field
 - Pure functions preferred; minimal side effects
 - Error handling via custom error classes in `errors/`
-- Logging via Logger class with pluggable transports (Elasticsearch default, Loki optional)
+- Logging via Logger class with pluggable transports (console default, Loki optional)
 - Browser automation uses `@cloudflare/puppeteer` with stealth patches
 
 ## ANTI-PATTERNS

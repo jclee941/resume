@@ -14,7 +14,7 @@
 # INTEGRATION:
 #   1. Worker pushes spans via OTLP/HTTP to Tempo's receiver (port 4318)
 #   2. Grafana reads from Tempo as a datasource (port 3200)
-#   3. Trace-to-Logs links Tempo spans to Loki/ES log entries via traceId
+#   3. Trace-to-Logs links Tempo spans to Loki log entries via traceId
 
 stream_over_http_enabled: true
 

@@ -822,7 +822,7 @@ wrangler analytics-engine
 
 ### Log Format (ECS - Elastic Common Schema)
 
-All logs use ECS format for compatibility with Elasticsearch/Grafana:
+All logs use ECS format for compatibility with Grafana/Loki:
 
 ```json
 {

@@ -238,7 +238,7 @@ export class ValidationError extends AppError {
 }
 
 /**
- * External service communication errors (Elasticsearch, Slack, D1, KV, etc.)
+ * External service communication errors (Slack, D1, KV, etc.)
  */
 export class ExternalServiceError extends AppError {
   /**

@@ -7,7 +7,7 @@
 ## OVERVIEW
 
 Monitoring assets for dashboards, logging strategy, SLOs, tracing, uptime
-checks, and Elasticsearch/Grafana integration.
+checks, and Grafana integration.
 
 ## STRUCTURE
 
@@ -16,7 +16,6 @@ infrastructure/monitoring/
 ├── grafana-dashboard-*.json   # dashboard exports
 ├── README.md                  # operator-facing monitoring guide
 ├── logging-strategy.md        # backend responsibility split
-├── elasticsearch/             # ES-oriented assets
 ├── grafana/                   # Grafana-specific support files
 ├── slo/                       # service-level objectives
 ├── tracing/                   # trace/log correlation material
@@ -25,19 +24,19 @@ infrastructure/monitoring/
 
 ## WHERE TO LOOK
 
-| Task                      | Location                                  | Notes                                |
-| ------------------------- | ----------------------------------------- | ------------------------------------ |
-| Main dashboard behavior   | `grafana-dashboard-resume-portfolio.json` | primary production dashboard export  |
-| Logging backend contract  | `logging-strategy.md`                     | ES for app logs, Loki for infra logs |
-| Operator deployment steps | `README.md`                               | Grafana API/UI workflow              |
-| SLO/tracing specifics     | `slo/`, `tracing/`                        | targeted reliability docs            |
+| Task                      | Location                                  | Notes                               |
+| ------------------------- | ----------------------------------------- | ----------------------------------- |
+| Main dashboard behavior   | `grafana-dashboard-resume-portfolio.json` | primary production dashboard export |
+| Logging backend contract  | `logging-strategy.md`                     | Workers Logs default, Loki opt-in   |
+| Operator deployment steps | `README.md`                               | Grafana API/UI workflow             |
+| SLO/tracing specifics     | `slo/`, `tracing/`                        | targeted reliability docs           |
 
 ## CONVENTIONS
 
 - Dashboard JSON files are versioned artifacts; keep docs clear about which file
   is primary.
-- Elasticsearch is the app-log source of truth; Loki is
-  infrastructure/ops-oriented unless explicitly stated otherwise.
+- Workers Logs (console output) is the app-log source of truth; Loki is
+  opt-in and infrastructure/ops-oriented unless explicitly stated otherwise.
 - Prefer Grafana API or UI deployment flows; avoid undocumented NAS/SSH drift.
 - Monitoring docs should name the datasource, query family, and alert ownership
   explicitly.

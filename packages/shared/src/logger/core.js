@@ -5,8 +5,8 @@ import { createDefaultTransports, dispatchToTransports, flushTransports } from '
 
 /**
  * @typedef {import('./config.js').RequestContext} RequestContext
- * @typedef {import('../clients/elasticsearch/transport.js').ElasticsearchEnv} LoggerEnv
- * @typedef {import('../clients/elasticsearch/transport.js').ElasticsearchLogOptions & { requestId?: string }} LogOptions
+ * @typedef {Record<string, unknown> & { LOKI_API_KEY?: string, LOKI_URL?: string }} LoggerEnv
+ * @typedef {{ requestId?: string, immediate?: boolean, job?: string }} LogOptions
  * @typedef {Object} LoggerOptions
  * @property {string} [service]
  * @property {string} [minLevel]
