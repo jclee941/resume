@@ -51,6 +51,7 @@ describe('ops workflows against the schema.sql database', () => {
   let logHealthMetrics;
   let getConsecutiveFailures;
   let notifyHealthFailure;
+  let buildHealthFailureMessage;
   let QueueWorkflowDispatcher;
   let recordSyncHistory;
 
@@ -71,7 +72,7 @@ describe('ops workflows against the schema.sql database', () => {
     ({ logHealthMetrics, getConsecutiveFailures } = await import(
       path.join(src, 'workflows/health-check/metrics.js')
     ));
-    ({ notifyHealthFailure } = await import(
+    ({ notifyHealthFailure, buildHealthFailureMessage } = await import(
       path.join(src, 'workflows/health-check/notifications.js')
     ));
     ({ recordSyncHistory } = await import(path.join(src, 'workflows/resume-sync-steps.js')));
@@ -246,6 +247,13 @@ describe('ops workflows against the schema.sql database', () => {
       [2, 'warning'],
       [3, 'critical'],
     ]);
+    const message = buildHealthFailureMessage({
+      healthEvaluation: failed,
+      escalationLevel: 'critical',
+      consecutiveFailures: 3,
+      startedAt: '2026-09-29T16:00:00Z',
+    });
+    expect(message).toContain('<b>Consecutive Failures</b>: 3\n');
   });
 
   test('resume sync history records a run once even when the step retries', async () => {
