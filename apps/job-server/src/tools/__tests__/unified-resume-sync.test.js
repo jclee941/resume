@@ -141,6 +141,21 @@ describe('unifiedResumeSyncTool', () => {
     assert.ok(result.preview.wanted.educations[0].description.includes('재학중'));
   });
 
+  it('maps an expected graduation to its end date and a 졸업예정 description', async () => {
+    const data = clone(BASE_RESUME_DATA);
+    data.education.status = '졸업 예정';
+    data.education.endDate = '2027.02';
+    mockResumeFile(data);
+
+    const result = await unifiedResumeSyncTool.execute({
+      action: 'preview',
+      platforms: ['wanted'],
+    });
+
+    assert.strictEqual(result.preview.wanted.educations[0].end_time, '2027-02-01');
+    assert.strictEqual(result.preview.wanted.educations[0].description, '졸업예정 (2027.02)');
+  });
+
   it('handles parseDate edge behavior through preview output', async () => {
     const data = clone(BASE_RESUME_DATA);
     data.careers = [

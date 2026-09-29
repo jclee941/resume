@@ -81,6 +81,38 @@ describe('unified resume sync platform modules', () => {
     assert.strictEqual(resumeSave.mock.calls.length, 2);
   });
 
+  it('matches existing wanted awards by title instead of re-adding them', async () => {
+    const resumeActivity = {
+      add: mock.fn(async () => undefined),
+      update: mock.fn(async () => undefined),
+      delete: mock.fn(async () => undefined),
+    };
+    mock.method(SessionManager, 'getAPI', async () => ({
+      updateProfile: mock.fn(async () => undefined),
+      getResumeDetail: mock.fn(async () => ({
+        activities: [
+          { id: 'award-1', title: '우수상', activity_type: 'AWARD' },
+          { id: 'project-1', title: 'Side project', activity_type: 'PROJECT' },
+        ],
+      })),
+      resumeActivity,
+    }));
+
+    const result = await syncToWanted(
+      { profile: { headline: 'h', description: 'd' } },
+      { resume_id: 'resume-1', dry_run: false },
+      { awards: [{ name: '우수상', organization: '한양사이버대학교', year: '2026' }] }
+    );
+
+    assert.ok(result.updated.includes('activities'));
+    assert.strictEqual(resumeActivity.add.mock.calls.length, 0);
+    assert.deepStrictEqual(
+      resumeActivity.update.mock.calls.map((call) => call.arguments.slice(0, 2)),
+      [['resume-1', 'award-1']]
+    );
+    assert.strictEqual(resumeActivity.delete.mock.calls.length, 0);
+  });
+
   it('returns jobkorea dry-run plan in isolation', async () => {
     const result = await syncToJobKorea({ name: 'Test User', careers: [] }, { dry_run: true });
     assert.strictEqual(result.dry_run, true);

@@ -102,10 +102,10 @@ export async function syncToWanted(data, params, sourceData = {}, injectedLogger
   });
 
   await runStep(results, 'activities', async () => {
-    const remoteCerts = (resumeDetail.activities || []).filter(
-      (a) => a.activity_type === 'CERTIFICATE'
+    const remoteSsotActivities = (resumeDetail.activities || []).filter(
+      (a) => a.activity_type === 'CERTIFICATE' || a.activity_type === 'AWARD'
     );
-    await syncActivities(api, params.resume_id, sourceData, remoteCerts);
+    await syncActivities(api, params.resume_id, sourceData, remoteSsotActivities);
   });
 
   await runStep(results, 'language_certs', async () => {
