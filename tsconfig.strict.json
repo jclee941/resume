@@ -861,7 +861,8 @@
     "apps/job-dashboard/scripts/dev/start-job-dashboard-stub.mjs",
     "packages/shared/src/platform-sync/wanted/sync.js",
     "packages/shared/src/platform-sync/jobkorea/index.js",
-    "packages/shared/src/platform-sync/jobkorea/sections/base.js"
+    "packages/shared/src/platform-sync/jobkorea/sections/base.js",
+    "packages/shared/src/platform-sync/jobkorea/section-indices.js"
   ],
   "exclude": ["packages/env/src/__tests__/**"]
 }

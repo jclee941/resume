@@ -35,3 +35,4 @@ export {
   JOBKOREA_RESUME_TITLE,
 } from './sections/field-mappers.js';
 export { parseRange, toYYYYMM } from './sections/validators.js';
+export { deriveJobKoreaSectionIndices } from './section-indices.js';

@@ -4,8 +4,10 @@ import {
   buildPortfolioPayload,
   buildSavePayload,
   encodeFormFields,
+  mergeBaseFields,
   smartMergeFields,
 } from '@resume/shared/platform-sync/jobkorea/api-payload';
+import { deriveJobKoreaSectionIndices } from '@resume/shared/platform-sync/jobkorea';
 import { overlayTemplate } from '../jobkorea-handler/sync-api-only.js';
 
 describe('JobKorea API payload helpers', () => {
@@ -272,5 +274,77 @@ describe('JobKorea API payload helpers', () => {
     assert.strictEqual(map.get('Language[c9].Eval_Category'), '2');
     assert.strictEqual(map.has('Language[c1].Lang1_Name'), false);
     assert.strictEqual(map.has('Language[c1].Lang1_Stat'), false);
+  });
+
+  it('replaces live Award rows with the SSoT awards and their index', () => {
+    const base = [
+      { name: 'Award.Index', value: 'c4' },
+      { name: 'Award[c4].Index_Name', value: 'c4' },
+      { name: 'Award[c4].Award_Name', value: 'Old award' },
+      { name: 'Award[c4].Award_Inst_Name', value: 'Org' },
+      { name: 'Award[c4].Award_Year', value: '2025' },
+      { name: 'Award[c4].Award_Cntnt', value: '' },
+    ];
+    const target = [
+      { name: 'Award[c1].Index_Name', value: 'c1' },
+      { name: 'Award[c1].Award_Name', value: 'First award' },
+      { name: 'Award[c2].Index_Name', value: 'c2' },
+      { name: 'Award[c2].Award_Name', value: 'Second award' },
+      { name: 'Award.index', value: 'c1,c2' },
+    ];
+
+    const map = new Map(smartMergeFields(base, target).map((field) => [field.name, field.value]));
+
+    assert.strictEqual(map.has('Award[c4].Award_Name'), false);
+    assert.strictEqual(map.has('Award.Index'), false);
+    assert.strictEqual(map.get('Award.index'), 'c1,c2');
+    assert.strictEqual(map.get('Award[c1].Award_Name'), 'First award');
+    assert.strictEqual(map.get('Award[c2].Award_Name'), 'Second award');
+  });
+
+  it('overlays the graduation status together with the graduation month', () => {
+    const base = [
+      { name: 'UnivSchool[c3].Schl_Name', value: 'Univ' },
+      { name: 'UnivSchool[c3].Grad_YM', value: '202802' },
+      { name: 'UnivSchool[c3].Grad_Type_Code', value: '4' },
+      { name: 'UnivSchool[c3].Grade', value: '4.0' },
+    ];
+    const target = [
+      { name: 'UnivSchool[c3].Grad_YM', value: '202702' },
+      { name: 'UnivSchool[c3].Grad_Type_Code', value: '5' },
+    ];
+
+    const map = new Map(smartMergeFields(base, target).map((field) => [field.name, field.value]));
+
+    assert.strictEqual(map.get('UnivSchool[c3].Grad_YM'), '202702');
+    assert.strictEqual(map.get('UnivSchool[c3].Grad_Type_Code'), '5');
+    assert.strictEqual(map.get('UnivSchool[c3].Grade'), '4.0');
+  });
+
+  it('lets browser-serialized values win over raw edit-page values', () => {
+    const merged = mergeBaseFields(
+      [
+        { name: 'Military_Stat', value: '1' },
+        { name: 'Military_Stat', value: '2' },
+        { name: 'Only_Raw', value: 'raw' },
+      ],
+      [{ name: 'Military_Stat', value: '1' }]
+    );
+
+    assert.deepStrictEqual(merged, [
+      { name: 'Military_Stat', value: '1' },
+      { name: 'Only_Raw', value: 'raw' },
+    ]);
+  });
+
+  it('derives existing single-entry school keys regardless of index casing', () => {
+    assert.deepStrictEqual(
+      deriveJobKoreaSectionIndices([
+        { name: 'UnivSchool.Index', value: 'c3' },
+        { name: 'HighSchool.index', value: 'c7,c8' },
+      ]),
+      { school: 'c3', highSchool: 'c7' }
+    );
+    assert.deepStrictEqual(deriveJobKoreaSectionIndices([]), {});
   });
 });
