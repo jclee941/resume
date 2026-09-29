@@ -162,7 +162,7 @@ export function mapAwardToFormFields(ssot, indices) {
     pushField(fields, `Award[${key}].Award_Cntnt`, '');
   });
   if (awards.length > 0) {
-    pushField(fields, 'Award.index', keys.slice(0, awards.length).join(','));
+    for (const key of keys.slice(0, awards.length)) pushField(fields, 'Award.index', key);
     pushField(fields, 'InputStat.AwardInputStat', 'True');
   } else if (achievements.length > 0) {
     pushField(

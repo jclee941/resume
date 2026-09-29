@@ -92,6 +92,34 @@ function truncatedRows(targetFields, mergedFields) {
 }
 
 /**
+ * The live form's section InputStat flags, for review.
+ * @param {FormField[]} fields
+ * @returns {Record<string, string>}
+ */
+function inputStatFlags(fields) {
+  return Object.fromEntries(
+    fields
+      .filter((field) => /^InputStat[._]/.test(field.name))
+      .map((f) => [f.name, String(f.value)])
+  );
+}
+
+/**
+ * Field names (after the row key) that live rows of the replaced sections carry, for review.
+ * @param {FormField[]} fields
+ * @returns {Record<string, string[]>}
+ */
+function liveRowFieldNames(fields) {
+  /** @type {Record<string, Set<string>>} */
+  const names = {};
+  for (const field of fields) {
+    const match = field.name.match(/^(Career|License|Award)\[[^\]]+\]\.(.+)$/);
+    if (match) (names[match[1]] ??= new Set()).add(match[2]);
+  }
+  return Object.fromEntries(Object.entries(names).map(([name, set]) => [name, [...set].sort()]));
+}
+
+/**
  * @param {string} text
  * @returns {{ IsSuccess?: boolean; ErrorMessage?: string } | null}
  */
@@ -153,7 +181,10 @@ export async function syncJobKoreaFromSsot(env, ssot, options) {
       ...editor.tokens,
     });
     const summary = {
-      activatedSections: editor.activatedSections,
+      sections: editor.sections,
+      ...(editor.dialogs.length > 0 ? { dialogs: editor.dialogs } : {}),
+      inputStat: inputStatFlags(editor.fields),
+      liveRowFields: liveRowFieldNames(editor.fields),
       formFieldCount: editor.fields.length,
       mergedFieldCount: mergedFields.length,
       rows: describeReplacedRows(editor.fields, mergedFields),
