@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { mapToWantedFormat } from '../wanted-sync-operations.js';
+import { mapToWantedFormat } from '@resume/shared/platform-sync/wanted';
 
 describe('mapToWantedFormat career categories', () => {
   it('preserves Wanted security category when career role label is normalized', () => {

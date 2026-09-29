@@ -32,6 +32,24 @@ export function buildSavePayload(formFields) {
 }
 
 /**
+ * Combine raw edit-page fields with the browser-serialized form; browser values win
+ * because only the browser reflects checked radios/checkboxes and JS-populated inputs.
+ * @param {FormField[] | null | undefined} rawFields
+ * @param {FormField[] | null | undefined} browserFields
+ * @returns {FormField[]}
+ */
+export function mergeBaseFields(rawFields, browserFields) {
+  /** @type {Map<string, string | number | boolean>} */
+  const merged = new Map();
+  for (const field of [...(rawFields || []), ...(browserFields || [])]) {
+    if (field?.name) {
+      merged.set(field.name, field.value ?? '');
+    }
+  }
+  return Array.from(merged.entries()).map(([name, value]) => ({ name, value }));
+}
+
+/**
  * @param {string} url
  * @returns {string}
  */

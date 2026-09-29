@@ -15,7 +15,7 @@ const SESSION_CHECK_ENDPOINT = '/User/Resume/Edit';
  * }} RequestHeaderOptions
  *
  * @typedef {{
- *   saveResult?: { IsSuccess?: boolean };
+ *   saveResult?: { IsSuccess?: boolean; ErrorMessage?: string };
  *   sc?: number;
  *   idx?: number;
  *   [key: string]: unknown;
@@ -37,7 +37,7 @@ const SESSION_CHECK_ENDPOINT = '/User/Resume/Edit';
  *
  * @typedef {{
  *   tokens?: EditPageTokens;
- *   baseFields?: Array<{ name: string; value: string }>;
+ *   baseFields?: Array<import('./api-payload.js').FormField>;
  * }} SaveResumeOptions
  */
 

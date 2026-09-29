@@ -25,7 +25,6 @@ pipeline orchestration, and profile automation. Run from project root.
 | `profile-sync/`                | profile sync helper modules                          |
 | `job-search-apply-pipeline.js` | automation pipeline: search + apply + profile sync   |
 | `send-jobs-telegram.js`        | Telegram job queue notification and ATS-only dry-run |
-| `skill-tag-map.js`             | skill name → tag ID mapping                          |
 
 ## AUTH EVOLUTION
 

@@ -13,9 +13,9 @@ import {
 } from '../wanted-sections.js';
 import { syncCareerProjects, collectCareerProjects } from '../wanted-sections/career-projects.js';
 import { CONFIG } from '../constants.js';
-import { WANTED_ABOUT_LIMIT } from '../../../src/tools/platforms/wanted-sync-operations.js';
+import { WANTED_ABOUT_LIMIT } from '@resume/shared/platform-sync/wanted';
 import { normalizePhone } from '@resume/shared/phone';
-import { diffSkills, flattenSkills } from '../../skill-tag-map.js';
+import { diffSkills, flattenSkills } from '@resume/shared/platform-sync/skill-tag-map';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const realSSoT = JSON.parse(

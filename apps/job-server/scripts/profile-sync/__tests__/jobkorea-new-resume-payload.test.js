@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
-import { buildJobKoreaFormData } from '../jobkorea-sections.js';
+import { buildJobKoreaFormData } from '@resume/shared/platform-sync/jobkorea';
 import { loadSSOT } from '../ssot-loader.js';
 
 function toMap(fields) {

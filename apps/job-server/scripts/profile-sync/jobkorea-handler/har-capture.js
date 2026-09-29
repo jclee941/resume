@@ -3,7 +3,7 @@ import path from 'path';
 import { chromium } from 'playwright';
 import { applyPlaywrightStealth } from '../playwright-stealth.js';
 import { CONFIG } from '../constants.js';
-import { buildJobKoreaFormData } from '../jobkorea-sections.js';
+import { buildJobKoreaFormData } from '@resume/shared/platform-sync/jobkorea';
 import { getEditUrl } from './change-detection.js';
 import { assertJobKoreaResumeAccess, waitForEditableForm } from './session.js';
 import { toPlaywrightCookies } from '../../jobkorea-session/cookie-utils.js';

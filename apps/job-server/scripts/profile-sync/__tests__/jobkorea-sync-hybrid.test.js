@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import { afterEach, describe, it } from 'node:test';
-import { JobKoreaAuthError } from '../jobkorea-handler/api-errors.js';
+import { JobKoreaAuthError } from '@resume/shared/platform-sync/jobkorea/api-errors';
 import {
   executeHybridPortfolio,
   executeHybridSave,

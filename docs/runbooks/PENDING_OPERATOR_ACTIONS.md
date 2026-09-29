@@ -57,7 +57,7 @@ binding provides atomic semantics.
 ### JK-PROBE-001 — Verify JobKorea live DOM selectors
 
 **Was issue**: #18 · **Priority**: P3 · **Estimated time**: ~30 min ·
-**Files**: `apps/job-server/scripts/profile-sync/jobkorea-sections.js`,
+**Files**: `packages/shared/src/platform-sync/jobkorea/index.js`,
 `apps/job-server/platforms/jobkorea/jobkorea-crawler.js`
 
 JobKorea redesigns periodically. The skills-mapping selectors and the

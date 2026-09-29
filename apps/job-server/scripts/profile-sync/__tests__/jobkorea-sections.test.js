@@ -19,7 +19,7 @@ import {
   mapSchoolToFormFields,
   parseRange,
   toYYYYMM,
-} from '../jobkorea-sections.js';
+} from '@resume/shared/platform-sync/jobkorea';
 import { loadSSOT } from '../ssot-loader.js';
 
 function toMap(fields) {

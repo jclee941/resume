@@ -1,7 +1,7 @@
 import {
   registerPortfolioUrl as defaultRegisterPortfolioUrl,
   mapPortfolioToFormFields,
-} from '../jobkorea-sections.js';
+} from '@resume/shared/platform-sync/jobkorea';
 import { log } from '../sync-logger.js';
 
 function buildPortfolioRegistrationError(portfolioUrl, timestamp) {

@@ -53,7 +53,7 @@ LinkedIn, and related workflows.
 ## Skills mapping
 
 - `SKILL_TAG_MAP` maps 31 skills directly + 45 aliases
-  (apps/job-server/scripts/skill-tag-map.js)
+  (packages/shared/src/platform-sync/skill-tag-map.js)
 - ~10 alias targets currently resolve to fallback routings (e.g.
   Loki→Prometheus, Ansible→DevOps) until real `tag_type_id` values are probed
   via /sns-api/profile (see docs/guides/wanted-skill-probe.md)

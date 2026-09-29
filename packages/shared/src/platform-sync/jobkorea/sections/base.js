@@ -16,9 +16,24 @@ import {
 } from './field-mappers.js';
 
 /**
+ * @typedef {{
+ *   career?: string[];
+ *   school?: string | number;
+ *   license?: string[];
+ *   award?: string[];
+ *   portfolioFileIdx?: string | number;
+ *   language?: string[];
+ *   highSchool?: string | number;
+ *   skill?: string[];
+ *   project?: string[];
+ *   intro?: string[];
+ * }} JobKoreaSectionIndices
+ */
+
+/**
  * Build complete JobKorea form data from SSOT.
  * @param {object} ssot - SSOT resume data
- * @param {object} [sectionIndices] - Server-generated indices per section:
+ * @param {JobKoreaSectionIndices} [sectionIndices] - Server-generated indices per section:
  *   { career: string[], license: string[], award: string[], school: string,
  *     language: string[], highSchool: string, skill: string[],
  *     project: string[] }

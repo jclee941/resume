@@ -5,7 +5,7 @@ import {
   buildSavePayload,
   encodeFormFields,
   smartMergeFields,
-} from '../jobkorea-handler/api-payload.js';
+} from '@resume/shared/platform-sync/jobkorea/api-payload';
 import { overlayTemplate } from '../jobkorea-handler/sync-api-only.js';
 
 describe('JobKorea API payload helpers', () => {

@@ -8,7 +8,7 @@ import {
   syncActivities,
   syncCareers,
   WANTED_HEADLINE_LIMIT,
-} from '../wanted-sync-operations.js';
+} from '@resume/shared/platform-sync/wanted';
 
 function createApiMock() {
   return {

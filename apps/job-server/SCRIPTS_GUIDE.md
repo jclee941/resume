@@ -19,7 +19,6 @@ recommended approaches.
 | `auto-all.js`              | Orchestration | ✅ Active | **YES**     | Run all automation tasks in sequence               |
 | `ops/auto-monitor/`        | Ops           | ✅ Active | **YES**     | Health and activity monitoring                     |
 | `ops/auto-maintenance/`    | Ops           | ✅ Active | **YES**     | Cleanup, backup, and maintenance                   |
-| `skill-tag-map.js`         | Utility       | ✅ Active | YES         | Map SSOT skills to platform skill tags             |
 | `metrics-exporter.js`      | Monitoring    | ✅ Active | YES         | Export application metrics to Prometheus           |
 | `import-cookies-manual.js` | Session       | ⚠️ Manual | NO          | Manually import cookies from file                  |
 | `foreign-apply:dry-run`    | QA            | ✅ Active | **YES**     | Local foreign ATS dry-run walkthrough              |
@@ -333,5 +332,4 @@ profile-sync-apply     node scripts/profile-sync/index.js --apply
 foreign-apply-dry-run  npm run foreign-apply:dry-run -- --ats-stub
 auto-all-pipeline      node scripts/auto-all.js --all
 metrics-export         node scripts/metrics-exporter.js
-skill-mapping          node scripts/skill-tag-map.js
 ```

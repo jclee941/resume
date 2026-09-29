@@ -1,6 +1,6 @@
 import { CONFIG } from '../constants.js';
 import { log } from '../sync-logger.js';
-import { WANTED_ABOUT_LIMIT } from '../../../src/tools/platforms/wanted-sync-operations.js';
+import { WANTED_ABOUT_LIMIT } from '@resume/shared/platform-sync/wanted';
 
 // Wanted stores the about field HTML-encoded (" -> &quot;, & -> &amp;, etc.).
 // Normalize both sides before comparing so the sync is idempotent.

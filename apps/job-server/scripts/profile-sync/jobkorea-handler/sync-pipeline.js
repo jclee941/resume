@@ -1,4 +1,4 @@
-import { JobKoreaAPIClient } from './api-client.js';
+import { JobKoreaAPIClient } from '@resume/shared/platform-sync/jobkorea/api-client';
 import { buildCookieString } from '../../jobkorea-session/cookie-utils.js';
 import { executeHybridPortfolio } from './sync-hybrid.js';
 import { appendPortfolioFields } from './sync-portfolio.js';

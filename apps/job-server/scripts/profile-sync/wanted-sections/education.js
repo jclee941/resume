@@ -1,6 +1,6 @@
 import { CONFIG } from '../constants.js';
 import { log } from '../sync-logger.js';
-import { formatYYYY_MM_DD } from '../../../src/shared/utils/date-formatters.js';
+import { formatYYYY_MM_DD } from '@resume/shared/platform-sync/date-formatters';
 import { normalizeEducationStatus } from '@resume/shared/normalize';
 
 // Map SSoT schoolType to a Wanted degree label.

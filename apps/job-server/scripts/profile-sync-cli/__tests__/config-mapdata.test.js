@@ -5,7 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { PLATFORMS } from '../config.js';
-import { WANTED_ABOUT_LIMIT } from '../../../src/tools/platforms/wanted-sync-operations.js';
+import { WANTED_ABOUT_LIMIT } from '@resume/shared/platform-sync/wanted';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const realSSoT = JSON.parse(

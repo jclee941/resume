@@ -31,6 +31,9 @@ export class WantedAPI {
   resumeActivity;
   resumeLanguageCert;
 
+  /**
+   * @param {string | null} [cookies]
+   */
   constructor(cookies = null) {
     this.#client = new HttpClient(cookies);
     this.jobs = new JobsEndpoint(this.#client);
