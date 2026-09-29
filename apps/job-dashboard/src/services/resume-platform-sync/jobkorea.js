@@ -38,6 +38,21 @@ function createJobKoreaClient(options) {
 }
 
 /**
+ * The save echoes the edit-page tokens; values from the live form win over the page scrape.
+ * @param {{ IsEditPage: string; IsCompleteSave: string; LastEditDateTicks: string }} tokens
+ * @param {FormField[]} baseFields
+ */
+function withFormTokens(tokens, baseFields) {
+  /** @param {string} name */
+  const formValue = (name) => String(baseFields.find((field) => field.name === name)?.value ?? '');
+  return {
+    ...tokens,
+    IsEditPage: formValue('IsEditPage') || tokens.IsEditPage,
+    LastEditDateTicks: formValue('LastEditDateTicks') || tokens.LastEditDateTicks,
+  };
+}
+
+/**
  * Education and award fields whose value the save would change, for review.
  * @param {FormField[]} baseFields
  * @param {FormField[]} mergedFields
@@ -90,10 +105,28 @@ export async function syncJobKoreaFromSsot(env, ssot, options) {
   }
 
   const client = createClient({ cookieString, rNo, userAgent: DEFAULT_USER_AGENT });
-  const tokens = await client.fetchEditPageTokens();
-  const rawFields = await client.fetchEditPageBaseFields();
+  const pageTokens = await client.fetchEditPageTokens();
+  /** @type {Array<{ name: string; value: string }>} */
+  let rawFields = [];
+  let rawFieldsError = '';
+  try {
+    rawFields = await client.fetchEditPageBaseFields();
+  } catch (error) {
+    rawFieldsError = error instanceof Error ? error.message : String(error);
+  }
   const browserFields = await readBrowserForm(env, { cookieString, rNo });
+  if (browserFields.length === 0) {
+    return {
+      platform: 'jobkorea',
+      success: false,
+      dryRun,
+      error:
+        'JobKorea resume form was empty in the browser; refusing to save without the live form',
+      ...(rawFieldsError ? { rawFieldsError } : {}),
+    };
+  }
   const baseFields = mergeBaseFields(rawFields, browserFields);
+  const tokens = withFormTokens(pageTokens, baseFields);
   const targetFields = buildJobKoreaFormData(ssot, deriveJobKoreaSectionIndices(baseFields)).map(
     ({ name, value }) => ({ name: String(name), value })
   );
@@ -102,6 +135,7 @@ export async function syncJobKoreaFromSsot(env, ssot, options) {
 
   const summary = {
     rawFieldCount: rawFields.length,
+    ...(rawFieldsError ? { rawFieldsError } : {}),
     browserFieldCount: browserFields.length,
     mergedFieldCount: mergedFields.length,
     changes: describeReviewedChanges(baseFields, mergedFields),

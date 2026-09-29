@@ -68,6 +68,32 @@ function requestHeaders(cookieString, options = {}) {
 }
 
 /**
+ * Headers for loading the resume editor as a document. The captured browser
+ * request for this page carries no XHR headers (see the jobkorea-save-request fixture).
+ * @param {string | null | undefined} cookieString
+ * @param {RequestHeaderOptions} [options]
+ * @returns {Record<string, string>}
+ */
+function pageRequestHeaders(cookieString, options = {}) {
+  /** @type {Record<string, string>} */
+  const headers = {
+    Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'ko-KR,ko;q=0.9',
+  };
+  if (options.userAgent) headers['User-Agent'] = options.userAgent;
+  if (cookieString) headers.Cookie = cookieString;
+  return headers;
+}
+
+/**
+ * @param {string} html
+ * @returns {string}
+ */
+function pageTitle(html) {
+  return (html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1] || '').trim().slice(0, 80);
+}
+
+/**
  * @param {string | null | undefined} rawResponse
  * @returns {JobKoreaApiResponse}
  */
@@ -114,7 +140,7 @@ export class JobKoreaAPIClient {
   async fetchEditPageTokens() {
     const response = await fetch(`${this.baseUrl}${SESSION_CHECK_ENDPOINT}?RNo=${this.rNo}`, {
       method: 'GET',
-      headers: requestHeaders(this.session.getCookieHeader(), {
+      headers: pageRequestHeaders(this.session.getCookieHeader(), {
         rNo: this.rNo,
         userAgent: this.userAgent,
       }),
@@ -197,7 +223,7 @@ export class JobKoreaAPIClient {
 
     const response = await fetch(endpointUrl(this.baseUrl, SESSION_CHECK_ENDPOINT), {
       method: 'GET',
-      headers: requestHeaders(cookieString, {
+      headers: pageRequestHeaders(cookieString, {
         rNo: this.rNo,
         userAgent: this.userAgent,
       }),
@@ -233,7 +259,7 @@ export class JobKoreaAPIClient {
   async fetchEditPageBaseFields() {
     const response = await fetch(`${this.baseUrl}${SESSION_CHECK_ENDPOINT}?RNo=${this.rNo}`, {
       method: 'GET',
-      headers: requestHeaders(this.session.getCookieHeader(), {
+      headers: pageRequestHeaders(this.session.getCookieHeader(), {
         rNo: this.rNo,
         userAgent: this.userAgent,
       }),
@@ -267,7 +293,7 @@ export class JobKoreaAPIClient {
 
     if (baseFields.length === 0) {
       throw new JobKoreaSaveError(
-        'JobKorea edit-page base fields were empty; refusing to save without preservation base',
+        `JobKorea edit-page base fields were empty; refusing to save without preservation base (status=${response.status}, url=${response.url}, bytes=${html.length}, title=${pageTitle(html)})`,
         {
           endpoint: SESSION_CHECK_ENDPOINT,
           statusCode: response.status,
