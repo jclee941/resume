@@ -97,7 +97,7 @@ export function loadJobKoreaSession(options = {}) {
   return resolvedSession ? getJobKoreaSessionCookies(resolvedSession) : null;
 }
 
-export function saveJobKoreaSession(cookies) {
+export function saveJobKoreaSession(cookies, options = {}) {
   try {
     let session = {};
     try {
@@ -118,7 +118,7 @@ export function saveJobKoreaSession(cookies) {
     if (!session.expiresAt) {
       session.expiresAt = new Date(Date.now() + jobKoreaSessionTtlMs).toISOString();
     }
-    saveResolvedJobKoreaSession(session);
+    saveResolvedJobKoreaSession(session, options);
     log(`Session saved (${cookies.length} cookies)`, 'info', 'jobkorea');
   } catch (error) {
     log(`Failed to save session: ${error.message}`, 'error', 'jobkorea');
