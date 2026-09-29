@@ -10,6 +10,7 @@ const sourceRoots = ['apps/job-dashboard/src', 'apps/portfolio/lib'].map((dir) =
   path.join(root, dir)
 );
 const schemaPath = path.join(root, 'apps/job-dashboard/schema.sql');
+const generatedWorker = path.join(root, 'apps/portfolio/worker.js');
 const SQL_START = /^\s*(SELECT|INSERT|UPDATE|DELETE|WITH|REPLACE)\b/i;
 // Literals that start with a SQL keyword but are not SQL.
 const NOT_SQL = [
@@ -69,16 +70,30 @@ function collectSql(node, found) {
   }
 }
 
+function sqlStatementsIn(file, source) {
+  const ast = acorn.parse(source, { ecmaVersion: 'latest', sourceType: 'module' });
+  const found = [];
+  collectSql(ast, found);
+  return found.map((sql) => ({ file, sql }));
+}
+
 function workerSqlStatements() {
-  return sourceRoots.flatMap(listSourceFiles).flatMap((file) => {
-    const ast = acorn.parse(fs.readFileSync(file, 'utf8'), {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-    });
-    const found = [];
-    collectSql(ast, found);
-    return found.map((sql) => ({ file: path.relative(root, file), sql }));
-  });
+  return sourceRoots
+    .flatMap(listSourceFiles)
+    .flatMap((file) => sqlStatementsIn(path.relative(root, file), fs.readFileSync(file, 'utf8')));
+}
+
+// apps/portfolio/lib emits the portfolio Worker as generated source, so its SQL exists only in the
+// built apps/portfolio/worker.js (npm run build runs before the tests in CI and the gate).
+function generatedPortfolioSql() {
+  assert.ok(
+    fs.existsSync(generatedWorker),
+    'apps/portfolio/worker.js is missing; run npm run build'
+  );
+  return sqlStatementsIn(
+    'apps/portfolio/worker.js (generated)',
+    fs.readFileSync(generatedWorker, 'utf8')
+  );
 }
 
 function missingRequiredColumns(database, sql) {
@@ -97,7 +112,12 @@ test('every JOB_DB statement in the Worker compiles against schema.sql', () => {
   const database = new DatabaseSync(':memory:');
   try {
     database.exec(fs.readFileSync(schemaPath, 'utf8'));
-    const statements = workerSqlStatements();
+    const portfolio = generatedPortfolioSql();
+    assert.ok(
+      portfolio.length >= 2,
+      `only ${portfolio.length} SQL statements found in the generated portfolio Worker`
+    );
+    const statements = [...workerSqlStatements(), ...portfolio];
     const drift = [];
     const uncompilable = [];
     let compiled = 0;
