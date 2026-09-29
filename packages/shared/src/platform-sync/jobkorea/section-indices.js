@@ -15,9 +15,9 @@ const NEW_ROW_KEY_COUNT = 30;
  */
 function entryKeys(fields, indexName) {
   const wanted = indexName.toLowerCase();
-  const field = fields.find((candidate) => candidate?.name?.toLowerCase() === wanted);
-  return String(field?.value ?? '')
-    .split(',')
+  return fields
+    .filter((candidate) => candidate?.name?.toLowerCase() === wanted)
+    .flatMap((field) => String(field.value ?? '').split(','))
     .map((key) => key.trim())
     .filter(Boolean);
 }
