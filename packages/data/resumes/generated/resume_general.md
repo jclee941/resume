@@ -1,6 +1,6 @@
 <!-- Generated from master resume -->
 <!-- Variant: general -->
-<!-- Generated: 2026-09-29T06:42:41.665Z -->
+<!-- Generated: 2026-09-29T06:52:45.648Z -->
 <!-- Description: General purpose resume for all industries -->
 <!--
   NOTICE (repo hygiene, 2026-07-22): This file is HAND-WRITTEN, not generated.

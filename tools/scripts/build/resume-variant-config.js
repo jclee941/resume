@@ -23,7 +23,7 @@ const CONFIG = {
     short: {
       filename: 'resume_short.md',
       description: 'Short form resume (1-2 pages)',
-      sections: ['contact', 'summary', 'experience-recent', 'skills'],
+      sections: ['contact', 'education', 'summary', 'experience-recent', 'skills'],
       maxLength: 2000, // Approximate words
     },
     technical: {
@@ -31,6 +31,7 @@ const CONFIG = {
       description: 'Technical infrastructure focus',
       sections: [
         'contact',
+        'education',
         'summary',
         'experience',
         'skills-technical',
@@ -43,6 +44,7 @@ const CONFIG = {
       description: 'Security and compliance focus',
       sections: [
         'contact',
+        'education',
         'summary',
         'experience',
         'skills-security',

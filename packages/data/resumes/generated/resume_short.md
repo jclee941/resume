@@ -1,6 +1,6 @@
 <!-- Generated from master resume -->
 <!-- Variant: short -->
-<!-- Generated: 2026-09-29T06:42:41.666Z -->
+<!-- Generated: 2026-09-29T06:52:45.649Z -->
 <!-- Description: Short form resume (1-2 pages) -->
 ## 연락처
 
@@ -9,6 +9,13 @@
 - 주소: 대한민국
 - GitHub: github.com/jclee941
 - LinkedIn: linkedin.com/in/jclee0109
+
+---
+
+## 학력
+
+- 한양사이버대학교 컴퓨터공학과 (4년제, 2024.03 ~ 2027.02 졸업예정)
+- 용남고등학교 졸업
 
 ---
 
