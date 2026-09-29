@@ -71,7 +71,6 @@
  * @property {KVNamespace} [SESSIONS]
  * @property {KVNamespace} [RATE_LIMIT_KV]
  * @property {KVNamespace} [NONCE_KV]
- * @property {D1Database} [DB]
  * @property {D1Database} [JOB_DB]
  * @property {R2Bucket} [R2]
  * @property {Ai} [AI]
@@ -87,7 +86,6 @@
  * @property {WorkflowNamespace} [HEALTH_CHECK_WORKFLOW]
  * @property {WorkflowNamespace} [CLEANUP_WORKFLOW]
  * @property {string} ENVIRONMENT
- * @property {string} [ELASTICSEARCH_INDEX]
  * @property {string} [ADMIN_TOKEN]
  * @property {string} [WEBHOOK_SECRET]
  * @property {string} [ENCRYPTION_KEY]
@@ -102,7 +100,7 @@
  */
 
 /**
- * @typedef {Required<Pick<WorkerEnv, 'SESSIONS'|'RATE_LIMIT_KV'|'NONCE_KV'|'DB'|'ENVIRONMENT'>> & WorkerEnv} JobDashboardEnv
+ * @typedef {Required<Pick<WorkerEnv, 'SESSIONS'|'RATE_LIMIT_KV'|'NONCE_KV'|'JOB_DB'|'ENVIRONMENT'>> & WorkerEnv} JobDashboardEnv
  */
 
 export const ENV_TYPE_MARKER = Object.freeze({ kind: 'env-types', source: '@resume/types/env' });

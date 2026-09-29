@@ -95,8 +95,8 @@ describe('Worker Routes', () => {
       expect(code).toContain('/assets/');
     });
 
-    it('should contain Elasticsearch logging', () => {
-      expect(code).toContain('logToElasticsearch');
+    it('should not reference Elasticsearch logging', () => {
+      expect(code).not.toContain('logToElasticsearch');
     });
   });
 
@@ -155,8 +155,9 @@ describe('Worker Routes', () => {
       expect(code).toContain('2024-01-01T00:00:00Z');
     });
 
-    it('should contain D1 health check', () => {
-      expect(code).toContain('env.DB');
+    it('probes the JOB_DB binding and never the retired DB binding', () => {
+      expect(code).toContain('env.JOB_DB.prepare');
+      expect(code).not.toContain('env.DB');
     });
 
     it('should contain KV health check', () => {
@@ -186,7 +187,7 @@ describe('Worker Routes', () => {
           `return (async () => {${code}\n return null;})();`
         );
         const env = {
-          DB: {
+          JOB_DB: {
             prepare: () => ({
               first: async () => {
                 if (dbThrows) throw new Error('db boom');
@@ -489,6 +490,41 @@ describe('Worker Routes', () => {
     it('logs the failure to Workers Logs instead of a D1 table', () => {
       expect(code).toContain('console.error');
       expect(code).not.toContain('INSERT INTO');
+    });
+
+    it('logs an unhandled request error with console.error', async () => {
+      const failure = new Error('boom');
+      const body = code.trimEnd().replace(/\};$/, '').trimEnd().replace(/\}$/, '');
+      const run = new Function(
+        'thrown',
+        'request',
+        'url',
+        'metrics',
+        'applyNonceToHeaders',
+        'SECURITY_HEADERS',
+        'rateLimitHeaders',
+        'CACHE_POLICIES',
+        `return (async () => { try { throw thrown; ${body} })();`
+      );
+      const metrics = { requests_error: 0 };
+      const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      try {
+        const response = await run(
+          failure,
+          { method: 'GET' },
+          { pathname: '/boom' },
+          metrics,
+          (headers) => headers,
+          {},
+          {},
+          { api: {} }
+        );
+        expect(response.status).toBe(500);
+        expect(metrics.requests_error).toBe(1);
+        expect(errorSpy).toHaveBeenCalledWith('[worker 1.0.0] GET /boom failed:', failure.stack);
+      } finally {
+        errorSpy.mockRestore();
+      }
     });
 
     it('should contain 500 Internal Server Error', () => {

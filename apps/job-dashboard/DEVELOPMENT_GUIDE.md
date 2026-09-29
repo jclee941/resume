@@ -188,7 +188,7 @@ Wrangler automatically reloads when you save files:
 # To test with persistent database:
 # 1. Add to wrangler.jsonc:
 # [env.local]
-# d1_databases = [{ binding = "DB", database_name = "job-local", database_id = "local" }]
+# d1_databases = [{ binding = "JOB_DB", database_name = "job-local", database_id = "local" }]
 
 # 2. Run with environment:
 npx wrangler dev --env local
@@ -440,11 +440,11 @@ export class JobsHandler extends BaseHandler {
       const offset = (page - 1) * limit;
 
       // Query database
-      const jobs = await env.DB.prepare('SELECT * FROM jobs LIMIT ? OFFSET ?')
+      const jobs = await env.JOB_DB.prepare('SELECT * FROM jobs LIMIT ? OFFSET ?')
         .bind(limit, offset)
         .all();
 
-      const total = await env.DB.prepare('SELECT COUNT(*) as count FROM jobs').first();
+      const total = await env.JOB_DB.prepare('SELECT COUNT(*) as count FROM jobs').first();
 
       // Return paginated response
       return this.successResponse({
@@ -592,34 +592,34 @@ wrangler d1 execute job-dashboard-db \
 
 ```javascript
 // Single row query
-const application = await env.DB.prepare(
+const application = await env.JOB_DB.prepare(
   'SELECT * FROM applications WHERE id = ?'
 ).bind(appId).first();
 
 // Multiple rows
-const applications = await env.DB.prepare(
+const applications = await env.JOB_DB.prepare(
   'SELECT * FROM applications WHERE status = ? LIMIT ?'
 ).bind('pending', 50).all();
 
 // Insert
-const result = await env.DB.prepare(
+const result = await env.JOB_DB.prepare(
   'INSERT INTO applications (id, title, company) VALUES (?, ?, ?)'
 ).bind(newId, title, company).run();
 
 // Update
-await env.DB.prepare(
+await env.JOB_DB.prepare(
   'UPDATE applications SET status = ? WHERE id = ?'
 ).bind('applied', appId).run();
 
 // Delete
-await env.DB.prepare(
+await env.JOB_DB.prepare(
   'DELETE FROM applications WHERE id = ?'
 ).bind(appId).run();
 
 // Transactions
-const batch = env.DB.batch([
-  env.DB.prepare('INSERT INTO applications ...').bind(...),
-  env.DB.prepare('UPDATE applications ...').bind(...),
+const batch = env.JOB_DB.batch([
+  env.JOB_DB.prepare('INSERT INTO applications ...').bind(...),
+  env.JOB_DB.prepare('UPDATE applications ...').bind(...),
 ]);
 await batch;
 ```text
@@ -740,7 +740,7 @@ describe('CustomHandler', () => {
   beforeEach(() => {
     handler = new CustomHandler();
     mockEnv = {
-      DB: {
+      JOB_DB: {
         prepare: jest.fn().mockReturnValue({
           bind: jest.fn().mockReturnValue({
             all: jest.fn().mockResolvedValue({ results: [] }),
@@ -764,7 +764,7 @@ describe('CustomHandler', () => {
     const response = await handler.handleEndpoint(request, mockEnv, {});
 
     expect(response.status).toBe(200);
-    expect(mockEnv.DB.prepare).toHaveBeenCalled();
+    expect(mockEnv.JOB_DB.prepare).toHaveBeenCalled();
   });
 
   test('should reject unauthorized requests', async () => {
@@ -1019,7 +1019,7 @@ export class MyWorkflow extends WorkflowEntrypoint {
     try {
       // Step 1: Fetch data
       const data = await step.do('fetch-data', async () => {
-        const result = await env.DB.prepare('SELECT * FROM applications').all();
+        const result = await env.JOB_DB.prepare('SELECT * FROM applications').all();
         return result.results;
       });
 
@@ -1209,7 +1209,7 @@ async function handleListApplications(request, env) {
   params.push(limit, (page - 1) * limit);
 
   // Execute query
-  const result = await env.DB.prepare(query)
+  const result = await env.JOB_DB.prepare(query)
     .bind(...params)
     .all();
 
@@ -1467,7 +1467,7 @@ const apiKey = 'sk_live_1234567890';
 
    ```javascript
    // Better than individual queries
-   const batch = env.DB.batch([query1, query2, query3]);
+   const batch = env.JOB_DB.batch([query1, query2, query3]);
    await batch;
    ```text
 

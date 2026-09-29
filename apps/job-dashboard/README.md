@@ -89,7 +89,7 @@ npx wrangler secret put JWT_SECRET
   // Bindings
   "d1_databases": [
     // D1 database
-    { "binding": "DB", "database_name": "job-dashboard-db" },
+    { "binding": "JOB_DB", "database_name": "job-dashboard-db" },
   ],
   "kv_namespaces": [
     // KV storage
@@ -482,7 +482,7 @@ npx wrangler d1 execute job-dashboard-db --interactive
 ```javascript
 export default {
   async fetch(request, env, ctx) {
-    const db = env.DB;
+    const db = env.JOB_DB;
     const result = await db.prepare('SELECT * FROM applications LIMIT 10').all();
     return new Response(JSON.stringify(result));
   },
