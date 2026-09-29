@@ -133,7 +133,10 @@ function generateProfileBento(data, locale = 'ko') {
         const org = a.organization
           ? ` <span class="profile-card__muted">${escapeHtml(String(a.organization))}</span>`
           : '';
-        const year = a.year ? ` (${escapeHtml(String(a.year))})` : '';
+        const year =
+          a.year && !String(a.name).includes(String(a.year))
+            ? ` (${escapeHtml(String(a.year))})`
+            : '';
         return `<li>${escapeHtml(String(a.name))}${org}${year}</li>`;
       })
       .join('');

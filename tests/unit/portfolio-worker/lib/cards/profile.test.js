@@ -68,6 +68,25 @@ describe('cards/profile generateProfileBento', () => {
     expect(html).toContain('(졸업 예정) 2024.03 ~ 2027.02');
   });
 
+  it('omits the award year when the official award name already carries it', () => {
+    const html = generateProfileBento({
+      awards: [
+        {
+          name: '2026 HYCU AI학습법 공모전 장려상',
+          organization: '한양사이버대학교',
+          year: '2026',
+        },
+        { name: '공로상', organization: '테스트기관', year: '2025' },
+      ],
+    });
+    expect(html).toContain(
+      '2026 HYCU AI학습법 공모전 장려상 <span class="profile-card__muted">한양사이버대학교</span></li>'
+    );
+    expect(html).toContain(
+      '공로상 <span class="profile-card__muted">테스트기관</span> (2025)</li>'
+    );
+  });
+
   it('links OSS contributions with safe https url + noopener', () => {
     const html = generateProfileBento(full);
     expect(html).toContain('href="https://github.com/jclee941/resume"');
