@@ -43,7 +43,6 @@ import { MESSAGE_TYPES } from './queue-message-constants.js';
  * @property {string} [reportType]
  * @property {string[]} [recipients]
  * @property {number} [retentionDays]
- * @property {string[]} [targets]
  */
 
 export class QueueWorkflowDispatcher {
@@ -182,15 +181,15 @@ export class QueueWorkflowDispatcher {
   async handleCleanup(payload) {
     const instance = await this.env.CLEANUP_WORKFLOW.create({
       params: {
-        retentionDays: payload.retentionDays || 30,
-        targets: payload.targets || ['applications', 'logs', 'cache'],
+        jobResultsMaxAge: payload.retentionDays,
+        dryRun: payload.dryRun ?? false,
         source: 'queue',
       },
     });
 
     this.logger.info('Cleanup workflow started', {
       instanceId: instance.id,
-      targets: payload.targets,
+      retentionDays: payload.retentionDays,
     });
   }
 }

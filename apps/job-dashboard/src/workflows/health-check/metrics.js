@@ -46,7 +46,6 @@ import { getEscalationLevel } from './evaluation.js';
 
 /**
  * @typedef {Object} MetricBatchOptions
- * @property {HealthD1PreparedStatement} healthStmt
  * @property {HealthD1PreparedStatement} detailStmt
  * @property {HealthEvaluationData} healthEvaluation
  * @property {number} consecutiveFailures
@@ -58,11 +57,6 @@ import { getEscalationLevel } from './evaluation.js';
  * @param {HealthEvaluationData} healthEvaluation
  */
 export async function logHealthMetrics(workflow, healthEvaluation) {
-  const healthStmt = workflow.env.JOB_DB.prepare(`
-    INSERT INTO health_checks (service_url, status, latency_ms, checked_at)
-    VALUES (?, ?, ?, datetime('now'))
-  `);
-
   const detailStmt = workflow.env.JOB_DB.prepare(`
     INSERT INTO health_check_details (check_type, service_name, status, latency_ms, consecutive_failures, escalation_level)
     VALUES (?, ?, ?, ?, ?, ?)
@@ -74,7 +68,6 @@ export async function logHealthMetrics(workflow, healthEvaluation) {
       : 0;
   const escalationLevel = getEscalationLevel(consecutiveFailures);
   const batch = buildHealthMetricBatch({
-    healthStmt,
     detailStmt,
     healthEvaluation,
     consecutiveFailures,
@@ -90,16 +83,12 @@ export async function logHealthMetrics(workflow, healthEvaluation) {
  * @param {MetricBatchOptions} options
  */
 function buildHealthMetricBatch({
-  healthStmt,
   detailStmt,
   healthEvaluation,
   consecutiveFailures,
   escalationLevel,
 }) {
   return [
-    ...healthEvaluation.services.map((service) =>
-      healthStmt.bind(service.url, service.status, service.latencyMs)
-    ),
     ...healthEvaluation.services.map((service) =>
       detailStmt.bind(
         'http',
@@ -112,7 +101,7 @@ function buildHealthMetricBatch({
     ),
     detailStmt.bind(
       'd1',
-      'DB',
+      'JOB_DB',
       healthEvaluation.bindings.d1.healthy ? 'healthy' : 'down',
       healthEvaluation.bindings.d1.latencyMs,
       consecutiveFailures,
