@@ -210,7 +210,8 @@ describe('Cloudflare-native Wanted resume sync', () => {
     const [, educationId, education] = api.resumeEducation.update.mock.calls[0].arguments;
     assert.equal(educationId, 9);
     assert.equal(education.end_time, '2027-02-01');
-    assert.equal(education.description, '졸업예정 (2027.02)');
+    assert.equal(education.status, 'EXPECTED_GRADUATION');
+    assert.equal(education.description, null);
     const addedTitles = api.resumeActivity.add.mock.calls.map((call) => call.arguments[1].title);
     assert.deepEqual(addedTitles, ['2026 HYCU AI학습법 공모전 장려상']);
     assert.ok(result.updated.includes('activities'));
