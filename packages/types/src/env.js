@@ -86,7 +86,6 @@
  * @property {WorkflowNamespace} [HEALTH_CHECK_WORKFLOW]
  * @property {WorkflowNamespace} [CLEANUP_WORKFLOW]
  * @property {string} ENVIRONMENT
- * @property {string} [ELASTICSEARCH_INDEX]
  * @property {string} [ADMIN_TOKEN]
  * @property {string} [WEBHOOK_SECRET]
  * @property {string} [ENCRYPTION_KEY]

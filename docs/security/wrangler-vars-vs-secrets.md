@@ -21,7 +21,7 @@ secret-shaped strings appear in any committed `wrangler.jsonc` or
 | Public URL (e.g. `https://api.example.com`)               | yes    | no      | Not sensitive                                |
 | Feature flag (e.g. `ENABLE_X = "true"`)                   | yes    | no      | Behavior toggle                              |
 | Cron schedule (e.g. `CRON = "0 */6 * * *"`)               | yes    | no      | Operational metadata                         |
-| Index / queue name (e.g. `ELASTICSEARCH_INDEX`)           | yes    | no      | Resource identifier, not credential          |
+| Index / queue name (e.g. `CRAWL_QUEUE_NAME`)              | yes    | no      | Resource identifier, not credential          |
 | Public key fingerprint                                    | yes    | no      | Verifier, not signer                         |
 | Numeric tuning constant (rate limits, timeouts)           | yes    | no      | Operational parameter                        |
 | API key / token (any provider: Cloudflare, Wanted, etc.)  | no     | yes     | Authentication credential                    |
@@ -47,7 +47,6 @@ exfiltrate PII — it is a **Secret**.
   "name": "resume",
   "vars": {
     "DEPLOY_ENV": "production",
-    "ELASTICSEARCH_INDEX": "logs-portfolio",
     "RATE_LIMIT_RPM": "60",
   },
 }
@@ -62,7 +61,7 @@ For local/operator setup:
 
 ```bash
 cd apps/portfolio
-wrangler secret put ELASTICSEARCH_API_KEY     # paste at prompt
+wrangler secret put ENCRYPTION_KEY            # paste at prompt
 wrangler secret put GOOGLE_OAUTH_CLIENT_SECRET
 wrangler secret put SESSION_SIGNING_KEY
 ```
@@ -77,7 +76,6 @@ GitHub Secrets used by CI:
   [`docs/runbooks/CLOUDFLARE_KEY_ROTATION.md`](../runbooks/CLOUDFLARE_KEY_ROTATION.md))
 - `CLOUDFLARE_ACCOUNT_ID` — actually a public-ish ID, but kept in secrets
   to avoid accidental fork exposure
-- `ELASTICSEARCH_API_KEY` — Elasticsearch ingest credential
 - `GOOGLE_OAUTH_CLIENT_SECRET` — auth flow credential
 
 ---

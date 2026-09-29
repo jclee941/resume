@@ -146,7 +146,6 @@ export function validateWorkerConfiguration(input) {
   assert.equal(config.assets?.directory, 'apps/portfolio/assets', 'assets must be root-relative');
   assert.equal(config.assets?.binding, 'ASSETS', 'ASSETS binding missing');
   assert.equal(config.vars?.ENVIRONMENT, 'production', 'production vars missing');
-  assert.equal(config.vars?.ELASTICSEARCH_INDEX, 'resume-logs-worker', 'production index missing');
   assert.deepEqual(
     config.routes,
     [{ pattern: 'resume.jclee.me', custom_domain: true }],
@@ -181,11 +180,6 @@ export function validateWorkerConfiguration(input) {
   const preview = config.env?.preview;
   assert.equal(preview?.name, 'resume-preview', 'preview Worker name mismatch');
   assert.equal(preview?.vars?.ENVIRONMENT, 'preview', 'preview vars missing');
-  assert.equal(
-    preview?.vars?.ELASTICSEARCH_INDEX,
-    'resume-logs-worker-preview',
-    'preview index missing'
-  );
   assert.equal(preview?.assets?.directory, 'apps/portfolio/assets', 'preview assets mismatch');
   assert.deepEqual(preview?.routes, [], 'preview routes must explicitly override production');
   assert.deepEqual(

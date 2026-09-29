@@ -36,12 +36,6 @@ function generatePageRoutes() {
         metrics.requests_success++;
         metrics.response_time_sum += (Date.now() - startTime);
 
-        ctx.waitUntil(logToElasticsearch(env, \`Request: \${request.method} \${url.pathname}\`, 'INFO', {
-          route: url.pathname,
-          traceparent: request.headers.get('traceparent') || undefined,
-          tracestate: request.headers.get('tracestate') || undefined,
-        }, { immediate: true }));
-
         return response;
       }
 
@@ -59,12 +53,6 @@ function generatePageRoutes() {
         metrics.requests_success++;
         metrics.response_time_sum += (Date.now() - startTime);
 
-        ctx.waitUntil(logToElasticsearch(env, \`Request: \${request.method} \${url.pathname}\`, 'INFO', {
-          route: url.pathname,
-          traceparent: request.headers.get('traceparent') || undefined,
-          tracestate: request.headers.get('tracestate') || undefined,
-        }, { immediate: true }));
-
         return response;
       }
 
@@ -81,12 +69,6 @@ function generatePageRoutes() {
         });
         metrics.requests_success++;
         metrics.response_time_sum += (Date.now() - startTime);
-
-        ctx.waitUntil(logToElasticsearch(env, \`Request: \${request.method} \${url.pathname}\`, 'INFO', {
-          route: url.pathname,
-          traceparent: request.headers.get('traceparent') || undefined,
-          tracestate: request.headers.get('tracestate') || undefined,
-        }, { immediate: true }));
 
         return response;
       }`;
