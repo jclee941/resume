@@ -4,7 +4,7 @@ import {
   assertJobKoreaCareerPayloadCoverage,
   assertJobKoreaCareerSlotCoverage,
   selectJobKoreaCareerSectionIndices,
-} from '../jobkorea-handler/career-guards.js';
+} from '@resume/shared/platform-sync/jobkorea/career-guards';
 import { syncToJobKoreaAPI } from '../jobkorea-handler/sync-api-only.js';
 
 const originalFetch = global.fetch;

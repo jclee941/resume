@@ -2,14 +2,14 @@ import { chromium } from 'playwright';
 import { applyPlaywrightStealth } from '../playwright-stealth.js';
 import { CONFIG } from '../constants.js';
 import { log } from '../sync-logger.js';
-import { buildJobKoreaFormData } from '../jobkorea-sections.js';
+import { buildJobKoreaFormData } from '@resume/shared/platform-sync/jobkorea';
 import { assertJobKoreaResumeAccess } from './session.js';
 import { toPlaywrightCookies } from '../../jobkorea-session/cookie-utils.js';
 import { executeHybridSave, shouldUseHybridMode, getJobKoreaSyncMode } from './sync-hybrid.js';
 import {
   assertJobKoreaCareerSlotCoverage,
   selectJobKoreaCareerSectionIndices,
-} from './career-guards.js';
+} from '@resume/shared/platform-sync/jobkorea/career-guards';
 import { pickJobKoreaBrowserProfile } from '../../jobkorea-session/user-agent-pool.js';
 import {
   activateRequiredSections,
@@ -21,7 +21,7 @@ import { loadOrRenewJobKoreaCookies } from './sync-session-renewal.js';
 import { prepareJobKoreaEditPage } from './sync-navigation.js';
 import { handleJobKoreaPortfolioAndPhoto, prepareJobKoreaApiClient } from './sync-pipeline.js';
 
-export { assertJobKoreaCareerSlotCoverage } from './career-guards.js';
+export { assertJobKoreaCareerSlotCoverage } from '@resume/shared/platform-sync/jobkorea/career-guards';
 
 export async function syncJobKoreaProfile(handler, ssot, options = {}) {
   const logger = options.logger ?? log;

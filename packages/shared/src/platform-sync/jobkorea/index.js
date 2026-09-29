@@ -6,8 +6,8 @@
  * Skills mapping uses best-effort field names (Skill[cN].Skill_Name etc.)
  * pending live DOM verification. See docs/architecture/RESUME_SYNC_AUDIT_2026-04-29.md.
  */
-export { registerPortfolioUrl } from './jobkorea-sections/api-client.js';
-export { buildJobKoreaFormData } from './jobkorea-sections/base.js';
+export { registerPortfolioUrl } from './sections/api-client.js';
+export { buildJobKoreaFormData } from './sections/base.js';
 export {
   GRAD_TYPE,
   JK_JOB_CATEGORY,
@@ -33,5 +33,5 @@ export {
   mapSkillsToFormFields,
   normalizeCompanyName,
   JOBKOREA_RESUME_TITLE,
-} from './jobkorea-sections/field-mappers.js';
-export { parseRange, toYYYYMM } from './jobkorea-sections/validators.js';
+} from './sections/field-mappers.js';
+export { parseRange, toYYYYMM } from './sections/validators.js';

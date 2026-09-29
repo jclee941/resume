@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert';
 
-const { getTagTypeId } = await import('../skill-tag-map.js');
+const { getTagTypeId } = await import('@resume/shared/platform-sync/skill-tag-map');
 
 describe('skill-tag-map', () => {
   describe('getTagTypeId — previously null skills now resolve', () => {

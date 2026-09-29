@@ -2,9 +2,9 @@ import { CONFIG } from '../constants.js';
 import { log } from '../sync-logger.js';
 
 /**
- * @typedef {import('../../skill-tag-map.js').WantedSkillItem} WantedSkillItem
- * @typedef {import('../../skill-tag-map.js').SkillToAdd} SkillToAdd
- * @typedef {ReturnType<typeof import('../../skill-tag-map.js').diffSkills>} SkillsDiff
+ * @typedef {import('@resume/shared/platform-sync/skill-tag-map').WantedSkillItem} WantedSkillItem
+ * @typedef {import('@resume/shared/platform-sync/skill-tag-map').SkillToAdd} SkillToAdd
+ * @typedef {ReturnType<typeof import('@resume/shared/platform-sync/skill-tag-map').diffSkills>} SkillsDiff
  */
 
 /**
@@ -18,12 +18,12 @@ import { log } from '../sync-logger.js';
  */
 
 /**
- * @param {{ skills?: Parameters<typeof import('../../skill-tag-map.js').flattenSkills>[0] }} ssot
+ * @param {{ skills?: Parameters<typeof import('@resume/shared/platform-sync/skill-tag-map').flattenSkills>[0] }} ssot
  * @param {{ skills?: WantedSkillItem[] }} profile
  * @returns {Promise<SkillsDiff>}
  */
 async function getSkillsDiff(ssot, profile) {
-  const { flattenSkills, diffSkills } = await import('../../skill-tag-map.js');
+  const { flattenSkills, diffSkills } = await import('@resume/shared/platform-sync/skill-tag-map');
   const ssotSkills = flattenSkills(ssot.skills);
   const wantedSkills = profile.skills || [];
   return diffSkills(ssotSkills, wantedSkills);
@@ -40,7 +40,7 @@ function reportSkillDiff(diff) {
 
 /**
  * @param {WantedSkillsApi} api
- * @param {{ skills?: Parameters<typeof import('../../skill-tag-map.js').flattenSkills>[0] }} ssot
+ * @param {{ skills?: Parameters<typeof import('@resume/shared/platform-sync/skill-tag-map').flattenSkills>[0] }} ssot
  * @param {{ skills?: WantedSkillItem[] }} profile
  * @returns {Promise<{ changes: number, added: number, deleted: number, dryRun?: boolean }>}
  */

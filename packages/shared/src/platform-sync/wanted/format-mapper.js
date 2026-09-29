@@ -1,12 +1,12 @@
-import { flattenSkills, flattenSkillsWithLevels } from '../../../../scripts/skill-tag-map.js';
-import { resolveJobCategoryId } from '../../../../scripts/profile-sync/constants.js';
+import { flattenSkills, flattenSkillsWithLevels } from '../skill-tag-map.js';
+import { resolveJobCategoryId } from '@resume/shared/job-categories';
 import { mapWorkTypeToWantedEmploymentType } from '@resume/shared/employment-types';
 import {
   normalizeCareerRole,
   normalizeCompanyName,
   normalizeEducationStatus,
 } from '@resume/shared/normalize';
-import { parseDate } from '../../date-parser.js';
+import { parseDate } from '../date-parser.js';
 
 import { WANTED_HEADLINE_LIMIT } from './constants.js';
 
@@ -65,7 +65,7 @@ import { WANTED_HEADLINE_LIMIT } from './constants.js';
  * @property {{ totalExperience?: string; expertise?: string[] }} [summary]
  * @property {WantedFormatEducation} [education]
  * @property {{ wanted?: { headline?: string; about?: string } }} [platformVariants]
- * @property {Record<string, import('../../../../scripts/skill-tag-map.js').SkillCategory | null | undefined> | null | undefined} [skills]
+ * @property {Record<string, import('../skill-tag-map.js').SkillCategory | null | undefined> | null | undefined} [skills]
  * @property {WantedFormatLanguage[]} [languages]
  * @property {WantedFormatHope} [hope]
  * @property {{ ko?: WantedFormatCoverLetterKo }} [coverLetter]

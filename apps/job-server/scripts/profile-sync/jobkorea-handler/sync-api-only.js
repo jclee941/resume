@@ -1,9 +1,9 @@
-import { JobKoreaAPIClient } from './api-client.js';
-import { JobKoreaAuthError } from './api-errors.js';
+import { JobKoreaAPIClient } from '@resume/shared/platform-sync/jobkorea/api-client';
+import { JobKoreaAuthError } from '@resume/shared/platform-sync/jobkorea/api-errors';
 import { log } from '../sync-logger.js';
-import { buildJobKoreaFormData } from '../jobkorea-sections.js';
-import { assertJobKoreaCareerPayloadCoverage } from './career-guards.js';
-import { isJwtExpired } from './jwt-utils.js';
+import { buildJobKoreaFormData } from '@resume/shared/platform-sync/jobkorea';
+import { assertJobKoreaCareerPayloadCoverage } from '@resume/shared/platform-sync/jobkorea/career-guards';
+import { isJwtExpired } from '@resume/shared/platform-sync/jobkorea/jwt-utils';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';

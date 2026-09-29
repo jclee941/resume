@@ -6,7 +6,7 @@ Wanted session and must not be simulated with guessed IDs.
 
 ## When to run
 
-Run this only when updating `apps/job-server/scripts/skill-tag-map.js` or when a
+Run this only when updating `packages/shared/src/platform-sync/skill-tag-map.js` or when a
 Wanted profile sync reports unmapped skills that should be added as first-class
 tags.
 

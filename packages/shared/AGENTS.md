@@ -29,6 +29,7 @@ packages/shared/src/
 ├── session/             # Session store, cookies, constants
 ├── auth/                # Cookie auth, HMAC signing
 ├── normalize/           # Data normalization
+├── platform-sync/       # Wanted + JobKorea resume mapping/sync (Worker-safe, fetch only)
 ├── ua.js                # User-Agent utilities
 ├── phone.js             # Phone number utilities
 ├── employment-types.js  # Employment type constants
@@ -53,6 +54,7 @@ packages/shared/src/
 | `@resume/shared/session`          | Session store, cookies, constants         |
 | `@resume/shared/auth`             | Cookie auth, HMAC signing                 |
 | `@resume/shared/normalize`        | Data normalization                        |
+| `@resume/shared/platform-sync/*`  | Wanted/JobKorea resume mapping and sync   |
 | `@resume/shared/ua`               | User-Agent utilities                      |
 | `@resume/shared/phone`            | Phone number utilities                    |
 | `@resume/shared/employment-types` | Employment type constants                 |

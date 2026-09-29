@@ -44,7 +44,10 @@
     "./auth/cookie": "./src/auth/cookie.js",
     "./auth/hmac": "./src/auth/hmac.js",
     "./normalize": "./src/normalize/index.js",
-    "./job-url-canonicalization": "./src/job-url-canonicalization.js"
+    "./job-url-canonicalization": "./src/job-url-canonicalization.js",
+    "./platform-sync/wanted": "./src/platform-sync/wanted/index.js",
+    "./platform-sync/jobkorea": "./src/platform-sync/jobkorea/index.js",
+    "./platform-sync/*": "./src/platform-sync/*.js"
   },
   "dependencies": {
     "@resume/schemas": "*",

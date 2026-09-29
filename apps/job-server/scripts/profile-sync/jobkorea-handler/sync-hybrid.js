@@ -1,5 +1,10 @@
-import { JobKoreaAuthError, JobKoreaCaptchaError, JobKoreaSaveError } from './api-errors.js';
-import { mapPortfolioToFormFields } from '../jobkorea-sections.js';
+import {
+  JobKoreaAuthError,
+  JobKoreaCaptchaError,
+  JobKoreaSaveError,
+} from '@resume/shared/platform-sync/jobkorea/api-errors';
+import { mapPortfolioToFormFields } from '@resume/shared/platform-sync/jobkorea';
+import { mergeBaseFields } from '@resume/shared/platform-sync/jobkorea/api-payload';
 
 const HYBRID_MODES = new Set(['hybrid-api', 'api-dry-run']);
 
@@ -31,21 +36,6 @@ async function readApiBaseFields(apiClient) {
     return [];
   }
   return apiClient.fetchEditPageBaseFields();
-}
-
-function mergeBaseFields(rawFields, browserFields) {
-  const merged = new Map();
-  for (const field of rawFields || []) {
-    if (field?.name) {
-      merged.set(field.name, field.value ?? '');
-    }
-  }
-  for (const field of browserFields || []) {
-    if (field?.name) {
-      merged.set(field.name, field.value ?? '');
-    }
-  }
-  return Array.from(merged.entries()).map(([name, value]) => ({ name, value }));
 }
 
 export async function executeHybridSave(

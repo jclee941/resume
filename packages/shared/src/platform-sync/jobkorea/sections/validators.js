@@ -1,4 +1,4 @@
-import { formatYYYYMM, parsePeriod } from '../../../src/shared/utils/date-formatters.js';
+import { formatYYYYMM, parsePeriod } from '../../date-formatters.js';
 
 /**
  * @param {Date | string | number | null | undefined} dateStr

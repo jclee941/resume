@@ -1,11 +1,11 @@
 import assert from 'node:assert';
 import { afterEach, describe, it } from 'node:test';
-import { JobKoreaAPIClient } from '../jobkorea-handler/api-client.js';
+import { JobKoreaAPIClient } from '@resume/shared/platform-sync/jobkorea/api-client';
 import {
   JobKoreaAuthError,
   JobKoreaCaptchaError,
   JobKoreaSaveError,
-} from '../jobkorea-handler/api-errors.js';
+} from '@resume/shared/platform-sync/jobkorea/api-errors';
 
 function jsonResponse(body, options = {}) {
   return {

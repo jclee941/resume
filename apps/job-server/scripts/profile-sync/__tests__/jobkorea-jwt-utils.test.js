@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
-import { isJwtExpired } from '../jobkorea-handler/jwt-utils.js';
+import { isJwtExpired } from '@resume/shared/platform-sync/jobkorea/jwt-utils';
 
 describe('jwt-utils', () => {
   it('returns true when jkat cookie is missing', () => {

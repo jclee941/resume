@@ -1,5 +1,5 @@
-import { getTagTypeId } from '../../../../scripts/skill-tag-map.js';
-import { parseDate } from '../../date-parser.js';
+import { getTagTypeId } from '../skill-tag-map.js';
+import { parseDate } from '../date-parser.js';
 
 import { isStrictSyncEnabled } from './strict-sync.js';
 
@@ -18,7 +18,6 @@ import { isStrictSyncEnabled } from './strict-sync.js';
  *   resumeActivity: WantedSyncSubApi & { delete(resumeId: string | number, id: unknown): Promise<unknown> };
  *   resumeLanguageCert: WantedSyncSubApi & { delete(resumeId: string | number, id: unknown): Promise<unknown> };
  *   resume: { save(resumeId: string | number, data: unknown): Promise<unknown> };
- *   [key: string]: unknown;
  * }} WantedSyncApi
  */
 

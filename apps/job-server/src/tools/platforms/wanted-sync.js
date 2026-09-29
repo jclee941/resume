@@ -1,14 +1,5 @@
 import { SessionManager } from '../../shared/services/session/index.js';
-import {
-  mapToWantedFormat,
-  syncAbout,
-  syncActivities,
-  syncCareers,
-  syncContact,
-  syncEducations,
-  syncLanguageCerts,
-  syncSkills,
-} from './wanted-sync-operations.js';
+import { mapToWantedFormat, syncWantedResume } from '@resume/shared/platform-sync/wanted';
 
 export async function diffPlatform(sourceData, params) {
   const api = await SessionManager.getAPI();
@@ -55,79 +46,5 @@ export async function syncToWanted(data, params, sourceData = {}, injectedLogger
   if (!api) return { error: 'Not authenticated. Use wanted_auth first.' };
   if (params.dry_run) return { dry_run: true, would_sync: data };
 
-  const results = { updated: [], errors: [] };
-
-  let resumeDetail;
-  try {
-    resumeDetail = await api.getResumeDetail(params.resume_id);
-  } catch (e) {
-    results.errors.push({ section: 'resume_detail', error: e.message });
-    return results;
-  }
-
-  await runStep(results, 'profile', async () => {
-    await api.updateProfile({
-      headline: data.profile.headline,
-      description: data.profile.description,
-    });
-  });
-
-  await runStep(results, 'careers', async () => {
-    await syncCareers(
-      api,
-      params.resume_id,
-      data.careers || [],
-      resumeDetail.careers || [],
-      sourceData.careers || []
-    );
-  });
-
-  await runStep(results, 'educations', async () => {
-    await syncEducations(
-      api,
-      params.resume_id,
-      data.educations || [],
-      resumeDetail.educations || []
-    );
-  });
-
-  await runStep(results, 'skills', async () => {
-    await syncSkills(
-      api,
-      params.resume_id,
-      data.skills || [],
-      resumeDetail.skills || [],
-      injectedLogger
-    );
-  });
-
-  await runStep(results, 'activities', async () => {
-    const remoteSsotActivities = (resumeDetail.activities || []).filter(
-      (a) => a.activity_type === 'CERTIFICATE' || a.activity_type === 'AWARD'
-    );
-    await syncActivities(api, params.resume_id, sourceData, remoteSsotActivities);
-  });
-
-  await runStep(results, 'language_certs', async () => {
-    await syncLanguageCerts(api, params.resume_id, sourceData, resumeDetail.language_certs || []);
-  });
-
-  await runStep(results, 'about', async () => {
-    await syncAbout(api, params.resume_id, sourceData, resumeDetail.about || '');
-  });
-
-  await runStep(results, 'contact', async () => {
-    await syncContact(api, params.resume_id, sourceData, resumeDetail);
-  });
-
-  return results;
-}
-
-async function runStep(results, section, fn) {
-  try {
-    await fn();
-    results.updated.push(section);
-  } catch (e) {
-    results.errors.push({ section, error: e.message });
-  }
+  return syncWantedResume(api, data, params.resume_id, sourceData, injectedLogger);
 }
