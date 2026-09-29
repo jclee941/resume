@@ -37,7 +37,7 @@ import {
  * }} DiagnosticResult
  *
  * @typedef {{
- *   DB?: import('./diagnostics-probes.js').D1CheckBinding;
+ *   JOB_DB?: import('./diagnostics-probes.js').D1CheckBinding;
  *   SESSIONS?: import('./diagnostics-probes.js').KvCheckBinding;
  *   RATE_LIMIT_KV?: import('./diagnostics-probes.js').KvCheckBinding;
  *   NONCE_KV?: import('./diagnostics-probes.js').KvCheckBinding;
@@ -94,7 +94,7 @@ export class DiagnosticsHandler {
     };
 
     // D1 Databases
-    const d1Checks = ['DB'];
+    const d1Checks = ['JOB_DB'];
     for (const name of d1Checks) {
       const binding = /** @type {import('./diagnostics-probes.js').D1CheckBinding} */ (
         this.env[name]

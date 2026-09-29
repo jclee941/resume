@@ -283,7 +283,7 @@ wrangler d1 create job-dashboard-db
 
 # Output will show:
 # Database ID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-# Binding name: DB (or customize)
+# Binding name: JOB_DB (or customize)
 ```
 
 **Save the Database ID** - you'll need it for configuration.
@@ -294,7 +294,7 @@ Add D1 binding to `wrangler.jsonc`:
 
 ```toml
 [[d1_databases]]
-binding = "DB"
+binding = "JOB_DB"
 database_name = "job-dashboard-db"
 database_id = "c858dda6-b752-4e12-b60c-2886e9483cc7"  # Use your database ID
 ```

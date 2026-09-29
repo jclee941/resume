@@ -74,14 +74,13 @@ describe('entry.js merged-worker contract', () => {
   test('has error handling that logs and returns 500', () => {
     expect(source).toMatch(/catch \(error\)/);
     expect(source).toMatch(/console\.error\('\[entry\] Unhandled error:'/);
-    expect(source).toMatch(/logError\(/);
     expect(source).toMatch(/status:\s*500/);
   });
 
   test('imports required modules', () => {
     expect(source).toMatch(/import\s+portfolioWorker\s+from\s+['"]\.\/worker\.js['"]/);
     expect(source).toMatch(/from\s+['"]\.\/lib\/entry-router-utils\.js['"]/);
-    expect(source).toMatch(/from\s+['"]@resume\/shared\/es-client['"]/);
+    expect(source).not.toMatch(/es-client/);
   });
 
   test('exports default fetch handler object', () => {

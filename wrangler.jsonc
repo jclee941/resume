@@ -35,7 +35,6 @@
   ],
   "vars": {
     "ENVIRONMENT": "production",
-    "ELASTICSEARCH_INDEX": "resume-logs-worker",
   },
   "routes": [{ "pattern": "resume.jclee.me", "custom_domain": true }],
   "triggers": {
@@ -56,11 +55,6 @@
     ],
   },
   "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "resume-prod-db",
-      "database_id": "6c723024-2527-490d-8ffd-38604b923166",
-    },
     {
       "binding": "JOB_DB",
       "database_name": "job-dashboard-db",
@@ -133,7 +127,6 @@
       "name": "resume-preview",
       "vars": {
         "ENVIRONMENT": "preview",
-        "ELASTICSEARCH_INDEX": "resume-logs-worker-preview",
       },
       "assets": {
         "directory": "apps/portfolio/assets",

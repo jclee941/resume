@@ -4,7 +4,7 @@ module.exports = {
   modules: true,
   compatibilityDate: '2026-02-21',
   d1Databases: {
-    DB: 'local-resume-db',
+    JOB_DB: 'local-job-db',
   },
   kvNamespaces: {
     SESSIONS: 'local-sessions-kv',

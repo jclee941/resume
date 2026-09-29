@@ -32,7 +32,7 @@ The local endpoint listens on `http://localhost:8787`.
 
 ## Local Bindings
 
-- `DB` -> local D1 simulation
+- `JOB_DB` -> local D1 simulation
 - `SESSIONS`, `CACHE` -> local KV namespaces
 - `RESUME_ASSETS_BUCKET` -> local R2 bucket
 

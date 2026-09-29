@@ -29,7 +29,6 @@ const { buildWorkerRuntimeHelpers } = require('./worker-runtime-helpers');
  * @property {string} initHistogramBucketsStr - initHistogramBuckets function source
  * @property {string} generateHistogramLinesStr - generateHistogramLines function source
  * @property {string} generateMetricsStr - generateMetrics function source
- * @property {string} logToElasticsearchStr - logToElasticsearch function source
  * @property {string} rateLimitConfigJson - JSON.stringify'd rate limit config
  * @property {string} authHelpersStr - Generated auth helper code
  */
@@ -104,7 +103,7 @@ ${opts.generateHistogramLinesStr}
 
 ${opts.generateMetricsStr}
 
-${buildWorkerRuntimeHelpers({ logToElasticsearchStr: opts.logToElasticsearchStr })}
+${buildWorkerRuntimeHelpers()}
 
 ${opts.authHelpersStr}
 `;

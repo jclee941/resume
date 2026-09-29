@@ -27,7 +27,6 @@ import {
   isSingleWorkerProfileSyncTrigger,
   localizeHtmlResponse,
 } from './lib/entry-router-utils.js';
-import { logResponse, logError } from '@resume/shared/es-client';
 
 // Re-export Workflow + Durable Object classes so wrangler can register them in the merged worker.
 export {
@@ -95,7 +94,6 @@ export default {
    * @returns {Promise<Response>}
    */
   async fetch(request, env, ctx) {
-    const startTime = Date.now();
     const url = new URL(request.url);
     const languageContext = detectRequestLanguage(request, url.pathname);
     const profileSyncStatusId = getSingleWorkerProfileSyncStatusId(url.pathname, request.method);
@@ -181,34 +179,12 @@ export default {
       }
     } catch (error) {
       console.error('[entry] Unhandled error:', /** @type {ErrLike} */ (error)?.message || error);
-      ctx.waitUntil(
-        logError(
-          env,
-          error instanceof Error
-            ? error
-            : new Error(String(/** @type {ErrLike} */ (error)?.message || error)),
-          {
-            url: { path: url.pathname },
-          },
-          {
-            job: 'resume-worker-entry',
-            index: env?.ELASTICSEARCH_INDEX || 'resume-logs-worker',
-          }
-        )
-      );
       response = new Response(JSON.stringify({ error: 'Internal server error' }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
-    ctx.waitUntil(
-      logResponse(env, request, response, {
-        startTime,
-        job: 'resume-worker-entry',
-        index: env?.ELASTICSEARCH_INDEX || 'resume-logs-worker',
-      })
-    );
     return response;
   },
 

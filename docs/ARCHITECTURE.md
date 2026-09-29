@@ -187,7 +187,6 @@ See [ADR 0009](adr/0009-single-worker-consolidation.md) (supersedes ADR 0007).
 
 | Binding         | Type  | Used By                    | Purpose                                   |
 | --------------- | ----- | -------------------------- | ----------------------------------------- |
-| `DB`            | D1    | Merged Worker (resume)     | Portfolio data (resume-prod-db)           |
 | `JOB_DB`        | D1    | Merged Worker (resume)     | Applications, job data (job-dashboard-db) |
 | `SESSIONS`      | KV    | Both (shared, intentional) | Session storage                           |
 | `RATE_LIMIT_KV` | KV    | Both (shared, intentional) | Domain-wide rate limiting                 |

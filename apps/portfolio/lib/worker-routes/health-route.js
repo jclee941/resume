@@ -18,7 +18,7 @@ function generateHealthRoute(opts) {
         const bindings = { d1: { healthy: false }, kv: { healthy: false } };
         try {
           const d1Start = Date.now();
-          await env.DB.prepare('SELECT 1 AS ok').first();
+          await env.JOB_DB.prepare('SELECT 1 AS ok').first();
           bindings.d1 = { healthy: true, latency_ms: Date.now() - d1Start };
         } catch (e) {
           bindings.d1 = { healthy: false, error: e.message };
@@ -65,7 +65,7 @@ function generateHealthRoute(opts) {
       if (url.pathname === '/api/status') {
         const bindings = { d1: { healthy: false }, kv: { healthy: false } };
         try {
-          await env.DB.prepare('SELECT 1 AS ok').first();
+          await env.JOB_DB.prepare('SELECT 1 AS ok').first();
           bindings.d1 = { healthy: true };
         } catch (e) {
           bindings.d1 = { healthy: false };
