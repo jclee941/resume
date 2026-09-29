@@ -854,7 +854,7 @@
     "apps/job-dashboard/src/services/resume-platform-sync/index.js",
     "apps/job-dashboard/src/services/resume-platform-sync/wanted.js",
     "apps/job-dashboard/src/services/resume-platform-sync/jobkorea.js",
-    "apps/job-dashboard/src/services/resume-platform-sync/jobkorea-form-reader.js",
+    "apps/job-dashboard/src/services/resume-platform-sync/jobkorea-editor.js",
     "packages/shared/src/platform-sync/wanted/sync.js",
     "packages/shared/src/platform-sync/jobkorea/index.js",
     "packages/shared/src/platform-sync/jobkorea/section-indices.js",

@@ -68,6 +68,49 @@ describe('ProfileSyncHandler', () => {
     assert.match(body.platformResults.saramin.error, /Saramin/);
   });
 
+  it('re-mints an expired JobKorea session and retries the sync once', async () => {
+    const handler = new ProfileSyncHandler({ JOB_DB: fakeJobDb(STORED) });
+    handler.syncPlatform = mock.fn(async (_env, platform) =>
+      handler.syncPlatform.mock.callCount() === 0
+        ? { platform, success: false, code: 'JOBKOREA_SESSION_EXPIRED', error: 'session expired' }
+        : { platform, success: true }
+    );
+    handler.refreshJobKoreaSession = mock.fn(async () => ({
+      ok: true,
+      key: 'auth:jobkorea',
+      length: 9,
+    }));
+
+    const response = await handler.triggerProfileSync(request({ platforms: ['jobkorea'] }));
+    const body = await response.json();
+
+    assert.equal(body.success, true);
+    assert.equal(handler.refreshJobKoreaSession.mock.callCount(), 1);
+    assert.equal(handler.syncPlatform.mock.callCount(), 2);
+  });
+
+  it('reports the refresh failure when an expired JobKorea session cannot be re-minted', async () => {
+    const handler = new ProfileSyncHandler({ JOB_DB: fakeJobDb(STORED) });
+    handler.syncPlatform = mock.fn(async (_env, platform) => ({
+      platform,
+      success: false,
+      code: 'JOBKOREA_SESSION_EXPIRED',
+      error: 'session expired',
+    }));
+    handler.refreshJobKoreaSession = mock.fn(async () => ({ ok: false, error: 'captcha' }));
+
+    const body = await (
+      await handler.triggerProfileSync(request({ platforms: ['jobkorea'] }))
+    ).json();
+
+    assert.equal(body.success, false);
+    assert.match(
+      body.platformResults.jobkorea.error,
+      /session expired; JobKorea session refresh failed: captcha/
+    );
+    assert.equal(handler.syncPlatform.mock.callCount(), 1);
+  });
+
   it('returns 404 when no master resume is stored', async () => {
     const handler = new ProfileSyncHandler({ JOB_DB: fakeJobDb(null) });
     handler.syncPlatform = mock.fn();
