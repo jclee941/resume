@@ -81,6 +81,21 @@ async function loadPage(page, url, deadline) {
 }
 
 /**
+ * Adds to a navigation timeout the allowed requests the page was still waiting for (type, host and
+ * path only, once each across the retry), so a stalled applied-list page says whether JobKorea's
+ * document or a script held it.
+ * @param {unknown} error
+ * @param {string[]} pending
+ * @returns {unknown}
+ */
+function withPendingRequests(error, pending) {
+  if (error instanceof HistorySyncError || !(error instanceof Error)) return error;
+  if (!TIMEOUT_MESSAGE.test(error.message)) return error;
+  const stalled = [...new Set(pending)].join(', ') || 'none';
+  return new Error(`${error.message}; pending: ${stalled}`, { cause: error });
+}
+
+/**
  * @param {Parameters<typeof readPlatformSession>[0] & Parameters<typeof defaultWithBrowserSession>[0]} env
  * @param {{ withBrowserSession?: typeof defaultWithBrowserSession }} [options]
  * @returns {Promise<import('./history-types.js').HistoryRecord[]>}
@@ -97,7 +112,7 @@ export async function fetchJobKoreaHistory(
     const deadline = Date.now() + ADAPTER_BUDGET_MS;
     const page = await browser.newPage();
     try {
-      await restrictToJobKorea(page, BLOCKED_RESOURCE_TYPES);
+      const requests = await restrictToJobKorea(page, BLOCKED_RESOURCE_TYPES);
       await page.setCookie(...toJobKoreaBrowserCookies(cookieString));
       /** @type {Map<string, import('./history-types.js').HistoryRecord>} */
       const records = new Map();
@@ -107,7 +122,9 @@ export async function fetchJobKoreaHistory(
         const url = /** @type {string} */ (queue.shift());
         if (visited.has(url)) continue;
         visited.add(url);
-        const html = await loadPage(page, url, deadline);
+        const html = await loadPage(page, url, deadline).catch((error) => {
+          throw withPendingRequests(error, requests.pending());
+        });
         if (!isApplyListPage(html)) {
           throw new HistorySyncError('SESSION_EXPIRED', 'JobKorea did not serve the applied list');
         }
