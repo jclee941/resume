@@ -7,7 +7,8 @@
  * Doubles as the Wave 3 development harness: an admin can point it at any URL
  * (e.g. a JobKorea search/detail page) to observe live behaviour — final URL
  * after redirects, title, and a heuristic pageKind (content / login / captcha /
- * blocked) — before a crawler is wired through the broker.
+ * blocked) — before a crawler is wired through the broker. With `html=1` it also returns the
+ * rendered page HTML, so a platform page's markup can be read before a parser depends on it.
  *
  * Route: GET /api/browser/smoke[?url=...] (admin-gated via ADMIN_ROUTES '/api/browser').
  * @module handlers/browser/smoke
@@ -26,6 +27,8 @@ const SMOKE_SESSION_HOSTS = { jobkorea: 'jobkorea.co.kr' };
  */
 
 const DEFAULT_URL = 'https://example.com';
+/** Upper bound of the page HTML returned with `html=1`. */
+const SMOKE_HTML_MAX_CHARS = 1_000_000;
 
 const LOGIN_MARKERS = ['login', 'signin', 'sign-in', '로그인', 'ログイン', 'auth'];
 const CAPTCHA_MARKERS = [
@@ -64,7 +67,7 @@ export function classifyPage(finalUrl, title, text) {
 /**
  * Run the browser probe and return a plain result object (never throws).
  * @param {Parameters<typeof defaultWithBrowserSession>[0]} env
- * @param {{withBrowserSession?: typeof defaultWithBrowserSession, url?: string, cookies?: SmokeCookie[], screenshot?: boolean, now?: () => number}} [opts]
+ * @param {{withBrowserSession?: typeof defaultWithBrowserSession, url?: string, cookies?: SmokeCookie[], screenshot?: boolean, html?: boolean, now?: () => number}} [opts]
  * @returns {Promise<Record<string, unknown>>}
  */
 export async function runBrowserSmoke(env, opts = {}) {
@@ -73,6 +76,7 @@ export async function runBrowserSmoke(env, opts = {}) {
     url = DEFAULT_URL,
     cookies = [],
     screenshot = false,
+    html = false,
     now = () => Date.now(),
   } = opts;
   const started = now();
@@ -143,6 +147,7 @@ export async function runBrowserSmoke(env, opts = {}) {
         const image = screenshot
           ? await page.screenshot({ type: 'jpeg', quality: 60, encoding: 'base64' })
           : undefined;
+        const markup = html ? (await page.content()).slice(0, SMOKE_HTML_MAX_CHARS) : undefined;
         return {
           finalUrl,
           title,
@@ -151,6 +156,7 @@ export async function runBrowserSmoke(env, opts = {}) {
           inputs,
           ...resources,
           ...(image ? { screenshot: image } : {}),
+          ...(markup !== undefined ? { html: markup } : {}),
         };
       } finally {
         try {

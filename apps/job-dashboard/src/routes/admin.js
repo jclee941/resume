@@ -45,6 +45,7 @@ export function registerAdminRoutes(router, ctx) {
   // Optional ?url= lets an admin probe a real target (e.g. JobKorea/Wanted) to
   // observe live page state (content / login / captcha / blocked) before Wave 3.
   // ?session=jobkorea replays the stored KV session, only on that platform's host.
+  // ?html=1 adds the rendered page HTML (reading a platform page's markup).
   router.get('/api/browser/smoke', async (req) => {
     const params = new URL(req.url).searchParams;
     const target = params.get('url');
@@ -52,6 +53,7 @@ export function registerAdminRoutes(router, ctx) {
     /** @type {NonNullable<Parameters<typeof runBrowserSmoke>[1]>} */
     const opts = target ? { url: target } : {};
     if (params.get('screenshot') === '1') opts.screenshot = true;
+    if (params.get('html') === '1') opts.html = true;
     if (session) {
       const replay = await smokeCookiesFor(env, session, target || '');
       if (!replay.ok) return jsonResponse({ ok: false, error: replay.error }, replay.status);
