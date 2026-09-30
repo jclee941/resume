@@ -125,7 +125,11 @@ describe('mintJobKoreaSession', () => {
     const page = createFakePage({ evaluateQueue: Array(16).fill(false), inputs });
 
     await assert.rejects(
-      () => mintJobKoreaSession(CREDS, { withBrowserSession: fakeWithBrowserSession(page) }),
+      () =>
+        mintJobKoreaSession(CREDS, {
+          withBrowserSession: fakeWithBrowserSession(page),
+          pollIntervalMs: 0,
+        }),
       /JobKorea login did not complete/
     );
     assert.equal(page.close.mock.callCount(), 1);

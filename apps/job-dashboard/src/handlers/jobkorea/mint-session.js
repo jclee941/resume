@@ -56,12 +56,12 @@ function sleep(ms) {
  * Rendering broker. Fails with code JOBKOREA_CAPTCHA_REQUIRED when JobKorea
  * presents a CAPTCHA.
  * @param {JobKoreaEnv} env
- * @param {{ withBrowserSession?: typeof defaultWithBrowserSession }} [opts]
+ * @param {{ withBrowserSession?: typeof defaultWithBrowserSession, pollIntervalMs?: number }} [opts]
  * @returns {Promise<string>} cookie string `name=value; name2=value2`
  */
 export async function mintJobKoreaSession(
   env,
-  { withBrowserSession = defaultWithBrowserSession } = {}
+  { withBrowserSession = defaultWithBrowserSession, pollIntervalMs = LOGIN_POLL_INTERVAL_MS } = {}
 ) {
   const email = env?.JOBKOREA_USERNAME || env?.JOBKOREA_EMAIL;
   const password = env?.JOBKOREA_PASSWORD;
@@ -88,7 +88,7 @@ export async function mintJobKoreaSession(
             { code: 'JOBKOREA_CAPTCHA_REQUIRED' }
           );
         }
-        await sleep(LOGIN_POLL_INTERVAL_MS);
+        await sleep(pollIntervalMs);
         loggedIn = await isLoggedIn(page);
       }
 
