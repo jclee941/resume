@@ -70,34 +70,6 @@ test('stores raw and canonical URLs when importing direct Wanted search results'
   ]);
 });
 
-test('stores raw and canonical URLs when syncing Wanted application history', async () => {
-  const { WantedHistoryRepository } = await import(
-    path.join(
-      __dirname,
-      '../../../apps/job-dashboard/src/handlers/applications/wanted-history-repository.js'
-    )
-  );
-  const db = createCapturingDb();
-  const repository = new WantedHistoryRepository(db);
-
-  await repository.upsertApplication({
-    id: 'wanted-42',
-    wantedApplicationId: '42',
-    wantedJobId: 'opening-42',
-    sourceUrl: rawUrl,
-    position: 'Platform Engineer',
-    company: 'Example',
-    status: 'applied',
-    resumeId: null,
-    appliedAt: '2026-07-23T00:00:00.000Z',
-    updatedAt: '2026-07-23T00:00:00.000Z',
-  });
-
-  const statement = applicationInsert(db);
-  assert.match(statement.sql, /source_url,\s+canonical_url/);
-  assert.deepEqual(statement.params.slice(2, 4), [rawUrl, canonicalUrl]);
-});
-
 test('stores raw and canonical URLs for auto-apply application records', async () => {
   const { recordApplication } = await import(
     path.join(__dirname, '../../../apps/job-dashboard/src/handlers/auto-apply/db-helpers.js')

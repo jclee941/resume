@@ -2,7 +2,6 @@
  * @typedef {Object} ApplicationsHandlerShape
  * @property {import('../router.js').RouteHandler} list
  * @property {import('../router.js').RouteHandler} create
- * @property {import('../router.js').RouteHandler} syncWantedHistory
  * @property {import('../router.js').RouteHandler} get
  * @property {import('../router.js').RouteHandler} update
  * @property {import('../router.js').RouteHandler} delete
@@ -27,7 +26,6 @@ export function registerApplicationsRoutes(router, ctx) {
 
   router.get('/api/applications', (req) => apps.list(req));
   router.post('/api/applications', (req) => apps.create(req));
-  router.post('/api/applications/sync/wanted', (req) => apps.syncWantedHistory(req));
   router.get('/api/applications/:id', (req) => apps.get(req));
   router.put('/api/applications/:id', (req) => apps.update(req));
   router.delete('/api/applications/:id', (req) => apps.delete(req));
