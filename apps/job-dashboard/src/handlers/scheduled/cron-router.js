@@ -1,13 +1,14 @@
 import { refreshJobKoreaSession } from '../jobkorea/mint-session.js';
 import { refreshWantedSession } from '../wanted/mint-session.js';
+import { planAutoApplyStart } from './auto-apply-start.js';
 
 export const RESUME_SYNC_CRON = '0 21 * * *';
 export const HEALTH_CHECK_CRON = '0 * * * *';
 
 /**
  * @typedef {{ create(options: { params: unknown }): Promise<unknown> }} WorkflowStarter
- * @typedef {'RESUME_SYNC_WORKFLOW' | 'CLEANUP_WORKFLOW' | 'HEALTH_CHECK_WORKFLOW' | 'DAILY_REPORT_WORKFLOW'} WorkflowBindingName
- * @typedef {Parameters<typeof refreshWantedSession>[0] & Parameters<typeof refreshJobKoreaSession>[0] & {
+ * @typedef {'RESUME_SYNC_WORKFLOW' | 'CLEANUP_WORKFLOW' | 'APPLICATION_WORKFLOW' | 'HEALTH_CHECK_WORKFLOW' | 'DAILY_REPORT_WORKFLOW'} WorkflowBindingName
+ * @typedef {Parameters<typeof refreshWantedSession>[0] & Parameters<typeof refreshJobKoreaSession>[0] & Parameters<typeof planAutoApplyStart>[0] & {
  *   RESUME_SYNC_CRON_DRY_RUN?: string;
  * } & { [Name in WorkflowBindingName]?: WorkflowStarter }} CronEnv
  * @typedef {{ waitUntil(promise: Promise<unknown>): void }} CronContext
@@ -37,6 +38,7 @@ async function resumeSyncStarts(env) {
   return [
     { binding: 'RESUME_SYNC_WORKFLOW', params: { dryRun, source: 'cron' } },
     { binding: 'CLEANUP_WORKFLOW', params: { source: 'cron' } },
+    ...(await planAutoApplyStart(env)),
   ];
 }
 
@@ -93,7 +95,9 @@ function describeReason(reason) {
 /**
  * Route a Cloudflare scheduled() invocation by its matched cron expression.
  * - RESUME_SYNC_CRON   -> ResumeSyncWorkflow (dryRun unless RESUME_SYNC_CRON_DRY_RUN=false,
- *   after a best-effort Wanted/JobKorea session refresh) plus CleanupWorkflow.
+ *   after a best-effort Wanted/JobKorea session refresh) plus CleanupWorkflow, plus a dry-run
+ *   ApplicationWorkflow discovery run for Wanted unless auto-apply is disabled in D1 config
+ *   or AUTO_APPLY_CRON_ENABLED=false.
  * - HEALTH_CHECK_CRON  -> HealthCheckWorkflow, plus DailyReportWorkflow with type 'weekly'
  *   when the scheduled time is Monday 00:00 UTC.
  * - anything else      -> logged and ignored.

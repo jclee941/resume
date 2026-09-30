@@ -40,7 +40,9 @@ The section writers live in `packages/shared/src/platform-sync/wanted/`.
 `0 21 * * *` starts `ResumeSyncWorkflow` for `wanted` and `jobkorea` as a dry
 run unless the Worker variable `RESUME_SYNC_CRON_DRY_RUN` is `false`. A dry run
 reads the live resume and reports what would change without writing. Every run
-records a `resume_sync_history` row and sends a Telegram summary.
+records a `resume_sync_history` row and sends a Telegram summary. The same cron
+run also starts a dry-run Wanted `ApplicationWorkflow` discovery run unless
+auto-apply is disabled in D1 config or `AUTO_APPLY_CRON_ENABLED` is `false`.
 
 ### Manual (admin API)
 

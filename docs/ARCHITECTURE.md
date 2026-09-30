@@ -141,8 +141,8 @@ Scheduled job automation runs inside the merged `resume` Worker: Cron Triggers
 invoke `scheduled()`, which routes through
 `apps/job-dashboard/src/handlers/scheduled/` into Cloudflare Workflows and
 Queues. `0 21 * * *` refreshes the Wanted session and starts
-`ResumeSyncWorkflow` (dry-run by default); auto-apply runs only when requested
-through the dashboard API. The dashboard API is served by the job-dashboard module imported
+`ResumeSyncWorkflow` (dry-run by default) and a dry-run Wanted `ApplicationWorkflow`
+discovery run; real auto-apply submissions still need approval through the dashboard API. The dashboard API is served by the job-dashboard module imported
 directly into the portfolio worker — no Service Binding, no separate
 deployment. The retired local job-server runtime is recorded in [ADR
 0010](adr/0010-retire-local-job-server.md).

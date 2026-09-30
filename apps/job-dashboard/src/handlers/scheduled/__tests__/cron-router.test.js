@@ -10,9 +10,34 @@ const TUESDAY_AFTERNOON = Date.UTC(2026, 8, 29, 14, 0);
 const BINDINGS = [
   'RESUME_SYNC_WORKFLOW',
   'CLEANUP_WORKFLOW',
+  'APPLICATION_WORKFLOW',
   'HEALTH_CHECK_WORKFLOW',
   'DAILY_REPORT_WORKFLOW',
 ];
+
+const ENABLED_CONFIG = {
+  auto_apply_enabled: 'true',
+  max_daily_applications: '7',
+  min_match_score: '65',
+  auto_apply_keywords: JSON.stringify(['DevOps', 'SRE']),
+};
+
+function createConfigDb(values, { failing = false } = {}) {
+  return {
+    prepare() {
+      return {
+        bind() {
+          return {
+            async all() {
+              if (failing) throw new Error('D1 down');
+              return { results: Object.entries(values).map(([key, value]) => ({ key, value })) };
+            },
+          };
+        },
+      };
+    },
+  };
+}
 
 function createHarness(overrides = {}, rejecting = []) {
   const calls = [];
@@ -39,10 +64,14 @@ function startedNames(calls) {
 describe('cron-router', () => {
   const originalFetch = globalThis.fetch;
   const originalWarn = console.warn;
+  const originalInfo = console.info;
   let warnings;
+  let infos;
 
   beforeEach(() => {
     warnings = [];
+    infos = [];
+    console.info = (...args) => infos.push(args);
     globalThis.fetch = () => {
       throw new Error('network access is not allowed in cron-router tests');
     };
@@ -52,6 +81,7 @@ describe('cron-router', () => {
   afterEach(() => {
     globalThis.fetch = originalFetch;
     console.warn = originalWarn;
+    console.info = originalInfo;
   });
 
   it('exports the two cron expressions and keeps the default export shape', () => {
@@ -75,6 +105,73 @@ describe('cron-router', () => {
     assert.deepEqual(calls.find((c) => c.name === 'CLEANUP_WORKFLOW').params, { source: 'cron' });
     assert.equal(waited.length, 2);
     for (const promise of waited) assert.ok(promise instanceof Promise);
+  });
+
+  it('resume-sync cron also starts one dry-run, non-auto-approved Wanted discovery run', async () => {
+    const { calls, env, ctx } = createHarness({ JOB_DB: createConfigDb(ENABLED_CONFIG) });
+    await scheduled({ cron: RESUME_SYNC_CRON }, env, ctx);
+    assert.deepEqual(startedNames(calls), [
+      'APPLICATION_WORKFLOW',
+      'CLEANUP_WORKFLOW',
+      'RESUME_SYNC_WORKFLOW',
+    ]);
+    const applications = calls.filter((c) => c.name === 'APPLICATION_WORKFLOW');
+    assert.equal(applications.length, 1);
+    assert.deepEqual(applications[0].params, {
+      triggerType: 'cron-auto-apply',
+      source: 'cron',
+      platforms: ['wanted'],
+      searchCriteria: { keywords: ['DevOps', 'SRE'], keyword: 'DevOps' },
+      minMatchScore: 65,
+      maxDailyApplications: 7,
+      dryRun: true,
+      autoApprove: false,
+    });
+  });
+
+  it('the hourly cron never starts the application workflow', async () => {
+    const { calls, env, ctx } = createHarness({ JOB_DB: createConfigDb(ENABLED_CONFIG) });
+    await scheduled({ cron: HEALTH_CHECK_CRON, scheduledTime: MONDAY_MIDNIGHT }, env, ctx);
+    assert.equal(calls.filter((c) => c.name === 'APPLICATION_WORKFLOW').length, 0);
+  });
+
+  it('skips the discovery run with a log line when D1 auto_apply_enabled is false', async () => {
+    const db = createConfigDb({ ...ENABLED_CONFIG, auto_apply_enabled: 'false' });
+    const { calls, env, ctx } = createHarness({ JOB_DB: db });
+    await scheduled({ cron: RESUME_SYNC_CRON }, env, ctx);
+    assert.deepEqual(startedNames(calls), ['CLEANUP_WORKFLOW', 'RESUME_SYNC_WORKFLOW']);
+    assert.equal(infos.length, 1);
+    assert.equal(infos[0][0], '[cron] auto-apply start skipped');
+  });
+
+  it('skips the discovery run when AUTO_APPLY_CRON_ENABLED is false', async () => {
+    const { calls, env, ctx } = createHarness({
+      JOB_DB: createConfigDb(ENABLED_CONFIG),
+      AUTO_APPLY_CRON_ENABLED: 'false',
+    });
+    await scheduled({ cron: RESUME_SYNC_CRON }, env, ctx);
+    assert.deepEqual(startedNames(calls), ['CLEANUP_WORKFLOW', 'RESUME_SYNC_WORKFLOW']);
+    assert.equal(infos.length, 1);
+  });
+
+  it('an unreadable D1 config skips the discovery run without blocking the other starts', async () => {
+    const db = createConfigDb(ENABLED_CONFIG, { failing: true });
+    const { calls, env, ctx } = createHarness({ JOB_DB: db });
+    await scheduled({ cron: RESUME_SYNC_CRON }, env, ctx);
+    assert.deepEqual(startedNames(calls), ['CLEANUP_WORKFLOW', 'RESUME_SYNC_WORKFLOW']);
+    assert.equal(infos.length, 1);
+  });
+
+  it('a rejecting application workflow does not stop resume sync and cleanup', async () => {
+    const { calls, env, ctx } = createHarness({ JOB_DB: createConfigDb(ENABLED_CONFIG) }, [
+      'APPLICATION_WORKFLOW',
+    ]);
+    await assert.rejects(scheduled({ cron: RESUME_SYNC_CRON }, env, ctx), /APPLICATION_WORKFLOW/);
+    assert.deepEqual(startedNames(calls), [
+      'APPLICATION_WORKFLOW',
+      'CLEANUP_WORKFLOW',
+      'RESUME_SYNC_WORKFLOW',
+    ]);
   });
 
   it('the hourly cron starts only the health check outside Monday 00:00 UTC', async () => {
