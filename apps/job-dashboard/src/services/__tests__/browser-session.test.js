@@ -205,3 +205,35 @@ describe('withBrowserSession when a pooled session refuses the connection', () =
     );
   });
 });
+
+describe('withBrowserSession when the fresh launch after a refusal fails', () => {
+  it('hands the pooled session back only once', async () => {
+    const bodies = [
+      { sessionId: 'pooled', reused: true },
+      { error: 'Browser Rendering capacity reached', code: 'NO_CAPACITY' },
+    ];
+    const calls = [];
+    const stub = {
+      async fetch(url, init) {
+        calls.push([new URL(url).pathname, JSON.parse(init.body)]);
+        const body = String(url).endsWith('/acquire') ? bodies.shift() : { released: true };
+        return { json: async () => body };
+      },
+    };
+    const connect = mock.fn(async () => {
+      throw new Error('Unable to connect to existing session pooled');
+    });
+
+    await assert.rejects(
+      withBrowserSession(createFakeEnv(stub), async () => 'unreachable', {
+        puppeteer: { connect },
+      }),
+      /capacity reached/
+    );
+    assert.deepEqual(calls, [
+      ['/acquire', {}],
+      ['/release', { sessionId: 'pooled' }],
+      ['/acquire', { fresh: true }],
+    ]);
+  });
+});

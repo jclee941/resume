@@ -38,6 +38,8 @@ export async function withBrowserSession(env, fn, opts = {}) {
 
   const stub = env.BROWSER_SESSION.get(env.BROWSER_SESSION.idFromName(name));
   let { sessionId, reused } = await acquire(stub, {});
+  /** @type {string | null} the session this call still holds and must hand back */
+  let held = sessionId;
   /** @type {import('@cloudflare/puppeteer').Browser | undefined} */
   let browser;
 
@@ -49,7 +51,9 @@ export async function withBrowserSession(env, fn, opts = {}) {
       // A pooled session listed as free can still refuse the connection while its last user is
       // letting go or it is closing, so it is handed back and a fresh session is launched once.
       await release(stub, sessionId);
+      held = null;
       ({ sessionId, reused } = await acquire(stub, { fresh: true }));
+      held = sessionId;
       browser = await puppeteer.connect(env.MYBROWSER, sessionId);
     }
     return await fn(browser);
@@ -59,7 +63,29 @@ export async function withBrowserSession(env, fn, opts = {}) {
     } catch {
       // best-effort — the session may already be disconnected
     }
-    await release(stub, sessionId);
+    // A handed-back session may already belong to another borrower, so only a held one is released.
+    if (held) await release(stub, held);
+  }
+}
+
+/**
+ * Waits for a page or browser call that a stalled page can leave pending, at most `ms`.
+ * @template T
+ * @param {Promise<T>} work
+ * @param {number} ms
+ * @returns {Promise<T | null>} the result, or null when it failed or did not settle within `ms`
+ */
+export async function settleWithin(work, ms) {
+  /** @type {ReturnType<typeof setTimeout> | undefined} */
+  let timer;
+  /** @type {Promise<null>} */
+  const gaveUp = new Promise((resolve) => {
+    timer = setTimeout(() => resolve(null), ms);
+  });
+  try {
+    return await Promise.race([work.catch(() => null), gaveUp]);
+  } finally {
+    clearTimeout(timer);
   }
 }
 
