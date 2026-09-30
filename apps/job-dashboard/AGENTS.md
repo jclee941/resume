@@ -18,6 +18,7 @@ job-dashboard/
 │   ├── AGENTS.md             # source-level guide (new)
 │   ├── index.js              # fetch/queue/scheduled entry
 │   ├── handlers/             # request adapters
+│   ├── mcp/                  # job-mcp-server: remote MCP endpoint at /job/mcp
 │   ├── middleware/           # CORS/CSRF helpers
 │   ├── queues/               # queue validation and dispatch
 │   ├── routes/               # declarative route registrars
@@ -40,6 +41,7 @@ job-dashboard/
 | Request routing        | `src/index.js`              | strips `/job` prefix after portfolio entry forwards  |
 | Handler contracts      | `src/handlers/AGENTS.md`    | adapter patterns and route-to-handler wiring         |
 | Middleware policy      | `src/middleware/AGENTS.md`  | CORS/CSRF ordering and auth behavior                 |
+| MCP server             | `src/mcp/`                  | `/job/mcp`; docs/guides/MCP_SERVER.md                |
 | Queue rules            | `src/queues/AGENTS.md`      | message shape, retry, and DLQ handling               |
 | Route tables           | `src/routes/AGENTS.md`      | declarative path registration                        |
 | Service boundaries     | `src/services/AGENTS.md`    | auth, clients, config, notifications                 |
@@ -65,7 +67,12 @@ migrations apply job-dashboard-db --remote`; mirror the end state in `schema.sql
 - Request/response logging via middleware, not handlers.
 - KV entries MUST have TTL — never set without expiry.
 - Rate limiting uses path-class policies from `@resume/shared/rate-limit`
-  (`auth`, `api`, and `dashboard` have distinct limits).
+  (`auth`, `api`, and `dashboard` have distinct limits; `/mcp` uses `api`).
+- `src/mcp/` serves `POST /job/mcp` (job-mcp-server, `@modelcontextprotocol/server` pinned to
+  2.2.0). Order: rate limit, Host/Origin, method, admin Bearer only (cookies ignored, so no CSRF),
+  then the SDK handler. Tools call the route table via `mcp/internal-api.js`, so REST handlers
+  and gates stay the single implementation; workflow starts default to `dryRun: true`, and real
+  submissions only pass through the existing real-submit gate. Keep each file within 200 LOC.
 - Queue `APPLY` payloads with `candidates`, `platforms`, `searchCriteria`, or `triggerType` pass through to `APPLICATION_WORKFLOW` unchanged.
 - Use `@resume/shared` for logging, errors, rate limiting, and cross-app policy.
 - Preserve exports consumed by `apps/portfolio/entry.js`: seven Workflows and `BrowserSessionDO`.
@@ -75,7 +82,10 @@ migrations apply job-dashboard-db --remote`; mirror the end state in `schema.sql
 - Never skip rate limiting on any endpoint.
 - Never log credentials or session tokens.
 - Never set KV without TTL.
-- Never bypass CSRF for state-changing operations.
+- Never bypass CSRF for state-changing operations (the only exemptions are HMAC webhooks and
+  `/mcp`, which accepts a Bearer token and never a cookie).
+- Never add an MCP tool that reimplements a handler, skips the real-submit gate, or accepts
+  cookie authentication.
 - Never re-enable standalone deploy without updating ADR 0009 and portfolio entry routing.
 - Never send arbitrary external URLs to Browser Rendering; normalize and allowlist platform hosts first.
 

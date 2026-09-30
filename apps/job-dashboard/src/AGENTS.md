@@ -17,6 +17,7 @@ src/
 ├── index.js          # fetch/queue/scheduled composition and Workflow exports
 ├── router.js         # route matching and handler error boundary
 ├── worker-env.js     # Worker env/ctx types derived from binding consumers
+├── mcp/              # job-mcp-server: MCP guard, handler, tools (mounted at /mcp)
 ├── handlers/         # request adapters and scheduled dispatch
 ├── middleware/       # CORS and CSRF helpers
 ├── queues/           # queue validation, retry, metrics, Workflow dispatch
@@ -33,6 +34,7 @@ src/
 | Task                       | Location               | Notes                                              |
 | -------------------------- | ---------------------- | -------------------------------------------------- |
 | Request policy/order       | `index.js`             | CORS → rate limit → auth/signature → CSRF → routes |
+| MCP endpoint               | `mcp/`                 | `/mcp`: rate limit → Host/Origin → Bearer → tools  |
 | Route dispatch             | `router.js`, `routes/` | `/job` is stripped before matching                 |
 | HTTP behavior              | `handlers/`            | child guide owns adapter contracts                 |
 | Background messages        | `queues/`              | child guide owns payload/retry/DLQ rules           |
