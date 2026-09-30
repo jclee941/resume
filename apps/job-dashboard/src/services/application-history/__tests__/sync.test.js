@@ -165,6 +165,28 @@ describe('syncApplicationHistory', () => {
     assert.equal(rows(db).length, 0);
   });
 
+  it('never writes a fetch that resolves after the timeout was reported', async (t) => {
+    t.mock.timers.enable({ apis: ['setTimeout'] });
+    let resolveFetch;
+    const fetched = new Promise((resolve) => {
+      resolveFetch = resolve;
+    });
+    const adapters = { wanted: () => fetched, jobkorea: async () => [] };
+
+    const pending = syncApplicationHistory(env, {
+      adapters,
+      timeoutMs: 1000,
+      platforms: ['wanted'],
+    });
+    t.mock.timers.tick(1000);
+    const summary = await pending;
+
+    assert.equal(summary.platforms.wanted.code, 'TIMEOUT');
+    resolveFetch([wantedRecord(1)]);
+    await new Promise((resolve) => setImmediate(resolve));
+    assert.equal(rows(db).length, 0);
+  });
+
   it('makes the approval gate treat a synced job as already applied', async () => {
     await syncApplicationHistory(env, {
       adapters: adaptersReturning([wantedRecord(262001, 'rejected')], [jobkoreaRecord(48000001)]),

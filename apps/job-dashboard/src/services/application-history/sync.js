@@ -68,10 +68,10 @@ function withTimeout(work, ms) {
  */
 async function syncPlatform(env, platform, adapters, timeoutMs, now) {
   try {
-    const counts = await withTimeout(
-      adapters[platform](env).then((records) => upsertApplicationHistory(env.JOB_DB, records, now)),
-      timeoutMs
-    );
+    // Only the fetch is time-bounded: the write starts after it resolved in time, so a fetch
+    // that finishes after TIMEOUT was reported is never written.
+    const records = await withTimeout(adapters[platform](env), timeoutMs);
+    const counts = await upsertApplicationHistory(env.JOB_DB, records, now);
     return { ok: true, ...counts };
   } catch (error) {
     const code = error instanceof HistorySyncError ? error.code : 'SYNC_FAILED';
