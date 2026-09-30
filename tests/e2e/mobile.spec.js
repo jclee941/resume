@@ -1,5 +1,6 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
+const { ownerNamePattern } = require('./fixtures/owner-copy');
 
 /**
  * @param {import('@playwright/test').Page} page
@@ -44,7 +45,7 @@ async function safeMobileGoto(page, url = '/') {
 test.describe('Mobile Responsiveness', () => {
   test('should load page successfully', async ({ page }) => {
     await safeMobileGoto(page);
-    await expect(page).toHaveTitle(/Jaecheol Lee|이재철/);
+    await expect(page).toHaveTitle(ownerNamePattern());
 
     // Check main content is visible (use first() to avoid strict mode violation)
     const mainContent = page.locator('#main-content, main, body').first();

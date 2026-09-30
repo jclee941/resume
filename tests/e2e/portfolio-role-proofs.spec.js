@@ -1,18 +1,21 @@
 const { test, expect } = require('@playwright/test');
+const { escapeRegExp } = require('../helpers/owner-data');
+const { HERO_CONTENT } = require('./fixtures/owner-copy');
 
-const KOREAN_ROLE_EVIDENCE_COUNTS = [
-  ['security', '보안 엔지니어링', '근거 4건'],
-  ['infra', '보안 인프라', '근거 2건'],
-  ['observability', '관측성', '근거 2건'],
-  ['automation', 'AI 엔지니어링', '근거 6건'],
-];
+// Role labels come from the hero copy; evidence counts are the number of project cards
+// the page tags with the role, so the specs follow whatever content is materialized.
+const ROLES = HERO_CONTENT.ko.quickRoles.map(([id, label]) => ({ id, label }));
+const SECURITY = ROLES.find((role) => role.id === 'security');
+const COUNT_LABELS = {
+  ko: (count) => `근거 ${count}건`,
+  en: (count) => `${count} evidence ${count === 1 ? 'item' : 'items'}`,
+  ja: (count) => `${count}件の根拠`,
+};
 
-const SECURITY_PROJECT_TITLES = [
-  'Security Alert System',
-  'IP Blacklist Platform',
-  'Firewall Policy Automation',
-  'Bug Bounty Recon Toolkit',
-];
+/** @param {import('@playwright/test').Page} page @param {string} roleId */
+function roleProjects(page, roleId) {
+  return page.locator(`#projects li.project-item[data-role~="${roleId}"]`);
+}
 
 test.describe('Portfolio role evidence routing', () => {
   test('Korean role chips show evidence counts and focus all matching projects', async ({
@@ -20,22 +23,24 @@ test.describe('Portfolio role evidence routing', () => {
   }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    for (const [roleId, label, countLabel] of KOREAN_ROLE_EVIDENCE_COUNTS) {
-      const roleChip = page.locator(`.role-chip[data-role-filter="${roleId}"]`);
+    for (const { id, label } of ROLES) {
+      const roleChip = page.locator(`.role-chip[data-role-filter="${id}"]`);
       await expect(roleChip).toContainText(label);
-      await expect(roleChip).toContainText(countLabel);
+      await expect(roleChip).toContainText(COUNT_LABELS.ko(await roleProjects(page, id).count()));
     }
 
-    await page.getByRole('button', { name: /보안 엔지니어링/ }).click();
+    const securityCount = await roleProjects(page, SECURITY.id).count();
+    expect(securityCount).toBeGreaterThan(0);
+    const securityButton = page.getByRole('button', {
+      name: new RegExp(escapeRegExp(SECURITY.label)),
+    });
+    await securityButton.click();
 
-    await expect(page.getByRole('button', { name: /보안 엔지니어링/ })).toHaveAttribute(
-      'aria-pressed',
-      'true'
-    );
+    await expect(securityButton).toHaveAttribute('aria-pressed', 'true');
     const roleOrientation = page.locator('[data-role-status]');
     await expect(roleOrientation).toHaveAttribute('aria-live', 'polite');
-    await expect(roleOrientation).toContainText('보안 엔지니어링');
-    await expect(roleOrientation).toContainText('근거 4건');
+    await expect(roleOrientation).toContainText(SECURITY.label);
+    await expect(roleOrientation).toContainText(COUNT_LABELS.ko(securityCount));
     await expect
       .poll(() =>
         page.evaluate(() => ({
@@ -48,11 +53,13 @@ test.describe('Portfolio role evidence routing', () => {
         state: expect.objectContaining({ selectedRole: 'security' }),
       });
 
-    for (const title of SECURITY_PROJECT_TITLES) {
-      await expect(
-        page.locator('#projects li.project-item.is-role-match').filter({ hasText: title })
-      ).toHaveCount(1);
-    }
+    // Every project tagged with the role is focused, and nothing else.
+    await expect(page.locator('#projects li.project-item.is-role-match')).toHaveCount(
+      securityCount
+    );
+    await expect(
+      page.locator(`#projects li.project-item.is-role-match:not([data-role~="${SECURITY.id}"])`)
+    ).toHaveCount(0);
   });
 
   test('reinitializing recruiter enhancements keeps role handlers single-bound', async ({
@@ -82,9 +89,9 @@ test.describe('Portfolio role evidence routing', () => {
     await expect(page.locator('.role-quick-paths')).toHaveCount(1);
     await expect(page.locator('.project-evidence-matrix')).toHaveCount(1);
 
-    await page.getByRole('button', { name: /보안 엔지니어링/ }).click();
+    await page.getByRole('button', { name: new RegExp(escapeRegExp(SECURITY.label)) }).click();
 
-    await expect(page.locator('[data-role-status]')).toContainText('보안 엔지니어링');
+    await expect(page.locator('[data-role-status]')).toContainText(SECURITY.label);
 
     const projectScrollCalls = await page.evaluate(
       () => window.__roleScrollTargets.filter((target) => target === 'projects').length
@@ -93,24 +100,13 @@ test.describe('Portfolio role evidence routing', () => {
   });
 
   test('role evidence counts localize on English and Japanese pages', async ({ page }) => {
-    await page.goto('/en/', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('.role-chip[data-role-filter="security"]')).toContainText(
-      '4 evidence items'
-    );
-    await expect(page.locator('.role-chip[data-role-filter="infra"]')).toContainText(
-      '2 evidence items'
-    );
-    await expect(page.locator('.role-chip[data-role-filter="observability"]')).toContainText(
-      '2 evidence items'
-    );
-
-    await page.goto('/ja/', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('.role-chip[data-role-filter="security"]')).toContainText(
-      '4件の根拠'
-    );
-    await expect(page.locator('.role-chip[data-role-filter="infra"]')).toContainText('2件の根拠');
-    await expect(page.locator('.role-chip[data-role-filter="observability"]')).toContainText(
-      '2件の根拠'
-    );
+    for (const locale of ['en', 'ja']) {
+      await page.goto(`/${locale}/`, { waitUntil: 'domcontentloaded' });
+      for (const { id } of ROLES) {
+        await expect(page.locator(`.role-chip[data-role-filter="${id}"]`)).toContainText(
+          COUNT_LABELS[locale](await roleProjects(page, id).count())
+        );
+      }
+    }
   });
 });

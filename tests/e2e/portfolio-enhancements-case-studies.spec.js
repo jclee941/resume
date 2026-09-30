@@ -1,5 +1,6 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
+const { HERO_CONTENT } = require('./fixtures/owner-copy');
 
 test.describe('Portfolio recruiter enhancements — case studies', () => {
   test.beforeEach(async ({ page }) => {
@@ -32,23 +33,28 @@ test.describe('Portfolio recruiter enhancements — case studies', () => {
   });
 
   test('localized pages do not leak Korean deep-dive cards', async ({ page }) => {
-    await page.goto('/en/', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('.case-study-deep-dives')).toHaveCount(0);
-    await expect(page.locator('body')).not.toContainText('넥스트레이드 매매체결시스템 보안 운영');
+    const koreanCardTitle = (
+      await page.locator('.case-study-deep-dives .project-card__title').first().innerText()
+    ).trim();
+    expect(koreanCardTitle.length).toBeGreaterThan(0);
 
-    await page.goto('/ja/', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('.case-study-deep-dives')).toHaveCount(0);
-    await expect(page.locator('body')).not.toContainText('넥스트레이드 매매체결시스템 보안 운영');
+    for (const path of ['/en/', '/ja/']) {
+      await page.goto(path, { waitUntil: 'domcontentloaded' });
+      await expect(page.locator('.case-study-deep-dives')).toHaveCount(0);
+      await expect(page.locator('body')).not.toContainText(koreanCardTitle);
+    }
   });
 
   test('project evidence links highlight the target project', async ({ page }) => {
-    const reviewerLink = page.getByRole('link', {
-      name: 'jclee-bot GitHub App 근거 보기',
-    });
+    const reviewerLink = page
+      .locator('.project-evidence-matrix .project-evidence-card__link')
+      .last();
+    const targetTitle = await reviewerLink.getAttribute('data-evidence-project');
+    expect(targetTitle).toBeTruthy();
     await reviewerLink.click();
 
     const reviewerCard = page.locator('#projects li.project-item', {
-      hasText: 'jclee-bot GitHub App',
+      hasText: targetTitle,
     });
     await expect(reviewerCard).toBeVisible();
     await expect(reviewerCard).toHaveClass(/is-role-match/);
@@ -58,7 +64,9 @@ test.describe('Portfolio recruiter enhancements — case studies', () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    const primaryAction = page.locator('.hero-cta').getByRole('link', { name: '면접 문의' });
+    const primaryAction = page
+      .locator('.hero-cta')
+      .getByRole('link', { name: HERO_CONTENT.ko.actions[0] });
     await expect(primaryAction).toBeVisible();
 
     const styles = await primaryAction.evaluate((element) => {

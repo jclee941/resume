@@ -1,8 +1,9 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
+const { canonicalUrlPattern, ownerNamePattern } = require('./fixtures/owner-copy');
 
-const NAME_PATTERN = /Jaecheol Lee|이재철/;
-const CANONICAL_URL_PATTERN = /^https:\/\/resume\.jclee\.me\/(?:en\/|ja\/)?$/;
+const NAME_PATTERN = ownerNamePattern();
+const CANONICAL_URL_PATTERN = canonicalUrlPattern();
 
 const configuredBaseUrl =
   process.env.PLAYWRIGHT_BASE_URL || (process.env.CI ? 'http://localhost:8787' : '');

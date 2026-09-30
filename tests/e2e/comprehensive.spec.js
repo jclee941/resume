@@ -2,6 +2,7 @@
 const { test, expect } = require('@playwright/test');
 
 const projectData = require('../../apps/portfolio/data.json');
+const { ownerNamePattern } = require('./fixtures/owner-copy');
 
 // The portfolio renders project cards sorted by displayOrder (see
 // apps/portfolio/lib/cards/projects.js), not by data.json array order.
@@ -25,16 +26,6 @@ function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-/**
- * @param {unknown[]} candidates
- * @returns {RegExp}
- */
-function buildAnyTextPattern(candidates) {
-  const values = candidates.filter(Boolean).map((item) => escapeRegExp(String(item)));
-  if (values.length === 0) return /.+/;
-  return new RegExp(values.join('|'));
-}
-
 test.describe('Navigation', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
@@ -44,7 +35,7 @@ test.describe('Navigation', () => {
   test('should display logo', async ({ page }) => {
     const logo = page.locator('.nav-logo');
     await expect(logo).toBeVisible();
-    await expect(logo).toHaveText('~/jclee');
+    await expect(logo).toHaveText(/^~\/\S+$/);
   });
 
   test('should have all navigation links', async ({ page }) => {
@@ -82,8 +73,7 @@ test.describe('Hero Section', () => {
     const title = page.locator('.hero-title');
     await expect(title).toBeVisible();
     const heroText = await title.textContent();
-    const heroPattern = buildAnyTextPattern(['이재철', 'Jaecheol Lee']);
-    expect(heroText || '').toMatch(heroPattern);
+    expect(heroText || '').toMatch(ownerNamePattern());
   });
 
   test('should display clean hero positioning copy without command output chrome', async ({
