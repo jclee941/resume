@@ -169,6 +169,13 @@ paths:
   /api/applications/sync:
     post:
       operationId: syncApplicationHistory
+      security:
+        - AdminSessionCookie: []
+          CsrfHeader: []
+          CsrfCookie: []
+        - LegacyAdminBearer: []
+          CsrfHeader: []
+          CsrfCookie: []
       tags: [Applications]
       summary: Sync Wanted and JobKorea application history into D1
       description: >
@@ -199,6 +206,10 @@ paths:
                 $ref: '#/components/schemas/ApplicationHistorySyncResult'
         '400':
           description: Invalid platforms or body
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '502':
           description: Every requested platform failed (per-platform `code` in the body)
           content:
@@ -899,9 +910,11 @@ paths:
       summary: job-mcp-server (MCP Streamable HTTP endpoint)
       description: |
         Stateless Model Context Protocol endpoint served at `POST /job/mcp`. The body is one
-        JSON-RPC 2.0 request or notification (batches are rejected with 400); the tools
-        are documented in docs/guides/MCP_SERVER.md. Authenticate with the admin token as
-        `Authorization: Bearer`. Cookies are ignored and no CSRF token is used. Browser
+        JSON-RPC 2.0 request or notification. JSON-RPC batches are rejected with 400
+        (-32600) for protocol revision 2026-07-28 or later; legacy requests without that
+        version header may batch. The tools are documented in docs/guides/MCP_SERVER.md.
+        Authenticate with the ADMIN_TOKEN as `Authorization: Bearer`; an admin session
+        token sent as Bearer is rejected with 401. Cookies are ignored and no CSRF token is used. Browser
         requests carrying an Origin other than the site origin are rejected with 403.
         GET and DELETE return 405. No CORS headers are sent.
       operationId: postMcp
@@ -926,7 +939,7 @@ paths:
         '202':
           description: Notification accepted
         '400':
-          description: Malformed JSON (-32700), batch, or protocol header/version error
+          description: Malformed JSON (-32700), a batch on protocol revision 2026-07-28 or later (-32600), or protocol header/version error
           content:
             application/json:
               schema:
