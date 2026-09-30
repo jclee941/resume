@@ -108,39 +108,39 @@ export async function checkDailyLimits(ctx, step, workflow, maxDailyApplications
  * @returns {Promise<JobSearchRecord[]>}
  */
 export async function searchWorkflowJobs(ctx, step, workflow, platforms, searchCriteria) {
-  const jobsFound = await step.do(
-    'search-jobs',
-    {
-      retries: { limit: 2, delay: '10 seconds', backoff: 'exponential' },
-      timeout: '5 minutes',
-    },
-    async () => {
-      /** @type {JobSearchRecord[]} */
-      const allJobs = [];
+  /** @type {JobSearchRecord[]} */
+  const jobsFound = [];
 
-      for (const platform of platforms) {
+  for (const platform of platforms) {
+    const outcome = await step.do(
+      `search-jobs-${platform}`,
+      {
+        retries: { limit: 2, delay: '10 seconds', backoff: 'exponential' },
+        timeout: '5 minutes',
+      },
+      async () => {
         try {
           const platformJobs = await ctx.searchJobs(platform, searchCriteria);
-          allJobs.push(...platformJobs.map((job) => ({ ...job, source: platform })));
-
-          if (platforms.indexOf(platform) < platforms.length - 1) {
-            await step.sleep(`pause-after-${platform}`, '10 seconds');
-          }
+          return {
+            jobs: platformJobs.map((job) => ({ ...job, source: platform })),
+            error: null,
+          };
         } catch (error) {
-          workflow.errors.push({
-            platform,
-            error: error instanceof Error ? error.message : String(error),
-          });
-          console.error(
-            `Failed to search ${platform}:`,
-            error instanceof Error ? error.message : String(error)
-          );
+          return { jobs: [], error: error instanceof Error ? error.message : String(error) };
         }
       }
+    );
 
-      return allJobs;
+    if (outcome.error !== null) {
+      workflow.errors.push({ platform, error: outcome.error });
+      console.error(`Failed to search ${platform}:`, outcome.error);
     }
-  );
+    jobsFound.push(...outcome.jobs);
+
+    if (platforms.indexOf(platform) < platforms.length - 1) {
+      await step.sleep(`pause-after-${platform}`, '10 seconds');
+    }
+  }
 
   workflow.stats.jobsFound = jobsFound.length;
   workflow.steps.push({ step: 'search-jobs', status: 'completed', count: jobsFound.length });
