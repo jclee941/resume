@@ -65,3 +65,14 @@ test('rate limit enters temporary block on third overflow', async () => {
   assert.equal(blocked.headers['X-RateLimit-Blocked'], 'true');
   assert.equal(blocked.headers['X-RateLimit-Violation'], '3');
 });
+
+test('the MCP endpoint is limited as an API path, not as a dashboard page', async () => {
+  const env = { RATE_LIMIT_KV: new MemoryKv() };
+
+  const mcp = await checkRateLimit(requestFor('/mcp'), '/mcp', env);
+  const page = await checkRateLimit(requestFor('/'), '/', env);
+
+  assert.equal(mcp.headers['X-RateLimit-Limit'], '80');
+  assert.equal(page.headers['X-RateLimit-Limit'], '180');
+  assert.ok([...env.RATE_LIMIT_KV.store.keys()].some((key) => key.startsWith('ratelimit:v2:api:')));
+});

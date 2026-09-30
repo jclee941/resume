@@ -52,7 +52,7 @@ function getClientIp(request) {
  */
 function getPolicy(pathname, policies) {
   if (pathname.startsWith('/api/auth')) return ['auth', policies.auth];
-  if (pathname.startsWith('/api/')) return ['api', policies.api];
+  if (pathname === '/mcp' || pathname.startsWith('/api/')) return ['api', policies.api];
   return ['dashboard', policies.dashboard];
 }
 
