@@ -35,6 +35,22 @@ const STATUS_BY_FILTER = {
  * @typedef {(url: string, init?: RequestInit) => Promise<Response>} Fetcher
  */
 
+const NAIVE_OR_OFFSET_DATETIME =
+  /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?)(Z|[+-]\d{2}:\d{2})?$/;
+
+/**
+ * Wanted's `apply_time` has no offset and is Korea Standard Time; every other applications row
+ * is UTC ISO, so an offset-less value gets +09:00 before it is normalised.
+ * @param {string | null | undefined} value
+ * @returns {string | null} UTC ISO string, or null when missing or unparseable
+ */
+export function wantedTimeToUtcIso(value) {
+  const match = NAIVE_OR_OFFSET_DATETIME.exec(value ?? '');
+  if (!match) return null;
+  const date = new Date(`${match[1]}${match[2] ?? '+09:00'}`);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
 /**
  * @param {WantedApplicationItem} item
  * @param {keyof typeof STATUS_BY_FILTER} filter
@@ -50,7 +66,7 @@ export function toWantedRecord(item, filter) {
     company: item.company_name?.trim() || 'Unknown',
     position: item.position?.trim() || 'Unknown',
     url: `https://www.wanted.co.kr/wd/${wantedJobId}`,
-    appliedAt: item.apply_time || null,
+    appliedAt: wantedTimeToUtcIso(item.apply_time),
     status,
   };
 }
