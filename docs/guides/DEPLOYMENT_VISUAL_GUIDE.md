@@ -93,7 +93,7 @@
 │  ┌────────────────────────────────────────────────────────┐  │
 │  │  $ npx wrangler whoami                                 │  │
 │  │  👋 You are logged in with an API Token!              │  │
-│  │  Email: qws941@kakao.com                              │  │
+│  │  Email: <owner-email>                                 │  │
 │  └────────────────────────────────────────────────────────┘  │
 └──────────────────────────────────────────────────────────────┘
 ```
@@ -130,7 +130,7 @@
 │  ~/.env                                                       │
 │  ┌────────────────────────────────────────────────────────┐  │
 │  │  CLOUDFLARE_API_KEY=REVOKED_CF_API_KEY_REPLACE_ME...   │  │
-│  │  CLOUDFLARE_EMAIL=qws941@kakao.com                    │  │
+│  │  CLOUDFLARE_EMAIL=<owner-email>                       │  │
 │  └────────────────────────────────────────────────────────┘  │
 └──────────────────────────────────────────────────────────────┘
                            │
@@ -142,7 +142,7 @@
 │  ┌────────────────────────────────────────────────────────┐  │
 │  │  $ npx wrangler whoami                                 │  │
 │  │  👋 You are logged in with an API Key!                │  │
-│  │  Email: qws941@kakao.com                              │  │
+│  │  Email: <owner-email>                                 │  │
 │  └────────────────────────────────────────────────────────┘  │
 └──────────────────────────────────────────────────────────────┘
 ```
@@ -187,7 +187,7 @@
 │  Terminal                                                     │
 │  ┌────────────────────────────────────────────────────────┐  │
 │  │  ✅ Successfully logged in!                            │  │
-│  │  👋 You are logged in as qws941@kakao.com              │  │
+│  │  👋 You are logged in as <owner-email>                 │  │
 │  └────────────────────────────────────────────────────────┘  │
 └──────────────────────────────────────────────────────────────┘
 ```
@@ -418,7 +418,7 @@
 │  │                                                        │  │
 │  │  # 변경 후 (추가 - 2개 변수 필요):                     │  │
 │  │  CLOUDFLARE_API_KEY=REVOKED_CF_API_KEY_REPLACE_ME...  │  │
-│  │  CLOUDFLARE_EMAIL=qws941@kakao.com                    │  │
+│  │  CLOUDFLARE_EMAIL=<owner-email>                       │  │
 │  └────────────────────────────────────────────────────────┘  │
 └────────────────┬─────────────────────────────────────────────┘
                  │
@@ -430,7 +430,7 @@
 │  │  $ cd apps/portfolio && npx wrangler whoami                       │  │
 │  │                                                        │  │
 │  │  👋 You are logged in with an API Key!                │  │
-│  │  Email: qws941@kakao.com                              │  │
+│  │  Email: <owner-email>                                 │  │
 │  └────────────────────────────────────────────────────────┘  │
 └────────────────┬─────────────────────────────────────────────┘
                  │
@@ -545,7 +545,7 @@ LOCAL DEVELOPMENT                 PRODUCTION
 vim ~/.env
 # 다음 2줄 추가:
 # CLOUDFLARE_API_KEY=REVOKED_CF_API_KEY_REPLACE_ME
-# CLOUDFLARE_EMAIL=qws941@kakao.com
+# CLOUDFLARE_EMAIL=<owner-email>
 
 # 2️⃣ 환경 변수 로드
 source ~/.env

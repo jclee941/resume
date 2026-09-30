@@ -265,4 +265,4 @@ const headers = {
 ---
 
 **Last Updated**: 2025-12-21  
-**Maintainer**: Jaecheol Lee <qws941@kakao.com>
+**Maintainer**: jclee941 (https://github.com/jclee941)

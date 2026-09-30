@@ -1,8 +1,8 @@
 # Data Package - Single Source of Truth
 # Resume JSON, schemas, technical docs
 
-jclee@jclee.me
+@jclee941
 
 # Schema changes require review
-per-file schema/** = jclee@jclee.me
-per-file resumes/master/** = jclee@jclee.me
+per-file schema/** = @jclee941
+per-file resumes/master/** = @jclee941

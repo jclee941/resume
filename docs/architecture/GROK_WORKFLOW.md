@@ -295,7 +295,7 @@ npx -y @modelcontextprotocol/server-grok
 ```bash
 # Stage 1: OpenCode gathers context
 1. Read master/resume_master.md
-2. Read company-specific/Jaecheol_Lee_HyundaiAutoEver_*.md
+2. Read company-specific/*_HyundaiAutoEver_*.md
 3. Identify sections needing review (experience, achievements)
 
 # Stage 2: Grok analyzes content

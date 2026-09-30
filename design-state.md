@@ -36,7 +36,7 @@ Major findings:
 Minor findings:
 
 - Axe reports `aria-allowed-role` on timeline `article` nodes with `role="listitem"`. Keep list semantics, but use allowed element/role combinations.
-- Browser title is narrower than the visible positioning: `이재철 - 보안 엔지니어` while the hero says `Security / SRE Engineer`.
+- Browser title is narrower than the visible positioning: `<owner-name> - 보안 엔지니어` while the hero says `Security / SRE Engineer`.
 
 Recommendation:
 Prioritize the mobile recruiter path before broad visual changes: move or duplicate `채용 문의` and `이력서 PDF` into the first mobile viewport, align focus order with that visual priority, then fix touch targets and reader-facing headings. The desktop direction is already credible enough; the highest-impact work is mobile task completion.
@@ -113,7 +113,7 @@ Major:
 Minor:
 
 - H9: `mailto:` is efficient when configured, but offers no in-page fallback if the mail client is missing. Keep the shortcut, but make the contact email visible/copyable near the first CTA.
-- H4/H2: browser title says `이재철 - 보안 엔지니어` while the hero says `Security / SRE Engineer`. Align title/meta with the current target role.
+- H4/H2: browser title says `<owner-name> - 보안 엔지니어` while the hero says `Security / SRE Engineer`. Align title/meta with the current target role.
 - H2/H4: mobile menu toggle uses `Toggle navigation` on the Korean page. Localize the accessible label to match page language.
 
 What works well:
@@ -216,5 +216,5 @@ _Items: 3 | Open: 1 | Resolved: 2 | Critical: 0 | Oldest: 2026-07-01_
 | ID     | Date       | Source              | Severity | What                                                                                 | Who is affected                                           | Suggested fix                                                                                | Status              | Notes                                                                                                                                        |
 | ------ | ---------- | ------------------- | -------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | DD-001 | 2026-07-01 | heuristic-evaluator | Minor    | `mailto:` CTA has no visible fallback if the user's mail client is not configured    | Recruiters on locked-down corporate devices, mobile users | Show a copyable email address near the first CTA or provide an adjacent `Email` contact link | Open                | Deferred because the link itself works and the contact section has email later                                                               |
-| DD-002 | 2026-07-01 | heuristic-evaluator | Minor    | Browser title is narrower than visible role positioning                              | Recruiters using tabs/bookmarks, search result scanners   | Align title/meta with the target role positioning                                            | Resolved 2026-07-07 | Title/meta now read `이재철 - Security & Infrastructure Engineer` and are pinned by enhancement-contract tests                               |
+| DD-002 | 2026-07-01 | heuristic-evaluator | Minor    | Browser title is narrower than visible role positioning                              | Recruiters using tabs/bookmarks, search result scanners   | Align title/meta with the target role positioning                                            | Resolved 2026-07-07 | Title/meta now read `<owner-name> - Security & Infrastructure Engineer` and are pinned by enhancement-contract tests                         |
 | DD-003 | 2026-07-01 | heuristic-evaluator | Minor    | Korean page mobile menu toggle accessible label is English-only: `Toggle navigation` | Korean screen-reader users, non-English users             | Localize the accessible label, for example `메뉴 열기` / `메뉴 닫기`                         | Resolved 2026-07-07 | Toggle now uses `메뉴 열기/메뉴 닫기` (KO), `Open/Close navigation` (EN), `メニューを開く/閉じる` (JA), pinned by enhancement-contract tests |

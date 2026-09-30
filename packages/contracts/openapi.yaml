@@ -4,7 +4,7 @@ info:
   description: REST API for job search, application tracking, and auto-apply automation
   version: 1.4.0
   contact:
-    email: qws941@kakao.com
+    url: https://github.com/jclee941/resume
 
 servers:
   - url: http://localhost:3000

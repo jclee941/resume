@@ -50,7 +50,7 @@ CLOUDFLARE_ACCOUNT_ID=a8d9c67f586acdd15eebcc65ca3aa5bb
 
 # Deprecated: Old Global API Key method (keep for backup)
 # CLOUDFLARE_API_KEY=REVOKED_CF_API_KEY_REPLACE_ME
-# CLOUDFLARE_EMAIL=qws941@kakao.com
+# CLOUDFLARE_EMAIL=<owner-email>
 ```
 
 ### Step 6: Test Authentication
@@ -61,7 +61,7 @@ source ~/.env
 
 # Test authentication
 npx wrangler whoami
-# Should show: You are logged in with an API Token, associated with the email 'qws941@kakao.com'
+# Should show: You are logged in with an API Token, associated with the email '<owner-email>'
 ```
 
 ### Step 7: Deploy

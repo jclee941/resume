@@ -1,7 +1,7 @@
 # Portfolio Worker - Cloudflare Edge
 # Resume website served from CF Workers
 
-jclee@jclee.me
+@jclee941
 
 # Generated files - no direct edits
 per-file worker.js = set noparent

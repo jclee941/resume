@@ -256,10 +256,10 @@ If you prefer SSH over HTTPS tokens.
 
 ```bash
 # Generate Ed25519 key (recommended)
-ssh-keygen -t ed25519 -C "qws941@kakao.com" -f ~/.ssh/id_ed25519_github
+ssh-keygen -t ed25519 -C "<owner-email>" -f ~/.ssh/id_ed25519_github
 
 # Or RSA if Ed25519 not supported
-ssh-keygen -t rsa -b 4096 -C "qws941@kakao.com" -f ~/.ssh/id_rsa_github
+ssh-keygen -t rsa -b 4096 -C "<owner-email>" -f ~/.ssh/id_rsa_github
 
 # Press Enter for all prompts (no passphrase for automation)
 ```
@@ -617,7 +617,7 @@ curl -X POST https://resume.jclee.me/api/vitals \
    ```
 
 4. **Contact**:
-   - Email: <qws941@kakao.com>
+   - Maintainer: <https://github.com/jclee941>
    - GitHub Issues: <https://github.com/qws941/resume/issues>
 
 ---

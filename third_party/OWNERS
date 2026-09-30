@@ -2,7 +2,7 @@
 # All dependency changes require review
 
 # Primary maintainer
-jclee@jclee.me
+@jclee941
 
 # Security-sensitive changes
-per-file licenses/* = jclee@jclee.me
+per-file licenses/* = @jclee941
