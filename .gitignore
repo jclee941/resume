@@ -204,3 +204,33 @@ applications/_auto-apply-runs/
 
 # Materialized personal content pack manifest (ADR 0011)
 .content/
+
+# Personal content pack paths (ADR 0011): materialized from D1, never committed. Mirrors the
+# include/exclude globs of tools/scripts/content/content-pack.json; tests/fixtures/content-pack/
+# holds the tracked fake pack. Later rules win, so this block stays last.
+/packages/data/resumes/**
+/applications/**
+/ta/**
+/.sisyphus/**
+/apps/portfolio/index.html
+/apps/portfolio/index-en.html
+/apps/portfolio/lib/hero-content-data.js
+/apps/portfolio/lib/skill-radar-data.js
+/apps/portfolio/src/scripts/modules/*-data.js
+/apps/portfolio/manifest*.json
+/apps/portfolio/og-image*.png
+/apps/portfolio/og-image*.webp
+/apps/portfolio/assets/profile-photo.jpg
+/apps/portfolio/assets/resume*.pdf
+/apps/portfolio/downloads/**
+/ProfileView.jpg
+# Keep directories traversable so the exceptions below can re-include files inside them.
+!/packages/data/resumes/**/
+!/applications/**/
+!/ta/**/
+!/.sisyphus/**/
+!/apps/portfolio/downloads/**/
+# Not content: agent guides, the resume schema, and directory placeholders stay tracked.
+!**/AGENTS.md
+!/packages/data/resumes/master/resume_schema.json
+!**/.gitkeep
