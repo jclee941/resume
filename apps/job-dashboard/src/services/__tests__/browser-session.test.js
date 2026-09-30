@@ -237,3 +237,100 @@ describe('withBrowserSession when the fresh launch after a refusal fails', () =>
     ]);
   });
 });
+
+describe('withBrowserSession with a caller deadline', () => {
+  /** A pool whose `onFetch(path, count)` hook can close the caller's window during a call. */
+  function recordingStub(acquireBodies, onFetch = () => {}) {
+    const bodies = [...acquireBodies];
+    const calls = [];
+    return {
+      calls,
+      async fetch(url, init) {
+        const path = new URL(url).pathname;
+        calls.push([path, JSON.parse(init.body)]);
+        onFetch(path, calls.length);
+        const body = path === '/acquire' ? bodies.shift() : { released: true };
+        return { json: async () => body };
+      },
+    };
+  }
+  /** A caller window that stays open until `closed()` turns true. */
+  const windowUntil = (closed) => (next) => {
+    if (closed()) throw new Error(`window closed before ${next}`);
+  };
+
+  it('hands back a session acquired after the deadline without connecting', async () => {
+    let closed = false;
+    const stub = recordingStub([{ sessionId: 'late', reused: true }], (path) => {
+      if (path === '/acquire') closed = true;
+    });
+    const connect = mock.fn(async () => ({ disconnect: async () => {} }));
+
+    await assert.rejects(
+      withBrowserSession(createFakeEnv(stub), async () => 'unreachable', {
+        puppeteer: { connect },
+        assertOpen: windowUntil(() => closed),
+      }),
+      /window closed before the browser connected/
+    );
+    assert.equal(connect.mock.calls.length, 0);
+    assert.deepEqual(stub.calls, [
+      ['/acquire', {}],
+      ['/release', { sessionId: 'late' }],
+    ]);
+  });
+
+  it('launches no fresh session when the deadline passes while a refused one is handed back', async () => {
+    let closed = false;
+    const stub = recordingStub([{ sessionId: 'pooled', reused: true }], (path) => {
+      if (path === '/release') closed = true;
+    });
+    const connect = mock.fn(async () => {
+      throw new Error('Unable to connect to existing session pooled');
+    });
+
+    await assert.rejects(
+      withBrowserSession(createFakeEnv(stub), async () => 'unreachable', {
+        puppeteer: { connect },
+        assertOpen: windowUntil(() => closed),
+      }),
+      /window closed before a fresh browser was launched/
+    );
+    assert.equal(connect.mock.calls.length, 1);
+    assert.deepEqual(stub.calls, [
+      ['/acquire', {}],
+      ['/release', { sessionId: 'pooled' }],
+    ]);
+  });
+
+  it('hands back a fresh session launched past the deadline without connecting it', async () => {
+    let closed = false;
+    const stub = recordingStub(
+      [
+        { sessionId: 'pooled', reused: true },
+        { sessionId: 'fresh', reused: false },
+      ],
+      (path, count) => {
+        if (path === '/acquire' && count > 1) closed = true;
+      }
+    );
+    const connect = mock.fn(async () => {
+      throw new Error('Unable to connect to existing session pooled');
+    });
+
+    await assert.rejects(
+      withBrowserSession(createFakeEnv(stub), async () => 'unreachable', {
+        puppeteer: { connect },
+        assertOpen: windowUntil(() => closed),
+      }),
+      /window closed before the fresh browser connected/
+    );
+    assert.equal(connect.mock.calls.length, 1);
+    assert.deepEqual(stub.calls, [
+      ['/acquire', {}],
+      ['/release', { sessionId: 'pooled' }],
+      ['/acquire', { fresh: true }],
+      ['/release', { sessionId: 'fresh' }],
+    ]);
+  });
+});

@@ -1,6 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
+import { withBrowserSession } from '../../browser-session.js';
 import { JOBKOREA_APPLY_LIST_URL, fetchJobKoreaHistory } from '../jobkorea-adapter.js';
 import {
   EXPIRED_HTML,
@@ -273,5 +274,158 @@ describe('fetchJobKoreaHistory work after its deadline', () => {
       }),
       { code: 'TIMEOUT', message: 'JobKorea history window closed before the page was opened' }
     );
+  });
+
+  it('hands a pooled browser acquired after the deadline back unconnected', async () => {
+    const env = await sessionEnv(createSqliteD1(), ['jobkorea']);
+    let now = 0;
+    const pool = [];
+    env.BROWSER_SESSION = {
+      idFromName: (name) => name,
+      get: () => ({
+        fetch: async (url) => {
+          const path = new URL(url).pathname;
+          pool.push(path);
+          if (path === '/acquire') now = 1000; // the pool answers after the deadline
+          const body =
+            path === '/acquire' ? { sessionId: 'late', reused: true } : { released: true };
+          return { json: async () => body };
+        },
+      }),
+    };
+    const connect = async () => assert.fail('no connection after the deadline');
+
+    await assert.rejects(
+      fetchJobKoreaHistory(env, {
+        withBrowserSession: (browserEnv, fn, opts) =>
+          withBrowserSession(browserEnv, fn, { ...opts, puppeteer: { connect } }),
+        deadlineMs: 100,
+        clock: () => now,
+      }),
+      { code: 'TIMEOUT', message: 'JobKorea history window closed before the browser connected' }
+    );
+    assert.deepEqual(pool, ['/acquire', '/release']);
+  });
+});
+
+describe('fetchJobKoreaHistory checks its deadline after every awaited step', () => {
+  const healthyHtml = applyListHtml({ rows: [ROW] });
+  function steppingPage(onStep) {
+    const calls = [];
+    const page = {
+      setRequestInterception: async () => {
+        calls.push('intercept');
+        onStep('intercept');
+      },
+      on: () => {},
+      setCookie: async () => {
+        calls.push('cookie');
+        onStep('cookie');
+      },
+      goto: async () => {
+        calls.push('goto');
+        onStep('goto');
+      },
+      content: async () => {
+        calls.push('content');
+        return healthyHtml;
+      },
+      url: () => JOBKOREA_APPLY_LIST_URL,
+      close: async () => {},
+    };
+    return { page, calls };
+  }
+  async function run(onStep, { newPageStep = false } = {}) {
+    const env = await sessionEnv(createSqliteD1(), ['jobkorea']);
+    let now = 0;
+    const clock = () => now;
+    const advance = () => {
+      now = 1000;
+    };
+    const { page, calls } = steppingPage((step) => onStep(step, advance));
+    const result = fetchJobKoreaHistory(env, {
+      withBrowserSession: async (_env, fn) =>
+        fn({
+          newPage: async () => {
+            if (newPageStep) advance();
+            return page;
+          },
+        }),
+      deadlineMs: 500,
+      settleMs: 5,
+      clock,
+    });
+    return { result, calls };
+  }
+
+  it('sets nothing up when newPage returns after the deadline', async () => {
+    const { result, calls } = await run(() => {}, { newPageStep: true });
+    await assert.rejects(result, {
+      code: 'TIMEOUT',
+      message: 'JobKorea history window closed before the page was set up',
+    });
+    assert.deepEqual(calls, []);
+  });
+
+  it('sets no cookies when interception is enabled after the deadline', async () => {
+    const { result, calls } = await run((step, advance) => step === 'intercept' && advance());
+    await assert.rejects(result, {
+      code: 'TIMEOUT',
+      message: 'JobKorea history window closed before the session cookies were set',
+    });
+    assert.deepEqual(calls, ['intercept']);
+  });
+
+  it('reads no HTML when the navigation returns after the deadline', async () => {
+    const { result, calls } = await run((step, advance) => step === 'goto' && advance());
+    await assert.rejects(result, {
+      code: 'TIMEOUT',
+      message: 'JobKorea history window closed before the applied-list HTML was read',
+    });
+    assert.deepEqual(calls, ['intercept', 'cookie', 'goto']);
+  });
+});
+
+describe('fetchJobKoreaHistory with an injected clock', () => {
+  it('loads a healthy applied list under a constant injected clock', async () => {
+    const env = await sessionEnv(createSqliteD1(), ['jobkorea']);
+    const browser = fakeBrowser({ [JOBKOREA_APPLY_LIST_URL]: applyListHtml({ rows: [ROW] }) });
+
+    const records = await fetchJobKoreaHistory(env, {
+      withBrowserSession: browser.withBrowserSession,
+      clock: () => 0,
+    });
+
+    assert.deepEqual(
+      records.map((record) => record.jobId),
+      ['jobkorea-40000001']
+    );
+    assert.deepEqual(browser.visited, [JOBKOREA_APPLY_LIST_URL]);
+  });
+
+  it('starts no navigation once the injected clock reaches the attempt deadline', async () => {
+    const env = await sessionEnv(createSqliteD1(), ['jobkorea']);
+    let now = 0;
+    const visited = [];
+    const page = {
+      setRequestInterception: async () => {},
+      on: () => {},
+      setCookie: async () => {
+        now = 100_000;
+      },
+      goto: async (url) => void visited.push(url),
+      content: async () => '',
+      url: () => JOBKOREA_APPLY_LIST_URL,
+      close: async () => {},
+    };
+
+    await assert.rejects(
+      fetchJobKoreaHistory(env, {
+        withBrowserSession: async (_env, fn) => fn({ newPage: async () => page }),
+        clock: () => now,
+      }),
+      { code: 'TIMEOUT', message: 'JobKorea sync budget exhausted' }
+    );
+    assert.deepEqual(visited, []);
   });
 });

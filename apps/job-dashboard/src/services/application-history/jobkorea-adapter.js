@@ -59,25 +59,29 @@ function sameSiteUrl(href, base) {
  * navigation that succeeded.
  * @param {import('@cloudflare/puppeteer').Page} page
  * @param {string} url
- * @param {number} deadline epoch ms after which no further attempt may start
- * @param {number} settleMs how long a content read may take
+ * @param {{ deadline: number; settleMs: number; clock: () => number; assertOpen: (next: string) => void }} limits
+ *   `deadline` (epoch ms by `clock`) is when no further attempt may start; `settleMs` bounds each
+ *   content read; `assertOpen` stops before a content read once the whole fetch's window closed
  * @returns {Promise<string>} the page HTML (not yet checked for being the applied list)
  */
-async function loadPage(page, url, deadline, settleMs) {
+async function loadPage(page, url, { deadline, settleMs, clock, assertOpen }) {
   /** @type {unknown} */
   let timedOut = new HistorySyncError('TIMEOUT', 'JobKorea sync budget exhausted');
   for (let attempt = 0; attempt < 2; attempt += 1) {
-    const timeout = Math.min(NAVIGATION_TIMEOUT_MS, deadline - Date.now());
+    const timeout = Math.min(NAVIGATION_TIMEOUT_MS, deadline - clock());
     if (timeout <= 0) break;
     try {
       await page.goto(url, { waitUntil: 'domcontentloaded', timeout });
+      assertOpen('the applied-list HTML was read');
       const html = await settleWithin(page.content(), settleMs);
       if (html !== null) return html;
       // The document loaded but its HTML never came back; count it as a timed-out attempt.
       timedOut = new Error(`Navigation timeout: ${url} loaded but its HTML was not readable`);
     } catch (error) {
+      if (error instanceof HistorySyncError) throw error;
       if (!TIMEOUT_MESSAGE.test(error instanceof Error ? error.message : '')) throw error;
       timedOut = error;
+      assertOpen('the timed-out page was read');
       const html = await settleWithin(page.content(), settleMs);
       if (html !== null && isApplyListPage(html)) return html;
     }
@@ -129,44 +133,55 @@ export async function fetchJobKoreaHistory(
       throw new HistorySyncError('SESSION_MISSING', 'No JobKorea session in KV (auth:jobkorea)');
     }
     // A slow session read or browser acquisition that finishes after the deadline must not
-    // start browser work the caller has already been told timed out.
+    // start browser work the caller has already been told timed out; the session helper runs the
+    // same check before it connects or launches anything.
     assertOpen('the browser was acquired');
-    return withBrowserSession(env, async (browser) => {
-      assertOpen('the page was opened');
-      // Attempts stop early enough for the bounded reads and the page close to fit as well.
-      const deadline = Math.min(clock() + ADAPTER_BUDGET_MS, deadlineAt - 2 * settleMs);
-      const page = await browser.newPage();
-      try {
-        requests = await restrictToJobKorea(page, BLOCKED_RESOURCE_TYPES);
-        await page.setCookie(...toJobKoreaBrowserCookies(cookieString));
-        /** @type {Map<string, import('./history-types.js').HistoryRecord>} */
-        const records = new Map();
-        const visited = new Set();
-        const queue = [JOBKOREA_APPLY_LIST_URL];
-        while (queue.length > 0 && visited.size < MAX_PAGES) {
-          const url = /** @type {string} */ (queue.shift());
-          if (visited.has(url)) continue;
-          visited.add(url);
-          const html = await loadPage(page, url, deadline, settleMs).catch((error) => {
-            throw withPendingRequests(error, requests.pending());
-          });
-          if (!isApplyListPage(html)) {
-            throw new HistorySyncError(
-              'SESSION_EXPIRED',
-              'JobKorea did not serve the applied list'
-            );
+    return withBrowserSession(
+      env,
+      async (browser) => {
+        assertOpen('the page was opened');
+        // Attempts stop early enough for the bounded reads and the page close to fit as well.
+        const deadline = Math.min(clock() + ADAPTER_BUDGET_MS, deadlineAt - 2 * settleMs);
+        const limits = { deadline, settleMs, clock, assertOpen };
+        const page = await browser.newPage();
+        try {
+          // Each awaited step is followed by a check, so nothing new starts once the window
+          // closed; only the page close (bounded) runs after it.
+          assertOpen('the page was set up');
+          requests = await restrictToJobKorea(page, BLOCKED_RESOURCE_TYPES);
+          assertOpen('the session cookies were set');
+          await page.setCookie(...toJobKoreaBrowserCookies(cookieString));
+          /** @type {Map<string, import('./history-types.js').HistoryRecord>} */
+          const records = new Map();
+          const visited = new Set();
+          const queue = [JOBKOREA_APPLY_LIST_URL];
+          while (queue.length > 0 && visited.size < MAX_PAGES) {
+            const url = /** @type {string} */ (queue.shift());
+            if (visited.has(url)) continue;
+            visited.add(url);
+            assertOpen('the next applied-list page was requested');
+            const html = await loadPage(page, url, limits).catch((error) => {
+              throw withPendingRequests(error, requests.pending());
+            });
+            if (!isApplyListPage(html)) {
+              throw new HistorySyncError(
+                'SESSION_EXPIRED',
+                'JobKorea did not serve the applied list'
+              );
+            }
+            for (const record of parseJobKoreaApplyList(html)) records.set(record.jobId, record);
+            for (const href of parseJobKoreaPagerLinks(html)) {
+              const next = sameSiteUrl(href, page.url());
+              if (next) queue.push(next);
+            }
           }
-          for (const record of parseJobKoreaApplyList(html)) records.set(record.jobId, record);
-          for (const href of parseJobKoreaPagerLinks(html)) {
-            const next = sameSiteUrl(href, page.url());
-            if (next) queue.push(next);
-          }
+          return [...records.values()];
+        } finally {
+          await settleWithin(page.close(), settleMs);
         }
-        return [...records.values()];
-      } finally {
-        await settleWithin(page.close(), settleMs);
-      }
-    });
+      },
+      { assertOpen }
+    );
   })();
   const outcome = await settleWithin(
     work.then(

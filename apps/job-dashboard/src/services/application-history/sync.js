@@ -1,8 +1,10 @@
 /**
  * @fileoverview Orchestrates the application-history sync: fetches each requested platform in
  * parallel under a shared time budget, upserts what it found, and records one `sync_logs` row.
- * A platform that fails (no session, expired session, upstream error, timeout) reports its own
- * error and leaves `applications` untouched; the other platform still syncs.
+ * A platform whose fetch fails (no session, expired session, upstream error, timeout) reports its
+ * own error and leaves `applications` untouched; the other platform still syncs. A caller's
+ * deadline that closes during a write stops further batches: the batches already written stay,
+ * and the next run upserts the rest.
  * @module services/application-history/sync
  */
 import { fetchJobKoreaHistory } from './jobkorea-adapter.js';
@@ -119,8 +121,9 @@ async function recordRun(env, summary, startedAt, completedAt) {
  *   now?: () => string;
  *   deadline?: number;
  *   clock?: () => number;
- * }} [options] `deadline` (epoch ms) closes the whole run: fetches end by it, no write or
- *   sync_logs row starts at or after it
+ * }} [options] `deadline` (epoch ms) closes the whole run: the run stops waiting for fetches at
+ *   it, and no write batch or sync_logs row starts at or after it (one already issued may finish
+ *   later)
  * @returns {Promise<HistorySyncSummary>}
  */
 export async function syncApplicationHistory(env, options = {}) {
