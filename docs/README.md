@@ -38,6 +38,7 @@ context. ADR files stay in place so their decision history remains intact.
 ## Guides/Runbooks
 
 - [Quick Start](guides/QUICK_START.md)
+- [Content Pack](guides/CONTENT_PACK.md)
 - [Local Debugging](guides/LOCAL_DEBUGGING.md)
 - [Project Structure Map](guides/PROJECT_STRUCTURE_MAP.md)
 - [Manual Deployment](guides/MANUAL_DEPLOYMENT_GUIDE.md)

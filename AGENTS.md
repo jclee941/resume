@@ -11,6 +11,11 @@ dashboard), Cloudflare-native job automation (Cron Triggers, Workflows, KV, D1,
 Browser Rendering), shared type/schema/contract packages, content SSoT data, and
 self-hosted observability support.
 
+Personal content (resume data, application packets, portfolio copy, HTML shells,
+assets, downloads, `ta/`) is not committed. The D1 `content_files` table is its
+SSoT (ADR 0011); the working tree holds a gitignored, materialized copy. See
+`docs/guides/CONTENT_PACK.md`.
+
 ## STRUCTURE
 
 ```text
@@ -38,21 +43,22 @@ self-hosted observability support.
 
 ## WHERE TO LOOK
 
-| Task                    | Location                                       | Notes                                                                                       |
-| ----------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Portfolio runtime/build | `apps/portfolio/`                              | edit `entry.js`, HTML, `src/`, or `lib/`; never hand-edit `worker.js`                       |
-| Dashboard/API workflows | `apps/job-dashboard/`                          | Worker fetch/queue/scheduled entry, handlers, middleware, workflows                         |
-| Resume/content SSoT     | `packages/data/`                               | `resumes/master/resume_data.json` is authoritative resume data                              |
-| Application packets     | `applications/`                                | role-specific resumes, cover letters, previews, run outputs                                 |
-| Types and validation    | `packages/types/`, `packages/schemas/`         | define domain types once, validate with Zod schemas                                         |
-| Workspace packages      | `packages/`                                    | shared package boundary rules; child guides own package-local rules                         |
-| Contracts               | `packages/contracts/`                          | OpenAPI spec and Cloudflare Worker env contract surface                                     |
-| Shared utilities        | `packages/shared/`                             | errors, logger, retry, crypto, rate-limit, auth, browser, clients                           |
-| Operational scripts     | `tools/scripts/`                               | Go-first operations; child guides own release, verification, enrichment, and secret tooling |
-| Tests                   | `tests/`                                       | unit/integration/e2e child guides define test-layer rules                                   |
-| Repository automation   | `.github/`                                     | minimal validation CI; production deploy authority is Cloudflare Workers Builds             |
-| Architecture rules      | `docs/conventions/architecture-rules.md`       | 200-LOC rule, naming, automation SSoT, script language policy                               |
-| Secrets/security        | `docs/security/`, `tools/scripts/onepassword/` | secret rotation and local 1Password env tooling                                             |
+| Task                    | Location                                                | Notes                                                                                       |
+| ----------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Portfolio runtime/build | `apps/portfolio/`                                       | edit `entry.js`, HTML, `src/`, or `lib/`; never hand-edit `worker.js`                       |
+| Dashboard/API workflows | `apps/job-dashboard/`                                   | Worker fetch/queue/scheduled entry, handlers, middleware, workflows                         |
+| Resume/content SSoT     | `packages/data/`                                        | `resumes/master/resume_data.json` is authoritative resume data (D1 content pack)            |
+| Content pack            | `docs/guides/CONTENT_PACK.md`, `tools/scripts/content/` | D1 SSoT for personal content: pull/push/ensure, guards, fake fixtures                       |
+| Application packets     | `applications/`                                         | role-specific resumes, cover letters, previews, run outputs                                 |
+| Types and validation    | `packages/types/`, `packages/schemas/`                  | define domain types once, validate with Zod schemas                                         |
+| Workspace packages      | `packages/`                                             | shared package boundary rules; child guides own package-local rules                         |
+| Contracts               | `packages/contracts/`                                   | OpenAPI spec and Cloudflare Worker env contract surface                                     |
+| Shared utilities        | `packages/shared/`                                      | errors, logger, retry, crypto, rate-limit, auth, browser, clients                           |
+| Operational scripts     | `tools/scripts/`                                        | Go-first operations; child guides own release, verification, enrichment, and secret tooling |
+| Tests                   | `tests/`                                                | unit/integration/e2e child guides define test-layer rules                                   |
+| Repository automation   | `.github/`                                              | minimal validation CI; production deploy authority is Cloudflare Workers Builds             |
+| Architecture rules      | `docs/conventions/architecture-rules.md`                | 200-LOC rule, naming, automation SSoT, script language policy                               |
+| Secrets/security        | `docs/security/`, `tools/scripts/onepassword/`          | secret rotation and local 1Password env tooling                                             |
 
 ## CODE MAP
 
@@ -75,7 +81,13 @@ self-hosted observability support.
 
 - npm workspaces are the only build orchestrator; Bazel was removed by ADR 0008.
 - Workspace dependencies use `*`; do not reintroduce `file:../..` links.
-- `npm run build` runs SSoT sync before portfolio worker generation.
+- `npm run build` ensures the content pack (`content ensure`), runs SSoT sync, then
+  generates the portfolio worker.
+- Personal content is materialized, never committed: `npm run content:pull` locally
+  (needs Cloudflare credentials), `CONTENT_SOURCE=fixtures` in GitHub CI (the fake pack in
+  `tests/fixtures/content-pack/`), `WORKERS_CI=1` on Workers Builds (real pack from D1,
+  fail closed). `tools/scripts/content/content-pack.json` defines the pack and drives
+  `.gitignore`, the guards, and D1 sync.
 - Node is `>=22`; ESLint blocks unsanctioned cross-app imports.
 - Dashboard routes run through `apps/portfolio/entry.js` per ADR 0009.
 - Cloudflare Workers Builds owns production deploy authority. Local Wrangler
@@ -104,6 +116,9 @@ self-hosted observability support.
 - Never suppress type errors with `as any`, `@ts-ignore`, or broad unchecked
   casts.
 - Never exceed the project 200-LOC source-file limit without splitting.
+- Never commit pack paths or personal content (names, contacts, employers, schools,
+  awards, certifications, project names). CI runs `content guard --tracked` and
+  pre-commit runs `content guard --staged`. Never hand-edit fixtures; regenerate them.
 - Never include concrete performance metrics in portfolio or resume text; keep
   claims factual and verifiable without percentages, ratios, or absolute metrics.
 
@@ -124,7 +139,10 @@ self-hosted observability support.
 ```bash
 npm run automate:ssot       # sync + build + typecheck
 npm run automate:full       # full validation pipeline
-npm run build               # sync data and generate portfolio worker
+npm run build               # ensure content pack, sync data, generate portfolio worker
+npm run content:pull        # materialize the real pack from D1 (needs credentials)
+npm run content:push        # upload edited pack files to D1
+node tools/scripts/content/make-fixtures.mjs  # regenerate the fake pack from a pulled pack
 npm run lint
 npm run typecheck
 npm test
@@ -139,6 +157,6 @@ gitleaks detect --source . --config .gitleaks.toml --redact
 ## NOTES
 
 - `applications/` is now scoped because it is a distinct top-level content
-  corpus outside npm workspaces.
+  corpus outside npm workspaces; its packets are content-pack files, not git content.
 - `apps/portfolio/worker.js` is an ignored local build output; fix the generator
   or source inputs instead of editing the generated bundle.

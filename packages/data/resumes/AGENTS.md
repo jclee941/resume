@@ -10,6 +10,11 @@ Resume data subtrees contain the canonical master resume, role-specific
 variants, historical archives, generated outputs, and supporting project docs.
 Only `master/` is the portfolio/platform-sync SSoT.
 
+All of it except `AGENTS.md` guides, `.gitkeep` files, and `master/resume_schema.json`
+is the D1 content pack (ADR 0011): gitignored and materialized by
+`npm run content:pull`. GitHub CI builds against the fake pack in
+`tests/fixtures/content-pack/`. See `docs/guides/CONTENT_PACK.md`.
+
 ## STRUCTURE
 
 ```text
@@ -31,6 +36,7 @@ resumes/
   master-parity assumptions.
 - Regenerate derived files through project commands instead of hand-editing
   generated PDFs/PPTX/Markdown.
+- Publish edits with `npm run content:push`; the working tree copy is not committed.
 
 ## ANTI-PATTERNS
 
@@ -38,6 +44,8 @@ resumes/
   globally true.
 - Do not put generated artifacts outside `generated/` or documented output dirs.
 - Do not use absolute local paths in resume data.
+- Do not commit anything here except the schema, guides, and placeholders; the guard
+  rejects pack paths.
 - Do not add quantified resume/portfolio claims unless they are verifiable and
   allowed by the root instruction.
 

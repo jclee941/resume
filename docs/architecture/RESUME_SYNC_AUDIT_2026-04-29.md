@@ -46,7 +46,7 @@ integrity, skills/projects dedup) + 직접 검증.
 ### Fix 3 — P2: JobKorea 회사명 (주) 정규화 누락 (Wanted parity)
 
 - **현상**: `wanted-sync-operations.js:251`은 `replace(/\(주\)/g, '').trim()` 처리하지만
-  `jobkorea-sections.js:155` `mapCareersToFormFields()`는 raw 회사명 (`(주)아이티센 CTS`)
+  `jobkorea-sections.js:155` `mapCareersToFormFields()`는 raw 회사명 (법인 표기가 붙은 회사명)
   을 그대로 form field에 전송. JobKorea remote 측 정규화 동작이 다를 경우 매칭 실패 가능.
 - **수정**:
   - `jobkorea-sections.js`: `normalizeCompanyName()` export 추가 (Wanted와 동일한

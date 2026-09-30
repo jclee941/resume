@@ -10,6 +10,12 @@ Public Cloudflare Worker and the merged edge entry for the in-process dashboard.
 `worker.js` and locale data snapshots are generated; `entry.js`, HTML, `src/`,
 and `lib/` are editable sources.
 
+The personal copy is content-pack data (ADR 0011), gitignored and materialized from D1:
+`index.html`, `index-en.html`, `lib/hero-content-data.js`, `lib/skill-radar-data.js`,
+`src/scripts/modules/*-data.js`, `manifest*.json`, `og-image*.{png,webp}`,
+`assets/profile-photo.jpg`, `assets/resume*.pdf`, and `downloads/`. See
+`docs/guides/CONTENT_PACK.md`.
+
 ## STRUCTURE
 
 ```text
@@ -39,8 +45,9 @@ portfolio/
 
 ## CONVENTIONS
 
-- Run `npm run build` from the repository root; it synchronizes data before
-  generating the Worker.
+- Run `npm run build` from the repository root; it ensures the content pack,
+  synchronizes data, then generates the Worker. Without a pulled pack use
+  `CONTENT_SOURCE=fixtures npm run build`.
 - Preserve inline script bytes until CSP hashes are computed; do not trim or
   reorder the hash pipeline casually.
 - Keep `/job/*`, queue, scheduled, Workflow, and Durable Object exports compatible
@@ -56,6 +63,7 @@ portfolio/
 ## ANTI-PATTERNS
 
 - Never edit `worker.js` or generated `data*.json` directly.
+- Never commit content-pack files; edit them through `content:pull` → `content:push`.
 - Never reintroduce a dashboard Service Binding unless ADR 0009 is reversed.
 - Never hardcode design tokens outside `src/styles/variables.css`.
 - Never add light-mode or animation behavior without updating design,
@@ -66,6 +74,7 @@ portfolio/
 
 ```bash
 npm run build
+CONTENT_SOURCE=fixtures npm run build
 npm run test:e2e:worker
 npm run deploy:wrangler:root:dry-run
 ```
