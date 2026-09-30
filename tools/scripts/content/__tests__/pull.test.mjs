@@ -4,7 +4,7 @@ import path from 'node:path';
 import test from 'node:test';
 import { sha256Hex } from '../pack.mjs';
 import { pull, writeAtomic } from '../pull.mjs';
-import { CREDS, fakeD1, makeRoot, put } from './helpers.mjs';
+import { CREDS, fakeD1, makeRoot, put } from './d1-test-kit.mjs';
 
 const quiet = () => {};
 

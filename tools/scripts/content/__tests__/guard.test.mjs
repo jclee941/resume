@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import test from 'node:test';
 import { guard } from '../guard.mjs';
-import { makeRoot, put } from './helpers.mjs';
+import { makeRoot, put } from './d1-test-kit.mjs';
 
 const REALISTIC = ['010', '2345', '6789'].join('-');
 const FAKE = '010-1234-5678';

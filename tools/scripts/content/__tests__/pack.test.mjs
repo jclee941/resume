@@ -10,7 +10,7 @@ import {
   loadPack,
   sha256Hex,
 } from '../pack.mjs';
-import { makeRoot, put } from './helpers.mjs';
+import { makeRoot, put } from './d1-test-kit.mjs';
 
 const pack = await loadPack();
 const matcher = createMatcher(pack);

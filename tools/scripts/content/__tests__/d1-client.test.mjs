@@ -8,7 +8,7 @@ import {
   resolveAccountId,
   resolveAuthHeaders,
 } from '../d1-client.mjs';
-import { CREDS, fakeD1, makeRoot } from './helpers.mjs';
+import { CREDS, fakeD1, makeRoot } from './d1-test-kit.mjs';
 
 test('auth prefers CONTENT_API_TOKEN, then CLOUDFLARE_API_TOKEN, then the key pair', () => {
   const all = {

@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import test from 'node:test';
 import { run } from '../cli.mjs';
-import { CREDS, fakeD1, makeRoot, put } from './helpers.mjs';
+import { CREDS, fakeD1, makeRoot, put } from './d1-test-kit.mjs';
 
 const capture = () => {
   const lines = [];
