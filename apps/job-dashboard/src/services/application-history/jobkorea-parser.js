@@ -2,7 +2,9 @@
  * @fileoverview Parses the JobKorea 입사지원 현황 page (`/User/ApplyMng`) from its rendered HTML.
  * The list is server-rendered: one `<tr>` per application holds `.apply-status` (label + date),
  * `.apply-board` (`.company`, `.description` linking `/Recruit/GI_Read/<posting no>`) and a
- * `.reading` cell (`is-reading-yes` once the employer opened it). A `colspan` row with
+ * `.reading` cell (`is-reading-yes` once the employer opened it). The row's 지원취소 button
+ * carries the application time to the second as `data-applydate="YYYYMMDDHHmmss"` (Korea
+ * Standard Time; the page's own script sends it as the 지원일자). A `colspan` row with
  * `.similar-list` follows some rows and lists recommended postings; it has no `.apply-board`
  * and is skipped. Rowspan groups reuse the previous status/date.
  * @module services/application-history/jobkorea-parser
@@ -22,6 +24,8 @@ const COMPANY_RE = /<div class="company">\s*<a\b[^>]*>([\s\S]*?)<\/a>/;
 const POSTING_RE =
   /<div class="description">\s*<a\b[^>]*href="[^"]*\/Recruit\/GI_Read\/(\d+)[^"]*"[^>]*>([\s\S]*?)<\/a>/i;
 const PAGINATION_RE = /<div class="tplPagination">([\s\S]*?)<\/div>/;
+const APPLY_STAMP_RE = /\bdata-applydate="(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})"/;
+const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
 
 /**
  * @param {string} fragment
@@ -61,6 +65,22 @@ function toIsoDate(dotted) {
 }
 
 /**
+ * @param {string} row
+ * @returns {string | null} UTC ISO application time, or null when the row has no valid stamp
+ */
+function applyTimeOf(row) {
+  const match = APPLY_STAMP_RE.exec(row);
+  if (!match) return null;
+  const [, year, month, day, hour, minute, second] = match;
+  const wallClock = `${year}-${month}-${day}T${hour}:${minute}:${second}`;
+  const date = new Date(`${wallClock}+09:00`);
+  if (Number.isNaN(date.getTime())) return null;
+  // Date rolls impossible values over (Feb 31 -> Mar 3), so the stamp must read back unchanged.
+  const readBack = new Date(date.getTime() + KST_OFFSET_MS).toISOString().slice(0, 19);
+  return readBack === wallClock ? date.toISOString() : null;
+}
+
+/**
  * @param {string} html
  * @returns {import('./history-types.js').HistoryRecord[]}
  */
@@ -81,7 +101,7 @@ export function parseJobKoreaApplyList(html) {
       company: textOf(COMPANY_RE.exec(row)?.[1] ?? '') || 'Unknown',
       position: textOf(posting[2]) || 'Unknown',
       url: `https://www.jobkorea.co.kr/Recruit/GI_Read/${posting[1]}`,
-      appliedAt: toIsoDate(date),
+      appliedAt: applyTimeOf(row) ?? toIsoDate(date),
       status: mapJobKoreaStatus(label, row.includes('is-reading-yes')),
     });
   }
