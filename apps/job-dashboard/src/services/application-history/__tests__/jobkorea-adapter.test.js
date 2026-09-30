@@ -137,3 +137,44 @@ describe('fetchJobKoreaHistory timeout diagnostics', () => {
     );
   });
 });
+
+describe('fetchJobKoreaHistory stalled page', () => {
+  it(
+    'stops waiting for a hung content read and page close, then reports the timeout',
+    { timeout: 2000 },
+    async () => {
+      const env = await sessionEnv(createSqliteD1(), ['jobkorea']);
+      const handlers = {};
+      const hang = () => new Promise(() => {});
+      const page = {
+        setRequestInterception: async () => {},
+        setCookie: async () => {},
+        on: (event, handler) => void (handlers[event] ??= []).push(handler),
+        goto: async () => {
+          const document = {
+            url: () => JOBKOREA_APPLY_LIST_URL,
+            resourceType: () => 'document',
+            abort: async () => {},
+            continue: async () => {},
+          };
+          handlers.request.forEach((handle) => handle(document));
+          throw new Error('Navigation timeout of 45000 ms exceeded');
+        },
+        content: hang,
+        url: () => JOBKOREA_APPLY_LIST_URL,
+        close: hang,
+      };
+
+      await assert.rejects(
+        fetchJobKoreaHistory(env, {
+          withBrowserSession: async (_env, run) => run({ newPage: async () => page }),
+          settleMs: 5,
+        }),
+        {
+          message:
+            'Navigation timeout of 45000 ms exceeded; pending: document www.jobkorea.co.kr/User/ApplyMng',
+        }
+      );
+    }
+  );
+});
