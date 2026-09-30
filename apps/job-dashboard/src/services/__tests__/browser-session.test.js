@@ -144,3 +144,64 @@ describe('withBrowserSession', () => {
     assert.equal(env.BROWSER_SESSION.get.mock.calls[1].arguments[0], 'id:crawler-pool');
   });
 });
+
+describe('withBrowserSession when a pooled session refuses the connection', () => {
+  function sequencedStub(acquireBodies) {
+    const bodies = [...acquireBodies];
+    const calls = [];
+    return {
+      calls,
+      async fetch(url, init) {
+        calls.push([new URL(url).pathname, JSON.parse(init.body)]);
+        const body = String(url).endsWith('/acquire') ? bodies.shift() : { released: true };
+        return { json: async () => body };
+      },
+    };
+  }
+
+  it('hands the pooled session back and launches a fresh one once', async () => {
+    const stub = sequencedStub([
+      { sessionId: 'pooled', reused: true },
+      { sessionId: 'fresh', reused: false },
+    ]);
+    const browser = { disconnect: mock.fn(async () => {}) };
+    const connect = mock.fn(async (_endpoint, sessionId) => {
+      if (sessionId === 'pooled') throw new Error('Unable to connect to existing session pooled');
+      return browser;
+    });
+
+    const result = await withBrowserSession(
+      createFakeEnv(stub),
+      async (connected) => (connected === browser ? 'ran' : 'wrong browser'),
+      { puppeteer: { connect } }
+    );
+
+    assert.equal(result, 'ran');
+    assert.deepEqual(stub.calls, [
+      ['/acquire', {}],
+      ['/release', { sessionId: 'pooled' }],
+      ['/acquire', { fresh: true }],
+      ['/release', { sessionId: 'fresh' }],
+    ]);
+    assert.equal(browser.disconnect.mock.calls.length, 1);
+  });
+
+  it('reports a refusal from a freshly launched session without another attempt', async () => {
+    const stub = sequencedStub([{ sessionId: 'new-1', reused: false }]);
+    const connect = mock.fn(async () => {
+      throw new Error('refused');
+    });
+
+    await assert.rejects(
+      withBrowserSession(createFakeEnv(stub), async () => 'unreachable', {
+        puppeteer: { connect },
+      }),
+      /refused/
+    );
+    assert.equal(connect.mock.calls.length, 1);
+    assert.deepEqual(
+      stub.calls.map(([path]) => path),
+      ['/acquire', '/release']
+    );
+  });
+});

@@ -106,7 +106,8 @@ export class BrowserSessionDO {
   }
 
   /**
-   * Acquire a connectable sessionId — reused or freshly launched via the broker.
+   * Acquire a connectable sessionId — reused or freshly launched via the broker
+   * (`fresh: true` in the body always launches a new session).
    * @param {Request} request
    * @returns {Promise<Response>}
    */
@@ -118,6 +119,7 @@ export class BrowserSessionDO {
     const lockedIds = new Set(this.#locked.keys());
     const { sessionId, reused } = await acquireSession(puppeteer, this.env.MYBROWSER, lockedIds, {
       keepAlive,
+      reuse: body.fresh !== true,
     });
 
     this.#locked.set(sessionId, { requestId, lockedAt: Date.now() });

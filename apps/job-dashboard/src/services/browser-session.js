@@ -24,7 +24,8 @@ import puppeteerDefault from '@cloudflare/puppeteer';
 /**
  * Run `fn` with a connected Browser Rendering session borrowed from the
  * `BROWSER_SESSION` Durable Object pool, releasing it when done regardless
- * of success or failure.
+ * of success or failure. A reused session that refuses the connection is
+ * replaced by a freshly launched one.
  *
  * @template T
  * @param {{BROWSER_SESSION: DurableObjectNamespaceBinding, MYBROWSER: import('@cloudflare/puppeteer').ConnectOptions | import('@cloudflare/puppeteer').BrowserWorker}} env
@@ -36,11 +37,42 @@ export async function withBrowserSession(env, fn, opts = {}) {
   const { puppeteer = puppeteerDefault, name = 'global' } = opts;
 
   const stub = env.BROWSER_SESSION.get(env.BROWSER_SESSION.idFromName(name));
+  let { sessionId, reused } = await acquire(stub, {});
+  /** @type {import('@cloudflare/puppeteer').Browser | undefined} */
+  let browser;
 
+  try {
+    try {
+      browser = await puppeteer.connect(env.MYBROWSER, sessionId);
+    } catch (error) {
+      if (!reused) throw error;
+      // A pooled session listed as free can still refuse the connection while its last user is
+      // letting go or it is closing, so it is handed back and a fresh session is launched once.
+      await release(stub, sessionId);
+      ({ sessionId, reused } = await acquire(stub, { fresh: true }));
+      browser = await puppeteer.connect(env.MYBROWSER, sessionId);
+    }
+    return await fn(browser);
+  } finally {
+    try {
+      if (browser) await browser.disconnect();
+    } catch {
+      // best-effort — the session may already be disconnected
+    }
+    await release(stub, sessionId);
+  }
+}
+
+/**
+ * @param {DurableObjectStub} stub
+ * @param {{ fresh?: boolean }} body `fresh` skips reuse and launches a new session
+ * @returns {Promise<{ sessionId: string; reused?: boolean }>}
+ */
+async function acquire(stub, body) {
   const acquireResponse = await stub.fetch('https://browser-session/acquire', {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({}),
+    body: JSON.stringify(body),
   });
   const acquired = await acquireResponse.json();
 
@@ -50,29 +82,22 @@ export async function withBrowserSession(env, fn, opts = {}) {
     if (acquired?.code) err.code = acquired.code;
     throw err;
   }
+  return acquired;
+}
 
-  const { sessionId } = acquired;
-  /** @type {import('@cloudflare/puppeteer').Browser | undefined} */
-  let browser;
-
+/**
+ * @param {DurableObjectStub} stub
+ * @param {string} sessionId
+ * @returns {Promise<void>}
+ */
+async function release(stub, sessionId) {
   try {
-    browser = await puppeteer.connect(env.MYBROWSER, sessionId);
-    return await fn(browser);
-  } finally {
-    try {
-      if (browser) await browser.disconnect();
-    } catch {
-      // best-effort — the session may already be disconnected
-    }
-
-    try {
-      await stub.fetch('https://browser-session/release', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ sessionId }),
-      });
-    } catch {
-      // best-effort — release failures should not mask fn's result/error
-    }
+    await stub.fetch('https://browser-session/release', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ sessionId }),
+    });
+  } catch {
+    // best-effort — release failures should not mask fn's result/error
   }
 }
