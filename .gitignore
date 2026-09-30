@@ -200,3 +200,6 @@ applications/_auto-apply-runs/
 /infrastructure/monitoring/elasticsearch/apply-assets
 /packages/data/resumes/archive/toss/pdf-convert
 /packages/data/resumes/technical/nextrade/convert-to-pdf-docx
+
+# Materialized personal content pack manifest (ADR 0011)
+.content/
