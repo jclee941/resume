@@ -7,6 +7,9 @@
 \usepackage{parskip}
 \usepackage{fancyhdr}
 
+% Pandoc defines the page-header name via header-includes (see owner.go).
+\providecommand{\ResumeOwnerName}{}
+
 \definecolor{ResumeSlate}{HTML}{1F2933}
 \definecolor{ResumeText}{HTML}{2F3A45}
 \definecolor{ResumeMuted}{HTML}{6B7280}
@@ -19,7 +22,7 @@
   \pagestyle{fancy}%
   \thispagestyle{empty}%
   \fancyhf{}%
-  \fancyhead[L]{\footnotesize\color{ResumeMuted}이재철}%
+  \fancyhead[L]{\footnotesize\color{ResumeMuted}\ResumeOwnerName}%
   \fancyhead[R]{\footnotesize\color{ResumeMuted}\thepage}%
   \renewcommand{\headrulewidth}{0pt}%
   \renewcommand{\footrulewidth}{0pt}%
@@ -46,7 +49,7 @@
   partopsep=0pt
 }
 
-% Pandoc maps the resume's markdown H1 (# 이재철) to \section and H2
+% Pandoc maps the resume's markdown H1 (# Name) to \section and H2
 % sections (## 연락처, ## 경력사항, ...) to \subsection. Style both levels
 % intentionally so the H1 acts as a clean name header and H2 sections carry
 % the restrained divider rule.

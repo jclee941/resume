@@ -97,10 +97,10 @@ func pandocPDFArgsForProfile(source, output, font string, layout PDFLayoutProfil
 		"-V", "colorlinks:true",
 		"-V", "linkcolor:[HTML]{5AA9B8}",
 		"-V", "urlcolor:[HTML]{5AA9B8}",
-		"--metadata", "author=Jaecheol Lee",
 		"--metadata", "lang=ko-KR",
 		"--lua-filter", "tools/scripts/build/strip-emoji.lua",
 	)
+	args = append(args, ownerMetadataArgs()...)
 	if usesResumePhoto(source) {
 		args = append(args,
 			"--metadata", "photo="+resumePhotoPath,
