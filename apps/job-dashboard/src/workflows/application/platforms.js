@@ -1,5 +1,4 @@
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
-import { readPlatformSession } from '../../services/platform-session.js';
 import {
   ATS_DRY_RUN_PLATFORMS,
   DEFAULT_APPLICATION_PLATFORMS,
@@ -8,7 +7,9 @@ import {
   normalizeApplicationPlatforms,
   supportedApplicationPlatforms,
 } from './application-platform-catalog.js';
+import { searchWanted } from './wanted-search.js';
 
+export { searchWanted };
 export {
   ATS_DRY_RUN_PLATFORMS,
   DEFAULT_APPLICATION_PLATFORMS,
@@ -57,17 +58,6 @@ export {
 /**
  * @typedef {{
  *   id: string | number;
- *   company?: { name?: string };
- *   position?: string;
- *   address?: { location?: string };
- *   years?: string | number;
- *   detail?: { description?: string };
- * }} WantedApiRawJob
- */
-
-/**
- * @typedef {{
- *   id: string | number;
  *   organization?: { name?: string };
  *   company?: { name?: string };
  *   title?: string;
@@ -110,33 +100,6 @@ async function searchAtsDryRun(platform, criteria) {
   return result.jobs;
 }
 
-/**
- * @param {PlatformSearchContext} ctx
- * @param {PlatformSearchCriteria} criteria
- * @returns {Promise<PlatformJob[]>}
- */
-export async function searchWanted(ctx, criteria) {
-  const session = await readPlatformSession(ctx.env, 'wanted');
-  if (!session) throw new Error('No Wanted session available');
-  const params = new URLSearchParams();
-  if (criteria.keyword) params.append('query', criteria.keyword);
-  if (criteria.location) params.append('location', criteria.location);
-  const response = await fetch(`https://www.wanted.co.kr/api/v4/jobs?${params}`, {
-    headers: { Cookie: session, 'User-Agent': DEFAULT_USER_AGENT },
-  });
-  if (!response.ok) throw new Error(`Wanted API error: ${response.status}`);
-  /** @type {{ data?: WantedApiRawJob[] }} */
-  const data = await response.json();
-  return (data.data || []).map((job) => ({
-    id: `wanted-${job.id}`,
-    company: job.company?.name || 'Unknown',
-    position: job.position || 'Unknown',
-    url: `https://www.wanted.co.kr/wd/${job.id}`,
-    location: job.address?.location || '',
-    experience: job.years || '',
-    description: job.detail?.description || '',
-  }));
-}
 /**
  * @param {PlatformSearchContext} _ctx
  * @param {PlatformSearchCriteria} criteria
