@@ -347,6 +347,7 @@
     "apps/job-dashboard/src/services/platform-session.js",
     "apps/job-dashboard/src/workflows/application/application-platform-catalog.js",
     "apps/job-dashboard/src/workflows/application/platforms.js",
+    "apps/job-dashboard/src/workflows/application/wanted-search.js",
     "apps/job-dashboard/src/workflows/job-crawling/session.js",
     "apps/job-dashboard/src/workflows/resume-sync-data.js",
     "packages/shared/src/platform-sync/jobkorea/sections/school-fields.js",
