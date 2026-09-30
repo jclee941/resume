@@ -25,13 +25,13 @@ function writeFixture(name, data) {
 }
 
 const VALID_VARIANT = {
-  personal: { name: '이재철', email: 'qws941@kakao.com', phone: '010-1234-5678' },
+  personal: { name: '예시 이름', email: 'applicant@example.com', phone: '010-0000-0000' },
   summary: { totalExperience: '9년', expertise: ['DevSecOps'] },
   careers: [
-    { company: '아이티센', period: '2024.03 ~ 현재', role: '보안운영' },
-    { company: '콴텍', period: '2022.01 ~ 2024.02' },
+    { company: '예시회사 A', period: '2024.03 ~ 현재', role: '보안운영' },
+    { company: '예시회사 B', period: '2022.01 ~ 2024.02' },
   ],
-  projects: [{ name: 'Nextrade SOC', period: '2024.03 ~ 현재' }],
+  projects: [{ name: 'Example SOC', period: '2024.03 ~ 현재' }],
   skills: { security: ['Splunk ES', 'FortiGate'], cloud: ['AWS'] },
   certifications: [],
 };
