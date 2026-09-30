@@ -69,6 +69,26 @@ describe('refreshJobKoreaSession login page timeout retry', () => {
     assert.equal(withBrowserSession.mock.callCount(), 1);
   });
 
+  it('waits retryDelayMs between tries when a caller asks for a patient retry', async () => {
+    const env = { ...ENV, SESSIONS: { put: mock.fn(async () => {}) } };
+    const withBrowserSession = borrows([TIMEOUT(), TIMEOUT(), TIMEOUT(), undefined]);
+    const wait = mock.fn(async () => {});
+
+    const result = await refreshJobKoreaSession(env, {
+      withBrowserSession,
+      attempts: 4,
+      retryDelayMs: 90_000,
+      wait,
+    });
+
+    assert.equal(result.ok, true);
+    assert.equal(result.attempts, 4);
+    assert.deepEqual(
+      wait.mock.calls.map((call) => call.arguments[0]),
+      [90_000, 90_000, 90_000]
+    );
+  });
+
   it('reports the timeout after the retry also times out, without writing KV', async () => {
     const env = { ...ENV, SESSIONS: { put: mock.fn(async () => {}) } };
     const withBrowserSession = borrows([TIMEOUT(), TIMEOUT()]);
