@@ -35,10 +35,10 @@ describe('sanitizeHref()', () => {
       ['absolute root path', '/resume.pdf'],
       ['dot-relative path', './section'],
       ['hash anchor', '#contact'],
-      ['https url', 'https://resume.jclee.me/'],
+      ['https url', 'https://example.com/'],
       ['http url', 'http://example.com/'],
-      ['mailto', 'mailto:qws941@kakao.com'],
-      ['tel', 'tel:01012345678'],
+      ['mailto', 'mailto:applicant@example.com'],
+      ['tel', 'tel:01000000000'],
     ];
     test.each(allowed)('%s -> unchanged', (_label, input) => {
       expect(sanitizeHref(input)).toBe(input);

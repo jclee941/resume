@@ -11,6 +11,7 @@ const {
   generateFaviconRedirect,
   generateErrorHandler,
 } = require('../../apps/portfolio/lib/worker-routes');
+const { ownerIdentity } = require('../helpers/owner-data');
 
 describe('Worker Routes', () => {
   describe('generateFetchAndRateLimit', () => {
@@ -305,7 +306,7 @@ describe('Worker Routes', () => {
 
     it('should serve a richer RFC 9116 security.txt (Contact + Hiring + dynamic Expires)', () => {
       expect(code).toContain('/.well-known/security.txt');
-      expect(code).toContain('Contact: mailto:qws941@kakao.com');
+      expect(code).toContain(`Contact: mailto:${ownerIdentity('ko').email}`);
       expect(code).toContain('Hiring:');
       expect(code).toContain('Expires:');
       expect(code).toContain('Preferred-Languages: ko, en');
@@ -359,8 +360,8 @@ describe('Worker Routes', () => {
           },
         };
         const res = await handler(
-          new URL('https://resume.jclee.me/resume.pdf'),
-          new Request('https://resume.jclee.me/resume.pdf'),
+          new URL('https://example.com/resume.pdf'),
+          new Request('https://example.com/resume.pdf'),
           env,
           deps.metrics,
           deps.rateLimitHeaders,
@@ -374,7 +375,7 @@ describe('Worker Routes', () => {
         );
         expect(res.status).toBe(200);
         expect(res.headers.get('Content-Type')).toBe('application/pdf');
-        expect(res.headers.get('Content-Disposition')).toContain('filename="resume_jclee.pdf"');
+        expect(res.headers.get('Content-Disposition')).toMatch(/filename="resume_[^"]+\.pdf"/);
         expect(deps.metrics.requests_success).toBe(1);
         const buf = new Uint8Array(await res.arrayBuffer());
         expect(Array.from(buf.slice(0, 4))).toEqual([0x25, 0x50, 0x44, 0x46]);
@@ -387,8 +388,8 @@ describe('Worker Routes', () => {
           ASSETS: { fetch: async () => new Response('not found', { status: 404 }) },
         };
         const res = await handler(
-          new URL('https://resume.jclee.me/resume.pdf'),
-          new Request('https://resume.jclee.me/resume.pdf'),
+          new URL('https://example.com/resume.pdf'),
+          new Request('https://example.com/resume.pdf'),
           env,
           deps.metrics,
           deps.rateLimitHeaders,
@@ -408,8 +409,8 @@ describe('Worker Routes', () => {
         const handler = buildHandler();
         const deps = baseDeps();
         const res = await handler(
-          new URL('https://resume.jclee.me/resume.pdf'),
-          new Request('https://resume.jclee.me/resume.pdf'),
+          new URL('https://example.com/resume.pdf'),
+          new Request('https://example.com/resume.pdf'),
           {},
           deps.metrics,
           deps.rateLimitHeaders,

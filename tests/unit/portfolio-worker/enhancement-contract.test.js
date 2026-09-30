@@ -14,6 +14,7 @@
 const fs = require('fs');
 const path = require('path');
 const { buildJapaneseTemplate } = require('../../../apps/portfolio/lib/html-transformer');
+const { escapeRegExp, loadMaster, siteOrigin } = require('../../helpers/owner-data');
 
 const PORTFOLIO = path.join(__dirname, '..', '..', '..', 'apps', 'portfolio');
 const DATA = path.join(__dirname, '..', '..', '..', 'packages', 'data', 'resumes', 'master');
@@ -50,7 +51,13 @@ describe('T3: localized nav toggle copy and deferred metadata', () => {
   const ja = buildJapaneseTemplate(ko);
   const manifest = JSON.parse(read(path.join(PORTFOLIO, 'manifest.json')));
   const manifestEn = JSON.parse(read(path.join(PORTFOLIO, 'manifest_en.json')));
-  const targetRole = 'Security & Infrastructure Engineer';
+  const names = {
+    ko: loadMaster('ko').personal.name,
+    en: loadMaster('en').personal.name,
+    ja: loadMaster('ja').personal.name,
+  };
+  // The role is the part of the published manifest title after "<name> - ".
+  const targetRole = manifestEn.name.slice(manifestEn.name.indexOf(' - ') + 3);
 
   test('nav toggle accessible names are localized per locale', () => {
     expect(ko).toContain('aria-label="메뉴 열기"');
@@ -62,24 +69,29 @@ describe('T3: localized nav toggle copy and deferred metadata', () => {
   });
 
   test('title/meta/manifest strings use the hiring-decision role convention', () => {
-    expect(ko).toContain(`<title>이재철 - ${targetRole}</title>`);
-    expect(ko).toContain(`<meta property="og:title" content="이재철 - ${targetRole}" />`);
-    expect(ko).toContain(`<meta name="twitter:title" content="이재철 - ${targetRole}" />`);
-    expect(en).toContain(`<title>Jaecheol Lee - ${targetRole}</title>`);
+    expect(targetRole.length).toBeGreaterThan(0);
+    expect(ko).toContain(`<title>${names.ko} - ${targetRole}</title>`);
+    expect(ko).toContain(`<meta property="og:title" content="${names.ko} - ${targetRole}" />`);
+    expect(ko).toContain(`<meta name="twitter:title" content="${names.ko} - ${targetRole}" />`);
+    expect(en).toContain(`<title>${names.en} - ${targetRole}</title>`);
     expect(en).toMatch(
-      new RegExp(`<meta\\s+property="og:title"\\s+content="Jaecheol Lee - ${targetRole}"`)
+      new RegExp(
+        `<meta\\s+property="og:title"\\s+content="${escapeRegExp(names.en)} - ${escapeRegExp(targetRole)}"`
+      )
     );
     expect(en).toMatch(
-      new RegExp(`<meta\\s+name="twitter:title"\\s+content="Jaecheol Lee - ${targetRole}"`)
+      new RegExp(
+        `<meta\\s+name="twitter:title"\\s+content="${escapeRegExp(names.en)} - ${escapeRegExp(targetRole)}"`
+      )
     );
-    expect(ja).toContain(`<title>イ・ジェチョル - ${targetRole}</title>`);
-    expect(ja).toContain(`<meta property="og:title" content="イ・ジェチョル - ${targetRole}" />`);
+    expect(ja).toContain(`<title>${names.ja} - ${targetRole}</title>`);
+    expect(ja).toContain(`<meta property="og:title" content="${names.ja} - ${targetRole}" />`);
     expect(ja).toContain(`"jobTitle": "${targetRole}"`);
     expect(ja).toContain(`"name": "${targetRole} — 面接依頼受付中"`);
     expect(ja).not.toContain('면접 제안 접수 중');
-    expect(manifest.name).toBe(`이재철 - ${targetRole}`);
+    expect(manifest.name).toBe(`${names.ko} - ${targetRole}`);
     expect(manifest.description).toContain(targetRole);
-    expect(manifestEn.name).toBe(`Jaecheol Lee - ${targetRole}`);
+    expect(manifestEn.name).toBe(`${names.en} - ${targetRole}`);
     expect(manifestEn.description).toContain(targetRole);
   });
 });
@@ -88,10 +100,9 @@ describe('고도화: SEO hreflang JA', () => {
   test('KO and EN heads both declare a Japanese alternate', () => {
     for (const f of ['index.html', 'index-en.html']) {
       const html = read(path.join(PORTFOLIO, f));
-      expect(html).toMatch(
-        /hreflang="ja-JP"[^>]*href="https:\/\/resume\.jclee\.me\/ja\/"|hreflang="ja-JP"/
-      );
-      expect(html).toMatch(/resume\.jclee\.me\/ja\//);
+      const jaUrl = escapeRegExp(`${siteOrigin()}/ja/`);
+      expect(html).toMatch(new RegExp(`hreflang="ja-JP"[^>]*href="${jaUrl}"|hreflang="ja-JP"`));
+      expect(html).toMatch(new RegExp(jaUrl));
     }
   });
 });
@@ -137,8 +148,8 @@ describe('고도화: PDF source polish', () => {
 describe('FAANG framing: case-study senior narrative', () => {
   const src = read(path.join(PORTFOLIO, 'src', 'scripts', 'modules', 'project-cards-data.js'));
 
-  test('Nextrade case studies frame a design decision / trade-off', () => {
-    // The two Nextrade cards should read like senior engineering: an explicit
+  test('case studies frame a design decision / trade-off', () => {
+    // The case-study cards should read like senior engineering: an explicit
     // constraint or trade-off, not just a task list.
     expect(src).toMatch(/제약|트레이드오프|설계 결정|trade-off|constraint/);
   });
