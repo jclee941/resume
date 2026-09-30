@@ -12,8 +12,8 @@ job automation as MCP tools and is authenticated with the admin Bearer token.
 - Request order in `src/index.js`: rate limit (`api` policy class) -> Host/Origin check
   (a browser Origin other than the site origin is 403) -> method check (`GET`, `DELETE`
   and `OPTIONS` are 405) -> admin Bearer (`401` with `WWW-Authenticate: Bearer`) -> MCP handler.
-- Only `Authorization: Bearer <ADMIN_TOKEN>` authenticates. The admin session cookie is
-  ignored, so the CSRF double-submit does not apply to `/mcp` (the same kind of exemption
+- Only `Authorization: Bearer <ADMIN_TOKEN>` authenticates. An admin session token sent as
+  Bearer is `401`, and the admin session cookie is ignored, so the CSRF double-submit does not apply to `/mcp` (the same kind of exemption
   as the HMAC-signed webhooks). No CORS headers are sent.
 - Tools call the dashboard's own route table with an internal request, so each tool runs
   the same handler and safety gates as its REST endpoint. Nothing is re-implemented in the
