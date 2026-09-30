@@ -30,11 +30,14 @@ import puppeteerDefault from '@cloudflare/puppeteer';
  * @template T
  * @param {{BROWSER_SESSION: DurableObjectNamespaceBinding, MYBROWSER: import('@cloudflare/puppeteer').ConnectOptions | import('@cloudflare/puppeteer').BrowserWorker}} env
  * @param {(browser: import('@cloudflare/puppeteer').Browser) => Promise<T>} fn
- * @param {{puppeteer?: {connect: (endpoint: import('@cloudflare/puppeteer').ConnectOptions | import('@cloudflare/puppeteer').BrowserWorker, sessionId?: string) => Promise<import('@cloudflare/puppeteer').Browser>}, name?: string}} [opts]
+ * @param {{puppeteer?: {connect: (endpoint: import('@cloudflare/puppeteer').ConnectOptions | import('@cloudflare/puppeteer').BrowserWorker, sessionId?: string) => Promise<import('@cloudflare/puppeteer').Browser>}, name?: string, assertOpen?: (next: string) => void}} [opts]
+ *   `assertOpen(next)` throws once the caller's deadline has passed. It runs after every awaited
+ *   acquisition or hand-back, before the next connection or launch, so a session acquired too
+ *   late is handed back unconnected and no fresh session is launched after the deadline.
  * @returns {Promise<T>}
  */
 export async function withBrowserSession(env, fn, opts = {}) {
-  const { puppeteer = puppeteerDefault, name = 'global' } = opts;
+  const { puppeteer = puppeteerDefault, name = 'global', assertOpen = () => {} } = opts;
 
   const stub = env.BROWSER_SESSION.get(env.BROWSER_SESSION.idFromName(name));
   let { sessionId, reused } = await acquire(stub, {});
@@ -44,6 +47,7 @@ export async function withBrowserSession(env, fn, opts = {}) {
   let browser;
 
   try {
+    assertOpen('the browser connected');
     try {
       browser = await puppeteer.connect(env.MYBROWSER, sessionId);
     } catch (error) {
@@ -52,8 +56,10 @@ export async function withBrowserSession(env, fn, opts = {}) {
       // letting go or it is closing, so it is handed back and a fresh session is launched once.
       await release(stub, sessionId);
       held = null;
+      assertOpen('a fresh browser was launched');
       ({ sessionId, reused } = await acquire(stub, { fresh: true }));
       held = sessionId;
+      assertOpen('the fresh browser connected');
       browser = await puppeteer.connect(env.MYBROWSER, sessionId);
     }
     return await fn(browser);
