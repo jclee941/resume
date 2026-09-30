@@ -2,7 +2,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { HistorySyncError } from '../history-types.js';
-import { fetchWantedHistory } from '../wanted-adapter.js';
+import { fetchWantedHistory, toWantedRecord } from '../wanted-adapter.js';
 import { createSqliteD1, sessionEnv } from './history-test-kit.js';
 
 const item = (id, jobId, extra = {}) => ({
@@ -97,5 +97,40 @@ describe('fetchWantedHistory', () => {
       fetchWantedHistory(env, { fetcher: fakeWanted({}, { failWith: 422 }).fetcher }),
       { code: 'UPSTREAM_ERROR' }
     );
+  });
+});
+
+describe('Wanted apply_time to UTC ISO', () => {
+  const appliedAt = (applyTime) =>
+    toWantedRecord(item(1, 101, { apply_time: applyTime }), 'reject').appliedAt;
+
+  it('reads a naive datetime as KST and stores it as UTC', () => {
+    assert.equal(appliedAt('2026-09-30T12:17:13'), '2026-09-30T03:17:13.000Z');
+    assert.equal(appliedAt('2026-09-01T00:30:00'), '2026-08-31T15:30:00.000Z');
+  });
+
+  it('keeps fractional seconds of a naive datetime', () => {
+    assert.equal(appliedAt('2026-09-30T12:17:13.5'), '2026-09-30T03:17:13.500Z');
+  });
+
+  it('converts a value that already carries Z or an offset', () => {
+    assert.equal(appliedAt('2026-09-30T03:17:13Z'), '2026-09-30T03:17:13.000Z');
+    assert.equal(appliedAt('2026-09-30T12:17:13+09:00'), '2026-09-30T03:17:13.000Z');
+    assert.equal(appliedAt('2026-09-30T12:17:13-05:00'), '2026-09-30T17:17:13.000Z');
+  });
+
+  it('returns null for missing, empty or unparseable input', () => {
+    for (const value of [null, undefined, '', 'yesterday', '2026-13-45T99:00:00']) {
+      assert.equal(appliedAt(value), null, String(value));
+    }
+  });
+
+  it('delivers UTC ISO through fetchWantedHistory', async () => {
+    const env = await sessionEnv(createSqliteD1(), ['wanted']);
+    const { fetcher } = fakeWanted({
+      reject: [[item(1, 101, { apply_time: '2026-09-30T12:17:13' })]],
+    });
+    const [record] = await fetchWantedHistory(env, { fetcher });
+    assert.equal(record.appliedAt, '2026-09-30T03:17:13.000Z');
   });
 });
