@@ -99,30 +99,33 @@ export async function processApprovalGates(
   autoApproveThreshold
 ) {
   const approvedJobs = [];
-  const approvalResults = [];
+  const evaluatedResults = [];
 
   for (const job of scoredJobs) {
     const approvalMetadata = buildApprovalMetadata(job);
     const approvalResult = await step.do(
       `approval-gate-${job.id}`,
-      {
-        retries: { limit: 2, delay: '5 seconds' },
-        timeout: '2 minutes',
-      },
+      { retries: { limit: 2, delay: '5 seconds' }, timeout: '2 minutes' },
       async () =>
-        evaluateApproval(
-          ctx,
-          step,
-          workflow,
-          job,
-          autoApprove,
-          autoApproveThreshold,
-          approvalMetadata
-        )
+        evaluateApproval(ctx, workflow, job, autoApprove, autoApproveThreshold, approvalMetadata)
     );
 
-    approvalResults.push(approvalResult);
+    const { requestId } = approvalResult;
+    if (approvalResult.status === 'pending' && requestId) {
+      // Separate step so a retried gate never re-sends the notification.
+      await step.do(
+        `approval-notify-${job.id}`,
+        { retries: { limit: 2, delay: '5 seconds' }, timeout: '1 minute' },
+        async () => ctx.sendApprovalRequestNotification(workflow.id, requestId, job)
+      );
+    }
 
+    evaluatedResults.push(approvalResult);
+  }
+
+  const approvalResults = await resolvePendingApprovals(ctx, step, evaluatedResults);
+
+  for (const approvalResult of approvalResults) {
     if (isApprovedResult(approvalResult.status)) {
       approvedJobs.push(createApprovedJob(approvalResult));
       workflow.stats.jobsApproved++;
@@ -148,8 +151,45 @@ export async function processApprovalGates(
 }
 
 /**
+ * Waits once for every pending approval, then reads their decisions in one step.
  * @param {ApprovalContext} ctx
  * @param {ApprovalStep} step
+ * @param {ApprovalResult[]} results
+ * @returns {Promise<ApprovalResult[]>}
+ */
+async function resolvePendingApprovals(ctx, step, results) {
+  const pending = results.filter((result) => result.status === 'pending');
+  if (pending.length === 0) return results;
+
+  await step.sleep('wait-approvals', '24 hours');
+  const decisions = await step.do(
+    'resolve-approvals',
+    { retries: { limit: 2, delay: '5 seconds' }, timeout: '2 minutes' },
+    async () => {
+      /** @type {Array<{ status: string; approvalMetadata: ApprovalMetadata }>} */
+      const resolved = [];
+      for (const result of pending) {
+        const requestId = /** @type {string} */ (result.requestId);
+        const status = await ctx.getApprovalStatus(requestId);
+        resolved.push({
+          status: status === 'approved' ? 'human-approved' : status,
+          approvalMetadata:
+            status === 'approved'
+              ? withHumanApproval(result.approvalMetadata, result.job)
+              : result.approvalMetadata,
+        });
+      }
+      return resolved;
+    }
+  );
+
+  return results.map((result) =>
+    result.status === 'pending' ? { ...result, ...decisions.shift() } : result
+  );
+}
+
+/**
+ * @param {ApprovalContext} ctx
  * @param {ApprovalWorkflow} workflow
  * @param {ScoredJob} job
  * @param {boolean} autoApprove
@@ -159,7 +199,6 @@ export async function processApprovalGates(
  */
 async function evaluateApproval(
   ctx,
-  step,
   workflow,
   job,
   autoApprove,
@@ -206,17 +245,7 @@ async function evaluateApproval(
       job.matchScore,
       approvalMetadata
     );
-    await ctx.sendApprovalRequestNotification(workflow.id, requestId, job);
-    await step.sleep(`wait-approval-${job.id}`, '24 hours');
-    const approvalStatus = await ctx.getApprovalStatus(requestId);
-    const metadata =
-      approvalStatus === 'approved' ? withHumanApproval(approvalMetadata, job) : approvalMetadata;
-    return {
-      status: approvalStatus === 'approved' ? 'human-approved' : approvalStatus,
-      job,
-      requestId,
-      approvalMetadata: metadata,
-    };
+    return { status: 'pending', job, requestId, approvalMetadata };
   }
 
   await ctx.createApprovalRequest(workflow.id, job, 'rejected', job.matchScore, approvalMetadata);
