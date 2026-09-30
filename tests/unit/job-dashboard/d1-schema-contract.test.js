@@ -32,9 +32,6 @@ const DYNAMIC = [
     "UPDATE applications SET status = ?, 1 = datetime('now') WHERE id = ?",
   ],
 ];
-// The MCP content tools read content_files, which arrives with migration 0006. Until schema.sql
-// declares it their queries cannot compile; once it does, they are checked like every other statement.
-const CONTENT_FILES_TOOL = 'apps/job-dashboard/src/mcp/tools/content-files.js';
 const KNOWN_UNCOMPILABLE = [...NOT_SQL, ...DYNAMIC].map(([file, text]) => `${file}: ${text}`);
 
 function listSourceFiles(dir) {
@@ -135,12 +132,7 @@ test('every JOB_DB statement in the Worker compiles against schema.sql', () => {
       } catch (error) {
         const key = `${file}: ${sql.replace(/\s+/g, ' ').trim()}`;
         if (KNOWN_UNCOMPILABLE.includes(key)) uncompilable.push(key);
-        else if (
-          file === CONTENT_FILES_TOOL &&
-          /no such table: content_files/.test(error.message)
-        ) {
-          continue;
-        } else drift.push(`${key.slice(0, 160)} :: ${error.message}`);
+        else drift.push(`${key.slice(0, 160)} :: ${error.message}`);
       }
     }
     assert.ok(compiled >= 50, `only ${compiled} statements compiled; the extractor found too few`);
