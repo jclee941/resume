@@ -53,7 +53,10 @@ async function mintWithFakePage() {
   const events = [];
   const page = createFakePage(events);
   await mintJobKoreaSession(CREDS, {
-    withBrowserSession: async (_env, fn) => fn({ newPage: async () => page }),
+    withBrowserSession: async (_env, fn) =>
+      fn({
+        createBrowserContext: async () => ({ newPage: async () => page, close: async () => {} }),
+      }),
   });
   assert.equal(page.requestHandlers.length, 1);
   return { page, events, handler: page.requestHandlers[0] };

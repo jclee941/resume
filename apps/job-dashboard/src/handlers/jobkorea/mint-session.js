@@ -70,7 +70,11 @@ export async function mintJobKoreaSession(
   if (!password) throw new Error('JOBKOREA_PASSWORD is required to mint a JobKorea session');
 
   return withBrowserSession(env, async (browser) => {
-    const page = await browser.newPage();
+    // The broker hands out pooled browser sessions, and their default context can still hold another
+    // flow's JobKorea cookies; logged in, /Login redirects away from the form. Log in inside a fresh
+    // context and close it so no login state is left in the pool either.
+    const context = await browser.createBrowserContext();
+    const page = await context.newPage();
     try {
       // Stylesheets stay allowed: which login tab's submit button is visible is decided by CSS.
       await restrictToJobKorea(page, LOGIN_BLOCKED_RESOURCE_TYPES);
@@ -98,12 +102,13 @@ export async function mintJobKoreaSession(
         throw new Error(`JobKorea login did not complete (url=${url}, title=${title})`);
       }
 
-      const cookieString = await collectJobKoreaCookies(page, browser);
+      const cookieString = await collectJobKoreaCookies(page);
       if (!cookieString)
         throw new Error('JobKorea login succeeded but no session cookies were found');
       return cookieString;
     } finally {
       await page.close().catch(() => {});
+      await context.close().catch(() => {});
     }
   });
 }

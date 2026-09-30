@@ -62,7 +62,10 @@ function defaultInputs() {
 }
 
 function fakeWithBrowserSession(page) {
-  return async (env, fn) => fn({ newPage: async () => page });
+  return async (env, fn) =>
+    fn({
+      createBrowserContext: async () => ({ newPage: async () => page, close: async () => {} }),
+    });
 }
 
 describe('mintJobKoreaSession', () => {
