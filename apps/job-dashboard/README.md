@@ -340,6 +340,33 @@ curl -X DELETE https://resume.jclee.me/job/api/applications/abc123 \
   -H "Authorization: Bearer <token>"
 ```
 
+### Application history sync
+
+```bash
+# Pull Wanted and JobKorea application history into D1 (idempotent; state-changing, needs CSRF)
+curl -X POST https://resume.jclee.me/job/api/applications/sync \
+  -H "Authorization: Bearer <token>" -H "X-CSRF-Token: <csrf>" -H "Cookie: csrf_token=<csrf>" \
+  -H "Content-Type: application/json" -d '{"platforms": ["wanted", "jobkorea"]}'
+```
+
+The service lives in `src/services/application-history/`. It maps the owner's real applications
+onto `applications` rows keyed by (source, job_id) so the auto-apply approval gate
+(`SELECT id FROM applications WHERE job_id = ? AND source = ?`) sees them:
+`wanted-<jobId>` (source `wanted`) and `jobkorea-<posting number>` (source `jobkorea`).
+
+- **Wanted**: `GET /api/v4/applications?status={complete|pass|hire|reject}&limit=50&offset=N` with the
+  KV session cookie, paged by `links.next`. The `status` filter is mandatory (422 without it).
+- **JobKorea**: the KV cookies are replayed in Browser Rendering on `/User/ApplyMng` (입사지원 현황)
+  and the rendered HTML is parsed. The page is only read; nothing is clicked.
+- Existing rows matching (source, job_id) only have their status advanced; new rows are inserted
+  as `history-<job_id>`; rows are never deleted. Each run adds a `sync_logs` row of type
+  `application-history`.
+- A missing or expired session reports `SESSION_MISSING` / `SESSION_EXPIRED` for that platform
+  only. HTTP 502 means every requested platform failed.
+- Runs in the `0 21 * * *` cron after the session refresh and before the auto-apply discovery
+  start (120 s budget, failures never block the other starts), and as the MCP tool
+  `sync_application_history`.
+
 ### Workflows (7 endpoints)
 
 ```bash
@@ -371,13 +398,13 @@ curl https://resume.jclee.me/job/api/workflows/abc123/status \
 
 ### Supported Platforms
 
-| Platform     | Search | Job Details | Auto-Apply | Notes                                                  |
-| ------------ | :----: | :---------: | :--------: | ------------------------------------------------------ |
-| **Wanted**   |   ✅   |     ✅      |     ✅     | Full API support via Chaos API                         |
-| **LinkedIn** |   ✅   |     ⚠️      |     ❌     | Search works; Apply requires Puppeteer (see below)     |
-| **Remember** |   ✅   |     ⚠️      |     ❌     | Search works; Apply requires Puppeteer (see below)     |
-| **JobKorea** |   ❌   |     ❌      |     ❌     | Session renewal only (`/api/jobkorea/refresh-session`) |
-| **Saramin**  |   ❌   |     ❌      |     ❌     | Not supported                                          |
+| Platform     | Search | Job Details | Auto-Apply | Notes                                              |
+| ------------ | :----: | :---------: | :--------: | -------------------------------------------------- |
+| **Wanted**   |   ✅   |     ✅      |     ✅     | Full API support via Chaos API                     |
+| **LinkedIn** |   ✅   |     ⚠️      |     ❌     | Search works; Apply requires Puppeteer (see below) |
+| **Remember** |   ✅   |     ⚠️      |     ❌     | Search works; Apply requires Puppeteer (see below) |
+| **JobKorea** |   ❌   |     ❌      |     ❌     | Session renewal and application-history read       |
+| **Saramin**  |   ❌   |     ❌      |     ❌     | Not supported                                      |
 
 ### ⚠️ Important Limitations
 
