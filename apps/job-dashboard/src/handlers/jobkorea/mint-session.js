@@ -40,6 +40,7 @@ export const JOBKOREA_SESSION_TTL_S = 60 * 60 * 6; // 6h
  */
 
 const LOGIN_BLOCKED_RESOURCE_TYPES = new Set(['image', 'media', 'font']);
+const LOGIN_PAGE_TIMEOUT = /Navigation timeout/i;
 const LOGIN_POLL_ATTEMPTS = 5;
 const LOGIN_POLL_INTERVAL_MS = 1000; // ~5s worst case across LOGIN_POLL_ATTEMPTS
 
@@ -49,6 +50,24 @@ const LOGIN_POLL_INTERVAL_MS = 1000; // ~5s worst case across LOGIN_POLL_ATTEMPT
  */
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * A timed-out login page names the requests it was still waiting for, so a stall can be traced to
+ * the document or to a specific script.
+ * @param {import('@cloudflare/puppeteer').Page} page
+ * @param {{ pending(): string[] }} requests
+ * @returns {Promise<void>}
+ */
+async function openLoginPage(page, requests) {
+  try {
+    await page.goto(JOBKOREA_LOGIN_URL, { waitUntil: 'domcontentloaded' });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (!LOGIN_PAGE_TIMEOUT.test(message)) throw error;
+    const stalled = requests.pending().slice(0, 5).join(', ') || 'none';
+    throw new Error(`${message}; pending: ${stalled}`, { cause: error });
+  }
 }
 
 /**
@@ -77,8 +96,8 @@ export async function mintJobKoreaSession(
     const page = await context.newPage();
     try {
       // Stylesheets stay allowed: which login tab's submit button is visible is decided by CSS.
-      await restrictToJobKorea(page, LOGIN_BLOCKED_RESOURCE_TYPES);
-      await page.goto(JOBKOREA_LOGIN_URL, { waitUntil: 'domcontentloaded' });
+      const requests = await restrictToJobKorea(page, LOGIN_BLOCKED_RESOURCE_TYPES);
+      await openLoginPage(page, requests);
       await fillLoginForm(page, { email, password });
       await submitAndWait(page, SUBMIT_SELECTOR);
 
@@ -114,7 +133,6 @@ export async function mintJobKoreaSession(
 }
 
 const MINT_ATTEMPTS = 2;
-const LOGIN_PAGE_TIMEOUT = /Navigation timeout/i;
 
 /**
  * Mint a JobKorea session and store it encrypted in KV as `auth:jobkorea`. Never
