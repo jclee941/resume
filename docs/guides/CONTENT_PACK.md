@@ -20,6 +20,8 @@ materialized copy. The pack is defined by `tools/scripts/content/content-pack.js
    Cloudflare Builds API. A D1 change alone does not redeploy the Worker.
 
 D1 wins: `content:pull` overwrites local copies. Push before you pull if you have edits.
+`pull` (and `ensure`) also deletes files the previous pull wrote that the new source lacks, but only
+while they are unchanged since that pull; edited or never-pulled files are kept with a warning.
 
 ## What `npm run build` does with the pack
 

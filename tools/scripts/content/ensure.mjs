@@ -37,9 +37,9 @@ async function localHash(root, repoPath) {
 
 /**
  * Materialize the fixtures without clobbering local pack files that changed since the last pull.
- * @param {{ root: string, env: Record<string, string | undefined>, out: (line: string) => void, force?: boolean }} options
+ * @param {{ root: string, env: Record<string, string | undefined>, out: (line: string) => void, warn: (line: string) => void, force?: boolean }} options
  */
-async function ensureFixtures({ root, env, out, force }) {
+async function ensureFixtures({ root, env, out, warn, force }) {
   const manifest = await readManifest(root);
   const conflicts = [];
   for (const fixture of await loadFixtures(root, out)) {
@@ -53,7 +53,7 @@ async function ensureFixtures({ root, env, out, force }) {
         `(unpushed edits?): ${conflicts.join(', ')}. Run \`npm run content:push\` first, or pass --force.`
     );
   }
-  await pull({ root, env, source: 'fixtures', out });
+  await pull({ root, env, source: 'fixtures', out, warn });
 }
 
 /**
@@ -109,9 +109,9 @@ export async function ensure({
     );
   }
   if (workers || source === 'd1') {
-    await pull({ root, env, source: 'd1', fetchImpl, out });
+    await pull({ root, env, source: 'd1', fetchImpl, out, warn });
   } else if (source === 'fixtures') {
-    await ensureFixtures({ root, env, out, force });
+    await ensureFixtures({ root, env, out, warn, force });
   } else {
     await requireMaterialized({ root, out, warn });
   }
