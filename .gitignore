@@ -119,7 +119,7 @@ logs/
 test-results/
 *.backup-*
 downloaded_files/
-applications/security-ir-2026/Jaecheol_Lee_Resume_Security_IR_KR.pdf
+applications/security-ir-2026/*_Lee_Resume_Security_IR_KR.pdf
 applications/security-ir-2026/resume-security-ir-preview.png
 # Build/temp artifacts
 .tmp/
