@@ -138,18 +138,21 @@ const MINT_ATTEMPTS = 2;
  * Mint a JobKorea session and store it encrypted in KV as `auth:jobkorea`. Never
  * throws — callers (admin route, scheduled cron) get a plain result back
  * either way. Only the login page's own navigation can time out before any credentials are
- * submitted (submitAndWait swallows the post-submit wait), so that failure alone is retried, once,
- * in a fresh browser context.
+ * submitted (submitAndWait swallows the post-submit wait), so that failure alone is retried in a
+ * fresh browser context: at once by default, or after `retryDelayMs` when a caller such as the
+ * daily cron can wait out a slow spell of the login page.
  * @param {JobKoreaEnv & { SESSIONS: { put: Function } }} env
- * @param {{ withBrowserSession?: typeof defaultWithBrowserSession }} [opts]
+ * @param {{ withBrowserSession?: typeof defaultWithBrowserSession, attempts?: number, retryDelayMs?: number, wait?: (ms: number) => Promise<void> }} [opts]
  * @returns {Promise<{ ok: true, key: string, length: number, attempts?: number } | { ok: false, error: string, code?: unknown }>}
  */
 export async function refreshJobKoreaSession(env, opts = {}) {
+  const { attempts = MINT_ATTEMPTS, retryDelayMs = 0, wait = sleep, ...mintOpts } = opts;
   /** @type {unknown} */
   let failure;
-  for (let attempt = 1; attempt <= MINT_ATTEMPTS; attempt += 1) {
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    if (attempt > 1 && retryDelayMs > 0) await wait(retryDelayMs);
     try {
-      const cookie = await mintJobKoreaSession(env, opts);
+      const cookie = await mintJobKoreaSession(env, mintOpts);
       await writePlatformSession(env, 'jobkorea', cookie, JOBKOREA_SESSION_TTL_S);
       return {
         ok: true,

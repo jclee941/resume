@@ -6,6 +6,12 @@ import { planAutoApplyStart } from './auto-apply-start.js';
 export const RESUME_SYNC_CRON = '0 21 * * *';
 export const HEALTH_CHECK_CRON = '0 * * * *';
 const HISTORY_SYNC_TIMEOUT_MS = 120_000;
+/**
+ * JobKorea's login page has slow spells lasting a minute or two, during which even an immediate
+ * retry times out; the daily cron can afford to wait them out before the history sync needs the
+ * session (4 tries at most, 90 s apart, well inside the scheduled-event limit).
+ */
+export const JOBKOREA_CRON_REFRESH = Object.freeze({ attempts: 4, retryDelayMs: 90_000 });
 
 /**
  * @typedef {{ create(options: { params: unknown }): Promise<unknown> }} WorkflowStarter
@@ -24,7 +30,7 @@ const HISTORY_SYNC_TIMEOUT_MS = 120_000;
 async function refreshPlatformSessions(env) {
   const [wanted, jobkorea] = await Promise.all([
     refreshWantedSession(env),
-    refreshJobKoreaSession(env),
+    refreshJobKoreaSession(env, JOBKOREA_CRON_REFRESH),
   ]);
   if (!wanted.ok) console.warn('[cron] Wanted session refresh failed:', wanted.error);
   if (!jobkorea.ok) console.warn('[cron] JobKorea session refresh failed:', jobkorea.error);
