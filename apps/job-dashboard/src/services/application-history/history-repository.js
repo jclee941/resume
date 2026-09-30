@@ -37,7 +37,7 @@ function dedupeKey(source, jobId) {
 /**
  * @param {HistoryDb} db
  * @param {string} source
- * @returns {Promise<Map<string, { id: string; status: string }>>}
+ * @returns {Promise<Map<string, { id: string; status: string; canonical: boolean }>>}
  */
 async function loadExisting(db, source) {
   const { results = [] } = await db
@@ -49,7 +49,12 @@ async function loadExisting(db, source) {
     results
   )) {
     const key = dedupeKey(source, row.job_id);
-    if (key && !existing.has(key)) existing.set(key, { id: row.id, status: row.status });
+    if (!key) continue;
+    const canonical = row.job_id === key;
+    const seen = existing.get(key);
+    if (!seen || (canonical && !seen.canonical)) {
+      existing.set(key, { id: row.id, status: row.status, canonical });
+    }
   }
   return existing;
 }
@@ -86,8 +91,9 @@ export async function upsertApplicationHistory(db, fetched, now) {
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   );
   const update = db.prepare(
-    'UPDATE applications SET status = ?, updated_at = ?, applied_at = COALESCE(applied_at, ?) WHERE id = ?'
+    'UPDATE applications SET status = ?, job_id = ?, updated_at = ?, applied_at = COALESCE(applied_at, ?) WHERE id = ?'
   );
+  const normalize = db.prepare('UPDATE applications SET job_id = ? WHERE id = ?');
   const statements = [];
   for (const record of records) {
     const row = existing.get(record.jobId);
@@ -110,7 +116,10 @@ export async function upsertApplicationHistory(db, fetched, now) {
       );
       counts.inserted += 1;
     } else if (row.status !== record.status) {
-      statements.push(update.bind(record.status, now, record.appliedAt, row.id));
+      statements.push(update.bind(record.status, record.jobId, now, record.appliedAt, row.id));
+      counts.updated += 1;
+    } else if (!row.canonical) {
+      statements.push(normalize.bind(record.jobId, row.id));
       counts.updated += 1;
     } else {
       counts.unchanged += 1;
