@@ -75,7 +75,10 @@ describe('refreshJobKoreaSession login page timeout retry', () => {
 
     const result = await refreshJobKoreaSession(env, { withBrowserSession });
 
-    assert.deepEqual(result, { ok: false, error: 'Navigation timeout of 30000 ms exceeded' });
+    assert.deepEqual(result, {
+      ok: false,
+      error: 'Navigation timeout of 30000 ms exceeded; pending: none',
+    });
     assert.equal(withBrowserSession.mock.callCount(), 2);
     assert.equal(env.SESSIONS.put.mock.callCount(), 0);
   });
