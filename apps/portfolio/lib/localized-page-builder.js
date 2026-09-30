@@ -4,6 +4,7 @@ const {
   escapeForTemplateLiteral,
 } = require('./html-transformer');
 const { buildHeroContent } = require('./hero-content');
+const { defaultOwnerIdentity, escapeRegExp } = require('./owner-identity');
 
 /**
  * @typedef {Object} PortfolioPageOptions
@@ -14,6 +15,7 @@ const { buildHeroContent } = require('./hero-content');
  * @property {string} version
  * @property {string} buildDeployedAt
  * @property {string} buildDeployedDate
+ * @property {import('./owner-identity').OwnerIdentity} [identity]
  *
  * @typedef {{ indexHtml: string, indexEnHtml: string, indexJaHtml: string }} PortfolioPages
  */
@@ -32,13 +34,18 @@ function sharedPageOptions({ cssContent, templates, version, buildDeployedAt, bu
 /**
  * @param {Record<string, string>} templates
  * @param {'ko' | 'en' | 'ja'} locale
+ * @param {import('./owner-identity').OwnerIdentity} identity
  */
-function contentOptions(templates, locale) {
+function contentOptions(templates, locale, identity) {
   const suffix = locale === 'ko' ? '' : locale[0].toUpperCase() + locale.slice(1);
   return {
     resumeCardsHtml: templates[`resumeCards${suffix}Html`],
     projectCardsHtml: templates[`projectCards${suffix}Html`],
-    projectSchemasHtml: localizeProjectSchemas(templates[`projectSchemas${suffix}Html`], locale),
+    projectSchemasHtml: localizeProjectSchemas(
+      templates[`projectSchemas${suffix}Html`],
+      locale,
+      identity
+    ),
     infrastructureCardsHtml: templates[`infrastructureCards${suffix}Html`],
     skillsHtml: templates[`skills${suffix}Html`],
     certCardsHtml: templates[`certCards${suffix}Html`],
@@ -53,27 +60,28 @@ function contentOptions(templates, locale) {
 /**
  * @param {string | undefined} html
  * @param {string} locale
+ * @param {import('./owner-identity').OwnerIdentity} identity
  * @returns {string}
  */
-function localizeProjectSchemas(html, locale) {
+function localizeProjectSchemas(html, locale, identity) {
   if (!html) return '';
 
+  /** @param {string} name @param {string} alternateName */
+  const creator = (name, alternateName) =>
+    `"creator":{"@type":"Person","name":${JSON.stringify(name)},"alternateName":${JSON.stringify(alternateName)}}`;
+  /** @param {string} name */
+  const site = (name) => `"isPartOf":{"@type":"WebSite","name":${JSON.stringify(`${name} Resume`)}`;
+  /** @param {string} text */
+  const literal = (text) => new RegExp(escapeRegExp(text), 'g');
+  const { nameKo, nameEn, nameJa } = identity;
+
   if (locale === 'en') {
-    return html.replace(
-      /"creator":\{"@type":"Person","name":"이재철","alternateName":"Jaecheol Lee"\}/g,
-      '"creator":{"@type":"Person","name":"Jaecheol Lee","alternateName":"이재철"}'
-    );
+    return html.replace(literal(creator(nameKo, nameEn)), () => creator(nameEn, nameKo));
   }
   if (locale === 'ja') {
     return html
-      .replace(
-        /"creator":\{"@type":"Person","name":"이재철","alternateName":"Jaecheol Lee"\}/g,
-        '"creator":{"@type":"Person","name":"イ・ジェチョル","alternateName":"Jaecheol Lee"}'
-      )
-      .replace(
-        /"isPartOf":\{"@type":"WebSite","name":"Jaecheol Lee Resume"/g,
-        '"isPartOf":{"@type":"WebSite","name":"イ・ジェチョル Resume"'
-      );
+      .replace(literal(creator(nameKo, nameEn)), () => creator(nameJa, nameEn))
+      .replace(literal(site(nameEn)), () => site(nameJa));
   }
   return html;
 }
@@ -83,23 +91,23 @@ function localizeProjectSchemas(html, locale) {
  * @returns {Promise<PortfolioPages>}
  */
 async function buildPortfolioPages(options) {
-  const { indexHtmlRaw, indexEnHtmlRaw } = options;
+  const { indexHtmlRaw, indexEnHtmlRaw, identity = defaultOwnerIdentity() } = options;
   const shared = sharedPageOptions(options);
 
   const indexHtml = await buildLocalizedHtml(indexHtmlRaw, {
     ...shared,
-    ...contentOptions(options.templates, 'ko'),
-    heroContentHtml: buildHeroContent('ko'),
+    ...contentOptions(options.templates, 'ko', identity),
+    heroContentHtml: buildHeroContent('ko', identity),
   });
   const indexEnHtml = await buildLocalizedHtml(indexEnHtmlRaw, {
     ...shared,
-    ...contentOptions(options.templates, 'en'),
-    heroContentHtml: buildHeroContent('en'),
+    ...contentOptions(options.templates, 'en', identity),
+    heroContentHtml: buildHeroContent('en', identity),
   });
-  const indexJaHtml = await buildLocalizedHtml(buildJapaneseTemplate(indexHtmlRaw), {
+  const indexJaHtml = await buildLocalizedHtml(buildJapaneseTemplate(indexHtmlRaw, identity), {
     ...shared,
-    ...contentOptions(options.templates, 'ja'),
-    heroContentHtml: buildHeroContent('ja'),
+    ...contentOptions(options.templates, 'ja', identity),
+    heroContentHtml: buildHeroContent('ja', identity),
   });
 
   return { indexHtml, indexEnHtml, indexJaHtml };

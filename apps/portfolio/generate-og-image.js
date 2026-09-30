@@ -2,6 +2,7 @@ const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
 const logger = require('./logger');
+const { defaultOwnerIdentity } = require('./lib/owner-identity');
 
 /**
  * Generate Open Graph images for resume site
@@ -16,23 +17,24 @@ async function generateOGImage(language = 'ko') {
   const centerX = width / 2;
   const centerY = height / 2;
 
+  const identity = defaultOwnerIdentity();
   const content = {
     ko: {
-      name: '이재철',
+      name: identity.nameKo,
       subtitleLines: ['Security &', 'Infrastructure Engineer'],
       stats: '8년차 | 금융 보안 인프라 · SIEM · IaC',
       url: 'resume.jclee.me',
       label: '한국어',
     },
     en: {
-      name: 'Jaecheol Lee',
+      name: identity.nameEn,
       subtitleLines: ['Security &', 'Infrastructure Engineer'],
       stats: '8 years | Financial Security Infrastructure · SIEM · IaC',
       url: 'resume.jclee.me',
       label: 'English',
     },
     ja: {
-      name: 'イ・ジェチョル',
+      name: identity.nameJa,
       subtitleLines: ['Security &', 'Infrastructure Engineer'],
       stats: '8年目 | 金融セキュリティインフラ · SIEM · IaC',
       url: 'resume.jclee.me',

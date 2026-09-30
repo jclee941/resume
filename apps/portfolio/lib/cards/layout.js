@@ -1,4 +1,5 @@
 const { escapeHtml } = require('../template-sanitizer');
+const { defaultOwnerIdentity } = require('../owner-identity');
 
 /**
  * @typedef {Object} HeroData
@@ -33,11 +34,12 @@ const { escapeHtml } = require('../template-sanitizer');
  * @returns {string} HTML string for hero section
  */
 function generateHeroContent(heroData) {
+  const email = heroData.email || defaultOwnerIdentity().email;
   return `
     <h1 class="hero-name">${escapeHtml(heroData.titleEn)}</h1>
     <h2 class="hero-subtitle">${escapeHtml(heroData.subtitle)}</h2>
     <div class="hero-contact">
-       <a href="mailto:${escapeHtml(heroData.email || 'qws941@kakao.com')}" class="hero-link" aria-label="Email">${escapeHtml(heroData.email || 'qws941@kakao.com')}</a>
+       <a href="mailto:${escapeHtml(email)}" class="hero-link" aria-label="Email">${escapeHtml(email)}</a>
     </div>
   `;
 }

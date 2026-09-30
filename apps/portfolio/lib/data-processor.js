@@ -8,6 +8,7 @@ const crypto = require('crypto');
 const { TEMPLATE_CACHE } = require('./config');
 const { validatePortfolioData } = require('./validators');
 const { calculateDataHash } = require('./content-hashing');
+const { ownerIdentityFromPortfolioData } = require('./owner-identity');
 const {
   generateResumeCards,
   generateResumeDescription,
@@ -63,6 +64,11 @@ function processProjectData({
   const projectData = JSON.parse(projectDataRaw);
   const projectDataEn = projectDataEnRaw ? JSON.parse(projectDataEnRaw) : null;
   const projectDataJa = projectDataJaRaw ? JSON.parse(projectDataJaRaw) : null;
+  const identity = ownerIdentityFromPortfolioData({
+    ko: projectDataRaw,
+    en: projectDataEnRaw,
+    ja: projectDataJaRaw,
+  });
 
   logger.log('🔍 Validating data.json...');
   validatePortfolioData(projectData, { logger });
@@ -92,12 +98,14 @@ function processProjectData({
       (projectDataJa && projectDataJa.projects) || projectData.projects,
       `${dataHash}:ja-projects`
     ),
-    projectSchemasHtml: generateProjectSchemasHtml(projectData.projects),
+    projectSchemasHtml: generateProjectSchemasHtml(projectData.projects, identity),
     projectSchemasEnHtml: generateProjectSchemasHtml(
-      (projectDataEn && projectDataEn.projects) || projectData.projectsEn || projectData.projects
+      (projectDataEn && projectDataEn.projects) || projectData.projectsEn || projectData.projects,
+      identity
     ),
     projectSchemasJaHtml: generateProjectSchemasHtml(
-      (projectDataJa && projectDataJa.projects) || projectData.projects
+      (projectDataJa && projectDataJa.projects) || projectData.projects,
+      identity
     ),
     certCardsHtml: generateCertificationCards(projectData.certifications, dataHash, 'ko'),
     certCardsEnHtml: generateCertificationCards(

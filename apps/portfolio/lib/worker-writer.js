@@ -54,6 +54,7 @@ const {
  * @property {Record<string, unknown>} [rateLimitConfig]
  * @property {string} [contentLastmod]
  * @property {string[]} [allowedEmails]
+ * @property {string} [contactEmail]
  * @property {string} version
  * @property {string} [gitSha]
  */
@@ -113,7 +114,7 @@ function buildWorkerCode(options) {
     generateCspViolationRoute() +
     generateMetricsPostRoute() +
     generateMetricsGetRoute() +
-    generateSeoRoutes() +
+    generateSeoRoutes({ contactEmail: options.contactEmail }) +
     generateFaviconRedirect() +
     generate404() +
     generateErrorHandler({ version: options.version })

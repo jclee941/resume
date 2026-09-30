@@ -1,3 +1,5 @@
+const { defaultOwnerIdentity } = require('../owner-identity');
+
 /**
  * @typedef {Object} ProjectSchemaData
  * @property {string} [title]
@@ -28,9 +30,10 @@
 /**
  * @param {ProjectSchemaData} project
  * @param {number} index
+ * @param {import('../owner-identity').OwnerIdentity} identity
  * @returns {ProjectJsonLd}
  */
-function buildProjectSchema(project, index) {
+function buildProjectSchema(project, index, identity) {
   /** @type {ProjectJsonLd} */
   const schema = {
     '@context': 'https://schema.org',
@@ -44,12 +47,12 @@ function buildProjectSchema(project, index) {
         : project.tech || '',
     creator: {
       '@type': 'Person',
-      name: '이재철',
-      alternateName: 'Jaecheol Lee',
+      name: identity.nameKo,
+      alternateName: identity.nameEn,
     },
     isPartOf: {
       '@type': 'WebSite',
-      name: 'Jaecheol Lee Resume',
+      name: `${identity.nameEn} Resume`,
       url: 'https://resume.jclee.me',
     },
   };
@@ -68,14 +71,15 @@ function buildProjectSchema(project, index) {
  * data without changing the visible layout.
  *
  * @param {Array<ProjectSchemaData>} projects - locale-specific projects (data.projects)
+ * @param {import('../owner-identity').OwnerIdentity} [identity] - schema creator; defaults to the master resume owner
  * @returns {string} concatenated <script type="application/ld+json"> blocks, or ''
  */
-function generateProjectSchemasHtml(projects) {
+function generateProjectSchemasHtml(projects, identity = defaultOwnerIdentity()) {
   if (!Array.isArray(projects) || projects.length === 0) return '';
 
   return projects
     .map((project, index) => {
-      const json = JSON.stringify(buildProjectSchema(project, index))
+      const json = JSON.stringify(buildProjectSchema(project, index, identity))
         // Escape every '<' as a JSON unicode escape so the payload can never
         // prematurely close the <script> tag or start an HTML comment. \u003c
         // is valid JSON (unlike a literal backslash-bang) and parses back to '<'.

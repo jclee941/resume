@@ -10,6 +10,7 @@ const { buildPortfolioPages, escapePortfolioPages } = require('./localized-page-
 const { buildAndWriteWorker } = require('./worker-writer');
 const { escapeForTemplateLiteral } = require('./html-transformer');
 const { resolveContentLastmod } = require('./content-lastmod');
+const { ownerIdentityFromPortfolioData } = require('./owner-identity');
 
 /**
  * @typedef {{ log: (message: string) => void, warn: (message: string) => void, error: (message: string) => void, debug: (message: string) => void }} BuildLogger
@@ -130,6 +131,11 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
   const buildStartTime = Date.now();
   const inputs = await readBuildInputs({ baseDir, logger });
   assertResumePdfsAvailable(inputs, logger);
+  const identity = ownerIdentityFromPortfolioData({
+    ko: inputs.projectDataRaw,
+    en: inputs.projectDataEnRaw,
+    ja: inputs.projectDataJaRaw,
+  });
 
   const { projectData, templates } = processProjectData({
     projectDataRaw: inputs.projectDataRaw,
@@ -157,6 +163,7 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
     version,
     buildDeployedAt,
     buildDeployedDate,
+    identity,
   });
   logger.log('✓ Localized HTML processed\n');
 
@@ -195,7 +202,7 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
     manifestEnJson: inputs.manifestEnJson,
     serviceWorker: inputs.serviceWorker,
     mainJs: inputs.mainJs,
-    robotsTxt: inputs.robotsTxt,
+    robotsTxt: inputs.robotsTxt?.replace('{{OWNER_NAME}}', () => identity.nameKo),
     sitemapXml: inputs.sitemapXml.replace(
       /<lastmod>[^<]*<\/lastmod>/g,
       `<lastmod>${contentLastmod}</lastmod>`
@@ -205,6 +212,7 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
     metrics: buildInitialMetrics({ version, deployedAt }),
     rateLimitConfig: { windowSize: 60 * 1000, maxRequests: 30 },
     allowedEmails,
+    contactEmail: identity.email,
     version,
   });
 
