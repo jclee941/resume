@@ -3,11 +3,24 @@ const {
   captureState,
   dynamicStateDescriptors,
 } = require('./fixtures/public-copy-ledger-extractor');
-const { DYNAMIC_STATE_SHAPE, runtimeCopy } = require('./fixtures/public-copy-ledger-serializer');
+const {
+  DYNAMIC_STATE_SHAPE,
+  capabilityNames,
+  capabilityStatus,
+  runtimeCopy,
+} = require('./fixtures/public-copy-ledger-serializer');
+const { SKILL_SEARCH } = require('./fixtures/public-copy-ledger-constants');
+const { escapeRegExp, loadPortfolioData, ownerIdentity } = require('../helpers/owner-data');
+
 const DESKTOP = { key: 'desktop-1280x900', width: 1280, height: 900, dpr: 1 };
 const MOBILE = { key: 'mobile-375x812', width: 375, height: 812, dpr: 1 };
 async function captureRoute(page, context, routeInfo, occurrences) {
-  const copy = runtimeCopy(routeInfo.locale, process.env.PORTFOLIO_LEDGER_MODE);
+  const mode = process.env.PORTFOLIO_LEDGER_MODE;
+  const copy = runtimeCopy(routeInfo.locale, mode);
+  const ownerEmail = ownerIdentity('ko').email;
+  const projectTitles = new Set(
+    loadPortfolioData(routeInfo.locale).projects.map((project) => project.title)
+  );
   await captureState(page, occurrences, routeInfo, 'initial', DESKTOP);
   await captureState(page, occurrences, routeInfo, 'mobile-nav-open', MOBILE, async (current) => {
     const toggle = current.locator('.nav-toggle');
@@ -36,7 +49,7 @@ async function captureRoute(page, context, routeInfo, occurrences) {
   });
   const dynamic = await dynamicStateDescriptors(page, routeInfo, DESKTOP);
   expect(dynamic).toEqual(DYNAMIC_STATE_SHAPE);
-  for (const id of dynamic.capabilities) {
+  for (const [index, id] of dynamic.capabilities.entries()) {
     await captureState(
       page,
       occurrences,
@@ -51,9 +64,15 @@ async function captureRoute(page, context, routeInfo, occurrences) {
           1
         );
         await expect(current.locator('#projects')).toHaveAttribute('data-capability-selected', id);
-        await expect(current.locator('[data-capability-status][role="status"]')).toHaveText(
-          copy.capabilities[id]
-        );
+        // The listed projects come from the page; they must be portfolio projects and the
+        // status line must follow the localized template for that many names.
+        const status = current.locator('[data-capability-status][role="status"]');
+        await expect(status).toHaveText(new RegExp(`^${escapeRegExp(copy.labels[index])}: `));
+        const text = (await status.innerText()).trim();
+        const names = capabilityNames(text);
+        expect(names.length).toBeGreaterThan(0);
+        for (const name of names) expect(projectTitles.has(name), name).toBe(true);
+        expect(text).toBe(capabilityStatus(routeInfo.locale, mode, index, names));
       }
     );
   }
@@ -109,10 +128,10 @@ async function captureRoute(page, context, routeInfo, occurrences) {
     DESKTOP,
     async (current) => {
       const link = current.locator('[data-contact-email]').first();
-      await expect(link).toHaveAttribute('data-contact-email', 'qws941@kakao.com');
+      await expect(link).toHaveAttribute('data-contact-email', ownerEmail);
       await link.click();
       await expect(link).toHaveClass(/is-copied/);
-      expect(await current.evaluate(() => navigator.clipboard.readText())).toBe('qws941@kakao.com');
+      expect(await current.evaluate(() => navigator.clipboard.readText())).toBe(ownerEmail);
       await expect(current.locator('.contact-copy-status[role="status"]')).toHaveText(
         copy.clipboard
       );
@@ -153,7 +172,7 @@ async function captureRoute(page, context, routeInfo, occurrences) {
     'skill-search-cloudflare',
     DESKTOP,
     async (current) => {
-      await current.locator('#skill-search-input').fill('Cloudflare');
+      await current.locator('#skill-search-input').fill(SKILL_SEARCH.term);
       await expect(current.locator('#skill-search-count[aria-live="polite"]')).toHaveText(
         copy.search
       );
@@ -168,7 +187,7 @@ async function captureRoute(page, context, routeInfo, occurrences) {
             ).length,
           }))
         )
-        .toEqual({ cards: 2, items: 2 });
+        .toEqual({ cards: SKILL_SEARCH.cards, items: SKILL_SEARCH.items });
       expect(
         await current.evaluate(
           () =>
@@ -176,7 +195,7 @@ async function captureRoute(page, context, routeInfo, occurrences) {
               (item) => item.style.display !== 'none'
             ).length
         )
-      ).toBe(4);
+      ).toBe(SKILL_SEARCH.cards + SKILL_SEARCH.items);
     }
   );
   for (const domain of dynamic.domains) {
