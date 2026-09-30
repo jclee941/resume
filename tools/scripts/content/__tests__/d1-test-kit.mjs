@@ -30,11 +30,11 @@ export function put(root, repoPath, content) {
  * @param {{ masterRow?: boolean }} [options]
  */
 export function fakeD1({ masterRow = true } = {}) {
-  /** @type {Map<string, { body: Buffer, sha256: string, size: number }>} */
+  /** @type {Map<string, { body: Buffer, sha256: string, size: number, updatedAt?: string }>} */
   const files = new Map();
   const calls = [];
-  const seed = (repoPath, bytes, sha256 = sha256Hex(bytes)) =>
-    files.set(repoPath, { body: Buffer.from(bytes), sha256, size: bytes.length });
+  const seed = (repoPath, bytes, sha256 = sha256Hex(bytes), updatedAt) =>
+    files.set(repoPath, { body: Buffer.from(bytes), sha256, size: bytes.length, updatedAt });
   const answer = (sql, params) => {
     if (sql.startsWith('SELECT path, sha256 FROM content_files')) {
       return { results: [...files].map(([p, f]) => ({ path: p, sha256: f.sha256 })), meta: {} };
@@ -49,6 +49,7 @@ export function fakeD1({ masterRow = true } = {}) {
           body_hex: f.body.toString('hex').toUpperCase(),
           sha256: f.sha256,
           size: f.size,
+          updated_at: f.updatedAt,
         }));
       return { results: page, meta: {} };
     }
