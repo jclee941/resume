@@ -63,3 +63,38 @@ describe('mintJobKoreaSession browser context', () => {
     assert.equal(context.close.mock.callCount(), 1);
   });
 });
+
+describe('mintJobKoreaSession context cleanup', () => {
+  it('closes the fresh context when opening its page fails', async () => {
+    const context = {
+      newPage: mock.fn(async () => {
+        throw new Error('Target closed');
+      }),
+      close: mock.fn(async () => {}),
+    };
+    const browser = { createBrowserContext: mock.fn(async () => context) };
+
+    await assert.rejects(
+      mintJobKoreaSession(CREDS, { withBrowserSession: async (_env, fn) => fn(browser) }),
+      /Target closed/
+    );
+    assert.equal(context.close.mock.callCount(), 1);
+  });
+
+  it('stops waiting for a hung page and context close', { timeout: 2000 }, async () => {
+    const hang = () => new Promise(() => {});
+    const page = { ...fakePage({ form: false }), close: mock.fn(hang) };
+    const context = { newPage: mock.fn(async () => page), close: mock.fn(hang) };
+    const browser = { createBrowserContext: mock.fn(async () => context) };
+
+    await assert.rejects(
+      mintJobKoreaSession(CREDS, {
+        withBrowserSession: async (_env, fn) => fn(browser),
+        cleanupMs: 5,
+      }),
+      /email input not found/
+    );
+    assert.equal(page.close.mock.callCount(), 1);
+    assert.equal(context.close.mock.callCount(), 1);
+  });
+});

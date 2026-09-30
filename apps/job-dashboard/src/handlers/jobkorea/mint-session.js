@@ -9,7 +9,10 @@
  * @module handlers/jobkorea/mint-session
  */
 
-import { withBrowserSession as defaultWithBrowserSession } from '../../services/browser-session.js';
+import {
+  withBrowserSession as defaultWithBrowserSession,
+  settleWithin,
+} from '../../services/browser-session.js';
 import { restrictToJobKorea } from '../../services/jobkorea-request-filter.js';
 import { writePlatformSession } from '../../services/platform-session.js';
 import {
@@ -26,6 +29,7 @@ export const AUTH_JOBKOREA_KEY = 'auth:jobkorea';
 // redirects to the homepage, so use /Login.
 export const JOBKOREA_LOGIN_URL = 'https://www.jobkorea.co.kr/Login';
 export const JOBKOREA_SESSION_TTL_S = 60 * 60 * 6; // 6h
+const CLEANUP_TIMEOUT_MS = 5_000;
 
 /**
  * @typedef {{
@@ -75,12 +79,16 @@ async function openLoginPage(page, requests) {
  * Rendering broker. Fails with code JOBKOREA_CAPTCHA_REQUIRED when JobKorea
  * presents a CAPTCHA.
  * @param {JobKoreaEnv} env
- * @param {{ withBrowserSession?: typeof defaultWithBrowserSession, pollIntervalMs?: number }} [opts]
+ * @param {{ withBrowserSession?: typeof defaultWithBrowserSession, pollIntervalMs?: number, cleanupMs?: number }} [opts]
  * @returns {Promise<string>} cookie string `name=value; name2=value2`
  */
 export async function mintJobKoreaSession(
   env,
-  { withBrowserSession = defaultWithBrowserSession, pollIntervalMs = LOGIN_POLL_INTERVAL_MS } = {}
+  {
+    withBrowserSession = defaultWithBrowserSession,
+    pollIntervalMs = LOGIN_POLL_INTERVAL_MS,
+    cleanupMs = CLEANUP_TIMEOUT_MS,
+  } = {}
 ) {
   const email = env?.JOBKOREA_USERNAME || env?.JOBKOREA_EMAIL;
   const password = env?.JOBKOREA_PASSWORD;
@@ -93,8 +101,10 @@ export async function mintJobKoreaSession(
     // flow's JobKorea cookies; logged in, /Login redirects away from the form. Log in inside a fresh
     // context and close it so no login state is left in the pool either.
     const context = await browser.createBrowserContext();
-    const page = await context.newPage();
+    /** @type {import('@cloudflare/puppeteer').Page | undefined} */
+    let page;
     try {
+      page = await context.newPage();
       // Stylesheets stay allowed: which login tab's submit button is visible is decided by CSS.
       const requests = await restrictToJobKorea(page, LOGIN_BLOCKED_RESOURCE_TYPES);
       await openLoginPage(page, requests);
@@ -126,8 +136,10 @@ export async function mintJobKoreaSession(
         throw new Error('JobKorea login succeeded but no session cookies were found');
       return cookieString;
     } finally {
-      await page.close().catch(() => {});
-      await context.close().catch(() => {});
+      // A stalled page can leave these protocol calls pending for minutes; the cron's budget
+      // cannot wait for them.
+      if (page) await settleWithin(page.close(), cleanupMs);
+      await settleWithin(context.close(), cleanupMs);
     }
   });
 }
