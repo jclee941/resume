@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS config (
 
 CREATE INDEX IF NOT EXISTS idx_applications_status ON applications(status);
 CREATE INDEX IF NOT EXISTS idx_applications_source ON applications(source);
+CREATE INDEX IF NOT EXISTS idx_applications_source_job_id ON applications(source, job_id);
 CREATE INDEX IF NOT EXISTS idx_applications_company ON applications(company);
 CREATE INDEX IF NOT EXISTS idx_applications_created_at ON applications(created_at);
 CREATE INDEX IF NOT EXISTS idx_applications_auto_apply_run ON applications(auto_apply_run_id);
