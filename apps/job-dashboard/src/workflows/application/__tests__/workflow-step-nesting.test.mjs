@@ -44,7 +44,12 @@ function createStepMock() {
   };
 }
 
-function createApprovalContext({ statuses = {}, failCreateOnce = [], failNotifyOnce = [] } = {}) {
+function createApprovalContext({
+  statuses = {},
+  failCreateOnce = [],
+  failNotifyOnce = [],
+  existingRequests = [],
+} = {}) {
   const created = [];
   const notifications = [];
   const pendingFailures = { create: new Set(failCreateOnce), notify: new Set(failNotifyOnce) };
@@ -52,7 +57,21 @@ function createApprovalContext({ statuses = {}, failCreateOnce = [], failNotifyO
     created,
     notifications,
     env: {
-      JOB_DB: { prepare: () => ({ bind: () => ({ first: async () => null }) }) },
+      JOB_DB: {
+        prepare: (query) => ({
+          bind: (...values) => ({
+            first: async () => {
+              if (!/FROM approval_requests/.test(query)) return null;
+              const [jobId, ownRequestId] = values;
+              return (
+                existingRequests.find(
+                  (request) => request.job_id === jobId && request.id !== ownRequestId
+                ) ?? null
+              );
+            },
+          }),
+        }),
+      },
     },
     async createApprovalRequest(workflowId, job, status) {
       if (pendingFailures.create.delete(job.id)) throw new Error(`create failed for ${job.id}`);
@@ -166,6 +185,83 @@ test('no sleep or resolve step when nothing is pending', async () => {
     false
   );
   assert.equal(ctx.notifications.length, 0);
+});
+
+test('a pending request from another workflow skips the job without sleep or notification', async () => {
+  const step = createStepMock();
+  const ctx = createApprovalContext({
+    existingRequests: [
+      { id: 'approval-wf-0-a', job_id: 'a', workflow_id: 'wf-0', status: 'pending' },
+    ],
+  });
+  const workflow = newWorkflow();
+
+  const { approvedJobs, approvalResults } = await processApprovalGates(
+    ctx,
+    step,
+    workflow,
+    [jobOf('a', 65)],
+    false,
+    90
+  );
+
+  assert.deepEqual(
+    approvalResults.map((result) => [result.status, result.requestId]),
+    [['already-requested', 'approval-wf-0-a']]
+  );
+  assert.deepEqual(ctx.created, []);
+  assert.deepEqual(ctx.notifications, []);
+  assert.equal(
+    step.calls.some((call) => call.api === 'sleep' || call.name === 'resolve-approvals'),
+    false
+  );
+  assert.deepEqual(approvedJobs, []);
+  assert.equal(workflow.stats.jobsAlreadyRequested, 1);
+  assert.equal(workflow.stats.jobsApproved, 0);
+  assert.equal(workflow.stats.jobsRejected, 0);
+});
+
+test('a human-rejected earlier request keeps the job skipped', async () => {
+  const step = createStepMock();
+  const ctx = createApprovalContext({
+    existingRequests: [
+      { id: 'approval-wf-0-a', job_id: 'a', workflow_id: 'wf-0', status: 'rejected' },
+    ],
+  });
+  const jobs = [jobOf('a', 95), jobOf('b', 65)];
+
+  const { approvalResults } = await processApprovalGates(ctx, step, newWorkflow(), jobs, true, 90);
+
+  assert.deepEqual(
+    approvalResults.map((result) => result.status),
+    ['already-requested', 'pending']
+  );
+  assert.deepEqual(ctx.created, [{ jobId: 'b', status: 'pending' }]);
+  assert.deepEqual(
+    ctx.notifications.map((n) => n.jobId),
+    ['b']
+  );
+});
+
+test('a retried gate is not skipped by its own earlier request', async () => {
+  const step = createStepMock();
+  const ctx = createApprovalContext({
+    existingRequests: [
+      { id: 'approval-wf-1-a', job_id: 'a', workflow_id: 'wf-1', status: 'pending' },
+    ],
+  });
+
+  const { approvalResults } = await processApprovalGates(
+    ctx,
+    step,
+    newWorkflow(),
+    [jobOf('a', 65)],
+    false,
+    90
+  );
+
+  assert.equal(approvalResults[0].status, 'pending');
+  assert.equal(ctx.notifications.length, 1);
 });
 
 test('searchWorkflowJobs pauses between platforms outside the search steps', async () => {

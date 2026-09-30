@@ -27,7 +27,7 @@ const ctx = {
   env: {
     JOB_DB: {
       prepare(query) {
-        assert.match(query, /SELECT id FROM applications/);
+        assert.match(query, /SELECT id FROM (applications|approval_requests)/);
         return { bind: () => ({ first: async () => null }) };
       },
     },
