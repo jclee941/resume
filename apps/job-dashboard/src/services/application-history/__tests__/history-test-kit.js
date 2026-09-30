@@ -85,3 +85,52 @@ ${rows.map(APPLY_ROW).join('')}${carried.map(CARRIED_ROW).join('')}</tbody></tab
 }
 
 export const EXPIRED_HTML = '<html><head><title>로그인│잡코리아</title></head><body></body></html>';
+
+/**
+ * Fake Browser Rendering session. `gotoFailures` are thrown by successive `goto` calls; with
+ * `partialLoad` the page has already committed the URL when `goto` throws, like a real timeout
+ * that fires after the document arrived but before DOMContentLoaded.
+ */
+export function fakeBrowser(pagesByUrl, { gotoFailures = [], partialLoad = false } = {}) {
+  const visited = [];
+  const failures = [...gotoFailures];
+  const cookies = [];
+  const calls = [];
+  const gotoOptions = [];
+  const requestHandlers = [];
+  let opened = 0;
+  const withBrowserSession = async (_env, run) => {
+    opened += 1;
+    const page = {
+      current: '',
+      setCookie: async (...next) => void cookies.push(...next),
+      setRequestInterception: async (enabled) => void calls.push(`intercept:${enabled}`),
+      on: (event, handler) => {
+        if (event === 'request') requestHandlers.push(handler);
+      },
+      goto: async (url, options) => {
+        calls.push('goto');
+        visited.push(url);
+        gotoOptions.push(options);
+        if (failures.length > 0) {
+          if (partialLoad) page.current = url;
+          throw failures.shift();
+        }
+        page.current = url;
+      },
+      content: async () => pagesByUrl[page.current] ?? EXPIRED_HTML,
+      url: () => page.current,
+      close: async () => {},
+    };
+    return run({ newPage: async () => page });
+  };
+  return {
+    withBrowserSession,
+    visited,
+    cookies,
+    calls,
+    gotoOptions,
+    requestHandlers,
+    opened: () => opened,
+  };
+}
