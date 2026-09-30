@@ -221,3 +221,57 @@ describe('fetchJobKoreaHistory overall deadline', () => {
     }
   );
 });
+
+describe('fetchJobKoreaHistory deadline including the session read', () => {
+  it('counts a stalled KV session read against the deadline', { timeout: 2000 }, async () => {
+    const env = { SESSIONS: { get: () => new Promise(() => {}) }, ENCRYPTION_KEY: 'unused' };
+
+    await assert.rejects(
+      fetchJobKoreaHistory(env, {
+        withBrowserSession: async () => assert.fail('no browser before the session is read'),
+        deadlineMs: 5,
+      }),
+      { code: 'TIMEOUT', message: 'JobKorea history fetch gave up after 5 ms; pending: none' }
+    );
+  });
+});
+
+describe('fetchJobKoreaHistory work after its deadline', () => {
+  it('starts no browser work when the session read ends after the deadline', async () => {
+    const env = await sessionEnv(createSqliteD1(), ['jobkorea']);
+    let now = 0;
+    const clock = () => now;
+    const readsDone = { get: env.SESSIONS.get };
+    env.SESSIONS.get = async (key) => {
+      const value = await readsDone.get(key);
+      now = 1000;
+      return value;
+    };
+
+    await assert.rejects(
+      fetchJobKoreaHistory(env, {
+        withBrowserSession: async () => assert.fail('no browser after the deadline'),
+        deadlineMs: 100,
+        clock,
+      }),
+      { code: 'TIMEOUT', message: 'JobKorea history window closed before the browser was acquired' }
+    );
+  });
+
+  it('opens no page when the browser arrives after the deadline', async () => {
+    const env = await sessionEnv(createSqliteD1(), ['jobkorea']);
+    let now = 0;
+
+    await assert.rejects(
+      fetchJobKoreaHistory(env, {
+        withBrowserSession: async (_env, run) => {
+          now = 1000;
+          return run({ newPage: async () => assert.fail('no page after the deadline') });
+        },
+        deadlineMs: 100,
+        clock: () => now,
+      }),
+      { code: 'TIMEOUT', message: 'JobKorea history window closed before the page was opened' }
+    );
+  });
+});
