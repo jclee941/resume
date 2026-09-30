@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 import { writePlatformSession } from '../../../services/platform-session.js';
 import { searchWanted } from '../platforms.js';
+import { formatWantedExperience } from '../wanted-detail.js';
 
 const ENCRYPTION_KEY = btoa('0123456789abcdef0123456789abcdef');
 const realFetch = globalThis.fetch;
@@ -11,6 +12,10 @@ const realFetch = globalThis.fetch;
 let requests;
 /** @type {Map<string, () => Response>} */
 let responders;
+/** @type {string[]} */
+let detailRequests;
+/** @type {Map<string, () => Response | Promise<Response>>} */
+let detailResponders;
 
 async function ctxWithWantedSession() {
   /** @type {Map<string, string>} */
@@ -36,8 +41,15 @@ function jsonResponse(ids) {
 beforeEach(() => {
   requests = [];
   responders = new Map();
+  detailRequests = [];
+  detailResponders = new Map();
   globalThis.fetch = async (input) => {
     const url = new URL(String(input));
+    const detailId = url.pathname.match(/^\/api\/v4\/jobs\/(\d+)$/)?.[1];
+    if (detailId) {
+      detailRequests.push(detailId);
+      return (detailResponders.get(detailId) ?? (() => Response.json({ job: {} })))();
+    }
     requests.push(url);
     const respond = responders.get(url.searchParams.get('query') ?? '');
     if (!respond) throw new Error(`unexpected query ${url.search}`);
@@ -150,4 +162,121 @@ test('throws when no Wanted session is stored', async () => {
     ),
     /No Wanted session available/
   );
+});
+
+test('enriches merged jobs with description and experience from the detail endpoint', async () => {
+  responders.set('security', jsonResponse([10, 11]));
+  detailResponders.set('10', () =>
+    Response.json({
+      job: {
+        annual_from: 3,
+        annual_to: 8,
+        detail: {
+          intro: 'company boilerplate',
+          main_tasks: 'SIEM 운영',
+          requirements: 'Linux 경험',
+          preferred_points: 'Terraform',
+        },
+      },
+    })
+  );
+  detailResponders.set('11', () =>
+    Response.json({ job: { annual_from: 5, annual_to: 100, detail: { main_tasks: 'cloud 보안' } } })
+  );
+  const ctx = await ctxWithWantedSession();
+
+  const jobs = await searchWanted(ctx, { keywords: ['security'] });
+
+  assert.deepEqual(detailRequests.sort(), ['10', '11']);
+  assert.equal(jobs[0].description, 'SIEM 운영\nLinux 경험\nTerraform');
+  assert.equal(jobs[0].experience, '3-8년');
+  assert.equal(jobs[1].description, 'cloud 보안');
+  assert.equal(jobs[1].experience, '5년 이상');
+  assert.equal(jobs[0].position, 'Role 10');
+  assert.equal(jobs[0].url, 'https://www.wanted.co.kr/wd/10');
+});
+
+test('enriches the single-keyword path too', async () => {
+  responders.set('security', jsonResponse([12]));
+  detailResponders.set('12', () =>
+    Response.json({ job: { annual_from: 0, annual_to: 2, detail: { requirements: 'Linux' } } })
+  );
+  const ctx = await ctxWithWantedSession();
+
+  const [job] = await searchWanted(ctx, { keyword: 'security' });
+
+  assert.equal(job.description, 'Linux');
+  assert.equal(job.experience, '0-2년');
+});
+
+test('a failing detail request keeps the list job and warns', async (t) => {
+  const warn = t.mock.method(console, 'warn', () => {});
+  responders.set('security', jsonResponse([20, 21, 22]));
+  detailResponders.set('20', () => new Response('nope', { status: 500 }));
+  detailResponders.set('21', () => {
+    throw new Error('network down');
+  });
+  detailResponders.set('22', () =>
+    Response.json({ job: { annual_from: 1, annual_to: 3, detail: { requirements: 'devops' } } })
+  );
+  const ctx = await ctxWithWantedSession();
+
+  const jobs = await searchWanted(ctx, { keywords: ['security'] });
+
+  assert.deepEqual(
+    jobs.map((job) => [job.id, job.description, job.company]),
+    [
+      ['wanted-20', '', 'Co 20'],
+      ['wanted-21', '', 'Co 21'],
+      ['wanted-22', 'devops', 'Co 22'],
+    ]
+  );
+  assert.equal(warn.mock.callCount(), 2);
+});
+
+test('fetches details for the first 40 jobs only, four at a time', async () => {
+  const ids = Array.from({ length: 45 }, (_, index) => index + 1);
+  responders.set('security', jsonResponse(ids));
+  let inFlight = 0;
+  let maxInFlight = 0;
+  for (const id of ids) {
+    detailResponders.set(String(id), async () => {
+      inFlight += 1;
+      maxInFlight = Math.max(maxInFlight, inFlight);
+      await new Promise((resolve) => setImmediate(resolve));
+      inFlight -= 1;
+      return Response.json({ job: { detail: { requirements: `req ${id}` } } });
+    });
+  }
+  const ctx = await ctxWithWantedSession();
+
+  const jobs = await searchWanted(ctx, { keywords: ['security'] });
+
+  assert.equal(jobs.length, 45);
+  assert.equal(detailRequests.length, 40);
+  assert.deepEqual(
+    [...detailRequests].sort((a, b) => Number(a) - Number(b)),
+    ids.slice(0, 40).map(String)
+  );
+  assert.equal(maxInFlight, 4);
+  assert.equal(jobs[39].description, 'req 40');
+  assert.equal(jobs[40].description, '');
+});
+
+test('makes no detail request when the list is empty', async () => {
+  responders.set('security', jsonResponse([]));
+  const ctx = await ctxWithWantedSession();
+
+  const jobs = await searchWanted(ctx, { keywords: ['security'] });
+
+  assert.deepEqual(jobs, []);
+  assert.equal(detailRequests.length, 0);
+});
+
+test('formats the annual range in shapes match-scoring parses', () => {
+  assert.equal(formatWantedExperience({ annual_from: 3, annual_to: 8 }), '3-8년');
+  assert.equal(formatWantedExperience({ annual_from: 3, annual_to: 3 }), '3년');
+  assert.equal(formatWantedExperience({ annual_from: 5, annual_to: 100 }), '5년 이상');
+  assert.equal(formatWantedExperience({ annual_from: 0 }), '0년 이상');
+  assert.equal(formatWantedExperience({}), '');
 });
