@@ -8,8 +8,6 @@ import { listApplications } from './list-query.js';
 import { jsonResponse } from '../../middleware/cors.js';
 import { updateApplicationStatus } from './status-operation.js';
 import { updateApplication } from './update-operation.js';
-import { syncWantedApplications } from './wanted-sync-operation.js';
-import { WantedHistoryRepository } from './wanted-history-repository.js';
 import { decideWorkflowApprovals } from './workflow-approval-operation.js';
 
 export { APPLICATION_STATUS, VALID_STATUSES } from './statuses.js';
@@ -29,7 +27,6 @@ export class ApplicationsHandler {
       new ApplicationRepository(db)
     );
     this.approvalRequests = new ApprovalRequestRepository(db);
-    this.wantedHistoryRepository = new WantedHistoryRepository(db);
   }
 
   /**
@@ -95,14 +92,6 @@ export class ApplicationsHandler {
    */
   async cleanupExpired(_request) {
     return cleanupExpiredApplications(this);
-  }
-
-  /**
-   * @param {Request} request
-   * @returns {Promise<Response>}
-   */
-  async syncWantedHistory(request) {
-    return syncWantedApplications(this, request);
   }
 
   /**
