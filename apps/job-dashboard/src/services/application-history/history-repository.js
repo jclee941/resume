@@ -100,8 +100,8 @@ export async function upsertApplicationHistory(db, fetched, now) {
   );
   /** @type {unknown[]} */
   const statements = [];
-  /** @type {Array<'inserted' | 'updated'>} */
-  const outcomes = [];
+  /** @type {Array<{ outcome: 'inserted' | 'updated'; record: import('./history-types.js').HistoryRecord }>} */
+  const planned = [];
   for (const record of records) {
     const row = existing.get(record.jobId);
     if (!row) {
@@ -121,7 +121,7 @@ export async function upsertApplicationHistory(db, fetched, now) {
           record.appliedAt
         )
       );
-      outcomes.push('inserted');
+      planned.push({ outcome: 'inserted', record });
     } else if (row.status !== record.status) {
       statements.push(
         update.bind(
@@ -134,21 +134,44 @@ export async function upsertApplicationHistory(db, fetched, now) {
           record.jobId
         )
       );
-      outcomes.push('updated');
+      planned.push({ outcome: 'updated', record });
     } else if (!row.canonical) {
       statements.push(normalize.bind(record.jobId, row.id, record.jobId));
-      outcomes.push('updated');
+      planned.push({ outcome: 'updated', record });
     } else {
       counts.unchanged += 1;
     }
   }
   // A concurrent sync may have written the same row after the SELECT, so the counts come from
-  // what each statement actually changed: a conflict or a guarded no-op changes 0 rows.
+  // what each statement actually changed: a guarded no-op changes 0 rows. An insert that hit a
+  // row another sync created meanwhile is retried as a guarded update, so its status is not lost.
+  /** @type {unknown[]} */
+  const retries = [];
   for (let start = 0; start < statements.length; start += BATCH_SIZE) {
     const results = await db.batch(statements.slice(start, start + BATCH_SIZE));
     results.forEach((result, index) => {
-      counts[result.meta.changes > 0 ? outcomes[start + index] : 'unchanged'] += 1;
+      const { outcome, record } = planned[start + index];
+      if (result.meta.changes > 0) counts[outcome] += 1;
+      else if (outcome === 'updated') counts.unchanged += 1;
+      else {
+        const id = `history-${record.jobId}`;
+        retries.push(
+          update.bind(
+            record.status,
+            record.jobId,
+            now,
+            record.appliedAt,
+            id,
+            record.status,
+            record.jobId
+          )
+        );
+      }
     });
+  }
+  for (let start = 0; start < retries.length; start += BATCH_SIZE) {
+    const results = await db.batch(retries.slice(start, start + BATCH_SIZE));
+    for (const result of results) counts[result.meta.changes > 0 ? 'updated' : 'unchanged'] += 1;
   }
   return counts;
 }
