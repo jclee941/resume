@@ -3,6 +3,7 @@ import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
+import { ensure } from './ensure.mjs';
 import { guard } from './guard.mjs';
 import { REPO_ROOT, buildManifest, loadPack } from './pack.mjs';
 import { pull } from './pull.mjs';
@@ -13,6 +14,8 @@ const USAGE = `usage: cli.mjs <command> [options]
   push [--dry-run] [--prune]     upload new/changed pack files to D1
   status                         compare local pack files with D1
   manifest [--out file]          print the local pack file count; write path/sha256/size JSON
+  ensure [--force]               build-time policy: fixtures (CONTENT_SOURCE=fixtures), D1 (WORKERS_CI=1),
+                                 else require a pulled pack
   guard [--staged|--tracked] [--report]  fail on pack paths or personal tokens in git`;
 
 const OPTIONS = {
@@ -23,17 +26,18 @@ const OPTIONS = {
   staged: { type: 'boolean' },
   tracked: { type: 'boolean' },
   report: { type: 'boolean' },
+  force: { type: 'boolean' },
 };
 
 /**
  * Run one CLI command and return its exit code.
  * @param {string[]} argv
- * @param {{ root?: string, env?: Record<string, string | undefined>, fetchImpl?: typeof fetch, out?: (line: string) => void }} [context]
+ * @param {{ root?: string, env?: Record<string, string | undefined>, fetchImpl?: typeof fetch, out?: (line: string) => void, warn?: (line: string) => void }} [context]
  * @returns {Promise<number>}
  */
 export async function run(
   argv,
-  { root = REPO_ROOT, env = process.env, fetchImpl, out = console.log } = {}
+  { root = REPO_ROOT, env = process.env, fetchImpl, out = console.log, warn = console.warn } = {}
 ) {
   let parsed;
   try {
@@ -69,6 +73,9 @@ export async function run(
         out(`pack files: ${files.length} (${bytes} bytes)`);
         return 0;
       }
+      case 'ensure':
+        await ensure({ ...shared, warn, force: flags.force });
+        return 0;
       case 'guard': {
         if (flags.staged && flags.tracked) throw new Error('choose one of --staged or --tracked');
         const mode = flags.tracked ? 'tracked' : 'staged';

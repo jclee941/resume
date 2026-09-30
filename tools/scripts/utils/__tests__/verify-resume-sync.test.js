@@ -169,7 +169,10 @@ describe('deterministic resume sync contract', () => {
 
     // When/Then: build owns the only sync and automation delegates through it once.
     assert.equal(scripts['build:worker'], 'npm run build --workspace=@resume/portfolio-worker');
-    assert.equal(scripts.build, 'npm run sync:data && npm run build:worker');
+    assert.equal(
+      scripts.build,
+      'node tools/scripts/content/cli.mjs ensure && npm run sync:data && npm run build:worker'
+    );
     assert.equal(scripts['build:portfolio'], 'npm run build');
     assert.equal(
       scripts['automate:ssot'],

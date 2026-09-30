@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import picomatch from 'picomatch';
+import { compileGlobs } from './glob.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 export const REPO_ROOT = path.resolve(HERE, '../../..');
@@ -52,8 +52,8 @@ export async function loadPack(file = PACK_FILE) {
  * @returns {PackMatcher}
  */
 export function createMatcher(pack) {
-  const included = picomatch(pack.include, { dot: true });
-  const excluded = picomatch(pack.exclude, { dot: true });
+  const included = compileGlobs(pack.include);
+  const excluded = compileGlobs(pack.exclude);
   return { matches: (repoPath) => included(repoPath) && !excluded(repoPath) };
 }
 
