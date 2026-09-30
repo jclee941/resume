@@ -1,11 +1,11 @@
 import { getConfig, getTodayApplicationCount } from './db-helpers.js';
-import { getWantedSession } from './session-helpers.js';
-import { SUPPORTED_PLATFORMS } from './constants.js';
+import { readPlatformSession } from '../../services/platform-session.js';
+import { DISABLED_PLATFORMS, SUPPORTED_PLATFORMS } from './constants.js';
 import { jsonResponse } from '../../middleware/cors.js';
 import { ATS_DRY_RUN_PLATFORMS } from '../../workflows/application/platforms.js';
 
 /**
- * @typedef {import('./db-helpers.js').DbEnv} StatusEnv
+ * @typedef {import('./db-helpers.js').DbEnv & Parameters<typeof readPlatformSession>[0]} StatusEnv
  * @typedef {import('./db-helpers.js').D1DatabaseLike} StatusDb
  */
 
@@ -23,17 +23,18 @@ const SAFE_CONFIG = {
 export async function getAutoApplyStatus(env) {
   const config = await getSafeConfig(env);
   const todayCount = await getSafeTodayCount(env);
-  const cookies = await getSafeWantedSession(env);
   /** @type {Record<string, Record<string, unknown>>} */
   const platformStatus = {};
   const pendingApprovals = await getPendingApprovalCount(env);
 
   for (const platform of SUPPORTED_PLATFORMS) {
     const count = await getSafeTodayCount(env, platform);
+    const disabled = DISABLED_PLATFORMS.includes(platform);
     platformStatus[platform] = {
       todayApplications: count,
-      authenticated: platform === 'wanted' ? !!cookies : true,
+      authenticated: disabled ? false : await hasPlatformSession(env, platform),
       mode: 'direct',
+      ...(disabled && { disabled: true }),
     };
   }
 
@@ -50,6 +51,7 @@ export async function getAutoApplyStatus(env) {
   return jsonResponse({
     enabled: config.autoApplyEnabled,
     supportedPlatforms: [...SUPPORTED_PLATFORMS, ...ATS_DRY_RUN_PLATFORMS],
+    disabledPlatforms: DISABLED_PLATFORMS,
     todayApplications: todayCount,
     maxDaily: config.maxDailyApplications,
     remaining: Math.max(0, config.maxDailyApplications - todayCount),
@@ -90,13 +92,14 @@ async function getSafeTodayCount(env, platform = null) {
 
 /**
  * @param {StatusEnv} env
- * @returns {Promise<string | null>}
+ * @param {string} platform
+ * @returns {Promise<boolean>}
  */
-async function getSafeWantedSession(env) {
+async function hasPlatformSession(env, platform) {
   try {
-    return await getWantedSession(env);
+    return Boolean(await readPlatformSession(env, platform));
   } catch {
-    return null;
+    return false;
   }
 }
 
