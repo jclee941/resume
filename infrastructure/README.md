@@ -171,6 +171,8 @@ directory:
 | ------------ | ----- | ------------------------------------------------------------------- |
 | `0 21 * * *` | 06:00 | Wanted session refresh, then `ResumeSyncWorkflow` (dry-run default) |
 
+The `0 21 * * *` run also starts a dry-run Wanted `ApplicationWorkflow` discovery run unless auto-apply is disabled.
+
 Health check, backup, cleanup, and daily report jobs are Cloudflare Workflows
 in `apps/job-dashboard/src/workflows/`. The former host systemd timers and
 workflow-tool exports were retired.
