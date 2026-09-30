@@ -19,6 +19,15 @@ export const JOBKOREA_CRON_REFRESH = Object.freeze({ attempts: 4, retryDelayMs: 
  * behind, and the history sync (at most 2 minutes) and the workflow starts still run.
  */
 export const SESSION_REFRESH_BUDGET_MS = 9 * 60_000;
+/**
+ * The resume-sync cron's preflight (the session refresh, then the history sync with its D1 writes
+ * and sync_logs row) closes this long after the scheduled event starts: the history sync gets the
+ * deadline, so no fetch outlives it and no write batch or log row starts after it. The remaining
+ * 3 of the 15 minutes are kept for the auto-apply config read and the workflow starts.
+ */
+export const PREFLIGHT_BUDGET_MS = 12 * 60_000;
+/** The discovery start's D1 config read; if it has not answered by then, only that start is skipped. */
+export const CONFIG_READ_BUDGET_MS = 60_000;
 
 /**
  * @typedef {{ create(options: { params: unknown }): Promise<unknown> }} WorkflowStarter
@@ -63,21 +72,34 @@ async function refreshWithinBudget(env, refresh, budgetMs) {
 
 /**
  * Pulls Wanted/JobKorea application history into D1 so the auto-apply approval gate that runs
- * next already sees what was applied elsewhere. A failure is logged and never blocks a start.
+ * next already sees what was applied elsewhere. The sync itself stops writing at the preflight
+ * deadline; a failure, or a write batch still in flight at the deadline, is logged and never
+ * blocks a start.
  * @param {CronEnv} env
  * @param {typeof syncApplicationHistory} sync
+ * @param {number} deadline epoch ms
+ * @param {() => number} clock
  * @returns {Promise<void>}
  */
-async function syncHistoryBestEffort(env, sync) {
-  try {
-    const summary = await sync(env, { timeoutMs: HISTORY_SYNC_TIMEOUT_MS });
+async function syncHistoryBestEffort(env, sync, deadline, clock) {
+  const outcome = await settleWithin(
+    sync(env, { timeoutMs: HISTORY_SYNC_TIMEOUT_MS, deadline, clock }).then(
+      (summary) => ({ summary }),
+      (error) => ({ error })
+    ),
+    Math.max(0, deadline - clock())
+  );
+  if (outcome === null) {
+    console.warn('[cron] application history sync still running at the preflight deadline');
+  } else if ('error' in outcome) {
+    console.warn('[cron] application history sync failed:', describeReason(outcome.error));
+  } else {
+    const { summary } = outcome;
     console.info(
       '[cron] application history sync',
       summary.status,
       JSON.stringify(summary.platforms)
     );
-  } catch (error) {
-    console.warn('[cron] application history sync failed:', describeReason(error));
   }
 }
 
@@ -86,6 +108,9 @@ async function syncHistoryBestEffort(env, sync) {
  *   sync: typeof syncApplicationHistory;
  *   refresh: (env: CronEnv) => Promise<void>;
  *   refreshBudgetMs: number;
+ *   preflightBudgetMs: number;
+ *   configBudgetMs: number;
+ *   clock: () => number;
  * }} CronSteps
  */
 
@@ -94,14 +119,24 @@ async function syncHistoryBestEffort(env, sync) {
  * @param {CronSteps} steps
  * @returns {Promise<WorkflowStart[]>}
  */
-async function resumeSyncStarts(env, { sync, refresh, refreshBudgetMs }) {
-  if (env.RESUME_SYNC_WORKFLOW) await refreshWithinBudget(env, refresh, refreshBudgetMs);
-  await syncHistoryBestEffort(env, sync);
+async function resumeSyncStarts(env, steps) {
+  const { sync, refresh, refreshBudgetMs, preflightBudgetMs, configBudgetMs, clock } = steps;
+  const deadline = clock() + preflightBudgetMs;
+  if (env.RESUME_SYNC_WORKFLOW) {
+    await refreshWithinBudget(env, refresh, Math.min(refreshBudgetMs, preflightBudgetMs));
+  }
+  await syncHistoryBestEffort(env, sync, deadline, clock);
   const dryRun = String(env.RESUME_SYNC_CRON_DRY_RUN ?? 'true').toLowerCase() !== 'false';
+  const discovery = await settleWithin(planAutoApplyStart(env), configBudgetMs);
+  if (discovery === null) {
+    console.warn(
+      `[cron] auto-apply config not read within ${configBudgetMs} ms; discovery skipped`
+    );
+  }
   return [
     { binding: 'RESUME_SYNC_WORKFLOW', params: { dryRun, source: 'cron' } },
     { binding: 'CLEANUP_WORKFLOW', params: { source: 'cron' } },
-    ...(await planAutoApplyStart(env)),
+    ...(discovery ?? []),
   ];
 }
 
@@ -172,7 +207,7 @@ function describeReason(reason) {
  * @param {{ cron?: string; scheduledTime?: number } | undefined} controller
  * @param {CronEnv} env
  * @param {CronContext} ctx
- * @param {{ syncApplicationHistory?: typeof syncApplicationHistory; refreshSessions?: CronSteps['refresh']; refreshBudgetMs?: number }} [deps]
+ * @param {{ syncApplicationHistory?: typeof syncApplicationHistory; refreshSessions?: CronSteps['refresh']; refreshBudgetMs?: number; preflightBudgetMs?: number; configBudgetMs?: number; clock?: () => number }} [deps]
  * @returns {Promise<void>}
  */
 export async function scheduled(controller, env, ctx, deps = {}) {
@@ -180,6 +215,9 @@ export async function scheduled(controller, env, ctx, deps = {}) {
     sync: deps.syncApplicationHistory ?? syncApplicationHistory,
     refresh: deps.refreshSessions ?? refreshPlatformSessions,
     refreshBudgetMs: deps.refreshBudgetMs ?? SESSION_REFRESH_BUDGET_MS,
+    preflightBudgetMs: deps.preflightBudgetMs ?? PREFLIGHT_BUDGET_MS,
+    configBudgetMs: deps.configBudgetMs ?? CONFIG_READ_BUDGET_MS,
+    clock: deps.clock ?? Date.now,
   };
   const starts = await planStarts(controller?.cron, env, controller?.scheduledTime, steps);
   const runs = starts.map((start) => {

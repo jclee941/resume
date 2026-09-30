@@ -64,14 +64,19 @@ function withTimeout(work, ms) {
  * @param {HistoryAdapters} adapters
  * @param {number} timeoutMs
  * @param {string} now
+ * @param {{ deadline: number; clock: () => number }} window
  * @returns {Promise<PlatformResult>}
  */
-async function syncPlatform(env, platform, adapters, timeoutMs, now) {
+async function syncPlatform(env, platform, adapters, timeoutMs, now, window) {
   try {
-    // Only the fetch is time-bounded: the write starts after it resolved in time, so a fetch
-    // that finishes after TIMEOUT was reported is never written.
+    // The fetch is time-bounded and the write starts only after it resolved in time, so a fetch
+    // that finishes after TIMEOUT was reported is never written. A caller's window (the daily
+    // cron's) also stops the write from starting, or issuing further batches, once it closes.
     const records = await withTimeout(adapters[platform](env), timeoutMs);
-    const counts = await upsertApplicationHistory(env.JOB_DB, records, now);
+    if (window.clock() >= window.deadline) {
+      throw new HistorySyncError('TIMEOUT', 'history window closed before the write started');
+    }
+    const counts = await upsertApplicationHistory(env.JOB_DB, records, now, window);
     return { ok: true, ...counts };
   } catch (error) {
     const code = error instanceof HistorySyncError ? error.code : 'SYNC_FAILED';
@@ -112,7 +117,10 @@ async function recordRun(env, summary, startedAt, completedAt) {
  *   adapters?: HistoryAdapters;
  *   timeoutMs?: number;
  *   now?: () => string;
- * }} [options]
+ *   deadline?: number;
+ *   clock?: () => number;
+ * }} [options] `deadline` (epoch ms) closes the whole run: fetches end by it, no write or
+ *   sync_logs row starts at or after it
  * @returns {Promise<HistorySyncSummary>}
  */
 export async function syncApplicationHistory(env, options = {}) {
@@ -121,10 +129,16 @@ export async function syncApplicationHistory(env, options = {}) {
     adapters = DEFAULT_ADAPTERS,
     timeoutMs = DEFAULT_TIMEOUT_MS,
     now = () => new Date().toISOString(),
+    deadline = Infinity,
+    clock = Date.now,
   } = options;
   const startedAt = now();
+  const window = { deadline, clock };
+  const fetchTimeoutMs = Math.max(0, Math.min(timeoutMs, deadline - clock()));
   const results = await Promise.all(
-    platforms.map((platform) => syncPlatform(env, platform, adapters, timeoutMs, startedAt))
+    platforms.map((platform) =>
+      syncPlatform(env, platform, adapters, fetchTimeoutMs, startedAt, window)
+    )
   );
   const okCount = results.filter((result) => result.ok).length;
   /** @type {HistorySyncSummary} */
@@ -133,6 +147,7 @@ export async function syncApplicationHistory(env, options = {}) {
     status: okCount === results.length ? 'success' : okCount === 0 ? 'failed' : 'partial',
     platforms: Object.fromEntries(platforms.map((platform, index) => [platform, results[index]])),
   };
-  await recordRun(env, summary, startedAt, now());
+  if (clock() < deadline) await recordRun(env, summary, startedAt, now());
+  else console.warn('[application-history] window closed; sync run not recorded:', summary.status);
   return summary;
 }

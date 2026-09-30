@@ -2,6 +2,11 @@ import assert from 'node:assert/strict';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 
 import * as cronRouter from '../cron-router.js';
+import { syncApplicationHistory } from '../../../services/application-history/sync.js';
+import {
+  createSqliteD1,
+  wantedRecord,
+} from '../../../services/application-history/__tests__/history-test-kit.js';
 
 const { HEALTH_CHECK_CRON, RESUME_SYNC_CRON, scheduled } = cronRouter;
 const MONDAY_MIDNIGHT = Date.UTC(2026, 9, 5, 0, 0);
@@ -199,6 +204,101 @@ describe('cron-router', () => {
       warnings.some(([message]) => /session refresh not finished within 5 ms/.test(message))
     );
   });
+
+  it(
+    'the preflight deadline leaves a still-running history sync behind and the starts run',
+    { timeout: 2000 },
+    async () => {
+      const { calls, env, ctx } = createHarness({ JOB_DB: createConfigDb(ENABLED_CONFIG) });
+      let received;
+
+      await scheduled({ cron: RESUME_SYNC_CRON }, env, ctx, {
+        syncApplicationHistory: (_env, options) => {
+          received = options;
+          return new Promise(() => {});
+        },
+        refreshSessions: async () => {},
+        preflightBudgetMs: 5,
+      });
+
+      assert.deepEqual(startedNames(calls), [
+        'APPLICATION_WORKFLOW',
+        'CLEANUP_WORKFLOW',
+        'RESUME_SYNC_WORKFLOW',
+      ]);
+      assert.equal(typeof received.deadline, 'number');
+      assert.ok(
+        warnings.some(([message]) => /still running at the preflight deadline/.test(message))
+      );
+    }
+  );
+
+  it(
+    'a stalled auto-apply config read skips only the discovery start',
+    { timeout: 2000 },
+    async () => {
+      const hangingDb = { prepare: () => ({ bind: () => ({ all: () => new Promise(() => {}) }) }) };
+      const { calls, env, ctx } = createHarness({ JOB_DB: hangingDb });
+
+      await scheduled({ cron: RESUME_SYNC_CRON }, env, ctx, {
+        syncApplicationHistory: async () => ({ ok: true, status: 'success', platforms: {} }),
+        refreshSessions: async () => {},
+        configBudgetMs: 5,
+      });
+
+      assert.deepEqual(startedNames(calls), ['CLEANUP_WORKFLOW', 'RESUME_SYNC_WORKFLOW']);
+      assert.ok(warnings.some(([message]) => /config not read within 5 ms/.test(message)));
+    }
+  );
+
+  it(
+    'stops issuing history writes at the preflight deadline in a slow multi-batch run',
+    { timeout: 2000 },
+    async () => {
+      const db = createSqliteD1();
+      const { calls, env, ctx } = createHarness({ JOB_DB: db });
+      let now = 0;
+      const batchStarts = [];
+      const batch = db.batch;
+      db.batch = async (statements) => {
+        batchStarts.push(now);
+        const results = await batch(statements);
+        now += 20_000;
+        return results;
+      };
+      const records = Array.from({ length: 663 }, (_, index) => wantedRecord(5000 + index));
+
+      await scheduled({ cron: RESUME_SYNC_CRON }, env, ctx, {
+        refreshSessions: async () => {
+          now = 540_000;
+        },
+        syncApplicationHistory: (syncEnv, options) =>
+          syncApplicationHistory(syncEnv, {
+            ...options,
+            platforms: ['wanted'],
+            adapters: {
+              wanted: async () => {
+                now += 119_000;
+                return records;
+              },
+            },
+          }),
+        clock: () => now,
+      });
+
+      assert.deepEqual(batchStarts, [659_000, 679_000, 699_000, 719_000]);
+      assert.ok(batchStarts.every((start) => start < 720_000));
+      assert.equal(db.sqlite.prepare('SELECT COUNT(*) AS n FROM applications').get().n, 200);
+      assert.equal(db.sqlite.prepare('SELECT COUNT(*) AS n FROM sync_logs').get().n, 0);
+      assert.ok(
+        infos.some(([, , platforms]) =>
+          /write window closed after 4 of 14 write batches/.test(platforms)
+        )
+      );
+      assert.equal(startedNames(calls).includes('RESUME_SYNC_WORKFLOW'), true);
+      assert.equal(startedNames(calls).includes('CLEANUP_WORKFLOW'), true);
+    }
+  );
 
   it('the hourly cron never starts the application workflow', async () => {
     const { calls, env, ctx } = createHarness({ JOB_DB: createConfigDb(ENABLED_CONFIG) });
