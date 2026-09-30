@@ -5,8 +5,8 @@ const { generateProfileBento } = require('../../../../../apps/portfolio/lib/card
 describe('cards/profile generateProfileBento', () => {
   const full = {
     education: {
-      school: '한양사이버대학교',
-      major: '컴퓨터공학과',
+      school: '예시대학교',
+      major: '예시학과',
       status: '재학중',
       startDate: '2024.03',
     },
@@ -14,11 +14,9 @@ describe('cards/profile generateProfileBento', () => {
       { name: 'Korean', level: 'Native' },
       { name: 'English', level: 'Working proficiency' },
     ],
-    awards: [
-      { name: '자율주행 포뮬레이션 공모전 우수상', organization: '한양사이버대학교', year: '2026' },
-    ],
-    ossContributions: [{ name: 'resume-portfolio', url: 'https://github.com/jclee941/resume' }],
-    military: { status: '사회복무요원', period: '2014.12 - 2016.12' },
+    awards: [{ name: '예시 공모전 우수상', organization: '예시대학교', year: '2026' }],
+    ossContributions: [{ name: 'example-project', url: 'https://github.com/example-user/example' }],
+    military: { status: '예시복무', period: '2000.01 - 2001.12' },
   };
 
   it('returns empty string for empty/invalid input', () => {
@@ -49,17 +47,17 @@ describe('cards/profile generateProfileBento', () => {
 
   it('includes real SSoT values', () => {
     const html = generateProfileBento(full);
-    expect(html).toContain('한양사이버대학교');
-    expect(html).toContain('Korean');
-    expect(html).toContain('자율주행 포뮬레이션 공모전 우수상');
-    expect(html).toContain('resume-portfolio');
-    expect(html).toContain('사회복무요원');
+    expect(html).toContain(full.education.school);
+    expect(html).toContain(full.languages[0].name);
+    expect(html).toContain(full.awards[0].name);
+    expect(html).toContain(full.ossContributions[0].name);
+    expect(html).toContain(full.military.status);
   });
 
   it('shows the expected graduation month after the start month', () => {
     const html = generateProfileBento({
       education: {
-        school: '한양사이버대학교',
+        school: '예시대학교',
         status: '졸업 예정',
         startDate: '2024.03',
         endDate: '2027.02',
@@ -70,12 +68,12 @@ describe('cards/profile generateProfileBento', () => {
 
   it('renders the profile photo first, with a localized alt text', () => {
     const photo = '/assets/profile-photo.jpg?v=0123456789ab';
-    const ko = generateProfileBento({ ...full, hero: { title: '이재철' } }, 'ko', photo);
-    const en = generateProfileBento({ ...full, hero: { title: 'Jaecheol Lee' } }, 'en', photo);
+    const ko = generateProfileBento({ ...full, hero: { title: '예시 이름' } }, 'ko', photo);
+    const en = generateProfileBento({ ...full, hero: { title: 'Example Person' } }, 'en', photo);
 
     expect(ko.indexOf('profile-card--photo')).toBeLessThan(ko.indexOf('profile-card__label'));
-    expect(ko).toContain(`src="${photo}" alt="이재철 증명사진"`);
-    expect(en).toContain('alt="Photo of Jaecheol Lee"');
+    expect(ko).toContain(`src="${photo}" alt="예시 이름 증명사진"`);
+    expect(en).toContain('alt="Photo of Example Person"');
   });
 
   it('omits the photo card without a photo and escapes the photo URL', () => {
@@ -89,15 +87,15 @@ describe('cards/profile generateProfileBento', () => {
     const html = generateProfileBento({
       awards: [
         {
-          name: '2026 HYCU AI학습법 공모전 장려상',
-          organization: '한양사이버대학교',
+          name: '2026 예시 공모전 장려상',
+          organization: '예시대학교',
           year: '2026',
         },
         { name: '공로상', organization: '테스트기관', year: '2025' },
       ],
     });
     expect(html).toContain(
-      '2026 HYCU AI학습법 공모전 장려상 <span class="profile-card__muted">한양사이버대학교</span></li>'
+      '2026 예시 공모전 장려상 <span class="profile-card__muted">예시대학교</span></li>'
     );
     expect(html).toContain(
       '공로상 <span class="profile-card__muted">테스트기관</span> (2025)</li>'
@@ -106,7 +104,7 @@ describe('cards/profile generateProfileBento', () => {
 
   it('links OSS contributions with safe https url + noopener', () => {
     const html = generateProfileBento(full);
-    expect(html).toContain('href="https://github.com/jclee941/resume"');
+    expect(html).toContain('href="https://github.com/example-user/example"');
     expect(html).toContain('rel="noopener"');
   });
 
@@ -127,7 +125,7 @@ describe('cards/profile generateProfileBento', () => {
   });
 
   it('omits sections that have no data', () => {
-    const html = generateProfileBento({ military: { status: '사회복무요원' } });
+    const html = generateProfileBento({ military: { status: '예시복무' } });
     expect(html).toContain('profile-card__label">병역<');
     expect(html).not.toContain('학력');
     expect(html).not.toContain('수상');

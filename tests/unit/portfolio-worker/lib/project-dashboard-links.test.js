@@ -4,11 +4,14 @@ const koPortfolioData = require('../../../../apps/portfolio/data.json');
 const enPortfolioData = require('../../../../apps/portfolio/data_en.json');
 const jaPortfolioData = require('../../../../apps/portfolio/data_ja.json');
 
+const GRAFANA_DEMO_URL = 'https://grafana.example.com/public-dashboards/example-dashboard';
 const KIBANA_DEMO_URL =
-  'https://kibana.jclee.me/s/portfolio-demo/app/dashboards?auth_provider_hint=portfolio_demo#/view/portfolio-demo-dashboard';
+  'https://kibana.example.com/s/demo/app/dashboards?auth_provider_hint=demo&mode=view#/view/example-dashboard';
 
-function projectById(data, id) {
-  return data.projects.find((project) => project.id === id);
+function elkDashboardProjects(data) {
+  return data.projects.filter((project) =>
+    (project.dashboards || []).some((dashboard) => dashboard.name === 'ELK')
+  );
 }
 
 describe('project dashboard links', () => {
@@ -25,13 +28,13 @@ describe('project dashboard links', () => {
   test('renders named dashboard links when project has Grafana and ELK demos', () => {
     const projectData = [
       {
-        title: 'Observability Platform',
+        title: 'Example Platform',
         tech: 'Grafana, Prometheus, Loki, ELK',
         description: 'Live observability demo surfaces',
         dashboards: [
           {
             name: 'Grafana',
-            url: 'https://grafana.jclee.me/public-dashboards/d179bed28cb64b87877464527550396e',
+            url: GRAFANA_DEMO_URL,
           },
           {
             name: 'ELK',
@@ -45,9 +48,7 @@ describe('project dashboard links', () => {
 
     expect(html).toContain('[Grafana]');
     expect(html).toContain('[ELK]');
-    expect(html).toContain(
-      'href="https://grafana.jclee.me/public-dashboards/d179bed28cb64b87877464527550396e"'
-    );
+    expect(html).toContain(`href="${GRAFANA_DEMO_URL}"`);
     expect(html).toContain(`href="${KIBANA_DEMO_URL.replace(/&/g, '&amp;')}"`);
     expect(html).toContain('project-meta-badge--live');
     expect(html).not.toContain('[Demo]');
@@ -57,19 +58,17 @@ describe('project dashboard links', () => {
     ['ko', koPortfolioData],
     ['en', enPortfolioData],
     ['ja', jaPortfolioData],
-  ])('renders Security Alert System as a named ELK dashboard link in %s data', (_locale, data) => {
-    const project = projectById(data, 'security-alert-system');
+  ])('renders every ELK dashboard in %s data as a named link', (locale, data) => {
+    const projects = elkDashboardProjects(data);
 
-    expect(project).toBeDefined();
-    expect(project.dashboards).toContainEqual({
-      name: 'ELK',
-      url: KIBANA_DEMO_URL,
+    expect(projects.length).toBeGreaterThan(0);
+    projects.forEach((project, index) => {
+      const html = generateProjectCards([project], `elk-dashboard-${locale}-${index}`);
+      const elk = project.dashboards.find((dashboard) => dashboard.name === 'ELK');
+
+      expect(html).toContain('[ELK]');
+      expect(html).toContain(`href="${elk.url.replace(/&/g, '&amp;')}"`);
+      expect(html).not.toContain('[Demo]');
     });
-
-    const html = generateProjectCards([project], `security-alert-elk-${_locale}`);
-
-    expect(html).toContain('[ELK]');
-    expect(html).toContain(`href="${KIBANA_DEMO_URL.replace(/&/g, '&amp;')}"`);
-    expect(html).not.toContain('[Demo]');
   });
 });

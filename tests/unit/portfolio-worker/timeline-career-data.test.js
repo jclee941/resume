@@ -8,10 +8,15 @@
  */
 const fs = require('fs');
 const path = require('path');
+const { loadPortfolioData } = require('../../helpers/owner-data');
 
 const TIMELINE_PATH = path.resolve(
   __dirname,
   '../../../apps/portfolio/src/scripts/modules/timeline.js'
+);
+const TIMELINE_CAREER_META_PATH = path.resolve(
+  __dirname,
+  '../../../apps/portfolio/src/scripts/modules/timeline-career-meta.js'
 );
 const TIMELINE_RENDERING_PATH = path.resolve(
   __dirname,
@@ -33,42 +38,55 @@ describe('timeline.js source contract (no hardcoded careers)', () => {
   });
 
   test('does not embed hardcoded career company strings', () => {
-    expect(source).not.toMatch(/role:\s*'보안운영 엔지니어/);
-    expect(source).not.toMatch(/description:\s*'넥스트레이드 금융 거래소/);
+    const careers = ['ko', 'en', 'ja'].flatMap((locale) => loadPortfolioData(locale).careers);
+    expect(careers.length).toBeGreaterThan(0);
+    for (const career of careers) {
+      for (const field of ['company', 'role', 'description']) {
+        if (typeof career[field] === 'string' && career[field].length >= 4) {
+          expect(source).not.toContain(career[field]);
+        }
+      }
+    }
   });
 });
 
 describe('mergeCareerUiMeta()', () => {
   let mergeCareerUiMeta;
+  let CAREER_UI_META;
   beforeAll(async () => {
     ({ mergeCareerUiMeta } = await import(TIMELINE_PATH));
+    ({ CAREER_UI_META } = await import(TIMELINE_CAREER_META_PATH));
   });
 
   test('S1: attaches phase/status UI metadata keyed by locale-stable period', () => {
     // Keyed by `period` (not `company`) so the same metadata applies across
     // ko/en/ja, where company names are localized but the tenure period is not.
+    const [firstPeriod, secondPeriod] = Object.keys(CAREER_UI_META);
+    expect(firstPeriod).toBeTruthy();
+    expect(secondPeriod).toBeTruthy();
     const out = mergeCareerUiMeta([
       {
-        company: 'ITCEN CTS Co., Ltd.',
-        period: '2025.03 ~ 2026.02',
-        role: 'Security Infrastructure Engineer (SIEM/Security)',
-        achievements: ['Built a SIEM detection/response pipeline'],
+        company: 'Example Corp',
+        period: firstPeriod,
+        role: 'Example Engineer',
+        achievements: ['Built an example pipeline'],
       },
-      { company: 'メタネットMプラットフォーム', period: '2020.08 ~ 2021.08', role: 'インフラ運用' },
+      { company: '예시회사', period: secondPeriod, role: '예시 역할' },
     ]);
-    expect(out[0].phase).toBe('운영');
-    expect(out[0].status).toBe('completed');
-    expect(out[1].phase).toBe('자동화');
-    expect(out[0].role).toBe('Security Infrastructure Engineer (SIEM/Security)');
+    expect(out[0].phase).toBe(CAREER_UI_META[firstPeriod].phase);
+    expect(out[0].status).toBe(CAREER_UI_META[firstPeriod].status);
+    expect(out[1].phase).toBe(CAREER_UI_META[secondPeriod].phase);
+    expect(out[1].status).toBe(CAREER_UI_META[secondPeriod].status);
+    expect(out[0].role).toBe('Example Engineer');
     // SSoT-derived achievements pass through untouched (feeds timeline Impact text).
-    expect(out[0].achievements).toEqual(['Built a SIEM detection/response pipeline']);
+    expect(out[0].achievements).toEqual(['Built an example pipeline']);
   });
 
   test('S2: preserves explicit phase/status if already present', () => {
     const out = mergeCareerUiMeta([
       {
-        company: '(주)아이티센 CTS',
-        period: '2025.03 ~ 2026.02',
+        company: '예시회사',
+        period: Object.keys(CAREER_UI_META)[0],
         phase: '커스텀',
         status: 'active',
       },
@@ -104,15 +122,15 @@ describe('createTimelineViewModel()', () => {
   test('renders company text without a dead # link when companyUrl is absent', () => {
     const model = createTimelineViewModel(
       {
-        company: '(주)조인트리',
+        company: '예시회사',
         companyUrl: null,
-        period: '2021.09 ~ 2022.04',
+        period: '2000.01 ~ 2000.12',
         phase: '구축',
         status: 'completed',
-        role: '네트워크 보안 엔지니어',
-        myRole: '네트워크 보안 구축 담당',
-        description: 'NSX-T 마이크로세그멘테이션 적용',
-        achievements: ['동서 트래픽 보안 정책 세분화'],
+        role: '예시 역할',
+        myRole: '예시 담당',
+        description: '예시 설명',
+        achievements: ['예시 성과'],
       },
       0
     );

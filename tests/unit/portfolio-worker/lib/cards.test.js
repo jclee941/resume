@@ -12,6 +12,7 @@ const {
 } = require('../../../../apps/portfolio/lib/cards');
 const { generateContactGrid } = require('../../../../apps/portfolio/lib/cards/layout');
 const { TEMPLATE_CACHE } = require('../../../../apps/portfolio/lib/config');
+const { loadPortfolioData, ownerIdentity } = require('../../../helpers/owner-data');
 
 describe('Cards Module', () => {
   // Reset cache before each test
@@ -188,15 +189,15 @@ describe('Cards Module', () => {
   describe('generateContactGrid', () => {
     test('should render the secondary GitHub bot profile when present', () => {
       const html = generateContactGrid({
-        email: 'qws941@kakao.com',
-        github: 'https://github.com/jclee941',
-        githubBot: 'https://github.com/jclee941/jclee-bot',
-        linkedin: 'https://linkedin.com/in/jclee0109',
-        velog: 'https://velog.io/@qws941',
-        website: 'https://resume.jclee.me',
+        email: 'applicant@example.com',
+        github: 'https://github.com/example-user',
+        githubBot: 'https://github.com/example-user/example-bot',
+        linkedin: 'https://linkedin.com/in/example-user',
+        velog: 'https://velog.io/@example-user',
+        website: 'https://resume.example.com',
       });
 
-      expect(html).toContain('https://github.com/jclee941/jclee-bot');
+      expect(html).toContain('https://github.com/example-user/example-bot');
       expect(html).toContain('GitHub Bot');
       expect(html).toContain('aria-label="GitHub Bot (opens in new tab)"');
     });
@@ -482,11 +483,11 @@ describe('Cards Module', () => {
 
     test('pending cert shows IN PROGRESS for JA 準備中 and EN Preparing (locale parity)', () => {
       // Bug: getCertificationStatus only matched KO '준비중', so a not-yet-earned
-      // cert (CKS) rendered as [ACQUIRED] on /en/ and /ja/ — falsely claiming the
+      // pending cert rendered as [ACQUIRED] on /en/ and /ja/ — falsely claiming the
       // credential. All locale pending labels must map to the pending status.
       for (const status of ['準備中', 'Preparing']) {
         const html = generateCertificationCards(
-          [{ name: 'CKS', issuer: 'CNCF', status }],
+          [{ name: 'Example Pending Cert', issuer: 'Example Issuer', status }],
           `pending-${status}`
         );
         expect(html).toContain('cert-status--pending');
@@ -496,8 +497,12 @@ describe('Cards Module', () => {
     });
 
     test('status badges are localized per locale (KO 취득/준비 중, JA 取得済み/準備中)', () => {
-      const acquired = [{ name: 'CCNP', issuer: 'Cisco', date: '2020.08', status: 'active' }];
-      const pending = [{ name: 'CKS', issuer: 'CNCF', status: '준비중' }];
+      const acquired = [
+        { name: 'Example Cert', issuer: 'Example Issuer', date: '2020.08', status: 'active' },
+      ];
+      const pending = [
+        { name: 'Example Pending Cert', issuer: 'Example Issuer', status: '준비중' },
+      ];
 
       const koActive = generateCertificationCards(acquired, 'ko-a', 'ko');
       expect(koActive).toContain('[취득]');
@@ -693,12 +698,14 @@ describe('Cards Module', () => {
       expect(html).toContain('Full Stack Developer');
     });
 
-    test('should include hardcoded email', () => {
+    test('should include the contact email from the resume data', () => {
       const heroData = { titleEn: 'Test', subtitle: 'Dev' };
       const html = generateHeroContent(heroData);
+      const { email } = ownerIdentity('ko');
 
-      expect(html).toContain('qws941@kakao.com');
-      expect(html).toContain('mailto:qws941@kakao.com');
+      expect(email).toBeTruthy();
+      expect(html).toContain(email);
+      expect(html).toContain(`mailto:${email}`);
     });
 
     test('should include aria-label for email', () => {
@@ -870,10 +877,12 @@ describe('Cards Module', () => {
     });
 
     test('should include velog link with consistent plain text styling', () => {
+      const velog = loadPortfolioData('ko').contact.velog;
       const contactData = { github: 'https://github.com/test' };
       const html = generateContactGrid(contactData);
 
-      expect(html).toContain('https://velog.io/@qws941');
+      expect(velog).toBeTruthy();
+      expect(html).toContain(velog);
       expect(html).toContain('Velog');
       // Velog now uses plain text like all other contact items (no special icon styling)
       expect(html).not.toContain('contact-item--velog');

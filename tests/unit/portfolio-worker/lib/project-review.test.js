@@ -22,7 +22,7 @@ describe('project review cards', () => {
       description: '채용 지원 흐름을 정리했습니다. 플랫폼별 입력을 검증했습니다.',
     },
     {
-      title: 'jclee-bot',
+      title: 'Example Bot',
       tagline: '자동화 계정',
       tech: 'GitHub Actions',
       description: '반복 운영 작업을 분리했습니다. 감사 가능한 커밋 흐름을 유지했습니다.',
@@ -51,7 +51,7 @@ describe('project review cards', () => {
 
   test('creates stable anchors from ids, titles, and fallback indexes', () => {
     expect(projectAnchor({ id: 'ELK Demo / Live' }, 0)).toBe('project-elk-demo-live');
-    expect(projectAnchor({ title: '잡코리아 CCNP 보강' }, 1)).toBe('project-잡코리아-ccnp-보강');
+    expect(projectAnchor({ title: '예시 ABC 보강' }, 1)).toBe('project-예시-abc-보강');
     expect(projectAnchor({ id: '!!!' }, 2)).toBe('project-3');
   });
 
