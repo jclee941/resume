@@ -69,6 +69,8 @@ describe('contact-copy module', () => {
   });
 
   test('contact-copy: clicking the email control copies the address via clipboard', async () => {
+    // A successful copy schedules the reset timer; keep it fake so no real timer outlives the file.
+    jest.useFakeTimers();
     const writeText = jest.fn().mockResolvedValue(undefined);
     global.navigator = { clipboard: { writeText } };
     const root = makeRoot({ email: 'me@x.com' });
