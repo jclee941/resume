@@ -61,7 +61,7 @@ test('searches each keyword and merges results by job id in first-seen order', a
   });
 
   assert.deepEqual(
-    requests.map((url) => [url.searchParams.get('query'), url.searchParams.get('location')]),
+    requests.map((url) => [url.searchParams.get('query'), url.searchParams.get('locations')]),
     [
       ['security', 'seoul'],
       ['devsecops', 'seoul'],
@@ -93,7 +93,7 @@ test('keeps the single keyword request when keywords is absent or empty', async 
   const empty = await searchWanted(ctx, { keywords: [], keyword: 'security' });
 
   assert.equal(requests.length, 2);
-  assert.equal(requests[0].searchParams.has('location'), false);
+  assert.equal(requests[0].searchParams.get('locations'), 'all');
   assert.deepEqual(
     single.map((job) => job.id),
     ['wanted-7']
@@ -127,6 +127,19 @@ test('throws the first error when every keyword fails', async (t) => {
     /Wanted API error: 500/
   );
   assert.equal(requests.length, 2);
+});
+
+test('sends the country Wanted requires, else the API answers 422', async () => {
+  responders.set('security', jsonResponse([1]));
+  const ctx = await ctxWithWantedSession();
+
+  await searchWanted(ctx, { keywords: ['security'] });
+
+  const [url] = requests;
+  assert.equal(url.pathname, '/api/v4/jobs');
+  assert.equal(url.searchParams.get('country'), 'kr');
+  assert.equal(url.searchParams.get('job_sort'), 'job.latest_order');
+  assert.equal(url.searchParams.get('limit'), '20');
 });
 
 test('throws when no Wanted session is stored', async () => {

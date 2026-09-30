@@ -2,6 +2,7 @@ import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 import { readPlatformSession } from '../../services/platform-session.js';
 
 const MAX_WANTED_KEYWORDS = 5;
+const WANTED_PAGE_SIZE = 20;
 
 /**
  * @typedef {import('./platforms.js').PlatformJob} PlatformJob
@@ -34,15 +35,23 @@ function wantedKeywords(criteria) {
 }
 
 /**
+ * Wanted's /api/v4/jobs answers HTTP 422 ("country: Missing data for required
+ * field") without `country`, and filters regions by `locations`.
  * @param {string} session
  * @param {string | undefined} keyword
  * @param {string | undefined} location
  * @returns {Promise<PlatformJob[]>}
  */
 async function queryWanted(session, keyword, location) {
-  const params = new URLSearchParams();
+  const params = new URLSearchParams({
+    country: 'kr',
+    job_sort: 'job.latest_order',
+    years: '-1',
+    locations: location || 'all',
+    limit: String(WANTED_PAGE_SIZE),
+    offset: '0',
+  });
   if (keyword) params.append('query', keyword);
-  if (location) params.append('location', location);
   const response = await fetch(`https://www.wanted.co.kr/api/v4/jobs?${params}`, {
     headers: { Cookie: session, 'User-Agent': DEFAULT_USER_AGENT },
   });
