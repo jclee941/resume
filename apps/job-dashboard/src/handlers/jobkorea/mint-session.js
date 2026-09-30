@@ -10,6 +10,7 @@
  */
 
 import { withBrowserSession as defaultWithBrowserSession } from '../../services/browser-session.js';
+import { restrictToJobKorea } from '../../services/jobkorea-request-filter.js';
 import { writePlatformSession } from '../../services/platform-session.js';
 import {
   SUBMIT_SELECTOR,
@@ -38,6 +39,7 @@ export const JOBKOREA_SESSION_TTL_S = 60 * 60 * 6; // 6h
  * }} JobKoreaEnv
  */
 
+const LOGIN_BLOCKED_RESOURCE_TYPES = new Set(['image', 'media', 'font']);
 const LOGIN_POLL_ATTEMPTS = 5;
 const LOGIN_POLL_INTERVAL_MS = 1000; // ~5s worst case across LOGIN_POLL_ATTEMPTS
 
@@ -70,6 +72,8 @@ export async function mintJobKoreaSession(
   return withBrowserSession(env, async (browser) => {
     const page = await browser.newPage();
     try {
+      // Stylesheets stay allowed: which login tab's submit button is visible is decided by CSS.
+      await restrictToJobKorea(page, LOGIN_BLOCKED_RESOURCE_TYPES);
       await page.goto(JOBKOREA_LOGIN_URL, { waitUntil: 'domcontentloaded' });
       await fillLoginForm(page, { email, password });
       await submitAndWait(page, SUBMIT_SELECTOR);
