@@ -69,6 +69,34 @@ describe('job-dashboard /job/mcp route', () => {
     expect(response.headers.get('www-authenticate')).toMatch(/^Bearer/);
   });
 
+  test('a valid admin session token sent as Bearer gets 401 and runs no tool', async () => {
+    const { mintSessionToken } = await import('../../../apps/job-dashboard/src/services/auth.js');
+    const session = await mintSessionToken({ ADMIN_TOKEN });
+    const request = new Request('https://resume.jclee.me/job/mcp', {
+      method: 'POST',
+      headers: {
+        host: 'resume.jclee.me',
+        authorization: `Bearer ${session}`,
+        'content-type': 'application/json',
+        accept: 'application/json, text/event-stream',
+        'mcp-protocol-version': '2026-07-28',
+        'mcp-method': 'tools/list',
+      },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'tools/list',
+        params: { _meta: META },
+      }),
+    });
+
+    const response = await worker.fetch(request, { ADMIN_TOKEN }, { waitUntil: jest.fn() });
+
+    expect(response.status).toBe(401);
+    expect(response.headers.get('www-authenticate')).toBe('Bearer');
+    expect(await response.json()).toEqual({ error: 'Unauthorized' });
+  });
+
   test('answers OPTIONS with 405 and no CORS preflight headers', async () => {
     const request = new Request('https://resume.jclee.me/job/mcp', {
       method: 'OPTIONS',
