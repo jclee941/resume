@@ -1,5 +1,6 @@
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 import { readPlatformSession } from '../../services/platform-session.js';
+import { enrichWantedJobs, formatWantedExperience } from './wanted-detail.js';
 
 const MAX_WANTED_KEYWORDS = 5;
 const WANTED_PAGE_SIZE = 20;
@@ -11,13 +12,11 @@ const WANTED_PAGE_SIZE = 20;
  */
 
 /**
- * @typedef {{
+ * @typedef {import('./wanted-detail.js').WantedExperienceRange & {
  *   id: string | number;
  *   company?: { name?: string };
  *   position?: string;
  *   address?: { location?: string };
- *   years?: string | number;
- *   detail?: { description?: string };
  * }} WantedApiRawJob
  */
 
@@ -64,14 +63,15 @@ async function queryWanted(session, keyword, location) {
     position: job.position || 'Unknown',
     url: `https://www.wanted.co.kr/wd/${job.id}`,
     location: job.address?.location || '',
-    experience: job.years || '',
-    description: job.detail?.description || '',
+    experience: formatWantedExperience(job),
+    description: '',
   }));
 }
 
 /**
  * Searches Wanted once per configured keyword (sequentially) and merges the
- * results by job id in first-seen order. Without `criteria.keywords` it runs
+ * results by job id in first-seen order, then enriches them with their detail
+ * text (the list endpoint has no description). Without `criteria.keywords` it runs
  * the single `criteria.keyword` query. A failing keyword is logged and skipped;
  * the first error is thrown only when every query fails.
  * @param {PlatformSearchContext} ctx
@@ -82,7 +82,10 @@ export async function searchWanted(ctx, criteria) {
   const session = await readPlatformSession(ctx.env, 'wanted');
   if (!session) throw new Error('No Wanted session available');
   const keywords = wantedKeywords(criteria);
-  if (keywords.length === 0) return queryWanted(session, criteria.keyword, criteria.location);
+  if (keywords.length === 0) {
+    const jobs = await queryWanted(session, criteria.keyword, criteria.location);
+    return enrichWantedJobs(session, jobs);
+  }
 
   /** @type {Map<string, PlatformJob>} */
   const merged = new Map();
@@ -101,5 +104,5 @@ export async function searchWanted(ctx, criteria) {
     }
   }
   if (errors.length === keywords.length) throw errors[0];
-  return [...merged.values()];
+  return enrichWantedJobs(session, [...merged.values()]);
 }
