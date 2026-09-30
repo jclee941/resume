@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
+import { ownerNamePattern } from './fixtures/owner-copy.js';
 
-const TITLE_PATTERN = /이재철|Jaecheol|Resume|Portfolio/i;
+const TITLE_PATTERN = new RegExp(`${ownerNamePattern().source}|Resume|Portfolio`, 'i');
 const PROBE_HEADERS = {
   'user-agent':
     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',

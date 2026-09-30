@@ -1,7 +1,8 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
+const { canonicalUrl, ownerNamePattern } = require('./fixtures/owner-copy');
 
-const NAME_PATTERN = /Jaecheol Lee|이재철/;
+const NAME_PATTERN = ownerNamePattern();
 const WEBSITE_LANGUAGE_PATTERN = /ko-KR|en-US/;
 
 const configuredBaseUrl =
@@ -126,9 +127,9 @@ test.describe('JSON-LD Structured Data', () => {
 
   test('canonical URL matches route on each locale', async ({ browser }) => {
     const cases = [
-      { path: '/', locale: 'ko-KR', expected: 'https://resume.jclee.me/' },
-      { path: '/en/', locale: 'en-US', expected: 'https://resume.jclee.me/en/' },
-      { path: '/ja/', locale: 'ja-JP', expected: 'https://resume.jclee.me/ja/' },
+      { path: '/', locale: 'ko-KR', expected: canonicalUrl('/') },
+      { path: '/en/', locale: 'en-US', expected: canonicalUrl('/en/') },
+      { path: '/ja/', locale: 'ja-JP', expected: canonicalUrl('/ja/') },
     ];
     for (const { path, locale, expected } of cases) {
       const ctx = await browser.newContext({
@@ -160,7 +161,7 @@ test.describe('JSON-LD Structured Data', () => {
     const htmlLang = await page.locator('html').getAttribute('lang');
     expect(htmlLang, 'root html lang').toBe('ko');
     const canonical = await page.locator('link[rel="canonical"]').first().getAttribute('href');
-    expect(canonical).toBe('https://resume.jclee.me/');
+    expect(canonical).toBe(canonicalUrl('/'));
     await ctx.close();
   });
 

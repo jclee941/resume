@@ -1,9 +1,10 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
+const { canonicalUrlPattern, ownerIdentity, ownerNamePattern } = require('./fixtures/owner-copy');
 
-const NAME_PATTERN = /Jaecheol Lee|이재철/;
+const NAME_PATTERN = ownerNamePattern();
 const INFRA_PATTERN = /Infrastructure|인프라/i;
-const CANONICAL_URL_PATTERN = /^https:\/\/resume\.jclee\.me\/(?:en\/|ja\/)?$/;
+const CANONICAL_URL_PATTERN = canonicalUrlPattern();
 const OG_LOCALE_PATTERN = /ko_KR|en_US/;
 
 const configuredBaseUrl =
@@ -144,11 +145,12 @@ test.describe('Open Graph Tags', () => {
   });
 
   test('should have profile:* tags', async ({ page }) => {
+    const [expectedFirstName, ...expectedLastName] = ownerIdentity('en').name.split(' ');
     const firstName = await page.getAttribute('meta[property="profile:first_name"]', 'content');
-    expect(firstName).toBe('Jaecheol');
+    expect(firstName).toBe(expectedFirstName);
 
     const lastName = await page.getAttribute('meta[property="profile:last_name"]', 'content');
-    expect(lastName).toBe('Lee');
+    expect(lastName).toBe(expectedLastName.join(' '));
 
     const username = await page.getAttribute('meta[property="profile:username"]', 'content');
     expect(username).toBeTruthy();

@@ -1,5 +1,6 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
+const { ownerNamePattern } = require('./fixtures/owner-copy');
 
 const SELECTORS = {
   HERO_TITLE: '.hero-title',
@@ -11,8 +12,8 @@ const SELECTORS = {
 };
 
 const REGEX_PATTERNS = {
-  // Site title is locale-specific (KO default: "이재철 - 보안 엔지니어").
-  TITLE: /(?:Jaecheol Lee|이재철)/,
+  // Site title is locale-specific; it carries the owner's name from the resume data.
+  TITLE: ownerNamePattern(),
 };
 
 /** @param {import('@playwright/test').Page} page */

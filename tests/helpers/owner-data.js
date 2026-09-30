@@ -24,7 +24,8 @@ function readJson(file) {
     return JSON.parse(fs.readFileSync(file, 'utf8'));
   } catch (error) {
     throw new Error(
-      `Cannot read ${path.relative(ROOT, file)} (${error.message}); run "npm run sync:data" first`
+      `Cannot read ${path.relative(ROOT, file)} (${error.message}); run "npm run sync:data" first`,
+      { cause: error }
     );
   }
 }

@@ -1,14 +1,16 @@
 const { test, expect } = require('@playwright/test');
+const { escapeRegExp } = require('../helpers/owner-data');
+const { ownerIdentity, ownerNamePattern } = require('./fixtures/owner-copy');
 
 test.describe('Portfolio UI', () => {
   test('should load Korean homepage', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await expect(page).toHaveTitle(/Jaecheol Lee|이재철/);
+    await expect(page).toHaveTitle(ownerNamePattern());
   });
 
   test('should load English homepage', async ({ page }) => {
     await page.goto('/en', { waitUntil: 'domcontentloaded' });
-    await expect(page).toHaveTitle(/Jaecheol Lee/);
+    await expect(page).toHaveTitle(new RegExp(escapeRegExp(ownerIdentity('en').name)));
   });
 
   test('should not expose terminal input or command registry', async ({ page }) => {

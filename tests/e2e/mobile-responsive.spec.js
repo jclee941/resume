@@ -1,8 +1,9 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
+const { ownerNamePattern } = require('./fixtures/owner-copy');
 
 const MOBILE_VIEWPORT = { width: 390, height: 844 };
-const HERO_NAME_PATTERN = /Jaecheol Lee|이재철/;
+const HERO_NAME_PATTERN = ownerNamePattern();
 
 /**
  * Mobile Responsive E2E Tests
