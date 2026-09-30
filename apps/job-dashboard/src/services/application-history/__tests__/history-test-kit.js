@@ -19,8 +19,14 @@ export function createSqliteD1() {
   return {
     sqlite,
     prepare: (sql) => statement(sql),
+    // Like D1: one result per statement, with the statement's row count in `meta.changes`.
     batch: async (statements) => {
-      for (const item of statements) await item.run();
+      const results = [];
+      for (const item of statements) {
+        const { changes } = await item.run();
+        results.push({ success: true, results: [], meta: { changes: Number(changes) } });
+      }
+      return results;
     },
   };
 }

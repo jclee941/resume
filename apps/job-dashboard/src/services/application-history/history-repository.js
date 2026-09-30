@@ -18,7 +18,7 @@ const BATCH_SIZE = 50;
  *
  * @typedef {{
  *   prepare(query: string): HistoryStatement;
- *   batch(statements: unknown[]): Promise<unknown>;
+ *   batch(statements: unknown[]): Promise<Array<{ meta: { changes: number } }>>;
  * }} HistoryDb
  *
  * @typedef {{ fetched: number; inserted: number; updated: number; unchanged: number }} UpsertCounts
@@ -88,13 +88,20 @@ export async function upsertApplicationHistory(db, fetched, now) {
   const existing = await loadExisting(db, records[0].source);
   const insert = db.prepare(
     `INSERT INTO applications (id, job_id, source, source_url, canonical_url, position, company, status, notes, created_at, updated_at, applied_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     ON CONFLICT(id) DO NOTHING`
   );
   const update = db.prepare(
-    'UPDATE applications SET status = ?, job_id = ?, updated_at = ?, applied_at = COALESCE(applied_at, ?) WHERE id = ?'
+    `UPDATE applications SET status = ?, job_id = ?, updated_at = ?, applied_at = COALESCE(applied_at, ?)
+     WHERE id = ? AND (status != ? OR job_id IS NOT ?)`
   );
-  const normalize = db.prepare('UPDATE applications SET job_id = ? WHERE id = ?');
+  const normalize = db.prepare(
+    'UPDATE applications SET job_id = ? WHERE id = ? AND job_id IS NOT ?'
+  );
+  /** @type {unknown[]} */
   const statements = [];
+  /** @type {Array<'inserted' | 'updated'>} */
+  const outcomes = [];
   for (const record of records) {
     const row = existing.get(record.jobId);
     if (!row) {
@@ -114,19 +121,34 @@ export async function upsertApplicationHistory(db, fetched, now) {
           record.appliedAt
         )
       );
-      counts.inserted += 1;
+      outcomes.push('inserted');
     } else if (row.status !== record.status) {
-      statements.push(update.bind(record.status, record.jobId, now, record.appliedAt, row.id));
-      counts.updated += 1;
+      statements.push(
+        update.bind(
+          record.status,
+          record.jobId,
+          now,
+          record.appliedAt,
+          row.id,
+          record.status,
+          record.jobId
+        )
+      );
+      outcomes.push('updated');
     } else if (!row.canonical) {
-      statements.push(normalize.bind(record.jobId, row.id));
-      counts.updated += 1;
+      statements.push(normalize.bind(record.jobId, row.id, record.jobId));
+      outcomes.push('updated');
     } else {
       counts.unchanged += 1;
     }
   }
+  // A concurrent sync may have written the same row after the SELECT, so the counts come from
+  // what each statement actually changed: a conflict or a guarded no-op changes 0 rows.
   for (let start = 0; start < statements.length; start += BATCH_SIZE) {
-    await db.batch(statements.slice(start, start + BATCH_SIZE));
+    const results = await db.batch(statements.slice(start, start + BATCH_SIZE));
+    results.forEach((result, index) => {
+      counts[result.meta.changes > 0 ? outcomes[start + index] : 'unchanged'] += 1;
+    });
   }
   return counts;
 }

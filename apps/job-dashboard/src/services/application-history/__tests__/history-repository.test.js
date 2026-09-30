@@ -64,6 +64,20 @@ describe('upsertApplicationHistory', () => {
     assert.equal(row.updated_at, 'then');
   });
 
+  it('survives two overlapping syncs of the same new record', async () => {
+    const results = await Promise.all([
+      upsertApplicationHistory(db, [wantedRecord(4)], NOW),
+      upsertApplicationHistory(db, [wantedRecord(4)], NOW),
+    ]);
+
+    assert.equal(applications().length, 1);
+    const sum = (key) => results.reduce((total, counts) => total + counts[key], 0);
+    assert.deepEqual(
+      { inserted: sum('inserted'), updated: sum('updated'), unchanged: sum('unchanged') },
+      { inserted: 1, updated: 0, unchanged: 1 }
+    );
+  });
+
   it('lets the row stored under the canonical key win and leaves legacy duplicates alone', async () => {
     seed('legacy-5', '5');
     seed('canonical-5', 'wanted-5');
