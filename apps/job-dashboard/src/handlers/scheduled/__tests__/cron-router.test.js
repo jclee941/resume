@@ -180,6 +180,26 @@ describe('cron-router', () => {
     );
   });
 
+  it('a session refresh that outlives its budget is left behind and the starts still run', async () => {
+    const { calls, env, ctx } = createHarness({ JOB_DB: createConfigDb(ENABLED_CONFIG) });
+    const syncApplicationHistory = async () => ({ ok: true, status: 'success', platforms: {} });
+
+    await scheduled({ cron: RESUME_SYNC_CRON }, env, ctx, {
+      syncApplicationHistory,
+      refreshSessions: () => new Promise(() => {}),
+      refreshBudgetMs: 5,
+    });
+
+    assert.deepEqual(startedNames(calls), [
+      'APPLICATION_WORKFLOW',
+      'CLEANUP_WORKFLOW',
+      'RESUME_SYNC_WORKFLOW',
+    ]);
+    assert.ok(
+      warnings.some(([message]) => /session refresh not finished within 5 ms/.test(message))
+    );
+  });
+
   it('the hourly cron never starts the application workflow', async () => {
     const { calls, env, ctx } = createHarness({ JOB_DB: createConfigDb(ENABLED_CONFIG) });
     await scheduled({ cron: HEALTH_CHECK_CRON, scheduledTime: MONDAY_MIDNIGHT }, env, ctx);

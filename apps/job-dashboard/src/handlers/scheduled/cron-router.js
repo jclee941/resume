@@ -1,3 +1,4 @@
+import { settleWithin } from '../../services/browser-session.js';
 import { refreshJobKoreaSession } from '../jobkorea/mint-session.js';
 import { syncApplicationHistory } from '../../services/application-history/sync.js';
 import { refreshWantedSession } from '../wanted/mint-session.js';
@@ -12,6 +13,12 @@ const HISTORY_SYNC_TIMEOUT_MS = 120_000;
  * session (4 tries at most, 90 s apart, well inside the scheduled-event limit).
  */
 export const JOBKOREA_CRON_REFRESH = Object.freeze({ attempts: 4, retryDelayMs: 90_000 });
+/**
+ * A scheduled event gets 15 minutes of wall time. Protocol calls on a stalled page can hang for
+ * minutes, so the session refresh as a whole gets 9; whatever it has not finished by then is left
+ * behind, and the history sync (at most 2 minutes) and the workflow starts still run.
+ */
+export const SESSION_REFRESH_BUDGET_MS = 9 * 60_000;
 
 /**
  * @typedef {{ create(options: { params: unknown }): Promise<unknown> }} WorkflowStarter
@@ -37,6 +44,24 @@ async function refreshPlatformSessions(env) {
 }
 
 /**
+ * @param {CronEnv} env
+ * @param {(env: CronEnv) => Promise<void>} refresh
+ * @param {number} budgetMs
+ * @returns {Promise<void>}
+ */
+async function refreshWithinBudget(env, refresh, budgetMs) {
+  const finished = await settleWithin(
+    refresh(env).then(() => true),
+    budgetMs
+  );
+  if (!finished) {
+    console.warn(
+      `[cron] session refresh not finished within ${budgetMs} ms; continuing without it`
+    );
+  }
+}
+
+/**
  * Pulls Wanted/JobKorea application history into D1 so the auto-apply approval gate that runs
  * next already sees what was applied elsewhere. A failure is logged and never blocks a start.
  * @param {CronEnv} env
@@ -57,12 +82,20 @@ async function syncHistoryBestEffort(env, sync) {
 }
 
 /**
+ * @typedef {{
+ *   sync: typeof syncApplicationHistory;
+ *   refresh: (env: CronEnv) => Promise<void>;
+ *   refreshBudgetMs: number;
+ * }} CronSteps
+ */
+
+/**
  * @param {CronEnv} env
- * @param {typeof syncApplicationHistory} sync
+ * @param {CronSteps} steps
  * @returns {Promise<WorkflowStart[]>}
  */
-async function resumeSyncStarts(env, sync) {
-  if (env.RESUME_SYNC_WORKFLOW) await refreshPlatformSessions(env);
+async function resumeSyncStarts(env, { sync, refresh, refreshBudgetMs }) {
+  if (env.RESUME_SYNC_WORKFLOW) await refreshWithinBudget(env, refresh, refreshBudgetMs);
   await syncHistoryBestEffort(env, sync);
   const dryRun = String(env.RESUME_SYNC_CRON_DRY_RUN ?? 'true').toLowerCase() !== 'false';
   return [
@@ -87,11 +120,11 @@ function isWeeklyReportHour(scheduledTime) {
  * @param {string | undefined} cron
  * @param {CronEnv} env
  * @param {number | undefined} scheduledTime
- * @param {typeof syncApplicationHistory} sync
+ * @param {CronSteps} steps
  * @returns {Promise<WorkflowStart[]>}
  */
-async function planStarts(cron, env, scheduledTime, sync) {
-  if (cron === RESUME_SYNC_CRON) return resumeSyncStarts(env, sync);
+async function planStarts(cron, env, scheduledTime, steps) {
+  if (cron === RESUME_SYNC_CRON) return resumeSyncStarts(env, steps);
   if (cron === HEALTH_CHECK_CRON) {
     /** @type {WorkflowStart[]} */
     const starts = [{ binding: 'HEALTH_CHECK_WORKFLOW', params: { source: 'cron' } }];
@@ -126,7 +159,8 @@ function describeReason(reason) {
 /**
  * Route a Cloudflare scheduled() invocation by its matched cron expression.
  * - RESUME_SYNC_CRON   -> ResumeSyncWorkflow (dryRun unless RESUME_SYNC_CRON_DRY_RUN=false,
- *   after a best-effort Wanted/JobKorea session refresh and application-history sync, which
+ *   after a best-effort Wanted/JobKorea session refresh (bounded by SESSION_REFRESH_BUDGET_MS)
+ *   and application-history sync, which
  *   runs before the discovery start so the approval gate dedupes against it) plus CleanupWorkflow, plus a dry-run
  *   ApplicationWorkflow discovery run for Wanted unless auto-apply is disabled in D1 config
  *   or AUTO_APPLY_CRON_ENABLED=false.
@@ -138,12 +172,16 @@ function describeReason(reason) {
  * @param {{ cron?: string; scheduledTime?: number } | undefined} controller
  * @param {CronEnv} env
  * @param {CronContext} ctx
- * @param {{ syncApplicationHistory?: typeof syncApplicationHistory }} [deps]
+ * @param {{ syncApplicationHistory?: typeof syncApplicationHistory; refreshSessions?: CronSteps['refresh']; refreshBudgetMs?: number }} [deps]
  * @returns {Promise<void>}
  */
 export async function scheduled(controller, env, ctx, deps = {}) {
-  const sync = deps.syncApplicationHistory ?? syncApplicationHistory;
-  const starts = await planStarts(controller?.cron, env, controller?.scheduledTime, sync);
+  const steps = {
+    sync: deps.syncApplicationHistory ?? syncApplicationHistory,
+    refresh: deps.refreshSessions ?? refreshPlatformSessions,
+    refreshBudgetMs: deps.refreshBudgetMs ?? SESSION_REFRESH_BUDGET_MS,
+  };
+  const starts = await planStarts(controller?.cron, env, controller?.scheduledTime, steps);
   const runs = starts.map((start) => {
     const run = startWorkflow(env, start);
     ctx.waitUntil(run);
