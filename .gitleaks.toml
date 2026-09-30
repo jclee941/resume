@@ -124,9 +124,36 @@ regexTarget = "match"
 regexes = ['''google-site-verification''']
 
 # -----------------------------------------------------------------------------
+# Verified false positives, each scoped by rule, path AND regex (all three must match)
+# -----------------------------------------------------------------------------
+
+# linkedin-client-id fires on the JSDoc type line `linkedin: LinkedInClient;`: a class name,
+# not a credential.
+[[allowlists]]
+description = "LinkedInClient class name in the auto-apply client factory typedef"
+condition = "AND"
+targetRules = ["linkedin-client-id"]
+paths = ['''(?:^|/)apps/job-dashboard/src/handlers/auto-apply/client-factory\.js$''']
+regexTarget = "match"
+regexes = ['''linkedin:\s+LinkedInClient;''']
+
+# generic-api-key fires on the Cloudflare Web Analytics beacon token in data-cf-beacon of the
+# published page. The token is public by design (it ships in every page response). The path only
+# exists in history: the pre-restructure bundle typescript/portfolio-worker/worker.js.
+[[allowlists]]
+description = "Public Cloudflare Web Analytics beacon token in the historical portfolio worker bundle"
+condition = "AND"
+targetRules = ["generic-api-key"]
+paths = ['''(?:^|/)typescript/portfolio-worker/worker\.js$''']
+regexTarget = "match"
+regexes = ['''token":"[0-9a-f]{32}"''']
+
+# -----------------------------------------------------------------------------
 # Allowlist — paths and global patterns
 # -----------------------------------------------------------------------------
-[allowlist]
+# gitleaks rejects the legacy [allowlist] table next to [[allowlists]], so the global list is
+# an entry of the same array (no targetRules: it applies to every rule).
+[[allowlists]]
 description = "Global allowlist for known-safe paths and patterns"
 
 paths = [
