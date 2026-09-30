@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { sha256Hex } from '../pack.mjs';
 import { diffManifests, push, status } from '../sync.mjs';
-import { CREDS, fakeD1, makeRoot, put } from './helpers.mjs';
+import { CREDS, fakeD1, makeRoot, put } from './d1-test-kit.mjs';
 
 const MASTER = 'packages/data/resumes/master/resume_data.json';
 const NOW = '2026-01-01T00:00:00.000Z';
