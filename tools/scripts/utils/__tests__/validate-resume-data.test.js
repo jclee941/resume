@@ -69,7 +69,7 @@ describe('validate resume data file diagnostics', () => {
     const schemaFile = join(directory, 'invalid-schema.json');
     const secret = 'redact-me-schema-token';
     const sourceFragment = 'redact-';
-    writeFileSync(dataFile, JSON.stringify({ name: 'Jaecheol' }));
+    writeFileSync(dataFile, JSON.stringify({ name: 'Example' }));
     writeFileSync(schemaFile, secret);
 
     try {
