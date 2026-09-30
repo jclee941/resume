@@ -30,7 +30,7 @@ const EXPECTED_TOOLS = {
     'start_job_crawl',
     'refresh_platform_session',
   ],
-  otherWrites: ['reject_application', 'update_application_status'],
+  otherWrites: ['reject_application', 'update_application_status', 'sync_application_history'],
 };
 
 function fixture() {

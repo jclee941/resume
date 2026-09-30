@@ -1,6 +1,7 @@
 import { jsonResponse } from '../middleware/cors.js';
 import { getConfig, saveConfig } from '../services/config.js';
 import { runBrowserSmoke, smokeCookiesFor } from '../handlers/browser/smoke.js';
+import { handleApplicationHistorySync } from '../handlers/applications/history-sync-operation.js';
 import { refreshWantedSession } from '../handlers/wanted/mint-session.js';
 import { refreshJobKoreaSession } from '../handlers/jobkorea/mint-session.js';
 import { enqueueTask } from '../queues/queue-enqueuer.js';
@@ -13,6 +14,7 @@ import { getQueueCapability, parseQueueRequest, QUEUE_NAME } from '../queues/que
  *   & Parameters<typeof smokeCookiesFor>[0]
  *   & Parameters<typeof refreshWantedSession>[0]
  *   & Parameters<typeof refreshJobKoreaSession>[0]
+ *   & Parameters<typeof handleApplicationHistorySync>[0]
  *   & Parameters<typeof enqueueTask>[0]
  *   & NonNullable<Parameters<typeof getQueueCapability>[0]>
  *   & { JOB_DB: Parameters<typeof getConfig>[0] }} AdminEnv
@@ -58,6 +60,8 @@ export function registerAdminRoutes(router, ctx) {
     const result = await runBrowserSmoke(env, opts);
     return jsonResponse(result, result.ok ? 200 : 502);
   });
+
+  router.post('/api/applications/sync', (req) => handleApplicationHistorySync(env, req));
 
   router.get('/api/config', () => getConfig(env.JOB_DB));
   router.put('/api/config', (req) => saveConfig(req, env.JOB_DB));
