@@ -56,7 +56,9 @@ describe('upsertApplicationHistory', () => {
   it('normalizes a legacy key whose status already matches and counts it as updated', async () => {
     seed('legacy-3', '3', 'applied');
 
-    const counts = await upsertApplicationHistory(db, [wantedRecord(3, 'applied')], NOW);
+    // No application time either, so the key rewrite is the only change.
+    const record = wantedRecord(3, 'applied', { appliedAt: null });
+    const counts = await upsertApplicationHistory(db, [record], NOW);
 
     assert.deepEqual(counts, { fetched: 1, inserted: 0, updated: 1, unchanged: 0 });
     const [row] = applications();
@@ -105,5 +107,81 @@ describe('upsertApplicationHistory', () => {
     assert.equal(byId['canonical-5'].status, 'rejected');
     assert.equal(byId['legacy-5'].job_id, '5');
     assert.equal(byId['legacy-5'].status, 'pending');
+  });
+});
+
+describe('upsertApplicationHistory application time', () => {
+  let db;
+  const row = (id) => db.sqlite.prepare('SELECT * FROM applications WHERE id = ?').get(id);
+  const seedJobKorea = (no, appliedAt) =>
+    db.sqlite
+      .prepare(
+        "INSERT INTO applications (id, job_id, source, position, company, status, created_at, updated_at, applied_at) VALUES (?, ?, 'jobkorea', 'Role', 'Co', 'applied', ?, 'then', ?)"
+      )
+      .run(`history-jobkorea-${no}`, `jobkorea-${no}`, appliedAt, appliedAt);
+  const jobkoreaRecord = (no, appliedAt) => ({
+    source: 'jobkorea',
+    jobId: `jobkorea-${no}`,
+    company: 'Co',
+    position: 'Role',
+    url: `https://www.jobkorea.co.kr/Recruit/GI_Read/${no}`,
+    appliedAt,
+    status: 'applied',
+  });
+
+  beforeEach(() => {
+    db = createSqliteD1();
+  });
+
+  it('replaces a bare date with the precise time once, then leaves the row alone', async () => {
+    seedJobKorea(7, '2026-09-03');
+    const record = jobkoreaRecord(7, '2026-09-03T05:15:30.000Z');
+
+    const first = await upsertApplicationHistory(db, [record], NOW);
+    const second = await upsertApplicationHistory(db, [record], NOW);
+
+    assert.deepEqual(first, { fetched: 1, inserted: 0, updated: 1, unchanged: 0 });
+    assert.deepEqual(second, { fetched: 1, inserted: 0, updated: 0, unchanged: 1 });
+    const stored = row('history-jobkorea-7');
+    assert.equal(stored.applied_at, '2026-09-03T05:15:30.000Z');
+    assert.equal(stored.created_at, '2026-09-03T05:15:30.000Z');
+    assert.equal(stored.status, 'applied');
+  });
+
+  it('never trades a precise time for a date', async () => {
+    seedJobKorea(8, '2026-09-03T05:15:30.000Z');
+
+    const counts = await upsertApplicationHistory(db, [jobkoreaRecord(8, '2026-09-03')], NOW);
+
+    assert.deepEqual(counts, { fetched: 1, inserted: 0, updated: 0, unchanged: 1 });
+    assert.equal(row('history-jobkorea-8').applied_at, '2026-09-03T05:15:30.000Z');
+  });
+
+  it('counts one update when overlapping syncs make the same date precise', async () => {
+    seedJobKorea(9, '2026-09-03');
+    const record = jobkoreaRecord(9, '2026-09-03T05:15:30.000Z');
+
+    const results = await Promise.all([
+      upsertApplicationHistory(db, [record], NOW),
+      upsertApplicationHistory(db, [record], NOW),
+    ]);
+
+    const sum = (key) => results.reduce((total, counts) => total + counts[key], 0);
+    assert.deepEqual([sum('updated'), sum('unchanged')], [1, 1]);
+    assert.equal(row('history-jobkorea-9').applied_at, '2026-09-03T05:15:30.000Z');
+  });
+
+  it('fills a missing application time without touching an unrelated created_at', async () => {
+    db.sqlite
+      .prepare(
+        "INSERT INTO applications (id, job_id, source, position, company, status, created_at, updated_at) VALUES ('own-10', 'wanted-10', 'wanted', 'Own Role', 'Own Co', 'applied', 'then', 'then')"
+      )
+      .run();
+
+    const counts = await upsertApplicationHistory(db, [wantedRecord(10, 'applied')], NOW);
+
+    assert.deepEqual(counts, { fetched: 1, inserted: 0, updated: 1, unchanged: 0 });
+    assert.equal(row('own-10').applied_at, '2026-09-01T10:00:00');
+    assert.equal(row('own-10').created_at, 'then');
   });
 });

@@ -2,13 +2,17 @@
  * @fileoverview Upserts synced application history into `applications`, keyed by
  * (source, job_id). One SELECT per source finds the existing rows (of any origin, including
  * auto-apply rows and the bare-id rows the old Wanted sync wrote); a row that exists only has its
- * status advanced, a missing one is inserted under a deterministic id, and nothing is deleted.
+ * status advanced and its application time filled in or made precise, a missing one is inserted
+ * under a deterministic id, and nothing is deleted.
  * Writes go through D1 `batch` so hundreds of rows cost a handful of subrequests.
  * @module services/application-history/history-repository
  */
 import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
 
 const BATCH_SIZE = 50;
+const DATE_ONLY_LENGTH = 10;
+/** SQL form of improvesAppliedAt, with ?4 the incoming application time. */
+const IMPROVES_APPLIED_AT = `(?4 IS NOT NULL AND (applied_at IS NULL OR (length(applied_at) = ${DATE_ONLY_LENGTH} AND length(?4) > ${DATE_ONLY_LENGTH})))`;
 
 /**
  * @typedef {{
@@ -35,17 +39,31 @@ function dedupeKey(source, jobId) {
 }
 
 /**
+ * A known application time fills a missing one, and a full timestamp replaces a bare date (JobKorea
+ * rows synced before the list's time stamp was read); a precise time is never replaced by a date.
+ * @param {string | null | undefined} stored
+ * @param {string | null | undefined} incoming
+ * @returns {boolean}
+ */
+function improvesAppliedAt(stored, incoming) {
+  if (!incoming) return false;
+  return !stored || (stored.length === DATE_ONLY_LENGTH && incoming.length > DATE_ONLY_LENGTH);
+}
+
+/**
  * @param {HistoryDb} db
  * @param {string} source
- * @returns {Promise<Map<string, { id: string; status: string; canonical: boolean }>>}
+ * @returns {Promise<Map<string, { id: string; status: string; appliedAt: string | null; canonical: boolean }>>}
  */
 async function loadExisting(db, source) {
   const { results = [] } = await db
-    .prepare('SELECT id, job_id, status FROM applications WHERE source = ? AND job_id IS NOT NULL')
+    .prepare(
+      'SELECT id, job_id, status, applied_at FROM applications WHERE source = ? AND job_id IS NOT NULL'
+    )
     .bind(source)
     .all();
   const existing = new Map();
-  for (const row of /** @type {Array<{ id: string; job_id: string; status: string }>} */ (
+  for (const row of /** @type {Array<{ id: string; job_id: string; status: string; applied_at: string | null }>} */ (
     results
   )) {
     const key = dedupeKey(source, row.job_id);
@@ -53,7 +71,7 @@ async function loadExisting(db, source) {
     const canonical = row.job_id === key;
     const seen = existing.get(key);
     if (!seen || (canonical && !seen.canonical)) {
-      existing.set(key, { id: row.id, status: row.status, canonical });
+      existing.set(key, { id: row.id, status: row.status, appliedAt: row.applied_at, canonical });
     }
   }
   return existing;
@@ -91,9 +109,12 @@ export async function upsertApplicationHistory(db, fetched, now) {
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      ON CONFLICT(id) DO NOTHING`
   );
+  // History rows keep created_at equal to the application time, so it moves with applied_at.
   const update = db.prepare(
-    `UPDATE applications SET status = ?, job_id = ?, updated_at = ?, applied_at = COALESCE(applied_at, ?)
-     WHERE id = ? AND (status != ? OR job_id IS NOT ?)`
+    `UPDATE applications SET status = ?1, job_id = ?2, updated_at = ?3,
+       applied_at = CASE WHEN ${IMPROVES_APPLIED_AT} THEN ?4 ELSE applied_at END,
+       created_at = CASE WHEN ${IMPROVES_APPLIED_AT} AND created_at = applied_at THEN ?4 ELSE created_at END
+     WHERE id = ?5 AND (status != ?1 OR job_id IS NOT ?2 OR ${IMPROVES_APPLIED_AT})`
   );
   const normalize = db.prepare(
     'UPDATE applications SET job_id = ? WHERE id = ? AND job_id IS NOT ?'
@@ -122,18 +143,8 @@ export async function upsertApplicationHistory(db, fetched, now) {
         )
       );
       planned.push({ outcome: 'inserted', record });
-    } else if (row.status !== record.status) {
-      statements.push(
-        update.bind(
-          record.status,
-          record.jobId,
-          now,
-          record.appliedAt,
-          row.id,
-          record.status,
-          record.jobId
-        )
-      );
+    } else if (row.status !== record.status || improvesAppliedAt(row.appliedAt, record.appliedAt)) {
+      statements.push(update.bind(record.status, record.jobId, now, record.appliedAt, row.id));
       planned.push({ outcome: 'updated', record });
     } else if (!row.canonical) {
       statements.push(normalize.bind(record.jobId, row.id, record.jobId));
@@ -155,17 +166,7 @@ export async function upsertApplicationHistory(db, fetched, now) {
       else if (outcome === 'updated') counts.unchanged += 1;
       else {
         const id = `history-${record.jobId}`;
-        retries.push(
-          update.bind(
-            record.status,
-            record.jobId,
-            now,
-            record.appliedAt,
-            id,
-            record.status,
-            record.jobId
-          )
-        );
+        retries.push(update.bind(record.status, record.jobId, now, record.appliedAt, id));
       }
     });
   }

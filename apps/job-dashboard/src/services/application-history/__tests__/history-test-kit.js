@@ -60,6 +60,7 @@ const APPLY_ROW = ({
   no,
   title,
   read = false,
+  stamp = '',
 }) => `
 <tr><td class="vertical-align-top" rowspan="2"><div class="vertical-align-middle apply-status"><div class="inner">
 <div class="item status">${label}</div><div class="item date">${date}</div></div></div></td>
@@ -68,7 +69,7 @@ const APPLY_ROW = ({
 <div class="description"><a target="_blank" href="/Recruit/GI_Read/${no}?Oem_Code=C1">${title}</a></div></div></div></td>
 <td><div class="vertical-align-middle apply-progress"><div class="inner"><div class="status"><div class="extra">접수마감</div></div></div></div></td>
 <td><div class="vertical-align-middle reading${read ? ' is-reading-yes' : ''}"><div class="inner"><div class="${read ? 'date' : 'read-not'}">${read ? '2026.09.02' : '미열람'}</div></div></div></td>
-<td><button class="btn devBtnCancel">지원취소</button></td></tr>
+<td><button class="btn devBtnCancel"${stamp ? ` data-applydate="${stamp}"` : ''}>지원취소</button></td></tr>
 <tr><td colspan="4"><div class="similar"><ul class="similar-list"><li class="listItem">
 <div class="company"><a href="/Recruit/Co_Read/C/9">Decoy Corp</a></div>
 <div class="description dmp-imp-start"><a class="giread" href="/Recruit/GI_Read/49999999?x=1">Decoy Role</a></div>

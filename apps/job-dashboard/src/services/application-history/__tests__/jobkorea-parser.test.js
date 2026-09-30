@@ -63,6 +63,28 @@ describe('parseJobKoreaApplyList', () => {
   });
 });
 
+describe('parseJobKoreaApplyList application time', () => {
+  const appliedAt = (rows) =>
+    parseJobKoreaApplyList(applyListHtml({ rows })).map((r) => r.appliedAt);
+
+  it('reads the 지원취소 stamp as a UTC ISO time to the second', () => {
+    assert.deepEqual(
+      appliedAt([
+        { ...ROWS[0], stamp: '20260903141530' },
+        { ...ROWS[1], stamp: '20260902003000' },
+      ]),
+      ['2026-09-03T05:15:30.000Z', '2026-09-01T15:30:00.000Z']
+    );
+  });
+
+  it('keeps the listed date when the stamp is missing or impossible', () => {
+    assert.deepEqual(appliedAt([{ ...ROWS[0], stamp: '20260231101010' }, ROWS[1]]), [
+      '2026-09-03',
+      '2026-09-02',
+    ]);
+  });
+});
+
 describe('mapJobKoreaStatus', () => {
   it('maps platform labels onto canonical statuses', () => {
     assert.equal(mapJobKoreaStatus('지원완료', false), 'applied');
