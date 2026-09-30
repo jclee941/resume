@@ -78,6 +78,7 @@ module.exports = [
       '.cache/**',
       '.opencode/**',
       '.sisyphus/**',
+      'tests/fixtures/content-pack/**',
       '.omo/**',
       'apps/natively/**',
       'downloaded_files/**',

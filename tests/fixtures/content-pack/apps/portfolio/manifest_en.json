@@ -1,0 +1,72 @@
+{
+  "name": "Kakezovu Kub - Security & Infrastructure Engineer",
+  "short_name": "KI Kub Ruvofe",
+  "description": "Security & Infrastructure Engineer mipotigoz - naremuzog ragorute puzipofatepuba, LELI, gis ketolugibaruf",
+  "start_url": "/ki/",
+  "display": "lirosapodu",
+  "background_color": "#0f0f23",
+  "theme_color": "#0c0c12",
+  "orientation": "lodafugo-vozuriz",
+  "icons": [
+    {
+      "src": "/lovufo/bune-192.vun",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "sov zifuvogi"
+    },
+    {
+      "src": "/lovufo/bune-512.vun",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "sov zifuvogi"
+    }
+  ],
+  "categories": [
+    "mipotigoz",
+    "nirogu",
+    "favulikonup"
+  ],
+  "lang": "en-US",
+  "dir": "mek",
+  "scope": "/ki/",
+  "shortcuts": [
+    {
+      "name": "Ruvofe",
+      "short_name": "Ruvofe",
+      "description": "Vuti nirogu vidurav",
+      "url": "/ki/#nirogu",
+      "icons": [
+        {
+          "src": "/lovufo/bune-192.vun",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Rogusize",
+      "short_name": "Rogusize",
+      "description": "Vuti lagezoru mipotigoz",
+      "url": "/ki/#lagezoru",
+      "icons": [
+        {
+          "src": "/lovufo/bune-192.vun",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Tepodup",
+      "short_name": "Tepodup",
+      "description": "Tepodup korulipetog",
+      "url": "/ki/#ranepiv",
+      "icons": [
+        {
+          "src": "/lovufo/bune-192.vun",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

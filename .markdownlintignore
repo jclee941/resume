@@ -5,3 +5,4 @@ node_modules/
 applications/
 # Generated resume markdowns derived from packages/data/resumes/master/resume_data.json
 packages/data/resumes/generated/
+tests/fixtures/content-pack/
