@@ -166,7 +166,10 @@ function createWorkflowHarness() {
 function createEmptyApplicationsDb() {
   return {
     prepare(query) {
-      if (query.includes('SELECT id FROM applications')) {
+      if (
+        query.includes('SELECT id FROM applications') ||
+        query.includes('SELECT id FROM approval_requests')
+      ) {
         return {
           bind() {
             return { first: async () => null };
