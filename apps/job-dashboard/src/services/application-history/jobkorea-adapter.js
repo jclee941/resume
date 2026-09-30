@@ -20,11 +20,14 @@ const MAX_PAGES = 10;
 const NAVIGATION_TIMEOUT_MS = 45_000;
 /**
  * The history sync runs every platform under a 120 s cron budget (sync.js DEFAULT_TIMEOUT_MS).
- * Worst case for one page is two timed-out attempts (2 x 45 s = 90 s) plus two content reads.
- * Each attempt's timeout is also capped by what is left of this 110 s deadline, so a slow pager
- * page cannot run past the cron budget and the adapter fails on its own before sync.js gives up.
+ * Worst case for one page is two timed-out attempts (2 x 45 s = 90 s) plus two content reads and
+ * the page close, each given up after SETTLE_TIMEOUT_MS because a stalled page can leave them
+ * hanging. Each attempt's timeout is also capped by what is left of this 100 s deadline, so a slow
+ * pager page cannot run past the cron budget and the adapter fails on its own, with its diagnosis,
+ * before sync.js gives up.
  */
-const ADAPTER_BUDGET_MS = 110_000;
+const ADAPTER_BUDGET_MS = 100_000;
+const SETTLE_TIMEOUT_MS = 5_000;
 const TIMEOUT_MESSAGE = /timeout/i;
 const BLOCKED_RESOURCE_TYPES = new Set(['image', 'media', 'font', 'stylesheet']);
 
@@ -40,14 +43,22 @@ function sameSiteUrl(href, base) {
 }
 
 /**
- * @param {import('@cloudflare/puppeteer').Page} page
- * @returns {Promise<string | null>} current HTML, or null when it cannot be read
+ * @template T
+ * @param {Promise<T>} work a page call that a stalled page can leave pending
+ * @param {number} ms
+ * @returns {Promise<T | null>} the result, or null when it failed or did not settle within `ms`
  */
-async function readContent(page) {
+async function settleWithin(work, ms) {
+  /** @type {ReturnType<typeof setTimeout> | undefined} */
+  let timer;
+  /** @type {Promise<null>} */
+  const gaveUp = new Promise((resolve) => {
+    timer = setTimeout(() => resolve(null), ms);
+  });
   try {
-    return await page.content();
-  } catch {
-    return null;
+    return await Promise.race([work.catch(() => null), gaveUp]);
+  } finally {
+    clearTimeout(timer);
   }
 }
 
@@ -59,9 +70,10 @@ async function readContent(page) {
  * @param {import('@cloudflare/puppeteer').Page} page
  * @param {string} url
  * @param {number} deadline epoch ms after which no further attempt may start
+ * @param {number} settleMs how long a content read after a timeout may take
  * @returns {Promise<string>} the page HTML (not yet checked for being the applied list)
  */
-async function loadPage(page, url, deadline) {
+async function loadPage(page, url, deadline, settleMs) {
   /** @type {unknown} */
   let timedOut = new HistorySyncError('TIMEOUT', 'JobKorea sync budget exhausted');
   for (let attempt = 0; attempt < 2; attempt += 1) {
@@ -73,7 +85,7 @@ async function loadPage(page, url, deadline) {
     } catch (error) {
       if (!TIMEOUT_MESSAGE.test(error instanceof Error ? error.message : '')) throw error;
       timedOut = error;
-      const html = await readContent(page);
+      const html = await settleWithin(page.content(), settleMs);
       if (html !== null && isApplyListPage(html)) return html;
     }
   }
@@ -97,12 +109,12 @@ function withPendingRequests(error, pending) {
 
 /**
  * @param {Parameters<typeof readPlatformSession>[0] & Parameters<typeof defaultWithBrowserSession>[0]} env
- * @param {{ withBrowserSession?: typeof defaultWithBrowserSession }} [options]
+ * @param {{ withBrowserSession?: typeof defaultWithBrowserSession; settleMs?: number }} [options]
  * @returns {Promise<import('./history-types.js').HistoryRecord[]>}
  */
 export async function fetchJobKoreaHistory(
   env,
-  { withBrowserSession = defaultWithBrowserSession } = {}
+  { withBrowserSession = defaultWithBrowserSession, settleMs = SETTLE_TIMEOUT_MS } = {}
 ) {
   const cookieString = await readPlatformSession(env, 'jobkorea');
   if (!cookieString) {
@@ -122,7 +134,7 @@ export async function fetchJobKoreaHistory(
         const url = /** @type {string} */ (queue.shift());
         if (visited.has(url)) continue;
         visited.add(url);
-        const html = await loadPage(page, url, deadline).catch((error) => {
+        const html = await loadPage(page, url, deadline, settleMs).catch((error) => {
           throw withPendingRequests(error, requests.pending());
         });
         if (!isApplyListPage(html)) {
@@ -136,7 +148,7 @@ export async function fetchJobKoreaHistory(
       }
       return [...records.values()];
     } finally {
-      await page.close().catch(() => {});
+      await settleWithin(page.close(), settleMs);
     }
   });
 }
