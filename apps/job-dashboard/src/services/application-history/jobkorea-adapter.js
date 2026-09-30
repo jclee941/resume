@@ -32,8 +32,9 @@ const NAVIGATION_TIMEOUT_MS = 45_000;
 const ADAPTER_BUDGET_MS = 100_000;
 const SETTLE_TIMEOUT_MS = 5_000;
 /**
- * The adapter as a whole, browser acquisition, page setup and cleanup included, gives up after
- * this, so it always answers with its own TIMEOUT before sync.js's 120 s budget runs out.
+ * The adapter as a whole, from the KV session read through browser acquisition, page setup and
+ * cleanup, gives up after this, so it always answers with its own TIMEOUT before sync.js's 120 s
+ * fetch budget (which starts at the same moment) runs out.
  */
 const ADAPTER_DEADLINE_MS = 110_000;
 const TIMEOUT_MESSAGE = /timeout/i;
@@ -101,7 +102,7 @@ function withPendingRequests(error, pending) {
 
 /**
  * @param {Parameters<typeof readPlatformSession>[0] & Parameters<typeof defaultWithBrowserSession>[0]} env
- * @param {{ withBrowserSession?: typeof defaultWithBrowserSession; settleMs?: number; deadlineMs?: number }} [options]
+ * @param {{ withBrowserSession?: typeof defaultWithBrowserSession; settleMs?: number; deadlineMs?: number; clock?: () => number }} [options]
  * @returns {Promise<import('./history-types.js').HistoryRecord[]>}
  */
 export async function fetchJobKoreaHistory(
@@ -110,45 +111,63 @@ export async function fetchJobKoreaHistory(
     withBrowserSession = defaultWithBrowserSession,
     settleMs = SETTLE_TIMEOUT_MS,
     deadlineMs = ADAPTER_DEADLINE_MS,
+    clock = Date.now,
   } = {}
 ) {
-  const cookieString = await readPlatformSession(env, 'jobkorea');
-  if (!cookieString) {
-    throw new HistorySyncError('SESSION_MISSING', 'No JobKorea session in KV (auth:jobkorea)');
-  }
+  const deadlineAt = clock() + deadlineMs;
+  /** @param {string} next */
+  const assertOpen = (next) => {
+    if (clock() >= deadlineAt) {
+      throw new HistorySyncError('TIMEOUT', `JobKorea history window closed before ${next}`);
+    }
+  };
   /** @type {{ pending(): string[] }} */
   let requests = { pending: () => [] };
-  const work = withBrowserSession(env, async (browser) => {
-    const deadline = Date.now() + ADAPTER_BUDGET_MS;
-    const page = await browser.newPage();
-    try {
-      requests = await restrictToJobKorea(page, BLOCKED_RESOURCE_TYPES);
-      await page.setCookie(...toJobKoreaBrowserCookies(cookieString));
-      /** @type {Map<string, import('./history-types.js').HistoryRecord>} */
-      const records = new Map();
-      const visited = new Set();
-      const queue = [JOBKOREA_APPLY_LIST_URL];
-      while (queue.length > 0 && visited.size < MAX_PAGES) {
-        const url = /** @type {string} */ (queue.shift());
-        if (visited.has(url)) continue;
-        visited.add(url);
-        const html = await loadPage(page, url, deadline, settleMs).catch((error) => {
-          throw withPendingRequests(error, requests.pending());
-        });
-        if (!isApplyListPage(html)) {
-          throw new HistorySyncError('SESSION_EXPIRED', 'JobKorea did not serve the applied list');
-        }
-        for (const record of parseJobKoreaApplyList(html)) records.set(record.jobId, record);
-        for (const href of parseJobKoreaPagerLinks(html)) {
-          const next = sameSiteUrl(href, page.url());
-          if (next) queue.push(next);
-        }
-      }
-      return [...records.values()];
-    } finally {
-      await settleWithin(page.close(), settleMs);
+  const work = (async () => {
+    const cookieString = await readPlatformSession(env, 'jobkorea');
+    if (!cookieString) {
+      throw new HistorySyncError('SESSION_MISSING', 'No JobKorea session in KV (auth:jobkorea)');
     }
-  });
+    // A slow session read or browser acquisition that finishes after the deadline must not
+    // start browser work the caller has already been told timed out.
+    assertOpen('the browser was acquired');
+    return withBrowserSession(env, async (browser) => {
+      assertOpen('the page was opened');
+      // Attempts stop early enough for the bounded reads and the page close to fit as well.
+      const deadline = Math.min(clock() + ADAPTER_BUDGET_MS, deadlineAt - 2 * settleMs);
+      const page = await browser.newPage();
+      try {
+        requests = await restrictToJobKorea(page, BLOCKED_RESOURCE_TYPES);
+        await page.setCookie(...toJobKoreaBrowserCookies(cookieString));
+        /** @type {Map<string, import('./history-types.js').HistoryRecord>} */
+        const records = new Map();
+        const visited = new Set();
+        const queue = [JOBKOREA_APPLY_LIST_URL];
+        while (queue.length > 0 && visited.size < MAX_PAGES) {
+          const url = /** @type {string} */ (queue.shift());
+          if (visited.has(url)) continue;
+          visited.add(url);
+          const html = await loadPage(page, url, deadline, settleMs).catch((error) => {
+            throw withPendingRequests(error, requests.pending());
+          });
+          if (!isApplyListPage(html)) {
+            throw new HistorySyncError(
+              'SESSION_EXPIRED',
+              'JobKorea did not serve the applied list'
+            );
+          }
+          for (const record of parseJobKoreaApplyList(html)) records.set(record.jobId, record);
+          for (const href of parseJobKoreaPagerLinks(html)) {
+            const next = sameSiteUrl(href, page.url());
+            if (next) queue.push(next);
+          }
+        }
+        return [...records.values()];
+      } finally {
+        await settleWithin(page.close(), settleMs);
+      }
+    });
+  })();
   const outcome = await settleWithin(
     work.then(
       (records) => ({ records }),
