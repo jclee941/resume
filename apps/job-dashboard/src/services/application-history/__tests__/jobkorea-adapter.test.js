@@ -178,3 +178,46 @@ describe('fetchJobKoreaHistory stalled page', () => {
     }
   );
 });
+
+describe('fetchJobKoreaHistory unreadable page after a navigation', () => {
+  it('bounds the HTML read after a navigation that succeeded', { timeout: 2000 }, async () => {
+    const env = await sessionEnv(createSqliteD1(), ['jobkorea']);
+    const page = {
+      setRequestInterception: async () => {},
+      setCookie: async () => {},
+      on: () => {},
+      goto: async () => {},
+      content: () => new Promise(() => {}),
+      url: () => JOBKOREA_APPLY_LIST_URL,
+      close: async () => {},
+    };
+
+    await assert.rejects(
+      fetchJobKoreaHistory(env, {
+        withBrowserSession: async (_env, run) => run({ newPage: async () => page }),
+        settleMs: 5,
+      }),
+      {
+        message: `Navigation timeout: ${JOBKOREA_APPLY_LIST_URL} loaded but its HTML was not readable; pending: none`,
+      }
+    );
+  });
+});
+
+describe('fetchJobKoreaHistory overall deadline', () => {
+  it(
+    'answers with its own TIMEOUT when the browser work outlives the deadline',
+    { timeout: 2000 },
+    async () => {
+      const env = await sessionEnv(createSqliteD1(), ['jobkorea']);
+
+      await assert.rejects(
+        fetchJobKoreaHistory(env, {
+          withBrowserSession: async () => new Promise(() => {}),
+          deadlineMs: 5,
+        }),
+        { code: 'TIMEOUT', message: 'JobKorea history fetch gave up after 5 ms; pending: none' }
+      );
+    }
+  );
+});
