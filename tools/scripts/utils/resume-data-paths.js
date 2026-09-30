@@ -15,6 +15,11 @@ const SCHEMA_PATH = path.join(
   '../../../packages/data/resumes/master/resume_schema.json'
 );
 
+const WEB_DATA_OVERRIDES_PATH = path.join(
+  __dirname,
+  '../../../packages/data/resumes/master/web-data-overrides.json'
+);
+
 const WEB_DATA_PATH = path.join(__dirname, '../../../apps/portfolio/data.json');
 const WEB_DATA_EN_PATH = path.join(__dirname, '../../../apps/portfolio/data_en.json');
 const WEB_DATA_JA_PATH = path.join(__dirname, '../../../apps/portfolio/data_ja.json');
@@ -25,4 +30,10 @@ const LANGUAGE_SOURCES = [
   { language: 'ja', sourcePath: SOURCE_JA_PATH, webDataPath: WEB_DATA_JA_PATH },
 ];
 
-module.exports = { SOURCE_PATH, SCHEMA_PATH, WEB_DATA_PATH, LANGUAGE_SOURCES };
+module.exports = {
+  SOURCE_PATH,
+  SCHEMA_PATH,
+  WEB_DATA_OVERRIDES_PATH,
+  WEB_DATA_PATH,
+  LANGUAGE_SOURCES,
+};
