@@ -1,6 +1,8 @@
 const assert = require('node:assert/strict');
 const path = require('node:path');
-const nodeTest = require('node:test');
+// Load node:test only outside Jest: requiring it under Jest leaves a TestReporterScope handle
+// open, and Jest then force-exits its worker.
+const nodeTest = globalThis.test ? null : require('node:test');
 
 const test = globalThis.test || nodeTest.test;
 const beforeEach = globalThis.beforeEach || nodeTest.beforeEach;
