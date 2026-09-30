@@ -28,7 +28,7 @@ const CONTENT_TYPES = {
 
 /**
  * @typedef {{ include: string[], exclude: string[] }} PackDefinition
- * @typedef {{ path: string, sha256: string, size: number }} ManifestEntry
+ * @typedef {{ path: string, sha256: string, size: number, updated_at?: string }} ManifestEntry
  * @typedef {{ matches: (repoPath: string) => boolean }} PackMatcher
  */
 

@@ -1,6 +1,6 @@
 /**
  * @typedef {import('./d1-client.mjs').D1Client} D1Client
- * @typedef {{ path: string, bytes: Buffer, sha256: string, size: number }} RemoteFile
+ * @typedef {{ path: string, bytes: Buffer, sha256: string, size: number, updatedAt: string }} RemoteFile
  */
 
 export const PAGE_SIZE = 20;
@@ -25,7 +25,7 @@ export async function* readFiles(client) {
   let cursor = '';
   for (;;) {
     const { results } = await client.query(
-      'SELECT path, hex(body) AS body_hex, sha256, size FROM content_files WHERE path > ?1 ORDER BY path LIMIT ?2',
+      'SELECT path, hex(body) AS body_hex, sha256, size, updated_at FROM content_files WHERE path > ?1 ORDER BY path LIMIT ?2',
       [cursor, PAGE_SIZE]
     );
     for (const row of results) {
@@ -34,6 +34,7 @@ export async function* readFiles(client) {
         bytes: Buffer.from(row.body_hex ?? '', 'hex'),
         sha256: row.sha256,
         size: row.size,
+        updatedAt: row.updated_at,
       };
     }
     if (results.length < PAGE_SIZE) return;

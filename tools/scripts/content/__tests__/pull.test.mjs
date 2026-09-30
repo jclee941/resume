@@ -29,6 +29,32 @@ test('pull pages through D1, writes verified bytes, and records the manifest', a
   });
 });
 
+test('pull records the D1 updated_at of each file in the manifest', async () => {
+  const root = makeRoot();
+  const d1 = fakeD1();
+  const bytes = Buffer.from('hello');
+  d1.seed('applications/role/a.md', bytes, sha256Hex(bytes), '2026-09-28T10:00:00.000Z');
+  await pull({ root, env: CREDS, source: 'd1', fetchImpl: d1.fetchImpl, out: quiet });
+  assert.ok(d1.calls.some((c) => c.sql.includes('updated_at') && c.sql.includes('hex(body)')));
+  const manifest = JSON.parse(readFileSync(path.join(root, '.content/manifest.json'), 'utf8'));
+  assert.deepEqual(manifest.files, [
+    {
+      path: 'applications/role/a.md',
+      sha256: sha256Hex(bytes),
+      size: 5,
+      updated_at: '2026-09-28T10:00:00.000Z',
+    },
+  ]);
+});
+
+test('fixture pulls leave updated_at out of the manifest', async () => {
+  const root = makeRoot();
+  put(root, 'tests/fixtures/content-pack/applications/x/a.md', 'fake');
+  await pull({ root, env: { CONTENT_SOURCE: 'fixtures' }, out: quiet });
+  const manifest = JSON.parse(readFileSync(path.join(root, '.content/manifest.json'), 'utf8'));
+  assert.deepEqual(Object.keys(manifest.files[0]), ['path', 'sha256', 'size']);
+});
+
 test('pull rejects a row whose bytes do not match its sha256 and writes nothing for it', async () => {
   const root = makeRoot();
   const d1 = fakeD1();

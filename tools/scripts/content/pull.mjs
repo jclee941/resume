@@ -125,7 +125,7 @@ async function pullD1(root, env, fetchImpl) {
       throw new Error(`content_files integrity check failed for ${row.path}`);
     }
     await writeAtomic(root, row.path, row.bytes);
-    entries.push({ path: row.path, sha256, size: row.size });
+    entries.push({ path: row.path, sha256, size: row.size, updated_at: row.updatedAt });
   }
   return entries;
 }
