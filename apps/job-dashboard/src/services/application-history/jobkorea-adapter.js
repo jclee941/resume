@@ -5,6 +5,7 @@
  * @module services/application-history/jobkorea-adapter
  */
 import { withBrowserSession as defaultWithBrowserSession } from '../browser-session.js';
+import { isJobKoreaHost, restrictToJobKorea } from '../jobkorea-request-filter.js';
 import { readPlatformSession } from '../platform-session.js';
 import { toJobKoreaBrowserCookies } from '../resume-platform-sync/jobkorea-editor.js';
 import { HistorySyncError } from './history-types.js';
@@ -28,14 +29,6 @@ const TIMEOUT_MESSAGE = /timeout/i;
 const BLOCKED_RESOURCE_TYPES = new Set(['image', 'media', 'font', 'stylesheet']);
 
 /**
- * @param {string} hostname
- * @returns {boolean}
- */
-function isJobKoreaHost(hostname) {
-  return hostname === 'jobkorea.co.kr' || hostname.endsWith('.jobkorea.co.kr');
-}
-
-/**
  * @param {string} href
  * @param {string} base
  * @returns {string | null} absolute https jobkorea.co.kr URL, or null for anything else
@@ -44,32 +37,6 @@ function sameSiteUrl(href, base) {
   if (!URL.canParse(href, base)) return null;
   const url = new URL(href, base);
   return url.protocol === 'https:' && isJobKoreaHost(url.hostname) ? url.toString() : null;
-}
-
-/**
- * @param {import('@cloudflare/puppeteer').HTTPRequest} request
- * @returns {boolean} true for heavy resources and anything served from outside jobkorea.co.kr
- */
-function shouldBlock(request) {
-  if (BLOCKED_RESOURCE_TYPES.has(request.resourceType())) return true;
-  const target = request.url();
-  return !URL.canParse(target) || !isJobKoreaHost(new URL(target).hostname);
-}
-
-/**
- * Request-interception handler: third-party ad/analytics scripts and page weight are what push
- * the applied list past DOMContentLoaded, and the parser only needs the server-rendered HTML.
- * Never throws: a request that is already handled or a closed page must not fail the sync.
- * @param {import('@cloudflare/puppeteer').HTTPRequest} request
- * @returns {void}
- */
-function handleRequest(request) {
-  try {
-    const settled = shouldBlock(request) ? request.abort() : request.continue();
-    Promise.resolve(settled).catch(() => {});
-  } catch {
-    // Intentionally ignored, see above.
-  }
 }
 
 /**
@@ -130,8 +97,7 @@ export async function fetchJobKoreaHistory(
     const deadline = Date.now() + ADAPTER_BUDGET_MS;
     const page = await browser.newPage();
     try {
-      await page.setRequestInterception(true);
-      page.on('request', handleRequest);
+      await restrictToJobKorea(page, BLOCKED_RESOURCE_TYPES);
       await page.setCookie(...toJobKoreaBrowserCookies(cookieString));
       /** @type {Map<string, import('./history-types.js').HistoryRecord>} */
       const records = new Map();
