@@ -15,15 +15,16 @@ const HISTORY_SYNC_TIMEOUT_MS = 120_000;
 export const JOBKOREA_CRON_REFRESH = Object.freeze({ attempts: 4, retryDelayMs: 90_000 });
 /**
  * A scheduled event gets 15 minutes of wall time. Protocol calls on a stalled page can hang for
- * minutes, so the session refresh as a whole gets 9; whatever it has not finished by then is left
- * behind, and the history sync (at most 2 minutes) and the workflow starts still run.
+ * minutes, so the cron waits at most 9 for the session refresh; whatever it has not finished by
+ * then is left behind (not cancelled), and the history sync and the workflow starts still run.
  */
 export const SESSION_REFRESH_BUDGET_MS = 9 * 60_000;
 /**
  * The resume-sync cron's preflight (the session refresh, then the history sync with its D1 writes
- * and sync_logs row) closes this long after the scheduled event starts: the history sync gets the
- * deadline, so no fetch outlives it and no write batch or log row starts after it. The remaining
- * 3 of the 15 minutes are kept for the auto-apply config read and the workflow starts.
+ * and sync_logs row) closes this long after the scheduled event starts. The history sync gets the
+ * deadline: the cron stops waiting for it there, and no write batch or log row starts after it,
+ * while a fetch, batch or log row already under way is left to finish, not cancelled. The
+ * remaining 3 of the 15 minutes are kept for the auto-apply config read and the workflow starts.
  */
 export const PREFLIGHT_BUDGET_MS = 12 * 60_000;
 /** The discovery start's D1 config read; if it has not answered by then, only that start is skipped. */

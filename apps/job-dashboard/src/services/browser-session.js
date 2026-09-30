@@ -1,9 +1,10 @@
 /**
- * @fileoverview Caller-side helper for borrowing a Cloudflare Browser
- * Rendering session from the `BrowserSessionDO` pool (CF-native migration,
- * Wave 2). NOT wired into any crawler, route, queue, or scheduled handler
- * yet — this is a drop-in for future callers, added in Wave 3 once live
- * Browser Rendering behaviour has been validated.
+ * @fileoverview Caller-side helper for borrowing a Cloudflare Browser Rendering session from the
+ * `BrowserSessionDO` pool and handing it back afterwards. Every dashboard Browser Rendering caller
+ * goes through it: the JobKorea session refresh (handlers/jobkorea/mint-session.js), the JobKorea
+ * resume editor (services/resume-platform-sync/jobkorea-editor.js), the JobKorea application-history
+ * adapter (services/application-history/jobkorea-adapter.js) and the admin smoke probe
+ * (handlers/browser/smoke.js).
  *
  * @module services/browser-session
  */
