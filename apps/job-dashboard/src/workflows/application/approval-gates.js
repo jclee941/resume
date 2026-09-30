@@ -1,9 +1,7 @@
 import { attachWorkflowApproval } from './application-submissions.js';
+import { buildApprovalMetadata, withHumanApproval } from './approval-metadata.js';
 
-const FOREIGN_ATS_PLATFORMS = new Set(['greenhouse', 'lever', 'ashby']);
-const SERVER_ATS_CAPABILITY = Symbol('serverAtsCapability');
-const FOREIGN_COMPANY_PACKET_PATH =
-  'packages/data/resumes/applications/foreign-company/foreign_company_security_sre_packet.json';
+export { attachServerAtsCapability } from './approval-metadata.js';
 
 /**
  * @typedef {{
@@ -14,37 +12,9 @@ const FOREIGN_COMPANY_PACKET_PATH =
  *   };
  * }} ApprovalDb
  *
- * @typedef {{
- *   platform: string;
- *   mode: string;
- *   canSubmit: boolean;
- *   dryRunFirst?: boolean;
- * }} ServerAtsCapability
+ * @typedef {import('./approval-metadata.js').ApprovalMetadata} ApprovalMetadata
  *
- * @typedef {{
- *   score: number | null;
- *   source: string;
- *   adapterCapability: ServerAtsCapability | null;
- *   packetPath: string | null;
- *   humanApproval?: {
- *     status: string;
- *     destination: string;
- *   };
- * }} ApprovalMetadata
- *
- * @typedef {{
- *   id?: string | number;
- *   source?: string;
- *   matchScore: number;
- *   platform?: string;
- *   dryRun?: boolean;
- *   atsStub?: boolean;
- *   packetPath?: string;
- *   applicationPacketPath?: string;
- *   packet?: { source?: { path?: string } };
- *   [key: string]: unknown;
- *   [key: symbol]: unknown;
- * }} ScoredJob
+ * @typedef {import('./approval-metadata.js').ScoredJob} ScoredJob
  *
  * @typedef {{
  *   status: string;
@@ -66,20 +36,16 @@ const FOREIGN_COMPANY_PACKET_PATH =
  *
  * @typedef {{
  *   id: string;
- *   stats: { jobsApproved: number; jobsRejected: number; [key: string]: unknown };
+ *   stats: {
+ *     jobsApproved: number;
+ *     jobsRejected: number;
+ *     jobsAlreadyRequested?: number;
+ *     [key: string]: unknown;
+ *   };
  *   steps: unknown[];
  *   [key: string]: unknown;
  * }} ApprovalWorkflow
  */
-
-/**
- * @param {Record<string, unknown>} job
- * @param {unknown} capability
- * @returns {Record<string, unknown>}
- */
-export function attachServerAtsCapability(job, capability) {
-  return { ...job, [SERVER_ATS_CAPABILITY]: capability };
-}
 
 /**
  * @param {ApprovalContext} ctx
@@ -131,6 +97,8 @@ export async function processApprovalGates(
       workflow.stats.jobsApproved++;
     } else if (approvalResult.status === 'rejected') {
       workflow.stats.jobsRejected++;
+    } else if (approvalResult.status === 'already-requested') {
+      workflow.stats.jobsAlreadyRequested = (workflow.stats.jobsAlreadyRequested ?? 0) + 1;
     }
   }
 
@@ -139,11 +107,13 @@ export async function processApprovalGates(
     status: 'completed',
     approved: workflow.stats.jobsApproved,
     rejected: workflow.stats.jobsRejected,
+    alreadyRequested: workflow.stats.jobsAlreadyRequested ?? 0,
     approvalMetadata: approvalResults.map((result) => result.approvalMetadata),
   });
   await ctx.logWorkflowStep(workflow.id, 'approval-gate', 'completed', {
     approved: workflow.stats.jobsApproved,
     rejected: workflow.stats.jobsRejected,
+    alreadyRequested: workflow.stats.jobsAlreadyRequested ?? 0,
     approvalMetadata: approvalResults.map((result) => result.approvalMetadata),
   });
 
@@ -215,6 +185,24 @@ async function evaluateApproval(
     return { status: 'already-applied', job, approvalMetadata };
   }
 
+  // Any earlier request for this job (any workflow, any status) means the owner was already
+  // asked, and a human rejection must stick. The gate's own id is excluded so a retried step
+  // that already inserted its request is not mistaken for an earlier one.
+  const earlier = await ctx.env.JOB_DB.prepare(
+    'SELECT id FROM approval_requests WHERE job_id = ? AND id != ? LIMIT 1'
+  )
+    .bind(job.id, `approval-${workflow.id}-${job.id}`)
+    .first();
+
+  if (earlier) {
+    return {
+      status: 'already-requested',
+      job,
+      requestId: String(earlier.id),
+      approvalMetadata,
+    };
+  }
+
   if (autoApprove && job.matchScore >= autoApproveThreshold) {
     const requestId = await ctx.createApprovalRequest(
       workflow.id,
@@ -275,88 +263,4 @@ function createApprovedJob(result) {
         ),
     })
   );
-}
-
-/**
- * @param {ApprovalMetadata} metadata
- * @param {ScoredJob} job
- * @returns {ApprovalMetadata}
- */
-function withHumanApproval(metadata, job) {
-  return {
-    ...metadata,
-    humanApproval: {
-      status: 'approved',
-      destination: toOptionalString(job?.source ?? job?.platform) ?? 'unknown',
-    },
-  };
-}
-
-/**
- * @param {ScoredJob} job
- * @returns {ApprovalMetadata}
- */
-function buildApprovalMetadata(job) {
-  const source = toOptionalString(job?.source ?? job?.platform) ?? 'unknown';
-  return {
-    score: toFiniteNumber(job?.matchScore),
-    source,
-    adapterCapability: createServerAdapterCapability(job, source),
-    packetPath: normalizePacketPath(job, source),
-  };
-}
-
-/**
- * @param {ScoredJob} job
- * @param {string} source
- * @returns {ServerAtsCapability | null}
- */
-function createServerAdapterCapability(job, source) {
-  if (!FOREIGN_ATS_PLATFORMS.has(source)) return null;
-  const capability = /** @type {Record<string, unknown> | null | undefined} */ (
-    job?.[SERVER_ATS_CAPABILITY]
-  );
-  if (capability && typeof capability === 'object' && !Array.isArray(capability)) {
-    return {
-      platform: source,
-      mode: toOptionalString(capability.mode) ?? 'manual-review',
-      canSubmit: capability.canSubmit === true,
-      dryRunFirst: capability.dryRunFirst !== false,
-    };
-  }
-  return {
-    platform: source,
-    mode: job?.dryRun === true || job?.atsStub === true ? 'dry-run' : 'manual-review',
-    canSubmit: false,
-  };
-}
-
-/**
- * @param {ScoredJob} job
- * @param {string} source
- * @returns {string | null}
- */
-function normalizePacketPath(job, source) {
-  const packetPath = toOptionalString(
-    job?.packetPath ?? job?.applicationPacketPath ?? job?.packet?.source?.path
-  );
-  if (packetPath) return packetPath;
-  return FOREIGN_ATS_PLATFORMS.has(source) ? FOREIGN_COMPANY_PACKET_PATH : null;
-}
-
-/**
- * @param {unknown} value
- * @returns {number | null}
- */
-function toFiniteNumber(value) {
-  const numeric = Number(value);
-  return Number.isFinite(numeric) ? numeric : null;
-}
-
-/**
- * @param {unknown} value
- * @returns {string | null}
- */
-function toOptionalString(value) {
-  return typeof value === 'string' && value.trim() ? value : null;
 }
