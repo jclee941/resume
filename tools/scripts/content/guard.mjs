@@ -9,6 +9,17 @@ const FAKE_DIGITS = new Set(['01000000000', '01012345678']);
 const MASTER_DIR = 'packages/data/resumes/master';
 const LOCALE_FILES = ['resume_data.json', 'resume_data_en.json', 'resume_data_ja.json'];
 const MAX_SCAN_BYTES = 8 * 1024 * 1024;
+const FAKE_EMAIL = /@example\.(?:com|org|net)$/i;
+
+/**
+ * The fixture pack's placeholder contact values are not personal data.
+ * @param {string} kind
+ * @param {string} text
+ * @returns {boolean}
+ */
+const isPlaceholder = (kind, text) =>
+  (kind === 'phone' && FAKE_DIGITS.has(text.replace(/\D/g, ''))) ||
+  (kind === 'email' && FAKE_EMAIL.test(text));
 
 /**
  * @typedef {{ kind: string, value: string }} Identifier
@@ -25,7 +36,8 @@ export function loadIdentifiers(root) {
   const found = new Map();
   const add = (kind, value, minLength) => {
     const text = typeof value === 'string' ? value.trim() : '';
-    if (text.length >= minLength) found.set(`${kind}\0${text}`, { kind, value: text });
+    if (text.length >= minLength && !isPlaceholder(kind, text))
+      found.set(`${kind}\0${text}`, { kind, value: text });
   };
   for (const file of LOCALE_FILES) {
     let data;
