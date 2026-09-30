@@ -1,9 +1,5 @@
 const crypto = require('crypto');
-const {
-  CAPABILITY_PROJECTS,
-  DYNAMIC_STATE_SHAPE,
-  RUNTIME_COPY,
-} = require('./public-copy-ledger-constants');
+const { DYNAMIC_STATE_SHAPE, RUNTIME_COPY } = require('./public-copy-ledger-constants');
 const {
   compareOccurrences,
   fail,
@@ -38,33 +34,33 @@ function canonicalBaselineCommand({ baseSha, sourceUrl, output }) {
   return `SKIP_WEBSERVER=1 PORTFOLIO_LEDGER_MODE=baseline PORTFOLIO_LEDGER_URL=${sourceUrl} PORTFOLIO_LEDGER_EXPECTED_SHA=${baseSha} PORTFOLIO_LEDGER_OUTPUT=${output} npx playwright test tests/e2e/portfolio-public-copy-ledger.spec.js --project=chromium --workers=1`;
 }
 
+/**
+ * Status line of the capability at `index` when it lists `names` (the project names come from
+ * the page and are checked against the portfolio data by the caller).
+ */
+function capabilityStatus(locale, mode, index, names) {
+  const target = mode !== 'baseline';
+  const count = names.length;
+  const label = RUNTIME_COPY[locale].labels[index];
+  return locale === 'ko'
+    ? `${label}: ${target ? `프로젝트 ${count}개` : `${count}개 프로젝트`} — ${names.join(', ')}`
+    : locale === 'ja'
+      ? `${label}: ${target ? `該当プロジェクト${count}件` : `${count}件のプロジェクト`} — ${names.join(', ')}`
+      : `${label}: ${count} project${count === 1 ? '' : 's'} — ${names.join(', ')}`;
+}
+
+/** Project names listed after the " — " separator of a capability status line. */
+function capabilityNames(status) {
+  const separator = status.indexOf(' — ');
+  return separator < 0 ? [] : status.slice(separator + 3).split(', ');
+}
+
 function runtimeCopy(locale, mode) {
   const copy = RUNTIME_COPY[locale];
   const target = mode !== 'baseline';
-  const ids = Object.keys(CAPABILITY_PROJECTS);
-  const capabilities = Object.fromEntries(
-    ids.map((id, index) => {
-      const names = CAPABILITY_PROJECTS[id].map((name) => {
-        if (name !== 'AI Content Automation Pipeline') return name;
-        if (locale === 'ko') return 'AI 콘텐츠 자동화 파이프라인';
-        if (locale === 'ja') return 'AIコンテンツ自動化パイプライン';
-        return name;
-      });
-      const count = names.length;
-      const label = copy.labels[index];
-      const value =
-        locale === 'ko'
-          ? `${label}: ${target ? `프로젝트 ${count}개` : `${count}개 프로젝트`} — ${names.join(', ')}`
-          : locale === 'ja'
-            ? `${label}: ${target ? `該当プロジェクト${count}件` : `${count}件のプロジェクト`} — ${names.join(', ')}`
-            : `${label}: ${count} project${count === 1 ? '' : 's'} — ${names.join(', ')}`;
-      return [id, value];
-    })
-  );
   const select = (value) => (Array.isArray(value) ? value[target ? 1 : 0] : value);
   return {
     ...copy,
-    capabilities,
     clear: select(copy.clear),
     clipboard: select(copy.clipboard),
     region: select(copy.region),
@@ -127,6 +123,8 @@ function sha256(value) {
 
 module.exports = {
   canonicalBaselineCommand,
+  capabilityNames,
+  capabilityStatus,
   compareOccurrences,
   DYNAMIC_STATE_SHAPE,
   isFragmentRecord,
