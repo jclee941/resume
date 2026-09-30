@@ -16,6 +16,7 @@ context. ADR files stay in place so their decision history remains intact.
 - [ADR 0008: Drop the Bazel Facade](adr/0008-drop-bazel-facade.md)
 - [ADR 0009: Single-Worker Consolidation](adr/0009-single-worker-consolidation.md)
 - [ADR 0010: Retire the Local job-server](adr/0010-retire-local-job-server.md)
+- [ADR 0011: Keep personal content in D1, not in git](adr/0011-content-pack-in-d1.md)
 
 ## Superseded
 
