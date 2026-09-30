@@ -78,6 +78,22 @@ describe('upsertApplicationHistory', () => {
     );
   });
 
+  it('keeps the second status when overlapping syncs insert one job with different statuses', async () => {
+    const results = await Promise.all([
+      upsertApplicationHistory(db, [wantedRecord(6, 'applied')], NOW),
+      upsertApplicationHistory(db, [wantedRecord(6, 'rejected')], NOW),
+    ]);
+
+    const rows = applications();
+    assert.equal(rows.length, 1);
+    assert.equal(rows[0].status, 'rejected');
+    const sum = (key) => results.reduce((total, counts) => total + counts[key], 0);
+    assert.deepEqual(
+      { inserted: sum('inserted'), updated: sum('updated'), unchanged: sum('unchanged') },
+      { inserted: 1, updated: 1, unchanged: 0 }
+    );
+  });
+
   it('lets the row stored under the canonical key win and leaves legacy duplicates alone', async () => {
     seed('legacy-5', '5');
     seed('canonical-5', 'wanted-5');
