@@ -195,3 +195,23 @@ describe('staleLocks', () => {
     assert.deepEqual(staleLocks(['a'], undefined), ['a']);
   });
 });
+
+describe('acquireSession without reuse', () => {
+  it('launches a new session even when a free one exists', async () => {
+    const puppeteer = {
+      sessions: mock.fn(async () => [{ sessionId: 'free-1' }]),
+      limits: mock.fn(async () => ({
+        activeSessions: [{ id: 'free-1' }],
+        maxConcurrentSessions: 5,
+        allowedBrowserAcquisitions: 5,
+      })),
+      acquire: mock.fn(async () => ({ sessionId: 'new-1' })),
+    };
+
+    const result = await acquireSession(puppeteer, 'endpoint', new Set(), { reuse: false });
+
+    assert.deepEqual(result, { sessionId: 'new-1', reused: false });
+    assert.equal(puppeteer.sessions.mock.calls.length, 0);
+    assert.equal(puppeteer.acquire.mock.calls.length, 1);
+  });
+});

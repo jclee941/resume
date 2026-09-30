@@ -49,20 +49,22 @@ export function canLaunch(limits, lockedSize = 0) {
 }
 
 /**
- * Acquire a connectable sessionId — reuse a free session if one exists, else
- * launch a new one when limits allow.
+ * Acquire a connectable sessionId — reuse a free session if one exists (unless
+ * `reuse` is false), else launch a new one when limits allow.
  * @param {{sessions:Function, limits:Function, acquire:Function}} puppeteer
  * @param {unknown} endpoint - the MYBROWSER binding
  * @param {Set<string>|Map<string, unknown>} locked
- * @param {{keepAlive?:number}} [opts]
+ * @param {{keepAlive?:number, reuse?:boolean}} [opts]
  * @returns {Promise<{sessionId:string, reused:boolean}>}
  */
 export async function acquireSession(puppeteer, endpoint, locked, opts = {}) {
   const keepAlive = opts.keepAlive ?? DEFAULT_KEEP_ALIVE_MS;
 
-  const sessions = await puppeteer.sessions(endpoint);
-  const free = pickFreeSession(sessions, locked);
-  if (free) return { sessionId: free.sessionId, reused: true };
+  if (opts.reuse !== false) {
+    const sessions = await puppeteer.sessions(endpoint);
+    const free = pickFreeSession(sessions, locked);
+    if (free) return { sessionId: free.sessionId, reused: true };
+  }
 
   const limits = await puppeteer.limits(endpoint);
   const lockedSize = typeof locked.size === 'number' ? locked.size : 0;
