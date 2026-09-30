@@ -29,18 +29,6 @@ async function resolveInput(page, selectors) {
 
 /**
  * @param {import('@cloudflare/puppeteer').Page} page
- * @returns {Promise<boolean>} true when the login form's password input is in the DOM
- */
-export async function hasLoginForm(page) {
-  try {
-    return Boolean(await resolveInput(page, PASSWORD_SELECTORS));
-  } catch {
-    return false;
-  }
-}
-
-/**
- * @param {import('@cloudflare/puppeteer').Page} page
  * @param {{ email: string, password: string }} credentials
  * @returns {Promise<void>}
  */
