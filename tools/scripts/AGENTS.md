@@ -41,15 +41,15 @@ scripts/
 `content_files` table and the working tree (ADR 0011). The pack is defined by
 `content/content-pack.json`; run everything through the root scripts.
 
-| Command                                                     | Purpose                                                                                                  |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `npm run content:pull`                                      | Materialize the pack. Source: `--source d1\|fixtures`, else `CONTENT_SOURCE`, else `d1`.                 |
-| `npm run content:push -- [--dry-run] [--prune]`             | Upload new/changed files; `--prune` deletes D1 rows missing locally; refreshes the `resumes` master row. |
-| `npm run content:status`                                    | Local vs D1 added/changed/deleted/unchanged counts and paths.                                            |
-| `npm run content:manifest -- [--out f]`                     | Local pack manifest (path, sha256, size) to prove D1 parity.                                             |
-| `npm run content:ensure -- [--force]`                       | Build-time policy run by `npm run build`: fixtures, D1 (`WORKERS_CI=1`), or a required pulled pack.      |
-| `node tools/scripts/content/make-fixtures.mjs`              | Regenerate `tests/fixtures/content-pack/` from a materialized real pack (fakers in `fixtures/`).         |
-| `npm run content:guard -- [--staged\|--tracked] [--report]` | Fail on pack paths or personal tokens in git; prints paths, kinds, and counts only.                      |
+| Command                                                     | Purpose                                                                                                                               |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run content:pull`                                      | Materialize the pack. Source: `--source d1\|fixtures`, else `CONTENT_SOURCE`, else `d1`; prunes unchanged files of the previous pull. |
+| `npm run content:push -- [--dry-run] [--prune]`             | Upload new/changed files; `--prune` deletes D1 rows missing locally; refreshes the `resumes` master row.                              |
+| `npm run content:status`                                    | Local vs D1 added/changed/deleted/unchanged counts and paths.                                                                         |
+| `npm run content:manifest -- [--out f]`                     | Local pack manifest (path, sha256, size) to prove D1 parity.                                                                          |
+| `npm run content:ensure -- [--force]`                       | Build-time policy run by `npm run build`: fixtures, D1 (`WORKERS_CI=1`), or a required pulled pack.                                   |
+| `node tools/scripts/content/make-fixtures.mjs`              | Regenerate `tests/fixtures/content-pack/` from a materialized real pack (fakers in `fixtures/`).                                      |
+| `npm run content:guard -- [--staged\|--tracked] [--report]` | Fail on pack paths or personal tokens in git; prints paths, kinds, and counts only.                                                   |
 
 Environment: `CONTENT_API_TOKEN` or `CLOUDFLARE_API_TOKEN` (Bearer), or
 `CLOUDFLARE_API_KEY` with `CLOUDFLARE_EMAIL`; `CONTENT_ACCOUNT_ID` or

@@ -9,9 +9,10 @@ import {
   loadPack,
   sha256Hex,
 } from './pack.mjs';
+import { MANIFEST_PATH, pruneStale, readPreviousManifest } from './prune.mjs';
 import { readFiles } from './store.mjs';
 
-export const MANIFEST_PATH = '.content/manifest.json';
+export { MANIFEST_PATH };
 
 /**
  * @param {string | undefined} flag
@@ -131,8 +132,9 @@ async function pullD1(root, env, fetchImpl) {
 }
 
 /**
- * Materialize the pack and write the gitignored manifest. Never falls back between sources.
- * @param {{ root?: string, env?: Record<string, string | undefined>, source?: string, fetchImpl?: typeof fetch, out?: (line: string) => void }} [options]
+ * Materialize the pack, drop unchanged files the previous pull wrote that the source no longer
+ * has, and write the gitignored manifest. Never falls back between sources.
+ * @param {{ root?: string, env?: Record<string, string | undefined>, source?: string, fetchImpl?: typeof fetch, out?: (line: string) => void, warn?: (line: string) => void }} [options]
  * @returns {Promise<number>} files written
  */
 export async function pull({
@@ -141,12 +143,15 @@ export async function pull({
   source,
   fetchImpl,
   out = console.log,
+  warn = console.warn,
 } = {}) {
   const chosen = resolveSource(source, env);
+  const previous = await readPreviousManifest(root);
   const entries =
     chosen === 'fixtures' ? await pullFixtures(root, out) : await pullD1(root, env, fetchImpl);
   if (entries.length === 0) throw new Error(`content source ${chosen} returned no pack files`);
   entries.sort((a, b) => a.path.localeCompare(b.path));
+  await pruneStale({ root, previous, entries, out, warn });
   const manifest = JSON.stringify({ version: 1, source: chosen, files: entries }, null, 2);
   await writeAtomic(root, MANIFEST_PATH, Buffer.from(`${manifest}\n`));
   const bytes = entries.reduce((sum, entry) => sum + entry.size, 0);
