@@ -101,6 +101,18 @@ export function registerWriteTools(server, api) {
   });
 
   registerApiTool(server, {
+    name: 'sync_application_history',
+    title: 'Sync application history',
+    description:
+      'Pull the real application history from Wanted and JobKorea into D1 applications (POST /api/applications/sync). Upserts by (source, job_id) so it is safe to repeat, never deletes rows, and reports a per-platform error when a session is missing or expired. Returns counts only.',
+    inputSchema: z.object({
+      platforms: z.array(z.enum(SESSION_PLATFORMS)).min(1).optional(),
+    }),
+    annotations: writeHints({ idempotent: true, external: true }),
+    run: (args) => api.call('POST', '/api/applications/sync', { body: args }),
+  });
+
+  registerApiTool(server, {
     name: 'refresh_platform_session',
     title: 'Refresh platform session',
     description: 'Mint a fresh login session for a job platform and store it in KV.',

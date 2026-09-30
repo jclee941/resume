@@ -84,6 +84,19 @@ test('start_resume_sync and start_job_crawl default to dryRun true', async () =>
   ]);
 });
 
+test('sync_application_history goes through the route, reports a missing session and writes nothing', async () => {
+  const { callTool, statements } = setup();
+  const { body } = await callTool('sync_application_history', { platforms: ['wanted'] });
+  assert.equal(body.result.isError, true);
+  assert.match(JSON.stringify(body.result.structuredContent), /SESSION_MISSING/);
+  assert.equal(
+    statements.some(({ sql }) => /INSERT INTO applications|DELETE/i.test(sql)),
+    false
+  );
+  const invalid = await callTool('sync_application_history', { platforms: ['saramin'] });
+  assert.equal(invalid.body.result.isError, true);
+});
+
 test('run_auto_apply cannot really submit without the approval gate', async () => {
   const { callTool, statements } = setup({
     route: (sql, _a, mode) => {

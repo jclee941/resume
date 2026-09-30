@@ -112,9 +112,10 @@ describe('job-dashboard route modules', () => {
         ],
       },
       admin: {
-        count: 8,
+        count: 9,
         patterns: [
           '/api/diagnostics/bindings',
+          '/api/applications/sync',
           '/api/config',
           '/api/queue/enqueue',
           '/api/queue/status',
@@ -147,14 +148,14 @@ describe('job-dashboard route modules', () => {
   });
 
   describe('total route count across all modules', () => {
-    test('all modules together register exactly 53 routes', () => {
+    test('all modules together register exactly 54 routes', () => {
       let totalRoutes = 0;
       for (const mod of modules) {
         const src = fs.readFileSync(path.join(ROUTES_DIR, `${mod}.js`), 'utf8');
         const routeCalls = src.match(/router\.(get|post|put|delete)\(/g) || [];
         totalRoutes += routeCalls.length;
       }
-      expect(totalRoutes).toBe(53);
+      expect(totalRoutes).toBe(54);
     });
   });
 });

@@ -166,6 +166,46 @@ paths:
               schema:
                 $ref: '#/components/schemas/Application'
 
+  /api/applications/sync:
+    post:
+      operationId: syncApplicationHistory
+      tags: [Applications]
+      summary: Sync Wanted and JobKorea application history into D1
+      description: >
+        Reads the owner's real application history (Wanted over HTTP with the stored session,
+        JobKorea through Browser Rendering) and upserts it into `applications` by
+        (source, job_id): `wanted-<jobId>` / `jobkorea-<posting number>`. Never deletes rows.
+        A platform without a valid session reports its own error and the other still syncs.
+        Also runs on the 21:00 UTC cron before auto-apply discovery.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                platforms:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    enum: [wanted, jobkorea]
+      responses:
+        '200':
+          description: Sync summary; `status` is success or partial
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationHistorySyncResult'
+        '400':
+          description: Invalid platforms or body
+        '502':
+          description: Every requested platform failed (per-platform `code` in the body)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationHistorySyncResult'
+
   /api/applications/{id}:
     parameters:
       - name: id
@@ -1237,6 +1277,35 @@ components:
           type: integer
         url:
           type: string
+
+    ApplicationHistorySyncResult:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        status:
+          type: string
+          enum: [success, partial, failed]
+        platforms:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              ok:
+                type: boolean
+              fetched:
+                type: integer
+              inserted:
+                type: integer
+              updated:
+                type: integer
+              unchanged:
+                type: integer
+              code:
+                type: string
+                enum: [SESSION_MISSING, SESSION_EXPIRED, UPSTREAM_ERROR, TIMEOUT, SYNC_FAILED]
+              error:
+                type: string
 
     Application:
       type: object
