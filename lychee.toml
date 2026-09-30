@@ -21,7 +21,7 @@ max_retries = 3
 # - Cloudflare dashboards (auth-walled; only authenticated browsers see them)
 # - The Korean Tistory blog (anti-bot, returns 403 to CI)
 exclude = [
-  "^https?://([a-z0-9.-]+\\.)?(jclee\\.me|jaecheol\\.io)",
+  "^https?://([a-z0-9.-]+\\.)?jclee\\.me",
   "^https?://([a-z0-9.-]+\\.)?example\\.(com|org|net)",
   "^https?://localhost",
   "^https?://127\\.0\\.0\\.1",

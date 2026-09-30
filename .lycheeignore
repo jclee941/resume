@@ -4,7 +4,6 @@
 
 # Self-hosted services (require VPN / k8s context; not stable from CI runners)
 ^https?://([a-z0-9.-]+\.)?jclee\.me
-^https?://([a-z0-9.-]+\.)?jaecheol\.io
 
 # Local / RFC1918 / placeholders
 ^https?://localhost
