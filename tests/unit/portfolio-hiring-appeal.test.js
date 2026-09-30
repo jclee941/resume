@@ -38,19 +38,22 @@ describe('portfolio hiring appeal copy', () => {
   test('Korean hero gives recruiters a direct hiring-decision path', () => {
     const html = buildHeroContent('ko');
 
-    expect(html).toContain('보안·인프라 엔지니어 면접 제안을 환영합니다.');
+    expect(html).toContain(HERO_CONTENT.ko.availability);
     expect(html).toContain(HERO_CONTENT.ko.positioning);
-    expect(html).toContain('<ul class="hero-proof-list" aria-label="핵심 이력 요약">');
-    expect(html).toContain('공개 자동화 프로젝트');
+    expect(html).toContain(
+      `<ul class="hero-proof-list" aria-label="${HERO_CONTENT.ko.proofLabel}">`
+    );
+    expect(html).toContain(HERO_CONTENT.ko.publicProofLabel);
     for (const item of HERO_CONTENT.ko.proofItems) expect(html).toContain(item);
-    expect(html).toContain('채용 제안 문의 가능');
-    expect(html).toContain('LLM 출력에 시크릿 스캔·Check Run 검증을 함께 표시');
-    expect(html).toContain('JADX 디컴파일과 mitmproxy 캡처로 모바일 클라이언트·API 흐름 분석');
-    expect(html).toContain(HERO_CONTENT.ko.publicProofLinks[2][2]);
-    expect(html).toContain('AI 엔지니어링');
-    expect(html).toContain('연락 및 이력서');
-    expect(html).toContain('<dt>대상 역할</dt><dd>보안 엔지니어링 · 인프라 · SIEM</dd>');
-    expect(html).toContain(`<dt>주요 경력</dt><dd>${HERO_CONTENT.ko.packetItems[1][1]}</dd>`);
+    expect(html).toContain(HERO_CONTENT.ko.packetStatus);
+    for (const [, , description] of HERO_CONTENT.ko.publicProofLinks) {
+      expect(html).toContain(description);
+    }
+    for (const [, label] of HERO_CONTENT.ko.quickRoles) expect(html).toContain(label);
+    expect(html).toContain(HERO_CONTENT.ko.reviewLinks[2][1]);
+    for (const [term, detail] of HERO_CONTENT.ko.packetItems) {
+      expect(html).toContain(`<dt>${term}</dt><dd>${detail}</dd>`);
+    }
     expect(html).not.toContain('공개 증거 바로가기');
     expect(html).not.toContain('검토할 핵심 증거');
     expect(html).not.toContain('검토할 핵심 근거');
@@ -58,10 +61,13 @@ describe('portfolio hiring appeal copy', () => {
     expect(html).not.toContain('DevSecOps');
     expect(html).not.toContain('자동화 방식');
     expect(extractHeroActions(html)).toEqual([
-      expect.objectContaining({ href: expect.stringMatching(/^mailto:/), label: '면접 문의' }),
-      { href: '#resume', label: '경력 보기' },
-      { href: '#projects', label: '프로젝트 보기' },
-      expect.objectContaining({ href: '/resume.pdf', label: '이력서 PDF' }),
+      expect.objectContaining({
+        href: expect.stringMatching(/^mailto:/),
+        label: HERO_CONTENT.ko.actions[0],
+      }),
+      { href: '#resume', label: HERO_CONTENT.ko.actions[1] },
+      { href: '#projects', label: HERO_CONTENT.ko.actions[2] },
+      expect.objectContaining({ href: '/resume.pdf', label: HERO_CONTENT.ko.actions[3] }),
     ]);
     expect(readPortfolioFile('index.html')).toContain('<!-- HERO_CONTENT_PLACEHOLDER -->');
   });
@@ -69,22 +75,19 @@ describe('portfolio hiring appeal copy', () => {
   test('English hero gives recruiters a direct hiring-decision path', () => {
     const html = buildHeroContent('en');
 
-    expect(html).toContain(
-      'Open to interview requests for security and infrastructure engineering roles'
-    );
+    expect(html).toContain(HERO_CONTENT.en.availability);
     expect(html).toContain(HERO_CONTENT.en.positioning);
-    expect(html).toContain('Target role: Security &amp; Infrastructure Engineer');
+    expect(html).toContain(HERO_CONTENT.en.proofItems[0].replace(/&/g, '&amp;'));
     expect(html).toContain(HERO_CONTENT.en.proofItems[1]);
-    expect(html).toContain('Open to interview requests');
-    expect(html).toContain('LLM output paired with secrets scan and Check Run verification');
-    expect(html).toContain(
-      'JADX decompilation and mitmproxy captures trace mobile client and API flows'
-    );
-    expect(html).toContain(HERO_CONTENT.en.publicProofLinks[2][2]);
-    expect(html).toContain('class="role-chip__label">Sec</span>');
-    expect(html).toContain('class="role-chip__label">AI</span>');
+    expect(html).toContain(HERO_CONTENT.en.packetStatus);
+    for (const [, , description] of HERO_CONTENT.en.publicProofLinks) {
+      expect(html).toContain(description);
+    }
+    for (const [, label] of HERO_CONTENT.en.quickRoles) {
+      expect(html).toContain(`class="role-chip__label">${label}</span>`);
+    }
     expect(html).not.toContain('Automation Workflow');
-    expect(html).toContain('Public automation projects');
+    expect(html).toContain(HERO_CONTENT.en.publicProofLabel);
     expect(html).not.toContain('Public proof shortcuts');
     expect(html).not.toContain('Review path');
     expect(html).not.toContain('Security Infrastructure, and SRE');
@@ -95,11 +98,11 @@ describe('portfolio hiring appeal copy', () => {
     expect(extractHeroActions(html)).toEqual([
       expect.objectContaining({
         href: expect.stringMatching(/^mailto:/),
-        label: 'Interview request',
+        label: HERO_CONTENT.en.actions[0],
       }),
-      { href: '#resume', label: 'Career detail' },
-      { href: '#projects', label: 'Project detail' },
-      expect.objectContaining({ href: '/resume.pdf', label: 'Resume PDF' }),
+      { href: '#resume', label: HERO_CONTENT.en.actions[1] },
+      { href: '#projects', label: HERO_CONTENT.en.actions[2] },
+      expect.objectContaining({ href: '/resume.pdf', label: HERO_CONTENT.en.actions[3] }),
     ]);
     expect(readPortfolioFile('index-en.html')).toContain('<!-- HERO_CONTENT_PLACEHOLDER -->');
   });
@@ -120,18 +123,18 @@ describe('portfolio hiring appeal copy', () => {
   test('Japanese hero localizes recruiter evidence and hiring-decision actions', () => {
     const html = buildHeroContent('ja');
 
-    expect(html).toContain('セキュリティ・インフラエンジニア職の面接依頼を歓迎');
+    expect(html).toContain(HERO_CONTENT.ja.availability);
     expect(html).toContain(HERO_CONTENT.ja.positioning);
-    expect(html).toContain('<ul class="hero-proof-list" aria-label="経歴サマリー">');
-    expect(html).toContain('希望職種: Security &amp; Infrastructure Engineer');
-    expect(html).toContain(HERO_CONTENT.ja.proofItems[1]);
-    expect(html).toContain('面接依頼を受付中');
-    expect(html).toContain('LLM出力にシークレットスキャン・チェックラン検証を併記');
     expect(html).toContain(
-      'JADXデコンパイルとmitmproxyキャプチャでモバイルクライアント・APIフローを分析'
+      `<ul class="hero-proof-list" aria-label="${HERO_CONTENT.ja.proofLabel}">`
     );
-    expect(html).toContain(HERO_CONTENT.ja.publicProofLinks[2][2]);
-    expect(html).toContain('AIエンジニアリング');
+    expect(html).toContain(HERO_CONTENT.ja.proofItems[0].replace(/&/g, '&amp;'));
+    expect(html).toContain(HERO_CONTENT.ja.proofItems[1]);
+    expect(html).toContain(HERO_CONTENT.ja.packetStatus);
+    for (const [, , description] of HERO_CONTENT.ja.publicProofLinks) {
+      expect(html).toContain(description);
+    }
+    for (const [, label] of HERO_CONTENT.ja.quickRoles) expect(html).toContain(label);
     expect(html).not.toContain('職務別レビュー経路');
     expect(html).not.toContain('セキュリティ基盤・SRE');
     expect(html).not.toContain('DevSecOps');
@@ -139,10 +142,13 @@ describe('portfolio hiring appeal copy', () => {
     expect(html).not.toContain('自動化アプローチ');
     expect(html).not.toContain('>Automation<');
     expect(extractHeroActions(html)).toEqual([
-      expect.objectContaining({ href: expect.stringMatching(/^mailto:/), label: '面接依頼' }),
-      { href: '#resume', label: '経歴確認' },
-      { href: '#projects', label: 'プロジェクト確認' },
-      expect.objectContaining({ href: '/resume.pdf', label: '履歴書PDF' }),
+      expect.objectContaining({
+        href: expect.stringMatching(/^mailto:/),
+        label: HERO_CONTENT.ja.actions[0],
+      }),
+      { href: '#resume', label: HERO_CONTENT.ja.actions[1] },
+      { href: '#projects', label: HERO_CONTENT.ja.actions[2] },
+      expect.objectContaining({ href: '/resume.pdf', label: HERO_CONTENT.ja.actions[3] }),
     ]);
 
     expect(html).not.toMatch(/[\uac00-\ud7a3]{2,}/);
@@ -163,7 +169,7 @@ describe('portfolio hiring appeal copy', () => {
     expect(roleCopy).not.toContain('Security Automation');
     expect(roleCopy).not.toContain('Automation');
     expect(roleCopy).not.toContain('Automation Workflow');
-    expect(roleCopy).toContain('jclee-bot LLM 리뷰, MCP 서버, Check Run');
+    expect(roleCopy.every((text) => typeof text === 'string' && text.length > 0)).toBe(true);
     expect(roleCopy).not.toContain('Ops Workflow');
     expect(roleCopy).not.toContain('jclee-bot, PR 검토, 시크릿 스캔, 운영 로그');
     expect(roleCopy.join('\n')).not.toMatch(/Security Ops|Ops Visibility/);

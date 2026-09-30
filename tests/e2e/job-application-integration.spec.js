@@ -76,7 +76,7 @@ test.describe.serial('Job Application Browser Automation', () => {
 
       await page.fill('input[name="name"]', 'User One');
       await page.fill('input[name="email"]', 'one@example.com');
-      await page.fill('input[name="phone"]', '010-1111-1111');
+      await page.fill('input[name="phone"]', '010-0000-0000');
       let submitResponse = waitForSubmitResponse(page);
       await page.click('button[type="submit"]');
 
@@ -90,7 +90,7 @@ test.describe.serial('Job Application Browser Automation', () => {
 
       await page.fill('input[name="name"]', 'User Two');
       await page.fill('input[name="email"]', 'two@example.com');
-      await page.fill('input[name="phone"]', '010-2222-2222');
+      await page.fill('input[name="phone"]', '010-0000-0000');
       submitResponse = waitForSubmitResponse(page);
       await page.click('button[type="submit"]');
 
@@ -106,7 +106,7 @@ test.describe.serial('Job Application Browser Automation', () => {
 
       await page.fill('input[name="name"]', 'Persistence Test');
       await page.fill('input[name="email"]', 'persist@test.com');
-      await page.fill('input[name="phone"]', '010-9999-9999');
+      await page.fill('input[name="phone"]', '010-0000-0000');
 
       await page.click('.btn-next');
       await expect(page.locator('.form-step[data-step="2"]')).toHaveClass(/active/);
@@ -116,7 +116,7 @@ test.describe.serial('Job Application Browser Automation', () => {
 
       await expect(page.locator('input[name="name"]')).toHaveValue('Persistence Test');
       await expect(page.locator('input[name="email"]')).toHaveValue('persist@test.com');
-      await expect(page.locator('input[name="phone"]')).toHaveValue('010-9999-9999');
+      await expect(page.locator('input[name="phone"]')).toHaveValue('010-0000-0000');
     });
   });
 });

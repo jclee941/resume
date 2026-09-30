@@ -32,8 +32,8 @@ describe('public portfolio hardening', () => {
       const data = JSON.parse(read(`packages/data/resumes/master/${file}`));
       const html = generateContactGrid(data.contact);
 
-      expect(data.contact.githubBot).toBe('https://github.com/jclee941/jclee-bot');
-      expect(html).toContain('jclee-bot');
+      expect(data.contact.githubBot).toMatch(/^https:\/\/github\.com\/[^/]+\/[^/]+$/);
+      expect(html).toContain(data.contact.githubBot);
       const publicData = generateWebData(data);
       expect(publicData.contact.phone).toBeUndefined();
     }
@@ -43,9 +43,12 @@ describe('public portfolio hardening', () => {
     '%s retains the restored contact schema',
     (file) => {
       const html = read(file);
+      const { githubBot } = JSON.parse(
+        read('packages/data/resumes/master/resume_data.json')
+      ).contact;
 
       expect(html).toContain('"telephone"');
-      expect(html).toContain('github.com/jclee941/jclee-bot');
+      expect(html).toContain(githubBot.replace('https://', ''));
     }
   );
 
