@@ -66,11 +66,12 @@ async function listFixtureFiles(root, dir) {
 }
 
 /**
+ * Read the fixture pack: every file under the fixtures dir that the pack definition matches.
  * @param {string} root
  * @param {(line: string) => void} out
- * @returns {Promise<import('./pack.mjs').ManifestEntry[]>}
+ * @returns {Promise<Array<import('./pack.mjs').ManifestEntry & { bytes: Buffer }>>}
  */
-async function pullFixtures(root, out) {
+export async function loadFixtures(root, out) {
   const matcher = createMatcher(await loadPack());
   const files = await listFixtureFiles(root, FIXTURES_DIR).catch((error) => {
     if (error.code !== 'ENOENT') throw error;
@@ -78,7 +79,7 @@ async function pullFixtures(root, out) {
       `${FIXTURES_DIR} is missing; nothing to materialize with CONTENT_SOURCE=fixtures`
     );
   });
-  const entries = [];
+  const fixtures = [];
   let skipped = 0;
   for (const file of files) {
     const repoPath = file.slice(FIXTURES_DIR.length + 1);
@@ -87,10 +88,23 @@ async function pullFixtures(root, out) {
       continue;
     }
     const bytes = await fs.readFile(path.join(root, file));
-    await writeAtomic(root, repoPath, bytes);
-    entries.push({ path: repoPath, sha256: sha256Hex(bytes), size: bytes.length });
+    fixtures.push({ path: repoPath, bytes, sha256: sha256Hex(bytes), size: bytes.length });
   }
   if (skipped) out(`skipped ${skipped} fixture files outside the pack`);
+  return fixtures;
+}
+
+/**
+ * @param {string} root
+ * @param {(line: string) => void} out
+ * @returns {Promise<import('./pack.mjs').ManifestEntry[]>}
+ */
+async function pullFixtures(root, out) {
+  const entries = [];
+  for (const { path: repoPath, bytes, sha256, size } of await loadFixtures(root, out)) {
+    await writeAtomic(root, repoPath, bytes);
+    entries.push({ path: repoPath, sha256, size });
+  }
   return entries;
 }
 
