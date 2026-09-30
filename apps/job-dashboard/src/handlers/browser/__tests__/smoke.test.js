@@ -151,6 +151,23 @@ describe('runBrowserSmoke with a replayed session', () => {
     assert.deepEqual(result.photoImages, resources.photoImages);
     assert.equal(result.screenshot, 'SU1H');
   });
+  it('returns the rendered HTML only when asked', async () => {
+    const page = {
+      goto: async () => {},
+      url: () => 'https://www.jobkorea.co.kr/User/ApplyMng',
+      title: async () => 'Applied',
+      evaluate: async () => 'text',
+      content: async () => '<html><body><table></table></body></html>',
+      close: async () => {},
+    };
+    const withBrowserSession = async (_env, fn) => fn({ newPage: async () => page });
+
+    const withHtml = await runBrowserSmoke(env, { withBrowserSession, html: true });
+    const without = await runBrowserSmoke(env, { withBrowserSession });
+
+    assert.equal(withHtml.html, '<html><body><table></table></body></html>');
+    assert.equal('html' in without, false);
+  });
 });
 
 describe('smokeCookiesFor', () => {
