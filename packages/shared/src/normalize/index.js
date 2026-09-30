@@ -15,10 +15,10 @@
  * include. Returns trimmed canonical company name.
  *
  * Handles:
- *   - `(주)아이티센 CTS` → `아이티센 CTS`
- *   - `아이티센 CTS(주)` → `아이티센 CTS`
- *   - `주식회사 ITCEN` → `ITCEN`
- *   - `ITCEN 주식회사` → `ITCEN`
+ *   - `(주)예시 Corp` → `예시 Corp`
+ *   - `예시 Corp(주)` → `예시 Corp`
+ *   - `주식회사 Example` → `Example`
+ *   - `Example 주식회사` → `Example`
  *   - empty / null / undefined → `''`
  *
  * @param {string|null|undefined} name
