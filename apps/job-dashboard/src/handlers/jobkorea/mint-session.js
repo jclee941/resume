@@ -113,28 +113,42 @@ export async function mintJobKoreaSession(
   });
 }
 
+const MINT_ATTEMPTS = 2;
+const LOGIN_PAGE_TIMEOUT = /Navigation timeout/i;
+
 /**
  * Mint a JobKorea session and store it encrypted in KV as `auth:jobkorea`. Never
  * throws — callers (admin route, scheduled cron) get a plain result back
- * either way.
+ * either way. Only the login page's own navigation can time out before any credentials are
+ * submitted (submitAndWait swallows the post-submit wait), so that failure alone is retried, once,
+ * in a fresh browser context.
  * @param {JobKoreaEnv & { SESSIONS: { put: Function } }} env
  * @param {{ withBrowserSession?: typeof defaultWithBrowserSession }} [opts]
- * @returns {Promise<{ ok: true, key: string, length: number } | { ok: false, error: string, code?: unknown }>}
+ * @returns {Promise<{ ok: true, key: string, length: number, attempts?: number } | { ok: false, error: string, code?: unknown }>}
  */
 export async function refreshJobKoreaSession(env, opts = {}) {
-  try {
-    const cookie = await mintJobKoreaSession(env, opts);
-    await writePlatformSession(env, 'jobkorea', cookie, JOBKOREA_SESSION_TTL_S);
-    return { ok: true, key: AUTH_JOBKOREA_KEY, length: cookie.length };
-  } catch (err) {
-    return {
-      ok: false,
-      error: /** @type {{ message?: string }} */ (err)?.message || String(err),
-      .../** @type {{ code?: unknown }} */ (
-        /** @type {{ code?: unknown } | null | undefined} */ (err)?.code
-          ? { code: /** @type {{ code?: unknown }} */ (err).code }
-          : {}
-      ),
-    };
+  /** @type {unknown} */
+  let failure;
+  for (let attempt = 1; attempt <= MINT_ATTEMPTS; attempt += 1) {
+    try {
+      const cookie = await mintJobKoreaSession(env, opts);
+      await writePlatformSession(env, 'jobkorea', cookie, JOBKOREA_SESSION_TTL_S);
+      return {
+        ok: true,
+        key: AUTH_JOBKOREA_KEY,
+        length: cookie.length,
+        ...(attempt > 1 ? { attempts: attempt } : {}),
+      };
+    } catch (err) {
+      failure = err;
+      const message = /** @type {{ message?: string } | null | undefined} */ (err)?.message ?? '';
+      if (!LOGIN_PAGE_TIMEOUT.test(message)) break;
+    }
   }
+  const err = /** @type {{ message?: string; code?: unknown } | null | undefined} */ (failure);
+  return {
+    ok: false,
+    error: err?.message || String(failure),
+    ...(err?.code ? { code: err.code } : {}),
+  };
 }
