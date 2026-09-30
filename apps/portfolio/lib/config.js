@@ -4,9 +4,6 @@
  */
 
 const CONFIG = {
-  // URL Prefixes for file downloads
-  DOWNLOADS_BASE_URL: 'https://raw.githubusercontent.com/jclee941/resume/master',
-
   // Link Types
   LINK_TYPES: {
     PRIMARY: 'project-link-primary',

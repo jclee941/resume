@@ -10,11 +10,6 @@ const {
 
 describe('Config Module', () => {
   describe('CONFIG', () => {
-    test('should have DOWNLOADS_BASE_URL', () => {
-      expect(CONFIG.DOWNLOADS_BASE_URL).toBeDefined();
-      expect(CONFIG.DOWNLOADS_BASE_URL).toMatch(/^https?:\/\//);
-    });
-
     test('should have all LINK_TYPES', () => {
       expect(CONFIG.LINK_TYPES).toHaveProperty('PRIMARY');
       expect(CONFIG.LINK_TYPES).toHaveProperty('SECONDARY');
