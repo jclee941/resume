@@ -14,6 +14,7 @@ import { writePlatformSession } from '../../services/platform-session.js';
 import {
   SUBMIT_SELECTOR,
   fillLoginForm,
+  hasLoginForm,
   submitAndWait,
   isLoggedIn,
   detectCaptcha,
@@ -49,6 +50,32 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+const NAVIGATION_TIMEOUT_MS = 45_000;
+const TIMEOUT_MESSAGE = /timeout/i;
+
+/**
+ * JobKorea's login page sometimes stalls on third-party scripts before DOMContentLoaded. A
+ * timed-out navigation whose document already holds the login form is usable; otherwise the
+ * navigation is retried once before the timeout is reported.
+ * @param {import('@cloudflare/puppeteer').Page} page
+ * @returns {Promise<void>}
+ */
+async function openLoginPage(page) {
+  for (let attempt = 1; ; attempt += 1) {
+    try {
+      await page.goto(JOBKOREA_LOGIN_URL, {
+        waitUntil: 'domcontentloaded',
+        timeout: NAVIGATION_TIMEOUT_MS,
+      });
+      return;
+    } catch (error) {
+      if (!TIMEOUT_MESSAGE.test(error instanceof Error ? error.message : '')) throw error;
+      if (await hasLoginForm(page)) return;
+      if (attempt >= 2) throw error;
+    }
+  }
+}
+
 /**
  * Mint a fresh JobKorea session cookie by logging in through the Browser
  * Rendering broker. Fails with code JOBKOREA_CAPTCHA_REQUIRED when JobKorea
@@ -70,7 +97,7 @@ export async function mintJobKoreaSession(
   return withBrowserSession(env, async (browser) => {
     const page = await browser.newPage();
     try {
-      await page.goto(JOBKOREA_LOGIN_URL, { waitUntil: 'domcontentloaded' });
+      await openLoginPage(page);
       await fillLoginForm(page, { email, password });
       await submitAndWait(page, SUBMIT_SELECTOR);
 
