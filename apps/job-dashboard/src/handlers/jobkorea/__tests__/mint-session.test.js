@@ -33,6 +33,8 @@ function createFakeInput() {
 function createFakePage({ evaluateQueue = [true], cookies = JOBKOREA_COOKIES, inputs = {} } = {}) {
   const evaluateCalls = [];
   return {
+    setRequestInterception: mock.fn(async () => {}),
+    on: mock.fn(() => {}),
     goto: mock.fn(async () => {}),
     $: mock.fn(async (selector) => inputs[selector] ?? null),
     $$: mock.fn(async () => [createFakeCandidate()]),
