@@ -1,5 +1,5 @@
 # robots.txt for resume.jclee.me
-# 이재철 - AIOps & Observability Engineer Portfolio
+# {{OWNER_NAME}} - AIOps & Observability Engineer Portfolio
 # Generated: 2026-02-01
 # NOTE: Cloudflare Managed Content (기타 에이전트) is configured in the Cloudflare Dashboard
 # and appends its own AI-bot rules. This file contains only custom rules.

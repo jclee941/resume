@@ -1,18 +1,21 @@
 const { buildLanguageLink } = require('./nav.js');
+const { defaultOwnerIdentity, escapeRegExp, familyNameFirst } = require('../owner-identity');
 
 const LANGUAGE_LINK_RE = /<a\b([^>]*\bhreflang="(ko|en|ja)"[^>]*)>\s*(KO|EN|JA)\s*<\/a\s*>/g;
 
 /**
  * @param {string} html
+ * @param {import('../owner-identity').OwnerIdentity} [identity]
  * @returns {string}
  */
-function applyJapaneseMeta(html) {
+function applyJapaneseMeta(html, identity = defaultOwnerIdentity()) {
+  const { nameKo, nameJa } = identity;
+  const latinName = familyNameFirst(identity.nameEn);
+  const title = `${nameJa} - Security & Infrastructure Engineer`;
+  const description = `${title} ポートフォリオ`;
   return html
     .replace(/<html lang="ko"/i, '<html lang="ja"')
-    .replace(
-      /<title>[^<]*<\/title>/i,
-      '<title>イ・ジェチョル - Security & Infrastructure Engineer</title>'
-    )
+    .replace(/<title>[^<]*<\/title>/i, `<title>${title}</title>`)
     .replace(
       /<link rel="canonical" href="https:\/\/resume\.jclee\.me\/?" \/>/i,
       '<link rel="canonical" href="https://resume.jclee.me/ja/" />'
@@ -31,7 +34,7 @@ function applyJapaneseMeta(html) {
     )
     .replace(
       /<meta property="og:title" content="[^"]*" \/>/i,
-      '<meta property="og:title" content="イ・ジェチョル - Security & Infrastructure Engineer" />'
+      `<meta property="og:title" content="${title}" />`
     )
     .replace(
       /<meta property="og:locale" content="ko_KR" \/>/i,
@@ -48,13 +51,13 @@ function applyJapaneseMeta(html) {
     )
     .replace(
       /<meta name="twitter:title" content="[^"]*" \/>/i,
-      '<meta name="twitter:title" content="イ・ジェチョル - Security & Infrastructure Engineer" />'
+      `<meta name="twitter:title" content="${title}" />`
     )
     .replace(
-      /"name": "이재철 - Security & Infrastructure Engineer"/g,
-      '"name": "イ・ジェチョル - Security & Infrastructure Engineer"'
+      new RegExp(escapeRegExp(`"name": "${nameKo} - Security & Infrastructure Engineer"`), 'g'),
+      `"name": "${title}"`
     )
-    .replace(/"name": "이재철"/g, '"name": "イ・ジェチョル"')
+    .replace(new RegExp(escapeRegExp(`"name": "${nameKo}"`), 'g'), `"name": "${nameJa}"`)
     .replace(/"inLanguage": "ko-KR"/g, '"inLanguage": "ja-JP"')
     .replace(/"url": "https:\/\/resume\.jclee\.me\/"/g, '"url": "https://resume.jclee.me/ja/"')
     .replace(/"item": "https:\/\/resume\.jclee\.me\/"/g, '"item": "https://resume.jclee.me/ja/"')
@@ -68,28 +71,25 @@ function applyJapaneseMeta(html) {
     )
     .replace(
       /<meta\s+name="description"[\s\S]*?\/>/i,
-      '<meta name="description" content="イ・ジェチョル - Security & Infrastructure Engineer ポートフォリオ" />'
+      `<meta name="description" content="${description}" />`
     )
     .replace(
       /<meta\s+name="keywords"[\s\S]*?\/>/i,
-      '<meta name="keywords" content="イ・ジェチョル, Lee Jaecheol, Security Automation, Security Infrastructure" />'
+      `<meta name="keywords" content="${nameJa}, ${latinName}, Security Automation, Security Infrastructure" />`
     )
     .replace(
       /<meta\s+name="author"[\s\S]*?\/>/i,
-      '<meta name="author" content="イ・ジェチョル (Lee Jaecheol)" />'
+      `<meta name="author" content="${nameJa} (${latinName})" />`
     )
     .replace(
       /<meta\s+property="og:description"[\s\S]*?\/>/i,
-      '<meta property="og:description" content="イ・ジェチョル - Security & Infrastructure Engineer ポートフォリオ" />'
+      `<meta property="og:description" content="${description}" />`
     )
     .replace(
       /<meta\s+name="twitter:description"[\s\S]*?\/>/i,
-      '<meta name="twitter:description" content="イ・ジェチョル - Security & Infrastructure Engineer ポートフォリオ" />'
+      `<meta name="twitter:description" content="${description}" />`
     )
-    .replace(
-      /"description": "[^"]*"/g,
-      '"description": "イ・ジェチョル - Security & Infrastructure Engineer ポートフォリオ"'
-    )
+    .replace(/"description": "[^"]*"/g, `"description": "${description}"`)
     .replace(
       LANGUAGE_LINK_RE,
       /**

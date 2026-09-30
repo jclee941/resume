@@ -1,6 +1,6 @@
 const { HERO_CONTENT } = require('./hero-content-data');
+const { defaultOwnerIdentity } = require('./owner-identity');
 
-const CONTACT_EMAIL = 'qws941@kakao.com';
 const RESUME_PDF_PATH = '/resume.pdf';
 
 /**
@@ -136,13 +136,14 @@ function renderRoleQuickPaths(content) {
 
 /**
  * @param {HeroContent} content
+ * @param {string} contactEmail
  * @returns {string}
  */
-function renderActions(content) {
+function renderActions(content, contactEmail) {
   const [contact, resume, projects, pdf] = content.actions;
   return (
     `<div class="hero-cta" role="group" aria-label="${content.actionsLabel}">` +
-    `<a href="mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(content.mailSubject)}" class="link-subtle link-subtle--primary">${contact}</a>` +
+    `<a href="mailto:${contactEmail}?subject=${encodeURIComponent(content.mailSubject)}" class="link-subtle link-subtle--primary">${contact}</a>` +
     `<a href="#resume" class="link-subtle">${resume}</a>` +
     `<a href="#projects" class="link-subtle">${projects}</a>` +
     `<a href="${RESUME_PDF_PATH}" download="${content.downloadName}" class="link-subtle">${pdf}</a>` +
@@ -152,9 +153,10 @@ function renderActions(content) {
 
 /**
  * @param {string} [locale]
+ * @param {import('./owner-identity').OwnerIdentity} [identity] - contact owner; defaults to the master resume owner
  * @returns {string}
  */
-function buildHeroContent(locale) {
+function buildHeroContent(locale, identity = defaultOwnerIdentity()) {
   const content = HERO_CONTENT[/** @type {HeroLocale} */ (locale)] || HERO_CONTENT.ko;
   return [
     '<div class="hero-intro"><header class="hero-identity">',
@@ -162,7 +164,7 @@ function buildHeroContent(locale) {
     `<p class="hero-role">${escapeHtml(content.role)}</p>`,
     `<p class="hero-availability">${content.availability}</p>`,
     `<p class="hero-positioning">${content.positioning}</p>`,
-    renderActions(content),
+    renderActions(content, identity.email),
     '</header>',
     renderReviewPacket(content),
     '</div>',

@@ -1,10 +1,13 @@
 'use strict';
 
+const { defaultOwnerIdentity } = require('../owner-identity');
+
 /**
  * Generate SEO and binary asset routes.
  * Lines 995-1050 of original template.
+ * @param {{ contactEmail?: string }} [options] - security.txt contact; defaults to the master resume owner
  */
-function generateSeoRoutes() {
+function generateSeoRoutes({ contactEmail = defaultOwnerIdentity().email } = {}) {
   return `
       if (url.pathname === '/robots.txt') {
         metrics.requests_success++;
@@ -22,7 +25,7 @@ function generateSeoRoutes() {
         metrics.requests_success++;
         const expires = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().slice(0, 19) + 'Z';
         const securityTxt = [
-          'Contact: mailto:qws941@kakao.com',
+          'Contact: mailto:${contactEmail}',
           'Preferred-Languages: ko, en',
           'Canonical: https://resume.jclee.me/.well-known/security.txt',
           'Policy: https://resume.jclee.me/#contact',
