@@ -41,6 +41,7 @@ import {
 } from './workflows/index.js';
 import { BrowserSessionDO } from './durable-objects/browser-session-do.js';
 import { QueueConsumer } from './queues/queue-consumer.js';
+import { handleMcpRequest } from './mcp/handler.js';
 
 export {
   JobCrawlingWorkflow,
@@ -65,6 +66,10 @@ export default /** @satisfies {import('./worker-env.js').DashboardWorker} */ ({
     // Create normalized URL for routing
     const url = new URL(originalUrl);
     url.pathname = pathname;
+    const isMcp = pathname === '/mcp';
+    // /mcp serves non-browser MCP clients: its responses carry no CORS headers.
+    const cors = (/** @type {Response} */ response) =>
+      isMcp ? response : addCorsHeaders(response, request, env);
 
     const router = new Router();
     const logger = Logger.create(env, { service: 'job-worker' });
@@ -77,20 +82,18 @@ export default /** @satisfies {import('./worker-env.js').DashboardWorker} */ ({
 
     ctx.waitUntil(log.logRequest(request, url));
 
-    if (request.method === 'OPTIONS') {
-      return respond(addCorsHeaders(new Response(null, { status: 204 }), request, env));
+    if (request.method === 'OPTIONS' && !isMcp) {
+      return respond(cors(new Response(null, { status: 204 })));
     }
 
     const rateResult = await checkRateLimit(request, url.pathname, env);
     if (!rateResult.ok) {
       return respond(
-        addCorsHeaders(
+        cors(
           addRateLimitHeaders(
             jsonResponse({ error: rateResult.error }, rateResult.status),
             rateResult.headers
-          ),
-          request,
-          env
+          )
         )
       );
     }
@@ -102,28 +105,26 @@ export default /** @satisfies {import('./worker-env.js').DashboardWorker} */ ({
           url.pathname === '/api/queue/enqueue' && authResult.status === 503
             ? { error: 'Authentication unavailable', status: 'disabled', available: false }
             : { error: authResult.error };
-        return respond(addCorsHeaders(jsonResponse(authBody, authResult.status), request, env));
+        return respond(cors(jsonResponse(authBody, authResult.status)));
       }
     }
 
     if (requiresWebhookSignature(url.pathname)) {
       const sigResult = await verifyWebhookSignature(request, env);
       if (!sigResult.ok) {
-        return respond(
-          addCorsHeaders(jsonResponse({ error: sigResult.error }, sigResult.status), request, env)
-        );
+        return respond(cors(jsonResponse({ error: sigResult.error }, sigResult.status)));
       }
     }
 
-    // CSRF gate. Webhooks use HMAC signature (validated above); every other
-    // state-changing endpoint - including /api/auto-apply/run - requires X-CSRF-Token.
-    const skipCsrf = url.pathname.startsWith('/api/webhooks/');
+    // CSRF gate. Webhooks use HMAC signature (validated above); /mcp only accepts an
+    // Authorization: Bearer admin token (cookies are ignored, so nothing rides on a browser
+    // session); every other state-changing endpoint - including /api/auto-apply/run -
+    // requires X-CSRF-Token.
+    const skipCsrf = url.pathname.startsWith('/api/webhooks/') || isMcp;
     if (!skipCsrf) {
       const csrfResult = validateCsrf(request);
       if (!csrfResult.ok) {
-        return respond(
-          addCorsHeaders(jsonResponse({ error: csrfResult.error }, csrfResult.status), request, env)
-        );
+        return respond(cors(jsonResponse({ error: csrfResult.error }, csrfResult.status)));
       }
     }
 
@@ -153,34 +154,35 @@ export default /** @satisfies {import('./worker-env.js').DashboardWorker} */ ({
     registerWorkflowRoutes(router, routeCtx);
     registerAdminRoutes(router, routeCtx);
 
+    if (isMcp) {
+      const mcp = await handleMcpRequest(request, env, { router, log });
+      return respond(addRateLimitHeaders(mcp, rateResult.headers));
+    }
+
     try {
       const response = await router.handle(request, url, log);
       if (response) {
         const withCsrf = addCsrfCookie(response, request);
-        return respond(
-          addRateLimitHeaders(addCorsHeaders(withCsrf, request, env), rateResult.headers)
-        );
+        return respond(addRateLimitHeaders(cors(withCsrf), rateResult.headers));
       }
 
       // Static fallback: serve dashboard for non-API routes
       if (!url.pathname.startsWith('/api/')) {
         const staticResponse = await serveStatic(url.pathname);
         const withCsrf = addCsrfCookie(staticResponse, request);
-        return respond(addCorsHeaders(withCsrf, request, env));
+        return respond(cors(withCsrf));
       }
 
       // API route not found
-      return respond(addCorsHeaders(jsonResponse({ error: 'Not found' }, 404), request, env));
+      return respond(cors(jsonResponse({ error: 'Not found' }, 404)));
     } catch (err) {
       const error = normalizeError(err, { path: url.pathname, method: request.method });
       ctx.waitUntil(log.error('Unhandled worker error', error));
 
       if (error instanceof HttpError) {
-        return respond(addCorsHeaders(error.toResponse(), request, env));
+        return respond(cors(error.toResponse()));
       }
-      return respond(
-        addCorsHeaders(jsonResponse({ error: 'Internal server error' }, 500), request, env)
-      );
+      return respond(cors(jsonResponse({ error: 'Internal server error' }, 500)));
     }
   },
 
