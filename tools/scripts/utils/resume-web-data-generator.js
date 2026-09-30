@@ -1,3 +1,5 @@
+const fs = require('fs');
+const { WEB_DATA_OVERRIDES_PATH } = require('./resume-data-paths.js');
 const {
   careerCardFromSource,
   englishCareerCardFromSource,
@@ -33,40 +35,6 @@ const RESUME_STATS_BY_INDEX = {
   ],
 };
 
-const CAREER_EN_OVERRIDES = {
-  '(주)아이티센 CTS': {
-    title: 'ITCEN CTS Co., Ltd.',
-    period: '2025.03 ~ 2026.02',
-    description:
-      'Connected Splunk ES Saved Searches, Webhooks, Slack/SMS alerts, and FortiManager API policy lookups into a security-event operating flow for exchange operations.',
-  },
-  '(주)가온누리정보시스템': {
-    title: 'Gaonnuri Information Systems Co., Ltd.',
-    description:
-      'Built FortiGate HA, network segmentation, and endpoint-security controls for the Nextrade exchange track, then documented the configuration evidence needed for approval and operations handoff.',
-  },
-  '(주)콴텍투자일임': {
-    title: 'Quantec Investment Management Co., Ltd.',
-    description:
-      'Operated Financial Security Data Center infrastructure and audit evidence, including DLP policy artifacts, DB access-control query tuning, and PB platform validation work.',
-  },
-  '(주)조인트리': {
-    title: 'Jointree Co., Ltd.',
-    description:
-      'Resolved east-west traffic blind spots from perimeter-based security by applying NSX-T micro-segmentation, and built centralized security policy management at the VDS level.',
-  },
-  '(주)메타넷엠플랫폼': {
-    title: 'Metanet M Platform Co., Ltd.',
-    description:
-      'Handled VPN/NAC operations during a contact-center remote-work transition, using Python and Ansible runbooks for endpoint registration, switch checks, and server configuration tasks.',
-  },
-  '(주)엠티데이타': {
-    title: 'MT Data Co., Ltd.',
-    description:
-      'Established a routine log analysis cadence and adhered to security audit guidelines to identify hardware failure indicators early in a closed network environment.',
-  },
-};
-
 const PROJECT_EN_OVERRIDES = {
   'Observability Platform': {
     description:
@@ -89,6 +57,20 @@ const PROJECT_EN_OVERRIDES = {
     tagline: 'Threat Intelligence',
   },
 };
+
+/**
+ * Load the content-side display overrides (keyed by source company name).
+ * @returns {Record<string, { title?: string, period?: string, description?: string }>}
+ */
+function loadCareerEnOverrides() {
+  if (!fs.existsSync(WEB_DATA_OVERRIDES_PATH)) {
+    throw new Error(
+      `Missing resume content file: ${WEB_DATA_OVERRIDES_PATH}. ` +
+        'Restore the content pack (see docs/adr/0011-content-pack-in-d1.md) before generating web data.'
+    );
+  }
+  return JSON.parse(fs.readFileSync(WEB_DATA_OVERRIDES_PATH, 'utf8')).careerEn;
+}
 
 /** @type {Set<string | undefined>} */
 const PUBLIC_PORTFOLIO_EXCLUDED_IDS = new Set([
@@ -174,11 +156,12 @@ function generateWebData(source, language = 'ko') {
   //   These are job-application detail consumed by Wanted/JobKorea sync, not portfolio content.
   //   The terminal-themed portfolio shows summarized career cards only.
   //   If sub-projects need to render here, extend the entry below AND update apps/portfolio/lib/cards.js.
+  const careerEnOverrides = loadCareerEnOverrides();
   const resume = source.careers.map((career, idx) =>
     careerCardFromSource(career, idx, statsByIndex)
   );
   const resumeEn = source.careers.map((career, idx) =>
-    englishCareerCardFromSource(career, idx, RESUME_STATS_BY_INDEX.en, CAREER_EN_OVERRIDES)
+    englishCareerCardFromSource(career, idx, RESUME_STATS_BY_INDEX.en, careerEnOverrides)
   );
   const publicProjects = /** @type {import('./resume-web-data-projections.js').SourceProject[]} */ (
     publicPortfolioItems(source.personalProjects).map((project) =>
