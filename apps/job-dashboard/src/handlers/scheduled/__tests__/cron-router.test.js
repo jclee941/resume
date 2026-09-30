@@ -57,6 +57,10 @@ function createHarness(overrides = {}, rejecting = []) {
   return { calls, env, ctx, waited };
 }
 
+function skippedInfos(infos) {
+  return infos.filter(([message]) => message === '[cron] auto-apply start skipped');
+}
+
 function startedNames(calls) {
   return calls.map((call) => call.name).sort();
 }
@@ -129,6 +133,53 @@ describe('cron-router', () => {
     });
   });
 
+  it('syncs application history before the discovery start, once, on the resume-sync cron only', async () => {
+    const order = [];
+    const { calls, env, ctx } = createHarness({ JOB_DB: createConfigDb(ENABLED_CONFIG) });
+    env.APPLICATION_WORKFLOW = {
+      create() {
+        order.push('APPLICATION_WORKFLOW');
+        return Promise.resolve({ id: 'a' });
+      },
+    };
+    const syncApplicationHistory = async (syncEnv, options) => {
+      order.push('history');
+      assert.equal(syncEnv, env);
+      assert.equal(options.timeoutMs, 120_000);
+      return { ok: true, status: 'success', platforms: {} };
+    };
+
+    await scheduled({ cron: RESUME_SYNC_CRON }, env, ctx, { syncApplicationHistory });
+    assert.deepEqual(order, ['history', 'APPLICATION_WORKFLOW']);
+    assert.equal(startedNames(calls).includes('RESUME_SYNC_WORKFLOW'), true);
+
+    order.length = 0;
+    await scheduled({ cron: HEALTH_CHECK_CRON, scheduledTime: TUESDAY_AFTERNOON }, env, ctx, {
+      syncApplicationHistory,
+    });
+    assert.deepEqual(order, []);
+  });
+
+  it('a failing history sync is logged and does not block any start', async () => {
+    const { calls, env, ctx } = createHarness({ JOB_DB: createConfigDb(ENABLED_CONFIG) });
+    const syncApplicationHistory = async () => {
+      throw new Error('history boom');
+    };
+
+    await scheduled({ cron: RESUME_SYNC_CRON }, env, ctx, { syncApplicationHistory });
+
+    assert.deepEqual(startedNames(calls), [
+      'APPLICATION_WORKFLOW',
+      'CLEANUP_WORKFLOW',
+      'RESUME_SYNC_WORKFLOW',
+    ]);
+    assert.ok(
+      warnings.some(
+        ([message, detail]) => /history sync failed/.test(message) && detail === 'history boom'
+      )
+    );
+  });
+
   it('the hourly cron never starts the application workflow', async () => {
     const { calls, env, ctx } = createHarness({ JOB_DB: createConfigDb(ENABLED_CONFIG) });
     await scheduled({ cron: HEALTH_CHECK_CRON, scheduledTime: MONDAY_MIDNIGHT }, env, ctx);
@@ -140,8 +191,8 @@ describe('cron-router', () => {
     const { calls, env, ctx } = createHarness({ JOB_DB: db });
     await scheduled({ cron: RESUME_SYNC_CRON }, env, ctx);
     assert.deepEqual(startedNames(calls), ['CLEANUP_WORKFLOW', 'RESUME_SYNC_WORKFLOW']);
-    assert.equal(infos.length, 1);
-    assert.equal(infos[0][0], '[cron] auto-apply start skipped');
+    assert.equal(skippedInfos(infos).length, 1);
+    assert.equal(skippedInfos(infos)[0][0], '[cron] auto-apply start skipped');
   });
 
   it('skips the discovery run when AUTO_APPLY_CRON_ENABLED is false', async () => {
@@ -151,7 +202,7 @@ describe('cron-router', () => {
     });
     await scheduled({ cron: RESUME_SYNC_CRON }, env, ctx);
     assert.deepEqual(startedNames(calls), ['CLEANUP_WORKFLOW', 'RESUME_SYNC_WORKFLOW']);
-    assert.equal(infos.length, 1);
+    assert.equal(skippedInfos(infos).length, 1);
   });
 
   it('an unreadable D1 config skips the discovery run without blocking the other starts', async () => {
@@ -159,7 +210,7 @@ describe('cron-router', () => {
     const { calls, env, ctx } = createHarness({ JOB_DB: db });
     await scheduled({ cron: RESUME_SYNC_CRON }, env, ctx);
     assert.deepEqual(startedNames(calls), ['CLEANUP_WORKFLOW', 'RESUME_SYNC_WORKFLOW']);
-    assert.equal(infos.length, 1);
+    assert.equal(skippedInfos(infos).length, 1);
   });
 
   it('a rejecting application workflow does not stop resume sync and cleanup', async () => {
