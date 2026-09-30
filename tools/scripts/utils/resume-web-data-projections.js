@@ -1,5 +1,3 @@
-const RESUME_CARD_ICONS = ['🏦', '🏗️', '📈', '☁️', '🎓', '📞', '✈️'];
-
 /**
  * @typedef {{
  *   id?: string;
@@ -48,6 +46,10 @@ const RESUME_CARD_ICONS = ['🏦', '🏗️', '📈', '☁️', '🎓', '📞', 
  */
 
 /**
+ * @typedef {{ icons: string[], completePdfUrl: string }} CardConfig
+ */
+
+/**
  * @param {Record<number, unknown[]>} statsByIndex
  * @param {number} idx
  * @returns {unknown[]}
@@ -60,12 +62,13 @@ function resumeStatsFor(statsByIndex, idx) {
  * @param {SourceCareer} career
  * @param {number} idx
  * @param {Record<number, unknown[]>} statsByIndex
+ * @param {CardConfig} cardConfig
  * @returns {Record<string, unknown>}
  */
-function careerCardFromSource(career, idx, statsByIndex) {
+function careerCardFromSource(career, idx, statsByIndex, cardConfig) {
   const entry = {
     id: career.id,
-    icon: RESUME_CARD_ICONS[idx] || '💼',
+    icon: cardConfig.icons[idx] || '💼',
     title: career.company,
     role: career.myRole || career.role || '',
     description: career.description,
@@ -73,7 +76,7 @@ function careerCardFromSource(career, idx, statsByIndex) {
     stats: resumeStatsFor(statsByIndex, idx),
     highlight: idx === 0,
   };
-  return withCompletePdf(entry, idx);
+  return withCompletePdf(entry, idx, cardConfig);
 }
 
 /**
@@ -81,13 +84,14 @@ function careerCardFromSource(career, idx, statsByIndex) {
  * @param {number} idx
  * @param {Record<number, unknown[]>} statsByIndex
  * @param {Record<string, TranslationOverride>} overrides
+ * @param {CardConfig} cardConfig
  * @returns {Record<string, unknown>}
  */
-function englishCareerCardFromSource(career, idx, statsByIndex, overrides) {
+function englishCareerCardFromSource(career, idx, statsByIndex, overrides, cardConfig) {
   const translated = overrides[career.company] || {};
   const entry = {
     id: career.id,
-    icon: RESUME_CARD_ICONS[idx] || '💼',
+    icon: cardConfig.icons[idx] || '💼',
     title: translated.title || career.company,
     role: translated.role || career.myRole || career.role || '',
     description: translated.description || career.description,
@@ -95,7 +99,7 @@ function englishCareerCardFromSource(career, idx, statsByIndex, overrides) {
     stats: resumeStatsFor(statsByIndex, idx),
     highlight: idx === 0,
   };
-  return withCompletePdf(entry, idx);
+  return withCompletePdf(entry, idx, cardConfig);
 }
 
 /**
@@ -161,14 +165,14 @@ function timelineCareerFromSource(career) {
 /**
  * @param {Record<string, unknown>} entry
  * @param {number} idx
+ * @param {CardConfig} cardConfig
  * @returns {Record<string, unknown>}
  */
-function withCompletePdf(entry, idx) {
+function withCompletePdf(entry, idx, cardConfig) {
   if (idx !== 0) return entry;
   return {
     ...entry,
-    completePdfUrl:
-      'https://raw.githubusercontent.com/jclee941/resume/master/packages/data/resumes/technical/nextrade/exports/Nextrade_Full_Documentation.pdf',
+    completePdfUrl: cardConfig.completePdfUrl,
   };
 }
 
