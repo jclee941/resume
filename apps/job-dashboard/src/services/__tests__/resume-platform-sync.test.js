@@ -15,16 +15,16 @@ const ENCRYPTION_KEY = btoa('0123456789abcdef0123456789abcdef');
 const SSOT = {
   personal: { name: 'Tester', email: 'tester@example.com', phone: '010-1234-5678' },
   education: {
-    school: '한양사이버대학교',
-    major: '컴퓨터공학과',
+    school: '예시대학교',
+    major: '예시학과',
     startDate: '2024.03',
     endDate: '2027.02',
     status: '졸업 예정',
     schoolType: '4년제',
   },
   awards: [
-    { name: '2026 HYCU AI학습법 공모전 장려상', organization: '한양사이버대학교', year: '2026' },
-    { name: '자율주행 포뮬레이션 공모전 우수상', organization: '한양사이버대학교', year: '2026' },
+    { name: '2026 예시 공모전 장려상', organization: '예시대학교', year: '2026' },
+    { name: '예시 대회 공모전 우수상', organization: '예시대학교', year: '2026' },
   ],
   careers: [],
   certifications: [],
@@ -44,13 +44,13 @@ async function envWithSessions(sessions, extra = {}) {
 
 const LIVE_FORM = [
   { name: 'UnivSchool.Index', value: 'c3' },
-  { name: 'UnivSchool[c3].Schl_Name', value: '한양사이버대학교' },
+  { name: 'UnivSchool[c3].Schl_Name', value: '예시대학교' },
   { name: 'UnivSchool[c3].Grad_YM', value: '202802' },
   { name: 'UnivSchool[c3].Grad_Type_Code', value: '4' },
   { name: 'UnivSchool[c3].Grade', value: '4.0' },
   { name: 'Award.Index', value: 'c1' },
   { name: 'InputStat.AwardInputStat', value: 'False' },
-  { name: 'Award[c1].Award_Name', value: '자율주행 경진대회 우수상' },
+  { name: 'Award[c1].Award_Name', value: '예시 대회 경진대회 우수상' },
 ];
 
 const SECTIONS = [
@@ -89,7 +89,7 @@ describe('Cloudflare-native JobKorea resume sync', () => {
     assert.deepEqual(result.sections, SECTIONS);
     assert.deepEqual(result.inputStat, { 'InputStat.AwardInputStat': 'False' });
     assert.deepEqual(result.liveRowFields.Award, ['Award_Name']);
-    assert.deepEqual(result.liveAwards, ['자율주행 경진대회 우수상']);
+    assert.deepEqual(result.liveAwards, ['예시 대회 경진대회 우수상']);
     assert.deepEqual(result.photo, PHOTO);
     assert.deepEqual(withEditor.mock.calls[0].arguments[1], {
       cookieString: 'ACNT=1; SES=2',
@@ -99,13 +99,10 @@ describe('Cloudflare-native JobKorea resume sync', () => {
     assert.deepEqual(changes['UnivSchool[c3].Grad_Type_Code'], ['4', '5']);
     assert.deepEqual(changes['UnivSchool[c3].Grad_YM'], ['202802', '202702']);
     assert.deepEqual(changes['Award[c1].Award_Name'], [
-      '자율주행 경진대회 우수상',
-      '2026 HYCU AI학습법 공모전 장려상',
+      '예시 대회 경진대회 우수상',
+      '2026 예시 공모전 장려상',
     ]);
-    assert.deepEqual(changes['Award[1_1000].Award_Name'], [
-      null,
-      '자율주행 포뮬레이션 공모전 우수상',
-    ]);
+    assert.deepEqual(changes['Award[1_1000].Award_Name'], [null, '예시 대회 공모전 우수상']);
     assert.equal(save.mock.callCount(), 0);
   });
 
@@ -364,9 +361,9 @@ function fakeWantedApi(detail) {
 describe('Cloudflare-native Wanted resume sync', () => {
   const detail = {
     careers: [],
-    educations: [{ id: 9, school_name: '한양사이버대학교' }],
+    educations: [{ id: 9, school_name: '예시대학교' }],
     skills: [],
-    activities: [{ id: 5, title: '자율주행 포뮬레이션 공모전 우수상', activity_type: 'AWARD' }],
+    activities: [{ id: 5, title: '예시 대회 공모전 우수상', activity_type: 'AWARD' }],
     language_certs: [],
     about: '',
   };
@@ -388,7 +385,7 @@ describe('Cloudflare-native Wanted resume sync', () => {
     assert.equal(education.status, 'EXPECTED_GRADUATION');
     assert.equal(education.description, null);
     const addedTitles = api.resumeActivity.add.mock.calls.map((call) => call.arguments[1].title);
-    assert.deepEqual(addedTitles, ['2026 HYCU AI학습법 공모전 장려상']);
+    assert.deepEqual(addedTitles, ['2026 예시 공모전 장려상']);
     assert.ok(result.updated.includes('activities'));
   });
 
