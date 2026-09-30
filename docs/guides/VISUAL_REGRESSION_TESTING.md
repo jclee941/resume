@@ -42,6 +42,14 @@ tests/e2e/visual.spec.js-snapshots/
 
 **Total Size**: ~5.7 MB
 
+**Baselines are local, not committed.** The screenshots capture whatever content is
+materialized for the build, so `tests/e2e/visual.spec.js-snapshots/` is gitignored and
+`playwright.config.js` sets `updateSnapshots: 'missing'`. The first run writes each missing
+baseline (those tests report "A snapshot doesn't exist ... writing actual" and fail once); the
+next run compares against it and fails on real differences, because existing baselines are never
+overwritten. After an intentional UI or content change, delete the directory or run with
+`--update-snapshots`.
+
 ---
 
 ## Running Tests

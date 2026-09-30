@@ -32,6 +32,7 @@ apps/portfolio/data.json
 apps/portfolio/data_en.json
 apps/portfolio/data_ja.json
 apps/portfolio/.wrangler/
+tests/e2e/visual.spec.js-snapshots/
 *.generated.*
 # NOTE: manifest*.json, sitemap.xml, og-image*.png, og-image*.webp are
 # hand-maintained build inputs and SHOULD remain tracked in git — the build

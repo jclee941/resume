@@ -19,6 +19,12 @@ module.exports = defineConfig({
   workers: process.env.CI ? 1 : 2,
   reporter: [['html'], ['junit', { outputFile: 'test-results/junit.xml' }]],
 
+  // Visual baselines are screenshots of the materialized content, so they are not
+  // committed (tests/e2e/visual.spec.js-snapshots/ is ignored). 'missing' writes a
+  // baseline the first time it is needed and leaves existing baselines untouched, so
+  // real diffs against an existing baseline still fail.
+  updateSnapshots: 'missing',
+
   expect: {
     toHaveScreenshot: {
       maxDiffPixelRatio: 0.05,
