@@ -118,7 +118,9 @@ function generateWebData(source, language = 'ko') {
   );
   const publicProjects = /** @type {import('./resume-web-data-projections.js').SourceProject[]} */ (
     publicPortfolioItems(source.personalProjects, excludedIds).map((project) =>
-      unlinkedIds.has(project.id) ? { ...project, githubUrl: null, repoUrl: null } : project
+      project.id && unlinkedIds.has(project.id)
+        ? { ...project, githubUrl: null, repoUrl: null }
+        : project
     )
   );
   const projects = publicProjects.map(projectCardFromSource);
