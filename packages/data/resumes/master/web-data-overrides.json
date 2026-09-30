@@ -25,5 +25,61 @@
       "title": "MT Data Co., Ltd.",
       "description": "Established a routine log analysis cadence and adhered to security audit guidelines to identify hardware failure indicators early in a closed network environment."
     }
+  },
+  "projectEn": {
+    "Observability Platform": {
+      "description": "Built unified observability for homelab infrastructure to remove the need to switch between per-service consoles by integrating Prometheus, Loki, and Grafana into a single dashboard.",
+      "tagline": "Monitoring Platform"
+    },
+    "Automation": {
+      "description": "Centralized scattered automation tasks such as alerts, deployments, and data collection into reusable workflow patterns.",
+      "tagline": "Automation"
+    },
+    "Security Alert System": {
+      "description": "FortiGate security events were scattered across device syslog and Splunk, making operator awareness and response handoff hard to keep consistent. Integrated Splunk Saved Search with Webhooks and implemented an EMS state-tracking pattern to prevent duplicate alerts by sending notifications only on state transitions. Classifies events with maintained FortiGate LogID mappings. When FortiGate syslog events occur, alerts are routed through Splunk Saved Search → Webhook → Slack in a single path.",
+      "tagline": "Security Alert Automation"
+    },
+    "IP Blacklist Platform": {
+      "description": "Built a unified threat intel lookup over Flask and Next.js so analysts query a single interface instead of multiple external feeds.",
+      "tagline": "Threat Intelligence"
+    }
+  },
+  "statsByIndex": {
+    "ko": [
+      ["Splunk ES", "탐지·대응", "보안 이벤트 흐름"],
+      ["FortiGate HA", "5계층 망분리", "본인가 대응"],
+      ["금융DC 운영", "감사 대응", "Python Runbook"],
+      ["NSX-T", "마이크로세그멘테이션", "침입 탐지"],
+      ["Ansible Runbook", "NAC", "VPN 모니터링"],
+      ["Linux 운영", "방화벽 정책", "패치 관리"]
+    ],
+    "en": [
+      ["Splunk ES", "Detection & Response", "Security Event Flow"],
+      ["FortiGate HA", "5-Tier Segmentation", "FSC Approval"],
+      ["Financial DC Ops", "Audit Response", "Python Runbooks"],
+      ["NSX-T", "Microsegmentation", "Intrusion Detection"],
+      ["Ansible Runbooks", "NAC", "VPN Monitoring"],
+      ["Linux Ops", "Firewall Policy", "Patch Management"]
+    ],
+    "ja": [
+      ["Splunk ES", "検知・対応", "セキュリティイベントフロー"],
+      ["FortiGate HA", "5階層ネットワーク分離", "本認可対応"],
+      ["金融DC運用", "監査対応", "Python Runbook"],
+      ["NSX-T", "マイクロセグメンテーション", "侵入検知"],
+      ["Ansible Runbook", "NAC", "VPNモニタリング"],
+      ["Linux運用", "ファイアウォールポリシー", "パッチ管理"]
+    ]
+  },
+  "cardIcons": ["🏦", "🏗️", "📈", "☁️", "🎓", "📞", "✈️"],
+  "completePdfUrl": "https://raw.githubusercontent.com/jclee941/resume/master/packages/data/resumes/technical/nextrade/exports/Nextrade_Full_Documentation.pdf",
+  "publicPortfolio": {
+    "excludedIds": [
+      "mcp-server-hub",
+      "idle-outpost",
+      "account",
+      "meetup-coordinator-mcp",
+      "nunchi-translator-mcp"
+    ],
+    "unlinkedIds": ["jclee-bot-github-app"]
   }
 }
