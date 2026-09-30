@@ -1,4 +1,4 @@
-# 이재철 | 보안 자동화 · 인프라 엔지니어
+# jclee941 | 보안 자동화 · 인프라 엔지니어
 
 **Security Automation · Infrastructure · SIEM Engineering**
 
@@ -6,7 +6,7 @@
 
 반복 작업의 자동화뿐 아니라 변경 이력, 장애 대응, 감사에 필요한 근거를 남기는 일을 중요하게 생각합니다.
 
-**[포트폴리오](https://resume.jclee.me)** · **[이력서 PDF](https://resume.jclee.me/resume-full.pdf)** · [LinkedIn](https://linkedin.com/in/jclee0109) · [이메일](mailto:qws941@kakao.com)
+**[포트폴리오](https://resume.jclee.me)** · **[이력서 PDF](https://resume.jclee.me/resume-full.pdf)** · [LinkedIn](https://linkedin.com/in/jclee0109) · [문의](https://resume.jclee.me/#contact)
 
 [주요 경험](#주요-경험) · [프로젝트 소개](#프로젝트-소개) · [기술 구성](#기술-구성) · [개발자 안내](#개발자-안내)
 
@@ -133,4 +133,4 @@ npm run dev
 
 ---
 
-[MIT License](LICENSE) · 경력 및 협업 문의: [qws941@kakao.com](mailto:qws941@kakao.com)
+[MIT License](LICENSE) · 경력 및 협업 문의: [resume.jclee.me/#contact](https://resume.jclee.me/#contact)

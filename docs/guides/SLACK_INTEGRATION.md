@@ -55,7 +55,7 @@ The Slack message includes:
 Status: ✅ Success
 Branch: master
 Commit: a1b2c3d
-Author: Jaecheol Lee
+Author: jclee941
 
 Commit Message:
 ```

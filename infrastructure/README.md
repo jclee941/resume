@@ -416,7 +416,7 @@ For issues or questions:
    - Project: `../README.md`
 
 3. **Contact**:
-   - Email: <qws941@kakao.com>
+   - Maintainer: <https://github.com/jclee941>
    - GitHub Issues: <https://github.com/jclee941/resume/issues>
 
 ---

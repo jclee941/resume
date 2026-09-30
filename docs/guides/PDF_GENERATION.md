@@ -187,7 +187,7 @@ lineStretch = "1.06"
 Fonts are per-variant (`fontNanum` = "NanumGothic", `fontNoto` = "Noto Serif
 CJK KR"), set via `catalog.go`.
 
-**PDF metadata**: `author=Jaecheol Lee`, `lang=ko-KR`. Links are colored
+**PDF metadata**: `author=<English name from resume_data_en.json>`, `lang=ko-KR`. Links are colored
 (`#5AA9B8`). Technical-doc variants additionally get `--toc --toc-depth=3
 --number-sections`; resume variants do not.
 
@@ -332,5 +332,5 @@ Install one of the two options above.
 
 - **Documentation**: This guide
 - **Generator source**: `tools/scripts/build/pdf-generator/`
-- **Questions**: <qws941@kakao.com>
+- **Questions**: <https://github.com/jclee941/resume/issues>
 - **Repository**: <https://github.com/qws941/resume>

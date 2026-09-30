@@ -390,7 +390,7 @@ wrangler.jsonc --env production`.
 
 **Last Updated**: February 2026  
 **Version**: v1.0.128  
-**Maintained by**: Jaecheol Lee (qws941)
+**Maintained by**: jclee941
 
 ---
 

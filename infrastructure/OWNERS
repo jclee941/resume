@@ -1,7 +1,7 @@
 # Infrastructure - Monitoring & Workflows
 # Grafana, Loki, Prometheus, automation
 
-jclee@jclee.me
+@jclee941
 
 # Sensitive configs
-per-file monitoring/** = jclee@jclee.me
+per-file monitoring/** = @jclee941

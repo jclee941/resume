@@ -223,9 +223,9 @@ sh_binary(
 # Package: new-package
 # Owner contact info
 
-jclee@jclee.me
+@jclee941
 
-per-file BUILD.bazel = jclee@jclee.me
+per-file BUILD.bazel = @jclee941
 ```
 
 ## Troubleshooting

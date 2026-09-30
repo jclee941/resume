@@ -93,7 +93,7 @@
     "cloudflare-workers",
     "jamstack"
   ],
-  "author": "Jaecheol Lee <qws941@kakao.com>",
+  "author": "jclee941 (https://github.com/jclee941)",
   "license": "MIT",
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
