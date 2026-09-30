@@ -1,5 +1,6 @@
 // Coverage tests for @resume/shared/normalize.
 // Closes the 0% coverage gap flagged in tech-debt audit 2026-04-29.
+const { loadMaster } = require('../../helpers/owner-data');
 
 describe('@resume/shared/normalize', () => {
   let normalize;
@@ -12,11 +13,11 @@ describe('@resume/shared/normalize', () => {
 
   describe('normalizeCompanyName — Korean corporation prefix/suffix stripping', () => {
     test('strips "(주)" prefix', () => {
-      expect(normalize.normalizeCompanyName('(주)아이티센 CTS')).toBe('아이티센 CTS');
+      expect(normalize.normalizeCompanyName('(주)예시회사 ABC')).toBe('예시회사 ABC');
     });
 
     test('strips "(주)" suffix', () => {
-      expect(normalize.normalizeCompanyName('아이티센 CTS(주)')).toBe('아이티센 CTS');
+      expect(normalize.normalizeCompanyName('예시회사 ABC(주)')).toBe('예시회사 ABC');
     });
 
     test('strips multiple "(주)" occurrences', () => {
@@ -24,11 +25,11 @@ describe('@resume/shared/normalize', () => {
     });
 
     test('strips "주식회사" prefix', () => {
-      expect(normalize.normalizeCompanyName('주식회사 ITCEN')).toBe('ITCEN');
+      expect(normalize.normalizeCompanyName('주식회사 EXAMPLE')).toBe('EXAMPLE');
     });
 
     test('strips "주식회사" suffix', () => {
-      expect(normalize.normalizeCompanyName('ITCEN 주식회사')).toBe('ITCEN');
+      expect(normalize.normalizeCompanyName('EXAMPLE 주식회사')).toBe('EXAMPLE');
     });
 
     test('strips both forms when present', () => {
@@ -36,7 +37,7 @@ describe('@resume/shared/normalize', () => {
     });
 
     test('trims whitespace after stripping', () => {
-      expect(normalize.normalizeCompanyName('  (주)아이티센 CTS  ')).toBe('아이티센 CTS');
+      expect(normalize.normalizeCompanyName('  (주)예시회사 ABC  ')).toBe('예시회사 ABC');
     });
 
     test('passes through company names without Korean corporation tokens', () => {
@@ -62,24 +63,22 @@ describe('@resume/shared/normalize', () => {
     });
 
     test('preserves internal whitespace', () => {
-      expect(normalize.normalizeCompanyName('(주)아이티센    CTS    Korea')).toBe(
-        '아이티센    CTS    Korea'
+      expect(normalize.normalizeCompanyName('(주)예시회사    ABC    Korea')).toBe(
+        '예시회사    ABC    Korea'
       );
     });
 
     test('handles real SSoT career data shapes', () => {
-      // Sample from packages/data/resumes/master/resume_data.json careers
-      const samples = [
-        ['(주)아이티센 CTS', '아이티센 CTS'],
-        ['(주)가온누리정보시스템', '가온누리정보시스템'],
-        ['(주)콴텍투자일임', '콴텍투자일임'],
-        ['(주)펀엔씨', '펀엔씨'],
-        ['(주)조인트리', '조인트리'],
-        ['(주)메타넷엠플랫폼', '메타넷엠플랫폼'],
-        ['(주)엠티데이타', '엠티데이타'],
-      ];
-      for (const [input, expected] of samples) {
-        expect(normalize.normalizeCompanyName(input)).toBe(expected);
+      // Every company in packages/data/resumes/master/resume_data*.json careers
+      const companies = ['ko', 'en', 'ja'].flatMap((locale) =>
+        loadMaster(locale).careers.map((career) => career.company)
+      );
+      expect(companies.length).toBeGreaterThan(0);
+      for (const company of companies) {
+        const normalized = normalize.normalizeCompanyName(company);
+        expect(normalized).toBe(company.replace(/\(주\)|주식회사/g, '').trim());
+        expect(normalized).not.toMatch(/\(주\)|주식회사/);
+        expect(normalized.length).toBeGreaterThan(0);
       }
     });
   });
