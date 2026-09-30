@@ -207,3 +207,36 @@ describe('syncApplicationHistory', () => {
     );
   });
 });
+
+describe('syncApplicationHistory window', () => {
+  it('writes nothing and records no run when the fetch returns after the window closed', async () => {
+    const db = createSqliteD1();
+    const env = await sessionEnv(db);
+    let now = 0;
+    const originalWarn = console.warn;
+    console.warn = () => {};
+    try {
+      const summary = await syncApplicationHistory(env, {
+        platforms: ['wanted'],
+        adapters: {
+          wanted: async () => {
+            now = 100;
+            return [wantedRecord(1)];
+          },
+        },
+        deadline: 50,
+        clock: () => now,
+      });
+
+      assert.deepEqual(summary.platforms.wanted, {
+        ok: false,
+        code: 'TIMEOUT',
+        error: 'history window closed before the write started',
+      });
+      assert.equal(db.sqlite.prepare('SELECT COUNT(*) AS n FROM applications').get().n, 0);
+      assert.equal(db.sqlite.prepare('SELECT COUNT(*) AS n FROM sync_logs').get().n, 0);
+    } finally {
+      console.warn = originalWarn;
+    }
+  });
+});

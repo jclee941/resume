@@ -8,6 +8,7 @@
  * @module services/application-history/history-repository
  */
 import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
+import { HistorySyncError } from './history-types.js';
 
 const BATCH_SIZE = 50;
 const DATE_ONLY_LENGTH = 10;
@@ -97,9 +98,16 @@ function latestPerJob(records) {
  * @param {HistoryDb} db
  * @param {import('./history-types.js').HistoryRecord[]} fetched records of one source
  * @param {string} now ISO timestamp
+ * @param {{ deadline?: number; clock?: () => number }} [window] no write batch starts at or after
+ *   `deadline` (epoch ms); batches already written stay, and the next sync finishes the rest
  * @returns {Promise<UpsertCounts>}
  */
-export async function upsertApplicationHistory(db, fetched, now) {
+export async function upsertApplicationHistory(
+  db,
+  fetched,
+  now,
+  { deadline = Infinity, clock = Date.now } = {}
+) {
   const records = latestPerJob(fetched);
   const counts = { fetched: fetched.length, inserted: 0, updated: 0, unchanged: 0 };
   if (records.length === 0) return counts;
@@ -158,7 +166,17 @@ export async function upsertApplicationHistory(db, fetched, now) {
   // row another sync created meanwhile is retried as a guarded update, so its status is not lost.
   /** @type {unknown[]} */
   const retries = [];
+  const total = Math.ceil(statements.length / BATCH_SIZE);
+  /** @param {number} done */
+  const assertWindowOpen = (done) => {
+    if (clock() < deadline) return;
+    throw new HistorySyncError(
+      'TIMEOUT',
+      `history write window closed after ${done} of ${total} write batches`
+    );
+  };
   for (let start = 0; start < statements.length; start += BATCH_SIZE) {
+    assertWindowOpen(start / BATCH_SIZE);
     const results = await db.batch(statements.slice(start, start + BATCH_SIZE));
     results.forEach((result, index) => {
       const { outcome, record } = planned[start + index];
@@ -171,6 +189,7 @@ export async function upsertApplicationHistory(db, fetched, now) {
     });
   }
   for (let start = 0; start < retries.length; start += BATCH_SIZE) {
+    assertWindowOpen(total);
     const results = await db.batch(retries.slice(start, start + BATCH_SIZE));
     for (const result of results) counts[result.meta.changes > 0 ? 'updated' : 'unchanged'] += 1;
   }

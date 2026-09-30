@@ -185,3 +185,23 @@ describe('upsertApplicationHistory application time', () => {
     assert.equal(row('own-10').created_at, 'then');
   });
 });
+
+describe('upsertApplicationHistory write window', () => {
+  it('issues no write batch once the window has closed', async () => {
+    const db = createSqliteD1();
+    let now = 0;
+    const batch = db.batch;
+    db.batch = async (statements) => {
+      const results = await batch(statements);
+      now = 100;
+      return results;
+    };
+    const records = Array.from({ length: 60 }, (_, index) => wantedRecord(1000 + index));
+
+    await assert.rejects(
+      upsertApplicationHistory(db, records, NOW, { deadline: 50, clock: () => now }),
+      { code: 'TIMEOUT', message: 'history write window closed after 1 of 2 write batches' }
+    );
+    assert.equal(db.sqlite.prepare('SELECT COUNT(*) AS n FROM applications').get().n, 50);
+  });
+});
