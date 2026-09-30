@@ -2,31 +2,13 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { JOBKOREA_APPLY_LIST_URL, fetchJobKoreaHistory } from '../jobkorea-adapter.js';
-import { EXPIRED_HTML, applyListHtml, createSqliteD1, sessionEnv } from './history-test-kit.js';
-
-function fakeBrowser(pagesByUrl, { gotoFailures = [] } = {}) {
-  const visited = [];
-  const failures = [...gotoFailures];
-  const cookies = [];
-  let opened = 0;
-  const withBrowserSession = async (_env, run) => {
-    opened += 1;
-    const page = {
-      current: '',
-      setCookie: async (...next) => void cookies.push(...next),
-      goto: async (url) => {
-        visited.push(url);
-        if (failures.length > 0) throw failures.shift();
-        page.current = url;
-      },
-      content: async () => pagesByUrl[page.current] ?? EXPIRED_HTML,
-      url: () => page.current,
-      close: async () => {},
-    };
-    return run({ newPage: async () => page });
-  };
-  return { withBrowserSession, visited, cookies, opened: () => opened };
-}
+import {
+  EXPIRED_HTML,
+  applyListHtml,
+  createSqliteD1,
+  fakeBrowser,
+  sessionEnv,
+} from './history-test-kit.js';
 
 const ROW = { company: 'Acme Robotics', no: 40000001, title: 'Platform Engineer' };
 
