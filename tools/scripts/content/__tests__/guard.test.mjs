@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import test from 'node:test';
-import { guard } from '../guard.mjs';
+import { guard, loadIdentifiers } from '../guard.mjs';
 import { makeRoot, put } from './d1-test-kit.mjs';
 
 const REALISTIC = ['010', '2345', '6789'].join('-');
@@ -120,4 +120,14 @@ test('tracked mode scans every tracked file', async () => {
   stage(root, 'notes');
   const { hits } = await scan(root, { mode: 'tracked' });
   assert.deepEqual([...hits.keys()], ['notes/real.md']);
+});
+
+test('the placeholder phone and email of the fixture pack are not identifiers', () => {
+  const root = makeRoot();
+  const personal = { name: 'Fixture Person', email: 'fixture@example.com', phone: '010-0000-0000' };
+  put(root, 'packages/data/resumes/master/resume_data.json', JSON.stringify({ personal }));
+  assert.deepEqual(
+    loadIdentifiers(root).map(({ kind }) => kind),
+    ['name']
+  );
 });
