@@ -4,7 +4,10 @@
  * applied-list page and nothing else: it never clicks, so no cancel/edit/apply control is touched.
  * @module services/application-history/jobkorea-adapter
  */
-import { withBrowserSession as defaultWithBrowserSession } from '../browser-session.js';
+import {
+  withBrowserSession as defaultWithBrowserSession,
+  settleWithin,
+} from '../browser-session.js';
 import { isJobKoreaHost, restrictToJobKorea } from '../jobkorea-request-filter.js';
 import { readPlatformSession } from '../platform-session.js';
 import { toJobKoreaBrowserCookies } from '../resume-platform-sync/jobkorea-editor.js';
@@ -28,6 +31,11 @@ const NAVIGATION_TIMEOUT_MS = 45_000;
  */
 const ADAPTER_BUDGET_MS = 100_000;
 const SETTLE_TIMEOUT_MS = 5_000;
+/**
+ * The adapter as a whole, browser acquisition, page setup and cleanup included, gives up after
+ * this, so it always answers with its own TIMEOUT before sync.js's 120 s budget runs out.
+ */
+const ADAPTER_DEADLINE_MS = 110_000;
 const TIMEOUT_MESSAGE = /timeout/i;
 const BLOCKED_RESOURCE_TYPES = new Set(['image', 'media', 'font', 'stylesheet']);
 
@@ -43,34 +51,15 @@ function sameSiteUrl(href, base) {
 }
 
 /**
- * @template T
- * @param {Promise<T>} work a page call that a stalled page can leave pending
- * @param {number} ms
- * @returns {Promise<T | null>} the result, or null when it failed or did not settle within `ms`
- */
-async function settleWithin(work, ms) {
-  /** @type {ReturnType<typeof setTimeout> | undefined} */
-  let timer;
-  /** @type {Promise<null>} */
-  const gaveUp = new Promise((resolve) => {
-    timer = setTimeout(() => resolve(null), ms);
-  });
-  try {
-    return await Promise.race([work.catch(() => null), gaveUp]);
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-/**
  * JobKorea inside Browser Rendering sometimes stalls past the navigation timeout. A timeout
  * whose document already is the applied list is good enough (the parser only needs the HTML);
  * otherwise the navigation is retried once, and the content is checked once more after the
- * retry times out before giving up.
+ * retry times out before giving up. Every content read is bounded, including the one after a
+ * navigation that succeeded.
  * @param {import('@cloudflare/puppeteer').Page} page
  * @param {string} url
  * @param {number} deadline epoch ms after which no further attempt may start
- * @param {number} settleMs how long a content read after a timeout may take
+ * @param {number} settleMs how long a content read may take
  * @returns {Promise<string>} the page HTML (not yet checked for being the applied list)
  */
 async function loadPage(page, url, deadline, settleMs) {
@@ -81,7 +70,10 @@ async function loadPage(page, url, deadline, settleMs) {
     if (timeout <= 0) break;
     try {
       await page.goto(url, { waitUntil: 'domcontentloaded', timeout });
-      return await page.content();
+      const html = await settleWithin(page.content(), settleMs);
+      if (html !== null) return html;
+      // The document loaded but its HTML never came back; count it as a timed-out attempt.
+      timedOut = new Error(`Navigation timeout: ${url} loaded but its HTML was not readable`);
     } catch (error) {
       if (!TIMEOUT_MESSAGE.test(error instanceof Error ? error.message : '')) throw error;
       timedOut = error;
@@ -109,22 +101,28 @@ function withPendingRequests(error, pending) {
 
 /**
  * @param {Parameters<typeof readPlatformSession>[0] & Parameters<typeof defaultWithBrowserSession>[0]} env
- * @param {{ withBrowserSession?: typeof defaultWithBrowserSession; settleMs?: number }} [options]
+ * @param {{ withBrowserSession?: typeof defaultWithBrowserSession; settleMs?: number; deadlineMs?: number }} [options]
  * @returns {Promise<import('./history-types.js').HistoryRecord[]>}
  */
 export async function fetchJobKoreaHistory(
   env,
-  { withBrowserSession = defaultWithBrowserSession, settleMs = SETTLE_TIMEOUT_MS } = {}
+  {
+    withBrowserSession = defaultWithBrowserSession,
+    settleMs = SETTLE_TIMEOUT_MS,
+    deadlineMs = ADAPTER_DEADLINE_MS,
+  } = {}
 ) {
   const cookieString = await readPlatformSession(env, 'jobkorea');
   if (!cookieString) {
     throw new HistorySyncError('SESSION_MISSING', 'No JobKorea session in KV (auth:jobkorea)');
   }
-  return withBrowserSession(env, async (browser) => {
+  /** @type {{ pending(): string[] }} */
+  let requests = { pending: () => [] };
+  const work = withBrowserSession(env, async (browser) => {
     const deadline = Date.now() + ADAPTER_BUDGET_MS;
     const page = await browser.newPage();
     try {
-      const requests = await restrictToJobKorea(page, BLOCKED_RESOURCE_TYPES);
+      requests = await restrictToJobKorea(page, BLOCKED_RESOURCE_TYPES);
       await page.setCookie(...toJobKoreaBrowserCookies(cookieString));
       /** @type {Map<string, import('./history-types.js').HistoryRecord>} */
       const records = new Map();
@@ -151,4 +149,20 @@ export async function fetchJobKoreaHistory(
       await settleWithin(page.close(), settleMs);
     }
   });
+  const outcome = await settleWithin(
+    work.then(
+      (records) => ({ records }),
+      (error) => ({ error })
+    ),
+    deadlineMs
+  );
+  if (outcome === null) {
+    const stalled = [...new Set(requests.pending())].join(', ') || 'none';
+    throw new HistorySyncError(
+      'TIMEOUT',
+      `JobKorea history fetch gave up after ${deadlineMs} ms; pending: ${stalled}`
+    );
+  }
+  if ('error' in outcome) throw outcome.error;
+  return outcome.records;
 }
