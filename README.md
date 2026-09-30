@@ -1,35 +1,17 @@
-# jclee941 | 보안 자동화 · 인프라 엔지니어
+# Resume Portfolio
 
-**Security Automation · Infrastructure · SIEM Engineering**
+이력서 콘텐츠, 공개 포트폴리오, 채용 작업 자동화를 한 저장소에서 관리하는 개인 프로젝트입니다.
+이력서와 지원 서류 같은 개인 데이터는 저장소에 두지 않고 Cloudflare D1 콘텐츠 팩([ADR 0011](docs/adr/0011-content-pack-in-d1.md))에 보관합니다.
 
-금융권 보안 인프라를 구축하고, 탐지부터 알림까지 이어지는 운영 흐름을 코드로 연결합니다.
+**[포트폴리오](https://resume.jclee.me)** · **[이력서 PDF](https://resume.jclee.me/resume-full.pdf)** · [문의](https://resume.jclee.me/#contact)
 
-반복 작업의 자동화뿐 아니라 변경 이력, 장애 대응, 감사에 필요한 근거를 남기는 일을 중요하게 생각합니다.
-
-**[포트폴리오](https://resume.jclee.me)** · **[이력서 PDF](https://resume.jclee.me/resume-full.pdf)** · [LinkedIn](https://linkedin.com/in/jclee0109) · [문의](https://resume.jclee.me/#contact)
-
-[주요 경험](#주요-경험) · [프로젝트 소개](#프로젝트-소개) · [기술 구성](#기술-구성) · [개발자 안내](#개발자-안내)
+[프로젝트 소개](#프로젝트-소개) · [기술 구성](#기술-구성) · [개발자 안내](#개발자-안내)
 
 ---
 
-## 주요 경험
-
-- **금융권 보안 인프라 구축**:
-  넥스트레이드 매매체결시스템의 망분리와 보안 솔루션 연동을 수행하고,
-  방화벽·NAC·DLP 정책 운영 스크립트와 DR 절차를 작성했습니다.
-- **SIEM 탐지·알림 자동화**:
-  Splunk ES, FortiGate/FortiManager, Webhook, Slack·SMS를 연결해
-  보안 이벤트의 탐지·분류·알림 흐름과 정책 조회 자동화를 설계했습니다.
-- **운영 근거와 감사 대응**:
-  금융보안데이터센터 인프라와 DLP 정책을 운영하고,
-  금융감독원 감사 및 금융위 본인가 심사에 필요한 점검·대응 자료를 정리했습니다.
-
-경력별 역할과 프로젝트 설명은 [포트폴리오](https://resume.jclee.me)에서 확인할 수 있습니다.
-
 ## 프로젝트 소개
 
-**Resume Portfolio**는 이력서 콘텐츠, 공개 웹사이트, 채용 작업 자동화를 함께 관리하는 개인 프로젝트입니다.
-위의 업무 경력과는 별개로 직접 구현하고 관리하며, 관련 앱과 공유 패키지를 하나의 저장소에 모았습니다.
+관련 앱과 공유 패키지를 하나의 저장소에 모았습니다.
 
 화면뿐 아니라 **콘텐츠 변경 → 서비스 동작 → 검증·배포**로 이어지는 구현을 아래 코드에서 확인할 수 있습니다.
 
@@ -122,7 +104,7 @@ npm run dev
 | --------------------------- | ---------------------------------------------------------- |
 | 공개 포트폴리오·요청 라우팅 | [apps/portfolio/](apps/portfolio/)                         |
 | 대시보드 API·큐·워크플로우  | [apps/job-dashboard/](apps/job-dashboard/)                 |
-| 이력서 콘텐츠 원본          | [packages/data/](packages/data/)                           |
+| 이력서 스키마(원본은 D1)    | [packages/data/](packages/data/)                           |
 | 콘텐츠 팩·가짜 픽스처       | [docs/guides/CONTENT_PACK.md](docs/guides/CONTENT_PACK.md) |
 | 공통 타입·스키마·API 계약   | [packages/](packages/)                                     |
 | 테스트·검증 계층            | [tests/](tests/)                                           |
