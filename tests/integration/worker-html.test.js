@@ -63,7 +63,9 @@ describe('Worker-HTML Integration', () => {
     });
 
     test('embedded HTML should contain name', () => {
-      expect(workerCode).toContain('이재철');
+      const master = path.join(__dirname, '../../packages/data/resumes/master/resume_data.json');
+      const { name } = JSON.parse(fs.readFileSync(master, 'utf-8')).personal;
+      expect(workerCode).toContain(name);
     });
 
     test('security headers should be complete', () => {

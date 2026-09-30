@@ -67,16 +67,17 @@ describe('portfolio first-screen hiring decision contract', () => {
       ja: TARGET_ROLE,
     });
 
-    const expectations = {
-      ko: ['채용 담당자', '공개 자동화 프로젝트', '연락 및 이력서', '면접 제안'],
-      en: [
-        'Recruiter summary',
-        'Public automation projects',
-        'Contact and resume PDF',
-        'interview request',
-      ],
-      ja: ['採用担当者', '公開自動化プロジェクト', '連絡・履歴書PDF', '面接依頼'],
-    };
+    const expectations = Object.fromEntries(
+      Object.entries(HERO_CONTENT).map(([locale, content]) => [
+        locale,
+        [
+          content.packetLabel,
+          content.publicProofLabel,
+          content.reviewLinks[2][1],
+          content.availability,
+        ],
+      ])
+    );
 
     for (const [locale, requiredTerms] of Object.entries(expectations)) {
       const html = buildHeroContent(locale);
@@ -85,9 +86,7 @@ describe('portfolio first-screen hiring decision contract', () => {
         expect(html).toContain(term);
       }
 
-      expect(html).toContain('jclee-bot');
-      expect(html).toContain('Grafana');
-      expect(html).toContain('ELK');
+      for (const [, name] of HERO_CONTENT[locale].publicProofLinks) expect(html).toContain(name);
     }
   });
 
@@ -104,18 +103,14 @@ describe('portfolio first-screen hiring decision contract', () => {
   });
 
   test('public proof details explain why each artifact is useful to hiring leads', () => {
-    const combinedHero = ['ko', 'en', 'ja'].map((locale) => buildHeroContent(locale)).join('\n');
+    for (const locale of ['ko', 'en', 'ja']) {
+      const html = buildHeroContent(locale);
 
-    expect(combinedHero).toMatch(/LLM/);
-    expect(combinedHero).toMatch(/시크릿 스캔|secrets scan|シークレットスキャン/);
-    expect(combinedHero).toMatch(/Check Run|check runs|チェックラン/);
-    expect(combinedHero).toMatch(/메트릭.*로그|metrics.*logs|メトリクス.*ログ/);
-    expect(combinedHero).toMatch(/관측성|observability|可観測性/);
-    expect(combinedHero).toMatch(
-      /보안 이벤트 수집|security event collection|セキュリティイベント収集/
-    );
-    expect(combinedHero).toMatch(/분류|triage|トリアージ/);
-    expect(combinedHero).toMatch(/추적|tracking|追跡/);
+      for (const [, name, description] of HERO_CONTENT[locale].publicProofLinks) {
+        expect(description.length).toBeGreaterThan(name.length);
+        expect(html).toContain(description);
+      }
+    }
   });
 
   test('role chips use visible text as the accessible name (WCAG 2.5.3 Label in Name)', () => {

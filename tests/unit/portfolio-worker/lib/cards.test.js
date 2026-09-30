@@ -878,7 +878,7 @@ describe('Cards Module', () => {
 
     test('should include velog link with consistent plain text styling', () => {
       const velog = loadPortfolioData('ko').contact.velog;
-      const contactData = { github: 'https://github.com/test' };
+      const contactData = { github: 'https://github.com/test', velog };
       const html = generateContactGrid(contactData);
 
       expect(velog).toBeTruthy();
