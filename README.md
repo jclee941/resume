@@ -24,7 +24,7 @@
   금융보안데이터센터 인프라와 DLP 정책을 운영하고,
   금융감독원 감사 및 금융위 본인가 심사에 필요한 점검·대응 자료를 정리했습니다.
 
-경력별 역할과 프로젝트 설명은 [경력 요약](packages/data/resumes/master/resume_summary.md)에서 확인할 수 있습니다.
+경력별 역할과 프로젝트 설명은 [포트폴리오](https://resume.jclee.me)에서 확인할 수 있습니다.
 
 ## 프로젝트 소개
 
@@ -37,9 +37,10 @@
 
 한국어·영어·일본어 이력서 데이터를 원본에서 동기화하고 Cloudflare Worker 번들로 생성합니다.
 하나의 기준 데이터에서 파생 콘텐츠를 만드는 SSoT(Single Source of Truth) 방식입니다.
+원본 이력서와 포트폴리오 문구는 저장소가 아니라 Cloudflare D1 콘텐츠 팩(ADR 0011)에 보관하고, 빌드할 때 작업 트리로 내려받습니다.
 공개 포트폴리오와 `/job/*` 대시보드는 하나의 Worker 진입점에서 요청을 분기합니다.
 
-[콘텐츠 원본](packages/data/resumes/master/resume_data.json) · [빌드 진입점](apps/portfolio/generate-worker.js) · [요청 라우팅](apps/portfolio/entry.js)
+[콘텐츠 팩 가이드](docs/guides/CONTENT_PACK.md) · [빌드 진입점](apps/portfolio/generate-worker.js) · [요청 라우팅](apps/portfolio/entry.js)
 
 ### 채용 작업 자동화
 
@@ -84,15 +85,18 @@ GitHub Actions는 코드 검증을, Cloudflare Workers Builds는 프로덕션 �
 
 Node.js 22 이상과 npm이 필요합니다. 저장소 루트에서 실행합니다.
 
+실제 콘텐츠는 저장소에 없습니다. `build`는 먼저 콘텐츠 팩을 확인하므로, 소유자는 `npm run content:pull`로 내려받고
+그 외에는 가짜 콘텐츠 팩(`tests/fixtures/content-pack/`)을 사용합니다.
+
 ```bash
 npm ci
-npm run build
+CONTENT_SOURCE=fixtures npm run build
 npm run dev
 ```
 
 로컬 포트폴리오: <http://localhost:8787>
 
-- **빌드 원본**: `build`는 이력서 데이터를 동기화한 뒤 Worker를 생성합니다.
+- **빌드 원본**: `build`는 콘텐츠 팩을 확인하고 이력서 데이터를 동기화한 뒤 Worker를 생성합니다.
   `apps/portfolio/worker.js`와 파생 데이터는 직접 수정하지 않습니다.
 - **실행 범위**: 외부 플랫폼 연동과 일부 대시보드 기능에는 별도 바인딩·인증 설정이 필요합니다.
 - **시크릿 관리**: 소스에 넣지 않고 1Password 또는 Cloudflare Workers Secrets로 관리합니다.
@@ -114,13 +118,14 @@ npm run dev
 
 ### 코드 탐색
 
-| 살펴볼 내용                 | 시작 경로                                  |
-| --------------------------- | ------------------------------------------ |
-| 공개 포트폴리오·요청 라우팅 | [apps/portfolio/](apps/portfolio/)         |
-| 대시보드 API·큐·워크플로우  | [apps/job-dashboard/](apps/job-dashboard/) |
-| 이력서 콘텐츠 원본          | [packages/data/](packages/data/)           |
-| 공통 타입·스키마·API 계약   | [packages/](packages/)                     |
-| 테스트·검증 계층            | [tests/](tests/)                           |
+| 살펴볼 내용                 | 시작 경로                                                  |
+| --------------------------- | ---------------------------------------------------------- |
+| 공개 포트폴리오·요청 라우팅 | [apps/portfolio/](apps/portfolio/)                         |
+| 대시보드 API·큐·워크플로우  | [apps/job-dashboard/](apps/job-dashboard/)                 |
+| 이력서 콘텐츠 원본          | [packages/data/](packages/data/)                           |
+| 콘텐츠 팩·가짜 픽스처       | [docs/guides/CONTENT_PACK.md](docs/guides/CONTENT_PACK.md) |
+| 공통 타입·스키마·API 계약   | [packages/](packages/)                                     |
+| 테스트·검증 계층            | [tests/](tests/)                                           |
 
 ### 문서와 기여
 

@@ -13,6 +13,12 @@ Canonical resume and application content. `resumes/master/resume_data.json` and
 its locale JSON peers are the structured sources; Markdown, PDFs, generated
 variants, and platform snapshots are secondary outputs or independent corpora.
 
+Everything under `resumes/` except `AGENTS.md` guides, `.gitkeep` files, and
+`master/resume_schema.json` is the D1 content pack (ADR 0011): gitignored,
+materialized by `npm run content:pull`, published by `npm run content:push`.
+Builds and tests in GitHub CI use the fake pack in `tests/fixtures/content-pack/`.
+See `docs/guides/CONTENT_PACK.md`.
+
 ## STRUCTURE
 
 ```text
@@ -42,12 +48,15 @@ master/resume_data.json → npm run sync:data → portfolio-worker/data.json
 - Keep locale facts aligned while preserving locale-specific wording.
 - `applications/` is intentionally independent; see its child AGENTS for contract details.
 - Regenerate derived files through project commands, not hand-editing.
+- Edit content through the pack workflow: `content:pull` → edit → `content:push`, then
+  redeploy. D1 wins over any local copy.
 
 ## ANTI-PATTERNS
 
 - Never edit PDFs directly. Edit source, regenerate.
 - Never put loose files outside the resumes/ hierarchy.
 - Never let derived artifacts drift from SSoT.
+- Never commit files under `resumes/` other than the schema, guides, and placeholders.
 - Never use absolute paths in data references.
 
 ---

@@ -9,6 +9,10 @@
 Top-level per-role application corpus: tailored resumes, cover letters, HTML/PDF
 previews, screenshots, and auto-apply run outputs outside npm workspaces.
 
+The packets are D1 content-pack files (ADR 0011): gitignored, materialized by
+`npm run content:pull`, published by `npm run content:push`. Only this guide is
+tracked. See `docs/guides/CONTENT_PACK.md`.
+
 ## STRUCTURE
 
 ```text
@@ -40,6 +44,7 @@ applications/
 - Keep claims conservative and sourced from the resume SSoT or role-specific
   evidence. Tailoring may reframe facts; it must not invent facts.
 - Prefer editing markdown/source inputs, then regenerating HTML/PDF outputs.
+- Publish packet edits with `npm run content:push`; never commit packets.
 
 ## ANTI-PATTERNS
 

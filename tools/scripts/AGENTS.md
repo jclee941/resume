@@ -47,6 +47,8 @@ scripts/
 | `npm run content:push -- [--dry-run] [--prune]`             | Upload new/changed files; `--prune` deletes D1 rows missing locally; refreshes the `resumes` master row. |
 | `npm run content:status`                                    | Local vs D1 added/changed/deleted/unchanged counts and paths.                                            |
 | `npm run content:manifest -- [--out f]`                     | Local pack manifest (path, sha256, size) to prove D1 parity.                                             |
+| `npm run content:ensure -- [--force]`                       | Build-time policy run by `npm run build`: fixtures, D1 (`WORKERS_CI=1`), or a required pulled pack.      |
+| `node tools/scripts/content/make-fixtures.mjs`              | Regenerate `tests/fixtures/content-pack/` from a materialized real pack (fakers in `fixtures/`).         |
 | `npm run content:guard -- [--staged\|--tracked] [--report]` | Fail on pack paths or personal tokens in git; prints paths, kinds, and counts only.                      |
 
 Environment: `CONTENT_API_TOKEN` or `CLOUDFLARE_API_TOKEN` (Bearer), or
@@ -61,7 +63,7 @@ Rules:
   when `CONTENT_SOURCE=fixtures` or `--source fixtures` is explicit.
 - Never print file contents, request bodies, tokens, or matched personal values; output is paths,
   counts, and token kinds.
-- Keep every file under 200 LOC and add no npm dependencies (globs use `picomatch`, already in the lockfile).
+- Keep every file under 200 LOC and add no npm dependencies (globs use the in-tree `glob.mjs`, so the guards run before `npm ci`).
 
 **Why JavaScript, not Go:** this CLI runs inside `npm run build` on Cloudflare Workers Builds, where
 only the Node toolchain is guaranteed. A Go binary would add a toolchain requirement to the deploy
