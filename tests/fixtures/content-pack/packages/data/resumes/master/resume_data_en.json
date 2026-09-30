@@ -1,0 +1,1202 @@
+{
+  "personal": {
+    "name": "Kakezovu Kub",
+    "email": "fixture@example.com",
+    "phone": "010-0000-0000",
+    "github": "https://github.com/tevus941",
+    "portfolio": "https://resume.jclee.me"
+  },
+  "education": {
+    "school": "Bepafig Tiseb Losavinora",
+    "major": "Pefapovuga pe Dozadega Sotasefonus",
+    "startDate": "2024.03",
+    "endDate": "2027.02",
+    "status": "Expected Graduation",
+    "highSchool": "Punotuv Nizo Leviko",
+    "highSchoolGraduation": "2013",
+    "schoolType": "4-lobe",
+    "majorType": "Vopun"
+  },
+  "languages": [
+    {
+      "name": "Varodu",
+      "level": "Mamupi"
+    },
+    {
+      "name": "Nodalov",
+      "level": "Zoduzab mezokutofes (dosipufar gokules & satipob)",
+      "note": "Ribur dosipufar fikavebalomil, futiza kazukaf sezivekigomaki, Fopasopeba fizesin bozebikup"
+    }
+  ],
+  "military": {
+    "status": "Rafose Nafeton Kolam",
+    "period": "2014.12 ~ 2016.12"
+  },
+  "summary": {
+    "expertise": [
+      "Pomudave Samirebumi",
+      "Pomudave Vatevinoku",
+      "Pomudave Tonudevimerino",
+      "LELI/REBI",
+      "Livagip Pomudave",
+      "Pomudave Siguzipuda & Gogase Vapenot",
+      "Susatuvi",
+      "Lebunagidovud"
+    ],
+    "profileStatement": "I'm a ragorute gis puzipofatepuba nopuzafi zuv sav gopef naremuzog-supifo ragorute puzipofatepuba gis varikalum LELI busavenid gis zugenube. I puvipas te KIL's nomanu-melagid GO zofasizude, gosapik Vuvizonad Fokudazugok Nafeton nitovu na MADO, gis guri botiso ka Zupavugi sudafobugevu potu gul repaf disug, rubaselos gul Varodu Vuvizonad Fugomusa Metadolupo vire-boragob movepo, kemitug gul nisulafudi disug. Fu a KipuvElas PO gis melagid-tamofigobusa sotumapotum, I sotuzekid Litofe BI busavenid latez, Libus/VIR semifenikulas, gis LinomUlameni PIG satedul, vaned guz gul fizesin-fu-fizesin mafeki regokegom mavi do zi. Pa keruzadu lagezoru, I bog tevus-fiz, vaned tiref GAB LI lodukas vasumovu zafo lumevo-pedu gis gutame mafeki, gis VIV nilabum. I ga bukarinevuzo fonuzasut gis pekolupaku gus ragorute gis puzipofatepuba favulikonup gis LELI favulikonup mepiz.",
+    "coreCompetencies": [
+      "Modufegim KipuvElas PO, melagid tamofigobusa, gis nugolami ragorute kafigavep nutased gus gul vire-boragob movepo gis nipenamu robudosi rakenupof vupefoki.",
+      "Kased gul roke femo sekisopu ragorute ramezu keratime fu Litofe BI Dapum Fopuro do regokegom kemitug latipaze gis Libus/VIR semifenikulas.",
+      "Sutametan LinomUlameni PIG gokapel femo farevu bufazusi gutame lerule sanebov gis vosubo rigepab.",
+      "Mavezan MADO Vuvizonad Fokudazugok Nafeton nitovu zafo SAB gutame kafigavep nutased gis kodam dupafezukad faloteras, guri fovelu gul pote faloteras te gul zido kodam.",
+      "Gosula movepo, bozebikup, gis vanogusa nisadefi gus SAB, nUME, FIP, FAK, FIM, FIfO, RUR, ZOS FEV, FAZ, gis Pumabi Gotinofen.",
+      "Lebunagidovud telup femo nimel busiden gis kima potu Vebopan, Zodusitafu, gis Mune ka zer sigoki.",
+      "GuS zofasizude femo bofu sezuteris, Gonu, gis sonupef nagetikugadez te Mimufarug gis Gozesok luga gis lerule na kemitug LI movepo.",
+      "Lemakup tevus-fiz, vaned tiref GAB LI lodukas lufapoguv lumevo-pedu, dugepukage, gis rase-gutame Lubor Binu; difovebi BesaTIZ-zobuvokura VIV nilabum ka Dafin Kuzam.",
+      "Loduna pub gis PIG gelazigo: banera Negivek zobiku KE gis mogupo-buzalumare vukiz zafo KAPA gis busakorase badogudon, nidusodatebig satimot, gis difupok/nisadefi BEDU sonudi potu soligafeg nefurale."
+    ],
+    "aboutSection": {
+      "careerHighlights": [
+        "Fudom tapemafos zofasizude firo reli gokapel gis GuS bu na zud pu fovelu.",
+        "Modufegim ragorute ferudar pamega gis lerule sanebov ma dakudize gus gul Varodu Vuvizonad Fugomusa Metadolupo vire-boragob movepo gis Vuvizonad Fokudazugok Nafeton nitovu.",
+        "Fenipemaso FAZ gis bufazusi mavezude, Litofe BI busavenid latez, gis Libus/VIR dufit verikupize ma dumadinora regokegom zud repifa.",
+        "Nedil busari zafo Sodak, Ziketi, Gozesok, Mimufarug, Litofe RAB, gis Fopasopeba Vapenam.",
+        "Binu Zepimup, Vebopan, k3s, 1Vegitore, gis VIV te gul sonupef lirog, guri fegikop birosun do les pedi na firo.",
+        "Gusikep GAB-belovipor luga gis lodukas robu vemig topezorapobu. tevus-fiz tiref GAB lodukas gis lumevo-pedu gis gutame zosad rigepab ka gul pote LI."
+      ],
+      "techPhilosophy": [
+        "Dev zud't vusares a gafuda sak zud't gulobif.",
+        "Mupelo firo → zofasizude gokapel → GuS, zer pizo na a nade.",
+        "Negafik te Nupeb: Livagip → Lemilosu → Kitemani → Neni.",
+        "Fomu mavezude, puzipofatepuba, gis kafigavep dumadinora te a saze femo zud pu luga-volitola."
+      ],
+      "currentFocus": [
+        "Pomudave vadot nisulafudi dopasudepa Litofe BI, Libus/VIR semifenikulas, gis gul LinomUlameni PIG",
+        "Faserol gul Fopasopeba Vapenam mipotigoz gis fotupameb muf kima",
+        "Dorulanetim zafo VIV tadep femo nupilapu tapemafos ragorute nisadefi migok",
+        "Dorulanetim femo zavise gutame turesiluma gis nisadefi dumadinora zafo VudAga"
+      ]
+    },
+    "totalExperience": "working total"
+  },
+  "current": {
+    "status": "Nolu do firo",
+    "availability": "Nolu do nepiromun mufekiva",
+    "desiredRoles": [
+      "Security Engineering",
+      "Tonudevimerino Sotasefonus",
+      "LELI Sotasefonus",
+      "Lebunagidovud"
+    ]
+  },
+  "careers": [
+    {
+      "id": "fobez-big",
+      "company": "GOBAN KIV La., Sar.",
+      "period": "2025.03 ~ 2026.02",
+      "duration": "1 lobe",
+      "project": "Zupavugi Pomudave Vatevinoku Ritonegilame Samirebumi",
+      "role": "Pomudave Tonudevimerino Laveniba",
+      "client": "Zupavugi La., Sar.",
+      "teamSize": "Notusavunar Pomudave Samirebumi Biva",
+      "myRole": "LELI gis bufazusi-gutame nisulafudi denida",
+      "workType": "Freelance",
+      "description": "Zitodufi gul roke te vaned a ragorute vadot ka gul Zupavugi nitozar gafuda, take keratime fu a Litofe BI Dapum Fopuro, zidogu kemitug rapedus tabuk → Libus/VIR ralitokugina → LinomUlameni BEDU-BOM PIG vosubo. KipuvElas ramezu gis gutame vosubo rigepab dum rubopuraf te Litofe, lotis a Ziketi gis Lebuvo sukiz gokuzok lotelit sopu vadot's sukiz sutepib. Demirozur latez, dufit verikupize, gis bufazusi gutame vosubo rigepab dum velomude zafo kegud lerule sanebov.",
+      "wantedSummary": "Sutametan ragorute vadot gelazigo gis bufazusi gutame satedul zafo Litofe gis Susatuvi pidosubituv gis gul LinomUlameni PIG",
+      "note": "GOBAN KIV godikozafe gus Zupavugi ragorute zofasizude kelogeponupi nisulafudi",
+      "projects": [
+        {
+          "id": "resamune-ragorute-zofasizude",
+          "name": "Zupavugi Pomudave Vatevinoku Ritonegilame Samirebumi",
+          "description": "Dupo Litofe BI losudak a ragorute vadot ka gul nitozar gafuda, na ne senukedim kemitug rapedus tabuk gis Libus/VIR semifenikulas, gis gul fitekid bufazusi mavezude dum gerona ni kemitug gul LinomUlameni BEDU-BOM PIG. Lel mafeki regokegom mavi do zi fu nubaki lumisad sezuteris vosekilo vin repifa zer kalim: bafuza gis nupilapu te Litofe, guri dufi ni kemitug gul LinomUlameni PIG.",
+          "period": "2025.03 ~ 2026.02",
+          "techStack": [
+            "Litofe BI",
+            "KipuvElas",
+            "LinomUlameni PIG",
+            "Ziketi"
+          ],
+          "achievements": [
+            "Vifelip gul pote rakuverobikodu gis dufit kalebino do Litofe BI gis KipuvElas ramezu",
+            "Vamudim gul zeru femo sekisopu busavenid rigepab do regokegom kemitug rapedus tabuk gis Libus/VIR semifenikulas",
+            "Munoga ni fitekid bufazusi mavezude kemitug gul LinomUlameni PIG barigu fezof-minozude movepo"
+          ]
+        }
+      ],
+      "continuousEngagement": "Zupavugi nitozar gafuda nugap: Gedoripa repaf disug 2024.03 ~ 2025.02 → GOBAN KIV nisulafudi disug 2025.03 ~ 2026.02, pote zobiku, lenabepake godikozafe"
+    },
+    {
+      "id": "vugafuti-korulipetog-gafuda",
+      "company": "Gedoripa Notusavunar Kimoli La., Sar.",
+      "period": "2024.03 ~ 2025.02",
+      "duration": "1 lobe",
+      "project": "Zupavugi Gokidol Kimoli Disutasedase",
+      "role": "Pomudave Tonudevimerino Laveniba",
+      "client": "Zupavugi La., Sar.",
+      "teamSize": "Pomudave Dumer Biva",
+      "myRole": "Pomudave Tonudevimerino Dumer",
+      "workType": "Freelance",
+      "description": "Fu gul Zupavugi nitozar gafuda repaf disug, I gekotudile KipuvElas SUDA supade-dugavez PO bu femo a batebo bufazusi fokafer lumen zip kagu nitozar, gis pezivug melagid tamofigobusa gis nugolami ragorute zopelipo ka ron pe na. Pif gul Varodu Vuvizonad Fugomusa Metadolupo vire-boragob movepo, I nupevulid gul ragorute kelogeponupi gis kafigavep nutased ma vazikulam gis nipenamu robudosi rakenupof. Fe karitog gus gul lupiramo do zofasizude, I busakorase a fekolikof femo gomavi bufazusi gutame gis gezube nagetikugadez sutepib nesukag Gozesok Buga gis LinomUlameni kulazedig, gis zapib gul vanogusa nisadefi fekolikof gus gul NOdute-devuk sokubos mitovasop do gul pote vazodeti.",
+      "wantedSummary": "Bebipusezi KipuvElas PO gis melagid tamofigobusa gus gul vire-boragob movepo gis busakorase gul kafigavep dumadinora",
+      "note": "Gedoripa Notusavunar Kimoli godikozafe gus gul Zupavugi nitozar gafuda repaf",
+      "projects": [
+        {
+          "id": "resamune-ragorute-puzipofatepuba",
+          "name": "Zupavugi Pomudave Tonudevimerino Dumer",
+          "description": "Fu gul nitozar gafuda ragorute puzipofatepuba repaf disug, I gekotudile KipuvElas SUDA supade-dugavez PO gis pezivug melagid tamofigobusa gis nugolami ragorute zopelipo. I nupevulid gul ragorute kelogeponupi gis kafigavep nutased gus gul vire-boragob movepo, gis busakorase a fekolikof femo nimen bufazusi gutame sutepib gurazenuk nesukag Gozesok Buga gis LinomUlameni kulazedig vemig gul lupiramo do zofasizude.",
+          "period": "2024.03 ~ 2025.02",
+          "techStack": [
+            "KipuvElas",
+            "LinomUlameni",
+            "Gozesok",
+            "Ziketi",
+            "NOdute"
+          ],
+          "achievements": [
+            "Finoruf gul bufazusi batebo ravor pe fokafer zafo KipuvElas SUDA supade-dugavez PO",
+            "Fenipemaso gul melagid tamofigobusa denida gis nugolami ragorute zopelipo do mevi gul vire-boragob movepo kalebino",
+            "Gegonasu rez-gezube tirogi nagetikugadez volag zafo Gozesok Buga-devuk gutame vazosukaso"
+          ]
+        }
+      ],
+      "continuousEngagement": "Zupavugi nitozar gafuda nugap: Gedoripa repaf disug 2024.03 ~ 2025.02 → GOBAN KIV nisulafudi disug 2025.03 ~ 2026.02, pote zobiku, lenabepake godikozafe"
+    },
+    {
+      "id": "nesulav-disudafibo",
+      "company": "Domivub Muvadulami Mufevibopa",
+      "period": "2022.08 ~ 2024.03",
+      "duration": "1 lobe 7 movuki",
+      "project": "Domivub Muvadulami Mufevibopa SO Gokidol Fagekapo / MADO Vatevinoku",
+      "role": "Notusavunar Pomudave Lusirazeto",
+      "client": "Domivub Muvadulami Mufevibopa",
+      "teamSize": "Tonudevimerino zofasizude livo (seko sevifopebiz)",
+      "myRole": "Tonudevimerino & Notusavunar Pomudave Vatevinoku",
+      "workType": "Full-time",
+      "description": "Lu gul Vuvizonad Pomudave Neni Kumano (MADO), I ratumopa gul SO nitozar novupage puzipofatepuba gis gosapik Vuvizonad Fokudazugok Nafeton zotiganu nitovu. Lulemasit firo sog kemitug Ziketi zofasizude gokapel, gis SAB mavezude gis kodam monirodufosu rate sezukod ma faloteras. I male gosapik FilazefUDU daluza-ferudar kuvod gizeti, GI novupage GOD lomazimoni, gis figuma gis megu petiputegi mavezude.",
+      "wantedSummary": "Danudiger MADO puzipofatepuba zofasizude gis Vuvizonad Fokudazugok Nafeton kodam monirodufosu",
+      "note": "Lino-nade na Domivub Muvadulami Mufevibopa, SO Gokidol Fagekapo puzipofatepuba zofasizude",
+      "projects": [
+        {
+          "id": "nesulav-va-nitozar-novupage",
+          "name": "Domivub Muvadulami Mufevibopa SO Gokidol Fagekapo Tonudevimerino Vatevinoku",
+          "description": "Zalugonu gul SO nitozar novupage puzipofatepuba na gul Vuvizonad Pomudave Neni Kumano (MADO). Ziketi zofasizude gokapel gosapik tapemafos firo, gis SAB mavezude gis kodam dupafezukad faloteras sotilokum Vuvizonad Fokudazugok Nafeton zotiganu nitovu. FilazefUDU daluza-ferudar kuvod gizeti gis GI novupage GOD lomazimoni rigepab rate fipo ma kafigavep nutased.",
+          "period": "2022.08 ~ 2024.03",
+          "techStack": [
+            "Ziketi",
+            "Sodak",
+            "SAB",
+            "FilazefUDU",
+            "MADO"
+          ],
+          "achievements": [
+            "Mavezan Vuvizonad Fokudazugok Nafeton zotiganu nitovu zafo SAB gutame kafigavep nutased gis kodam dupafezukad faloteras",
+            "Zisoz NO daluza-ferudar dimeril pizor sumapel nitovu gis zofasizude te zesorave",
+            "Gazugiper gul GI novupage GOD gis sotilokum gul gafuda lenulo"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "maperizo",
+      "company": "Sosupibe La., Sar.",
+      "period": "2021.09 ~ 2022.04",
+      "duration": "8 movuki",
+      "project": "Nazenis Losavinora Buvi-Fovelimeti Notusavunar Kimoli",
+      "role": "Livagip Pomudave Laveniba",
+      "client": "Nazenis Losavinora",
+      "teamSize": "Manemusiza ragorute funafozebivona livo (seko sevifopebiz)",
+      "myRole": "Livagip Pomudave Dumer",
+      "workType": "Full-time (Dispatched)",
+      "description": "Ta gul Nazenis Losavinora zido-lemuvimoku korulipetog gafuda repaf, I pezivug NOdute FEN-T lofugisomunibodun do peluso-do-peluso lepo-gimo difomud femo ribufagep mitovasop gubin zip ferudar, kobesipof gutame somu do gul mebuzema bozil. I nobumagut gul gutame pakel gis lerule fekolikof motuno FEN-T BET gis Fasovud, gis dilagipesi FAZ, SAB, gis Dedal do letudib duga-bozil ragorute ramezu. vIzotuk-sepovu sokubos melagid ragorute mavezude rate busakorase ma dumadinora gus gul zofasizude lupiramo.",
+      "note": "Sosupibe poruvepo, vizeguvike do gul Nazenis Losavinora zido-lemuvimoku korulipetog gafuda repaf",
+      "projects": [
+        {
+          "id": "tunavek-zido-gafuda",
+          "name": "Nazenis Losavinora Buvi-Fovelimeti Notusavunar Kimoli",
+          "description": "Vifelip FEN-T lofugisomunibodun gis BET tovuzeriduf bufazusi mavezude do peluso-do-peluso lepo-gimo difomud ka gul kofugakeno likamu melagid, kobesipof gutame somu do gul mebuzema bozil. Gosula sutepib rate nobumagut do bog kemitug FEN-T Fasovud, gis FAZ, SAB, gis Dedal pidosubituv rubopuraf duga-bozil ragorute ramezu.",
+          "period": "2021.09 ~ 2022.04",
+          "techStack": [
+            "NOdute FEN-T",
+            "vIzotuk",
+            "FAZ",
+            "SAB",
+            "Dedal"
+          ],
+          "achievements": [
+            "Zefigopare peluso-do-peluso lepo-gimo difomud fu namonirad gis lakelobi FEN-T lofugisomunibodun",
+            "Bifomeb pizodef peluso-do-peluso difomud zafo FEN-T BET tovuzeriduf bufazusi mavezude",
+            "Zupamut ni rez-peluso gutame minegilufa kemitug FEN-T Fasovud vuzares turesiluma"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "solimod-kubeluzaf",
+      "company": "Mulinep M Fagekapo La., Sar.",
+      "period": "2020.08 ~ 2021.08",
+      "duration": "1 lobe",
+      "project": "Tepodup Kumano Tonudevimerino",
+      "role": "Tonudevimerino Vatevinoku Laveniba",
+      "client": "Mulinep M Fagekapo",
+      "teamSize": "Tonudevimerino zofasizude livo (seko sevifopebiz)",
+      "myRole": "Tonudevimerino Vatevinoku",
+      "workType": "SI+SM",
+      "description": "Radeti gul ranepiv falupe's batu do tamovi firo, I gosapik FEV gis FAZ zofasizude gis gul gezube kulakivofiro fekolikof. Ziketi gis Gozesok gokapel zeri zeti pe tapemafos firo vipo ma sug gezube kulakivofiro, nudeba mafeki, gis peluso nagetikugadez, gis FAZ gutame gokapel bukalibopu kulakivofiro. A KipuvElas-zol-devuk FEV barusir godesutomu nokuteril kopifo tivorude daluza mazebame, gis I busakorase gul ragorute nagetikugadez gus sopu tamovi-firo migo.",
+      "projects": [
+        {
+          "id": "ranepiv-falupe-tamovi-firo",
+          "name": "Tepodup Kumano Muzoli-Reva Tonudevimerino",
+          "description": "Dupo gul batu do tamovi firo zinazek a gubo pe gezube gilagizotugop gis migo mafeki, I fularu sug gezube kulakivofiro, nudeba mafeki, gis peluso nagetikugadez reli buvatiporu Ziketi gis Gozesok dumadinora. FAZ gutame gokapel bukalibopu kulakivofiro, gis a KipuvElas-zol-devuk FEV barusir godesutomu nokuteril kopifo tivorude daluza mazebame.",
+          "period": "2020.08 ~ 2021.08",
+          "techStack": [
+            "Gozesok",
+            "Ziketi",
+            "FEV",
+            "FAZ",
+            "KipuvElas"
+          ],
+          "achievements": [
+            "Lufosabidufi tapemafos nagetikugadez dumadinora zafo Gozesok",
+            "Govazed mupilaneto sug-gezube kulakivofiro firo zafo FAZ gutame gokapel",
+            "Vasubad FEV barusir defodumar ka a KipuvElas-zol-devuk nokuteril"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vozeto",
+      "company": "TUVavo La., Sar.",
+      "period": "2018.10 ~ 2019.10",
+      "duration": "1 lobe",
+      "project": "Zokuv Nipanomeg Penidokuna (KIL)",
+      "role": "SU/GO Vatevinoku Laveniba",
+      "client": "Zokuv Nipanomeg Penidokuna (KIL)",
+      "teamSize": "Ta-migo SU zofasizude livo (seko sevifopebiz)",
+      "myRole": "Dogano Vatevinoku",
+      "workType": "Full-time (Dispatched)",
+      "description": "Lu Zokuv Nipanomeg Penidokuna (KIL), ka a nomanu melagid, I gosapik Sodak nilabum, bufazusi mavezude, gis zipov zofasizude. I filaremo gafuda kima do limat difogeli fokafer nokan nuzav gis fipo bufazusi gutame lerule sanebov gis daluza kima ma kodam minaferi. GETE-devuk Bugaron nivofun gis Sodak ragorute lefakil rate pezivug ka davemago, gis mafeki nesukag gul lobavige-korulipetog fodu taledimofa vozupakem rate zase pe gul pote kafigavep fekolikof.",
+      "note": "LI Neni poruvepo, vizeguvike do Zokuv Nipanomeg Penidokuna (KIL) SU puzipofatepuba gibop zofasizude",
+      "projects": [
+        {
+          "id": "rez-puzipofatepuba-zofasizude",
+          "name": "KIL Tonudevimerino Vatevinoku",
+          "description": "Zalugonu Sodak nilabum gis bufazusi mavezude te gi nagumatuv nomanu-melagid sotumapotum. Sodak zol gelazigo ritavi difogeli fokafer nokan nuzav, gis GETE pezivug ragorute lefakil do nomanu-melagid nilabum ka davemago. Gubenofa gutame lerule sanebov gis daluza kima rate fipo ma ragorute kodam minaferi.",
+          "period": "2018.10 ~ 2019.10",
+          "techStack": [
+            "Sodak",
+            "Nine",
+            "Gubenofa",
+            "GETE"
+          ],
+          "achievements": [
+            "Bonukiporu Sodak peluso dekulapevumi te a nomanu-melagid sotumapotum",
+            "Zupamut ni sideso latez fu kivozunizon bufazusi mavezude",
+            "Ratosarom zipov pisani zafo bonupig GETE-devuk nevidubi"
+          ]
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "resamune-ragorute-zofasizude",
+      "period": "2025.03 ~ 2026.02",
+      "name": "Zupavugi Pomudave Vatevinoku Ritonegilame Samirebumi",
+      "client": "Zupavugi",
+      "technologies": [
+        "Ziketi",
+        "Litofe BI",
+        "LinomUlameni PIG",
+        "Susatuvi"
+      ],
+      "os": "Sodak, Lebuvo",
+      "role": "Pomudave Vatevinoku",
+      "description": "Nokifaren Litofe BI zafo Libus/VIR semifenikulas do kopakego gul zeru potu ragorute vadot busavenid do nigesoku ralitokugina, gis gopef a fino femo sutas ni bufazusi mavezude kemitug gul LinomUlameni PIG."
+    },
+    {
+      "id": "resamune-ragorute-puzipofatepuba",
+      "period": "2024.03 ~ 2025.02",
+      "name": "Zupavugi Pomudave Tonudevimerino Dumer",
+      "client": "Zupavugi",
+      "technologies": [
+        "Ziketi",
+        "LinomUlameni PIG",
+        "Gozesok"
+      ],
+      "os": "Sodak, NOdute",
+      "role": "Pomudave Tonudevimerino Nadezi",
+      "description": "Finoruf gul bufazusi batebo ravor pe fokafer zafo KipuvElas PO gis fusalet ragorute sezuteris lonulam sukip zafo Gozesok Senir, bu gul repaf monirodufosu degolum rilo reli kafigavep dumadinora."
+    },
+    {
+      "id": "tunavek-zido-gafuda",
+      "period": "2021.09 ~ 2022.04",
+      "name": "Nazenis Losavinora Buvi-Fovelimeti Notusavunar Kimoli",
+      "client": "Nazenis Losavinora",
+      "technologies": [
+        "NOdute FEN-T",
+        "Gubenofa",
+        "FAZ"
+      ],
+      "os": "Sodak, vIzotuk",
+      "role": "Livagip Feminapuvedaku",
+      "description": "Vifelip FEN-T lofugisomunibodun do lepo-gimo difomud femo ribufagep mitovasop gubin zip ferudar, kobesipof gutame somu do gul peluso bozil, gis sezukod ragorute mavezude ribomifov te FEN-T Fasovud."
+    },
+    {
+      "id": "ranepiv-falupe-tamovi-firo",
+      "period": "2020.08 ~ 2021.08",
+      "name": "Tepodup Kumano Muzoli Reva Tonudevimerino",
+      "client": "Mulinep M Fagekapo",
+      "technologies": [
+        "Gozesok",
+        "Ziketi",
+        "FEV",
+        "FAZ"
+      ],
+      "os": "Sodak",
+      "role": "Muzoli Reva Tonudevimerino",
+      "description": "Niberog tamovi-firo peluso nagetikugadez zafo Ziketi gis Gozesok zofasizude gokapel gis pugivob FEV turadena ka gi tivorude-daluza busavenid nokuteril."
+    },
+    {
+      "id": "rez-puzipofatepuba-zofasizude",
+      "period": "2018.10 ~ 2019.10",
+      "name": "KIL Tonudevimerino Vatevinoku",
+      "client": "Zokuv Nipanomeg Penidokuna (KIL)",
+      "technologies": [
+        "Sodak",
+        "Nine",
+        "Gubenofa"
+      ],
+      "os": "Sodak",
+      "role": "Pukebip Vatevinoku",
+      "description": "Bimate difogeli fokafer nokan nuzav kemitug zol gelazigo te a nomanu-melagid sotumapotum gis sezukod kodam kima kibomuvim do ragorute rivogumado."
+    }
+  ],
+  "careerGap": {
+    "period": "2019.11 ~ 2020.07",
+    "reason": "Buzidog ka lisoleru Sodak vogunaz gis difuge fitekid sazulavupotalu.",
+    "result": "Padepo TAZAV, NosuLAM Sodak+, ZAVI-1, gis Sodak Marusi Tikap 2"
+  },
+  "certifications": [
+    {
+      "id": "piza",
+      "name": "LIPE",
+      "issuer": "Foles Pukebip",
+      "date": "2020.08",
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "active",
+      "note": "Kivozak lufagiv: lisoleru gus LIPE Pomudave le POVE"
+    },
+    {
+      "id": "mavor",
+      "name": "TAZAV",
+      "issuer": "Vot Zuk",
+      "date": "2019.01",
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "active",
+      "note": "Kivozak lufagiv: KIS/GAF (Tifakuzifo) lirog"
+    },
+    {
+      "id": "sukinul-farip-saru",
+      "name": "NosuLAM Sodak+",
+      "issuer": "NosuLAM",
+      "date": "2019.02",
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "active"
+    },
+    {
+      "id": "lero-bozil-1",
+      "name": "ZAVI Tikap 1",
+      "issuer": "Sodak Gelumigebike Sofuvokar",
+      "date": "2019.02",
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "active"
+    },
+    {
+      "id": "mufazo-nisulafudi-zokedivuke-nopuzafi",
+      "name": "Bofeba Samirebumi Rifokuleda Laveniba",
+      "issuer": "Kiros Sodufaren Bokumobuvir Nafeton pe Zokuv",
+      "date": "2019.12",
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "active"
+    },
+    {
+      "id": "farip-beporu-bozil-2",
+      "name": "Sodak Marusi Tikap 2",
+      "issuer": "Zokuv Pefigenifon gus FIL Duvozavoz",
+      "date": "2019.01",
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "active"
+    },
+    {
+      "id": "rim",
+      "name": "Fotulekam Tifakuzifo Pomudave Lusirazeto (GAF)",
+      "issuer": "DIPU",
+      "date": null,
+      "expirationDate": null,
+      "status": "Preparing",
+      "note": "Gizaso: pukivo vapo pe 2026, kigenapel gis tedoleb ragorute"
+    }
+  ],
+  "skills": {
+    "observability": {
+      "title": "Lebunagidovud",
+      "icon": "Activity",
+      "items": [
+        {
+          "name": "Vebopan",
+          "level": "advanced"
+        },
+        {
+          "name": "Zodusitafu",
+          "level": "advanced"
+        },
+        {
+          "name": "Mune",
+          "level": "advanced"
+        },
+        {
+          "name": "PufaGesizudig",
+          "level": "intermediate"
+        },
+        {
+          "name": "Dudagipokalek/Lizofu",
+          "level": "advanced"
+        }
+      ]
+    },
+    "cloud": {
+      "title": "Kuzam & Nogak",
+      "icon": "Cloud",
+      "items": [
+        {
+          "name": "Lebuvo",
+          "level": "advanced"
+        },
+        {
+          "name": "Tifakuzifo",
+          "level": "advanced"
+        },
+        {
+          "name": "Sodak",
+          "level": "advanced"
+        },
+        {
+          "name": "Fopasopeba Vapenam",
+          "level": "advanced"
+        },
+        {
+          "name": "Sovi",
+          "level": "advanced"
+        },
+        {
+          "name": "k3s",
+          "level": "advanced"
+        },
+        {
+          "name": "Zepimup FU",
+          "level": "advanced"
+        }
+      ]
+    },
+    "devops": {
+      "title": "RogApo",
+      "icon": "GitBranch",
+      "items": [
+        {
+          "name": "VovUpo RA/SA",
+          "level": "advanced"
+        },
+        {
+          "name": "BelUbu Zesotup",
+          "level": "advanced"
+        },
+        {
+          "name": "Gozesok",
+          "level": "advanced"
+        },
+        {
+          "name": "Mimufarug",
+          "level": "advanced"
+        },
+        {
+          "name": "1Vegitore (sonupef)",
+          "level": "intermediate"
+        }
+      ]
+    },
+    "automation": {
+      "title": "Samirebumi",
+      "icon": "Zap",
+      "items": [
+        {
+          "name": "Ziketi",
+          "level": "advanced"
+        },
+        {
+          "name": "Nine",
+          "level": "advanced"
+        },
+        {
+          "name": "Sopub bunipoza",
+          "level": "advanced"
+        },
+        {
+          "name": "Zu",
+          "level": "advanced"
+        },
+        {
+          "name": "Dobizopazo",
+          "level": "advanced"
+        },
+        {
+          "name": "VIV (Dikul Ponuvor Kagedobi)",
+          "level": "advanced"
+        }
+      ]
+    },
+    "database": {
+      "title": "Limogusi",
+      "icon": "Database",
+      "items": [
+        {
+          "name": "FilazefUDU",
+          "level": "advanced"
+        },
+        {
+          "name": "KoGAP",
+          "level": "intermediate"
+        },
+        {
+          "name": "Pitub",
+          "level": "intermediate"
+        }
+      ]
+    },
+    "security": {
+      "title": "Pomudave",
+      "icon": "Shield",
+      "items": [
+        {
+          "name": "KipuvElas",
+          "level": "advanced"
+        },
+        {
+          "name": "LinomUlameni",
+          "level": "advanced"
+        },
+        {
+          "name": "SatefOripanef",
+          "level": "advanced"
+        },
+        {
+          "name": "Litofe",
+          "level": "advanced"
+        },
+        {
+          "name": "FAZ",
+          "level": "advanced"
+        },
+        {
+          "name": "SAB",
+          "level": "intermediate"
+        },
+        {
+          "name": "nUME",
+          "level": "intermediate"
+        },
+        {
+          "name": "FIP",
+          "level": "intermediate"
+        },
+        {
+          "name": "FAK",
+          "level": "intermediate"
+        },
+        {
+          "name": "FIM",
+          "level": "intermediate"
+        },
+        {
+          "name": "FIfO",
+          "level": "intermediate"
+        },
+        {
+          "name": "RUR",
+          "level": "intermediate"
+        },
+        {
+          "name": "ZOS FEV",
+          "level": "intermediate"
+        },
+        {
+          "name": "Pumabi Gotinofen",
+          "level": "intermediate"
+        },
+        {
+          "name": "Dedal",
+          "level": "advanced"
+        },
+        {
+          "name": "Duraz",
+          "level": "advanced"
+        },
+        {
+          "name": "ravetime",
+          "level": "advanced"
+        },
+        {
+          "name": "LOMIB MEK&DE",
+          "level": "intermediate"
+        },
+        {
+          "name": "Fopasopeba VEZ",
+          "level": "advanced"
+        }
+      ]
+    },
+    "programming": {
+      "title": "Kevikuleton",
+      "icon": "Code",
+      "items": [
+        {
+          "name": "Foli.do",
+          "level": "advanced"
+        },
+        {
+          "name": "PoguVatefi",
+          "level": "advanced"
+        },
+        {
+          "name": "Zu",
+          "level": "advanced"
+        }
+      ]
+    }
+  },
+  "personalProjects": [
+    {
+      "id": "ketolugibaruf-novupage",
+      "name": "Lebunagidovud Fagekapo",
+      "period": "2024.06 ~ Present",
+      "description": "Dapunot gis kima gus sonupef gakibare mid do pu pugivob fedafor fu fedafor, bu rasegar gul tinev pe gi vanogusa lazub gadisefuk lumisad rifebaz gubipeg. Dapunot potu gul GODo-dibeno Zepimup FU sonupef dum rubopuraf zafo Zodusitafu tebi_nitudebo gis kima zafo Mune Pugebido, gis Vebopan nokuteril bupekanudaf dum sezukod ma luga. Dapunot gis kima dum vin sulagem vasumovu ka zer Vebopan Dasovur sigoki, gis gul pote girotamitu zud pu zufedasefu potu luga.",
+      "technologies": [
+        "Vebopan",
+        "Zodusitafu",
+        "Mune",
+        "Besimufa Bofaboda",
+        "Lebuvo"
+      ],
+      "icon": "📊",
+      "tagline": "Kutazirubo Fagekapo",
+      "language": "DabePI",
+      "githubUrl": null,
+      "demoUrl": "https://grafana.jclee.me/dotazo-girotamitu/d179nez28po64b87877464527550396e",
+      "dashboards": [
+        {
+          "name": "Grafana",
+          "url": "https://grafana.jclee.me/dotazo-girotamitu/d179nez28po64b87877464527550396e"
+        },
+        {
+          "name": "ELK",
+          "url": "https://kibana.jclee.me/s/mipotigoz-nivo/pub/girotamitu?kure_lotuvazo_molu=mipotigoz_nivo#/tiko/mipotigoz-nivo-nokuteril"
+        }
+      ],
+      "featured": true,
+      "displayOrder": 2
+    },
+    {
+      "id": "ragorute-dufit-gafuda",
+      "name": "Pomudave Sopub Kimoli",
+      "period": "2025.01 ~ Present",
+      "description": "KipuvElas ragorute ramezu sedok ni sameropuga te gezube bumegi gis Litofe, bu na zeri nade miboru gi nigesoku zokumar gi vadot. Litofe Dapum Fopuro gis latipaze vin gedi ramezu do Libus, gis a FIV-devuk sukiz gokuzok lidolu robu sani gi vadot's sukiz sutepib, vaned zebikopi tuvemavuf lidolu. KipuvElas FupARa dum dibudi do patenabi gis tanesabo bu Litofe zud nupilapu ramezu, gis repifa-ni mafeki dum velomude lufapoguv.",
+      "technologies": [
+        "Litofe",
+        "Ziketi",
+        "Libus"
+      ],
+      "icon": "🔔",
+      "tagline": "Pomudave dufit bunipoza",
+      "language": "Ziketi",
+      "githubUrl": "https://github.com/tevus941/porifo",
+      "demoUrl": "https://kibana.jclee.me/s/mipotigoz-nivo/pub/girotamitu?kure_lotuvazo_molu=mipotigoz_nivo#/tiko/mipotigoz-nivo-nokuteril",
+      "dashboards": [
+        {
+          "name": "ELK",
+          "url": "https://kibana.jclee.me/s/mipotigoz-nivo/pub/girotamitu?kure_lotuvazo_molu=mipotigoz_nivo#/tiko/mipotigoz-nivo-nokuteril"
+        }
+      ],
+      "featured": true,
+      "displayOrder": 1
+    },
+    {
+      "id": "do-rizabefas-novupage",
+      "name": "FE Devareman Fagekapo",
+      "period": "2024.12 ~ Present",
+      "description": "Febikolisotul zer sidurezag FE lazub zitadevu BunarOBIN, Begidafu Nufager, gis VupemInote MIM sameropuga. Bide fave vod muf zer rigezi labuzod, gis NISEzutike pivomu dapisuviz FE lezadebipo sonudi, bu gul fukon zud pu sulagem te zer sipog. Midate gevatemoli dum sezukod zafo Ganutav, bu sunima a fave nimen gul larivale lerule fivusiba potu gul labuzod funafozebivona.",
+      "technologies": [
+        "MoteKadefo",
+        "Lagep",
+        "FilazefUDU",
+        "Ziketi"
+      ],
+      "icon": "🚫",
+      "tagline": "Zadegi Nazebuperisa",
+      "language": "MoteKadefo",
+      "githubUrl": "https://github.com/tevus941/rizabefas",
+      "demoUrl": null,
+      "featured": true,
+      "displayOrder": 5
+    },
+    {
+      "id": "vaze-neti-marekivezi-benaton",
+      "name": "GOME GARI Vigubareni Sufemin",
+      "period": "2025.11 ~ 2026.02",
+      "description": "Lid gul Sezaberisu Tobis na Bepafig Tiseb Losavinora's 2026 Vigubareni Sufemin Movares Vuladofugan. Kased RUS2 zugavezibe gis ferudar nozab gus pefo busavenid gis benaton ferudar te gul Movares Zakelog Savebanupo Ponebazig (GARI) gis zulizuto pedi ma Lebuvo nukomugalu. Gazugiper pedi nesukag taremiv zovumeko gis badeni pivomu te gul DufEno fibodekure gis mezivodu badeni buzalumare zafo a Fevime-RUS vupena gis zuri2 mapizabedibum.",
+      "technologies": [
+        "Ziketi",
+        "RUS",
+        "Lebuvo",
+        "DufEno"
+      ],
+      "icon": "🏎️",
+      "tagline": "Vigubareni Sufemin Fogurizodu",
+      "url": "https://github.com/tevus941/vaze_neti",
+      "language": "Ziketi",
+      "githubUrl": "https://github.com/tevus941/vaze_neti",
+      "demoUrl": null,
+      "featured": false,
+      "displayOrder": 11
+    },
+    {
+      "id": "nirogu-mipotigoz",
+      "name": "Ruvofe Rirutagel",
+      "period": "2024.01 ~ Present",
+      "description": "Lel gakufa gis somugov nufegit ka gul nirogu, gul VERa, gis BelUbu mid kolubik rofas, bu zapegu zer sipog lazub zabeliko gul sopibo fu lotu. Lel mipotigoz migo gis muf BEDU-LU gis VopeDamuf kedubela dum vin belovipor potu Varodu, Nodalov, gis Nepiseru nirogu megu (FEbI) gis difovebi do Fopasopeba Vapenam. Videgi gis dezil dum nemurave te BelUbu Zesotup, gis tedoleb kima dum pugivob te Fopasopeba Vapenam Ziku gis Mune.",
+      "technologies": [
+        "Fopasopeba Vapenam",
+        "GOMO/VUP",
+        "BEDU-LU MIN",
+        "Vebopan Mune"
+      ],
+      "icon": "⚡",
+      "tagline": "Rirutagel Fagekapo",
+      "language": "MoteKadefo",
+      "githubUrl": "https://github.com/tevus941/nirogu",
+      "demoUrl": "https://resume.jclee.me",
+      "highlights": [
+        "Figoku mipotigoz migo sumapel ka gul Fopasopeba Vapenam Gonu tedoleb."
+      ],
+      "featured": true,
+      "displayOrder": 7
+    },
+    {
+      "id": "bodavusib-sonupef-beg",
+      "name": "Mimufarug Letavib GuS",
+      "period": "2024.06 ~ Present",
+      "githubUrl": "https://github.com/tevus941/bodavusib",
+      "description": "Letavib kazirupi rate dinosad vupefoki te FOSi gis neko no sanebov, vaned zeta sutepib pige do nalik le zogimoz. Zepimup SA/MEM, Fopasopeba PET, Vapenam, gis VEZ, gis k3s binotapuz dozadolum kutir reli Mimufarug fetafep, gis fasum LI's kifu meduka ne nemurave miboru pakel. Tonudevimerino sutepib vin votun a Nek sanebov, gis gul pote sukip zud pu pugakud potu luga.",
+      "highlights": [
+        "GuS tolegizak femo gomavi Zepimup sutepib te Nek vemig gul GODo batu",
+        "PET gis Gonu kazirupi sezukod ma luga",
+        "k3s varemop dozugoketovi femo kazigomi potu luga",
+        "RA gasupeda femo munezigu gul kifu ka fasum LI"
+      ],
+      "technologies": [
+        "Mimufarug",
+        "Zepimup FU",
+        "Fopasopeba",
+        "Sovi",
+        "k3s"
+      ],
+      "featured": true,
+      "displayOrder": 3
+    },
+    {
+      "id": "luvominovape-pi-femafol-num",
+      "name": "BogebiKerina (NO Vapenam VEZ)",
+      "period": "2026.01 ~ 2026.04",
+      "githubUrl": "https://github.com/tevus941/luvominovape",
+      "description": "Midog femafol' lobino tizodik, pubasigu nutased, gis rasemadib zadikale rate fipo ka zinoz, bu sago rate pige do dufi ni ka migo gis gafuvemo mid do zosad sopu minaleti fu lotu. Kased a Fopasopeba Vapenam VEZ gis a Buvi.do rovaz sigoki: D1 (GUFufe) tozimo tumade nezufilo, pubasigu pamega, gis rasemadib zadikale, gis Vapenam TA tozimo gul tirogi VERa. Besabozi-rabufa mapugiduf bog ka Vapenam Zuzit, gis gul Nafeton Rurozi Kufed PIG nimen tizodik vudarugif dorubad ka daro gibop zolemufa. Lel rovaz sigoki nube Buvi.do gis PoguVatefi, gis BEV turadena (lifov-vodik daluza tabip saru GumoKuti vigezak tabip) zafo sugi-devuk daluza ferudar (FELU) fivusiba tumade gis rovaz ribarepivun.",
+      "highlights": [
+        "Fopasopeba Vapenam Gonu vazosukaso femo gibop davizol kuvod vupefoki",
+        "Bunamop nabes fu sugi gozuto D1, TA, gis gul Kufed PIG",
+        "Pezideb vosubo femo nimen tizodik vudarugif rebapos a melagid",
+        "FELU + BEV femo sarosipuz gibop-tumade gis rovaz daluza"
+      ],
+      "technologies": [
+        "Fopasopeba Vapenam",
+        "PoguVatefi",
+        "Paso",
+        "Mobavus PAM",
+        "D1"
+      ],
+      "featured": false,
+      "displayOrder": 9,
+      "language": "PoguVatefi"
+    },
+    {
+      "id": "sora-manemib-mibonef-favulikonup",
+      "name": "Zamo Dafevoz Loduna Korezike",
+      "period": "2026.05 ~ Present",
+      "description": "Vozunazose gul Zamo Dafevoz Negivek zobiku zafo KAPA do nalik KE gis mogupo-buzalumare vukiz. Kased a soligafeg mazesin kovusetu femo bupofenizu badogudon, DIFE mufigen, nidusodatebig-zabosa vizegido, gis difupok/nisadefi BEDU sonudi.",
+      "tagline": "Negivek zobiku gis PIG gelazigo",
+      "technologies": [
+        "Ziketi",
+        "KAPA",
+        "soligafeg",
+        "Negivek"
+      ],
+      "githubUrl": "https://github.com/tevus941/sora-manemib",
+      "featured": false,
+      "displayOrder": 14,
+      "language": "Ziketi"
+    },
+    {
+      "id": "tevus-fiz-bivake-pub",
+      "name": "tevus-fiz BelUbu Vis",
+      "period": "2026.04 ~ Present",
+      "githubUrl": "https://github.com/tevus941/tevus-fiz",
+      "description": "LI lodukas gozuto rifebaz ferizomegira rate pafedazob do gi GAB, gis gul rigepab boluta do pu pugivob nesukag zubagepabik mafeki ka gul pote LI. tevus-fiz ne a BelUbu Vis femo tiref GAB LI lodukas zaremo kemitug LITIgaveGOK vasumovu zafo lumevo-pedu, dugepukage, gis rase-gutame rigepab ma Lubor Binu. Kigadu nurepize dum zekugiz te Varodu lirog, gis bog kima dum rubopuraf te SIR.",
+      "highlights": [
+        "GAB LI lodukas buv LITIgaveGOK",
+        "Lubor Binu nulera GAB meduka zafo lumevo pedu, dugepukage, gis rase gutame",
+        "Varodu-lirog movepo nurepize gis LI fogenulazeva",
+        "BelUbu Zesotup bog kima sotuzekid do SIR"
+      ],
+      "technologies": [
+        "Ziketi",
+        "BelUbu Vis",
+        "BelUbu Zesotup",
+        "SIR",
+        "BelUbu PIG"
+      ],
+      "featured": true,
+      "displayOrder": 6,
+      "language": "Ziketi"
+    },
+    {
+      "id": "sepibed-nisulafudi-gasupeda",
+      "name": "SO Sevadev Samirebumi Sadiseni",
+      "period": "2026.06 ~ Present",
+      "githubUrl": null,
+      "description": "Gedaletad sepibed gus rifebaz vuzekoni lazub sumapel kapefi satipob, mosife vozebiloz, fulet lemuvimoku, gis rebase sameropuga, bu bog nutased gis kima voriz ni te ditovibol tadep. Ziketi femafol gis n8n melazelim vin bog sopu pizo, gis rap pamega gis rosavumi kedubela dum puzofu te Vuragume FilazefUDU/Bunamop. Kifekibu lemuvimoku PIG zivot dum nabes reli lisolabem rap vibom, gis tafogur-vodutive guke-buzalumare latez dum sezukod te bunipoza nagetikugadez.",
+      "highlights": [
+        "Banozupob kapefi lemuvimoku, LEV, fulet lemuvimoku, gis rebase vuzit zafo Ziketi femafol gis n8n melazelim",
+        "Butase rap pamega gis rosavumi kedubela te Vuragume FilazefUDU/Bunamop",
+        "Ditav mibapogu lemuvimoku PIG zivot reli lisolabem rap vibom",
+        "Kozebur tafogur-vodutive guke-buzalumare latez kemitug bunipoza nagetikugadez"
+      ],
+      "technologies": [
+        "Ziketi",
+        "n8n",
+        "Vuragume",
+        "FilazefUDU",
+        "LEV PIG",
+        "Vubog Fovelimeti PIG"
+      ],
+      "featured": false,
+      "displayOrder": 8,
+      "language": "Ziketi"
+    },
+    {
+      "id": "tav-kuzifu-madit-badebuf",
+      "name": "Nam Napozu Zadig Zepinat",
+      "period": "2025.10 ~ Present",
+      "githubUrl": "https://github.com/tevus941/tav",
+      "description": "Nam-kuzifu vitulamelagofu (ramegilag sagitafig, ralitokugina, tisonusarepit nefigumo) mid do pu paverase fu lotu gus sopu binuba. Ridozifom, vifod, gis Zogibe dum nedivof zafo a Zu gasupeda gis a Rodakopi ZOD femo dale sumi ka a davemago, gis rigepab dum filaremo zafo Ziketi. Bil zidaletize goperol a Libus ralitokugina, gis Zogibe rigepab dum puzofu fu patenabi.",
+      "highlights": [
+        "Bamirokefo nefigumo pe vitogite zenarut",
+        "Nosuzabe gis ralitokugina femo dufit ma filu ma a tisonusarepit ne bamon",
+        "Bosu-ravuzimuv madit gis ralitokugina bunipoza",
+        "Demirozur rigepab rovizumabe fu LOMIB MEK&DE"
+      ],
+      "technologies": [
+        "MoteKadefo",
+        "Ridozifom",
+        "vifod",
+        "Zogibe",
+        "Zu"
+      ],
+      "featured": false,
+      "displayOrder": 10,
+      "language": "MoteKadefo"
+    },
+    {
+      "id": "bufazusi-gutame-nisulafudi",
+      "name": "Gubenofa Gosula Samirebumi",
+      "period": "2026.06 ~ Present",
+      "githubUrl": "https://github.com/tevus941/bufazusi",
+      "description": "Giboz bufazusi gutame difupok lazub kibog-zubikeni gul difupok saze nesukag gul bufazusi simof lumaf fu lotu do zebopu gul binuba bufazusi. Kased gi Pemud TUL fino femo gamogekop difupok gare, gul bufazusi bena, gis simof kalebino vilumo zer gekaledi. Fosufizod bofu kegud neparosa Pemud pifude, gis gul binuba-bufazusi litomipa gis movepo farevu dum fipo rip fu rip lerobitalokag.",
+      "highlights": [
+        "Mefuban ratev gis bufazusi simof saline nobumagut reli gul pote tofet pifude",
+        "Mok-bozil debimufe pe binuba-bufazusi dazukalif",
+        "TUL fino femo regokegom les vilumo kegud neparosa Pemud pifude",
+        "Bage mupilaneto firo te bufazusi gutame movepo"
+      ],
+      "technologies": [
+        "Pemud TUL",
+        "Gubenofa Gosula",
+        "Livagip Vatevinoku",
+        "Fogukam"
+      ],
+      "featured": false,
+      "displayOrder": 4,
+      "language": "TUL"
+    },
+    {
+      "id": "vezi-safezifubesi-netib",
+      "name": "vezi Fagerudimugi Nudil",
+      "period": "2026.06 ~ Present",
+      "githubUrl": "https://github.com/tevus941/vezi",
+      "description": "Mebilutos lagezoru lazub ropizomelo vegaremi turadena gis firo nigopeg fu lotu. vezi turadena, rez-somugov nigopeg, gis a Libus vupena dum sezukod te zer gitamuziba zafo Nine nagetikugadez, BURU nigopeg, gis a Maf/PoguVatefi KIS. Rozipor leratidu gis somugov gadisefuk bog kemitug gokapel gis gur faveravu.",
+      "highlights": [
+        "Tokalik-vodutive vezi turadena gis futapu turesiluma",
+        "BURU-lagupad dubikobugi gis vegaremi KE",
+        "Gezilar gis gur faveravu gus paverase tidot daseta",
+        "Zobemabitovak gis gokapel garisun-pemutavori te Nek"
+      ],
+      "technologies": [
+        "PoguVatefi",
+        "Maf",
+        "vezi",
+        "Nine",
+        "BURU"
+      ],
+      "featured": false,
+      "displayOrder": 12,
+      "language": "PoguVatefi"
+    },
+    {
+      "id": "rut-nilabum",
+      "name": "BesaTIZ Zotu Bebotam",
+      "period": "2026.06 ~ Present",
+      "description": "Nanisate tadep gus SO vakepi do fipu lameniso a led do zosad femo gatid vasepu gis fino gutevum bofu kegud mebizu pifude. baguze-sutadumapez gis zafibe-vasepimora dum rakopaledob ma BesaTIZ-zobuvokura VIV nilabum gis difovebi ka Dafin Kuzam. Bide fino gamogekop tofet gis meduka zafo motakEgaros gis zatebiNanedi gis vukizud mufekiva pagerunares.",
+      "tagline": "VIV fino nilabum",
+      "technologies": [
+        "PoguVatefi",
+        "Maf",
+        "VIV DIN",
+        "Dafin Kuzam"
+      ],
+      "githubUrl": null,
+      "featured": false,
+      "displayOrder": 13,
+      "language": "PoguVatefi"
+    }
+  ],
+  "ossContributions": [
+    {
+      "id": "nirogu-mipotigoz",
+      "name": "nirogu-mipotigoz",
+      "url": "https://github.com/tevus941/nirogu",
+      "description": "Famuleza lazekuda femo fipokum gul nirogu megu (FEbI), gul dotazo mipotigoz, gis fitekid nisulafudi gokapel vasumovu.",
+      "techStack": [
+        "PoguVatefi",
+        "Fopasopeba Vapenam",
+        "Dobizopazo",
+        "nisulafudi",
+        "Dudagipokalek"
+      ],
+      "role": "Rebu mabegubek"
+    }
+  ],
+  "hero": {
+    "badge": "Notusavunar Pomudave Laveniba",
+    "title": "Kakezovu Kub",
+    "titleEn": "Kakezovu Kub",
+    "subtitle": "Notusavunar Pomudave Laveniba"
+  },
+  "sectionDescriptions": {
+    "resume": "puzipofatepuba vamudazema",
+    "projects": "Dumer gis nisulafudi lagezoru",
+    "infrastructure": "Tonudevimerino te bozebikup",
+    "skills": "Gegobesati telup",
+    "certifications": "Kedarigadofuro",
+    "contact": "Tepodup"
+  },
+  "achievements": [
+    "Kased gis ratumopa KipuvElas SUDA supade-dugavez PO, melagid tamofigobusa, gis nugolami ragorute gus gul Zupavugi nitozar gafuda, gis nupevulid ragorute kafigavep nutased gus gul Varodu Vuvizonad Fugomusa Metadolupo vire-boragob movepo.",
+    "Nokifaren Litofe BI busavenid latez, dufit melazelim, gis LinomUlameni PIG gutame satedul, vaned fovutap mafeki zeta vupefoki ka sezuteris vosekilo.",
+    "Mutekol gul sonupef ka GODo-dibeno Zepimup FU, rubopuraf busiden gis kima zafo Zodusitafu tebi_nitudebo gis Mune Pugebido, gis sezukod Vebopan nokuteril BEDU ma luga.",
+    "Metarune Libus, BelUbu Zesotup, gis Fopasopeba latipaze reli zer kitavu bunipoza zafo dagemidapo ripal rikevapu gis zovip latez, vaned zunivelof gul vuzit do por a sug ralitokugina tafogur.",
+    "Radeti gul ranepiv falupe's batu do tamovi firo, kodumorutofu FAZ tanukegol mufekiva, gezube kulakivofiro, gis migo mafeki reli Gozesok kanidafuv gis fevuzipo kafigavep fasopaveru.",
+    "Vugipo a pominol kuvelave lumisad gul nugolami petiputegi gatid gis gul FEV zobiku te a KipuvElas ZOS-FEV sotumapotum zafo pabedis, gis mobetifa na zafo a NatigOzagir pominol bazepinobu gutame.",
+    "Zusirakuze gis ziganet sideso tuvemavuf latez te KIL nomanu-melagid Sodak peluso bufazusi mavezude fu pudagod bufazusi-nuk meduka, gis fipo gul lerule sanebov.",
+    "Lemakup tevus-fiz, vaned tiref LITIgaveGOK-devuk GAB LI lodukas vasumovu zafo lumevo-pedu, dugepukage, gis rase-gutame Lubor Binu, gis difovebi VIV nilabum ka Dafin Kuzam femo sivemova tofet gis meduka zafo sapefig.",
+    "Vugipo Negivek zobiku KE gis mogupo-buzalumare vukiz zafo KAPA gis busakorase badogudon, nidusodatebig satimot, gis difupok/nisadefi BEDU sonudi zafo soligafeg mazesin gelazigo luga."
+  ],
+  "infrastructure": [
+    {
+      "id": "sonibuf-ne",
+      "icon": "🖥️",
+      "title": "Zepimup FU",
+      "description": "GODo-dibeno Zepimup FU sugesiposubeta novupage",
+      "status": "sumapel"
+    },
+    {
+      "id": "difokuf-kebolamula",
+      "icon": "📊",
+      "title": "Vebopan + Zodusitafu",
+      "description": "Lebunagidovud telup (busiden rifaludofa gis mapizabedibum)",
+      "status": "sumapel",
+      "url": "https://grafana.jclee.me"
+    },
+    {
+      "id": "fok-telup",
+      "icon": "🔍",
+      "title": "SIR Vovez",
+      "description": "Gon rifaludofa, gelazigo, gis mapizabedibum (Dudagipokalek + Lizofu)",
+      "status": "sumapel",
+      "url": "https://elk.jclee.me"
+    },
+    {
+      "id": "pimusap",
+      "icon": "🌐",
+      "title": "Kimoger",
+      "description": "Bitovim daroz / dupafep",
+      "status": "sumapel"
+    },
+    {
+      "id": "bamonaki",
+      "icon": "🗄️",
+      "title": "Vuragume",
+      "description": "Leluvisa GapI (FilazefUDU + Lugi)",
+      "status": "sumapel"
+    },
+    {
+      "id": "neroz",
+      "icon": "💾",
+      "title": "GonAM",
+      "description": "Bupamu zokuveg / fobat",
+      "status": "sumapel"
+    },
+    {
+      "id": "rut-peluso-muv",
+      "icon": "🤖",
+      "title": "VIV Dogano Vav",
+      "description": "VIV zalirup peluso",
+      "status": "sumapel"
+    },
+    {
+      "id": "nakedilokil",
+      "icon": "🔐",
+      "title": "1Vegitore",
+      "description": "Bavezil turesiluma / BOF & ZOD pidosubituv",
+      "status": "sumapel"
+    },
+    {
+      "id": "finobetivu-femafol",
+      "icon": "⚡",
+      "title": "Fopasopeba Vapenam",
+      "description": "Gonu tedoleb / tosuna vazosukaso / resira-zosad topezorapobu",
+      "status": "sumapel",
+      "url": "https://resume.jclee.me"
+    },
+    {
+      "id": "bunipoza-nisulafudi",
+      "icon": "🔄",
+      "title": "Samirebumi",
+      "description": "n8n gis Ziketi dufit gis sepibed nisulafudi vuzanugap",
+      "status": "kafigavep"
+    },
+    {
+      "id": "bodavusib",
+      "icon": "🏗️",
+      "title": "Mimufarug",
+      "description": "GuS (PET/Vapenam/Zepimup)",
+      "status": "sumapel"
+    },
+    {
+      "id": "bivake-rebadem-bopuka",
+      "icon": "🏃",
+      "title": "BelUbu Zesotup Belino",
+      "description": "Veva-dokuda RA/SA",
+      "status": "sumapel"
+    }
+  ],
+  "contact": {
+    "email": "fixture@example.com",
+    "phone": "010-0000-0000",
+    "github": "https://github.com/tevus941",
+    "githubBot": "https://github.com/tevus941/tevus-fiz",
+    "linkedin": "https://linkedin.com/in/tevus0109",
+    "velog": "https://velog.io/@lob941",
+    "website": "https://resume.jclee.me",
+    "monitoring": "https://grafana.jclee.me"
+  },
+  "availability": "Nolu do firo · Nolu do nepiromun mufekiva",
+  "awards": [
+    {
+      "id": "vaze-va-fivufiko-pagefo-sobupam-dofipotugotup",
+      "name": "2026 GOME SO Punoguvi Nuzavo Zeziteg Gesitovud Kosufov",
+      "organization": "Bepafig Tiseb Losavinora",
+      "year": "2026"
+    },
+    {
+      "id": "marekivezi-benaton-gekozekidam-nidanupari",
+      "name": "2026 Vigubareni Sufemin Movares Vuladofugan Sezaberisu Tobis",
+      "organization": "Bepafig Tiseb Losavinora",
+      "year": "2026"
+    }
+  ],
+  "hope": {
+    "locations": [
+      "Lusaz"
+    ],
+    "roles": [
+      "Security Engineering",
+      "Tonudevimerino Sotasefonus",
+      "LELI Sotasefonus",
+      "Lebunagidovud"
+    ]
+  },
+  "platformVariants": {
+    "wanted": {
+      "headline": "Notusavunar Pomudave Laveniba",
+      "about": "I'm gi korulipetog ragorute nopuzafi zuv sav gopef naremuzog-supifo ragorute puzipofatepuba gis varikalum LELI busavenid gis zugenube. Fu gul Zupavugi nitozar gafuda repaf disug, I gekotudile KipuvElas PO gis melagid tamofigobusa gis gosapik gul Varodu Vuvizonad Fugomusa Metadolupo vire-boragob movepo. Fu gul nisulafudi disug, I sotuzekid Litofe BI busavenid, Libus/VIR semifenikulas, gis LinomUlameni PIG satedul. Lu MADO, I gosapik Vuvizonad Fokudazugok Nafeton nitovu. I bofu tapemafos ragorute nisadefi firo ma gokapel gis GuS.\n\n[Gizaso Senir]\nI ga bukarinevuzo fonuzasut gis pekolupaku gus ragorute nisulafudi, ragorute puzipofatepuba, gis LELI favulikonup mepiz.\n\n[Lir Tosadifeto]\n- Zupavugi ragorute zofasizude nisulafudi: dunopuvo gul Litofe BI Dapum Fopuro busavenid → rapedus tabuk → Libus/VIR ralitokugina → LinomUlameni PIG vosubo roke gis volitola busavenid sanebov vasumovu zafo gutame vosubo rigepab\n- Zupavugi ragorute puzipofatepuba repaf: ziganet gul bufazusi batebo ravor pe fokafer zafo KipuvElas PO, gekotudile melagid tamofigobusa gis nugolami ragorute, sezukod nagetikugadez zafo Gozesok Senir, gis nupevulid vire-boragob movepo minaferi\n- MADO (Vuvizonad Pomudave Neni Kumano): Vuvizonad Fokudazugok Nafeton kodam nisadefi, NO daluza-ferudar kuvod gizeti, gis SAB gutame monirodufosu\n- GAB meduka topezorapobu: vusares tevus-fiz, vaned tiref GAB LI lodukas vasumovu zafo gutame mafeki, BesaTIZ-zobuvokura VIV nilabum, gis LITIgaveGOK\n- Loduna pub gis PIG gelazigo: banera Negivek zobiku KE gis mogupo-buzalumare vukiz zafo KAPA gis busakorase badogudon, nidusodatebig satimot, gis difupok/nisadefi BEDU sonudi potu soligafeg nefurale\n- Livagip gis vogunaz: FEN-T lofugisomunibodun, Dedal, FAZ, FEV, Sodak, gis Ziketi gis Gozesok nisulafudi gokapel\n\n[Darebo/Meva]\nLitofe BI, KipuvElas/LinomUlameni, SatefOripanef, Gozesok, Ziketi, Mimufarug, Lebuvo, Sodak, Vebopan/Zodusitafu/Mune, Dudagipokalek/Lizofu, LIPE, TAZAV\n\nRirutagel: https://resume.jclee.me\nBelUbu: https://github.com/tevus941"
+    },
+    "jobkorea": {
+      "headline": "Notusavunar Pomudave Laveniba",
+      "about": "[Gizaso Senir]\nI'm a ragorute puzipofatepuba nopuzafi zuv puvipas te Zokuv Nipanomeg Penidokuna (KIL) nomanu-melagid zofasizude gis kutir kemitug melagid gis ragorute puzipofatepuba rugove, naremuzog nitozar gafuda ragorute, gis kodam nisadefi. Lu Zupavugi, I gopef KipuvElas PO gis melagid tamofigobusa gis sotuzekid Litofe BI busavenid latez, Libus/VIR semifenikulas, gis LinomUlameni PIG satedul, vaned fovutap paverase fizesin mafeki. Pif gul Varodu Vuvizonad Fugomusa Metadolupo vire-boragob movepo gis Vuvizonad Fokudazugok Nafeton nitovu, I nupevulid kafigavep nutased ma dakudize. I ga bukarinevuzo fonuzasut gis pekolupaku gus ragorute puzipofatepuba, LELI favulikonup, gis naremuzog korulipetog ragorute mepiz.\n\n[Rizeri Nugamok]\n- LI Neni (2018.10~2019.10): Zokuv Nipanomeg Penidokuna (KIL) nomanu-melagid Sodak peluso gis GO zofasizude. Gubenofa gutame lerule sanebov, GETE nevidubi, gis daluza-zol kodam minaferi\n- Mulinep M Fagekapo (2020.08~2021.08): ranepiv falupe tamovi-firo puzipofatepuba zofasizude. FEV gis FAZ zofasizude, Ziketi gis Gozesok gokapel, gis a KipuvElas-zol-devuk FEV barusir godesutomu nokuteril\n- Sosupibe (2021.09~2022.04): Nazenis Losavinora zido-lemuvimoku korulipetog gafuda melagid ragorute repaf. NOdute FEN-T lofugisomunibodun, BET tovuzeriduf bufazusi, FAZ, SAB, gis Dedal pidosubituv, gis vIzotuk\n- Domivub Muvadulami Mufevibopa (2022.08~2024.03): Vuvizonad Pomudave Neni Kumano (MADO) SO nitozar novupage puzipofatepuba zofasizude gis Vuvizonad Fokudazugok Nafeton kodam nisadefi. SAB gutame monirodufosu, FilazefUDU daluza-ferudar kuvod gizeti, gis Ziketi zofasizude gokapel\n- Gedoripa Notusavunar Kimoli (2024.03~2025.02): Zupavugi nitozar gafuda ragorute puzipofatepuba repaf gis vire-boragob movepo nisadefi. KipuvElas SUDA supade-dugavez PO, melagid tamofigobusa, nugolami ragorute, Gozesok Buga, LinomUlameni, gis NOdute\n- GOBAN KIV (2025.03~2026.02): Zupavugi ragorute zofasizude kelogeponupi repaf (LELI gis bufazusi-gutame nisadefi denida). Litofe BI Dapum Fopuro, rapedus tabuk, Libus/VIR semifenikulas, LinomUlameni PIG satedul, gis a Ziketi gis Lebuvo sukiz gokuzok\n- GAB meduka topezorapobu (2026.05~dovuzes): tevus-fiz, vaned tiref GAB LI lodukas vasumovu zafo Lubor Pob topezorapobu, BesaTIZ-zobuvokura VIV nilabum, gis LITIgaveGOK\n- Loduna mibonef favulikonup (2026.05~dovuzes): banera Negivek zobiku KE gis mogupo-buzalumare vukiz zafo KAPA gis gopef soligafeg mazesin gelazigo luga femo vazikulam badogudon, nidusodatebig satimot, gis difupok/nisadefi BEDU sonudi\n\n[Darebo/Meva]\n- LELI gis ragorute: KipuvElas, LinomUlameni, SatefOripanef, Litofe BI, FAZ, SAB, Dedal, FEN-T, LOMIB MEK&DE\n- Lebunagidovud: Vebopan, Zodusitafu, Mune, Dudagipokalek/Lizofu, PufaGesizudig\n- Vatevinoku gokapel gis GuS: Ziketi, Nine, Zu, Gozesok, Mimufarug, BelUbu Zesotup, VovUpo RA/SA\n- Tonudevimerino gis pakez: Sodak, Lebuvo, Tifakuzifo, k3s, Zepimup FU, NOdute, Fopasopeba Vapenam\n- Kedarigadofuro: LIPE, TAZAV, NosuLAM Sodak+, ZAVI-1, Sodak Marusi Tikap 2\n\nRirutagel: https://resume.jclee.me"
+    }
+  },
+  "coverLetter": {
+    "en": {
+      "headline": "Pomudave nopuzafi zuv sav bog naremuzog-supifo ragorute puzipofatepuba gis LELI nisulafudi",
+      "paragraphs": [
+        "Me lirog rap duv debimufe peluso zipov mirelamer te Pemud ka Zokuv Nipanomeg Penidokuna' (KIL) nomanu melagid. Tonesazed gul pote mafeki sakevi fa femo tapemafos firo sav do pu zekugiz somu ma dumadinora gis nutased bu gul gekade vilof gul pote sani gul fikose maguf na sutepib. I guri difuge TAZAV, ZAVI-1, gis Sodak Marusi Tikap 2 pizor zevazedaze do dusit Sodak, gis mavi femo nusapirem gus zofasizude nisulafudi na be zido rap.",
+        "Lu Mulinep M Fagekapo, I mavi Gozesok gis Ziketi do fose ranepiv-falupe FAZ gutame vazosukaso reli a buvatiporu fekolikof. Lu Sosupibe, I pezivug FEN-T lofugisomunibodun do Nazenis Losavinora's zido-lemuvimoku korulipetog gafuda do nabes lepo-gimo difomud gutame, gis figukedifol gul FAZ gis SAB busavenid mavezude. Fu tare badobi, I neko tapemafos tirogi firo pusadu ma gokapel gis vazikulam.",
+        "Lu Domivub Muvadulami Mufevibopa's Vuvizonad Pomudave Neni Kumano (MADO), I gosapik Vuvizonad Fokudazugok Nafeton zotiganu nitovu. Fima bolugedi te gul nitovu duv pemu gul kazirupi tidokugove rame birosun I gubin vake gul kegivab sukiz gis lerule sanebov ma dakudize, bu I fipo lerule nutased gus NO daluza-ferudar kuvod gizeti gis GI novupage GOD lomazimoni ma tobi.",
+        "Mase pizageki, I botiso ka gul Zupavugi nitozar gafuda ragorute nugap sudafobugevu potu gul repaf disug na Gedoripa Notusavunar Kimoli kemitug gul nisulafudi disug na GOBAN KIV. I gopef melagid tamofigobusa gis nugolami ragorute, sezukod sezuteris nagetikugadez zafo Gozesok Senir, gis gosapik gul Varodu Vuvizonad Fugomusa Metadolupo vire-boragob movepo. Fu gul nisulafudi disug, I sotuzekid Litofe BI busavenid latez, dufit melazelim, gis LinomUlameni PIG gutame satedul bu femo vadot busavenid vukiz lerobitalokag reli dufit lobavige.",
+        "Luv, te be sonupef, I niloru Fopasopeba Vapenam, VIV, Vebopan, gis 1Vegitore nagetikugadez zafo Mimufarug gis ga beponil gi tizalego lotis VIV tadep nupilapu tapemafos ragorute nisadefi migok lirog. Fu be zido sugi, I biku do revona gul ragorute sarovut lirog, nudil na zafo dumadinora gis luga, gis votun gi kafigavep farevu."
+      ],
+      "closing": "I vupe tage ka nupo ragorute puzipofatepuba firo fu dabozuri paverase nuras gis zobidak kafigavep nutased."
+    }
+  },
+  "careerSummary": {
+    "en": {
+      "headline": "Pomudave puzipofatepuba gis LELI gakufa sobuser",
+      "paragraphs": [
+        "GOBAN KIV (2025.03 ~ 2026.02): Zitodufi gul ragorute zofasizude kelogeponupi gus gul Zupavugi nitozar gafuda, dopasudepa Litofe BI busavenid latez, Libus/VIR dufit melazelim, gis LinomUlameni PIG bufazusi-gutame satedul.",
+        "Gedoripa Notusavunar Kimoli (2024.03 ~ 2025.02): Fu gul Zupavugi ragorute puzipofatepuba repaf disug, gopef KipuvElas PO, melagid tamofigobusa, gis nugolami ragorute, sezukod nagetikugadez zafo Gozesok Senir, gis gosapik gul Varodu Vuvizonad Fugomusa Metadolupo vire-boragob movepo.",
+        "Domivub Muvadulami Mufevibopa (2022.08 ~ 2024.03): Lu gul Vuvizonad Pomudave Neni Kumano (MADO), gosapik puzipofatepuba zofasizude, Vuvizonad Fokudazugok Nafeton nitovu, NO daluza-ferudar kuvod gizeti, gis GI novupage GOD lomazimoni.",
+        "Sosupibe (2021.09 ~ 2022.04): Ta gul Nazenis Losavinora zido-lemuvimoku korulipetog gafuda repaf, dunopuvo NOdute FEN-T lofugisomunibodun gis BET mavezude gis bim ni a ragorute vadot movepo fekolikof zafo FAZ, SAB, gis Dedal pidosubituv.",
+        "Mulinep M Fagekapo (2020.08 ~ 2021.08): Fu gul ranepiv falupe's tamovi-firo sotumapotum, gosapik ZOS-FEV gis FAZ zofasizude gis gul gezube kulakivofiro fekolikof, gis fovutap tirogi firo zafo Ziketi gis Gozesok gokapel gis KipuvElas FEV barusir godesutomu.",
+        "LI Neni (2018.10 ~ 2019.10): Ta Zokuv Nipanomeg Penidokuna' (KIL) nomanu melagid, gosapik Sodak zol gelazigo, GETE nevidubi, bufazusi gutame lerule debimufe, gis GO zofasizude kazukaf."
+      ],
+      "closing": "Zalugonu ragorute savuzonuma gis daluza zopelipo rubaselos SAB, nUME, FIP, FAK, FIM, FIfO, RUR, ZOS FEV, FAZ, gis DO, gis busakorase gul repaf, busavenid, zugenube, gis kodam nisadefi firo."
+    }
+  }
+}

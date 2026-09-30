@@ -55,3 +55,6 @@ packages/data/resumes/master/resume_data*.json
 
 # Generated resume variants (tools/scripts/build/resume-variant-config.js)
 packages/data/resumes/generated/
+
+# Generated fake content pack (tools/scripts/content/make-fixtures.mjs); never hand-format
+tests/fixtures/content-pack/

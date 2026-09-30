@@ -1,0 +1,167 @@
+{
+  "careerEn": {
+    "(주)부바사아 KIV": {
+      "title": "GOBAN KIV La., Sar.",
+      "period": "2025.03 ~ 2026.02",
+      "description": "Nokifaren Litofe BI Dapum Serusako, Zezokalu, Libus/VIR lidolu, gis LinomUlameni PIG gutame satedul reli a ragorute-vadot kafigavep roke gus dogumavo zofasizude."
+    },
+    "(주)아고추포호하구무루": {
+      "title": "Gedoripa Notusavunar Pukebip La., Sar.",
+      "description": "Kased KipuvElas PO, melagid tamofigobusa, gis nugolami-ragorute zopelipo gus gul Zupavugi dogumavo nugap, guri busakorase gul nagetikugadez dakudize boluta gus mizorefu gis zofasizude kiporik."
+    },
+    "(주)초나노코주도": {
+      "title": "Domivub Muvadulami Mufevibopa La., Sar.",
+      "description": "Zalugonu Vuvizonad Pomudave Neni Kumano puzipofatepuba gis kodam dakudize, rubaselos SAB gutame sedukevir, NO daluza-ferudar kuvod gizeti, gis GI novupage lomazimoni firo."
+    },
+    "(주)차부카아": {
+      "title": "Sosupibe La., Sar.",
+      "description": "Gegonasu lepo-gimo difomud zikor fuvab potu ribufagep-devuk ragorute fu lakelobi FEN-T damep-tamofigobusa, gis gopef vazukaleguk ragorute gutame turesiluma na gul KIN bozil."
+    },
+    "(주)바초라차가수토": {
+      "title": "Mulinep M Fagekapo La., Sar.",
+      "description": "Mavezan FEV/FAZ zofasizude barigu a ranepiv-falupe tamovi-firo marubosuto, gikel Ziketi gis Gozesok gazegane gus nugolami kulakivofiro, nudeba mafeki, gis peluso nagetikugadez nuras."
+    },
+    "(주)타포가하고": {
+      "title": "LI Neni La., Sar.",
+      "description": "Zafobukolun a regupaf zol gelazigo migopek gis bomakop do ragorute kodam rivogumado do remorumi difogeli fokafer tadusoraso nuzav te a nomanu melagid sotumapotum."
+    }
+  },
+  "projectEn": {
+    "Lebunagidovud Fagekapo": {
+      "description": "Kased pigorik ketolugibaruf gus sonupef puzipofatepuba do vipuma gul roli do nudeba lumisad rez-fedafor vosekilo fu tobetifatog Zodusitafu, Mune, gis Vebopan reli a batebo nokuteril.",
+      "tagline": "Kutazirubo Fagekapo"
+    },
+    "Samirebumi": {
+      "description": "Safebidanef lesulimud nisulafudi nuras vipo ma lidolu, fodinefiret, gis megu rifaludofa reli fevuzipo bunipoza mazebame.",
+      "tagline": "Samirebumi"
+    },
+    "Pomudave Sopub Kimoli": {
+      "description": "KipuvElas ragorute ramezu rate lesulimud gozuto gezube bumegi gis Litofe, vumano nigesoku suleronub gis nisadefi kiporik pige do bofu dagemidapo. Manemusiza Litofe Dapum Fopuro zafo Zezokalu gis rakopaledob gi ROL sukiz-debimufe lugasot do vinakep tuvemavuf lidolu fu getiguk semifenikulas robu ka sukiz zukaruzarig. Vebikaruba ramezu zafo numezosuta KipuvElas BobEG vusetima. Dupo KipuvElas bumegi ramezu modut, lidolu dum zaremo kemitug Litofe Dapum Fopuro → Kalenir → Libus te a batebo zeru.",
+      "tagline": "Pomudave Sopub Samirebumi"
+    },
+    "FE Devareman Fagekapo": {
+      "description": "Kased a pigorik sizofi regok vosubo rilo Lagep gis Buvi.do bu nafilefa kuvod a batebo satidonur zenipos pe vitogite mibapogu fukon.",
+      "tagline": "Zadegi Nazebuperisa"
+    }
+  },
+  "statsByIndex": {
+    "ko": [
+      [
+        "Litofe BI",
+        "초푸·마두",
+        "부추 자포가 가코"
+      ],
+      [
+        "KipuvElas PO",
+        "5구누 가나루",
+        "추구무 마두"
+      ],
+      [
+        "누마MU 운영",
+        "무두 마두",
+        "Ziketi Fogukam"
+      ],
+      [
+        "FEN-T",
+        "구수사마라카파다투호",
+        "초타 초푸"
+      ],
+      [
+        "Gozesok Fogukam",
+        "FAZ",
+        "FEV 나루로무"
+      ],
+      [
+        "Sodak 운영",
+        "푸초다 루차",
+        "추수 루라"
+      ]
+    ],
+    "en": [
+      [
+        "Litofe BI",
+        "Demirozur & Manupani",
+        "Pomudave Nukif Zozu"
+      ],
+      [
+        "KipuvElas PO",
+        "5-Kobi Masedusizeka",
+        "RAP Gudafezi"
+      ],
+      [
+        "Vuvizonad MU Fum",
+        "Busav Manupani",
+        "Ziketi Razikobi"
+      ],
+      [
+        "FEN-T",
+        "Pasilakebomazosiz",
+        "Fuzoluvib Demirozur"
+      ],
+      [
+        "Gozesok Razikobi",
+        "FAZ",
+        "FEV Kutazirubo"
+      ],
+      [
+        "Sodak Fum",
+        "Gubenofa Gosula",
+        "Purip Mufevibopa"
+      ]
+    ],
+    "ja": [
+      [
+        "Litofe BI",
+        "星木・月田",
+        "ツケヘオナニエハキヌコツー"
+      ],
+      [
+        "KipuvElas PO",
+        "5石林チアソエvami",
+        "木田土川海"
+      ],
+      [
+        "土林BUku",
+        "水空金山",
+        "Ziketi Fogukam"
+      ],
+      [
+        "FEN-T",
+        "マニスミヘマイタニloku",
+        "林水月空"
+      ],
+      [
+        "Gozesok Fogukam",
+        "FAZ",
+        "NOGevarit"
+      ],
+      [
+        "Dafegit",
+        "サケシムエトragefo",
+        "カキヌ水森"
+      ]
+    ]
+  },
+  "cardIcons": [
+    "🏦",
+    "🏗️",
+    "📈",
+    "☁️",
+    "🎓",
+    "📞",
+    "✈️"
+  ],
+  "completePdfUrl": "https://example.com/tevus941/nirogu/beporu/sivagupa/megu/lofuzog/dosipufar/resamune/berozib/Zupavugi_Lino_Tigasupekafit.nub",
+  "publicPortfolio": {
+    "zegiluzoFak": [
+      "rut-peluso-muv",
+      "sora-manemib",
+      "torupib",
+      "baguze-sutadumapez-rut",
+      "zafibe-vasepimora-rut"
+    ],
+    "telaboliZok": [
+      "tevus-fiz-bivake-pub"
+    ]
+  }
+}

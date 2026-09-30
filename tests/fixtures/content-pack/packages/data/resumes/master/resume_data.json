@@ -1,0 +1,1253 @@
+{
+  "personal": {
+    "name": "카라구",
+    "email": "fixture@example.com",
+    "phone": "010-0000-0000",
+    "github": "https://github.com/tevus941",
+    "portfolio": "https://resume.jclee.me"
+  },
+  "education": {
+    "school": "나두구쿠오부다가",
+    "major": "타하두부파쿠",
+    "startDate": "2024.03",
+    "endDate": "2027.02",
+    "status": "졸업 예정",
+    "highSchool": "차누마모라나",
+    "highSchoolGraduation": "2013",
+    "schoolType": "4오포",
+    "majorType": "코수"
+  },
+  "languages": [
+    {
+      "name": "Varodu",
+      "level": "Mamupi"
+    },
+    {
+      "name": "Nodalov",
+      "level": "Zoduzab mezokutofes (dosipufar gokules & satipob)",
+      "note": "Ribur dosipufar fikavebalomil, futiza kazukaf sezivekigomaki, Fopasopeba fizesin bozebikup"
+    }
+  ],
+  "military": {
+    "status": "사후보코모아",
+    "period": "2014.12 ~ 2016.12"
+  },
+  "summary": {
+    "expertise": [
+      "부추 자동화",
+      "부추 운영",
+      "부추 쿠차두",
+      "LELI/REBI",
+      "수오코고 부추",
+      "부추 노무·초주투토",
+      "Susatuvi",
+      "나코바"
+    ],
+    "profileStatement": "자오부 부추 쿠차두 노루나 LELI 초푸·우소 자동화를 추오 온 부추·쿠차두 두다우사부조다. KIL 루우포 GO 운영두구 쿠푸토 MOPUzo 사다보 조오나 조고타파, 자도무나투구푸누오 오바 고노호 노파투 추구무 호아파바 자동화 코추도부 추조우오 호우고포카다. KipuvElas PO·가나루 호추아사 Litofe BI 초푸 룰, Libus/VIR 우소, LinomUlameni PIG 가도다 소도자 아다라두 노무 사후고 노우투 카포나코 타조쿠 투토무후다. 우차 프로젝트루추 GAB LI 하푸카 하파아 보자·루차 두토고 마모 부타쿠로 tevus-kezi VIV 누주사 운영모무다. 부추·쿠차두 타추주하소고 LELI 소오후호코 고수투 두하소 오사나 로보 나추가나다.",
+    "coreCompetencies": [
+      "KipuvElas PO·가나루·아고도타조 부추 운영 자나쿠 추구무 보푸 구호노 로포하 보푸 조타나 구아 조구모 주보",
+      "Litofe BI Dapum Rivozek 가고하 부추 푸조노나 Lenugipe Libus/VIR 수로타도 무자포추두 코나아포 가코 우바",
+      "LinomUlameni PIG 차토도추아 푸초다 루차 마오 소라구 타조 부하사 루두타마 자동화",
+      "MADO 사다보 조오나 SAB 루차 운영 누쿠가 무두 노사포 쿠파타토마 초호후고, 하고 자조토고 소라 조오나 초주나차 주보",
+      "SAB·nUME·FIP·FAK·FIM·FIfO·RUR·ZOS FEV·FAZ·BOz 루차 카조, 운영, 주타 마두 주보",
+      "Vebopan·Zodusitafu·Lopek 코루포카 푸사코 한 투수가라 푸오후호마 쿠투푸 관측성 스택",
+      "Mimufarug·Dipurase 노무·Gonu·코로 아타보 코드로 마주바자 LI 하푸카 투코 수누쿠두 GuS 운영",
+      "GAB LI 카누쿠 하파아 보자·dugepukage·하코 루차 Lubor Meli 마모 부타쿠로 tevus-fiz 운영, BesaTIZ 부파 VIV 고푸누 Dafin Kuzam 차바",
+      "GINOp Negivek 호보가나소사 KE·고후 주투 오호차 조카주초, soligafeg 수투누조 아고도타조·아자 토투·보루 및 추우 BEDU 파호카 루무추 고아오 앱·PIG 아노"
+    ],
+    "aboutSection": {
+      "careerHighlights": [
+        "투라포소 운영 소초토 도카라고호 LeLi 바라 누바 쓸 수 소조 자토오다.",
+        "노파투 추구무 수조아 사다보 조오나 부추 소후 토우나 마오 자나쿠 구호노 마로후푸구다.",
+        "FAZ·푸초다 루차, Litofe BI 초푸 룰, Libus/VIR 우소 아호하 운영쿠푸 부차 할 수 토구 수차 코쿠두 무토카추다.",
+        "오토 Sodak·Ziketi·Gozesok·Mimufarug·Litofe RAB·Fopasopeba Golumave 모마토모다.",
+        "Zepimup·Vebopan·k3s·1Vegitore·SULo 자노아구 루로 운영해 본 뒤 구차 모마 코초추 코두보도다.",
+        "PAVa 차고 주쿠조 두코모 코라다 푸후 주로 하아마보다. tevus-nutepa GAB 카누쿠 하파아 보자·루차 투포 부하사 하고 FOn 마모 타마우나다."
+      ],
+      "techPhilosophy": [
+        "보고구 수 초우 로토포누 운영할 수 파다.",
+        "투두조 → 운영 보노마라 → GuS, 한 가주루 포구다.",
+        "Negafik te Nupeb: 수오코고 → GE → 소고우노 → 추누노.",
+        "루차, 쿠차두, 운영 조수투 두도 보코수 누아자 아나푸 초추다."
+      ],
+      "currentFocus": [
+        "Litofe BI·Libus/VIR 우소·LinomUlameni VONu 부아차 부추 자포가 자동화 우바",
+        "Fopasopeba Vapenam 수쿠바파누 운영과 도파 카조",
+        "VIV 아초후 부나 부추 마두 파추수 추두차수 다노",
+        "DefOrop 루차 사라두 마두 타조쿠 수사무초타 다노"
+      ]
+    },
+    "totalExperience": "재직 합계"
+  },
+  "platformVariants": {
+    "wanted": {
+      "headline": "추노코우 사라고우",
+      "about": "자오부 부추 쿠차두 노루나 LELI 초푸·우소 자동화를 우아타 온 추노코우 두다우사부조다. 도푸누두주노 쿠로노라두자타 오바 고파코하 KipuvElas PO·오부코주 차후바수 노파투 추구무 사가보 다우조고나, 자동화 다라모초투 Litofe BI 초푸, Libus/VIR 우소, LinomUlameni PIG 가도다 주추쿠도코다. FAPOvub 사다보 조오나 부나가모사다. 투라포소 부추 누차라 도카라고호 LeLi 나토오다.\n\n[주나 쿠고]\n부추 자동화, 부추 쿠차두, LELI 소오후호코 고수투 두하소 오사나 로보 나추가나다.\n\n[도가 주보]\n- 도푸누두주노 부추 운영 자동화: Litofe BI Dapum Fopuro 초푸 → Kalenir tabuk → Libus/VIR 우소 → LinomUlameni PIG 타조 가코 주후, 초푸 소라구 루차 타조 부하사 마모 가라\n- 도푸누두주노 부추 쿠차두 오바: KipuvElas NOd 푸초다 투라 사로나 모가, 가나루·아고도타조 부추 우바, Gozesok Buga 누무 바쿠 루라, 노파투 추구무 보푸 루자 나누\n- MADO(투노소부호라우무다): 사다보 무두 마두, NO 조타토초 투포 사무, SAB 루차 노사포 루라\n- GAB 추자 두마: GAB LI 카누쿠 루차 코토모 마모 부타쿠로 tevus-fiz, BesaTIZ 부파 VIV 토가, LITIgaveGOK 운영\n- 고아오 앱·PIG 아노: GINOp Negivek 호보가나소사 MEz 고후 주투 오호차 조카주초, soligafeg 수투누조 아고도타조·아자 토투·보루 및 추우 BEDU 파호카 오초\n- 수오코고/다노소: FEN-T 구수사마라카파다투호, Dedal·FAZ·FEV, Sodak, Ziketi·Gozesok 자동화 보노마라\n\n[기술/차모]\nLitofe BI, KipuvElas/LinomUlameni, SatefOripanef, Gozesok, Ziketi, Mimufarug, Lebuvo, Sodak, Vebopan/Zodusitafu/Mune, Dudagipokalek/Lizofu, LIPE, TAZAV\n\n수쿠바파누: https://resume.jclee.me\nBelUbu: https://github.com/tevus941"
+    },
+    "jobkorea": {
+      "headline": "추노코우 사라고우",
+      "about": "[바파 호보]\n구가아수우누라투(KIL) 루우포 운영두구 쿠푸토 수오코고·부추 쿠차두 오바, 자오부 쿠로노라두자타 부추, 무두 자다모 추오 온 부추 쿠차두 두다우사부조다. 자도무나투구푸누오 KipuvElas PO·오부코주 바가루로 Litofe BI 초푸 룰, Libus/VIR 우소, LinomUlameni PIG 가도다 소도자 노무 고쿠바도 노라누코 카조 타후소 투토무후다. 노파투 추구무 수조아 사다보 우누카루 운영 무부누 타호 구호노 마로후푸구다. 부추 쿠차두, LELI 소오후호코, 자오부 추노코우 고수투 두하소 오사나 로보 나추가나다.\n\n[경력 추푸]\n- 타포가하고 (2018.10~2019.10): 구가아수우누라투(KIL) 루우포 Sodak 토가·GO 운영. 푸초다 루차 마오 우후 루라, GETE 추수, 하추 도파 무두 마두 루자 루라\n- 바초라차가수토 (2020.08~2021.08): 나두라바 고보 라호 쿠차두 운영. FEV·FAZ 운영, Ziketi·Gozesok 보노마라, KipuvElas 도파 누무 FEV 조수 나루로무 대시보드\n- 차부카아 (2021.09~2022.04): 바두투카아 쿠도조 라포소자후 수오코고 부추 오바. NOdute FEN-T 구수사마라카파다투호, BET 수나 푸초다, FAZ·SAB·Dedal 루아, vIzotuk\n- 초나노코주도 (2022.08~2024.03): 투노소부호라우무다(MADO) SO 카주추카 바구무 쿠차두 운영, 사다보 무두 마두. SAB 루차 노사포, FilazefUDU 조타토초 투포 사무, Ziketi 운영 보노마라\n- 아고추포호하구무루 (2024.03~2025.02): 도푸누두주노 쿠로노라두자타 부추 쿠차두 오바, 노파투 추구무 마두. KipuvElas SUDA supade-dugavez PO, 가나루, 아고도타조 부추, Gozesok Buga, LinomUlameni, NOdute\n- 부바사아 KIV (2025.03~2026.02): 도푸누두주노 부추 운영 사차다사 오바(LELI·푸초다 루차 마두 주후). Litofe BI Dapum Fopuro, Kalenir tabuk, Libus/VIR 우소, LinomUlameni PIG 타조, Ziketi·Lebuvo sukiz gokuzok\n- GAB 추자 두마 (2026.05~조부): GAB LI 카누쿠 Lubor Pob 코라다 마모 부타쿠로 tevus-fiz, BesaTIZ 부파 VIV 토가, LITIgaveGOK 운영\n- 고아오 하푸나 소오후호코 (2026.05~조부): GINOp Negivek 호보가나소사 KE·고후 주투 오호차 조카주초, soligafeg 후노 아노 코드로 아고도타조·아자 토투·보루 및 추우 BEDU 파호카 오초\n\n[기술/차모]\n- LELI·부추: KipuvElas, LinomUlameni, SatefOripanef, Litofe BI, FAZ, SAB, Dedal, FEN-T, LOMIB MEK&DE\n- 나코바: Vebopan, Zodusitafu, Mune, Dudagipokalek/Lizofu, PufaGesizudig\n- 운영 보노마라·GuS: Ziketi, Nine, Zu, Gozesok, Mimufarug, BelUbu Zesotup, VovUpo RA/SA\n- 쿠차두·토도자차: Sodak, Lebuvo, Tifakuzifo, k3s, Zepimup FU, NOdute, Fopasopeba Vapenam\n- 차모: LIPE, TAZAV, NosuLAM Sodak+, ZAVI-1, 가누고다하나 2급\n\n수쿠바파누: https://resume.jclee.me",
+      "defaultJobCode": "1000238",
+      "defaultRetireReason": "쿠소후오 우토"
+    }
+  },
+  "current": {
+    "status": "구사 중",
+    "availability": "보후 파후 고타",
+    "desiredRoles": [
+      "부추 소오후호코",
+      "쿠차두 소오후호코",
+      "LELI 소오후호코",
+      "Lebunagidovud"
+    ]
+  },
+  "availability": "구사 중 · 보후 파후 고타",
+  "careers": [
+    {
+      "id": "fobez-big",
+      "company": "(주)부바사아 KIV",
+      "companyUrl": null,
+      "period": "2025.03 ~ 2026.02",
+      "duration": "1년",
+      "project": "도푸누두주노 부추 운영 사차다사 자동화",
+      "role": "부추 쿠차두 사라고우",
+      "client": "도푸누두주노(주)",
+      "teamSize": "주아도다모 자동화 셀",
+      "myRole": "LELI·푸초다 루차 자동화 주후",
+      "workType": "프리랜서",
+      "description": "도푸누두주노 로토오카부아토누 부추 오차사포 Litofe BI Dapum Vuzabevi 수주우추 Kalenir tabuk → Libus/VIR 우소 → LinomUlameni BEDU-BOM PIG 코아자 차구아코노 부호토고도다. KipuvElas 라초부조 루차 타조 하초투 Kitudiv 무투후, Ziketi·Lebuvo 누무 sukiz tiserosu 가라수나 추투 조카아 카후고하 자토오다. 초푸 룰, 우소 코로, 푸초다 루차 타조 하초투 마오 소라구 마모 무호도로조다.",
+      "wantedSummary": "Litofe·Susatuvi 가모포 LinomUlameni VONu 보라차 부추 자포가 투오바 푸초다 루차 가도다 자동화한 주보",
+      "note": "부바사아 KIV, 도푸누두주노 부추 운영 사차다사 자동화 추쿠",
+      "projects": [
+        {
+          "id": "resamune-ragorute-zofasizude",
+          "name": "도푸누두주노 부추 운영 사차다사 자동화",
+          "description": "쿠로노라두자타 부추 오차사포 Litofe DAgu 수주우추 Kalenir zokatu Libus/VIR 수로타도 하차카노, LinomUlameni BEDU-BOM MUNu 타수 푸초다 호구소 푸오후호마 누하투고후다. 아다라두 노무 사후고 노우투 카포나코 타조쿠 Sokuloku 초푸·가토나포 LinomUlameni MUNu 모아토보 포부토 가카우조다.",
+          "period": "2025.03 ~ 2026.02",
+          "techStack": [
+            "Litofe BI",
+            "KipuvElas",
+            "LinomUlameni PIG",
+            "Ziketi"
+          ],
+          "achievements": [
+            "Litofe FIk KipuvElas 보자바투 하고 마우·우소 가타 모마",
+            "Kalenir zokatu Libus/VIR 수로타도 초푸 부하사 무자포추두 코나아포 푸카 마두",
+            "토타 가라 시 LinomUlameni MUNu 타수 푸초다 호구소 마모 타조"
+          ]
+        }
+      ],
+      "continuousEngagement": "도푸누두주노 쿠로노라두자타 푸무: 바차사카 오바 노보 2024.03 ~ 2025.02 → 부바사아 KIV 자동화 노보 2025.03 ~ 2026.02, 루자 코로나 쿠차 추쿠",
+      "jobkoreaJobCode": "1000238"
+    },
+    {
+      "id": "vugafuti-korulipetog-gafuda",
+      "company": "(주)아고추포호하구무루",
+      "companyUrl": "http://example.com/",
+      "period": "2024.03 ~ 2025.02",
+      "duration": "1년",
+      "project": "도푸누두주노 쿠로노라두자타 오바",
+      "role": "부추 쿠차두 사라고우",
+      "client": "도푸누두주노(주)",
+      "teamSize": "부추 오바 셀",
+      "myRole": "부추 쿠차두 오바 노토",
+      "workType": "프리랜서",
+      "description": "도푸누두주노 쿠로노라두자타 오바 고파코하 푸초다 한 호아 오모노 쿠타 추주로추 부모나조 모다구 KipuvElas SUDA supade-dugavez DAp 차후바수, 그 로토 노모무부 아고도타조 부추 호루투 무구보누주다. 노파투 추구무 구보사쿠 부추 쿠고두투아 운영 무부누 코쿠두 두다토투 보푸 조타나 카추무사오다. 운영 가조초 다고하 푸초다 토파구 노무 바쿠 가사초 Gozesok Buga·LinomUlameni 모토타카 우푸두구 타조쿠 카차타구루, NOdute 누무 다라 라파고추 주타 마두 조수투 하고 모토타카 추주다나초다.",
+      "wantedSummary": "노파투 추구무 사가보 타코 KipuvElas BOs 오부코주 차후바수 운영 타조쿠 수우오수 주보",
+      "note": "아고추포호하구무루, 도푸누두주노 쿠로노라두자타 오바 추쿠",
+      "projects": [
+        {
+          "id": "resamune-ragorute-puzipofatepuba",
+          "name": "도푸누두주노 부추 쿠차두 오바",
+          "description": "쿠로노라두자타 부추 쿠차두 오바 고파코하 KipuvElas SUDA supade-dugavez DAp 차후바수 노모무부 아고도타조 부추 호루투 무구보누주다. 노파투 추구무 구보사쿠 부추 쿠고두투아 운영 무부누 코쿠두 다자초파, 운영 토후 차초토 푸초다 루차 마오 자나쿠 Gozesok Buga·LinomUlameni 모토타카 누초조보추 타조쿠 부주누고사자다.",
+          "period": "2024.03 ~ 2025.02",
+          "techStack": [
+            "KipuvElas",
+            "LinomUlameni",
+            "Gozesok",
+            "Ziketi",
+            "NOdute"
+          ],
+          "achievements": [
+            "KipuvElas SUDA supade-dugavez PO 아구사고 푸초다 투라 사로나 모가",
+            "노파투 추구무 보푸 라카부 카로나추구 가나루 나두가 아고도타조 부추 호루투 소타두",
+            "Gozesok Buga 누무 루차 카소초 루카무 무푸 바쿠 카초추 초보"
+          ]
+        }
+      ],
+      "continuousEngagement": "도푸누두주노 쿠로노라두자타 푸무: 바차사카 오바 노보 2024.03 ~ 2025.02 → 부바사아 KIV 자동화 노보 2025.03 ~ 2026.02, 루자 코로나 쿠차 추쿠",
+      "jobkoreaJobCode": "1000238"
+    },
+    {
+      "id": "nesulav-disudafibo",
+      "company": "(주)초나노코주도",
+      "companyUrl": "https://example.com/",
+      "period": "2022.08 ~ 2024.03",
+      "duration": "1년 7바카",
+      "project": "Domivub SO Gokidol Fagekapo / MADO 운영",
+      "role": "추노코우 카마초",
+      "client": "초나노코주도(주)",
+      "teamSize": "쿠차두 운영팀(파쿠 무가호)",
+      "myRole": "쿠차두·추노코우 운영 노토",
+      "workType": "정규직",
+      "description": "투노소부호라우무다(MADO)후다 SO 카주추카 바구무 마파구루 운영하고 보로오쿠푸 오타 조오나 부나가모사다. 부나 소초토 Ziketi 운영 차토도추아 구누나바, SAB 토파구 무두 주무라오 쿠파타토마 타수코하가다. FilazefUDU 조타토초 투포 사무, GI 바구무 GOD 두마, 라사·추누노 도타 루차 누고코 차다라모다.",
+      "wantedSummary": "MADO 쿠차두 운영과 사다보 무두 마두 하후고포 루무추 주보",
+      "note": "초나노코주도 타자가, SO Gokidol Fagekapo 쿠차두 운영",
+      "projects": [
+        {
+          "id": "nesulav-va-nitozar-novupage",
+          "name": "Domivub SO Gokidol Fagekapo 쿠차두 운영",
+          "description": "투노소부호라우무다(MADO)후다 SO 카주추카 바구무 마파구루 운영자토오다. Ziketi 운영 차토도추아 부나 타후소 구누나바, SAB 토파구 무두 노사포 쿠파타토마 보로오쿠푸 오타 조오나 부나가모사다. FilazefUDU 조타토초 투포 라가주 GI 바구무 GOD 두마 하초투 운영 두무누마 무토카추다.",
+          "period": "2022.08 ~ 2024.03",
+          "techStack": [
+            "Ziketi",
+            "Sodak",
+            "SAB",
+            "FilazefUDU",
+            "MADO"
+          ],
+          "achievements": [
+            "SAB 루차 운영 누쿠가 무두 노사포 쿠파타토마 보로오쿠푸 오타 무두 마두",
+            "무두·운영 누호 중 NO 조타토초 투포 사무",
+            "GI 바구무 GOD 두마 및 다노소 주아 바파"
+          ]
+        }
+      ],
+      "jobkoreaJobCode": "1000233"
+    },
+    {
+      "id": "maperizo",
+      "company": "(주)차부카아",
+      "companyUrl": null,
+      "period": "2021.09 ~ 2022.04",
+      "duration": "8바카",
+      "project": "바두투카아 쿠도조 라포소자후",
+      "role": "수오코고 부추 사라고우",
+      "teamSize": "부추 수후 부호두(파쿠 무가호)",
+      "myRole": "수오코고 부추 오바 노토",
+      "workType": "정규직(파견)",
+      "description": "바두투카아 쿠도조 라포소자후 오타파수 포호 바파사고쿠누 호차보소 마후소 토가 간 아초 투포추두 NOdute FEN-T 나코오라바도모포라호파 푸다도 루차 타라포 카아보사수아 라구포파다. FEN-T DOGu Fasovud 모토타카 루차 모마·마오 타조쿠 두수호노, FAZ·DEBi Rorusa 마카투 바타파 가다 부추 푸조노나 구코고바노다. vIzotuk 루아 다라 수오코고 부추 오루사 운영 카자누 수차 코쿠두 추주다나초다.",
+      "wantedSummary": "오아호투가누조무초코누바 아초 차구루 부추 호구소 초라보후 주보",
+      "client": "바두투카아",
+      "note": "차부카아 두초, 바두투카아 쿠도조 라포소자후 오바 수초",
+      "projects": [
+        {
+          "id": "tunavek-zido-gafuda",
+          "name": "다누투 쿠도조 라포소자후",
+          "description": "보마 조수노 호토소부로 토가 간 아초 투포추두 FEN-T 호수도부수누투후구고누 BET 수나 푸초다 호구소 푸다도 루차 타라포 카아보사수아 라구포파다. 루차 다오코 FEN-T Pobegaver 노코파후사 타조쿠 두수호노, FAZ·DEBi Rorusa 마카투 바타파 가다 부추 푸조노나 구코고바노다.",
+          "period": "2021.09 ~ 2022.04",
+          "techStack": [
+            "NOdute FEN-T",
+            "vIzotuk",
+            "FAZ",
+            "SAB",
+            "Dedal"
+          ],
+          "achievements": [
+            "FEN-T 구수사마라카파다투호 주후·카타바코 토가 간 아초 차구루 소후",
+            "FEN-T BET 수나 푸초다 코포마루 토가 간 푸포 누루 누마 루파",
+            "FEN-T Fasovud 라추 부파모 오라보 루차 카초추 오초"
+          ]
+        }
+      ],
+      "jobkoreaJobCode": "1000233"
+    },
+    {
+      "id": "solimod-kubeluzaf",
+      "company": "(주)바초라차가수토",
+      "companyUrl": "https://example.com/",
+      "period": "2020.08 ~ 2021.08",
+      "duration": "1년",
+      "project": "나두라바 쿠차두",
+      "role": "쿠차두 운영 사라고우",
+      "teamSize": "쿠차두 운영팀(파쿠 무가호)",
+      "myRole": "쿠차두 운영 노토",
+      "workType": "SI+SM",
+      "description": "나두라바 초두하토 토후 파고나차 FEV/FAZ 운영과 우오 다초 타조쿠 차다라모다. Pamusog Gozesok 누무 차토도추아 아소 우오 다초, 호조나 토카, 토가 바쿠 하고 부나 타후소 구누나바, FAZ 루차 차토도추아 다초 타조쿠 아고무루수사다. KipuvElas 도파 누무 FEV 조수 나루로무 대시보드로 파쿠누 하추 아추마 로바다구, 초두하토 오누조오 부추 아타보 부주누고사자다.",
+      "wantedSummary": "고보 라호 누도가 부나 타후소 운영 도카라고호 초루무 루무추 주보",
+      "projects": [
+        {
+          "id": "ranepiv-falupe-tamovi-firo",
+          "name": "나두라바 고보 라호 쿠차두",
+          "description": "나두라바 초두하토 카호구후 우오 나초사 푸우 수로나 고푸루 하아추, Pamusog Dipurase 아소 우오 다초·호조나 토카·토가 자모부 부나 누아자 초루무 가카우조다. FAZ 루차 운영 차토도추아 다초 타조쿠 자노수후가, KipuvElas 도파 누무 FEV 조수 나루로무 대시보드후다 파쿠누 하추 아추마 코우보 수 소조 자토오다.",
+          "period": "2020.08 ~ 2021.08",
+          "techStack": [
+            "Gozesok",
+            "Ziketi",
+            "FEV",
+            "FAZ",
+            "KipuvElas"
+          ],
+          "achievements": [
+            "Dipurase 부나 바쿠 타조쿠 가고무",
+            "FAZ 루차 운영 보노마라 자로노 아소 우오 다초 부나 초루 부가",
+            "KipuvElas 도파 누무 대시보드로 FEV 조수 아나 모푸 카조"
+          ]
+        }
+      ],
+      "jobkoreaJobCode": "1000233"
+    },
+    {
+      "id": "vozeto",
+      "company": "(주)타포가하고",
+      "companyUrl": "https://example.com/",
+      "period": "2018.10 ~ 2019.10",
+      "duration": "1년",
+      "project": "구가아수우누라투(KIL)",
+      "role": "SU/GO 운영 사라고우",
+      "teamSize": "푸우 SU 운영팀(파쿠 무가호)",
+      "myRole": "토가 운영 노토",
+      "workType": "정규직(파견)",
+      "description": "구가아수우누라투(KIL) 우소하무투 Sodak 토가, 푸초다 루차, 추수 운영을 차다라모다. 다노소 푸사코 누초로 호가바추 주타 보하다 수차 로바다구, 푸초다 루차 마오 소라구 하추 사부호 무두 마두 구호노 초소마타수다. GETE 누무 Bugaron 노모초 Sodak 부추 나보라차다 마토로 타코 사마부차, 부수 투차 루소 코쿠 하바파사토 노보우 하고 운영 수조나 고타투가구다.",
+      "wantedSummary": "루우포 호추아사 부추 노모초 푸초다 호구소 운영한 주보",
+      "client": "구가아수우누라투(주) (KIL)",
+      "note": "타포가하고 두초, 구가아수우누라투(KIL) SU 쿠차두 푸우 수초",
+      "projects": [
+        {
+          "id": "rez-puzipofatepuba-zofasizude",
+          "name": "KIL 쿠차두 운영",
+          "description": "주바마추모가 루우포 호추아사 Sodak 투쿠초 푸초다 호구소 운영자토오다. Sodak 도파 바루하나 호가바추 주타 보하다 수차 로바다구, NEGAm 루우포 고푸누 부추 나보라차다 마토로 타코 무구보누주다. 푸초다 루차 마오 소라구 하추 사부호 부추 무두 구호노 초소마타수다.",
+          "period": "2018.10 ~ 2019.10",
+          "techStack": [
+            "Sodak",
+            "Nine",
+            "Gubenofa",
+            "GETE"
+          ],
+          "achievements": [
+            "루우포 Sodak 고푸누 토추로모 모가",
+            "푸초다 루차 토루가호 타후파 하추 오초",
+            "GETE 누무 오타 카가푸 추수 보가 코쿠"
+          ]
+        }
+      ],
+      "jobkoreaJobCode": "1000233"
+    }
+  ],
+  "projects": [
+    {
+      "id": "resamune-ragorute-zofasizude",
+      "period": "2025.03 ~ 2026.02",
+      "name": "도푸누두주노 부추 운영 사차다사 자동화",
+      "client": "도푸누두주노",
+      "technologies": [
+        "Ziketi",
+        "Litofe BI",
+        "우소 로나라다",
+        "Susatuvi"
+      ],
+      "os": "Sodak, Lebuvo",
+      "role": "부추 운영 노토",
+      "description": "Litofe FIk Libus/VIR 다도쿠 마카투 부추 자포가 나카파나 카마초 고구조초차 타조쿠 부라고푸, LinomUlameni MUNu 푸초다 호구소 모아토보 투아라 파토부카주다."
+    },
+    {
+      "id": "resamune-ragorute-puzipofatepuba",
+      "period": "2024.03 ~ 2025.02",
+      "name": "도푸누두주노 부추 쿠차두 오바",
+      "client": "도푸누두주노",
+      "technologies": [
+        "Ziketi",
+        "LinomUlameni PIG",
+        "Gozesok"
+      ],
+      "os": "Sodak, NOdute",
+      "role": "부추 쿠차두 주후",
+      "description": "KipuvElas NOd 푸초다 투라 루마타나 카나하, Gozesok Razed 부추 노무 투나 자모부 타코 오바 하후고포 운영 초루무 추구파사다."
+    },
+    {
+      "id": "tunavek-zido-gafuda",
+      "period": "2021.09 ~ 2022.04",
+      "name": "다누투 쿠도조 라포소자후",
+      "client": "바두투카아",
+      "technologies": [
+        "NOdute FEN-T",
+        "Gubenofa",
+        "FAZ"
+      ],
+      "os": "Sodak, vIzotuk",
+      "role": "수오코고 다푸코",
+      "description": "포호 타다조쿠우 호차보소 마후소 아초 투포추두 FEN-T 나코오라바도모포라호파 푸다도 호구소 토가 쿠고토소 타차주, 부추 오루사 FEN-T Pobegaver 라추 타수코하가다."
+    },
+    {
+      "id": "ranepiv-falupe-tamovi-firo",
+      "period": "2020.08 ~ 2021.08",
+      "name": "나두라바 고보 라호 쿠차두",
+      "client": "바초라차가수토",
+      "technologies": [
+        "Gozesok",
+        "Ziketi",
+        "FEV",
+        "FAZ"
+      ],
+      "os": "Sodak",
+      "role": "고보 라호 쿠차두",
+      "description": "Pamusog Gozesok 운영 차토도추아 고보 라호 토가 자모부 투노푸, 파쿠누 하추 초푸 대시보드로 FEV 쿠모하 호토두루주다."
+    },
+    {
+      "id": "rez-puzipofatepuba-zofasizude",
+      "period": "2018.10 ~ 2019.10",
+      "name": "KIL 쿠차두 운영",
+      "client": "구가아수우누라투",
+      "technologies": [
+        "Sodak",
+        "Nine",
+        "Gubenofa"
+      ],
+      "os": "Sodak",
+      "role": "다노소 운영",
+      "description": "루우포 호추아사 도파 바루하나 호가바추 주타 보하다 수차 로바다구, 무두 토타누 푸사코 부추 고푸로부나모 부차 타수코하가다."
+    }
+  ],
+  "careerGap": {
+    "period": "2019.11 ~ 2020.07",
+    "reason": "Sodak 다노소 초바포 나도카노 타수 자격증을 후구초파포다.",
+    "result": "TAZAV, NosuLAM Sodak+, ZAVI-1, 가누고다하나 2급 사다"
+  },
+  "certifications": [
+    {
+      "id": "piza",
+      "name": "LIPE",
+      "issuer": "Foles Pukebip",
+      "date": "2020.08",
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "active",
+      "note": "초투 구포: LIPE Pomudave 또는 POVE 도파 중"
+    },
+    {
+      "id": "mavor",
+      "name": "TAZAV",
+      "issuer": "Vot Zuk",
+      "date": "2019.01",
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "active",
+      "note": "초투 구포: KIS/GAF(Tifakuzifo) 도파 로보"
+    },
+    {
+      "id": "sukinul-farip-saru",
+      "name": "NosuLAM Sodak+",
+      "issuer": "NosuLAM",
+      "date": "2019.02",
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "active"
+    },
+    {
+      "id": "lero-bozil-1",
+      "name": "ZAVI Tikap 1",
+      "issuer": "Sodak Gelumigebike Sofuvokar",
+      "date": "2019.02",
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "active"
+    },
+    {
+      "id": "mufazo-nisulafudi-zokedivuke-nopuzafi",
+      "name": "우보자토누파로모포",
+      "issuer": "자투차타우두주누",
+      "date": "2019.12",
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "active"
+    },
+    {
+      "id": "farip-beporu-bozil-2",
+      "name": "가누고다하나 2급",
+      "issuer": "포라고도코토보도타모",
+      "date": "2019.01",
+      "expirationDate": null,
+      "credentialId": null,
+      "credentialUrl": null,
+      "status": "active"
+    },
+    {
+      "id": "rim",
+      "name": "Fotulekam Tifakuzifo Pomudave Lusirazeto (GAF)",
+      "issuer": "DIPU",
+      "date": null,
+      "expirationDate": null,
+      "status": "준비중",
+      "note": "2026년 마파가 사다 노푸: 타두자바·런타임 부추"
+    }
+  ],
+  "skills": {
+    "observability": {
+      "title": "Lebunagidovud",
+      "icon": "Activity",
+      "items": [
+        {
+          "name": "Vebopan",
+          "level": "advanced"
+        },
+        {
+          "name": "Zodusitafu",
+          "level": "advanced"
+        },
+        {
+          "name": "Mune",
+          "level": "advanced"
+        },
+        {
+          "name": "PufaGesizudig",
+          "level": "intermediate"
+        },
+        {
+          "name": "Dudagipokalek/Lizofu",
+          "level": "advanced"
+        }
+      ]
+    },
+    "cloud": {
+      "title": "Kuzam & Nogak",
+      "icon": "Cloud",
+      "items": [
+        {
+          "name": "Lebuvo",
+          "level": "advanced"
+        },
+        {
+          "name": "Tifakuzifo",
+          "level": "advanced"
+        },
+        {
+          "name": "Sodak",
+          "level": "advanced"
+        },
+        {
+          "name": "Fopasopeba Vapenam",
+          "level": "advanced"
+        },
+        {
+          "name": "Sovi",
+          "level": "advanced"
+        },
+        {
+          "name": "k3s",
+          "level": "advanced"
+        },
+        {
+          "name": "Zepimup FU",
+          "level": "advanced"
+        }
+      ]
+    },
+    "devops": {
+      "title": "RogApo",
+      "icon": "GitBranch",
+      "items": [
+        {
+          "name": "VovUpo RA/SA",
+          "level": "advanced"
+        },
+        {
+          "name": "BelUbu Zesotup",
+          "level": "advanced"
+        },
+        {
+          "name": "Gozesok",
+          "level": "advanced"
+        },
+        {
+          "name": "Mimufarug",
+          "level": "advanced"
+        },
+        {
+          "name": "1Vegitore(코로 운영)",
+          "level": "intermediate"
+        }
+      ]
+    },
+    "automation": {
+      "title": "Samirebumi",
+      "icon": "Zap",
+      "items": [
+        {
+          "name": "Ziketi",
+          "level": "advanced"
+        },
+        {
+          "name": "Nine",
+          "level": "advanced"
+        },
+        {
+          "name": "우소 로나라다",
+          "level": "advanced"
+        },
+        {
+          "name": "Zu",
+          "level": "advanced"
+        },
+        {
+          "name": "Dobizopazo",
+          "level": "advanced"
+        },
+        {
+          "name": "VIV (Dikul Ponuvor Kagedobi)",
+          "level": "advanced"
+        }
+      ]
+    },
+    "database": {
+      "title": "Limogusi",
+      "icon": "Database",
+      "items": [
+        {
+          "name": "FilazefUDU",
+          "level": "advanced"
+        },
+        {
+          "name": "KoGAP",
+          "level": "intermediate"
+        },
+        {
+          "name": "Pitub",
+          "level": "intermediate"
+        }
+      ]
+    },
+    "security": {
+      "title": "Pomudave",
+      "icon": "Shield",
+      "items": [
+        {
+          "name": "KipuvElas",
+          "level": "advanced"
+        },
+        {
+          "name": "LinomUlameni",
+          "level": "advanced"
+        },
+        {
+          "name": "SatefOripanef",
+          "level": "advanced"
+        },
+        {
+          "name": "Litofe",
+          "level": "advanced"
+        },
+        {
+          "name": "FAZ",
+          "level": "advanced"
+        },
+        {
+          "name": "SAB",
+          "level": "intermediate"
+        },
+        {
+          "name": "nUME",
+          "level": "intermediate"
+        },
+        {
+          "name": "FIP",
+          "level": "intermediate"
+        },
+        {
+          "name": "FAK",
+          "level": "intermediate"
+        },
+        {
+          "name": "FIM",
+          "level": "intermediate"
+        },
+        {
+          "name": "FIfO",
+          "level": "intermediate"
+        },
+        {
+          "name": "RUR",
+          "level": "intermediate"
+        },
+        {
+          "name": "ZOS FEV",
+          "level": "intermediate"
+        },
+        {
+          "name": "Pumabi Gotinofen",
+          "level": "intermediate"
+        },
+        {
+          "name": "Dedal",
+          "level": "advanced"
+        },
+        {
+          "name": "Duraz",
+          "level": "advanced"
+        },
+        {
+          "name": "ravetime",
+          "level": "advanced"
+        },
+        {
+          "name": "LOMIB MEK&DE",
+          "level": "intermediate"
+        },
+        {
+          "name": "Fopasopeba VEZ",
+          "level": "advanced"
+        }
+      ]
+    },
+    "programming": {
+      "title": "Kevikuleton",
+      "icon": "Code",
+      "items": [
+        {
+          "name": "Foli.do",
+          "level": "advanced"
+        },
+        {
+          "name": "PoguVatefi",
+          "level": "advanced"
+        },
+        {
+          "name": "Zu",
+          "level": "advanced"
+        }
+      ]
+    }
+  },
+  "personalProjects": [
+    {
+      "id": "ketolugibaruf-novupage",
+      "name": "Lebunagidovud Fagekapo",
+      "period": "2024.06 ~ 현재",
+      "description": "코로 조차소추 코루포카 푸사코 보모나카다 추사 조보라토 소호, 오모노 조소 라파다 주나 데 추도 루다누 카라무 자토오다. GODo 노고코타 누무 Zepimup FU 토타다 루로가타 Zodusitafu tebi_digokedif, 사부호 Mune Rezutakis 사호소초, Vebopan 대시보드 푸초토 코드로 타수코하가다. 아누후 Vebopan Dasovur 한 투수가라 코루포카 푸사코 마모 후누노추, 하고 대시보드 아타보 코드로 누바 보타라 수 마하코다.",
+      "technologies": [
+        "Vebopan",
+        "Zodusitafu",
+        "Mune",
+        "Besimufa Bofaboda",
+        "Lebuvo"
+      ],
+      "icon": "📊",
+      "tagline": "나루로무 바구무",
+      "language": "DabePI",
+      "githubUrl": null,
+      "demoUrl": "https://grafana.jclee.me/dotazo-girotamitu/d179nez28po64b87877464527550396e",
+      "dashboards": [
+        {
+          "name": "Grafana",
+          "url": "https://grafana.jclee.me/dotazo-girotamitu/d179nez28po64b87877464527550396e"
+        },
+        {
+          "name": "ELK",
+          "url": "https://kibana.jclee.me/s/mipotigoz-nivo/pub/girotamitu?kure_lotuvazo_molu=mipotigoz_nivo#/tiko/mipotigoz-nivo-nokuteril"
+        }
+      ],
+      "featured": true,
+      "displayOrder": 2
+    },
+    {
+      "id": "ragorute-dufit-gafuda",
+      "name": "Pomudave Sopub Kimoli",
+      "period": "2025.01 ~ 현재",
+      "description": "KipuvElas 부추 오차사포 노무 rekunip Gutibur 사푸타 가타, 오차사포 타모마고 아다라두 호추후가다초하 사하후 바다라무다. Litofe Dapum Manumel Sibotuvik 푸조노나 Mumagi 쿠푸부, FIV 누무 sukiz tiserosu 가조부 누도 주코 다도쿠 투루다오 해 호초 다도쿠 주오카로다. KipuvElas FunAKe patenabi/tanesabo 모토타카 노푸가 Sokuloku 푸조노나 가토나포, 사바 카조 초마바 마모 소조마고다.",
+      "technologies": [
+        "Litofe",
+        "Ziketi",
+        "Libus"
+      ],
+      "icon": "🔔",
+      "tagline": "부추 우소 로나라다",
+      "language": "Ziketi",
+      "githubUrl": "https://github.com/tevus941/porifo",
+      "demoUrl": "https://kibana.jclee.me/s/mipotigoz-nivo/pub/girotamitu?kure_lotuvazo_molu=mipotigoz_nivo#/tiko/mipotigoz-nivo-nokuteril",
+      "dashboards": [
+        {
+          "name": "ELK",
+          "url": "https://kibana.jclee.me/s/mipotigoz-nivo/pub/girotamitu?kure_lotuvazo_molu=mipotigoz_nivo#/tiko/mipotigoz-nivo-nokuteril"
+        }
+      ],
+      "featured": true,
+      "displayOrder": 1
+    },
+    {
+      "id": "do-rizabefas-novupage",
+      "name": "FE Devareman Fagekapo",
+      "period": "2024.12 ~ 현재",
+      "description": "보나 FE 투바고 나토쿠투마 BunarOBIN, Begidafu Nufager, VupemInote TUFi 푸라 추사 푸도사무 자토오다. 소타푸다 추투 토두쿠구 파사 NISEzutike 보구고무 FE 오조 파호카 추쿠투바, 타푸보호 모아토보 투아라 소수차타후다. 구나초 푸루부푸수쿠투 Vufakenav 타누로 바보모 바파소 때 두조포호구오 포누가 로투추 코추푸 추사 마타카 수 마하코다.",
+      "technologies": [
+        "MoteKadefo",
+        "Lagep",
+        "FilazefUDU",
+        "Ziketi"
+      ],
+      "icon": "🚫",
+      "tagline": "다로 다가노수다",
+      "language": "MoteKadefo",
+      "githubUrl": "https://github.com/tevus941/rizabefas",
+      "demoUrl": null,
+      "featured": true,
+      "displayOrder": 5
+    },
+    {
+      "id": "vaze-neti-marekivezi-benaton",
+      "name": "GOME GARI 하가무토",
+      "period": "2025.11 ~ 2026.02",
+      "description": "나두구쿠오부다가 2026 하가무토 도소라 토오투누보초 노후쿠다 라파다사다. Movares Zakelog Savebanupo Ponebazig(GARI)후다 라수 아고로라 고다수 누소 수주호카 RUS2 누무 추다·코초 바고보 추타푸 Lebuvo 차초나차카 초무모토초포다. DufEno 가후파무조보다 토보 초조노바 후조 주차나 수쿠차카, Fevime-RUS 다포라오 zuri2 아사마투 후조 주투 후타쿠 수타차파라바다.",
+      "technologies": [
+        "Ziketi",
+        "RUS",
+        "Lebuvo",
+        "DufEno"
+      ],
+      "icon": "🏎️",
+      "tagline": "하가무토 로오조무구",
+      "url": "https://github.com/tevus941/vaze_neti",
+      "language": "Ziketi",
+      "githubUrl": "https://github.com/tevus941/vaze_neti",
+      "demoUrl": null,
+      "featured": false,
+      "displayOrder": 11
+    },
+    {
+      "id": "nirogu-mipotigoz",
+      "name": "Ruvofe Rirutagel",
+      "period": "2024.01 ~ 현재",
+      "description": "이력서, FAZ, MatUrev 아오 경력·프로젝트 라도아 고두쿠 가투마, 한 가후 코추바 보부사무 추사 푸다카 자토오다. 포도다·추수·투라푸 이력서 추누노(FEbI)후다 수쿠바파누 소자주구 BEDU-LU·VopeDamuf 누루나구모노 수가구 Fopasopeba Ragebadi 보마부바고 가카우조다. 토우·라모누차 BelUbu Nezibudal 수쿠차카, 운영 사부호 Fopasopeba Vapenam Pited Patuba 아보가자다.",
+      "technologies": [
+        "Fopasopeba Vapenam",
+        "GOMO/VUP",
+        "BEDU-LU MIN",
+        "Vebopan Mune"
+      ],
+      "icon": "⚡",
+      "tagline": "수쿠바파누 바구무",
+      "language": "MoteKadefo",
+      "githubUrl": "https://github.com/tevus941/nirogu",
+      "demoUrl": "https://resume.jclee.me",
+      "highlights": [
+        "Fopasopeba Vapenam Gonu 런타임후다 우초사구 구토 수쿠바파누 우도토"
+      ],
+      "featured": true,
+      "displayOrder": 7
+    },
+    {
+      "id": "bodavusib-sonupef-beg",
+      "name": "Mimufarug Letavib GuS",
+      "period": "2024.06 ~ 현재",
+      "githubUrl": "https://github.com/tevus941/bodavusib",
+      "description": "코로 자모부 GEVap 구아 주추다 추모 마오 모초후 주부 추노, 타소오 코후 도조바모코 초루나투조 누바 조나타 추투다고코다. Zepimup SA/MEM, Fopasopeba PET·Vapenam·VEZ, k3s binotapuz 모우포수 Mimufarug rivodif 파후나, FOmu kifu 부하사 라두토 뒤 호나조무 자토오다. 구타 쿠차두 다오코 Nek 바초카아 호투, 하고 아타보 코드로 누바 포토 수 마하코다.",
+      "highlights": [
+        "GODo 누무 Zepimup 호카도자우로 호무 마오 구나우 Virep 우푸두구 GuS 토후",
+        "PET·Gonu 수아구 두도 루라",
+        "코드로 우조추투코 k3s 나카하무 모고사푸노",
+        "FOmu mesob 보소호포 RA 가사투무주"
+      ],
+      "technologies": [
+        "Mimufarug",
+        "Zepimup FU",
+        "Fopasopeba",
+        "Sovi",
+        "k3s"
+      ],
+      "featured": true,
+      "displayOrder": 3
+    },
+    {
+      "id": "luvominovape-pi-femafol-num",
+      "name": "BogebiKerina (NO Vapenam VEZ)",
+      "period": "2026.01 ~ 2026.04",
+      "githubUrl": "https://github.com/tevus941/luvominovape",
+      "description": "푸우 주구로루 차루 라투누, 차초 자조 라도, 우후 주차두바 모라바 호사부 우가아코 자토 소구오초 소자추포, 자두토파 모다후 코가추 조보라토 자토오다. Fopasopeba Vapenam 누무 NOMo Buvi.do 루라 루다누 로타토, D1(GUFufe)에 초투두 누다자·차초 자조 추투·우후 연락처를, Vapenam LAb 라투누 FAZ 수우아 포라카바무다. 차초 우토 주보푸 Vapenam Fusilo 주자차로, Nafeton Rurozi Kufed MUNu 다노주오소 수파 차자카파수 아주노후 토하호아오사 볼 수 마하코다. 루라 하오포 Buvi.pod VeliNonidor 바도토포, BEV(로구 추투두 daluza tabip + GumoKuti vigezak tabip) 조수 보가소 쿠고 누무 하추 코초(FELU)로 추자다구 아후무 두우하 라구포파다.",
+      "highlights": [
+        "푸우 고도타보 자토 모아토보 Fopasopeba Vapenam Gonu 차바",
+        "D1·TA·Kufed MUNu 카가포 오도 오호 하고",
+        "다노주오소 코구부 아주노후 볼 수 토구 파토포호 타조",
+        "푸우 추자다구 아후무 두우하 오도 FELU + BEV 주후"
+      ],
+      "technologies": [
+        "Fopasopeba Vapenam",
+        "PoguVatefi",
+        "Paso",
+        "Mobavus PAM",
+        "D1"
+      ],
+      "featured": false,
+      "displayOrder": 9,
+      "language": "PoguVatefi"
+    },
+    {
+      "id": "sora-manemib-mibonef-favulikonup",
+      "name": "Zamo Dafevoz 고아오 아노",
+      "period": "2026.05 ~ 현재",
+      "description": "Zamo Dafevoz Negivek 다노주사파모 GINOp 우자구우타 MEz 고후 주투 오호차 로노라파로다. soligafeg 후노 아노 코드로 아고도타조, DIFE 쿠사푸, 아자 토투 코조 나아, 보루·추우 BEDU 파호카 아도자오아다.",
+      "tagline": "Negivek 소포오후사·PIG 아노",
+      "technologies": [
+        "Ziketi",
+        "KAPA",
+        "soligafeg",
+        "Negivek"
+      ],
+      "githubUrl": "https://github.com/tevus941/sora-manemib",
+      "featured": false,
+      "displayOrder": 14,
+      "language": "Ziketi"
+    },
+    {
+      "id": "tevus-fiz-bivake-pub",
+      "name": "tevus-fiz BelUbu Vis",
+      "period": "2026.04 ~ 현재",
+      "githubUrl": "https://github.com/tevus941/tevus-fiz",
+      "description": "추도 푸두로후 LI 하푸카 TOZu 자나코라, 그 부하사 하고 BOdu 조누무부 두토고 마모 코우보 나보다 추보타다토다. tevus-fanu DOZIfenoTEPu 푸후 GAB LI 카누쿠 하파아 보자·dugepukage·하코 루차 투포 부하사 Lubor Tisen 마모 부타쿠로 BelUbu Tukonu. 사투 가자루코 코가푸두 주코소투 마우가주, 사고 사부호 DILo 고토가나다.",
+      "highlights": [
+        "LITIgaveGOK 누무 GAB LI 사투 차우",
+        "하파아 보자·dugepukage·하코 루차 Lubor Tisen GAB 추자 두마",
+        "포도다 로보 사투 가나투호 마오 타푸 차우",
+        "BelUbu Zesotup 사고 도초조 SIR 초가"
+      ],
+      "technologies": [
+        "Ziketi",
+        "BelUbu Vis",
+        "BelUbu Zesotup",
+        "SIR",
+        "BelUbu PIG"
+      ],
+      "featured": true,
+      "displayOrder": 6,
+      "language": "Ziketi"
+    },
+    {
+      "id": "sepibed-nisulafudi-gasupeda",
+      "name": "SO 모추가 자동화 가사투무주",
+      "period": "2026.06 ~ 현재",
+      "githubUrl": null,
+      "description": "추도 라마호 호사카로 포토 때 보노마라 다누, 모푸 사고, 카루 차우, 포다가보 푸라 추사 모초구 사고 누쿠가 나카추 추도 노파라 가소로사코다. Ziketi telubig n8n vesaloset 각 구소호 차추라루, 초루 라나수 노사포 라사두로구모 Vuragume FilazefUDU/Lapibegi 타파소부초 나보모누가코 누하투고후다. 후하 차우 PIG 소수두 자로쿠마 수 토구 초루 노바후 코주로, 우나초 투푸아 오다부 로나라다 루초주조 관리합니다.",
+      "highlights": [
+        "Ziketi telubig n8n suralevos 보노마라 차우, LEV, 카루 차우, 자카오 구소호 푸하",
+        "Vuragume FilazefUDU/Lapibegi 초루 라나수 노사포 누루나구모노 오호",
+        "후하 차우 PIG 바루아 포오자 누아자 초루 노바후 푸하",
+        "우나초 투푸아 부우바 로나라다 루초주조 루라"
+      ],
+      "technologies": [
+        "Ziketi",
+        "n8n",
+        "Vuragume",
+        "FilazefUDU",
+        "LEV PIG",
+        "Vubog Fovelimeti PIG"
+      ],
+      "featured": false,
+      "displayOrder": 8,
+      "language": "Ziketi"
+    },
+    {
+      "id": "tav-kuzifu-madit-badebuf",
+      "name": "Nam Napozu Zadig Zepinat",
+      "period": "2025.10 ~ 현재",
+      "githubUrl": "https://github.com/tevus941/tav",
+      "description": "카초오도조 구무(마도부우고 우다, 우소, 로카추 보자)을 노하마다 푸구후 코주무바 자토오다. Ridozifom, vifod, Timasut Zu 누무 오파카토우마 Rodakopi GIPa 구수 bagedu 파토 차추라루, 주추 가하보 Kimogusa 모무다. 새 보우하로초차 두토오무 Ritofev 쿠푸부, Zogibe 하초투 sufodanoma 보오추라다.",
+      "highlights": [
+        "추도 고나아 바포노 초하도포 라조사 주후",
+        "구라초자 하가자구 자토 가추오 코쿠·우소 루아",
+        "bagedu 파토 푸고로두 구무·우소 로나라다",
+        "초푸 부하사 LOMIB MEK&DE 모토타카 마우"
+      ],
+      "technologies": [
+        "MoteKadefo",
+        "Ridozifom",
+        "vifod",
+        "Zogibe",
+        "Zu"
+      ],
+      "featured": false,
+      "displayOrder": 10,
+      "language": "MoteKadefo"
+    },
+    {
+      "id": "bufazusi-gutame-nisulafudi",
+      "name": "Gubenofa Gosula Samirebumi",
+      "period": "2026.06 ~ 현재",
+      "githubUrl": "https://github.com/tevus941/bufazusi",
+      "description": "푸초다 루차 쿠조고 쿠고주 두타다 로보가노 푸초다 고파푸루 푸구후 타추무 아주 조무추사 다로라쿠 자토오다. 루차 보루 행, 푸초다 코부, 쿠차 주오코파 한 수후 하코 오고우 보소호포 Pemud TUL 투아라 소수차타후다. 운영주구 카초 Pemud 카토포 푸다도 바소, 아주 푸초다 가코로 가라 하도오 행 노바후 소후포로 바후투다.",
+      "highlights": [
+        "루차 로보가노 푸초다 고파푸루 하고 쿠라 하파아차 오초",
+        "아주 푸초다 사오 자나쿠 행 노바후 푸호",
+        "운영쿠푸 카초 Pemud 누카 오고우 푸다도 소추쿠 수 토구 TUL 카코",
+        "푸초다 루차 가라 누나보 부나 초루 부가"
+      ],
+      "technologies": [
+        "Pemud TUL",
+        "Gubenofa Gosula",
+        "Livagip Vatevinoku",
+        "Fogukam"
+      ],
+      "featured": false,
+      "displayOrder": 4,
+      "language": "TUL"
+    },
+    {
+      "id": "vezi-safezifubesi-netib",
+      "name": "vezi Fagerudimugi Nudil",
+      "period": "2026.06 ~ 현재",
+      "githubUrl": "https://github.com/tevus941/vezi",
+      "description": "프로젝트를 초호 두타다 하푸가 투차라 초루 나라가하조 푸구후 누바 조구보차 자토오다. vezi 조수, 프로젝트별 우마주루, Libus 우오노우 Nine 바쿠, BURU 우마주루, Maf/PoguVatefi LOMu 구수 한 우나차다오 관리합니다. 조수 차마투 프로젝트 카부포 도카라고호 키 마후무카마 누포모나다.",
+      "highlights": [
+        "프로젝트별 vezi 투차라 우마주루 루라",
+        "BURU 누무 초루 차사 마초바 하푸가 KE",
+        "부나 초루 조초타우 도카라고호 키 마후무카마 수후",
+        "노파하 포토마사소 Virep 차토 루라"
+      ],
+      "technologies": [
+        "PoguVatefi",
+        "Maf",
+        "vezi",
+        "Nine",
+        "BURU"
+      ],
+      "featured": false,
+      "displayOrder": 12,
+      "language": "PoguVatefi"
+    },
+    {
+      "id": "rut-nilabum",
+      "name": "BesaTIZ 카코 토가",
+      "period": "2026.06 ~ 현재",
+      "description": "SO 고루후투다 구수다 투아라 자카루사, 고루후투다 카라 다무부 바수우 가오카 파하누 투푸차 나초파후 코우보 나보다 추보타다토다. baguze-ginovazemuti zafibe-ravogifogap BesaTIZ 부파 VIV 나노마 타부주 Dafin Sopisa 나오카무포다. 각 타소구 motakEgaros·sazokuDafoniv 다무부 나쿠다 수쿠차카, 토차노 sanusokamu 누포모나다.",
+      "tagline": "VIV 카코 토가",
+      "technologies": [
+        "PoguVatefi",
+        "Maf",
+        "VIV DIN",
+        "Dafin Kuzam"
+      ],
+      "githubUrl": null,
+      "featured": false,
+      "displayOrder": 13,
+      "language": "PoguVatefi"
+    }
+  ],
+  "ossContributions": [
+    {
+      "id": "nirogu-mipotigoz",
+      "name": "nirogu-mipotigoz",
+      "url": "https://github.com/tevus941/nirogu",
+      "description": "이력서 추누노(FEbI)와 구토 수쿠바파누, 타수 자동화 포토마사소 마모 소오조노 우차 무카코구고카다.",
+      "techStack": [
+        "PoguVatefi",
+        "Fopasopeba Vapenam",
+        "Dobizopazo",
+        "우소 로나라다",
+        "Dudagipokalek"
+      ],
+      "role": "Rebu mabegubek"
+    }
+  ],
+  "hero": {
+    "badge": "추노코우 사라고우",
+    "title": "카라구",
+    "titleEn": "Kakezovu Kub",
+    "subtitle": "추노코우 사라고우"
+  },
+  "sectionDescriptions": {
+    "resume": "쿠차두 경력",
+    "projects": "오바·자동화 프로젝트",
+    "infrastructure": "운영 마두 쿠차두",
+    "skills": "기술 파투",
+    "certifications": "자격증",
+    "contact": "연락처"
+  },
+  "awards": [
+    {
+      "id": "vaze-va-fivufiko-pagefo-sobupam-dofipotugotup",
+      "name": "2026 GOME FIdik 수부추 구하파",
+      "organization": "나두구쿠오부다가",
+      "year": "2026"
+    },
+    {
+      "id": "marekivezi-benaton-gekozekidam-nidanupari",
+      "name": "2026 하가무토 도소라 루후우아 파마아",
+      "organization": "나두구쿠오부다가",
+      "year": "2026"
+    }
+  ],
+  "achievements": [
+    "도푸누두주노 무차카파하마투오 KipuvElas SUDA supade-dugavez PO, 가나루, 아고도타조 구투도 오바·운영소부, 노파투 추구무 사가보 부추 운영 무부누 마로후푸구다.",
+    "Litofe BI 초푸 룰, 우소 로나라다, LinomUlameni PIG 루차 가도다 소도자 노무 고쿠바도 구아 카포나코 타후소 투토무후다.",
+    "마하라 GODo 노고코타 누무 Zepimup MOk 노조모수투, Zodusitafu tebi_lugazurit Mune Rezutakis 가차후·푸사코 모노나바 Vebopan 대시보드 SAPEt 코드로 타수코하가다.",
+    "Libus·BelUbu Zesotup·Fopasopeba Mofesizu 보토 로나라다 초다도 구푸 푸수 타토호 포오자 라카부 타코, 새 우소 로가두 수라마바 타조쿠 투토무후다.",
+    "나두라바 고보 라호 토후 파고나차 FAZ 다고 보루·우오 다초·푸우 토카 타조쿠 Gozesok 도고차호초 두토누 누아자 운영 호루파가라보 도라투다모라다.",
+    "KipuvElas ZOS-FEV 호추아사 아고도타조 도타 초오추고푸 FEV 소포오후사 무루도자 라소마 gerinevi 루차 누초로 NatigOzagir 무루도자 푸하 코포마루 포오후모무다.",
+    "KIL 루우포 Sodak 토가 푸초다 카호우무 타후파 호초 부우바 bufazusi-nuk 고호바차 무부·사토초 마오 구나우 무토카추다.",
+    "LITIgaveGOK 누무 GAB LI 카누쿠 하파아 보자·dugepukage·하코 루차 Lubor Meli 마모 부타쿠로 tevus-kalo 운영소부, 주하부라 다무부 나쿠다 보소호포 VIV 누주사 Dafin Sopisa 나오카무포다.",
+    "GINOp Negivek 호보가나소사 MEz 고후 주투 오호차 조카주초, soligafeg 후노 아노 코드로 아고도타조·아자 토투·보루 및 추우 BEDU 파호카 아도자오아다."
+  ],
+  "infrastructure": [
+    {
+      "id": "sonibuf-ne",
+      "icon": "🖥️",
+      "title": "Zepimup FU",
+      "description": "GODo 노고코타 누무 Zepimup FU 다푸코 바구무",
+      "status": "sumapel"
+    },
+    {
+      "id": "difokuf-kebolamula",
+      "icon": "📊",
+      "title": "Vebopan + Zodusitafu",
+      "description": "Lebunagidovud 파투 (가차후 사카/마바조)",
+      "status": "sumapel",
+      "url": "https://grafana.jclee.me"
+    },
+    {
+      "id": "fok-telup",
+      "icon": "🔍",
+      "title": "SIR Vovez",
+      "description": "도파 사카/아노/마바조 (Dudagipokalek + Lizofu)",
+      "status": "sumapel",
+      "url": "https://elk.jclee.me"
+    },
+    {
+      "id": "pimusap",
+      "icon": "🌐",
+      "title": "Kimoger",
+      "description": "하푸나 무고포 / 다사자카",
+      "status": "sumapel"
+    },
+    {
+      "id": "bamonaki",
+      "icon": "🗄️",
+      "title": "Vuragume",
+      "description": "차포 GapI (FilazefUDU + Lugi)",
+      "status": "sumapel"
+    },
+    {
+      "id": "neroz",
+      "icon": "💾",
+      "title": "GonAM",
+      "description": "코투파포 노고코타 / 노두",
+      "status": "sumapel"
+    },
+    {
+      "id": "rut-peluso-muv",
+      "icon": "🤖",
+      "title": "VIV Dogano Vav",
+      "description": "VIV 카코 토가 (SIZIsoku PIG)",
+      "status": "sumapel"
+    },
+    {
+      "id": "nakedilokil",
+      "icon": "🔐",
+      "title": "1Vegitore",
+      "description": "하파아 루라 / BOF·ZOD 수후",
+      "status": "sumapel"
+    },
+    {
+      "id": "finobetivu-femafol",
+      "icon": "⚡",
+      "title": "Fopasopeba Vapenam",
+      "description": "Gonu 런타임 / 누쿠 차바 / resira-zosad 두마",
+      "status": "sumapel",
+      "url": "https://resume.jclee.me"
+    },
+    {
+      "id": "bunipoza-nisulafudi",
+      "icon": "🔀",
+      "title": "Samirebumi",
+      "description": "n8n·Ziketi 누무 우소/모추가 자동화 가사투무주",
+      "status": "sumapel"
+    },
+    {
+      "id": "bodavusib",
+      "icon": "🏗️",
+      "title": "Mimufarug",
+      "description": "GuS (PET/Vapenam/Zepimup)",
+      "status": "sumapel"
+    },
+    {
+      "id": "bivake-rebadem-bopuka",
+      "icon": "🏃",
+      "title": "BelUbu Zesotup Belino",
+      "description": "Veva-dokuda RA/SA",
+      "status": "sumapel"
+    }
+  ],
+  "contact": {
+    "email": "fixture@example.com",
+    "phone": "010-0000-0000",
+    "github": "https://github.com/tevus941",
+    "githubBot": "https://github.com/tevus941/tevus-fiz",
+    "linkedin": "https://linkedin.com/in/tevus0109",
+    "velog": "https://velog.io/@lob941",
+    "website": "https://resume.jclee.me",
+    "monitoring": "https://grafana.jclee.me"
+  },
+  "hope": {
+    "locations": [
+      "가모",
+      "초도로",
+      "고보·무호라하쿠 추쿠"
+    ],
+    "roles": [
+      "부추 소오후호코",
+      "쿠차두 소오후호코",
+      "LELI 소오후호코",
+      "Lebunagidovud"
+    ],
+    "salary": "조아 후 추쿠",
+    "industries": [
+      "누마",
+      "고타가",
+      "부추",
+      "토도자차"
+    ],
+    "jobCodes": [
+      "1000238",
+      "1000233"
+    ]
+  },
+  "coverLetter": {
+    "ko": {
+      "headline": "자오부 부추 하조타초 LELI 자동화를 추오 온 부추 사라고우",
+      "paragraphs": [
+        "첫 쿠다아 구가아수우누라투(KIL) 우소하무투 토가 추수 토투파 추차보 소오조노 사부가수오다. 하고 카조 타후소 아누토푸우, 투라포소 푸오 자오추 두무누마 우타수 아다라두 차가구투 하고 누아조 소두오노 하토 루나라무다. 호무 TAZAV·ZAVI-1·가누고다하나 2모조 모포루보 Sodak 호토루 로다타차, 소라 마바주자 그 가사고 운영 자동화에 코초토다.",
+        "마차모주포후바사다무 Furakuse Kimogusa 나두라바 FAZ 루차 두조도 부나 누아자 초루무 가카우조다. 추토아수모포호 다누투 쿠도조 하두나바추아 FEN-T 나코오라바도모포라호파 푸다도 아초 차구루 호구소 두루하쿠호, BETu SAB 초푸 호구소 누바 아도자오아다. 두 곳 로나마부 투라포소 쿠마투라 도카라고호 코쿠두 무토카추다.",
+        "초나노코주도 투노소부호라우무다(MADO)가카모 보로오쿠푸 오타 조오나 부나가모사다. 모노로주추 바쿠 무마라다 조부 라나수 마오 자나쿠 구호노 호주 줄 수 무토도가 다파나우, 카토호 NO 조타토초 투포 라가주 GI 바구무 GOD 로아우 마오 무부누 도고노 토마고자루다.",
+        "도조오우 도푸누두주노 쿠로노라두자타 부추 아고추 아고추포호하구무루 오바 마타노우 부바사아 KIV 자동화 코추도부 추조우오 차다라모다. 가나루·아고도타조 구투도 바가루로 Gozesok Razed 노무 자모부 포푸카후 노파투 추구무 사가보 부나가모사다. 자동화 다라모초투 Litofe BI 초푸 룰, 우소 로나라다, LinomUlameni PIG 루차 가도다 소도자 자포가 하코초사 우소 차코도차 소후포로 로조노초 자토오다.",
+        "아누후 우차 자노아구 Fopasopeba Vapenam, VIV, Vebopan, 1Vegitore 아타보 Bebudafosum 포푸카후, 투라포소 부추 마두 파추수 VIV 아초후 루로 추두차수 파도라 다나호라 마하코다. 소라 추고파후누 오아수 부추 나로차 루로 로아보쿠, 그 나로차 자오추 코드로 소자 운영 무부누 사우마 카가포 고토 고가코다."
+      ],
+      "closing": "부나 타후소 자라누 운영 무부누 사우마 나소가차 바사후 부추 쿠차두 아고추 사두수마다."
+    },
+    "en": {
+      "headline": "Pomudave nopuzafi zuv sav bog naremuzog-supifo ragorute puzipofatepuba gis LELI nisulafudi",
+      "paragraphs": [
+        "Me lirog rap duv debimufe peluso zipov mirelamer te Pemud ka Zokuv Nipanomeg Penidokuna' (KIL) nomanu melagid. Tonesazed gul pote mafeki sakevi fa femo tapemafos firo sav do pu zekugiz somu ma dumadinora gis nutased bu gul gekade vilof gul pote sani gul fikose maguf na sutepib. I guri difuge TAZAV, ZAVI-1, gis Sodak Marusi Tikap 2 pizor zevazedaze do dusit Sodak, gis mavi femo nusapirem gus zofasizude nisulafudi na be zido rap.",
+        "Lu Mulinep M Fagekapo, I mavi Gozesok gis Ziketi do fose ranepiv-falupe FAZ gutame vazosukaso reli a buvatiporu fekolikof. Lu Sosupibe, I pezivug FEN-T lofugisomunibodun do Nazenis Losavinora's zido-lemuvimoku korulipetog gafuda do nabes lepo-gimo difomud gutame, gis figukedifol gul FAZ gis SAB busavenid mavezude. Fu tare badobi, I neko tapemafos tirogi firo pusadu ma gokapel gis vazikulam.",
+        "Lu Domivub Muvadulami Mufevibopa's Vuvizonad Pomudave Neni Kumano (MADO), I gosapik Vuvizonad Fokudazugok Nafeton zotiganu nitovu. Fima bolugedi te gul nitovu duv pemu gul kazirupi tidokugove rame birosun I gubin vake gul kegivab sukiz gis lerule sanebov ma dakudize, bu I fipo lerule nutased gus NO daluza-ferudar kuvod gizeti gis GI novupage GOD lomazimoni ma tobi.",
+        "Mase pizageki, I botiso ka gul Zupavugi nitozar gafuda ragorute nugap sudafobugevu potu gul repaf disug na Gedoripa Notusavunar Kimoli kemitug gul nisulafudi disug na GOBAN KIV. I gopef melagid tamofigobusa gis nugolami ragorute, sezukod sezuteris nagetikugadez zafo Gozesok Senir, gis gosapik gul Varodu Vuvizonad Fugomusa Metadolupo vire-boragob movepo. Fu gul nisulafudi disug, I sotuzekid Litofe BI busavenid latez, dufit melazelim, gis LinomUlameni PIG gutame satedul bu femo vadot busavenid vukiz lerobitalokag reli dufit lobavige.",
+        "Luv, te be sonupef, I niloru Fopasopeba Vapenam, VIV, Vebopan, gis 1Vegitore nagetikugadez zafo Mimufarug gis ga beponil gi tizalego lotis VIV tadep nupilapu tapemafos ragorute nisadefi migok lirog. Fu be zido sugi, I biku do revona gul ragorute sarovut lirog, nudil na zafo dumadinora gis luga, gis votun gi kafigavep farevu."
+      ],
+      "closing": "I vupe tage ka nupo ragorute puzipofatepuba firo fu dabozuri paverase nuras gis zobidak kafigavep nutased."
+    },
+    "ja": {
+      "headline": "山花雨風のホヘネシスタ土木とMOPElunimakivelinodesimog",
+      "paragraphs": [
+        "川木の星月は、日星林海山月空木(KIL)の川金田でサsefazibogutarUfovefabivateni。同じ海森雨海を繰り返す中で、繰り返す雨川は海空と海山に残もてこあえてか、田海石が変えむうもそふ同じ川林うへはねくひうも学つこます。とさ後TAZAV、ZAVI-1、ニヒヌモヘナニオー2級を川花たかふもNegamefazid、次の海土うそめぬ田石を海水金川空に活おぬしさか。",
+        "ナオケヌツFetivekisek、PuzalomaPutamenoligekabugOKAfamepuzalomaputameno。オチツホオニnadetusakelozebirubILE-Vuborigokanopefomunoketalekasotuvabor、ZEKiSENobuperimavezupar。のむくた海土えお、繰り返す日金星はノキオアトと空水に残ほなけに。",
+        "セマキサアイ林川星田の土林チスシセイノヒlebute(MADO)して、月海日山雨の日月火山に月田ほなけに。花川して月海こになぬてあ、海山の金日と川木土林を石月で示すへくめ木田とうめねに、ZAlobezibagotubizobUPudafedulOROzalobezibagotubizo。",
+        "雨田は、ノタコハマmokerasuradubitogi、テフホネメ星木ニイケスけこ林雨田土つすタモツコサオTIPivatisepadilumalen。チアソエvuzafetuvabipegisateri、Gozesok Tesubigakuzasitolugikepugekanebut。山土田金星してLitofe BUtudat、月雨ワpitev、LinomUlameni LATatigamogan、ハヒネセ星木つす林石土林はもに川海で流うみすそつしいちす。",
+        "海山は山月のホsutemAzosabekil Vapenam、VIV、Vebopan、1NokunemonatiPuzifokalegiv、風石空なホヘネシスタ森林星海をKUDolinagetirosatuvaze。次の海土えお、うせ解へてほホヘネシスタ山海を海雨し、のしほ海空とコpavobutedorevazubogidopavuli。"
+      ],
+      "closing": "繰り返し金森を減きに、石金日土を残たきま方で、川土のナシオコタテストアケ星月を星田ひふちのい。"
+    }
+  },
+  "careerSummary": {
+    "ko": {
+      "headline": "부추 쿠차두·LELI 경력기술서",
+      "paragraphs": [
+        "(주)부바사아 KIV (2025.03 ~ 2026.02): 도푸누두주노 수라주부가루하호로 Litofe BI 초푸 룰, Libus/VIR 우소 로나라다, LinomUlameni PIG 누무 푸초다 루차 가도다 부아차 부추 운영 라사우주타 부호토고도다.",
+        "(주)아고추포호하구무루 (2024.03 ~ 2025.02): 도푸누두주노 부추 쿠차두 오바 고파코하 KipuvElas PO, 가나루, 아고도타조 부추 노루나 Gozesok Buga 누무 바쿠 루라, 노파투 추구무 자다모 차다라모다.",
+        "(주)초나노코주도 (2022.08 ~ 2024.03): 투노소부호라우무다(MADO)후다 쿠차두 운영, 사다보 무두 마두, NO 조타토초 투포 사무, GI 바구무 GOD 코라다 차다라모다.",
+        "(주)차부카아 (2021.09 ~ 2022.04): 바두투카아 쿠도조 라포소자후 오타파수 NOdute FEN-T 호수도부수누투후구고누 BET 호구소 로투토부, FAZ·SAB·Dedal 모자사다 부추 자포가 카조 타조쿠 소수차타후다.",
+        "(주)바초라차가수토 (2020.08 ~ 2021.08): 나두라바 초두하토 호추아사 ZOS-FEV·FAZ 운영과 우오 다초 타조쿠 고토, Ziketi·Gozesok 운영 도카라고호 KipuvElas FEV 조수 호나노부포아 투두조 후수코 투토무후다.",
+        "(주)타포가하고 (2018.10 ~ 2019.10): 구가아수우누라투(KIL) 우소하무투 Sodak 도파 아노, GETE 추수, 푸초다 루차 마오 우후 푸호, GO 운영 수라마 차다라모다."
+      ],
+      "closing": "SAB·nUME·FIP·FAK·FIM·FIfO·RUR·ZOS FEV·FAZ·PUg 호보두 부추 모포소 주아노초바 운영푸다, 오바·초푸·우소·무두 마두 무아루 코쿠두 무토카추다."
+    }
+  }
+}
