@@ -36,13 +36,15 @@ test('characterizes ADR filenames, metadata styles, template, and index coverage
     '0008',
     '0009',
     '0010',
+    '0011',
   ]);
   assert.equal(dashStyleCount, 7);
-  assert.equal(boldStyleCount, 3);
+  assert.equal(boldStyleCount, 4);
   assert.equal(existsSync(join(ADR_DIR, 'template.md')), true);
   assert.equal(index.includes('0008-drop-bazel-facade.md'), true);
   assert.equal(index.includes('0009-single-worker-consolidation.md'), true);
   assert.equal(index.includes('0010-retire-local-job-server.md'), true);
+  assert.equal(index.includes('0011-content-pack-in-d1.md'), true);
 });
 
 function validateFixture(t, options = {}, mode = 'governance-only') {
@@ -59,7 +61,7 @@ test('accepts both metadata styles, partial note, chain, and free-text supersess
   assert.equal(result.status, 'ok');
   assert.deepEqual(
     result.adrs.map(({ id }) => id),
-    ['0001', '0002', '0003', '0004', '0005', '0006', '0007', '0008', '0009', '0010']
+    ['0001', '0002', '0003', '0004', '0005', '0006', '0007', '0008', '0009', '0010', '0011']
   );
 });
 

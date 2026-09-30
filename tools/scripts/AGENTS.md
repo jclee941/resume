@@ -13,6 +13,7 @@ Automation suite for build, deployment, verification, release, and enrichment. N
 ```text
 scripts/
 ├── build/              # asset generation (PDF, PPTX, icons, screenshots)
+├── content/            # personal content pack CLI (D1 content_files <-> working tree)
 ├── deployment/         # deploy helpers and preflight checks
 ├── local-dev-up/       # local dev environment orchestrator
 ├── verification/      # deterministic validators and remote probes
@@ -33,6 +34,38 @@ scripts/
 - `verification/AGENTS.md` — Deterministic validators and remote probes.
 - `release/AGENTS.md` — Version decisions and GitHub release publication.
 - `enrichment/AGENTS.md` — Resume data proposal generators.
+
+## CONTENT PACK CLI
+
+`content/` moves personal resume and portfolio content between the D1
+`content_files` table and the working tree (ADR 0011). The pack is defined by
+`content/content-pack.json`; run everything through the root scripts.
+
+| Command                                                     | Purpose                                                                                                  |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `npm run content:pull`                                      | Materialize the pack. Source: `--source d1\|fixtures`, else `CONTENT_SOURCE`, else `d1`.                 |
+| `npm run content:push -- [--dry-run] [--prune]`             | Upload new/changed files; `--prune` deletes D1 rows missing locally; refreshes the `resumes` master row. |
+| `npm run content:status`                                    | Local vs D1 added/changed/deleted/unchanged counts and paths.                                            |
+| `npm run content:manifest -- [--out f]`                     | Local pack manifest (path, sha256, size) to prove D1 parity.                                             |
+| `npm run content:guard -- [--staged\|--tracked] [--report]` | Fail on pack paths or personal tokens in git; prints paths, kinds, and counts only.                      |
+
+Environment: `CONTENT_API_TOKEN` or `CLOUDFLARE_API_TOKEN` (Bearer), or
+`CLOUDFLARE_API_KEY` with `CLOUDFLARE_EMAIL`; `CONTENT_ACCOUNT_ID` or
+`CLOUDFLARE_ACCOUNT_ID`. The database id comes from the `JOB_DB` entry in the root
+`wrangler.jsonc`.
+
+Rules:
+
+- `pull` fails closed: source `d1` without credentials exits non-zero and never falls back to
+  fixtures, including under `WORKERS_CI=1`. Fixtures (`tests/fixtures/content-pack/`) are used only
+  when `CONTENT_SOURCE=fixtures` or `--source fixtures` is explicit.
+- Never print file contents, request bodies, tokens, or matched personal values; output is paths,
+  counts, and token kinds.
+- Keep every file under 200 LOC and add no npm dependencies (globs use `picomatch`, already in the lockfile).
+
+**Why JavaScript, not Go:** this CLI runs inside `npm run build` on Cloudflare Workers Builds, where
+only the Node toolchain is guaranteed. A Go binary would add a toolchain requirement to the deploy
+path. This is a documented exception to the Go-first rule, not a precedent for other scripts.
 
 ## CONVENTIONS
 
