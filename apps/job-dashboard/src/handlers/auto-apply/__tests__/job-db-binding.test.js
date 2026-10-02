@@ -18,14 +18,14 @@ function createDb({ appliedCompany = null, pendingApprovals = 0 } = {}) {
           return this;
         },
         async first() {
-          if (sql.includes('lower(trim(company)) = lower(?)')) {
-            return this.params[0] === appliedCompany ? { id: 'app-1' } : null;
-          }
           if (sql.includes('FROM approval_requests')) return { count: pendingApprovals };
           if (sql.includes('COUNT(*)')) return { count: 0 };
           return null;
         },
         async all() {
+          if (sql.includes('SELECT DISTINCT company FROM applications') && appliedCompany) {
+            return { results: [{ company: appliedCompany }] };
+          }
           return { results: [] };
         },
       };

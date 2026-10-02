@@ -1,6 +1,6 @@
 import {
+  companyKey,
   isCompanyAlreadyApplied,
-  normalizeCompany,
 } from '../../handlers/auto-apply/duplicate-company.js';
 import { attachWorkflowApproval } from './application-submissions.js';
 import { buildApprovalMetadata, withHumanApproval } from './approval-metadata.js';
@@ -14,6 +14,7 @@ export { attachServerAtsCapability } from './approval-metadata.js';
  *       first(): Promise<{ id?: unknown; status?: unknown } | null>;
  *       run(): Promise<unknown>;
  *     };
+ *     all(): Promise<{ results?: Array<{ company?: unknown }> }>;
  *   };
  * }} ApprovalDb
  *
@@ -80,7 +81,7 @@ export async function processApprovalGates(
   for (const job of scoredJobs) {
     if (granted >= limit) break;
     const approvalMetadata = buildApprovalMetadata(job);
-    const company = normalizeCompany(job.company).toLowerCase();
+    const company = companyKey(job.company);
     if (company && approvedCompanies.has(company)) {
       evaluatedResults.push({
         status: 'already-applied',

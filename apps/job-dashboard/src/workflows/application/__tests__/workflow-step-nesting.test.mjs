@@ -62,18 +62,17 @@ function createApprovalContext({
     env: {
       JOB_DB: {
         prepare: (query) => ({
+          all: async () => ({
+            results: /SELECT DISTINCT company/.test(query)
+              ? appliedCompanies.map((company) => ({ company }))
+              : [],
+          }),
           bind: (...values) => ({
             run: async () => {
               updates.push({ query, values });
               return { meta: { changes: 1 } };
             },
             first: async () => {
-              if (/lower\(trim\(company\)\)/.test(query)) {
-                const company = String(values[0]).toLowerCase();
-                return appliedCompanies.some((name) => name.toLowerCase() === company)
-                  ? { id: 'application-1' }
-                  : null;
-              }
               if (!/FROM approval_requests/.test(query)) return null;
               const [jobId, ownRequestId] = values;
               return (

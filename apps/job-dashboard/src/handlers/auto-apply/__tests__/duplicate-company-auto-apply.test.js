@@ -36,6 +36,9 @@ function createD1WithExistingCompany(company) {
               ],
             };
           }
+          if (sql.includes('SELECT DISTINCT company FROM applications')) {
+            return { results: [{ company }] };
+          }
           return { results: [] };
         },
         async first() {
@@ -44,9 +47,6 @@ function createD1WithExistingCompany(company) {
           }
           if (sql.includes('job_id = ? AND source = ?')) {
             return null;
-          }
-          if (sql.includes('lower(trim(company)) = lower(?)')) {
-            return this.params[0] === company ? { id: 'existing-app' } : null;
           }
           return null;
         },
@@ -165,22 +165,30 @@ describe('auto-apply duplicate company handling', () => {
   });
 
   it('does not treat dry-run preview rows as blocking duplicate company evidence', async () => {
-    const db = {
-      prepare(sql) {
-        return {
-          bind() {
-            return this;
-          },
-          async first() {
-            assert.match(sql, /COALESCE\(auto_apply_dry_run, 0\) = 0/);
-            assert.match(sql, /lower\(trim\(company\)\) = lower\(\?\)/);
-            return null;
-          },
-        };
-      },
-    };
+    const db = createSqliteD1();
+    db.sqlite
+      .prepare(
+        `INSERT INTO applications
+           (id, job_id, source, position, company, status, created_at, updated_at, auto_apply_dry_run)
+         VALUES ('p', 'wanted-9', 'wanted', 'Role', 'Preview Enterprise', 'pending', '2026-10-01', '2026-10-01', 1)`
+      )
+      .run();
 
     assert.equal(await isCompanyAlreadyApplied({ JOB_DB: db }, 'Preview Enterprise'), false);
+  });
+
+  it('matches one company that two platforms write differently', async () => {
+    const db = createSqliteD1();
+    db.sqlite
+      .prepare(
+        `INSERT INTO applications (id, job_id, source, position, company, status, created_at, updated_at)
+         VALUES ('1', 'wanted-1', 'wanted', 'Role', '가나다라마(Ganada)', 'rejected', '2026-10-01', '2026-10-01')`
+      )
+      .run();
+
+    assert.equal(await isCompanyAlreadyApplied({ JOB_DB: db }, '(주)가나다라마'), true);
+    assert.equal(await isCompanyAlreadyApplied({ JOB_DB: db }, '가나다라마 주식회사'), true);
+    assert.equal(await isCompanyAlreadyApplied({ JOB_DB: db }, '가나다'), false);
   });
 
   it('blocks a company for its real applications but not for a saved posting', async () => {
