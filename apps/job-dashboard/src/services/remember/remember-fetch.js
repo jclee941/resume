@@ -137,7 +137,14 @@ function buildFetchScript(marker, url, init) {
       });
       write({ status: response.status, body: await response.text(), headers: [...response.headers] });
     } catch (error) {
-      write({ error: String((error && error.message) || error) });
+      let selfTest;
+      try {
+        const s = await fetch(location.origin + '/robots.txt', { credentials: 'same-origin' });
+        selfTest = 'self:' + s.status;
+      } catch (e2) {
+        selfTest = 'self-err:' + String((e2 && e2.message) || e2);
+      }
+      write({ error: String((error && error.name) + ':' + (error && error.message)) + ' | ' + selfTest });
     }
   })();`;
 }
