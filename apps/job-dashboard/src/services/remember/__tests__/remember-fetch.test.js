@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { rememberFetch } from '../remember-fetch.js';
+import { REMEMBER_BROWSER_FETCH_FAILED, rememberFetch } from '../remember-fetch.js';
 
 const ENV = {
   REMEMBER_BROWSER_ACCOUNT_ID: 'acct-1',
@@ -95,5 +95,15 @@ describe('rememberFetch', () => {
       fetchImpl('https://rememberapp.co.kr/auths/login', { method: 'POST' }),
       /Browser Rendering request failed \(403\)/
     );
+  });
+
+  it('marks a failed in-page fetch as retryable', async () => {
+    const apiFetch = apiFetchReturning({ error: 'Failed to fetch' }, []);
+    const fetchImpl = rememberFetch(ENV, { apiFetch });
+
+    await assert.rejects(fetchImpl('https://career-api.rememberapp.co.kr/job_postings/search'), {
+      code: REMEMBER_BROWSER_FETCH_FAILED,
+      message: /Failed to fetch/,
+    });
   });
 });

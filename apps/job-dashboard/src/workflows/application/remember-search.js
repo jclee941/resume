@@ -1,4 +1,8 @@
-import { rememberFetch } from '../../services/remember/remember-fetch.js';
+import { withRetry } from '@resume/shared/retry';
+import {
+  REMEMBER_BROWSER_FETCH_FAILED,
+  rememberFetch,
+} from '../../services/remember/remember-fetch.js';
 import {
   isAutoApplicable,
   searchRememberPostings,
@@ -6,6 +10,9 @@ import {
 } from '../../services/remember/remember-jobs.js';
 
 const MAX_REMEMBER_KEYWORDS = 5;
+/** A Browser Rendering session sometimes fails the in-page fetch where a fresh session succeeds,
+ * so such a query gets one retry before it is skipped. */
+const SEARCH_RETRY = { maxRetries: 1, retryableErrors: [REMEMBER_BROWSER_FETCH_FAILED] };
 
 /**
  * @typedef {import('./platforms.js').PlatformJob} PlatformJob
@@ -28,8 +35,9 @@ function rememberKeywords(criteria) {
 /**
  * Searches Remember once per keyword and keeps the open postings the profile can apply to on
  * its own, merged by posting id in first-seen order. Search results already carry the posting
- * text, so no detail call is needed for scoring. A failing keyword is logged and skipped; the
- * first error is thrown only when every query fails.
+ * text, so no detail call is needed for scoring. A query whose browser fetch fails is retried
+ * once; a keyword that still fails is logged and skipped, and the first error is thrown only when
+ * every query fails.
  * @param {{ env?: Record<string, unknown> }} ctx
  * @param {PlatformSearchCriteria} criteria
  * @returns {Promise<PlatformJob[]>}
@@ -43,7 +51,11 @@ export async function searchRemember(ctx, criteria) {
   const errors = [];
   for (const keyword of keywords) {
     try {
-      for (const posting of await searchRememberPostings(keyword, { fetchImpl })) {
+      const postings = await withRetry(
+        () => searchRememberPostings(keyword, { fetchImpl }),
+        SEARCH_RETRY
+      );
+      for (const posting of postings) {
         if (!isAutoApplicable(posting)) continue;
         const job = toRememberJob(posting);
         if (!merged.has(job.id)) merged.set(job.id, job);
