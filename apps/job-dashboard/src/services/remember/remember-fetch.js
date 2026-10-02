@@ -70,19 +70,22 @@ async function renderFetch(browser, url, init) {
     await page
       .goto(`${pageOrigin}/`, { waitUntil: 'domcontentloaded', timeout: PAGE_GOTO_TIMEOUT_MS })
       .catch(() => {});
-    const evalInit = {
-      method: init.method ?? 'GET',
-      headers: Object.fromEntries(
-        headers.filter(([key]) => !FORBIDDEN_HEADERS.has(key.toLowerCase()))
-      ),
-      body: init.body == null ? null : String(init.body),
-    };
-    let result;
-    try {
-      result = await page.evaluate(pageFetch, url, evalInit);
-    } catch (error) {
-      const detail = error instanceof Error ? error.message : String(error);
-      throw new Error(`Remember browser fetch ${target.host} from ${page.url()}: ${detail}`);
+    const safeHeaders = Object.fromEntries(
+      headers.filter(([key]) => !FORBIDDEN_HEADERS.has(key.toLowerCase()))
+    );
+    const marker = `rememberfetch${crypto.randomUUID().replace(/-/g, '')}`;
+    await page.addScriptTag({
+      content: buildFetchScript(marker, url, {
+        method: init.method ?? 'GET',
+        headers: safeHeaders,
+        body: init.body == null ? null : String(init.body),
+      }),
+    });
+    await page.waitForSelector(`#${marker}`, { timeout: PAGE_GOTO_TIMEOUT_MS });
+    const payload = await page.$eval(`#${marker}`, (el) => el.textContent);
+    const result = JSON.parse(payload || '{}');
+    if (result.error) {
+      throw new Error(`Remember browser fetch ${target.host} from ${page.url()}: ${result.error}`);
     }
     const outHeaders = new Headers(result.headers);
     for (const cookie of await page.cookies(target.origin, pageOrigin)) {
@@ -96,26 +99,40 @@ async function renderFetch(browser, url, init) {
 }
 
 /**
- * Runs inside the Browser Rendering page. `credentials: 'same-origin'` sends cookies for the
- * same-origin login but none for the cross-origin API calls, which authenticate with the
- * Authorization header: Remember's APIs allow the career origin but do not set
- * Access-Control-Allow-Credentials, so a credentialed cross-origin read would be blocked.
- * Set-Cookie is not readable here, so the caller reads it from the cookie jar.
+ * A classic script that runs the request in the page's main world and writes the result into a
+ * hidden element for the caller to read. `page.evaluate` runs in an isolated world whose origin is
+ * opaque, so its cross-origin fetch is seen as coming from `null` and CORS rejects it; a script
+ * added to the document runs in the real page origin, which Remember's APIs accept.
+ * `credentials: 'same-origin'` sends cookies for the same-origin login but none for the
+ * cross-origin API calls, which authenticate with the Authorization header (Remember's APIs allow
+ * the career origin but do not set Access-Control-Allow-Credentials). Set-Cookie is not readable
+ * here, so the caller reads it from the cookie jar.
+ * @param {string} marker
  * @param {string} url
  * @param {{ method: string; headers: Record<string, string>; body: string | null }} init
- * @returns {Promise<{ status: number; body: string; headers: Array<[string, string]> }>}
+ * @returns {string}
  */
-function pageFetch(url, init) {
-  return fetch(url, {
-    method: init.method,
-    headers: init.headers,
-    body: init.body,
-    credentials: 'same-origin',
-  }).then(async (response) => ({
-    status: response.status,
-    body: await response.text(),
-    headers: [...response.headers],
-  }));
+function buildFetchScript(marker, url, init) {
+  return `(async () => {
+    const write = (data) => {
+      const el = document.createElement('div');
+      el.id = ${JSON.stringify(marker)};
+      el.style.display = 'none';
+      el.textContent = JSON.stringify(data);
+      document.body.appendChild(el);
+    };
+    try {
+      const response = await fetch(${JSON.stringify(url)}, {
+        method: ${JSON.stringify(init.method)},
+        headers: ${JSON.stringify(init.headers)},
+        body: ${JSON.stringify(init.body)},
+        credentials: 'same-origin',
+      });
+      write({ status: response.status, body: await response.text(), headers: [...response.headers] });
+    } catch (error) {
+      write({ error: String((error && error.message) || error) });
+    }
+  })();`;
 }
 
 /**

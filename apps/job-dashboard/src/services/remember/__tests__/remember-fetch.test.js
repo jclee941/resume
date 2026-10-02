@@ -4,23 +4,21 @@ import assert from 'node:assert/strict';
 import { rememberFetch } from '../remember-fetch.js';
 
 function fakePage({ status = 200, body = '{"code":"ok"}', cookies = [] } = {}) {
-  const calls = { setCookie: [], goto: [], evaluate: [], closed: false };
+  const calls = { setCookie: [], goto: [], addScriptTag: [], closed: false };
   return {
     calls,
-    async setRequestInterception() {},
-    on() {},
-    mainFrame() {
-      return null;
-    },
     async setCookie(...items) {
       calls.setCookie.push(...items);
     },
     async goto(url, options) {
       calls.goto.push({ url, options });
     },
-    async evaluate(fn, url, init) {
-      calls.evaluate.push({ url, init });
-      return { status, body, headers: [['content-type', 'application/json']] };
+    async addScriptTag({ content }) {
+      calls.addScriptTag.push(content);
+    },
+    async waitForSelector() {},
+    async $eval() {
+      return JSON.stringify({ status, body, headers: [['content-type', 'application/json']] });
     },
     async cookies() {
       return cookies;
@@ -42,7 +40,7 @@ describe('rememberFetch', () => {
     assert.equal(rememberFetch({ BROWSER_SESSION: {} }), fetch);
   });
 
-  it('replays the request from a browser page and rebuilds the response', async () => {
+  it('runs the login request from its own origin and rebuilds the response', async () => {
     const page = fakePage({
       status: 200,
       body: '{"code":"ok"}',
@@ -71,14 +69,10 @@ describe('rememberFetch', () => {
       { name: '_remember_device_id', value: 'dev-1', url: 'https://rememberapp.co.kr' },
     ]);
     assert.equal(page.calls.goto[0].url, 'https://rememberapp.co.kr/');
-    const evaluated = page.calls.evaluate[0];
-    assert.equal(evaluated.url, 'https://rememberapp.co.kr/auths/login');
-    assert.equal(evaluated.init.method, 'POST');
-    assert.equal(evaluated.init.body, '{"email":"a"}');
-    assert.deepEqual(evaluated.init.headers, {
-      Authorization: 'Token token=t',
-      'Content-Type': 'application/json',
-    });
+    const script = page.calls.addScriptTag[0];
+    assert.match(script, /Token token=t/);
+    assert.match(script, /"email":"a"/);
+    assert.doesNotMatch(script, /User-Agent|should-be-dropped/);
 
     assert.equal(response.status, 200);
     assert.deepEqual(await response.json(), { code: 'ok' });
@@ -98,9 +92,9 @@ describe('rememberFetch', () => {
     });
 
     assert.equal(page.calls.goto[0].url, 'https://career.rememberapp.co.kr/');
-    assert.equal(
-      page.calls.evaluate[0].url,
-      'https://open-profile-api.rememberapp.co.kr/v2/open_profiles/me'
+    assert.match(
+      page.calls.addScriptTag[0],
+      /https:\/\/open-profile-api\.rememberapp\.co\.kr\/v2\/open_profiles\/me/
     );
   });
 });
