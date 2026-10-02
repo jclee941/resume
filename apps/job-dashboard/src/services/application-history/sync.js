@@ -119,20 +119,20 @@ async function recordRun(env, summary, startedAt, completedAt) {
  * @param {HistoryEnv} env
  * @param {{
  *   platforms?: import('./history-types.js').HistoryPlatform[];
- *   adapters?: HistoryAdapters;
+ *   adapters?: Partial<HistoryAdapters>;
  *   timeoutMs?: number;
  *   now?: () => string;
  *   deadline?: number;
  *   clock?: () => number;
- * }} [options] `deadline` (epoch ms) closes the whole run: the run stops waiting for fetches at
- *   it, and no write batch or sync_logs row starts at or after it (one already issued may finish
- *   later)
+ * }} [options] `adapters` replaces the default adapter of each platform it names. `deadline`
+ *   (epoch ms) closes the whole run: the run stops waiting for fetches at it, and no write batch
+ *   or sync_logs row starts at or after it (one already issued may finish later)
  * @returns {Promise<HistorySyncSummary>}
  */
 export async function syncApplicationHistory(env, options = {}) {
   const {
     platforms = [...HISTORY_PLATFORMS],
-    adapters = DEFAULT_ADAPTERS,
+    adapters = {},
     timeoutMs = DEFAULT_TIMEOUT_MS,
     now = () => new Date().toISOString(),
     deadline = Infinity,
@@ -140,10 +140,11 @@ export async function syncApplicationHistory(env, options = {}) {
   } = options;
   const startedAt = now();
   const window = { deadline, clock };
+  const platformAdapters = { ...DEFAULT_ADAPTERS, ...adapters };
   const fetchTimeoutMs = Math.max(0, Math.min(timeoutMs, deadline - clock()));
   const results = await Promise.all(
     platforms.map((platform) =>
-      syncPlatform(env, platform, adapters, fetchTimeoutMs, startedAt, window)
+      syncPlatform(env, platform, platformAdapters, fetchTimeoutMs, startedAt, window)
     )
   );
   const okCount = results.filter((result) => result.ok).length;

@@ -3,6 +3,9 @@ import {
   HISTORY_PLATFORMS,
   syncApplicationHistory,
 } from '../../services/application-history/sync.js';
+import { fetchJobKoreaHistoryAfterLogin } from './jobkorea-history-login.js';
+
+const ON_DEMAND_ADAPTERS = { jobkorea: fetchJobKoreaHistoryAfterLogin };
 
 /**
  * @param {Request} request
@@ -39,6 +42,6 @@ async function readPlatforms(request) {
 export async function handleApplicationHistorySync(env, request, sync = syncApplicationHistory) {
   const parsed = await readPlatforms(request);
   if ('error' in parsed) return jsonResponse({ error: parsed.error }, 400);
-  const summary = await sync(env, { platforms: parsed.platforms });
+  const summary = await sync(env, { platforms: parsed.platforms, adapters: ON_DEMAND_ADAPTERS });
   return jsonResponse(summary, summary.status === 'failed' ? 502 : 200);
 }

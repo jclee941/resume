@@ -240,4 +240,16 @@ describe('syncApplicationHistory window', () => {
       console.warn = originalWarn;
     }
   });
+
+  it('keeps the default adapter of a platform that a partial adapters map does not name', async () => {
+    const env = await sessionEnv(createSqliteD1());
+    const summary = await syncApplicationHistory(env, {
+      platforms: ['jobkorea'],
+      adapters: { wanted: async () => [] },
+    });
+
+    // The default JobKorea adapter answers before any browser work that KV holds no session.
+    assert.equal(summary.platforms.jobkorea.ok, false);
+    assert.equal(summary.platforms.jobkorea.code, 'SESSION_MISSING');
+  });
 });

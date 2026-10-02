@@ -2,6 +2,7 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { handleApplicationHistorySync } from '../applications/history-sync-operation.js';
+import { fetchJobKoreaHistoryAfterLogin } from '../applications/jobkorea-history-login.js';
 
 const post = (body) =>
   new Request('https://mcp.internal/api/applications/sync', {
@@ -47,6 +48,13 @@ describe('handleApplicationHistorySync', () => {
     const invalid = new Request('https://mcp.internal/x', { method: 'POST', body: '{nope' });
     assert.equal((await handleApplicationHistorySync({}, invalid, sync)).status, 400);
     assert.equal(calls.length, 0);
+  });
+
+  it('reads JobKorea through a login in the browser that reads it, and only JobKorea', async () => {
+    const { calls, sync } = stubSync({ ok: true, status: 'success', platforms: {} });
+    await handleApplicationHistorySync({}, post(), sync);
+    assert.equal(calls[0].adapters.jobkorea, fetchJobKoreaHistoryAfterLogin);
+    assert.deepEqual(Object.keys(calls[0].adapters), ['jobkorea']);
   });
 
   it('answers 200 for a partial run and 502 only when every platform failed', async () => {
