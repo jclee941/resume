@@ -44,12 +44,13 @@ describe('ProfileSyncHandler', () => {
 
     assert.equal(response.status, 200);
     assert.equal(body.success, true);
-    assert.deepEqual(body.platforms, ['wanted', 'jobkorea']);
+    assert.deepEqual(body.platforms, ['wanted', 'jobkorea', 'remember']);
     assert.deepEqual(
       handler.syncPlatform.mock.calls.map((call) => [call.arguments[1], call.arguments[3]]),
       [
         ['wanted', { dryRun: true, targetResumeId: 'W-100' }],
         ['jobkorea', { dryRun: true, targetResumeId: 'W-100' }],
+        ['remember', { dryRun: true, targetResumeId: 'W-100' }],
       ]
     );
     const update = db.statements.find((s) => s.sql.startsWith('UPDATE profile_syncs'));

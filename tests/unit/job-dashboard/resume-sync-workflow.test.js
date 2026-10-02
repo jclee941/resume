@@ -70,7 +70,7 @@ describe('ResumeSyncWorkflow resume identifiers', () => {
     const result = await run(env, { dryRun: true, source: 'cron' });
 
     expect(env.binds[0]).toEqual(['master']);
-    expect(result.platforms).toEqual(['wanted', 'jobkorea']);
+    expect(result.platforms).toEqual(['wanted', 'jobkorea', 'remember']);
     expect(result.results.wanted).toMatchObject({ success: true, dryRun: true });
     expect(result.results.jobkorea.error).toMatch('auth:jobkorea');
     expect(global.fetch.mock.calls[0][0]).toBe(
