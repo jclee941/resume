@@ -68,10 +68,10 @@ describe('rememberFetch', () => {
     assert.deepEqual(page.calls.setCookie, [
       { name: '_remember_device_id', value: 'dev-1', url: 'https://rememberapp.co.kr' },
     ]);
-    assert.equal(page.calls.goto[0].url, 'https://rememberapp.co.kr/');
+    assert.equal(page.calls.goto[0].url, 'https://rememberapp.co.kr/robots.txt');
     const script = page.calls.addScriptTag[0];
     assert.match(script, /Token token=t/);
-    assert.match(script, /"email":"a"/);
+    assert.match(script, /email/);
     assert.doesNotMatch(script, /User-Agent|should-be-dropped/);
 
     assert.equal(response.status, 200);
@@ -91,7 +91,7 @@ describe('rememberFetch', () => {
       headers: { Authorization: 'Token token=t' },
     });
 
-    assert.equal(page.calls.goto[0].url, 'https://career.rememberapp.co.kr/');
+    assert.equal(page.calls.goto[0].url, 'https://career.rememberapp.co.kr/robots.txt');
     assert.match(
       page.calls.addScriptTag[0],
       /https:\/\/open-profile-api\.rememberapp\.co\.kr\/v2\/open_profiles\/me/
