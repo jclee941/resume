@@ -7,6 +7,11 @@ function fakePage({ status = 200, body = '{"code":"ok"}', cookies = [] } = {}) {
   const calls = { setCookie: [], goto: [], evaluate: [], closed: false };
   return {
     calls,
+    async setRequestInterception() {},
+    on() {},
+    mainFrame() {
+      return null;
+    },
     async setCookie(...items) {
       calls.setCookie.push(...items);
     },
