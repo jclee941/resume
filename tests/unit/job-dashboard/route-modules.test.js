@@ -82,11 +82,11 @@ describe('job-dashboard route modules', () => {
         count: 14,
         patterns: [
           '/api/automation/search',
-          '/api/automation/apply',
           '/api/automation/report',
           '/api/automation/resume',
           '/api/auto-apply/status',
           '/api/auto-apply/run',
+          '/api/auto-apply/start',
           '/api/auto-apply/config',
           '/api/automation/profile-sync',
           '/api/automation/profile-sync/history',

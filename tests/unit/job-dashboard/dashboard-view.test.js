@@ -78,11 +78,11 @@ describe('job dashboard view', () => {
   test('apiFetch keeps API calls under the /job prefix and sends CSRF on writes', async () => {
     const underJob = loadCore('/job/');
     await underJob.apiFetch('/api/stats');
-    await underJob.apiFetch('/api/automation/apply', { method: 'POST', body: { dryRun: true } });
+    await underJob.apiFetch('/api/auto-apply/start', { method: 'POST', body: { dryRun: true } });
 
     expect(underJob.calls.map(({ url }) => url)).toEqual([
       '/job/api/stats',
-      '/job/api/automation/apply',
+      '/job/api/auto-apply/start',
     ]);
     expect(underJob.calls[1].init.headers.get('X-CSRF-Token')).toBe('abc123');
 

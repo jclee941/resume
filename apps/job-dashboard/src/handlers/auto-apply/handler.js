@@ -3,11 +3,13 @@ import { jsonResponse } from '../../middleware/cors.js';
 import { runAutoApply } from './run-handler.js';
 import { getAutoApplyStatus } from './status-handler.js';
 import { configureAutoApply } from './config-handler.js';
+import { startAutoApply } from './start-handler.js';
 
 /**
  * Every auto-apply entry point receives the same Worker env.
  * @typedef {import('./run-handler.js').AutoApplyRunEnv
  *   & Parameters<typeof getAutoApplyStatus>[0]
+ *   & import('./start-handler.js').AutoApplyStartHandlerEnv
  *   & { JOB_DB?: import('./config-handler.js').ConfigDb }} AutoApplyHandlerEnv
  */
 
@@ -37,6 +39,14 @@ export class AutoApplyHandler {
    */
   async run(request) {
     return runAutoApply({ request, env: this.env, clients: this.clients });
+  }
+
+  /**
+   * @param {Request} request
+   * @returns {Promise<Response>}
+   */
+  async start(request) {
+    return startAutoApply({ request, env: this.env });
   }
 
   /**

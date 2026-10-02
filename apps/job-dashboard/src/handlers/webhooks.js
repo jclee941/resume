@@ -1,6 +1,5 @@
 import { JobSearchHandler } from './job-search-handler.js';
 import { ResumeSyncHandler } from './resume-sync-handler.js';
-import { AutoApplyWebhookHandler } from './auto-apply-webhook-handler.js';
 import { ReportHandler } from './report-handler.js';
 import { ProfileSyncHandler } from './profile-sync-handler.js';
 import { TestHandler } from './test-handler.js';
@@ -27,7 +26,7 @@ import { TelegramWebhookHandler } from './telegram-webhook-handler.js';
  * } & import('../services/notifications.js').NotificationEnv &
  *   ConstructorParameters<typeof ProfileSyncHandler>[0]} WebhookEnv
  *
- * @typedef {import('./auto-apply-webhook-handler.js').AutoApplyAuth} WebhookAuth
+ * @typedef {{ getCookies(platform: string): Promise<string | null> }} WebhookAuth
  */
 
 export class WebhookHandler {
@@ -41,7 +40,6 @@ export class WebhookHandler {
 
     this.jobSearch = new JobSearchHandler(env, auth);
     this.resumeSync = new ResumeSyncHandler(env, auth);
-    this.autoApply = new AutoApplyWebhookHandler(env, auth);
     this.report = new ReportHandler(env, auth);
     this.profileSync = new ProfileSyncHandler(env, auth);
     this.test = new TestHandler(env, auth);
@@ -83,14 +81,6 @@ export class WebhookHandler {
    */
   triggerResumeSync(request) {
     return this.resumeSync.triggerResumeSync(request);
-  }
-
-  /**
-   * @param {Request} request
-   * @returns {Promise<Response>}
-   */
-  triggerAutoApply(request) {
-    return this.autoApply.triggerAutoApply(request);
   }
 
   /**

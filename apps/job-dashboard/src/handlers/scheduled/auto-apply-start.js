@@ -4,6 +4,7 @@ import { getConfig } from '../auto-apply/db-helpers.js';
  * @typedef {import('../auto-apply/db-helpers.js').DbEnv & {
  *   AUTO_APPLY_CRON_ENABLED?: string;
  * }} AutoApplyStartEnv
+ * @typedef {import('../auto-apply/db-helpers.js').AutoApplyConfig} AutoApplyConfig
  * @typedef {{ binding: 'APPLICATION_WORKFLOW'; params: Record<string, unknown> }} AutoApplyStart
  */
 
@@ -14,6 +15,35 @@ import { getConfig } from '../auto-apply/db-helpers.js';
  * discovery step and Saramin is intentionally disabled.
  */
 const AUTO_APPLY_CRON_PLATFORMS = ['wanted', 'remember'];
+
+/**
+ * @param {AutoApplyStartEnv} env
+ * @returns {boolean}
+ */
+export function isCronSwitchOff(env) {
+  return String(env.AUTO_APPLY_CRON_ENABLED ?? '').toLowerCase() === 'false';
+}
+
+/**
+ * ApplicationWorkflow params of a live auto-apply run for the given D1 config.
+ * @param {AutoApplyConfig} config
+ * @param {Record<string, unknown>} [overrides]
+ * @returns {Record<string, unknown>}
+ */
+export function buildAutoApplyParams(config, overrides = {}) {
+  return {
+    triggerType: 'cron-auto-apply',
+    source: 'cron',
+    platforms: AUTO_APPLY_CRON_PLATFORMS,
+    searchCriteria: { keywords: config.keywords, keyword: config.keywords[0] },
+    minMatchScore: config.minMatchScore,
+    maxDailyApplications: config.maxDailyApplications,
+    dryRun: false,
+    autoApprove: true,
+    autoApproveThreshold: config.minMatchScore,
+    ...overrides,
+  };
+}
 
 /**
  * @param {string} reason
@@ -35,7 +65,7 @@ function logSkipped(reason, detail = {}) {
  * @returns {Promise<AutoApplyStart[]>}
  */
 export async function planAutoApplyStart(env) {
-  if (String(env.AUTO_APPLY_CRON_ENABLED ?? '').toLowerCase() === 'false') {
+  if (isCronSwitchOff(env)) {
     logSkipped('AUTO_APPLY_CRON_ENABLED is false');
     return [];
   }
@@ -45,22 +75,7 @@ export async function planAutoApplyStart(env) {
       logSkipped('D1 config auto_apply_enabled is false');
       return [];
     }
-    return [
-      {
-        binding: 'APPLICATION_WORKFLOW',
-        params: {
-          triggerType: 'cron-auto-apply',
-          source: 'cron',
-          platforms: AUTO_APPLY_CRON_PLATFORMS,
-          searchCriteria: { keywords: config.keywords, keyword: config.keywords[0] },
-          minMatchScore: config.minMatchScore,
-          maxDailyApplications: config.maxDailyApplications,
-          dryRun: false,
-          autoApprove: true,
-          autoApproveThreshold: config.minMatchScore,
-        },
-      },
-    ];
+    return [{ binding: 'APPLICATION_WORKFLOW', params: buildAutoApplyParams(config) }];
   } catch (error) {
     logSkipped('D1 config read failed', {
       error: error instanceof Error ? error.message : String(error),
