@@ -49,7 +49,7 @@ authorization, so clients ask before running them.
 | `update_application_status` | `id`, `status`, optional `note`; validated by the status enum                                                                                                                                                        |
 | `start_resume_sync`         | Start the resume sync workflow; `dryRun` defaults to **true**                                                                                                                                                        |
 | `start_job_crawl`           | Start the job crawling workflow; `dryRun` defaults to **true**                                                                                                                                                       |
-| `sync_application_history`  | `POST /api/applications/sync`; optional `platforms` (`wanted`, `jobkorea`). Pulls the real application history into D1 by (source, job_id), never deletes, returns counts and per-platform errors only               |
+| `sync_application_history`  | `POST /api/applications/sync`; optional `platforms` (`wanted`, `jobkorea`, `remember`). Pulls the real application history into D1 by (source, job_id), never deletes, returns counts and per-platform errors only   |
 | `refresh_platform_session`  | `platform`: `wanted` or `jobkorea`                                                                                                                                                                                   |
 
 Every result carries `structuredContent` plus the same JSON as a text block. Failures

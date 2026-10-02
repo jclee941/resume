@@ -343,21 +343,25 @@ curl -X DELETE https://resume.jclee.me/job/api/applications/abc123 \
 ### Application history sync
 
 ```bash
-# Pull Wanted and JobKorea application history into D1 (idempotent; state-changing, needs CSRF)
+# Pull Wanted, JobKorea and Remember application history into D1 (idempotent; state-changing, needs CSRF)
 curl -X POST https://resume.jclee.me/job/api/applications/sync \
   -H "Authorization: Bearer <token>" -H "X-CSRF-Token: <csrf>" -H "Cookie: csrf_token=<csrf>" \
-  -H "Content-Type: application/json" -d '{"platforms": ["wanted", "jobkorea"]}'
+  -H "Content-Type: application/json" -d '{"platforms": ["wanted", "jobkorea", "remember"]}'
 ```
 
 The service lives in `src/services/application-history/`. It maps the owner's real applications
 onto `applications` rows keyed by (source, job_id) so the auto-apply approval gate
 (`SELECT id FROM applications WHERE job_id = ? AND source = ?`) sees them:
-`wanted-<jobId>` (source `wanted`) and `jobkorea-<posting number>` (source `jobkorea`).
+`wanted-<jobId>` (source `wanted`), `jobkorea-<posting number>` (source `jobkorea`) and
+`remember-<posting id>` (source `remember`).
 
 - **Wanted**: `GET /api/v4/applications?status={complete|pass|hire|reject}&limit=50&offset=N` with the
   KV session cookie, paged by `links.next`. The `status` filter is mandatory (422 without it).
 - **JobKorea**: the KV cookies are replayed in Browser Rendering on `/User/ApplyMng` (입사지원 현황)
   and the rendered HTML is parsed. The page is only read; nothing is clicked.
+- **Remember**: `GET /open_profiles/me/job_postings/application_histories?page=N&per=50` on the
+  career API with the account token, through Browser Rendering REST. A cancelled application is
+  stored as `withdrawn`.
 - Existing rows matching (source, job_id) only have their status advanced; new rows are inserted
   as `history-<job_id>`; rows are never deleted. Each run adds a `sync_logs` row of type
   `application-history`.
@@ -402,14 +406,14 @@ curl https://resume.jclee.me/job/api/workflows/abc123/status \
 | ------------ | :----: | :---------: | :--------: | -------------------------------------------------- |
 | **Wanted**   |   ✅   |     ✅      |     ✅     | Full API support via Chaos API                     |
 | **LinkedIn** |   ✅   |     ⚠️      |     ❌     | Search works; Apply requires Puppeteer (see below) |
-| **Remember** |   ✅   |     ⚠️      |     ❌     | Search works; Apply requires Puppeteer (see below) |
+| **Remember** |   ✅   |     ✅      |     ✅     | API through Browser Rendering REST                 |
 | **JobKorea** |   ❌   |     ❌      |     ❌     | Session renewal and application-history read       |
 | **Saramin**  |   ❌   |     ❌      |     ❌     | Not supported                                      |
 
 ### ⚠️ Important Limitations
 
-**LinkedIn and Remember Auto-Apply**: These platforms require browser automation
-(Puppeteer) for job applications, which is not available in Cloudflare Workers.
+**LinkedIn Auto-Apply**: LinkedIn requires browser automation (Puppeteer) for job
+applications, which is not available in Cloudflare Workers.
 The dashboard workflow will return an error with `requiresBrowserAutomation: true` if
 you attempt to apply to these platforms.
 
