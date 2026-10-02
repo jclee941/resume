@@ -1,6 +1,7 @@
 import { describe, it, mock } from 'node:test';
 import assert from 'node:assert/strict';
 
+import { createSqliteD1 } from '../../../services/application-history/__tests__/history-test-kit.js';
 import { isCompanyAlreadyApplied } from '../duplicate-company.js';
 import { runAutoApply } from '../run-handler.js';
 
@@ -180,5 +181,18 @@ describe('auto-apply duplicate company handling', () => {
     };
 
     assert.equal(await isCompanyAlreadyApplied({ JOB_DB: db }, 'Preview Enterprise'), false);
+  });
+
+  it('blocks a company for its real applications but not for a saved posting', async () => {
+    const db = createSqliteD1();
+    const insert = db.sqlite.prepare(
+      `INSERT INTO applications (id, job_id, source, position, company, status, created_at, updated_at)
+       VALUES (?, ?, 'wanted', 'Role', ?, ?, '2026-10-01', '2026-10-01')`
+    );
+    insert.run('1', 'wanted-1', 'Saved Co', 'saved');
+    insert.run('2', 'wanted-2', 'Rejected Co', 'rejected');
+
+    assert.equal(await isCompanyAlreadyApplied({ JOB_DB: db }, 'Saved Co'), false);
+    assert.equal(await isCompanyAlreadyApplied({ JOB_DB: db }, 'Rejected Co'), true);
   });
 });
