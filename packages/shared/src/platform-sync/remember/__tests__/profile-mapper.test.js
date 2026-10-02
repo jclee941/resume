@@ -24,7 +24,7 @@ const ssot = {
     { company: '비', period: '2024.03 ~ 2025.02', role: 'SRE', description: '모니터링' },
   ],
   education: {
-    school: '한양사이버대학교',
+    school: '예시사이버대학교',
     major: '컴퓨터공학',
     startDate: '2024.03',
     endDate: '2027.02',
@@ -61,7 +61,7 @@ const current = () => ({
   academic_histories_attributes: [
     {
       id: 2,
-      school: '한양사이버대학교',
+      school: '예시사이버대학교',
       degree: '학사',
       major: '컴퓨터공학',
       joined_date: '2024-01-01',
@@ -99,7 +99,7 @@ describe('mapToRememberProfile', () => {
     assert.deepEqual(academic, [
       {
         id: 2,
-        school: '한양사이버대학교',
+        school: '예시사이버대학교',
         major: '컴퓨터공학',
         joined_date: '2024-03-01',
         left_date: '2027-02-01',
