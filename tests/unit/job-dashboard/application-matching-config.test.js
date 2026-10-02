@@ -42,6 +42,29 @@ describe('Application Workflow matching config', () => {
 
     expect(score).toBeGreaterThanOrEqual(60);
   });
+
+  test('counts the Korean names of the skills in a Korean posting', async () => {
+    const config = await getMatchingConfig(createContext([]));
+    const score = calculateMatchScore(
+      {
+        position: 'DevOps 엔지니어 (5년 이상)',
+        description: '클라우드 인프라 자동화, 리눅스 서버 운영, Terraform, 보안 점검',
+        company: 'Example',
+        location: '서울',
+      },
+      config
+    );
+
+    expect(score).toBeGreaterThanOrEqual(60);
+  });
+
+  test('counts a skill listed under two names once', () => {
+    const job = { position: '보안 엔지니어', description: '', company: 'Example' };
+
+    expect(calculateMatchScore(job, { skills: ['보안', 'security'] })).toBe(
+      calculateMatchScore(job, { skills: ['보안'] })
+    );
+  });
 });
 
 function createContext(rows) {
