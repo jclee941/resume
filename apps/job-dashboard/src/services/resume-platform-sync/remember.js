@@ -37,19 +37,37 @@ export async function syncRememberFromSsot(env, ssot, { dryRun, fetchImpl }) {
       if (dryRun || Object.keys(openProfile).length === 0) {
         return { platform: 'remember', success: true, dryRun, changes };
       }
-      await rememberRequest(
-        token,
-        `${REMEMBER_PROFILE_API_URL}/v2/open_profiles/${current.id}?version=2`,
-        {
+      const url = `${REMEMBER_PROFILE_API_URL}/v2/open_profiles/${current.id}?version=2`;
+      for (const body of updateRequests(openProfile)) {
+        await rememberRequest(token, url, {
           method: 'PUT',
-          body: { open_profile: openProfile },
+          body: { open_profile: body },
           fetchImpl,
-        }
-      );
+        });
+      }
       return { platform: 'remember', success: true, dryRun: false, changes };
     },
     { fetchImpl }
   );
+}
+
+/**
+ * Remember refuses to delete the main career ("해당 정보를 삭제할 수 없습니다"), so career removals
+ * go in a second request, after the first one has moved the main flag.
+ * @param {ReturnType<typeof mapToRememberProfile>} openProfile
+ * @returns {Array<ReturnType<typeof mapToRememberProfile>>}
+ */
+function updateRequests(openProfile) {
+  const careers = openProfile.careers_attributes ?? [];
+  const removals = careers.filter((career) => career._destroy);
+  if (removals.length === 0) return [openProfile];
+  /** @type {ReturnType<typeof mapToRememberProfile>} */
+  const first = {
+    ...openProfile,
+    careers_attributes: careers.filter((career) => !career._destroy),
+  };
+  if (first.careers_attributes?.length === 0) delete first.careers_attributes;
+  return [...(Object.keys(first).length > 0 ? [first] : []), { careers_attributes: removals }];
 }
 
 /**

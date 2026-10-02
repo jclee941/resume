@@ -78,19 +78,39 @@ const current = () => ({
 });
 
 describe('mapToRememberProfile', () => {
-  it('adds SSoT careers as non-main entries and leaves the owner-added career alone', () => {
+  it('adds SSoT careers, removes the one the SSoT does not list and moves main to the newest', () => {
     const { careers_attributes: careers } = mapToRememberProfile(ssot, current());
 
     assert.deepEqual(
-      careers?.map((career) => [career.id, career.company, career.main, career.joined_date]),
+      careers?.map((career) => [career.id, career.company, career.main, career._destroy]),
       [
-        [undefined, '(주)에이', false, '2025-03-01'],
-        [undefined, '비', false, '2024-03-01'],
+        [undefined, '(주)에이', true, undefined],
+        [undefined, '비', false, undefined],
+        [1, undefined, undefined, true],
       ]
     );
+    assert.equal(careers?.[0].joined_date, '2025-03-01');
     assert.equal(careers?.[0].left_date, '2026-02-01');
     assert.equal(careers?.[0].open_description, '운영 자동화');
     assert.match(String(careers?.[0].description), /\[P1\]\n배포 파이프라인\n- 배포 단계 자동화/);
+  });
+
+  it('leaves the main flag on an SSoT career the owner chose', () => {
+    const owned = current();
+    owned.careers_attributes = [
+      { id: 1, company: '비', joined_date: '2024-03-01', left_date: '2025-02-01', main: true },
+    ];
+
+    const careers = mapToRememberProfile(ssot, owned).careers_attributes ?? [];
+
+    assert.equal(
+      careers.some((career) => career._destroy),
+      false
+    );
+    assert.deepEqual(
+      careers.filter((career) => career.main),
+      []
+    );
   });
 
   it('updates the matched school in place with the expected graduation', () => {
@@ -146,10 +166,9 @@ describe('mapToRememberProfile', () => {
       ...current(),
       introduction: update.introduction,
       headline: update.headline,
-      careers_attributes: [
-        ...current().careers_attributes,
-        ...(update.careers_attributes ?? []).map((career, i) => ({ ...career, id: 10 + i })),
-      ],
+      careers_attributes: (update.careers_attributes ?? [])
+        .filter((career) => !career._destroy)
+        .map((career, i) => ({ ...career, id: 10 + i })),
       academic_histories_attributes: [
         {
           ...current().academic_histories_attributes[0],

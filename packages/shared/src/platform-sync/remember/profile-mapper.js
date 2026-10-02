@@ -15,6 +15,7 @@ const DESCRIPTION_LIMIT = 5000;
  *   description?: string | null;
  *   open_description?: string | null;
  *   visibility?: string;
+ *   _destroy?: boolean;
  * }} RememberCareer
  * @typedef {{
  *   id?: number;
@@ -53,8 +54,8 @@ const DESCRIPTION_LIMIT = 5000;
 /**
  * The PUT /v2/open_profiles/{id} body that brings the open profile in line with the SSoT. Only
  * sections that differ are included, so an up-to-date profile maps to an empty object.
- * Careers and the school are matched by name and updated in place; careers the SSoT does not
- * list (for example one the owner added on Remember) are left untouched, as is the main flag.
+ * Careers and the school are matched by name and updated in place. Careers the SSoT does not
+ * list are removed; when that removes the main career, the newest SSoT career becomes main.
  * @param {RememberSsot} ssot
  * @param {RememberOpenProfile & { id?: number }} current
  * @returns {RememberOpenProfile}
@@ -99,8 +100,8 @@ export function mapToRememberProfile(ssot, current) {
 function careerChanges(careers, current) {
   /** @type {RememberCareer[]} */
   const changes = [];
-  for (const career of careers) {
-    if (!career.company) continue;
+  const listed = careers.filter((career) => career.company);
+  for (const career of listed) {
     const period = parsePeriod(career.period);
     const desired = {
       company: career.company,
@@ -114,6 +115,17 @@ function careerChanges(careers, current) {
     const existing = current.find((entry) => sameName(entry.company, career.company));
     if (!existing) changes.push({ ...desired, main: false, visibility: 'public' });
     else if (differs(existing, desired)) changes.push({ id: existing.id, ...desired });
+  }
+  const stale = current.filter(
+    (entry) => !listed.some((career) => sameName(entry.company, career.company))
+  );
+  for (const entry of stale) changes.push({ id: entry.id, _destroy: true });
+  if (listed.length > 0 && !current.some((entry) => entry.main && !stale.includes(entry))) {
+    const newest = listed[0];
+    const change = changes.find((entry) => sameName(entry.company, newest.company));
+    const existing = current.find((entry) => sameName(entry.company, newest.company));
+    if (change) change.main = true;
+    else if (existing) changes.push({ id: existing.id, main: true });
   }
   return changes;
 }

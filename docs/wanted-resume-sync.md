@@ -78,6 +78,9 @@ curl -H 'Authorization: Bearer <admin-token>' \
   verification; the step then reports the session error and writes nothing.
 - Remember is synced only when a run names it (`"platforms":["remember"]`): its
   WAF answers 403 to Cloudflare egress, so the Worker run fails until that changes.
+  The SSoT owns the Remember careers: careers it does not list are removed, in a
+  second request after the main flag has moved to the newest SSoT career (Remember
+  refuses to delete the main career).
 - SK Careers keeps one resume per account with personal, education, career,
   certificate and attachment sections only. The sync fills military service,
   education, the five most recent careers and the five most recent active
