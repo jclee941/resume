@@ -106,7 +106,8 @@ function withPendingRequests(error, pending) {
 
 /**
  * @param {Parameters<typeof readPlatformSession>[0] & Parameters<typeof defaultWithBrowserSession>[0]} env
- * @param {{ withBrowserSession?: typeof defaultWithBrowserSession; settleMs?: number; deadlineMs?: number; clock?: () => number }} [options]
+ * @param {{ withBrowserSession?: typeof defaultWithBrowserSession; settleMs?: number; deadlineMs?: number; clock?: () => number; session?: string }} [options]
+ *   `session` (cookie string) is replayed instead of the stored `auth:jobkorea`
  * @returns {Promise<import('./history-types.js').HistoryRecord[]>}
  */
 export async function fetchJobKoreaHistory(
@@ -116,6 +117,7 @@ export async function fetchJobKoreaHistory(
     settleMs = SETTLE_TIMEOUT_MS,
     deadlineMs = ADAPTER_DEADLINE_MS,
     clock = Date.now,
+    session,
   } = {}
 ) {
   const deadlineAt = clock() + deadlineMs;
@@ -128,7 +130,7 @@ export async function fetchJobKoreaHistory(
   /** @type {{ pending(): string[] }} */
   let requests = { pending: () => [] };
   const work = (async () => {
-    const cookieString = await readPlatformSession(env, 'jobkorea');
+    const cookieString = session ?? (await readPlatformSession(env, 'jobkorea'));
     if (!cookieString) {
       throw new HistorySyncError('SESSION_MISSING', 'No JobKorea session in KV (auth:jobkorea)');
     }
