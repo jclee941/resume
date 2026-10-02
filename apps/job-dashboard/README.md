@@ -360,8 +360,9 @@ onto `applications` rows keyed by (source, job_id) so the auto-apply approval ga
 - **JobKorea**: the KV cookies are replayed in Browser Rendering on `/User/ApplyMng` (입사지원 현황)
   and the rendered HTML is parsed. The page is only read; nothing is clicked.
 - **Remember**: `GET /open_profiles/me/job_postings/application_histories?page=N&per=50` on the
-  career API with the account token, through Browser Rendering REST. A cancelled application is
-  stored as `withdrawn`.
+  career API with the account token, through Browser Rendering REST. An entry that carries
+  `canceled_at` is stored as `withdrawn`. Remember can also drop a cancelled application from the
+  list; rows are never deleted, so that row keeps its last stored status.
 - Existing rows matching (source, job_id) only have their status advanced; new rows are inserted
   as `history-<job_id>`; rows are never deleted. Each run adds a `sync_logs` row of type
   `application-history`.
@@ -420,9 +421,8 @@ you attempt to apply to these platforms.
 There is no local fallback runner; these platforms stay unsupported for
 auto-apply.
 
-**Job Details Cache**: The `ApplicationWorkflow` can fetch job details from
-Wanted API directly, but LinkedIn/Remember require cached data from previous
-crawls. Ensure jobs are crawled before applying.
+**Job details**: `ApplicationWorkflow` reads Wanted posting details from the Wanted API, and
+Remember search results already carry the posting text, so neither needs an earlier crawl.
 
 ### Webhooks (9 endpoints)
 
