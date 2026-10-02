@@ -89,8 +89,11 @@ async function renderFetch(browser, url, init) {
 }
 
 /**
- * Runs inside the Browser Rendering page: a same-origin fetch that returns the parts a Response
- * is rebuilt from. Set-Cookie is not readable here, so the caller reads it from the cookie jar.
+ * Runs inside the Browser Rendering page. `credentials: 'same-origin'` sends cookies for the
+ * same-origin login but none for the cross-origin API calls, which authenticate with the
+ * Authorization header: Remember's APIs allow the career origin but do not set
+ * Access-Control-Allow-Credentials, so a credentialed cross-origin read would be blocked.
+ * Set-Cookie is not readable here, so the caller reads it from the cookie jar.
  * @param {string} url
  * @param {{ method: string; headers: Record<string, string>; body: string | null }} init
  * @returns {Promise<{ status: number; body: string; headers: Array<[string, string]> }>}
@@ -100,7 +103,7 @@ function pageFetch(url, init) {
     method: init.method,
     headers: init.headers,
     body: init.body,
-    credentials: 'include',
+    credentials: 'same-origin',
   }).then(async (response) => ({
     status: response.status,
     body: await response.text(),
