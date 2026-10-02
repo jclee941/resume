@@ -40,6 +40,7 @@
     "./job-url-canonicalization": "./src/job-url-canonicalization.js",
     "./platform-sync/wanted": "./src/platform-sync/wanted/index.js",
     "./platform-sync/jobkorea": "./src/platform-sync/jobkorea/index.js",
+    "./platform-sync/remember": "./src/platform-sync/remember/index.js",
     "./platform-sync/*": "./src/platform-sync/*.js"
   },
   "dependencies": {
