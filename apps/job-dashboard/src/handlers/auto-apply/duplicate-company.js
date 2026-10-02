@@ -5,7 +5,7 @@
 
 /**
  * @param {{ JOB_DB?: D1Database } | null | undefined} env
- * @param {string | null | undefined} company
+ * @param {unknown} company
  * @returns {Promise<boolean>}
  */
 export async function isCompanyAlreadyApplied(env, company) {
@@ -68,7 +68,7 @@ async function hasBlockingLegacyApplication(db, normalizedCompany) {
  * @param {unknown} company
  * @returns {string}
  */
-function normalizeCompany(company) {
+export function normalizeCompany(company) {
   return typeof company === 'string' ? company.trim().replace(/\s+/g, ' ') : '';
 }
 

@@ -49,18 +49,31 @@ function createApprovalContext({
   failCreateOnce = [],
   failNotifyOnce = [],
   existingRequests = [],
+  appliedCompanies = [],
 } = {}) {
   const created = [];
   const notifications = [];
+  const updates = [];
   const pendingFailures = { create: new Set(failCreateOnce), notify: new Set(failNotifyOnce) };
   return {
     created,
     notifications,
+    updates,
     env: {
       JOB_DB: {
         prepare: (query) => ({
           bind: (...values) => ({
+            run: async () => {
+              updates.push({ query, values });
+              return { meta: { changes: 1 } };
+            },
             first: async () => {
+              if (/lower\(trim\(company\)\)/.test(query)) {
+                const company = String(values[0]).toLowerCase();
+                return appliedCompanies.some((name) => name.toLowerCase() === company)
+                  ? { id: 'application-1' }
+                  : null;
+              }
               if (!/FROM approval_requests/.test(query)) return null;
               const [jobId, ownRequestId] = values;
               return (
@@ -95,7 +108,13 @@ const newWorkflow = () => ({
   steps: [],
 });
 
-const jobOf = (id, matchScore) => ({ id, source: 'wanted', matchScore, position: 'SRE' });
+const jobOf = (id, matchScore, company) => ({
+  id,
+  source: 'wanted',
+  matchScore,
+  position: 'SRE',
+  ...(company ? { company } : {}),
+});
 
 test('approval gates never call a step API inside a step.do callback', async () => {
   const step = createStepMock();
@@ -262,6 +281,93 @@ test('a retried gate is not skipped by its own earlier request', async () => {
 
   assert.equal(approvalResults[0].status, 'pending');
   assert.equal(ctx.notifications.length, 1);
+});
+
+test('the daily auto-approved run decides a job an earlier run left pending', async () => {
+  const step = createStepMock();
+  const ctx = createApprovalContext({
+    existingRequests: [
+      { id: 'approval-wf-0-a', job_id: 'a', workflow_id: 'wf-0', status: 'pending' },
+    ],
+  });
+  const workflow = newWorkflow();
+
+  const { approvedJobs, approvalResults } = await processApprovalGates(
+    ctx,
+    step,
+    workflow,
+    [jobOf('a', 62)],
+    true,
+    60
+  );
+
+  assert.deepEqual(
+    approvalResults.map((result) => [result.status, result.requestId]),
+    [['auto-approved', 'approval-wf-1-a']]
+  );
+  assert.deepEqual(ctx.created, [{ jobId: 'a', status: 'auto-approved' }]);
+  assert.deepEqual(
+    ctx.updates.map((update) => [/SET status = 'superseded'/.test(update.query), update.values]),
+    [[true, ['a', 'approval-wf-1-a']]]
+  );
+  assert.deepEqual(
+    approvedJobs.map((job) => job.id),
+    ['a']
+  );
+  assert.equal(ctx.notifications.length, 0);
+  assert.equal(
+    step.calls.some((call) => call.api === 'sleep'),
+    false
+  );
+});
+
+test('a job at a company already applied to is skipped without an approval request', async () => {
+  const step = createStepMock();
+  const ctx = createApprovalContext({ appliedCompanies: ['Acme'] });
+
+  const { approvedJobs, approvalResults } = await processApprovalGates(
+    ctx,
+    step,
+    newWorkflow(),
+    [jobOf('a', 80, ' Acme ')],
+    true,
+    60
+  );
+
+  assert.deepEqual(
+    approvalResults.map((result) => result.status),
+    ['already-applied']
+  );
+  assert.deepEqual(ctx.created, []);
+  assert.deepEqual(approvedJobs, []);
+});
+
+test('only the first of two postings from one company is approved in a run', async () => {
+  const step = createStepMock();
+  const ctx = createApprovalContext();
+  const jobs = [jobOf('a', 80, 'Acme'), jobOf('b', 70, 'acme'), jobOf('c', 65, 'Other')];
+
+  const { approvedJobs, approvalResults } = await processApprovalGates(
+    ctx,
+    step,
+    newWorkflow(),
+    jobs,
+    true,
+    60
+  );
+
+  assert.deepEqual(
+    approvalResults.map((result) => result.status),
+    ['auto-approved', 'already-applied', 'auto-approved']
+  );
+  assert.deepEqual(
+    approvedJobs.map((job) => job.id),
+    ['a', 'c']
+  );
+  assert.deepEqual(
+    ctx.created.map((request) => request.jobId),
+    ['a', 'c']
+  );
 });
 
 test('searchWorkflowJobs pauses between platforms outside the search steps', async () => {

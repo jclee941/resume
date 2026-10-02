@@ -23,11 +23,12 @@ function logSkipped(reason, detail = {}) {
 }
 
 /**
- * Plan the daily discovery run for the 21:00 UTC cron: a dry-run
- * ApplicationWorkflow that searches, scores, and queues approval requests.
- * It never auto-approves and never submits; a real submission still needs the
- * human-approved gate. Returns no start when the switch is off or D1 config is
- * unreadable, so the other starts in the plan are never blocked.
+ * Plan the daily auto-apply run for the 21:00 UTC cron: a live ApplicationWorkflow
+ * that searches, scores, and submits every posting at or above the D1
+ * min_match_score without waiting for approval (owner decision, 2026-10-02), up to
+ * max_daily_applications. Postings or companies already applied to and jobs the
+ * owner rejected are skipped by the approval gate. Returns no start when the switch
+ * is off or D1 config is unreadable, so the other starts in the plan are never blocked.
  * @param {AutoApplyStartEnv} env
  * @returns {Promise<AutoApplyStart[]>}
  */
@@ -52,8 +53,9 @@ export async function planAutoApplyStart(env) {
           searchCriteria: { keywords: config.keywords, keyword: config.keywords[0] },
           minMatchScore: config.minMatchScore,
           maxDailyApplications: config.maxDailyApplications,
-          dryRun: true,
-          autoApprove: false,
+          dryRun: false,
+          autoApprove: true,
+          autoApproveThreshold: config.minMatchScore,
         },
       },
     ];

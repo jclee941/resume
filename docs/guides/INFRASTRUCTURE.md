@@ -253,7 +253,7 @@ each cron through `apps/job-dashboard/src/handlers/scheduled/`:
 | `0 21 * * *` | 06:00  | Wanted + JobKorea session refresh, then `ResumeSyncWorkflow` (dry-run default) and `CleanupWorkflow` |
 | `0 * * * *`  | hourly | `HealthCheckWorkflow`; Mondays 00:00 UTC (09:00 KST) also `DailyReportWorkflow` (`type: weekly`)     |
 
-The `0 21 * * *` run also starts a dry-run Wanted `ApplicationWorkflow` discovery run (no auto-approve; real submissions stay human-approved) unless D1 `auto_apply_enabled` or `AUTO_APPLY_CRON_ENABLED` is `false`.
+The `0 21 * * *` run also starts the live Wanted `ApplicationWorkflow` auto-apply run (auto-approves and submits every new posting at or above D1 `min_match_score`, up to `max_daily_applications`; postings or companies already applied to and owner-rejected jobs are skipped) unless D1 `auto_apply_enabled` or `AUTO_APPLY_CRON_ENABLED` is `false`.
 
 Every scheduled job is a Cloudflare Workflow (`apps/job-dashboard/src/workflows/`); a
 failed workflow start fails the cron run. D1 Time Travel is the D1 backup. Uptime alerting stays in Grafana

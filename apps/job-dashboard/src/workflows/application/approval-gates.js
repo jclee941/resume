@@ -1,3 +1,7 @@
+import {
+  isCompanyAlreadyApplied,
+  normalizeCompany,
+} from '../../handlers/auto-apply/duplicate-company.js';
 import { attachWorkflowApproval } from './application-submissions.js';
 import { buildApprovalMetadata, withHumanApproval } from './approval-metadata.js';
 
@@ -7,7 +11,8 @@ export { attachServerAtsCapability } from './approval-metadata.js';
  * @typedef {{
  *   prepare(query: string): {
  *     bind(...values: unknown[]): {
- *       first(): Promise<{ id?: unknown } | null>;
+ *       first(): Promise<{ id?: unknown; status?: unknown } | null>;
+ *       run(): Promise<unknown>;
  *     };
  *   };
  * }} ApprovalDb
@@ -66,9 +71,20 @@ export async function processApprovalGates(
 ) {
   const approvedJobs = [];
   const evaluatedResults = [];
+  const approvedCompanies = new Set();
 
   for (const job of scoredJobs) {
     const approvalMetadata = buildApprovalMetadata(job);
+    const company = normalizeCompany(job.company).toLowerCase();
+    if (company && approvedCompanies.has(company)) {
+      evaluatedResults.push({
+        status: 'already-applied',
+        job,
+        reason: 'Company approved earlier in this run',
+        approvalMetadata,
+      });
+      continue;
+    }
     const approvalResult = await step.do(
       `approval-gate-${job.id}`,
       { retries: { limit: 2, delay: '5 seconds' }, timeout: '2 minutes' },
@@ -86,6 +102,7 @@ export async function processApprovalGates(
       );
     }
 
+    if (company && isApprovedResult(approvalResult.status)) approvedCompanies.add(company);
     evaluatedResults.push(approvalResult);
   }
 
@@ -175,9 +192,9 @@ async function evaluateApproval(
   autoApproveThreshold,
   approvalMetadata
 ) {
-  const existing = await ctx.env.JOB_DB.prepare(
-    'SELECT id FROM applications WHERE job_id = ? AND source = ?'
-  )
+  const db = ctx.env.JOB_DB;
+  const existing = await db
+    .prepare('SELECT id FROM applications WHERE job_id = ? AND source = ?')
     .bind(job.id, job.source)
     .first();
 
@@ -185,16 +202,24 @@ async function evaluateApproval(
     return { status: 'already-applied', job, approvalMetadata };
   }
 
-  // Any earlier request for this job (any workflow, any status) means the owner was already
-  // asked, and a human rejection must stick. The gate's own id is excluded so a retried step
-  // that already inserted its request is not mistaken for an earlier one.
-  const earlier = await ctx.env.JOB_DB.prepare(
-    'SELECT id FROM approval_requests WHERE job_id = ? AND id != ? LIMIT 1'
-  )
-    .bind(job.id, `approval-${workflow.id}-${job.id}`)
+  if (await isCompanyAlreadyApplied(ctx.env, job.company)) {
+    return { status: 'already-applied', job, reason: 'Company already applied', approvalMetadata };
+  }
+
+  // An earlier request for this job (any workflow) means the owner was already asked. A
+  // rejection always sticks; an undecided or approved-but-unsent one only stops runs that need
+  // a human, because auto-approval decides for the owner. The gate's own id is excluded so a
+  // retried step that already inserted its request is not mistaken for an earlier one.
+  const ownRequestId = `approval-${workflow.id}-${job.id}`;
+  const autoApproves = autoApprove && job.matchScore >= autoApproveThreshold;
+  const earlier = await db
+    .prepare(
+      "SELECT id, status FROM approval_requests WHERE job_id = ? AND id != ? ORDER BY status = 'rejected' DESC LIMIT 1"
+    )
+    .bind(job.id, ownRequestId)
     .first();
 
-  if (earlier) {
+  if (earlier && (earlier.status === 'rejected' || !autoApproves)) {
     return {
       status: 'already-requested',
       job,
@@ -203,7 +228,7 @@ async function evaluateApproval(
     };
   }
 
-  if (autoApprove && job.matchScore >= autoApproveThreshold) {
+  if (autoApproves) {
     const requestId = await ctx.createApprovalRequest(
       workflow.id,
       job,
@@ -211,6 +236,7 @@ async function evaluateApproval(
       job.matchScore,
       approvalMetadata
     );
+    if (earlier) await supersedePendingRequests(db, job.id, requestId);
     return { status: 'auto-approved', job, requestId, approvalMetadata };
   }
 
@@ -238,6 +264,25 @@ async function evaluateApproval(
 
   await ctx.createApprovalRequest(workflow.id, job, 'rejected', job.matchScore, approvalMetadata);
   return { status: 'rejected', job, reason: 'Match score below threshold', approvalMetadata };
+}
+
+/**
+ * Closes requests an earlier run left waiting on the owner once auto-approval decided the job.
+ * @param {ApprovalDb} db
+ * @param {unknown} jobId
+ * @param {string} requestId
+ * @returns {Promise<void>}
+ */
+async function supersedePendingRequests(db, jobId, requestId) {
+  await db
+    .prepare(
+      `UPDATE approval_requests
+       SET status = 'superseded', reviewed_by = 'auto-apply', reviewed_at = datetime('now'),
+           updated_at = datetime('now')
+       WHERE job_id = ? AND status = 'pending' AND id != ?`
+    )
+    .bind(jobId, requestId)
+    .run();
 }
 
 /**

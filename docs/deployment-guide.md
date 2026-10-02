@@ -336,7 +336,7 @@ Notify job inside `ci.yml`; see
 The worker declares 2 Cron Triggers in `wrangler.jsonc` (`triggers.crons`), routed by
 `apps/job-dashboard/src/handlers/scheduled/cron-router.js`:
 
-- `0 21 * * *`: **Resume Sync + Cleanup** - Refreshes platform sessions, then starts `ResumeSyncWorkflow` (dry-run by default) and `CleanupWorkflow`, plus a dry-run, non-auto-approved Wanted `ApplicationWorkflow` discovery run that is skipped when D1 `auto_apply_enabled` or the Worker variable `AUTO_APPLY_CRON_ENABLED` is `false`.
+- `0 21 * * *`: **Resume Sync + Cleanup** - Refreshes platform sessions, then starts `ResumeSyncWorkflow` (dry-run by default) and `CleanupWorkflow`, plus the live Wanted `ApplicationWorkflow` auto-apply run (auto-approves and submits every new posting at or above D1 `min_match_score`, up to `max_daily_applications`) that is skipped when D1 `auto_apply_enabled` or the Worker variable `AUTO_APPLY_CRON_ENABLED` is `false`.
 - `0 * * * *`: **Health Check + Weekly Report** - Starts `HealthCheckWorkflow` hourly; at 00:00 UTC on Mondays it also starts `DailyReportWorkflow` with `type: weekly`.
 
 ---
