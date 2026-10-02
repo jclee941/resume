@@ -370,6 +370,41 @@ test('only the first of two postings from one company is approved in a run', asy
   );
 });
 
+test('the approval limit counts only jobs this run approves, not ones already applied to', async () => {
+  const step = createStepMock();
+  const ctx = createApprovalContext({ appliedCompanies: ['Done Co'] });
+  const jobs = [
+    jobOf('a', 95, 'Done Co'),
+    jobOf('b', 92, 'B Co'),
+    jobOf('c', 91, 'C Co'),
+    jobOf('d', 90, 'D Co'),
+  ];
+
+  const { approvedJobs, approvalResults } = await processApprovalGates(
+    ctx,
+    step,
+    newWorkflow(),
+    jobs,
+    true,
+    90,
+    2
+  );
+
+  assert.deepEqual(
+    approvalResults.map((result) => [result.job.id, result.status]),
+    [
+      ['a', 'already-applied'],
+      ['b', 'auto-approved'],
+      ['c', 'auto-approved'],
+    ]
+  );
+  assert.deepEqual(
+    ctx.created.map((request) => request.jobId),
+    ['b', 'c']
+  );
+  assert.equal(approvedJobs.length, 2);
+});
+
 test('searchWorkflowJobs pauses between platforms outside the search steps', async () => {
   const step = createStepMock();
   const workflow = { id: 'wf-1', stats: {}, steps: [], errors: [] };

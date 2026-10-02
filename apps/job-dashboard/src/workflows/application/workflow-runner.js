@@ -61,21 +61,15 @@ export async function runApplicationWorkflow(ctx, event, step) {
     return completeWithoutJobs(ctx, step, workflow, notificationService, triggerType, platforms);
   }
 
-  const scoredJobs = await scoreWorkflowJobs(
-    ctx,
-    step,
-    workflow,
-    jobsFound,
-    minMatchScore,
-    dailyCheck
-  );
+  const scoredJobs = await scoreWorkflowJobs(ctx, step, workflow, jobsFound, minMatchScore);
   const { approvedJobs } = await processApprovalGates(
     ctx,
     step,
     workflow,
     scoredJobs,
     autoApprove,
-    autoApproveThreshold
+    autoApproveThreshold,
+    dailyCheck.remaining
   );
   const applicationResults = await submitApprovedApplications(
     ctx,

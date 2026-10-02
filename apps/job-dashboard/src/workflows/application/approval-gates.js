@@ -59,6 +59,8 @@ export { attachServerAtsCapability } from './approval-metadata.js';
  * @param {ScoredJob[]} scoredJobs
  * @param {boolean} autoApprove
  * @param {number} autoApproveThreshold
+ * @param {number} [limit] the most jobs to approve or ask about (the daily applications left);
+ *   jobs already applied to are skipped without counting, so they never use it up
  * @returns {Promise<{ approvedJobs: Array<import('./workflow-notifications.js').ApprovedJob>; approvalResults: ApprovalResult[] }>}
  */
 export async function processApprovalGates(
@@ -67,13 +69,16 @@ export async function processApprovalGates(
   workflow,
   scoredJobs,
   autoApprove,
-  autoApproveThreshold
+  autoApproveThreshold,
+  limit = Number.POSITIVE_INFINITY
 ) {
   const approvedJobs = [];
   const evaluatedResults = [];
   const approvedCompanies = new Set();
+  let granted = 0;
 
   for (const job of scoredJobs) {
+    if (granted >= limit) break;
     const approvalMetadata = buildApprovalMetadata(job);
     const company = normalizeCompany(job.company).toLowerCase();
     if (company && approvedCompanies.has(company)) {
@@ -103,6 +108,7 @@ export async function processApprovalGates(
     }
 
     if (company && isApprovedResult(approvalResult.status)) approvedCompanies.add(company);
+    if (isApprovedResult(approvalResult.status) || approvalResult.status === 'pending') granted++;
     evaluatedResults.push(approvalResult);
   }
 

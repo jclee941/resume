@@ -150,15 +150,16 @@ export async function searchWorkflowJobs(ctx, step, workflow, platforms, searchC
 }
 
 /**
+ * Scores every found job and keeps those at or above the threshold, best first. The daily cap is
+ * applied by the approval gate, so jobs already applied to do not use it up.
  * @param {ApplicationWorkflowContext} ctx
  * @param {WorkflowStepContext} step
  * @param {import('./workflow-records.js').WorkflowRecord} workflow
  * @param {JobSearchRecord[]} jobsFound
  * @param {number} minMatchScore
- * @param {DailyLimitCheckResult} dailyCheck
  * @returns {Promise<ScoredWorkflowJob[]>}
  */
-export async function scoreWorkflowJobs(ctx, step, workflow, jobsFound, minMatchScore, dailyCheck) {
+export async function scoreWorkflowJobs(ctx, step, workflow, jobsFound, minMatchScore) {
   const scoredJobs = await step.do(
     'score-jobs',
     {
@@ -171,8 +172,7 @@ export async function scoreWorkflowJobs(ctx, step, workflow, jobsFound, minMatch
       return jobsFound
         .map((job) => scoreJob(job, config))
         .filter((job) => job.matchScore >= minMatchScore)
-        .sort((a, b) => b.matchScore - a.matchScore)
-        .slice(0, dailyCheck.remaining);
+        .sort((a, b) => b.matchScore - a.matchScore);
     }
   );
 
