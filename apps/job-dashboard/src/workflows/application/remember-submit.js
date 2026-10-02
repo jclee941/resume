@@ -23,8 +23,8 @@ import { withRememberToken } from '../../services/remember/remember-session.js';
 export async function submitRememberApplication(env, jobId) {
   const postingId = String(jobId).replace(/^remember-/, '');
   try {
-    return await withRememberToken(env, async (token) => {
-      if (await getApplicationStatus(token, postingId)) {
+    return await withRememberToken(env, async (token, fetchImpl) => {
+      if (await getApplicationStatus(token, postingId, fetchImpl)) {
         return {
           success: false,
           alreadyApplied: true,
@@ -32,7 +32,7 @@ export async function submitRememberApplication(env, jobId) {
           platform: 'remember',
         };
       }
-      const missing = await getMissingApplicationFields(token, postingId);
+      const missing = await getMissingApplicationFields(token, postingId, fetchImpl);
       if (missing.length > 0) {
         return {
           success: false,
@@ -40,7 +40,12 @@ export async function submitRememberApplication(env, jobId) {
           error: `Remember posting ${postingId} asks for ${missing.join(', ')}, which the profile does not have`,
         };
       }
-      await applyWithProfile(token, postingId, await getAccountContact(token));
+      await applyWithProfile(
+        token,
+        postingId,
+        await getAccountContact(token, fetchImpl),
+        fetchImpl
+      );
       return {
         success: true,
         platform: 'remember',

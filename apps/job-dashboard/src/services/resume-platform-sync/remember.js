@@ -19,9 +19,9 @@ import { withRememberToken } from '../remember/remember-session.js';
 export async function syncRememberFromSsot(env, ssot, { dryRun, fetchImpl }) {
   return withRememberToken(
     env,
-    async (token) => {
+    async (token, relayFetch) => {
       const me = await rememberRequest(token, `${REMEMBER_PROFILE_API_URL}/v2/open_profiles/me`, {
-        fetchImpl,
+        fetchImpl: relayFetch,
       });
       const current = me?.data?.open_profile;
       if (!current?.id) {
@@ -42,7 +42,7 @@ export async function syncRememberFromSsot(env, ssot, { dryRun, fetchImpl }) {
         await rememberRequest(token, url, {
           method: 'PUT',
           body: { open_profile: body },
-          fetchImpl,
+          fetchImpl: relayFetch,
         });
       }
       return { platform: 'remember', success: true, dryRun: false, changes };

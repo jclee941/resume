@@ -13,6 +13,7 @@ import {
   RememberApiError,
   rememberRequest,
 } from './remember-api.js';
+import { rememberFetch } from './remember-fetch.js';
 
 export const AUTH_REMEMBER_KEY = 'auth:remember';
 export const REMEMBER_SESSION_TTL_S = 60 * 60 * 24 * 12;
@@ -25,6 +26,8 @@ const SHARED_DATA_COOKIE = 'remember_shared_data';
  *   REMEMBER_DEVICE_ID?: string;
  *   SESSIONS: { get: Function; put: Function };
  *   ENCRYPTION_KEY?: string;
+ *   REMEMBER_PROXY_URL?: string;
+ *   REMEMBER_PROXY_SECRET?: string;
  *   [key: string]: unknown;
  * }} RememberEnv
  */
@@ -34,7 +37,7 @@ const SHARED_DATA_COOKIE = 'remember_shared_data';
  * @param {{ fetchImpl?: typeof fetch }} [opts]
  * @returns {Promise<string>} the session token
  */
-export async function mintRememberToken(env, { fetchImpl = fetch } = {}) {
+export async function mintRememberToken(env, { fetchImpl = rememberFetch(env) } = {}) {
   const { REMEMBER_EMAIL: email, REMEMBER_PASSWORD: password, REMEMBER_DEVICE_ID: deviceId } = env;
   if (!email || !password || !deviceId) {
     throw new Error('REMEMBER_EMAIL, REMEMBER_PASSWORD and REMEMBER_DEVICE_ID are required');
@@ -80,7 +83,7 @@ export async function mintRememberToken(env, { fetchImpl = fetch } = {}) {
  */
 export async function refreshRememberSession(env, opts = {}) {
   try {
-    const token = await mintRememberToken(env, opts);
+    const token = await mintRememberToken(env, { fetchImpl: opts.fetchImpl ?? rememberFetch(env) });
     await writePlatformSession(env, 'remember', token, REMEMBER_SESSION_TTL_S);
     return { ok: true, key: AUTH_REMEMBER_KEY, length: token.length };
   } catch (error) {
@@ -93,24 +96,25 @@ export async function refreshRememberSession(env, opts = {}) {
  * answers 401 for the stored one.
  * @template T
  * @param {RememberEnv} env
- * @param {(token: string) => Promise<T>} fn
+ * @param {(token: string, fetchImpl: typeof fetch) => Promise<T>} fn
  * @param {{ fetchImpl?: typeof fetch }} [opts]
  * @returns {Promise<T>}
  */
 export async function withRememberToken(env, fn, opts = {}) {
+  const fetchImpl = opts.fetchImpl ?? rememberFetch(env);
   const stored = await readPlatformSession(env, 'remember');
   if (stored) {
     try {
-      return await fn(stored);
+      return await fn(stored, fetchImpl);
     } catch (error) {
       if (!(error instanceof RememberApiError && error.status === 401)) throw error;
     }
   }
-  const refreshed = await refreshRememberSession(env, opts);
+  const refreshed = await refreshRememberSession(env, { fetchImpl });
   if (!refreshed.ok) throw new Error(`Remember session refresh failed: ${refreshed.error}`);
   const minted = await readPlatformSession(env, 'remember');
   if (!minted) throw new Error('No Remember session after refresh');
-  return fn(minted);
+  return fn(minted, fetchImpl);
 }
 
 /**

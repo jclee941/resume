@@ -77,10 +77,27 @@ curl -H 'Authorization: Bearer <admin-token>' \
 - Session minting fails when the OneID password changes or Wanted asks for extra
   verification; the step then reports the session error and writes nothing.
 - Remember is synced only when a run names it (`"platforms":["remember"]`): its
-  WAF answers 403 to Cloudflare egress, so the Worker run fails until that changes.
+  WAF answers 403 to Cloudflare egress. Set `REMEMBER_PROXY_URL` and
+  `REMEMBER_PROXY_SECRET` to route Remember requests through the residential relay
+  (see below); without them the Worker cannot reach Remember.
   The SSoT owns the Remember careers: careers it does not list are removed, in a
   second request after the main flag has moved to the newest SSoT career (Remember
   refuses to delete the main career).
+
+## Remember relay
+
+Remember's Cloudflare WAF blocks datacenter IP ranges (Cloudflare Workers, Browser
+Rendering, and other clouds all get a 403), so the Worker reaches Remember through
+a small signed forwarder on a residential host.
+
+- `tools/scripts/remember-relay` is the forwarder: `POST /` takes an HMAC-signed
+  `{method, url, headers, body}` envelope, forwards it to `*.rememberapp.co.kr`
+  only, and returns `{status, headers, body}`. Run it with `RELAY_SECRET` set, put
+  it behind a Cloudflare Tunnel, and the Worker calls it when `REMEMBER_PROXY_URL`
+  (the tunnel URL) and `REMEMBER_PROXY_SECRET` (= `RELAY_SECRET`) are configured.
+- `rememberFetch(env)` returns the signed relay fetch when both are set and a plain
+  `fetch` otherwise, so every Remember call (login, profile sync, search, apply)
+  uses the relay once it is configured and is unchanged until then.
 - SK Careers keeps one resume per account with personal, education, career,
   certificate and attachment sections only. The sync fills military service,
   education, the five most recent careers and the five most recent active
