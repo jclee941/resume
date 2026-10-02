@@ -253,7 +253,7 @@ each cron through `apps/job-dashboard/src/handlers/scheduled/`:
 | `0 21 * * *` | 06:00  | Wanted + JobKorea session refresh, application-history sync, then `ResumeSyncWorkflow` (dry-run default), `CleanupWorkflow` and the auto-apply run |
 | `0 * * * *`  | hourly | `HealthCheckWorkflow`; Mondays 00:00 UTC (09:00 KST) also `DailyReportWorkflow` (`type: weekly`)                                                   |
 
-The `0 21 * * *` run syncs the Wanted, JobKorea and Remember application history into D1 `applications` before it starts the live auto-apply run ([Auto-apply](#auto-apply)), unless D1 `auto_apply_enabled` or `AUTO_APPLY_CRON_ENABLED` is `false`.
+The `0 21 * * *` run first syncs the Wanted, JobKorea and Remember application history into D1 `applications`, even when auto-apply is off. It then starts the live auto-apply run ([Auto-apply](#auto-apply)) unless D1 `auto_apply_enabled` or `AUTO_APPLY_CRON_ENABLED` is `false`.
 
 Every scheduled job is a Cloudflare Workflow (`apps/job-dashboard/src/workflows/`); a
 failed workflow start fails the cron run. D1 Time Travel is the D1 backup. Uptime alerting stays in Grafana
