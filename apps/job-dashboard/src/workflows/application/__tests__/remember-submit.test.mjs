@@ -132,4 +132,23 @@ describe('searchRemember', () => {
       [['remember-1', 'Acme', '3-7년', '운영\n\n쿠버네티스']]
     );
   });
+
+  it('reads a posting with no experience ceiling as open-ended', async () => {
+    stubRemember({
+      postings: [
+        {
+          status: 'published',
+          application_type: 'apply',
+          id: 4,
+          title: 'DevOps',
+          min_experience: 2,
+          max_experience: null,
+        },
+      ],
+    });
+
+    const [job] = await searchRemember({}, { keywords: ['DevOps'] });
+
+    assert.equal(job.experience, '2년 이상');
+  });
 });
