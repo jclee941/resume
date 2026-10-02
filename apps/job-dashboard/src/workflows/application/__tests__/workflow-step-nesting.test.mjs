@@ -404,6 +404,26 @@ test('the approval limit counts only jobs this run approves, not ones already ap
   assert.equal(approvedJobs.length, 2);
 });
 
+test('searchWorkflowJobs keeps a platform result within the Workflows step limit', async (t) => {
+  t.mock.method(console, 'warn', () => {});
+  const step = createStepMock();
+  const workflow = { id: 'wf-1', stats: {}, steps: [], errors: [] };
+  const big = 'x'.repeat(400_000);
+  const ctx = {
+    async searchJobs() {
+      return ['a', 'b', 'c'].map((id) => ({ id, description: big }));
+    },
+    async logWorkflowStep() {},
+  };
+
+  const jobs = await searchWorkflowJobs(ctx, step, workflow, ['wanted']);
+
+  assert.deepEqual(
+    jobs.map((job) => job.id),
+    ['a', 'b']
+  );
+});
+
 test('searchWorkflowJobs pauses between platforms outside the search steps', async () => {
   const step = createStepMock();
   const workflow = { id: 'wf-1', stats: {}, steps: [], errors: [] };

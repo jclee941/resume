@@ -6,7 +6,8 @@ import {
 } from '../../services/remember/remember-jobs.js';
 import { withBrowserFetchRetry } from '../../services/remember/remember-retry.js';
 
-const MAX_REMEMBER_KEYWORDS = 5;
+const MAX_REMEMBER_KEYWORDS = 12;
+const REMEMBER_PAGE_SIZE = 50;
 
 /**
  * @typedef {import('./platforms.js').PlatformJob} PlatformJob
@@ -46,7 +47,7 @@ export async function searchRemember(ctx, criteria) {
   for (const keyword of keywords) {
     try {
       const postings = await withBrowserFetchRetry(() =>
-        searchRememberPostings(keyword, { fetchImpl })
+        searchRememberPostings(keyword, { per: REMEMBER_PAGE_SIZE, fetchImpl })
       );
       for (const posting of postings) {
         if (!isAutoApplicable(posting)) continue;
