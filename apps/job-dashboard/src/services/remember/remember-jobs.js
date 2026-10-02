@@ -133,6 +133,21 @@ export async function getMissingApplicationFields(token, postingId, fetchImpl) {
 }
 
 /**
+ * Snapshots the open profile for a posting, as the posting's 지원하기 button does before the apply
+ * page; the apply endpoint answers 400 "해당 프로필 스냅샷이 존재하지 않습니다" without one.
+ * @param {string} token
+ * @param {string | number} postingId
+ * @param {typeof fetch} [fetchImpl]
+ * @returns {Promise<string>} the snapshot id
+ */
+export async function createProfileSnapshot(token, postingId, fetchImpl) {
+  const url = `${REMEMBER_CAREER_API_URL}/job_postings/${postingId}/profile_snapshot`;
+  const id = (await rememberRequest(token, url, { method: 'POST', fetchImpl }))?.data?.id;
+  if (id == null) throw new Error(`Remember posting ${postingId} returned no profile snapshot`);
+  return String(id);
+}
+
+/**
  * The account contact the apply form is prefilled with.
  * @param {string} token
  * @param {typeof fetch} [fetchImpl]

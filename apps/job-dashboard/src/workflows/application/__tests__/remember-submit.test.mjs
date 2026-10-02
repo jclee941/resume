@@ -42,6 +42,7 @@ function stubRemember({ status = null, missing = [], postings = [] } = {}) {
         data: { user: { email: 'me@example.com', national_number: '01012345678' } },
       });
     }
+    if (path.endsWith('/profile_snapshot')) return Response.json({ data: { id: 77 }, meta: {} });
     if (path.endsWith('/apply')) return Response.json({ data: { id: 1 }, meta: {} });
     if (path === '/job_postings/search') return Response.json({ data: postings, meta: {} });
     throw new Error(`unexpected request ${path}`);
@@ -63,6 +64,10 @@ describe('submitRememberApplication', () => {
     const result = await submitRememberApplication(await createEnv(), 'remember-42');
 
     assert.equal(result.success, true);
+    assert.deepEqual(
+      calls.filter((call) => call.method === 'POST').map((call) => call.path),
+      ['/job_postings/42/profile_snapshot', '/job_postings/42/apply']
+    );
     const apply = calls.find((call) => call.path === '/job_postings/42/apply');
     assert.equal(apply?.method, 'POST');
     assert.equal(apply?.auth, 'Token token=stored-token');
@@ -96,6 +101,52 @@ describe('submitRememberApplication', () => {
       calls.some((call) => call.path.endsWith('/apply')),
       false
     );
+  });
+
+  it('retries a read after a failed browser fetch', async (t) => {
+    stubRemember();
+    const stubbed = globalThis.fetch;
+    let signalFailed;
+    const failedOnce = new Promise((resolve) => (signalFailed = resolve));
+    let failed = false;
+    globalThis.fetch = async (url, init) => {
+      if (!failed && String(url).endsWith('/application_status')) {
+        failed = true;
+        signalFailed();
+        throw Object.assign(new Error('Remember browser fetch: Failed to fetch'), {
+          code: REMEMBER_BROWSER_FETCH_FAILED,
+        });
+      }
+      return stubbed(url, init);
+    };
+    const env = await createEnv();
+    t.mock.timers.enable({ apis: ['setTimeout'] });
+
+    const pending = submitRememberApplication(env, 'remember-42');
+    await failedOnce;
+    await new Promise((resolve) => setImmediate(resolve));
+    t.mock.timers.tick(2_000);
+
+    assert.equal((await pending).success, true);
+  });
+
+  it('does not resend an apply whose browser fetch failed', async () => {
+    const calls = stubRemember();
+    const stubbed = globalThis.fetch;
+    globalThis.fetch = async (url, init) => {
+      if (String(url).endsWith('/apply')) {
+        calls.push({ path: new URL(String(url)).pathname, method: init?.method ?? 'GET' });
+        throw Object.assign(new Error('Remember browser fetch: Failed to fetch'), {
+          code: REMEMBER_BROWSER_FETCH_FAILED,
+        });
+      }
+      return stubbed(url, init);
+    };
+
+    const result = await submitRememberApplication(await createEnv(), 'remember-42');
+
+    assert.equal(result.success, false);
+    assert.equal(calls.filter((call) => call.path.endsWith('/apply')).length, 1);
   });
 });
 
