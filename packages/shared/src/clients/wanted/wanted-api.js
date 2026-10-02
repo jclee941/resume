@@ -1,5 +1,6 @@
 import { HttpClient } from './http-client.js';
 import { JobsEndpoint, CompaniesEndpoint, AuthEndpoint } from './endpoints/jobs.js';
+import { ApplicationsEndpoint } from './endpoints/applications.js';
 import {
   ProfileEndpoint,
   ExperienceEndpoint,
@@ -30,6 +31,7 @@ export class WantedAPI {
   resumeSkills;
   resumeActivity;
   resumeLanguageCert;
+  applications;
 
   /**
    * @param {string | null} [cookies]
@@ -49,6 +51,7 @@ export class WantedAPI {
     this.resumeSkills = new ResumeSkillsEndpoint(this.#client);
     this.resumeActivity = new ResumeActivityEndpoint(this.#client);
     this.resumeLanguageCert = new ResumeLanguageCertEndpoint(this.#client);
+    this.applications = new ApplicationsEndpoint(this.#client);
   }
 
   /**
@@ -223,19 +226,11 @@ export class WantedAPI {
   }
 
   /**
-   * @param {string} jobId
-   * @param {string | number | null} [resumeId]
+   * @param {string | number} jobId
+   * @param {{ resumeKey?: string | null }} [options]
    */
-  async apply(jobId, resumeId = null) {
-    const body = resumeId ? { resume_id: resumeId } : {};
-    return this.chaosRequest('/applications/v1', {
-      method: 'POST',
-      headers: { Referer: `https://www.wanted.co.kr/wd/${jobId}` },
-      body: {
-        job_id: parseInt(jobId, 10),
-        ...body,
-      },
-    });
+  async apply(jobId, options) {
+    return this.applications.apply(jobId, options);
   }
 
   /**
