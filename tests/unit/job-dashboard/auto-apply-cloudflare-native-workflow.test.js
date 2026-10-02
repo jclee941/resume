@@ -166,6 +166,9 @@ function createWorkflowHarness() {
 function createEmptyApplicationsDb() {
   return {
     prepare(query) {
+      if (query.includes('SELECT DISTINCT company FROM applications')) {
+        return { all: async () => ({ results: [] }) };
+      }
       if (
         query.includes('SELECT id FROM applications') ||
         query.includes('SELECT id, status FROM approval_requests')

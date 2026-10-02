@@ -21,6 +21,9 @@ function createMockDb({ alreadyApplied = false } = {}) {
       if (query.includes('COUNT(*) as count')) {
         return makeStatement(() => ({ first: async () => ({ count: 0 }) }));
       }
+      if (query.includes('SELECT DISTINCT company FROM applications')) {
+        return { all: async () => ({ results: [] }) };
+      }
       if (query.includes('SELECT id FROM applications')) {
         return makeStatement((jobId, source) => ({
           first: async () => {
