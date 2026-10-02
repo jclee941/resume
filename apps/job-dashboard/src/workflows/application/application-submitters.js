@@ -1,7 +1,6 @@
-import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
-import { readPlatformSession } from '../../services/platform-session.js';
 import { submitToAtsDryRunOnly } from './application-platform-catalog.js';
 import { submitWithBrowserRendering } from './browser-rendering-submit.js';
+import { submitWantedApplication } from './wanted-submit.js';
 
 /**
  * @typedef {{
@@ -12,7 +11,7 @@ import { submitWithBrowserRendering } from './browser-rendering-submit.js';
  * @typedef {{
  *   env: Record<string, unknown> & {
  *     MYBROWSER?: import('@cloudflare/puppeteer').BrowserWorker;
- *     SESSIONS?: { get: Function };
+ *     SESSIONS: { get: Function; put: Function };
  *     ENCRYPTION_KEY?: string;
  *   };
  * }} SubmitContext
@@ -76,32 +75,15 @@ export async function submitApplication(
 }
 
 /**
+ * Wanted's apply attaches the account's profile resume and takes no cover letter.
  * @param {SubmitContext} ctx
  * @param {string} jobId
- * @param {SubmitResume | null | undefined} resume
- * @param {string} [coverLetter]
+ * @param {SubmitResume | null | undefined} _resume
+ * @param {string} [_coverLetter]
  * @returns {Promise<SubmitResult>}
  */
-export async function submitToWanted(ctx, jobId, resume, coverLetter) {
-  const session = await readPlatformSession(ctx.env, 'wanted');
-  if (!session) return { success: false, error: 'No Wanted session' };
-  const response = await fetch(
-    `https://www.wanted.co.kr/api/v4/jobs/${jobId.replace('wanted-', '')}/apply`,
-    {
-      method: 'POST',
-      headers: {
-        Cookie: session,
-        'Content-Type': 'application/json',
-        'User-Agent': DEFAULT_USER_AGENT,
-      },
-      body: JSON.stringify({ resume_id: resume?.id, cover_letter: coverLetter }),
-    }
-  );
-  if (!response.ok) {
-    const error = await response.text();
-    return { success: false, error: `Wanted API error: ${response.status} - ${error}` };
-  }
-  return { success: true, platformResponse: await response.json() };
+export async function submitToWanted(ctx, jobId, _resume, _coverLetter) {
+  return submitWantedApplication(ctx.env, jobId);
 }
 
 /**
