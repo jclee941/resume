@@ -17,6 +17,7 @@ import { normalizeText, truncateWantedProjectDescription } from './text-formatti
  * @typedef {Object} NormalizedProject
  * @property {string} title
  * @property {string} description
+ * @property {string} [job_role] shown as the item's 직무; Wanted keeps no role on the career itself
  */
 
 /**
@@ -36,6 +37,7 @@ import { normalizeText, truncateWantedProjectDescription } from './text-formatti
  * @property {CareerProject[]} [projects]
  * @property {string} [project]
  * @property {string} [description]
+ * @property {string} [role]
  * @property {CompanyInfo} [company]
  * @property {string} [company_name]
  */
@@ -166,7 +168,10 @@ function normalizeCareerProjects(ssotCareer = {}) {
  */
 async function syncCareerProjects(api, resume_id, careerId, ssotCareer = {}, remoteProjects = []) {
   const strictSync = isStrictSyncEnabled();
-  const localProjects = normalizeCareerProjects(ssotCareer);
+  const role = normalizeText(ssotCareer.role);
+  const localProjects = normalizeCareerProjects(ssotCareer).map((project) =>
+    role ? { ...project, job_role: role } : project
+  );
   const matchedProjectIds = new Set();
 
   for (const project of localProjects) {
