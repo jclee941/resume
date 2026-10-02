@@ -14,18 +14,25 @@ handlers thin and delegate business logic to services.
 ```text
 handlers/
 ├── base-handler.js               # shared request helpers
-├── applications.js               # application CRUD endpoints
+├── applications/                 # application CRUD, approvals, cleanup, history sync operation
 ├── auth.js                       # auth/session endpoints
-├── auto-apply.js                 # auto-apply control endpoint facade
-├── auto-apply/                   # explicit candidates + native dispatch helpers
+├── auto-apply/                   # auto-apply run/start/status/config, scoring, duplicate checks
+├── browser/                      # Browser Rendering smoke check
+├── diagnostics.js                # diagnostics endpoints
+├── diagnostics-probes.js         # diagnostics probe helpers
+├── jobkorea/                     # JobKorea session minting
 ├── job-search-handler.js         # search trigger/bridge logic
 ├── profile-sync-handler.js       # profile sync trigger/bridge
 ├── report-handler.js             # report generation endpoints
+├── resume-master-handler.js      # master resume endpoints
 ├── resume-sync-handler.js        # resume sync endpoints
+├── scheduled/                    # cron router and the auto-apply start plan
 ├── stats.js                      # stats/report endpoints
+├── sync/                         # profile sync status
+├── telegram-webhook-handler.js   # Telegram webhook endpoint
 ├── test-handler.js               # test-only endpoints
-├── webhooks.js                   # webhook ingress routes
-└── diagnostics.js                # diagnostics endpoints
+├── wanted/                       # Wanted session minting
+└── webhooks.js                   # webhook ingress routes
 ```
 
 ## CONVENTIONS
