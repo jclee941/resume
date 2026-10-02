@@ -36,10 +36,6 @@ have are deleted from Wanted.
 
 - `POST /job/api/wanted/refresh-session` (admin) mints a fresh session into
   `auth:wanted`.
-- `POST /job/api/jobkorea/refresh-session` (admin) logs in to JobKorea through Browser Rendering
-  and stores the session in `auth:jobkorea` for 6 hours. The login is submitted with JobKorea's IP
-  security (IP보안) off: later runs replay the session from other Browser Rendering browsers, which
-  leave from other IPs, and a session bound to the login IP stalls there.
 - The daily `0 21 * * *` Cron Trigger refreshes the Wanted and JobKorea sessions
   before it starts the sync.
 

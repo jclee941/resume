@@ -18,7 +18,6 @@ import { writePlatformSession } from '../../services/platform-session.js';
 import {
   SUBMIT_SELECTOR,
   fillLoginForm,
-  disableIpSecurity,
   submitAndWait,
   isLoggedIn,
   detectCaptcha,
@@ -110,11 +109,6 @@ export async function mintJobKoreaSession(
       const requests = await restrictToJobKorea(page, LOGIN_BLOCKED_RESOURCE_TYPES);
       await openLoginPage(page, requests);
       await fillLoginForm(page, { email, password });
-      if (!(await disableIpSecurity(page))) {
-        console.warn(
-          '[jobkorea] login form has no IP security switch; the session stays bound to this browser IP'
-        );
-      }
       await submitAndWait(page, SUBMIT_SELECTOR);
 
       let loggedIn = await isLoggedIn(page);
