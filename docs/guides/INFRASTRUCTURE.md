@@ -248,16 +248,37 @@ Scheduling is Cloudflare-native and lives in the root `wrangler.jsonc`
 (`triggers.crons`). The merged `resume` Worker's `scheduled()` handler routes
 each cron through `apps/job-dashboard/src/handlers/scheduled/`:
 
-| Cron (UTC)   | KST    | Job                                                                                                  |
-| ------------ | ------ | ---------------------------------------------------------------------------------------------------- |
-| `0 21 * * *` | 06:00  | Wanted + JobKorea session refresh, then `ResumeSyncWorkflow` (dry-run default) and `CleanupWorkflow` |
-| `0 * * * *`  | hourly | `HealthCheckWorkflow`; Mondays 00:00 UTC (09:00 KST) also `DailyReportWorkflow` (`type: weekly`)     |
+| Cron (UTC)   | KST    | Job                                                                                                                                                |
+| ------------ | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0 21 * * *` | 06:00  | Wanted + JobKorea session refresh, application-history sync, then `ResumeSyncWorkflow` (dry-run default), `CleanupWorkflow` and the auto-apply run |
+| `0 * * * *`  | hourly | `HealthCheckWorkflow`; Mondays 00:00 UTC (09:00 KST) also `DailyReportWorkflow` (`type: weekly`)                                                   |
 
-The `0 21 * * *` run also starts the live Wanted `ApplicationWorkflow` auto-apply run (auto-approves and submits every new posting at or above D1 `min_match_score`, up to `max_daily_applications`; postings or companies already applied to and owner-rejected jobs are skipped) unless D1 `auto_apply_enabled` or `AUTO_APPLY_CRON_ENABLED` is `false`.
+The `0 21 * * *` run syncs the Wanted, JobKorea and Remember application history into D1 `applications` before it starts the live auto-apply run ([Auto-apply](#auto-apply)), unless D1 `auto_apply_enabled` or `AUTO_APPLY_CRON_ENABLED` is `false`.
 
 Every scheduled job is a Cloudflare Workflow (`apps/job-dashboard/src/workflows/`); a
 failed workflow start fails the cron run. D1 Time Travel is the D1 backup. Uptime alerting stays in Grafana
 (`infrastructure/configs/grafana/alert-rules.yaml`).
+
+#### Auto-apply
+
+`ApplicationWorkflow` (`apps/job-dashboard/src/workflows/application/`) searches Wanted and Remember,
+scores every posting, and submits each one at or above the threshold without human approval.
+
+- D1 `config` drives it: `auto_apply_enabled` (kill switch), `min_match_score`,
+  `max_daily_applications` and `auto_apply_keywords` (JSON array, up to 12 keywords). Wanted is read in
+  pages of 100 with details for up to 400 postings, Remember in pages of 50. The Worker variable
+  `AUTO_APPLY_CRON_ENABLED=false` also stops the cron start.
+- Scoring (`apps/job-dashboard/src/handlers/auto-apply/match-scoring.js`) counts a Korean synonym such
+  as 자동화 or 클라우드 as its English skill (`skill-synonyms.js`).
+- A posting is skipped when its job or its company already has an application in D1. Companies are
+  compared by `companyKey` (`handlers/auto-apply/duplicate-company.js`), which ignores parenthesized
+  parts, legal-form words and punctuation, because Wanted and Remember write one company differently.
+  A saved posting does not block its company, and the daily cap counts only the jobs a run approves.
+- A submission that finds the job already applied is recorded as applied too. Remember submissions
+  snapshot the open profile for the posting before applying, and reach Remember through Browser
+  Rendering REST.
+- The dashboard's auto-apply button calls `POST /job/api/auto-apply/start` (admin): `{"dryRun": true}`
+  starts a preview run at any time; a live start answers 409 while auto-apply is disabled.
 
 ## 📈 Performance Metrics
 

@@ -6,8 +6,7 @@ The `resume` Worker syncs the master resume (the SSoT
 `packages/data/resumes/master/resume_data.json`, stored in JOB_DB) to the Wanted
 resume through the Wanted API. The sync runs inside `ResumeSyncWorkflow`
 (`apps/job-dashboard/src/workflows/resume-sync.js`), one durable step per
-platform: `wanted`, `jobkorea` and `skcareers` by default, `remember` only when a
-run names it.
+platform: `wanted`, `jobkorea`, `skcareers` and `remember` by default.
 
 ## Architecture
 
@@ -44,13 +43,12 @@ have are deleted from Wanted.
 
 ### Automatic (Cloudflare Cron)
 
-`0 21 * * *` starts `ResumeSyncWorkflow` for `wanted`, `jobkorea` and `skcareers`
+`0 21 * * *` starts `ResumeSyncWorkflow` for `wanted`, `jobkorea`, `skcareers` and `remember`
 as a dry run unless the Worker variable `RESUME_SYNC_CRON_DRY_RUN` is `false`. A dry run
 reads the live resume and reports what would change without writing. Every run
 records a `resume_sync_history` row and sends a Telegram summary. The same cron
-run also starts the live Wanted `ApplicationWorkflow` auto-apply run, which submits
-every new posting at or above D1 `min_match_score` (up to `max_daily_applications`),
-unless auto-apply is disabled in D1 config or `AUTO_APPLY_CRON_ENABLED` is `false`.
+run also starts the live auto-apply run on Wanted and Remember
+([Auto-apply](guides/INFRASTRUCTURE.md#auto-apply)).
 
 ### Manual (admin API)
 

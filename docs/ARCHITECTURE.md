@@ -140,9 +140,9 @@ D1 JOB_DB (applications, job cache, sync logs) · KV SESSIONS
 Scheduled job automation runs inside the merged `resume` Worker: Cron Triggers
 invoke `scheduled()`, which routes through
 `apps/job-dashboard/src/handlers/scheduled/` into Cloudflare Workflows and
-Queues. `0 21 * * *` refreshes the Wanted session and starts
-`ResumeSyncWorkflow` (dry-run by default) and the live Wanted `ApplicationWorkflow`
-auto-apply run, which submits every new posting at or above D1 `min_match_score`. The dashboard API is served by the job-dashboard module imported
+Queues. `0 21 * * *` refreshes the platform sessions, syncs the application history, and starts
+`ResumeSyncWorkflow` (dry-run by default) and the live `ApplicationWorkflow` auto-apply run on
+Wanted and Remember ([Auto-apply](guides/INFRASTRUCTURE.md#auto-apply)). The dashboard API is served by the job-dashboard module imported
 directly into the portfolio worker — no Service Binding, no separate
 deployment. The retired local job-server runtime is recorded in [ADR
 0010](adr/0010-retire-local-job-server.md).
