@@ -26,8 +26,8 @@ const SHARED_DATA_COOKIE = 'remember_shared_data';
  *   REMEMBER_DEVICE_ID?: string;
  *   SESSIONS: { get: Function; put: Function };
  *   ENCRYPTION_KEY?: string;
- *   MYBROWSER?: unknown;
- *   BROWSER_SESSION?: unknown;
+ *   REMEMBER_PROXY_URL?: string;
+ *   REMEMBER_PROXY_SECRET?: string;
  *   [key: string]: unknown;
  * }} RememberEnv
  */

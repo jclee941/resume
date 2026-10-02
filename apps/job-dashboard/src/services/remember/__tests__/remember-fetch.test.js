@@ -1,100 +1,79 @@
-import { describe, it } from 'node:test';
+import { describe, it, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 
+import { signHmacWebCrypto } from '@resume/shared/auth/hmac';
 import { rememberFetch } from '../remember-fetch.js';
 
-function fakePage({ status = 200, body = '{"code":"ok"}', cookies = [] } = {}) {
-  const calls = { setCookie: [], goto: [], addScriptTag: [], closed: false };
-  return {
-    calls,
-    async setCookie(...items) {
-      calls.setCookie.push(...items);
-    },
-    async goto(url, options) {
-      calls.goto.push({ url, options });
-    },
-    async addScriptTag({ content }) {
-      calls.addScriptTag.push(content);
-    },
-    async waitForSelector() {},
-    async $eval() {
-      return JSON.stringify({ status, body, headers: [['content-type', 'application/json']] });
-    },
-    async cookies() {
-      return cookies;
-    },
-    async close() {
-      calls.closed = true;
-    },
-  };
-}
-
-function fakeBrowserSession(page) {
-  return async (_env, fn) => fn({ newPage: async () => page });
-}
+const originalFetch = globalThis.fetch;
 
 describe('rememberFetch', () => {
-  it('is the global fetch when no browser is bound', () => {
-    assert.equal(rememberFetch(undefined), fetch);
-    assert.equal(rememberFetch({}), fetch);
-    assert.equal(rememberFetch({ BROWSER_SESSION: {} }), fetch);
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
   });
 
-  it('runs the login request from its own origin and rebuilds the response', async () => {
-    const page = fakePage({
-      status: 200,
-      body: '{"code":"ok"}',
-      cookies: [
-        { name: 'remember_shared_data', value: 'enc' },
-        { name: 'other', value: '1' },
-      ],
-    });
-    const fetchImpl = rememberFetch(
-      { MYBROWSER: {}, BROWSER_SESSION: {} },
-      { withBrowserSession: fakeBrowserSession(page) }
-    );
+  it('is the global fetch when no relay is configured', () => {
+    assert.equal(rememberFetch(undefined), fetch);
+    assert.equal(rememberFetch({ REMEMBER_PROXY_URL: 'https://relay' }), fetch);
+    assert.equal(rememberFetch({ REMEMBER_PROXY_SECRET: 's' }), fetch);
+  });
 
-    const response = await fetchImpl('https://rememberapp.co.kr/auths/login', {
+  it('tunnels the request through the signed relay and rebuilds the response', async () => {
+    const calls = [];
+    globalThis.fetch = async (url, init = {}) => {
+      calls.push({ url: String(url), init });
+      return Response.json({
+        status: 200,
+        headers: [
+          ['content-type', 'application/json'],
+          ['set-cookie', 'remember_shared_data=enc; Path=/'],
+          ['set-cookie', 'other=1; Path=/'],
+        ],
+        body: '{"code":"ok"}',
+      });
+    };
+
+    const relay = rememberFetch({
+      REMEMBER_PROXY_URL: 'https://relay.example',
+      REMEMBER_PROXY_SECRET: 'sek',
+    });
+    const response = await relay('https://career-api.rememberapp.co.kr/x', {
       method: 'POST',
-      headers: {
-        Authorization: 'Token token=t',
-        'Content-Type': 'application/json',
-        'User-Agent': 'should-be-dropped',
-        Cookie: '_remember_device_id=dev-1',
-      },
-      body: '{"email":"a"}',
+      headers: { Authorization: 'Token token=t', 'Content-Type': 'application/json' },
+      body: '{"a":1}',
     });
 
-    assert.deepEqual(page.calls.setCookie, [
-      { name: '_remember_device_id', value: 'dev-1', url: 'https://rememberapp.co.kr' },
-    ]);
-    assert.equal(page.calls.goto[0].url, 'https://rememberapp.co.kr/robots.txt');
-    const script = page.calls.addScriptTag[0];
-    assert.match(script, /Token token=t/);
-    assert.match(script, /email/);
-    assert.doesNotMatch(script, /User-Agent|should-be-dropped/);
+    assert.equal(calls[0].url, 'https://relay.example');
+    assert.equal(calls[0].init.method, 'POST');
+    const envelope = JSON.parse(calls[0].init.body);
+    assert.deepEqual(envelope, {
+      method: 'POST',
+      url: 'https://career-api.rememberapp.co.kr/x',
+      headers: [
+        ['Authorization', 'Token token=t'],
+        ['Content-Type', 'application/json'],
+      ],
+      body: '{"a":1}',
+    });
+    assert.equal(
+      calls[0].init.headers['X-Relay-Signature'],
+      await signHmacWebCrypto(calls[0].init.body, 'sek')
+    );
 
     assert.equal(response.status, 200);
     assert.deepEqual(await response.json(), { code: 'ok' });
-    assert.deepEqual(response.headers.getSetCookie(), ['remember_shared_data=enc', 'other=1']);
-    assert.equal(page.calls.closed, true);
+    assert.deepEqual(response.headers.getSetCookie(), [
+      'remember_shared_data=enc; Path=/',
+      'other=1; Path=/',
+    ]);
   });
 
-  it('runs API-host calls from the career app origin, not the API origin', async () => {
-    const page = fakePage();
-    const fetchImpl = rememberFetch(
-      { MYBROWSER: {}, BROWSER_SESSION: {} },
-      { withBrowserSession: fakeBrowserSession(page) }
-    );
-
-    await fetchImpl('https://open-profile-api.rememberapp.co.kr/v2/open_profiles/me', {
-      headers: { Authorization: 'Token token=t' },
+  it('throws when the relay itself fails', async () => {
+    globalThis.fetch = async () => new Response('bad gateway', { status: 502 });
+    const relay = rememberFetch({
+      REMEMBER_PROXY_URL: 'https://relay.example',
+      REMEMBER_PROXY_SECRET: 'sek',
     });
 
-    assert.equal(page.calls.goto[0].url, 'https://career.rememberapp.co.kr/robots.txt');
-    assert.match(
-      page.calls.addScriptTag[0],
-      /https:\/\/open-profile-api\.rememberapp\.co\.kr\/v2\/open_profiles\/me/
-    );
+    await assert.rejects(relay('https://rememberapp.co.kr/'), /Remember relay answered 502/);
   });
 });

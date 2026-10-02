@@ -70,10 +70,11 @@ describe('ResumeSyncWorkflow resume identifiers', () => {
     const result = await run(env, { dryRun: true, source: 'cron' });
 
     expect(env.binds[0]).toEqual(['master']);
-    expect(result.platforms).toEqual(['wanted', 'jobkorea', 'skcareers']);
+    expect(result.platforms).toEqual(['wanted', 'jobkorea', 'skcareers', 'remember']);
     expect(result.results.wanted).toMatchObject({ success: true, dryRun: true });
     expect(result.results.jobkorea.error).toMatch('auth:jobkorea');
     expect(result.results.skcareers.error).toMatch('SKCAREERS_EMAIL');
+    expect(result.results.remember.error).toMatch(/REMEMBER_EMAIL|session/i);
     expect(global.fetch.mock.calls[0][0]).toBe(
       'https://www.wanted.co.kr/api/chaos/resumes/v2/W-100'
     );

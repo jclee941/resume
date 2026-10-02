@@ -30,6 +30,8 @@ var allowedKeys = map[string]bool{
 	"REMEMBER_EMAIL":            true,
 	"REMEMBER_PASSWORD":         true,
 	"REMEMBER_DEVICE_ID":        true,
+	"REMEMBER_PROXY_URL":        true,
+	"REMEMBER_PROXY_SECRET":     true,
 	"SKCAREERS_EMAIL":           true,
 	"SKCAREERS_PASSWORD":        true,
 	"ADMIN_TOKEN":               true,
