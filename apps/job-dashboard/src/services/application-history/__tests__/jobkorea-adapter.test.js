@@ -100,6 +100,20 @@ describe('fetchJobKoreaHistory', () => {
     );
     assert.equal(browser.opened(), 0);
   });
+
+  it('replays a session it is given instead of the stored one', async () => {
+    const env = await sessionEnv(createSqliteD1(), ['jobkorea']);
+    const browser = fakeBrowser({ [JOBKOREA_APPLY_LIST_URL]: applyListHtml({ rows: [ROW] }) });
+
+    await fetchJobKoreaHistory(env, {
+      withBrowserSession: browser.withBrowserSession,
+      session: 'minted=here',
+    });
+
+    assert.deepEqual(browser.cookies, [
+      { name: 'minted', value: 'here', domain: '.jobkorea.co.kr', path: '/' },
+    ]);
+  });
 });
 
 describe('fetchJobKoreaHistory timeout diagnostics', () => {

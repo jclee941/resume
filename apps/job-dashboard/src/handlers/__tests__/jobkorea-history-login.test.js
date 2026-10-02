@@ -8,8 +8,14 @@ import {
 import { HistorySyncError } from '../../services/application-history/history-types.js';
 
 const RECORDS = [{ source: 'jobkorea', jobId: 'jobkorea-1' }];
+const NO_KV = {
+  SESSIONS: {
+    get: async () => assert.fail('the stored session is not read'),
+    put: async () => assert.fail('the login is not stored'),
+  },
+};
 
-function harness({ refreshed = { ok: true }, loginMs = 0 } = {}) {
+function harness({ minted = 'minted=a', mintError, loginMs = 0 } = {}) {
   let now = 1_000;
   const browser = { name: 'borrowed' };
   const steps = [];
@@ -18,34 +24,33 @@ function harness({ refreshed = { ok: true }, loginMs = 0 } = {}) {
     borrowed += 1;
     return fn(browser);
   };
-  const step =
-    (name, result, tookMs = 0) =>
-    async (_env, opts) =>
-      opts.withBrowserSession({}, async (given) => {
-        steps.push({ name, given, opts });
-        now += tookMs;
-        return result;
-      });
+  const mint = async (_env, opts) =>
+    opts.withBrowserSession({}, async (given) => {
+      steps.push({ name: 'login', given, opts });
+      now += loginMs;
+      if (mintError) throw mintError;
+      return minted;
+    });
+  const fetchHistory = async (_env, opts) =>
+    opts.withBrowserSession({}, async (given) => {
+      steps.push({ name: 'read', given, opts });
+      return RECORDS;
+    });
   const clock = () => now;
   return {
     browser,
     steps,
     clock,
     borrowed: () => borrowed,
-    deps: {
-      withBrowserSession,
-      clock,
-      refresh: step('login', refreshed, loginMs),
-      fetchHistory: step('read', RECORDS),
-    },
+    deps: { withBrowserSession, clock, mint, fetchHistory },
   };
 }
 
 describe('fetchJobKoreaHistoryAfterLogin', () => {
-  it('logs in and then reads the applied list in the one browser it borrowed', async () => {
+  it('logs in and reads the applied list with that login in the one browser it borrowed', async () => {
     const h = harness();
 
-    const records = await fetchJobKoreaHistoryAfterLogin({}, h.deps);
+    const records = await fetchJobKoreaHistoryAfterLogin(NO_KV, h.deps);
 
     assert.deepEqual(records, RECORDS);
     assert.equal(h.borrowed(), 1);
@@ -54,15 +59,45 @@ describe('fetchJobKoreaHistoryAfterLogin', () => {
       ['login', 'read']
     );
     assert.ok(h.steps.every(({ given }) => given === h.browser));
+    assert.equal(h.steps[1].opts.session, 'minted=a');
   });
 
-  it('makes one login attempt and gives the read only the budget the login left', async () => {
+  it('keeps each read on its own login when two syncs overlap', async () => {
+    const reads = [];
+    let releaseFirst = () => {};
+    const firstLoginDone = new Promise((resolve) => {
+      releaseFirst = resolve;
+    });
+    const deps = (name, minted, loggedIn) => ({
+      withBrowserSession: async (_env, fn) => fn({ name }),
+      clock: () => 0,
+      mint: async () => {
+        await loggedIn;
+        return minted;
+      },
+      fetchHistory: async (_env, opts) => {
+        reads.push([name, opts.session]);
+        return [];
+      },
+    });
+
+    const first = fetchJobKoreaHistoryAfterLogin(NO_KV, deps('first', 'cookie=1', firstLoginDone));
+    await fetchJobKoreaHistoryAfterLogin(NO_KV, deps('second', 'cookie=2', Promise.resolve()));
+    releaseFirst();
+    await first;
+
+    assert.deepEqual(reads, [
+      ['second', 'cookie=2'],
+      ['first', 'cookie=1'],
+    ]);
+  });
+
+  it('gives the read only the budget the login left', async () => {
     const h = harness({ loginMs: 30_000 });
 
-    await fetchJobKoreaHistoryAfterLogin({}, h.deps);
+    await fetchJobKoreaHistoryAfterLogin(NO_KV, h.deps);
 
-    const [login, read] = h.steps;
-    assert.equal(login.opts.attempts, 1);
+    const read = h.steps[1];
     assert.equal(read.opts.deadlineMs, AFTER_LOGIN_BUDGET_MS - 30_000);
     assert.equal(read.opts.clock, h.clock);
   });
@@ -71,7 +106,7 @@ describe('fetchJobKoreaHistoryAfterLogin', () => {
     const h = harness({ loginMs: AFTER_LOGIN_BUDGET_MS });
 
     await assert.rejects(
-      () => fetchJobKoreaHistoryAfterLogin({}, h.deps),
+      () => fetchJobKoreaHistoryAfterLogin(NO_KV, h.deps),
       (error) => error instanceof HistorySyncError && error.code === 'TIMEOUT'
     );
     assert.deepEqual(
@@ -81,10 +116,10 @@ describe('fetchJobKoreaHistoryAfterLogin', () => {
   });
 
   it('reports a failed login as a platform error and does not read', async () => {
-    const h = harness({ refreshed: { ok: false, error: 'JobKorea presented a CAPTCHA' } });
+    const h = harness({ mintError: new Error('JobKorea presented a CAPTCHA') });
 
     await assert.rejects(
-      () => fetchJobKoreaHistoryAfterLogin({}, h.deps),
+      () => fetchJobKoreaHistoryAfterLogin(NO_KV, h.deps),
       (error) =>
         error instanceof HistorySyncError &&
         error.code === 'UPSTREAM_ERROR' &&
