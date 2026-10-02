@@ -45,25 +45,6 @@ export async function fillLoginForm(page, { email, password }) {
 }
 
 /**
- * JobKorea binds a login to the IP it came from while the form's IP security ('IP보안') is ON, the
- * default. Each Browser Rendering browser can leave from a different IP, and an IP-bound session
- * replayed from another browser stalls JobKorea pages, so the login is submitted with IP security
- * OFF. This sets what the form's own toggle (ipCheckSetting in JK_IP_Secure.js) sets, the posted
- * IP_ONOFF field and the Secure_IPonOFF preference cookie, without the alert the toggle raises.
- * @param {import('@cloudflare/puppeteer').Page} page
- * @returns {Promise<boolean>} false when the form has no IP security field
- */
-export async function disableIpSecurity(page) {
-  const field = await page.$('#IP_ONOFF');
-  if (!field) return false;
-  await field.evaluate((input) => {
-    /** @type {HTMLInputElement} */ (input).value = 'N';
-    document.cookie = 'Secure_IPonOFF=N; path=/; domain=jobkorea.co.kr';
-  });
-  return true;
-}
-
-/**
  * @param {import('@cloudflare/puppeteer').ElementHandle<Element>} candidate
  * @returns {Promise<boolean>}
  */

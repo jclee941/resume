@@ -13,11 +13,7 @@ const input = () => ({ click: mock.fn(async () => {}), type: mock.fn(async () =>
 
 /** One logged-out login page per browser borrow; `gotoError` makes its first navigation throw. */
 function loginPage(gotoError) {
-  const inputs = {
-    'input[name="M_ID"]': input(),
-    'input[name="M_PWD"]': input(),
-    '#IP_ONOFF': { evaluate: async () => {} },
-  };
+  const inputs = { 'input[name="M_ID"]': input(), 'input[name="M_PWD"]': input() };
   return {
     setRequestInterception: mock.fn(async () => {}),
     on: mock.fn(),

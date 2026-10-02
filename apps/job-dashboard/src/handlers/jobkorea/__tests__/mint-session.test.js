@@ -54,16 +54,10 @@ function createFakePage({ evaluateQueue = [true], cookies = JOBKOREA_COOKIES, in
   };
 }
 
-// The login form's hidden IP security field (#IP_ONOFF) as an element handle.
-function createFakeIpSwitch() {
-  return { evaluate: mock.fn(async () => {}) };
-}
-
 function defaultInputs() {
   return {
     'input[name="M_ID"]': createFakeInput(),
     'input[name="M_PWD"]': createFakeInput(),
-    '#IP_ONOFF': createFakeIpSwitch(),
   };
 }
 
@@ -195,62 +189,5 @@ describe('refreshJobKoreaSession', () => {
 
     assert.deepEqual(result, { ok: false, error: 'Failed to acquire browser session' });
     assert.equal(env.SESSIONS.put.mock.callCount(), 0);
-  });
-});
-
-describe('mintJobKoreaSession IP security', () => {
-  it('switches IP security off before submitting, so another browser can replay the session', async () => {
-    const order = [];
-    const ipSwitch = {
-      evaluate: mock.fn(async () => {
-        order.push('ip-security-off');
-      }),
-    };
-    const page = createFakePage({
-      evaluateQueue: [true],
-      inputs: { ...defaultInputs(), '#IP_ONOFF': ipSwitch },
-    });
-    page.$$ = mock.fn(async () => [
-      {
-        evaluate: async () => true,
-        click: async () => {
-          order.push('submit');
-        },
-      },
-    ]);
-
-    await mintJobKoreaSession(CREDS, { withBrowserSession: fakeWithBrowserSession(page) });
-
-    assert.deepEqual(order, ['ip-security-off', 'submit']);
-    // Run the in-page step against stand-ins for the field and the document.
-    const field = { value: 'Y' };
-    const fakeDocument = { cookie: '' };
-    globalThis.document = fakeDocument;
-    try {
-      ipSwitch.evaluate.mock.calls[0].arguments[0](field);
-    } finally {
-      delete globalThis.document;
-    }
-    assert.equal(field.value, 'N');
-    assert.match(fakeDocument.cookie, /^Secure_IPonOFF=N;/);
-    assert.match(fakeDocument.cookie, /domain=jobkorea\.co\.kr/);
-  });
-
-  it('still logs in, with a warning, when the login form has no IP security switch', async () => {
-    const warn = mock.method(console, 'warn', () => {});
-    const inputs = defaultInputs();
-    delete inputs['#IP_ONOFF'];
-    const page = createFakePage({ evaluateQueue: [true], inputs });
-    try {
-      const cookie = await mintJobKoreaSession(CREDS, {
-        withBrowserSession: fakeWithBrowserSession(page),
-      });
-
-      assert.equal(cookie, 'PLAY_SESSION=sess-abc');
-      assert.equal(warn.mock.callCount(), 1);
-      assert.match(String(warn.mock.calls[0].arguments[0]), /IP security/);
-    } finally {
-      warn.mock.restore();
-    }
   });
 });

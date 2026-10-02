@@ -8,13 +8,7 @@ const input = () => ({ click: mock.fn(async () => {}), type: mock.fn(async () =>
 
 /** Fake page; `form` decides whether the login inputs exist (a logged-in browser has none). */
 function fakePage({ form }) {
-  const inputs = form
-    ? {
-        'input[name="M_ID"]': input(),
-        'input[name="M_PWD"]': input(),
-        '#IP_ONOFF': { evaluate: async () => {} },
-      }
-    : {};
+  const inputs = form ? { 'input[name="M_ID"]': input(), 'input[name="M_PWD"]': input() } : {};
   return {
     setRequestInterception: mock.fn(async () => {}),
     on: mock.fn(),
