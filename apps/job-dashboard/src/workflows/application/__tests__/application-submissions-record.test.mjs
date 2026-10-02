@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { createSqliteD1 } from '../../../services/application-history/__tests__/history-test-kit.js';
+import { upsertApplicationHistory } from '../../../services/application-history/history-repository.js';
 import { submitApprovedApplications } from '../application-submissions.js';
 import { recordApplication } from '../database.js';
 
@@ -61,6 +62,7 @@ describe('already-applied submission results', () => {
           resumeId: 'resume-1',
           coverLetter: 'cover letter',
           matchScore: 81,
+          appliedNow: false,
         },
       ]);
     });
@@ -126,6 +128,30 @@ describe('recordApplication', () => {
     const row = readRow(db);
     assert.equal(row.status, 'applied');
     assert.ok(row.applied_at);
+  });
+
+  it('leaves the time of a job found already applied empty for the history sync to fill', async () => {
+    const { db, ctx } = createDb();
+    await recordApplication(ctx, { ...record, appliedNow: false });
+    assert.equal(readRow(db).applied_at, null);
+
+    await upsertApplicationHistory(
+      db,
+      [
+        {
+          source: 'remember',
+          jobId: 'remember-4242',
+          company: 'Example Co',
+          position: 'Platform Engineer',
+          url: job.sourceUrl,
+          appliedAt: '2026-09-01T01:00:00.000Z',
+          status: 'applied',
+        },
+      ],
+      '2026-10-02T12:00:00.000Z'
+    );
+
+    assert.equal(readRow(db).applied_at, '2026-09-01T01:00:00.000Z');
   });
 
   it('promotes a history row for the same job instead of adding a second row', async () => {
