@@ -20,6 +20,11 @@ JOB_DB master resume → mapToWantedFormat() → Wanted API (Chaos)
 
 The section writers live in `packages/shared/src/platform-sync/wanted/`.
 
+Wanted keeps no role on a career, so every project under a career carries the
+career's SSoT `role` as its job role (직무). The Worker sets `SYNC_STRICT=true`:
+career projects and activities (certificates, awards) that the SSoT does not
+have are deleted from Wanted.
+
 ## Credentials and Session
 
 | Name                                                        | Stored in                         | Used for                             |
