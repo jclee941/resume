@@ -7,9 +7,10 @@ import {
   normalizeApplicationPlatforms,
   supportedApplicationPlatforms,
 } from './application-platform-catalog.js';
+import { searchRemember } from './remember-search.js';
 import { searchWanted } from './wanted-search.js';
 
-export { searchWanted };
+export { searchRemember, searchWanted };
 export {
   ATS_DRY_RUN_PLATFORMS,
   DEFAULT_APPLICATION_PLATFORMS,
@@ -53,16 +54,6 @@ export {
  *   };
  *   [key: string]: unknown;
  * }} PlatformSearchContext
- */
-
-/**
- * @typedef {{
- *   id: string | number;
- *   organization?: { name?: string };
- *   company?: { name?: string };
- *   title?: string;
- *   location?: { name?: string };
- * }} RememberApiRawJob
  */
 
 /**
@@ -129,44 +120,4 @@ export async function searchLinkedIn(_ctx, criteria) {
     match = pattern.exec(html);
   }
   return jobs;
-}
-/**
- * @param {PlatformSearchContext} _ctx
- * @param {PlatformSearchCriteria} criteria
- * @returns {Promise<PlatformJob[]>}
- */
-export async function searchRemember(_ctx, criteria) {
-  const headers = {
-    Accept: 'application/json',
-    Origin: 'https://career.rememberapp.co.kr',
-    Referer: 'https://career.rememberapp.co.kr/job/postings',
-    'User-Agent': DEFAULT_USER_AGENT,
-  };
-  const response = criteria.keyword
-    ? await fetch('https://career-api.rememberapp.co.kr/job_postings/search', {
-        method: 'POST',
-        headers: { ...headers, 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `page=1&per=20&search=${encodeURIComponent(criteria.keyword)}`,
-      })
-    : await fetch(
-        'https://career-api.rememberapp.co.kr/job_postings/curations?tab=STEP_UP&page=1&per=20',
-        { headers }
-      );
-  if (!response.ok) throw new Error(`Remember API error: ${response.status}`);
-  const data = await response.json();
-  /** @type {RememberApiRawJob[]} */
-  const jobs = Array.isArray(data?.data?.job_postings)
-    ? data.data.job_postings
-    : Array.isArray(data?.data)
-      ? data.data
-      : [];
-  return jobs
-    .filter((job) => job?.id)
-    .map((job) => ({
-      id: `remember-${job.id}`,
-      company: job.organization?.name || job.company?.name || '',
-      position: job.title || '',
-      url: `https://career.rememberapp.co.kr/job/posting/${job.id}`,
-      location: job.location?.name || '',
-    }));
 }
