@@ -122,7 +122,20 @@ async function submitApprovedApplication(ctx, workflow, job, resumeId) {
       job,
     });
 
+    const record = {
+      workflowId: workflow.id,
+      jobId: job.id,
+      platform: job.source,
+      sourceUrl: job.sourceUrl || job.url || null,
+      company: job.company,
+      position: job.position,
+      resumeId,
+      coverLetter,
+      matchScore: job.matchScore,
+    };
+
     if (submitResult.alreadyApplied || submitResult.status === 'already_applied') {
+      await ctx.recordApplication(record);
       return {
         success: true,
         networkWrite: false,
@@ -138,17 +151,7 @@ async function submitApprovedApplication(ctx, workflow, job, resumeId) {
     if (submitResult.success) {
       workflow.stats.jobsApplied++;
 
-      await ctx.recordApplication({
-        workflowId: workflow.id,
-        jobId: job.id,
-        platform: job.source,
-        sourceUrl: job.sourceUrl || job.url || null,
-        company: job.company,
-        position: job.position,
-        resumeId,
-        coverLetter,
-        matchScore: job.matchScore,
-      });
+      await ctx.recordApplication(record);
 
       return { success: true, jobId: job.id, company: job.company, position: job.position };
     }

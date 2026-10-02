@@ -213,6 +213,8 @@ export async function getApprovalStatus(ctx, requestId) {
 }
 
 /**
+ * Records the job as applied: an existing row for the same (source, job_id), such as one the
+ * application-history sync wrote, is promoted in place, so a job never gets a second row.
  * @param {WorkflowContext} ctx
  * @param {ApplicationRecord} record
  * @returns {Promise<void>}
@@ -221,18 +223,33 @@ export async function recordApplication(
   ctx,
   { workflowId, jobId, platform, sourceUrl, company, position, resumeId, coverLetter, matchScore }
 ) {
-  const applicationId = `${workflowId}-${jobId}`;
+  const db = ctx.env.JOB_DB;
+  await db
+    .prepare(
+      `
+      UPDATE applications SET
+        status = CASE WHEN status IN ('pending', 'saved') THEN 'applied' ELSE status END,
+        applied_at = COALESCE(applied_at, datetime('now')),
+        updated_at = datetime('now')
+      WHERE source = ? AND job_id = ?
+      `
+    )
+    .bind(platform, jobId)
+    .run();
 
-  await ctx.env.JOB_DB.prepare(
-    `
+  await db
+    .prepare(
+      `
       INSERT INTO applications (
         id, workflow_id, job_id, source, source_url, canonical_url, company, position,
         match_score, status, resume_id, cover_letter, applied_at, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'), datetime('now'))
+      )
+      SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'), datetime('now')
+      WHERE NOT EXISTS (SELECT 1 FROM applications WHERE source = ? AND job_id = ?)
       `
-  )
+    )
     .bind(
-      applicationId,
+      `${workflowId}-${jobId}`,
       workflowId,
       jobId,
       platform,
@@ -243,7 +260,9 @@ export async function recordApplication(
       matchScore,
       'applied',
       resumeId,
-      coverLetter
+      coverLetter,
+      platform,
+      jobId
     )
     .run();
 }
