@@ -24,23 +24,21 @@ function createLoginFetch({ code = 'ok', calls = [] } = {}) {
   return async (url, init) => {
     calls.push({ url: String(url), init });
     if (String(url).endsWith('/auths/login')) {
-      return new Response(JSON.stringify({ code, message: code === 'ok' ? null : 'bad' }), {
-        status: 200,
-        headers: [
-          ['content-type', 'application/json'],
-          ['set-cookie', 'remember_shared_data=enc%3D; Domain=.rememberapp.co.kr; Path=/'],
-        ],
-      });
-    }
-    if (String(url).endsWith('/shared_data/decrypt')) {
-      return Response.json({ data: { token: 'token-from-login' }, meta: {} });
+      return new Response(
+        JSON.stringify({
+          code,
+          message: code === 'ok' ? null : 'bad',
+          data: { device: { token: 'token-from-login' } },
+        }),
+        { status: 200, headers: [['content-type', 'application/json']] }
+      );
     }
     throw new Error(`unexpected request ${url}`);
   };
 }
 
 describe('mintRememberToken', () => {
-  it('logs in with the device cookie and decrypts the shared data cookie into a token', async () => {
+  it('logs in with the device cookie and reads the token from the body', async () => {
     const calls = [];
 
     const token = await mintRememberToken(createEnv(), { fetchImpl: createLoginFetch({ calls }) });
@@ -51,10 +49,10 @@ describe('mintRememberToken', () => {
       email: 'me@example.com',
       password: 'secret',
     });
-    assert.deepEqual(JSON.parse(calls[1].init.body), { encrypted_data: 'enc=' });
+    assert.equal(calls.length, 1);
   });
 
-  it('reports the login error code instead of decrypting anything', async () => {
+  it('reports the login error code', async () => {
     const calls = [];
 
     await assert.rejects(
@@ -68,7 +66,7 @@ describe('mintRememberToken', () => {
 });
 
 describe('withRememberToken', () => {
-  it('logs in again when Remember rejects the stored token', async () => {
+  it('logs in again when Remember rejects the stored token with 401', async () => {
     const env = createEnv();
     await writePlatformSession(env, 'remember', 'stale-token', 60);
     const seen = [];
@@ -78,6 +76,27 @@ describe('withRememberToken', () => {
       async (token) => {
         seen.push(token);
         if (token === 'stale-token') throw new RememberApiError('expired', 401, null);
+        return 'done';
+      },
+      { fetchImpl: createLoginFetch() }
+    );
+
+    assert.equal(result, 'done');
+    assert.deepEqual(seen, ['stale-token', 'token-from-login']);
+  });
+
+  it('logs in again when the stored token returns 200 require_authorize', async () => {
+    const env = createEnv();
+    await writePlatformSession(env, 'remember', 'stale-token', 60);
+    const seen = [];
+
+    const result = await withRememberToken(
+      env,
+      async (token) => {
+        seen.push(token);
+        if (token === 'stale-token') {
+          throw new RememberApiError('expired', 200, { code: 'require_authorize' });
+        }
         return 'done';
       },
       { fetchImpl: createLoginFetch() }
