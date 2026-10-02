@@ -115,6 +115,46 @@ describe('fetchJobKoreaHistoryAfterLogin', () => {
     );
   });
 
+  it(
+    'answers TIMEOUT at the budget while the browser is still coming, and never logs in after it',
+    { timeout: 2_000 },
+    async () => {
+      let now = 0;
+      let browserArrives = () => {};
+      const acquisition = new Promise((resolve) => {
+        browserArrives = resolve;
+      });
+      const steps = [];
+      const deps = {
+        clock: () => now,
+        budgetMs: 20,
+        withBrowserSession: async (_env, fn, opts) => {
+          await acquisition;
+          opts.assertOpen('the browser connected');
+          return fn({ name: 'late' });
+        },
+        mint: async () => {
+          steps.push('login');
+          return 'cookie=late';
+        },
+        fetchHistory: async () => {
+          steps.push('read');
+          return [];
+        },
+      };
+
+      await assert.rejects(
+        () => fetchJobKoreaHistoryAfterLogin(NO_KV, deps),
+        (error) => error instanceof HistorySyncError && error.code === 'TIMEOUT'
+      );
+      now = 1_000;
+      browserArrives();
+      await new Promise((resolve) => setImmediate(resolve));
+
+      assert.deepEqual(steps, []);
+    }
+  );
+
   it('reports a failed login as a platform error and does not read', async () => {
     const h = harness({ mintError: new Error('JobKorea presented a CAPTCHA') });
 
