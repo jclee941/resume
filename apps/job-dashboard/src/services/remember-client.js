@@ -71,21 +71,22 @@ export class RememberClient {
 
       if (keyword) {
         url = `${this.apiBaseUrl}/job_postings/search`;
-        const body = new URLSearchParams();
-        body.set('search', keyword);
-        body.set('page', String(params.page));
-        body.set('per', String(params.per));
+        const body = JSON.stringify({
+          page: params.page,
+          per: params.per,
+          search: { keywords: [keyword] },
+        });
 
         fetchOptions = {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/json',
             Accept: 'application/json',
             'User-Agent': DEFAULT_USER_AGENT,
             Origin: this.baseUrl,
             Referer: `${this.baseUrl}/job/postings`,
           },
-          body: body.toString(),
+          body,
         };
       } else {
         url = `${this.apiBaseUrl}/job_postings/curations?tab=${options.tab || 'STEP_UP'}&page=${params.page}&per=${params.per}`;

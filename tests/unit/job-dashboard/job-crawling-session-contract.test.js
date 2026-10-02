@@ -129,7 +129,11 @@ test('normalizes string and array criteria consistently for public crawlers', as
   await crawlLinkedIn({ keywords: '  cloud security  ', location: 'Seoul' });
 
   assert.equal(fetchCalls.length, 2);
-  assert.equal(fetchCalls[0].options.body, 'page=1&per=20&search=cloud%20security');
+  assert.deepEqual(JSON.parse(fetchCalls[0].options.body), {
+    page: 1,
+    per: 20,
+    search: { keywords: ['cloud security'] },
+  });
   const linkedInUrl = new URL(fetchCalls[1].url);
   assert.equal(linkedInUrl.searchParams.get('keywords'), 'cloud security');
   assert.equal(linkedInUrl.searchParams.get('location'), 'Seoul');
