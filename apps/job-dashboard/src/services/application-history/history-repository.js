@@ -112,9 +112,12 @@ export async function upsertApplicationHistory(
   const counts = { fetched: fetched.length, inserted: 0, updated: 0, unchanged: 0 };
   if (records.length === 0) return counts;
   const existing = await loadExisting(db, records[0].source);
+  // The job may have gained a row since loadExisting (the workflow records submissions under its
+  // own id), so the insert checks (source, job_id) itself.
   const insert = db.prepare(
     `INSERT INTO applications (id, job_id, source, source_url, canonical_url, position, company, status, notes, created_at, updated_at, applied_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12
+     WHERE NOT EXISTS (SELECT 1 FROM applications WHERE source = ?3 AND job_id = ?2)
      ON CONFLICT(id) DO NOTHING`
   );
   // History rows keep created_at equal to the application time, so it moves with applied_at.
@@ -123,6 +126,12 @@ export async function upsertApplicationHistory(
        applied_at = CASE WHEN ${IMPROVES_APPLIED_AT} THEN ?4 ELSE applied_at END,
        created_at = CASE WHEN ${IMPROVES_APPLIED_AT} AND created_at = applied_at THEN ?4 ELSE created_at END
      WHERE id = ?5 AND (status != ?1 OR job_id IS NOT ?2 OR ${IMPROVES_APPLIED_AT})`
+  );
+  const updateByJob = db.prepare(
+    `UPDATE applications SET status = ?1, updated_at = ?3,
+       applied_at = CASE WHEN ${IMPROVES_APPLIED_AT} THEN ?4 ELSE applied_at END,
+       created_at = CASE WHEN ${IMPROVES_APPLIED_AT} AND created_at = applied_at THEN ?4 ELSE created_at END
+     WHERE source = ?5 AND job_id = ?2 AND (status != ?1 OR ${IMPROVES_APPLIED_AT})`
   );
   const normalize = db.prepare(
     'UPDATE applications SET job_id = ? WHERE id = ? AND job_id IS NOT ?'
@@ -183,8 +192,9 @@ export async function upsertApplicationHistory(
       if (result.meta.changes > 0) counts[outcome] += 1;
       else if (outcome === 'updated') counts.unchanged += 1;
       else {
-        const id = `history-${record.jobId}`;
-        retries.push(update.bind(record.status, record.jobId, now, record.appliedAt, id));
+        retries.push(
+          updateByJob.bind(record.status, record.jobId, now, record.appliedAt, record.source)
+        );
       }
     });
   }

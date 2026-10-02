@@ -2,6 +2,7 @@ import { beforeEach, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { processApprovalGates } from '../../../workflows/application/approval-gates.js';
+import { recordApplication } from '../../../workflows/application/database.js';
 import { upsertApplicationHistory } from '../history-repository.js';
 import { createSqliteD1, wantedRecord } from './history-test-kit.js';
 
@@ -19,6 +20,49 @@ describe('upsertApplicationHistory', () => {
 
   beforeEach(() => {
     db = createSqliteD1();
+  });
+
+  it('keeps one row when the workflow records the job while the sync is writing', async () => {
+    db.sqlite
+      .prepare('INSERT INTO application_workflows (id, started_at) VALUES (?, ?)')
+      .run('9001', NOW);
+    const batch = db.batch.bind(db);
+    let release;
+    const released = new Promise((resolve) => (release = resolve));
+    let reached;
+    const atBatch = new Promise((resolve) => (reached = resolve));
+    db.batch = async (statements) => {
+      reached();
+      await released;
+      return batch(statements);
+    };
+
+    const syncing = upsertApplicationHistory(db, [wantedRecord(4242)], NOW);
+    await atBatch;
+    await recordApplication(
+      { env: { JOB_DB: db } },
+      {
+        workflowId: '9001',
+        jobId: 'wanted-4242',
+        platform: 'wanted',
+        sourceUrl: 'https://www.wanted.co.kr/wd/4242',
+        company: 'Company 4242',
+        position: 'Role 4242',
+        resumeId: null,
+        coverLetter: null,
+        matchScore: 70,
+      }
+    );
+    release();
+    await syncing;
+
+    const rows = db.sqlite
+      .prepare("SELECT id FROM applications WHERE source = 'wanted' AND job_id = 'wanted-4242'")
+      .all();
+    assert.deepEqual(
+      rows.map((row) => row.id),
+      ['9001-wanted-4242']
+    );
   });
 
   it('rewrites a legacy bare job_id to the canonical key so the approval gate sees it', async () => {
