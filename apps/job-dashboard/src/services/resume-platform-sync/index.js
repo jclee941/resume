@@ -3,8 +3,11 @@ export { JOBKOREA_SESSION_EXPIRED } from './jobkorea-editor.js';
 import { syncRememberFromSsot } from './remember.js';
 import { syncWantedFromSsot } from './wanted.js';
 
-/** Platforms whose resume sync runs inside the Worker. */
-export const RESUME_SYNC_PLATFORMS = Object.freeze(['wanted', 'jobkorea', 'remember']);
+/**
+ * Platforms whose resume sync runs inside the Worker by default (and on the daily cron).
+ * Remember is synced only on explicit request: its WAF answers 403 to Cloudflare egress.
+ */
+export const RESUME_SYNC_PLATFORMS = Object.freeze(['wanted', 'jobkorea']);
 
 /** @type {Record<string, string>} */
 const UNSUPPORTED_REASONS = {

@@ -8,10 +8,11 @@ import { getConfig } from '../auto-apply/db-helpers.js';
  */
 
 /**
- * Wanted and Remember have API discovery and API submission; JobKorea has no discovery step
- * and Saramin is intentionally disabled.
+ * Wanted has API discovery and API submission from the Worker. Remember answers 403 to
+ * Cloudflare egress (its WAF), so it runs only on demand from outside Cloudflare (owner
+ * decision, 2026-10-02); JobKorea has no discovery step and Saramin is intentionally disabled.
  */
-const AUTO_APPLY_CRON_PLATFORMS = ['wanted', 'remember'];
+const AUTO_APPLY_CRON_PLATFORMS = ['wanted'];
 
 /**
  * @param {string} reason
