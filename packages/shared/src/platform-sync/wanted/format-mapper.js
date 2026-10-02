@@ -153,7 +153,7 @@ export function mapToWantedFormat(source) {
       {
         school_name: source.education?.school,
         major: source.education?.major,
-        degree: '학사',
+        degree: 'BACHELOR',
         start_time: parseDate(source.education?.startDate),
         end_time: isAttending ? null : parseDate(source.education?.endDate),
         ...(wantedEducationStatus ? { status: wantedEducationStatus } : {}),
