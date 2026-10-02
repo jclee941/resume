@@ -15,11 +15,22 @@ const stubSync = (summary) => {
 };
 
 describe('handleApplicationHistorySync', () => {
-  it('syncs both platforms when the body is empty', async () => {
+  it('syncs every history platform when the body is empty', async () => {
     const { calls, sync } = stubSync({ ok: true, status: 'success', platforms: {} });
     const response = await handleApplicationHistorySync({}, post(), sync);
     assert.equal(response.status, 200);
-    assert.deepEqual(calls[0].platforms, ['wanted', 'jobkorea']);
+    assert.deepEqual(calls[0].platforms, ['wanted', 'jobkorea', 'remember']);
+  });
+
+  it('accepts remember as a requested platform', async () => {
+    const { calls, sync } = stubSync({ ok: true, status: 'success', platforms: {} });
+    const response = await handleApplicationHistorySync(
+      {},
+      post({ platforms: ['remember'] }),
+      sync
+    );
+    assert.equal(response.status, 200);
+    assert.deepEqual(calls[0].platforms, ['remember']);
   });
 
   it('passes a requested subset through once', async () => {

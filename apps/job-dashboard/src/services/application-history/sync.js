@@ -10,6 +10,7 @@
 import { fetchJobKoreaHistory } from './jobkorea-adapter.js';
 import { HISTORY_PLATFORMS, HistorySyncError } from './history-types.js';
 import { upsertApplicationHistory } from './history-repository.js';
+import { fetchRememberHistory } from './remember-adapter.js';
 import { fetchWantedHistory } from './wanted-adapter.js';
 
 export { HISTORY_PLATFORMS };
@@ -19,6 +20,7 @@ const DEFAULT_TIMEOUT_MS = 120_000;
 /**
  * @typedef {Parameters<typeof fetchWantedHistory>[0]
  *   & Parameters<typeof fetchJobKoreaHistory>[0]
+ *   & Parameters<typeof fetchRememberHistory>[0]
  *   & { JOB_DB: import('./history-repository.js').HistoryDb }} HistoryEnv
  *
  * @typedef {Record<
@@ -40,6 +42,7 @@ const DEFAULT_TIMEOUT_MS = 120_000;
 const DEFAULT_ADAPTERS = {
   wanted: (env) => fetchWantedHistory(env),
   jobkorea: (env) => fetchJobKoreaHistory(env),
+  remember: (env) => fetchRememberHistory(env),
 };
 
 /**

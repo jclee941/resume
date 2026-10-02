@@ -5,6 +5,7 @@ import { registerApiTool, writeHints } from '../tool-kit.js';
 
 const INSTANCE_ID = z.string().min(1).max(128).describe('Application workflow instance id');
 const SESSION_PLATFORMS = ['wanted', 'jobkorea'];
+const HISTORY_PLATFORMS = [...SESSION_PLATFORMS, 'remember'];
 
 /**
  * Tools that change state. Each one calls the same route as its REST endpoint,
@@ -104,9 +105,9 @@ export function registerWriteTools(server, api) {
     name: 'sync_application_history',
     title: 'Sync application history',
     description:
-      'Pull the real application history from Wanted and JobKorea into D1 applications (POST /api/applications/sync). Upserts by (source, job_id) so it is safe to repeat, never deletes rows, and reports a per-platform error when a session is missing or expired. Returns counts only.',
+      'Pull the real application history from Wanted, JobKorea and Remember into D1 applications (POST /api/applications/sync). Upserts by (source, job_id) so it is safe to repeat, never deletes rows, and reports a per-platform error when a session is missing or expired. Returns counts only.',
     inputSchema: z.object({
-      platforms: z.array(z.enum(SESSION_PLATFORMS)).min(1).optional(),
+      platforms: z.array(z.enum(HISTORY_PLATFORMS)).min(1).optional(),
     }),
     annotations: writeHints({ idempotent: true, external: true }),
     run: (args) => api.call('POST', '/api/applications/sync', { body: args }),
