@@ -85,15 +85,16 @@ test('searches each keyword and merges results by job id in first-seen order', a
   );
 });
 
-test('trims, de-duplicates and caps keywords at five queries', async () => {
-  for (const keyword of ['a', 'b', 'c', 'd', 'e', 'f']) responders.set(keyword, jsonResponse([]));
+test('trims, de-duplicates and caps keywords at twelve queries', async () => {
+  const letters = 'abcdefghijklm'.split('');
+  for (const keyword of letters) responders.set(keyword, jsonResponse([]));
   const ctx = await ctxWithWantedSession();
 
-  await searchWanted(ctx, { keywords: [' a ', 'a', '', 'b', 'c', 'd', 'e', 'f'] });
+  await searchWanted(ctx, { keywords: [' a ', 'a', '', ...letters.slice(1)] });
 
   assert.deepEqual(
     requests.map((url) => url.searchParams.get('query')),
-    ['a', 'b', 'c', 'd', 'e']
+    letters.slice(0, 12)
   );
 });
 
@@ -151,7 +152,7 @@ test('sends the country Wanted requires, else the API answers 422', async () => 
   assert.equal(url.pathname, '/api/v4/jobs');
   assert.equal(url.searchParams.get('country'), 'kr');
   assert.equal(url.searchParams.get('job_sort'), 'job.latest_order');
-  assert.equal(url.searchParams.get('limit'), '20');
+  assert.equal(url.searchParams.get('limit'), '100');
 });
 
 test('throws when no Wanted session is stored and none can be minted', async () => {
@@ -234,8 +235,8 @@ test('a failing detail request keeps the list job and warns', async (t) => {
   assert.equal(warn.mock.callCount(), 2);
 });
 
-test('fetches details for the first 40 jobs only, four at a time', async () => {
-  const ids = Array.from({ length: 45 }, (_, index) => index + 1);
+test('fetches details for the first 400 jobs only, four at a time', async () => {
+  const ids = Array.from({ length: 405 }, (_, index) => index + 1);
   responders.set('security', jsonResponse(ids));
   let inFlight = 0;
   let maxInFlight = 0;
@@ -252,15 +253,15 @@ test('fetches details for the first 40 jobs only, four at a time', async () => {
 
   const jobs = await searchWanted(ctx, { keywords: ['security'] });
 
-  assert.equal(jobs.length, 45);
-  assert.equal(detailRequests.length, 40);
+  assert.equal(jobs.length, 405);
+  assert.equal(detailRequests.length, 400);
   assert.deepEqual(
     [...detailRequests].sort((a, b) => Number(a) - Number(b)),
-    ids.slice(0, 40).map(String)
+    ids.slice(0, 400).map(String)
   );
   assert.equal(maxInFlight, 4);
-  assert.equal(jobs[39].description, 'req 40');
-  assert.equal(jobs[40].description, '');
+  assert.equal(jobs[399].description, 'req 400');
+  assert.equal(jobs[400].description, '');
 });
 
 test('mints a Wanted session when KV has none', async () => {

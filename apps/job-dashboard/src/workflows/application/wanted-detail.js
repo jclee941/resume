@@ -1,6 +1,6 @@
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 
-export const WANTED_DETAIL_LIMIT = 40;
+export const WANTED_DETAIL_LIMIT = 400;
 export const WANTED_DETAIL_CONCURRENCY = 4;
 
 /** Annual-to values at or above this mean "no upper bound" on Wanted. */

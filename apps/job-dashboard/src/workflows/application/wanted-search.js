@@ -3,8 +3,8 @@ import { refreshWantedSession } from '../../handlers/wanted/mint-session.js';
 import { readPlatformSession } from '../../services/platform-session.js';
 import { enrichWantedJobs, formatWantedExperience } from './wanted-detail.js';
 
-const MAX_WANTED_KEYWORDS = 5;
-const WANTED_PAGE_SIZE = 20;
+const MAX_WANTED_KEYWORDS = 12;
+const WANTED_PAGE_SIZE = 100;
 
 /**
  * @typedef {import('./platforms.js').PlatformJob} PlatformJob

@@ -122,7 +122,10 @@ export async function searchWorkflowJobs(ctx, step, workflow, platforms, searchC
         try {
           const platformJobs = await ctx.searchJobs(platform, searchCriteria);
           return {
-            jobs: platformJobs.map((job) => ({ ...job, source: platform })),
+            jobs: withinStepResultLimit(
+              platform,
+              platformJobs.map((job) => ({ ...job, source: platform }))
+            ),
             error: null,
           };
         } catch (error) {
@@ -243,4 +246,30 @@ function hasDeterministicAtsDryRunScore(job) {
  */
 function isAtsDryRunJob(job) {
   return job?.atsStub === true && isAtsDryRunPlatform(job.source);
+}
+
+/** Workflows keeps a step result of at most 1 MiB; this leaves room for the rest of it. */
+const SEARCH_STEP_RESULT_BYTES = 900_000;
+
+/**
+ * The leading jobs (search order) whose JSON fits in one Workflows step result.
+ * @param {string} platform
+ * @param {JobSearchRecord[]} jobs
+ * @returns {JobSearchRecord[]}
+ */
+function withinStepResultLimit(platform, jobs) {
+  const encoder = new TextEncoder();
+  let bytes = 0;
+  const kept = [];
+  for (const job of jobs) {
+    bytes += encoder.encode(JSON.stringify(job)).length + 1;
+    if (bytes > SEARCH_STEP_RESULT_BYTES) break;
+    kept.push(job);
+  }
+  if (kept.length < jobs.length) {
+    console.warn(
+      `[search-jobs] ${platform}: kept ${kept.length} of ${jobs.length} jobs to fit the step result`
+    );
+  }
+  return kept;
 }
