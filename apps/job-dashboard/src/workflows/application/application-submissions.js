@@ -135,7 +135,7 @@ async function submitApprovedApplication(ctx, workflow, job, resumeId) {
     };
 
     if (submitResult.alreadyApplied || submitResult.status === 'already_applied') {
-      await ctx.recordApplication(record);
+      await ctx.recordApplication({ ...record, appliedNow: false });
       return {
         success: true,
         networkWrite: false,

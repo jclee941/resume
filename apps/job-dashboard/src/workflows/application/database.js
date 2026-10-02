@@ -61,6 +61,8 @@ import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
  * @property {string | null} resumeId
  * @property {string | null} coverLetter
  * @property {number} matchScore
+ * @property {boolean} [appliedNow] false when the platform reported the job already applied: its
+ *   application time is unknown, so applied_at stays empty for the history sync to fill
  */
 
 /**
@@ -214,27 +216,29 @@ export async function getApprovalStatus(ctx, requestId) {
 
 /**
  * Records the job as applied: an existing row for the same (source, job_id), such as one the
- * application-history sync wrote, is promoted in place, so a job never gets a second row.
+ * application-history sync wrote, is promoted in place, so a job never gets a second row. An
+ * existing application time is kept; a new one is the submission time, or none when the job was
+ * found already applied.
  * @param {WorkflowContext} ctx
  * @param {ApplicationRecord} record
  * @returns {Promise<void>}
  */
-export async function recordApplication(
-  ctx,
-  { workflowId, jobId, platform, sourceUrl, company, position, resumeId, coverLetter, matchScore }
-) {
+export async function recordApplication(ctx, record) {
+  const { workflowId, jobId, platform, sourceUrl, company, position } = record;
+  const { resumeId, coverLetter, matchScore, appliedNow = true } = record;
+  const now = appliedNow ? 1 : 0;
   const db = ctx.env.JOB_DB;
   await db
     .prepare(
       `
       UPDATE applications SET
         status = CASE WHEN status IN ('pending', 'saved') THEN 'applied' ELSE status END,
-        applied_at = COALESCE(applied_at, datetime('now')),
+        applied_at = COALESCE(applied_at, CASE WHEN ? THEN datetime('now') END),
         updated_at = datetime('now')
       WHERE source = ? AND job_id = ?
       `
     )
-    .bind(platform, jobId)
+    .bind(now, platform, jobId)
     .run();
 
   await db
@@ -244,7 +248,8 @@ export async function recordApplication(
         id, workflow_id, job_id, source, source_url, canonical_url, company, position,
         match_score, status, resume_id, cover_letter, applied_at, created_at, updated_at
       )
-      SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'), datetime('now')
+      SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+        CASE WHEN ? THEN datetime('now') END, datetime('now'), datetime('now')
       WHERE NOT EXISTS (SELECT 1 FROM applications WHERE source = ? AND job_id = ?)
       `
     )
@@ -261,6 +266,7 @@ export async function recordApplication(
       'applied',
       resumeId,
       coverLetter,
+      now,
       platform,
       jobId
     )
