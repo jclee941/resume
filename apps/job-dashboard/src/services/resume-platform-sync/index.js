@@ -6,9 +6,10 @@ import { syncWantedFromSsot } from './wanted.js';
 
 /**
  * Platforms whose resume sync runs inside the Worker by default (and on the daily cron).
- * Remember is synced only on explicit request: its WAF answers 403 to Cloudflare egress.
+ * Remember reaches its API through the residential relay (REMEMBER_PROXY_URL/SECRET) because its
+ * WAF answers 403 to Cloudflare egress.
  */
-export const RESUME_SYNC_PLATFORMS = Object.freeze(['wanted', 'jobkorea', 'skcareers']);
+export const RESUME_SYNC_PLATFORMS = Object.freeze(['wanted', 'jobkorea', 'skcareers', 'remember']);
 
 /** @type {Record<string, string>} */
 const UNSUPPORTED_REASONS = {

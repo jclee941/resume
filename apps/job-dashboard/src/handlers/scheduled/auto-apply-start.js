@@ -9,10 +9,11 @@ import { getConfig } from '../auto-apply/db-helpers.js';
 
 /**
  * Wanted has API discovery and API submission from the Worker. Remember answers 403 to
- * Cloudflare egress (its WAF), so it runs only on demand from outside Cloudflare (owner
- * decision, 2026-10-02); JobKorea has no discovery step and Saramin is intentionally disabled.
+ * Cloudflare egress (its WAF), so its discovery and submission reach Remember through the
+ * residential relay (REMEMBER_PROXY_URL/SECRET; owner decision, 2026-10-02); JobKorea has no
+ * discovery step and Saramin is intentionally disabled.
  */
-const AUTO_APPLY_CRON_PLATFORMS = ['wanted'];
+const AUTO_APPLY_CRON_PLATFORMS = ['wanted', 'remember'];
 
 /**
  * @param {string} reason
