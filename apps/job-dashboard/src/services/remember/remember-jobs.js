@@ -76,14 +76,24 @@ export function isAutoApplicable(posting) {
 }
 
 /**
+ * The experience range in the shapes match-scoring parses ("3-7년", "3년 이상"). Remember leaves
+ * `max_experience` null when a posting has no upper bound.
+ * @param {number | null | undefined} min
+ * @param {number | null | undefined} max
+ * @returns {string}
+ */
+function formatExperience(min, max) {
+  if (min == null) return '';
+  return max == null ? `${min}년 이상` : `${min}-${max}년`;
+}
+
+/**
  * @param {RememberPosting} posting
  * @returns {RememberJob}
  */
 export function toRememberJob(posting) {
   const url = `${REMEMBER_CAREER_URL}/job/posting/${posting.id}`;
   const address = posting.addresses?.[0];
-  const min = posting.min_experience;
-  const max = posting.max_experience;
   return {
     id: `remember-${posting.id}`,
     sourceId: String(posting.id),
@@ -92,7 +102,7 @@ export function toRememberJob(posting) {
     url,
     sourceUrl: url,
     location: [address?.address_level1, address?.address_level2].filter(Boolean).join(' '),
-    experience: min == null ? '' : `${min}-${max ?? min}년`,
+    experience: formatExperience(posting.min_experience, posting.max_experience),
     description: [posting.job_description, posting.qualifications, posting.preferred_qualifications]
       .filter(Boolean)
       .join('\n\n'),
