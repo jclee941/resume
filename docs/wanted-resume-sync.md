@@ -6,7 +6,8 @@ The `resume` Worker syncs the master resume (the SSoT
 `packages/data/resumes/master/resume_data.json`, stored in JOB_DB) to the Wanted
 resume through the Wanted API. The sync runs inside `ResumeSyncWorkflow`
 (`apps/job-dashboard/src/workflows/resume-sync.js`), one durable step per
-platform (`wanted`, `jobkorea`).
+platform: `wanted`, `jobkorea` and `skcareers` by default, `remember` only when a
+run names it.
 
 ## Architecture
 
@@ -27,6 +28,7 @@ The section writers live in `packages/shared/src/platform-sync/wanted/`.
 | `ENCRYPTION_KEY`                                            | `resume` Worker secret            | AES-GCM encryption of sessions in KV |
 | `auth:wanted`                                               | KV `SESSIONS`                     | the session the sync step reads      |
 | target resume ID                                            | JOB_DB `resumes.target_resume_id` | which Wanted resume is updated       |
+| `SKCAREERS_EMAIL`, `SKCAREERS_PASSWORD`                     | `resume` Worker secrets           | the SK Careers login of each sync    |
 
 - `POST /job/api/wanted/refresh-session` (admin) mints a fresh session into
   `auth:wanted`.
@@ -37,8 +39,8 @@ The section writers live in `packages/shared/src/platform-sync/wanted/`.
 
 ### Automatic (Cloudflare Cron)
 
-`0 21 * * *` starts `ResumeSyncWorkflow` for `wanted` and `jobkorea` as a dry
-run unless the Worker variable `RESUME_SYNC_CRON_DRY_RUN` is `false`. A dry run
+`0 21 * * *` starts `ResumeSyncWorkflow` for `wanted`, `jobkorea` and `skcareers`
+as a dry run unless the Worker variable `RESUME_SYNC_CRON_DRY_RUN` is `false`. A dry run
 reads the live resume and reports what would change without writing. Every run
 records a `resume_sync_history` row and sends a Telegram summary. The same cron
 run also starts the live Wanted `ApplicationWorkflow` auto-apply run, which submits
@@ -69,4 +71,9 @@ curl -H 'Authorization: Bearer <admin-token>' \
   Wanted.
 - Session minting fails when the OneID password changes or Wanted asks for extra
   verification; the step then reports the session error and writes nothing.
-- Remember is not synced.
+- Remember is synced only when a run names it (`"platforms":["remember"]`): its
+  WAF answers 403 to Cloudflare egress, so the Worker run fails until that changes.
+- SK Careers keeps one resume per account with personal, education, career,
+  certificate and attachment sections only. The sync fills military service,
+  education, the five most recent careers and the five most recent active
+  certificates (the site's limits), and keeps the account's name, email and phone.

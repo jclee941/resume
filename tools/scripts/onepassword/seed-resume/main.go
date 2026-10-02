@@ -30,6 +30,8 @@ var allowedKeys = map[string]bool{
 	"REMEMBER_EMAIL":            true,
 	"REMEMBER_PASSWORD":         true,
 	"REMEMBER_DEVICE_ID":        true,
+	"SKCAREERS_EMAIL":           true,
+	"SKCAREERS_PASSWORD":        true,
 	"ADMIN_TOKEN":               true,
 	"AUTOMATION_WEBHOOK_SECRET": true,
 	"CLOUDFLARE_ACCOUNT_ID":     true,
