@@ -206,11 +206,8 @@ export async function crawlRemember(criteria = {}) {
     const response = keyword
       ? await fetch('https://career-api.rememberapp.co.kr/job_postings/search', {
           method: 'POST',
-          headers: {
-            ...headers,
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: `page=1&per=20&search=${encodeURIComponent(keyword)}`,
+          headers: { ...headers, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ page: 1, per: 20, search: { keywords: [keyword] } }),
         })
       : await fetch(
           'https://career-api.rememberapp.co.kr/job_postings/curations?tab=STEP_UP&page=1&per=20',
