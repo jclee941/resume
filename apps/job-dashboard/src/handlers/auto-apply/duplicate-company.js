@@ -22,6 +22,8 @@ export async function isCompanyAlreadyApplied(env, company) {
 }
 
 /**
+ * Any real application row blocks its company (applied, rejected, in progress, ...). A plain
+ * saved posting is a bookmark, not an application, so it does not.
  * @param {D1Database} db
  * @param {string} normalizedCompany
  * @returns {Promise<boolean>}
@@ -34,7 +36,7 @@ async function hasBlockingApplicationWithAutoApplyMetadata(db, normalizedCompany
          AND (
            status = 'applied'
            OR applied_at IS NOT NULL
-           OR COALESCE(auto_apply_dry_run, 0) = 0
+           OR (COALESCE(auto_apply_dry_run, 0) = 0 AND status != 'saved')
            OR auto_apply_action = 'saved_for_manual_apply'
          )
        LIMIT 1`
