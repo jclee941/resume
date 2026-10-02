@@ -18,6 +18,9 @@ const LOGIN_ORIGIN = 'https://rememberapp.co.kr';
 /** A stable document on each origin: the app root is a single-page app that redirects an
  * unauthenticated visitor within a second or two, which aborts the in-page fetch. */
 const STABLE_PATH = '/robots.txt';
+/** `code` of the error for a request the page could not complete (its `fetch` threw or it never
+ * reported back). Browser Rendering sessions hit this transiently, so a caller may retry it. */
+export const REMEMBER_BROWSER_FETCH_FAILED = 'REMEMBER_BROWSER_FETCH_FAILED';
 /** Headers a browser sets itself; a page `fetch` rejects or ignores them. */
 const FORBIDDEN_HEADERS = new Set([
   'cookie',
@@ -94,7 +97,8 @@ async function renderFetch(apiFetch, account, token, url, init) {
   }
   const result = readMarker(body.result, marker);
   if (!result || result.error) {
-    throw new Error(`Remember browser fetch ${target.host}: ${result?.error ?? 'no result'}`);
+    const message = `Remember browser fetch ${target.host}: ${result?.error ?? 'no result'}`;
+    throw Object.assign(new Error(message), { code: REMEMBER_BROWSER_FETCH_FAILED });
   }
   const status = result.status ?? 200;
   const outBody = BODYLESS_STATUS.has(status) ? null : (result.body ?? null);

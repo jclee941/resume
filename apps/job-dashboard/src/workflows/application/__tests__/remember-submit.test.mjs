@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 
 import { writePlatformSession } from '../../../services/platform-session.js';
+import { REMEMBER_BROWSER_FETCH_FAILED } from '../../../services/remember/remember-fetch.js';
 import { searchRemember } from '../remember-search.js';
 import { submitRememberApplication } from '../remember-submit.js';
 
@@ -150,5 +151,33 @@ describe('searchRemember', () => {
     const [job] = await searchRemember({}, { keywords: ['DevOps'] });
 
     assert.equal(job.experience, '2년 이상');
+  });
+
+  it('retries a query once when the browser fetch fails', async (t) => {
+    let attempts = 0;
+    globalThis.fetch = async () => {
+      attempts += 1;
+      if (attempts === 1) {
+        throw Object.assign(new Error('Remember browser fetch: Failed to fetch'), {
+          code: REMEMBER_BROWSER_FETCH_FAILED,
+        });
+      }
+      return Response.json({
+        data: [{ status: 'published', application_type: 'apply', id: 5, title: 'SRE' }],
+        meta: {},
+      });
+    };
+    t.mock.timers.enable({ apis: ['setTimeout'] });
+
+    const pending = searchRemember({}, { keywords: ['SRE'] });
+    await new Promise((resolve) => setImmediate(resolve));
+    t.mock.timers.tick(2_000);
+    const jobs = await pending;
+
+    assert.equal(attempts, 2);
+    assert.deepEqual(
+      jobs.map((job) => job.id),
+      ['remember-5']
+    );
   });
 });
