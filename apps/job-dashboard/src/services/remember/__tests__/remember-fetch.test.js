@@ -80,4 +80,22 @@ describe('rememberFetch', () => {
     assert.deepEqual(response.headers.getSetCookie(), ['remember_shared_data=enc', 'other=1']);
     assert.equal(page.calls.closed, true);
   });
+
+  it('runs API-host calls from the career app origin, not the API origin', async () => {
+    const page = fakePage();
+    const fetchImpl = rememberFetch(
+      { MYBROWSER: {}, BROWSER_SESSION: {} },
+      { withBrowserSession: fakeBrowserSession(page) }
+    );
+
+    await fetchImpl('https://open-profile-api.rememberapp.co.kr/v2/open_profiles/me', {
+      headers: { Authorization: 'Token token=t' },
+    });
+
+    assert.equal(page.calls.goto[0].url, 'https://career.rememberapp.co.kr/');
+    assert.equal(
+      page.calls.evaluate[0].url,
+      'https://open-profile-api.rememberapp.co.kr/v2/open_profiles/me'
+    );
+  });
 });
