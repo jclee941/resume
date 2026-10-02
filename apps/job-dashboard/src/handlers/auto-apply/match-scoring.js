@@ -3,7 +3,8 @@
  *
  * Scoring breakdown (max 100):
  *   Base:               5 pts
- *   Skills match:      40 pts (proportional to matched/total)
+ *   Skills match:      40 pts (share of the configured skills mentioned; a Korean
+ *                      synonym such as 자동화 counts as its skill, see skill-synonyms.js)
  *   Preferred company: 20 pts
  *   Experience fit:    15 pts (exact fit) or 10 pts (near fit)
  *   Location match:    10 pts
@@ -11,6 +12,8 @@
  *
  * Excluded companies return 0 immediately.
  */
+
+import { skillTermGroups } from './skill-synonyms.js';
 
 /**
  * Normalize a skill name for comparison.
@@ -82,17 +85,14 @@ export function calculateMatchScore(job, config) {
   const normalizedText = normalizeSkillName(textForMatching).replace(/\s+/g, ' ');
 
   const requiredSkills = Array.isArray(config.skills) ? config.skills : [];
-  if (requiredSkills.length > 0) {
-    const matchedSkills = requiredSkills.filter((skill) => {
-      const normalizedSkill = normalizeSkillName(skill);
-      if (!normalizedSkill) return false;
-
-      const escaped = normalizedSkill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const pattern = new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`, 'i');
-      return pattern.test(normalizedText);
-    });
-
-    score += (matchedSkills.length / requiredSkills.length) * 40;
+  const skillGroups = skillTermGroups(
+    requiredSkills.map((skill) => normalizeSkillName(skill)).filter(Boolean)
+  );
+  if (skillGroups.length > 0) {
+    const matchedGroups = skillGroups.filter((terms) =>
+      terms.some((term) => mentionsTerm(normalizedText, term))
+    );
+    score += (matchedGroups.length / skillGroups.length) * 40;
   }
 
   // --- Preferred companies (20 pts) ---
@@ -176,4 +176,14 @@ export function calculateMatchScore(job, config) {
   }
 
   return Math.min(100, Math.round(score));
+}
+
+/**
+ * @param {string} text normalized posting text
+ * @param {string} term normalized skill term
+ * @returns {boolean}
+ */
+function mentionsTerm(text, term) {
+  const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`, 'i').test(text);
 }
