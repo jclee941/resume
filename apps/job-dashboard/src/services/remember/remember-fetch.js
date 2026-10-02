@@ -11,6 +11,9 @@
 import { withBrowserSession as defaultWithBrowserSession } from '../browser-session.js';
 
 const PAGE_GOTO_TIMEOUT_MS = 20_000;
+/** The Remember web app origin whose requests the API hosts accept; login stays on its own host. */
+const APP_ORIGIN = 'https://career.rememberapp.co.kr';
+const LOGIN_ORIGIN = 'https://rememberapp.co.kr';
 const BODYLESS_STATUS = new Set([101, 204, 205, 304]);
 /** Headers a browser sets itself; a page `fetch` rejects or ignores them. */
 const FORBIDDEN_HEADERS = new Set([
@@ -60,11 +63,12 @@ async function renderFetch(browser, url, init) {
   const page = await browser.newPage();
   try {
     const target = new URL(url);
+    const pageOrigin = target.origin === LOGIN_ORIGIN ? LOGIN_ORIGIN : APP_ORIGIN;
     const headers = headerPairs(init.headers);
     const cookies = cookieParam(headers, target.origin);
     if (cookies.length > 0) await page.setCookie(...cookies);
     await page
-      .goto(`${target.origin}/`, { waitUntil: 'domcontentloaded', timeout: PAGE_GOTO_TIMEOUT_MS })
+      .goto(`${pageOrigin}/`, { waitUntil: 'domcontentloaded', timeout: PAGE_GOTO_TIMEOUT_MS })
       .catch(() => {});
     const result = await page.evaluate(pageFetch, url, {
       method: init.method ?? 'GET',
@@ -74,7 +78,7 @@ async function renderFetch(browser, url, init) {
       body: init.body == null ? null : String(init.body),
     });
     const outHeaders = new Headers(result.headers);
-    for (const cookie of await page.cookies(target.origin)) {
+    for (const cookie of await page.cookies(target.origin, pageOrigin)) {
       outHeaders.append('set-cookie', `${cookie.name}=${cookie.value}`);
     }
     const body = BODYLESS_STATUS.has(result.status) ? null : result.body;
