@@ -14,6 +14,10 @@ const PAGE_GOTO_TIMEOUT_MS = 20_000;
 /** The Remember web app origin whose requests the API hosts accept; login stays on its own host. */
 const APP_ORIGIN = 'https://career.rememberapp.co.kr';
 const LOGIN_ORIGIN = 'https://rememberapp.co.kr';
+/** A stable document on each origin: the app root is a single-page app that redirects an
+ * unauthenticated visitor within a second or two, which aborts the in-page fetch; robots.txt stays
+ * put and still runs an injected script. */
+const STABLE_PATH = '/robots.txt';
 const BODYLESS_STATUS = new Set([101, 204, 205, 304]);
 /** Headers a browser sets itself; a page `fetch` rejects or ignores them. */
 const FORBIDDEN_HEADERS = new Set([
@@ -68,7 +72,10 @@ async function renderFetch(browser, url, init) {
     const cookies = cookieParam(headers, target.origin);
     if (cookies.length > 0) await page.setCookie(...cookies);
     await page
-      .goto(`${pageOrigin}/`, { waitUntil: 'domcontentloaded', timeout: PAGE_GOTO_TIMEOUT_MS })
+      .goto(`${pageOrigin}${STABLE_PATH}`, {
+        waitUntil: 'domcontentloaded',
+        timeout: PAGE_GOTO_TIMEOUT_MS,
+      })
       .catch(() => {});
     const safeHeaders = Object.fromEntries(
       headers.filter(([key]) => !FORBIDDEN_HEADERS.has(key.toLowerCase()))
