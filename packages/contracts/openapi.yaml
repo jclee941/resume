@@ -465,6 +465,41 @@ paths:
               schema:
                 $ref: '#/components/schemas/AutoApplyRunResponse'
 
+  /api/auto-apply/start:
+    post:
+      tags: [AutoApply]
+      summary: Start the auto-apply ApplicationWorkflow from the dashboard
+      operationId: startAutoApply
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dryRun:
+                  type: boolean
+                  default: true
+      responses:
+        '202':
+          description: Workflow instance created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  instanceId:
+                    type: string
+                  dryRun:
+                    type: boolean
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: Auto-apply is disabled (live runs only)
+        '503':
+          description: D1 config or workflow binding unavailable
+
   # ===== ADDED 2026-04-29 closing OpenAPI drift (audit P1) =====
   # Auth routes (apps/job-dashboard/src/routes/auth.js)
   /api/auth/status:
@@ -685,17 +720,6 @@ paths:
       responses:
         '202':
           description: Search triggered
-        '400':
-          $ref: '#/components/responses/BadRequest'
-
-  /api/automation/apply:
-    post:
-      tags: [Automation]
-      summary: Trigger auto-apply webhook
-      operationId: triggerAutomationApply
-      responses:
-        '202':
-          description: Auto-apply triggered
         '400':
           $ref: '#/components/responses/BadRequest'
 

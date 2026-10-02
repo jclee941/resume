@@ -78,25 +78,4 @@ describe('automation webhook handlers use JOB_DB', () => {
     expect(jobDb.queries.some(({ sql }) => sql.includes('INTO applications'))).toBe(true);
     expect(portfolioDb.queries).toEqual([]);
   });
-
-  test('webhook auto-apply selects saved candidates from JOB_DB', async () => {
-    const { AutoApplyWebhookHandler } = await import(
-      path.join(handlersDir, 'auto-apply-webhook-handler.js')
-    );
-    const portfolioDb = createRecordingDb();
-    const jobDb = createRecordingDb({
-      saved: [{ id: 'wanted_1', job_id: '1', position: 'SRE', company: 'Acme', match_score: 90 }],
-    });
-    const auth = { getCookies: async () => 'wanted-session=stub' };
-
-    const response = await new AutoApplyWebhookHandler(
-      { DB: portfolioDb, JOB_DB: jobDb },
-      auth
-    ).triggerAutoApply({ json: async () => ({ dryRun: true }) });
-    const body = await response.json();
-
-    expect(response.status).toBe(200);
-    expect(body).toMatchObject({ success: true, skipped: 1, dryRun: true });
-    expect(portfolioDb.queries).toEqual([]);
-  });
 });

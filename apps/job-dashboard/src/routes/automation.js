@@ -8,7 +8,6 @@
  *
  * @typedef {{
  *   triggerJobSearch(req: Request): Promise<Response> | Response;
- *   triggerAutoApply(req: Request): Promise<Response> | Response;
  *   triggerDailyReport(req: Request): Promise<Response> | Response;
  *   triggerResumeSync(req: Request): Promise<Response> | Response;
  *   triggerProfileSync(req: Request): Promise<Response> | Response;
@@ -20,6 +19,7 @@
  * @typedef {{
  *   status(req: Request): Promise<Response> | Response;
  *   run(req: Request): Promise<Response> | Response;
+ *   start(req: Request): Promise<Response> | Response;
  *   configure(req: Request): Promise<Response> | Response;
  * }} AutomationAutoApply
  *
@@ -44,12 +44,12 @@ export function registerAutomationRoutes(router, ctx) {
   const { webhooks, autoApply, resumeMaster } = ctx;
 
   router.post('/api/automation/search', (req) => webhooks.triggerJobSearch(req));
-  router.post('/api/automation/apply', (req) => webhooks.triggerAutoApply(req));
   router.post('/api/automation/report', (req) => webhooks.triggerDailyReport(req));
   router.post('/api/automation/resume', (req) => webhooks.triggerResumeSync(req));
 
   router.get('/api/auto-apply/status', (req) => autoApply.status(req));
   router.post('/api/auto-apply/run', (req) => autoApply.run(req));
+  router.post('/api/auto-apply/start', (req) => autoApply.start(req));
   router.get('/api/auto-apply/config', (req) => autoApply.configure(req));
 
   router.post('/api/automation/profile-sync', (req) => webhooks.triggerProfileSync(req));

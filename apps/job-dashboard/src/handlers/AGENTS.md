@@ -18,7 +18,6 @@ handlers/
 ├── auth.js                       # auth/session endpoints
 ├── auto-apply.js                 # auto-apply control endpoint facade
 ├── auto-apply/                   # explicit candidates + native dispatch helpers
-├── auto-apply-webhook-handler.js # webhook trigger bridge
 ├── job-search-handler.js         # search trigger/bridge logic
 ├── profile-sync-handler.js       # profile sync trigger/bridge
 ├── report-handler.js             # report generation endpoints

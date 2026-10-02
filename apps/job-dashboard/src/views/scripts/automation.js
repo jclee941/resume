@@ -90,14 +90,19 @@ async function triggerAutoApply(dryRun) {
   showAutomationStatus(dryRun ? '🧪 자동지원 테스트 실행 중...' : '🚀 자동지원 실행 중...');
 
   try {
-    const res = await apiFetch('/api/automation/apply', {
+    const res = await apiFetch('/api/auto-apply/start', {
       method: 'POST',
-      body: { dryRun, maxApplications: 5 }
+      body: { dryRun }
     });
     if (res.status === 401) { promptForToken(); return; }
     const data = await res.json();
+    if (res.status === 409) {
+      showAutomationStatus('⚠️ ' + (data.error || 'auto-apply is disabled'), 'error');
+      showToast('자동지원이 비활성화됨', true);
+      return;
+    }
     if (data.success) {
-      showAutomationStatus(dryRun ? '테스트 완료! 결과 확인' : '자동지원 트리거됨!', 'success');
+      showAutomationStatus((dryRun ? '테스트 시작됨' : '자동지원 시작됨') + ' (instance: ' + data.instanceId + ')', 'success');
       showToast(dryRun ? '테스트 트리거됨' : '자동지원 트리거됨');
     } else {
       throw new Error(data.error || 'Failed');
