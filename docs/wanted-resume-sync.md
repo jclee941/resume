@@ -41,8 +41,9 @@ The section writers live in `packages/shared/src/platform-sync/wanted/`.
 run unless the Worker variable `RESUME_SYNC_CRON_DRY_RUN` is `false`. A dry run
 reads the live resume and reports what would change without writing. Every run
 records a `resume_sync_history` row and sends a Telegram summary. The same cron
-run also starts a dry-run Wanted `ApplicationWorkflow` discovery run unless
-auto-apply is disabled in D1 config or `AUTO_APPLY_CRON_ENABLED` is `false`.
+run also starts the live Wanted `ApplicationWorkflow` auto-apply run, which submits
+every new posting at or above D1 `min_match_score` (up to `max_daily_applications`),
+unless auto-apply is disabled in D1 config or `AUTO_APPLY_CRON_ENABLED` is `false`.
 
 ### Manual (admin API)
 

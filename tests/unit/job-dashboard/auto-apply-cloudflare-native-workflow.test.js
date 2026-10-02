@@ -168,7 +168,7 @@ function createEmptyApplicationsDb() {
     prepare(query) {
       if (
         query.includes('SELECT id FROM applications') ||
-        query.includes('SELECT id FROM approval_requests')
+        query.includes('SELECT id, status FROM approval_requests')
       ) {
         return {
           bind() {

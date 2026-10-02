@@ -116,7 +116,7 @@ describe('cron-router', () => {
     for (const promise of waited) assert.ok(promise instanceof Promise);
   });
 
-  it('resume-sync cron also starts one dry-run, non-auto-approved Wanted discovery run', async () => {
+  it('resume-sync cron also starts one live Wanted auto-apply run approving at the D1 score', async () => {
     const { calls, env, ctx } = createHarness({ JOB_DB: createConfigDb(ENABLED_CONFIG) });
     await scheduled({ cron: RESUME_SYNC_CRON }, env, ctx);
     assert.deepEqual(startedNames(calls), [
@@ -133,8 +133,9 @@ describe('cron-router', () => {
       searchCriteria: { keywords: ['DevOps', 'SRE'], keyword: 'DevOps' },
       minMatchScore: 65,
       maxDailyApplications: 7,
-      dryRun: true,
-      autoApprove: false,
+      dryRun: false,
+      autoApprove: true,
+      autoApproveThreshold: 65,
     });
   });
 
