@@ -17,6 +17,10 @@ on the `homelab/resume` item:
 - `jobkorea/email`
 - `jobkorea/password`
 - `JOBKOREA_RNO`
+- `remember/email`
+- `remember/password`
+- `remember/device_id` (the fixed `_remember_device_id` the Worker logs in with, so
+  Remember sees one device instead of a new one per login)
 - `TELEGRAM_BOT_TOKEN`
 - `TELEGRAM_CHAT_ID`
 - `CLOUDFLARE_ACCOUNT_ID`

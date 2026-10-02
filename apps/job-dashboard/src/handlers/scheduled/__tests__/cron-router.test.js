@@ -129,7 +129,7 @@ describe('cron-router', () => {
     assert.deepEqual(applications[0].params, {
       triggerType: 'cron-auto-apply',
       source: 'cron',
-      platforms: ['wanted'],
+      platforms: ['wanted', 'remember'],
       searchCriteria: { keywords: ['DevOps', 'SRE'], keyword: 'DevOps' },
       minMatchScore: 65,
       maxDailyApplications: 7,

@@ -8,10 +8,10 @@ import { getConfig } from '../auto-apply/db-helpers.js';
  */
 
 /**
- * Wanted is the only platform with working job discovery and a stored session;
- * JobKorea has no discovery step and Saramin is intentionally disabled.
+ * Wanted and Remember have API discovery and API submission; JobKorea has no discovery step
+ * and Saramin is intentionally disabled.
  */
-const AUTO_APPLY_CRON_PLATFORMS = ['wanted'];
+const AUTO_APPLY_CRON_PLATFORMS = ['wanted', 'remember'];
 
 /**
  * @param {string} reason

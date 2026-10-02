@@ -1,5 +1,6 @@
 import { submitToAtsDryRunOnly } from './application-platform-catalog.js';
 import { submitWithBrowserRendering } from './browser-rendering-submit.js';
+import { submitRememberApplication } from './remember-submit.js';
 import { submitWantedApplication } from './wanted-submit.js';
 
 /**
@@ -98,14 +99,15 @@ export async function submitToLinkedIn(_ctx, _jobId, _resume, _coverLetter) {
 }
 
 /**
- * @param {SubmitContext} _ctx
- * @param {string} _jobId
+ * Remember applies with the open profile, so the resume and cover letter are not sent.
+ * @param {SubmitContext} ctx
+ * @param {string} jobId
  * @param {SubmitResume | null | undefined} _resume
  * @param {string} [_coverLetter]
  * @returns {Promise<SubmitResult>}
  */
-export async function submitToRemember(_ctx, _jobId, _resume, _coverLetter) {
-  return browserAutomationRequired('remember', 'Remember application');
+export async function submitToRemember(ctx, jobId, _resume, _coverLetter) {
+  return submitRememberApplication(ctx.env, jobId);
 }
 
 /**
