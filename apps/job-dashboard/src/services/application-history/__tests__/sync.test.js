@@ -17,6 +17,7 @@ const rows = (db) => db.sqlite.prepare('SELECT * FROM applications ORDER BY id')
 const adaptersReturning = (wanted, jobkorea = []) => ({
   wanted: async () => wanted,
   jobkorea: async () => jobkorea,
+  remember: async () => [],
 });
 
 describe('syncApplicationHistory', () => {

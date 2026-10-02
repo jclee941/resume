@@ -2,12 +2,12 @@
  * @fileoverview Shared contract of the application-history sync: the normalized record both
  * platform adapters produce and the typed error they raise. Records map onto `applications`
  * rows; `jobId` is the dedupe key the auto-apply approval gate reads
- * (`wanted-<jobId>` / `jobkorea-<posting number>`).
+ * (`wanted-<jobId>` / `jobkorea-<posting number>` / `remember-<posting id>`).
  * @module services/application-history/history-types
  */
 
 /**
- * @typedef {'wanted' | 'jobkorea'} HistoryPlatform
+ * @typedef {'wanted' | 'jobkorea' | 'remember'} HistoryPlatform
  *
  * @typedef {{
  *   source: HistoryPlatform;
@@ -20,7 +20,7 @@
  * }} HistoryRecord
  */
 
-export const HISTORY_PLATFORMS = /** @type {const} */ (['wanted', 'jobkorea']);
+export const HISTORY_PLATFORMS = /** @type {const} */ (['wanted', 'jobkorea', 'remember']);
 
 /** Failure of one platform's sync; `code` is machine-readable, `message` never holds a cookie. */
 export class HistorySyncError extends Error {
