@@ -41,6 +41,9 @@ function harness({ minted = 'minted=a', mintError, loginMs = 0 } = {}) {
     browser,
     steps,
     clock,
+    advance: (ms) => {
+      now += ms;
+    },
     borrowed: () => borrowed,
     deps: { withBrowserSession, clock, mint, fetchHistory },
   };
@@ -154,6 +157,29 @@ describe('fetchJobKoreaHistoryAfterLogin', () => {
       assert.deepEqual(steps, []);
     }
   );
+
+  it('hands its deadline to the login, so a login resuming after the budget stops', async () => {
+    const h = harness();
+
+    await fetchJobKoreaHistoryAfterLogin(NO_KV, h.deps);
+
+    const { assertOpen } = h.steps[0].opts;
+    assert.doesNotThrow(() => assertOpen('the login was submitted'));
+    h.advance(AFTER_LOGIN_BUDGET_MS);
+    assert.throws(
+      () => assertOpen('the login was submitted'),
+      (error) => error instanceof HistorySyncError && error.code === 'TIMEOUT'
+    );
+  });
+
+  it('reports a login stopped by the deadline as TIMEOUT', async () => {
+    const h = harness({ mintError: new HistorySyncError('TIMEOUT', 'window closed') });
+
+    await assert.rejects(
+      () => fetchJobKoreaHistoryAfterLogin(NO_KV, h.deps),
+      (error) => error instanceof HistorySyncError && error.code === 'TIMEOUT'
+    );
+  });
 
   it('reports a failed login as a platform error and does not read', async () => {
     const h = harness({ mintError: new Error('JobKorea presented a CAPTCHA') });

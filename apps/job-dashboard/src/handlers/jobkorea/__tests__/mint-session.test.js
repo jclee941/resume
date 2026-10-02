@@ -139,6 +139,34 @@ describe('mintJobKoreaSession', () => {
   });
 });
 
+describe('mintJobKoreaSession caller window', () => {
+  it('fills and submits nothing once the caller window has closed', async () => {
+    for (const closesBefore of ['the login form was filled', 'the login was submitted']) {
+      const inputs = defaultInputs();
+      const page = createFakePage({ evaluateQueue: [true], inputs });
+      const submit = mock.fn(async () => {});
+      page.$$ = mock.fn(async () => [{ evaluate: async () => true, click: submit }]);
+      const assertOpen = (next) => {
+        if (next === closesBefore) throw new Error(`window closed before ${next}`);
+      };
+
+      await assert.rejects(
+        () =>
+          mintJobKoreaSession(CREDS, {
+            withBrowserSession: fakeWithBrowserSession(page),
+            assertOpen,
+          }),
+        /window closed/
+      );
+
+      assert.equal(submit.mock.callCount(), 0);
+      const typedPassword = inputs['input[name="M_PWD"]'].type.mock.callCount();
+      assert.equal(typedPassword, closesBefore === 'the login form was filled' ? 0 : 1);
+      assert.equal(page.close.mock.callCount(), 1);
+    }
+  });
+});
+
 describe('refreshJobKoreaSession', () => {
   it('mints a session and stores it in KV with the expected TTL', async () => {
     const inputs = defaultInputs();

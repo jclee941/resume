@@ -17,8 +17,9 @@ import { mintJobKoreaSession as defaultMint } from '../jobkorea/mint-session.js'
 
 /**
  * Budget of the whole on-demand read from asking for a browser on. Nothing starts after it (a
- * browser that arrives late is handed back unused), the read gets only what the login left, and
- * the adapter answers TIMEOUT at it, inside sync.js's 120 s fetch budget.
+ * browser that arrives late is handed back unused, a login in progress fills and submits nothing),
+ * the read gets only what the login left, and the adapter answers TIMEOUT at it, inside sync.js's
+ * 120 s fetch budget.
  */
 export const AFTER_LOGIN_BUDGET_MS = 110_000;
 
@@ -57,8 +58,9 @@ export async function fetchJobKoreaHistoryAfterLogin(env, deps = {}) {
       /** @type {string} */
       let session;
       try {
-        session = await mint(env, { withBrowserSession: sameBrowser });
+        session = await mint(env, { withBrowserSession: sameBrowser, assertOpen });
       } catch (error) {
+        if (error instanceof HistorySyncError) throw error;
         const reason = error instanceof Error ? error.message : String(error);
         throw new HistorySyncError(
           'UPSTREAM_ERROR',
