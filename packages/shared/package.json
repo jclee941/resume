@@ -41,6 +41,7 @@
     "./platform-sync/wanted": "./src/platform-sync/wanted/index.js",
     "./platform-sync/jobkorea": "./src/platform-sync/jobkorea/index.js",
     "./platform-sync/remember": "./src/platform-sync/remember/index.js",
+    "./platform-sync/skcareers": "./src/platform-sync/skcareers/index.js",
     "./platform-sync/*": "./src/platform-sync/*.js"
   },
   "dependencies": {

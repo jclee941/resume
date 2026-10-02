@@ -23,7 +23,9 @@ services/
 ├── notifications/             # delivery, formatting, Telegram actions
 ├── browser-session.js         # Browser Rendering session borrow/release (BROWSER_SESSION DO)
 ├── platform-session.js        # encrypted KV platform sessions (auth:<platform>)
-├── resume-platform-sync/      # Worker-native resume sync (Wanted, JobKorea)
+├── remember/                  # Remember login, job search and apply APIs
+├── skcareers/                 # SK Careers login and MyPage resume editor/save
+├── resume-platform-sync/      # Worker-native resume sync (Wanted, JobKorea, SK Careers, Remember)
 └── rate-limiter/              # token-bucket service + tests
 ```
 

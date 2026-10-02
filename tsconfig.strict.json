@@ -444,7 +444,10 @@
     "packages/shared/src/platform-sync/wanted/sync.js",
     "packages/shared/src/platform-sync/jobkorea/index.js",
     "packages/shared/src/platform-sync/jobkorea/section-indices.js",
-    "packages/shared/src/platform-sync/jobkorea/sections/base.js"
+    "packages/shared/src/platform-sync/jobkorea/sections/base.js",
+    "packages/shared/src/platform-sync/skcareers/index.js",
+    "apps/job-dashboard/src/services/skcareers/skcareers-api.js",
+    "apps/job-dashboard/src/services/resume-platform-sync/skcareers.js"
   ],
   "exclude": ["packages/env/src/__tests__/**"]
 }

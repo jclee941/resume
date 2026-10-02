@@ -1,13 +1,14 @@
 import { syncJobKoreaFromSsot } from './jobkorea.js';
 export { JOBKOREA_SESSION_EXPIRED } from './jobkorea-editor.js';
 import { syncRememberFromSsot } from './remember.js';
+import { syncSkCareersFromSsot } from './skcareers.js';
 import { syncWantedFromSsot } from './wanted.js';
 
 /**
  * Platforms whose resume sync runs inside the Worker by default (and on the daily cron).
  * Remember is synced only on explicit request: its WAF answers 403 to Cloudflare egress.
  */
-export const RESUME_SYNC_PLATFORMS = Object.freeze(['wanted', 'jobkorea']);
+export const RESUME_SYNC_PLATFORMS = Object.freeze(['wanted', 'jobkorea', 'skcareers']);
 
 /** @type {Record<string, string>} */
 const UNSUPPORTED_REASONS = {
@@ -16,8 +17,8 @@ const UNSUPPORTED_REASONS = {
 };
 
 /**
- * @typedef {Parameters<typeof syncWantedFromSsot>[0] & Parameters<typeof syncJobKoreaFromSsot>[0] & Parameters<typeof syncRememberFromSsot>[0]} ResumePlatformSyncEnv
- * @typedef {Parameters<typeof syncWantedFromSsot>[1] & Parameters<typeof syncJobKoreaFromSsot>[1] & Parameters<typeof syncRememberFromSsot>[1]} ResumePlatformSsot
+ * @typedef {Parameters<typeof syncWantedFromSsot>[0] & Parameters<typeof syncJobKoreaFromSsot>[0] & Parameters<typeof syncRememberFromSsot>[0] & Parameters<typeof syncSkCareersFromSsot>[0]} ResumePlatformSyncEnv
+ * @typedef {Parameters<typeof syncWantedFromSsot>[1] & Parameters<typeof syncJobKoreaFromSsot>[1] & Parameters<typeof syncRememberFromSsot>[1] & Parameters<typeof syncSkCareersFromSsot>[1]} ResumePlatformSsot
  * @typedef {{ platform: string; success: boolean; dryRun?: boolean; error?: string; code?: string; [key: string]: unknown }} PlatformSyncOutcome
  */
 
@@ -44,6 +45,7 @@ export async function syncResumePlatform(env, platform, ssot, options) {
     if (platform === 'wanted') return await syncWantedFromSsot(env, ssot, options);
     if (platform === 'jobkorea') return await syncJobKoreaFromSsot(env, ssot, options);
     if (platform === 'remember') return await syncRememberFromSsot(env, ssot, options);
+    if (platform === 'skcareers') return await syncSkCareersFromSsot(env, ssot, options);
   } catch (error) {
     return {
       platform,
