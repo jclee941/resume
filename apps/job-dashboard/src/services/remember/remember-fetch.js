@@ -67,9 +67,7 @@ async function renderFetch(browser, url, init) {
     const headers = headerPairs(init.headers);
     const cookies = cookieParam(headers, target.origin);
     if (cookies.length > 0) await page.setCookie(...cookies);
-    await page
-      .goto(`${pageOrigin}/`, { waitUntil: 'domcontentloaded', timeout: PAGE_GOTO_TIMEOUT_MS })
-      .catch(() => {});
+    await establishOrigin(page, pageOrigin);
     const result = await page.evaluate(pageFetch, url, {
       method: init.method ?? 'GET',
       headers: Object.fromEntries(
@@ -86,6 +84,32 @@ async function renderFetch(browser, url, init) {
   } finally {
     await page.close().catch(() => {});
   }
+}
+
+/**
+ * Serves a blank document on `origin` so the page runs on that origin without loading the real
+ * site: the career app is a single-page app that redirects an unauthenticated visitor off the
+ * origin before the fetch runs, which would make the API call cross-origin from the wrong origin.
+ * @param {import('@cloudflare/puppeteer').Page} page
+ * @param {string} origin
+ * @returns {Promise<void>}
+ */
+async function establishOrigin(page, origin) {
+  await page.setRequestInterception(true);
+  page.on('request', (request) => {
+    if (request.isNavigationRequest() && request.frame() === page.mainFrame()) {
+      request.respond({
+        status: 200,
+        contentType: 'text/html',
+        body: '<!doctype html><title>r</title>',
+      });
+    } else {
+      request.continue();
+    }
+  });
+  await page
+    .goto(`${origin}/`, { waitUntil: 'domcontentloaded', timeout: PAGE_GOTO_TIMEOUT_MS })
+    .catch(() => {});
 }
 
 /**
