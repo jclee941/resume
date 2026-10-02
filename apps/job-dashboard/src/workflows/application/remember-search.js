@@ -1,3 +1,4 @@
+import { rememberFetch } from '../../services/remember/remember-fetch.js';
 import {
   isAutoApplicable,
   searchRememberPostings,
@@ -29,19 +30,20 @@ function rememberKeywords(criteria) {
  * its own, merged by posting id in first-seen order. Search results already carry the posting
  * text, so no detail call is needed for scoring. A failing keyword is logged and skipped; the
  * first error is thrown only when every query fails.
- * @param {unknown} _ctx
+ * @param {{ env?: Record<string, unknown> }} ctx
  * @param {PlatformSearchCriteria} criteria
  * @returns {Promise<PlatformJob[]>}
  */
-export async function searchRemember(_ctx, criteria) {
+export async function searchRemember(ctx, criteria) {
   const keywords = rememberKeywords(criteria);
+  const fetchImpl = rememberFetch(ctx?.env);
   /** @type {Map<string, PlatformJob>} */
   const merged = new Map();
   /** @type {unknown[]} */
   const errors = [];
   for (const keyword of keywords) {
     try {
-      for (const posting of await searchRememberPostings(keyword)) {
+      for (const posting of await searchRememberPostings(keyword, { fetchImpl })) {
         if (!isAutoApplicable(posting)) continue;
         const job = toRememberJob(posting);
         if (!merged.has(job.id)) merged.set(job.id, job);
