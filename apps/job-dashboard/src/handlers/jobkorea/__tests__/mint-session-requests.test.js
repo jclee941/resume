@@ -24,7 +24,7 @@ function fakeRequest(url, resourceType) {
 /** Logged-in fake page that records interception setup order relative to goto. */
 function createFakePage(events) {
   const requestHandlers = [];
-  const input = { click: async () => {}, type: async () => {} };
+  const input = { click: async () => {}, type: async () => {}, evaluate: async () => {} };
   return {
     requestHandlers,
     setRequestInterception: mock.fn(async (enabled) => {
