@@ -49,7 +49,10 @@ export {
  * @typedef {{
  *   env: {
  *     ENCRYPTION_KEY?: string;
- *     SESSIONS?: { get(key: string): Promise<string | null> };
+ *     SESSIONS?: {
+ *       get(key: string): Promise<string | null>;
+ *       put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
+ *     };
  *     [key: string]: unknown;
  *   };
  *   [key: string]: unknown;

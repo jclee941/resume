@@ -154,13 +154,13 @@ test('sends the country Wanted requires, else the API answers 422', async () => 
   assert.equal(url.searchParams.get('limit'), '20');
 });
 
-test('throws when no Wanted session is stored', async () => {
+test('throws when no Wanted session is stored and none can be minted', async () => {
   await assert.rejects(
     searchWanted(
       { env: { ENCRYPTION_KEY, SESSIONS: { get: async () => null } } },
       { keyword: 'x' }
     ),
-    /No Wanted session available/
+    /Wanted session refresh failed: WANTED_EMAIL is required/
   );
 });
 
@@ -261,6 +261,40 @@ test('fetches details for the first 40 jobs only, four at a time', async () => {
   assert.equal(maxInFlight, 4);
   assert.equal(jobs[39].description, 'req 40');
   assert.equal(jobs[40].description, '');
+});
+
+test('mints a Wanted session when KV has none', async () => {
+  /** @type {Map<string, string>} */
+  const kv = new Map();
+  const env = {
+    ENCRYPTION_KEY,
+    WANTED_EMAIL: 'me@example.com',
+    WANTED_PASSWORD: 'pw',
+    WANTED_ONEID_CLIENT_ID: 'client',
+    SESSIONS: {
+      get: async (key) => kv.get(key) ?? null,
+      put: async (key, value) => void kv.set(key, value),
+    },
+  };
+  /** @type {string[]} */
+  const listCookies = [];
+  globalThis.fetch = async (input, init = {}) => {
+    const url = new URL(String(input));
+    if (url.pathname === '/v1/auth/token') return Response.json({ token: 'minted' });
+    if (url.pathname === '/api/v4/user') return Response.json({ data: { id: 7 } });
+    if (url.pathname !== '/api/v4/jobs') return Response.json({ job: {} });
+    listCookies.push(init.headers?.Cookie);
+    return jsonResponse([1])();
+  };
+
+  const jobs = await searchWanted({ env }, { keywords: ['security'] });
+
+  assert.deepEqual(
+    jobs.map((job) => job.id),
+    ['wanted-1']
+  );
+  assert.deepEqual(listCookies, ['WWW_ONEID_ACCESS_TOKEN=minted']);
+  assert.equal(kv.has('auth:wanted'), true);
 });
 
 test('makes no detail request when the list is empty', async () => {

@@ -1,4 +1,5 @@
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
+import { refreshWantedSession } from '../../handlers/wanted/mint-session.js';
 import { readPlatformSession } from '../../services/platform-session.js';
 import { enrichWantedJobs, formatWantedExperience } from './wanted-detail.js';
 
@@ -69,6 +70,24 @@ async function queryWanted(session, keyword, location) {
 }
 
 /**
+ * The KV Wanted session, minted when KV has none: it lives 12 hours from the daily 21:00 UTC
+ * refresh, so a run started at another time of day would otherwise find none.
+ * @param {PlatformSearchContext['env']} env
+ * @returns {Promise<string>}
+ */
+async function wantedSession(env) {
+  const stored = await readPlatformSession(env, 'wanted');
+  if (stored) return stored;
+  const refreshed = await refreshWantedSession(
+    /** @type {Parameters<typeof refreshWantedSession>[0]} */ (env)
+  );
+  if (!refreshed.ok) throw new Error(`Wanted session refresh failed: ${refreshed.error}`);
+  const minted = await readPlatformSession(env, 'wanted');
+  if (!minted) throw new Error('No Wanted session after refresh');
+  return minted;
+}
+
+/**
  * Searches Wanted once per configured keyword (sequentially) and merges the
  * results by job id in first-seen order, then enriches them with their detail
  * text (the list endpoint has no description). Without `criteria.keywords` it runs
@@ -79,8 +98,7 @@ async function queryWanted(session, keyword, location) {
  * @returns {Promise<PlatformJob[]>}
  */
 export async function searchWanted(ctx, criteria) {
-  const session = await readPlatformSession(ctx.env, 'wanted');
-  if (!session) throw new Error('No Wanted session available');
+  const session = await wantedSession(ctx.env);
   const keywords = wantedKeywords(criteria);
   if (keywords.length === 0) {
     const jobs = await queryWanted(session, criteria.keyword, criteria.location);
