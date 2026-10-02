@@ -70,7 +70,7 @@ export async function generateCoverLetter(ctx, job) {
       const resume = await getStoredResume(ctx);
       const prompt = buildCoverLetterPrompt(ctx, job, resume);
 
-      const response = await ctx.env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+      const response = await ctx.env.AI.run('@cf/meta/llama-3.1-8b-instruct-fp8', {
         messages: [
           {
             role: 'system',
