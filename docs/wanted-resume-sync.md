@@ -77,27 +77,29 @@ curl -H 'Authorization: Bearer <admin-token>' \
 - Session minting fails when the OneID password changes or Wanted asks for extra
   verification; the step then reports the session error and writes nothing.
 - Remember is on the daily cron (sync and auto-apply) and reaches its API through
-  the residential relay (see below), because its WAF answers 403 to Cloudflare
-  egress (both a Worker `fetch` and the Browser Rendering binding). The SSoT owns
+  the Cloudflare Browser Rendering REST API (see below), because its WAF answers
+  403 to Cloudflare's Worker and Browser Rendering binding IP ranges. The SSoT owns
   the Remember careers: careers it does not list are removed, in a second request
   after the main flag has moved to the newest SSoT career (Remember refuses to
   delete the main career).
 
-## Remember relay
+## Remember over Browser Rendering REST
 
 Remember's Cloudflare WAF answers 403 to Cloudflare's Worker and Browser Rendering
-binding IP ranges (the Browser Rendering REST pool is not blocked but cannot
-complete Remember's HttpOnly-cookie login). So Remember is reached through a small
-signed forwarder on a residential host (owner decision, 2026-10-02).
+_binding_ IP ranges, but the Browser Rendering _REST_ API runs on infrastructure
+Remember accepts. So every Remember request is replayed from a Browser Rendering
+REST page, entirely Cloudflare-native (no outside host).
 
-- `tools/scripts/remember-relay` is the forwarder: `POST /` takes an HMAC-signed
-  `{method, url, headers, body}` envelope, forwards it to `*.rememberapp.co.kr`
-  only, and returns `{status, headers, body}`. Run it with `RELAY_SECRET` set,
-  behind a Cloudflare Tunnel, and the Worker calls it when `REMEMBER_PROXY_URL`
-  (the tunnel URL) and `REMEMBER_PROXY_SECRET` (= `RELAY_SECRET`) are set.
-- `rememberFetch(env)` returns the signed relay fetch when both are set and a plain
-  `fetch` otherwise, so every Remember call (login, profile sync, search, apply)
-  uses the relay once it is configured and is unchanged until then.
+- `rememberFetch(env)` returns a Browser Rendering REST fetch when
+  `REMEMBER_BROWSER_ACCOUNT_ID` and `REMEMBER_BROWSER_API_TOKEN` (a token with
+  Browser Run Write) are set, and a plain `fetch` otherwise. Each Remember call
+  (login, profile sync, search, apply) loads `/robots.txt` on the right origin
+  (`rememberapp.co.kr` for login, `career.rememberapp.co.kr` for the APIs — a stable
+  page that does not redirect), injects a main-world script that runs the request as
+  a page `fetch`, and reads the base64 result back from the DOM. The login token
+  comes from the response body (`data.device.token`), so no cookie is read; the
+  `Cookie` request header (the device id) is applied through the REST `cookies`
+  option.
 - SK Careers keeps one resume per account with personal, education, career,
   certificate and attachment sections only. The sync fills military service,
   education, the five most recent careers and the five most recent active

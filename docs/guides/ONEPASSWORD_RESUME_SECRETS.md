@@ -21,8 +21,8 @@ on the `homelab/resume` item:
 - `remember/password`
 - `remember/device_id` (the fixed `_remember_device_id` the Worker logs in with, so
   Remember sees one device instead of a new one per login)
-- `remember/proxy_url` (the Cloudflare Tunnel URL of the residential Remember relay)
-- `remember/proxy_secret` (the relay's HMAC secret; shared with the relay's `RELAY_SECRET`)
+- `remember/browser_api_token` (a Cloudflare API token with Browser Run Write, used to reach
+  Remember through the Browser Rendering REST API; the account id reuses `CLOUDFLARE_ACCOUNT_ID`)
 - `skcareers/email`
 - `skcareers/password`
 - `TELEGRAM_BOT_TOKEN`

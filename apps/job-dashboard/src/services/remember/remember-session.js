@@ -1,23 +1,19 @@
 /**
  * @fileoverview Remember login for the Worker, stored like the other platforms as an encrypted
  * KV session (`auth:remember`). The web login (POST rememberapp.co.kr/auths/login) needs the
- * `_remember_device_id` cookie and answers with a `remember_shared_data` cookie; the career API
- * decrypts that cookie into the session token the APIs take. Plain fetch, no browser.
+ * `_remember_device_id` cookie and answers with the session token in its body
+ * (`data.device.token`), which the career APIs take as `Authorization: Token token=<token>`. The
+ * request runs through `rememberFetch` (Browser Rendering REST), since Remember's WAF blocks
+ * Cloudflare egress.
  * @module services/remember/remember-session
  */
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 import { readPlatformSession, writePlatformSession } from '../platform-session.js';
-import {
-  REMEMBER_CAREER_API_URL,
-  REMEMBER_WEB_URL,
-  RememberApiError,
-  rememberRequest,
-} from './remember-api.js';
+import { REMEMBER_WEB_URL, RememberApiError } from './remember-api.js';
 import { rememberFetch } from './remember-fetch.js';
 
 export const AUTH_REMEMBER_KEY = 'auth:remember';
 export const REMEMBER_SESSION_TTL_S = 60 * 60 * 24 * 12;
-const SHARED_DATA_COOKIE = 'remember_shared_data';
 
 /**
  * @typedef {{
@@ -26,8 +22,8 @@ const SHARED_DATA_COOKIE = 'remember_shared_data';
  *   REMEMBER_DEVICE_ID?: string;
  *   SESSIONS: { get: Function; put: Function };
  *   ENCRYPTION_KEY?: string;
- *   REMEMBER_PROXY_URL?: string;
- *   REMEMBER_PROXY_SECRET?: string;
+ *   REMEMBER_BROWSER_ACCOUNT_ID?: string;
+ *   REMEMBER_BROWSER_API_TOKEN?: string;
  *   [key: string]: unknown;
  * }} RememberEnv
  */
@@ -61,16 +57,9 @@ export async function mintRememberToken(env, { fetchImpl = rememberFetch(env) } 
     const detail = payload?.message ? `: ${payload.message}` : '';
     throw new Error(`Remember login failed (${response.status} ${payload?.code ?? ''})${detail}`);
   }
-  const sharedData = readSetCookie(response.headers, SHARED_DATA_COOKIE);
-  if (!sharedData) throw new Error('Remember login returned no remember_shared_data cookie');
-  const decrypted = await rememberRequest(null, `${REMEMBER_CAREER_API_URL}/shared_data/decrypt`, {
-    method: 'POST',
-    body: { encrypted_data: sharedData },
-    fetchImpl,
-  });
-  const token = decrypted?.data?.token;
+  const token = payload?.data?.device?.token;
   if (typeof token !== 'string' || !token) {
-    throw new Error('Remember shared data decrypt returned no token');
+    throw new Error('Remember login returned no token');
   }
   return token;
 }
@@ -107,7 +96,7 @@ export async function withRememberToken(env, fn, opts = {}) {
     try {
       return await fn(stored, fetchImpl);
     } catch (error) {
-      if (!(error instanceof RememberApiError && error.status === 401)) throw error;
+      if (!needsRelogin(error)) throw error;
     }
   }
   const refreshed = await refreshRememberSession(env, { fetchImpl });
@@ -118,18 +107,15 @@ export async function withRememberToken(env, fn, opts = {}) {
 }
 
 /**
- * @param {Headers} headers
- * @param {string} name
- * @returns {string | null}
+ * Whether an error means the stored token is no longer valid, so a fresh login should be tried.
+ * Remember answers an expired token with HTTP 200 and `code: "require_authorize"`, not 401.
+ * @param {unknown} error
+ * @returns {boolean}
  */
-function readSetCookie(headers, name) {
-  const cookies =
-    typeof headers.getSetCookie === 'function'
-      ? headers.getSetCookie()
-      : [headers.get('set-cookie') ?? ''];
-  for (const cookie of cookies) {
-    const pair = cookie.split(';')[0].trim();
-    if (pair.startsWith(`${name}=`)) return decodeURIComponent(pair.slice(name.length + 1));
-  }
-  return null;
+function needsRelogin(error) {
+  if (!(error instanceof RememberApiError)) return false;
+  if (error.status === 401) return true;
+  const body = /** @type {{ code?: unknown } | null} */ (error.body);
+  const code = body && typeof body === 'object' ? body.code : undefined;
+  return code === 'require_authorize' || code === 'unauthorized';
 }
