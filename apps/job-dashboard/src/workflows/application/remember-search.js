@@ -1,18 +1,12 @@
-import { withRetry } from '@resume/shared/retry';
-import {
-  REMEMBER_BROWSER_FETCH_FAILED,
-  rememberFetch,
-} from '../../services/remember/remember-fetch.js';
+import { rememberFetch } from '../../services/remember/remember-fetch.js';
 import {
   isAutoApplicable,
   searchRememberPostings,
   toRememberJob,
 } from '../../services/remember/remember-jobs.js';
+import { withBrowserFetchRetry } from '../../services/remember/remember-retry.js';
 
 const MAX_REMEMBER_KEYWORDS = 5;
-/** A Browser Rendering session sometimes fails the in-page fetch where a fresh session succeeds,
- * so such a query gets one retry before it is skipped. */
-const SEARCH_RETRY = { maxRetries: 1, retryableErrors: [REMEMBER_BROWSER_FETCH_FAILED] };
 
 /**
  * @typedef {import('./platforms.js').PlatformJob} PlatformJob
@@ -51,9 +45,8 @@ export async function searchRemember(ctx, criteria) {
   const errors = [];
   for (const keyword of keywords) {
     try {
-      const postings = await withRetry(
-        () => searchRememberPostings(keyword, { fetchImpl }),
-        SEARCH_RETRY
+      const postings = await withBrowserFetchRetry(() =>
+        searchRememberPostings(keyword, { fetchImpl })
       );
       for (const posting of postings) {
         if (!isAutoApplicable(posting)) continue;
