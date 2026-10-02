@@ -79,7 +79,9 @@ async function openLoginPage(page, requests) {
  * Rendering broker. Fails with code JOBKOREA_CAPTCHA_REQUIRED when JobKorea
  * presents a CAPTCHA.
  * @param {JobKoreaEnv} env
- * @param {{ withBrowserSession?: typeof defaultWithBrowserSession, pollIntervalMs?: number, cleanupMs?: number }} [opts]
+ * @param {{ withBrowserSession?: typeof defaultWithBrowserSession, pollIntervalMs?: number, cleanupMs?: number, assertOpen?: (next: string) => void }} [opts]
+ *   `assertOpen(next)` throws once the caller has given up; it runs before the form is filled and
+ *   before it is submitted, so no credentials go out after that
  * @returns {Promise<string>} cookie string `name=value; name2=value2`
  */
 export async function mintJobKoreaSession(
@@ -88,6 +90,7 @@ export async function mintJobKoreaSession(
     withBrowserSession = defaultWithBrowserSession,
     pollIntervalMs = LOGIN_POLL_INTERVAL_MS,
     cleanupMs = CLEANUP_TIMEOUT_MS,
+    assertOpen = () => {},
   } = {}
 ) {
   const email = env?.JOBKOREA_USERNAME || env?.JOBKOREA_EMAIL;
@@ -108,7 +111,9 @@ export async function mintJobKoreaSession(
       // Stylesheets stay allowed: which login tab's submit button is visible is decided by CSS.
       const requests = await restrictToJobKorea(page, LOGIN_BLOCKED_RESOURCE_TYPES);
       await openLoginPage(page, requests);
+      assertOpen('the login form was filled');
       await fillLoginForm(page, { email, password });
+      assertOpen('the login was submitted');
       await submitAndWait(page, SUBMIT_SELECTOR);
 
       let loggedIn = await isLoggedIn(page);
