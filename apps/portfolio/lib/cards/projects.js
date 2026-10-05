@@ -8,6 +8,7 @@ const {
   buildProjectCaseNotes,
   buildProjectReviewRail,
   projectAnchor,
+  projectDescriptionRemainder,
   projectLabelsFor,
 } = require('./project-review');
 
@@ -170,6 +171,7 @@ function generateProjectCards(projectsData, dataHash) {
       const metaLine = buildProjectMeta(project, githubUrl, demoUrl);
       const projectLinks = buildProjectLinks(project, githubUrl, demoUrl);
       const caseNotes = buildProjectCaseNotes(project, labels, githubUrl, demoUrl, dashboards);
+      const descriptionRemainder = projectDescriptionRemainder(project);
       // Progressive disclosure: show the top FEATURED_VISIBLE projects (by
       // displayOrder) by default; collapse the rest behind a "\uB354\uBCF4\uAE30" toggle so
       // the section is curated without removing any project from the DOM.
@@ -186,7 +188,7 @@ function generateProjectCards(projectsData, dataHash) {
                  </h3>
              </div>
               ${caseNotes}
-              <p class="project-description">${escapeHtml(project.description).replace(/\n/g, '<br>')}</p>
+              ${descriptionRemainder ? `<p class="project-description">${escapeHtml(descriptionRemainder)}</p>` : ''}
               <div class="project-tech">
                   ${escapeHtml(project.tech)}
               </div>

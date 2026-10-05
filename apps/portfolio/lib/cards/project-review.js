@@ -118,6 +118,15 @@ function splitProjectSentences(description) {
 }
 
 /**
+ * Description sentences that the problem/role/proof case notes do not already show.
+ * @param {ProjectItem} project
+ * @returns {string}
+ */
+function projectDescriptionRemainder(project) {
+  return splitProjectSentences(project.description).slice(3).join(' ');
+}
+
+/**
  * @param {ProjectLabels} labels
  * @param {string | null | undefined} githubUrl
  * @param {string | null | undefined} demoUrl
@@ -190,5 +199,6 @@ module.exports = {
   buildProjectCaseNotes,
   buildProjectReviewRail,
   projectAnchor,
+  projectDescriptionRemainder,
   projectLabelsFor,
 };
