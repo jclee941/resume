@@ -41,6 +41,7 @@ const ICON_PATHS = {
   brick: '<path d="M4 8h16v10H4z"/><path d="M4 13h16"/><path d="M9 8v5"/><path d="M15 13v5"/>',
   chart: '<path d="M4 19h16"/><path d="M7 16V9"/><path d="M12 16V5"/><path d="M17 16v-4"/>',
   check: '<path d="m5 12 4 4L19 6"/>',
+  chevron: '<path d="m6 9 6 6 6-6"/>',
   cloud: '<path d="M7 18h10a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.3 9.1 4.5 4.5 0 0 0 7 18z"/>',
   code: '<path d="m9 18-6-6 6-6"/><path d="m15 6 6 6-6 6"/><path d="m13 4-2 16"/>',
   container: '<path d="M4 7h16v10H4z"/><path d="M8 7v10"/><path d="M12 7v10"/><path d="M16 7v10"/>',
