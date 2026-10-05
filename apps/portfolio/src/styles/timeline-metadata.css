@@ -1,98 +1,64 @@
-/* ----------------------------------------
-   TIMELINE HEADER
-   ---------------------------------------- */
 .timeline-header {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-2);
-}
-
-@media (min-width: 768px) {
-  .timeline-node:nth-child(odd) .timeline-header {
-    justify-content: flex-end;
-  }
+  gap: var(--space-2) var(--space-3);
+  min-height: 20px;
+  margin-bottom: var(--space-3);
 }
 
 .timeline-date {
+  color: var(--text-secondary);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--text-primary);
   letter-spacing: 0.02em;
 }
 
 .timeline-badges {
   display: flex;
-  gap: var(--space-2);
   flex-wrap: wrap;
+  gap: var(--space-2);
 }
 
-/* ----------------------------------------
-   PHASE BADGES
-   ---------------------------------------- */
-.phase-badge {
+.phase-badge,
+.status-badge--active {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-family: var(--font-mono);
+  gap: var(--space-1);
+  padding: 2px var(--space-2);
+  border: 1px solid var(--accent-line-soft);
+  border-radius: var(--radius-sm);
+  background: var(--accent-wash-2);
+  color: var(--color-accent-strong);
+  font-family: var(--font-label);
   font-size: var(--text-xs);
-  padding: 3px 10px;
-  border-radius: 3px;
-  border: 1px solid;
+  font-weight: var(--font-medium);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--leading-snug);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .phase-badge__icon {
+  flex-shrink: 0;
   width: 13px;
   height: 13px;
-  flex-shrink: 0;
 }
 
-.phase-badge--운영 {
-  background: rgba(121, 184, 138, 0.14);
-  border-color: var(--color-success);
+.phase-badge--운영,
+.status-badge--active {
+  border-color: rgb(var(--color-success-rgb) / 0.32);
+  background: rgb(var(--color-success-rgb) / 0.1);
   color: var(--color-success);
 }
 
-.phase-badge--구축 {
-  background: rgb(var(--color-accent-rgb) / 0.14);
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-}
-
-.phase-badge--자동화 {
-  background: rgb(var(--color-accent-rgb) / 0.1);
-  border-color: var(--color-accent);
-  color: var(--color-accent-strong);
-}
-
 .phase-badge--안정화 {
-  background: rgba(216, 181, 104, 0.15);
-  border-color: var(--color-warning);
+  border-color: rgb(var(--color-warning-rgb) / 0.32);
+  background: rgb(var(--color-warning-rgb) / 0.1);
   color: var(--color-warning);
 }
 
 .phase-badge--기초 {
-  background: rgba(161, 161, 170, 0.15);
-  border-color: var(--text-secondary);
+  border-color: var(--border-secondary);
+  background: rgb(var(--bg-primary-rgb) / 0.5);
   color: var(--text-secondary);
 }
-
-/* ----------------------------------------
-   STATUS BADGE
-   ---------------------------------------- */
-.status-badge--active {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  padding: 3px 8px;
-  border-radius: 3px;
-  background: var(--color-success);
-  color: var(--bg-primary);
-  animation: blink 1.5s ease-in-out infinite;
-}
-
-/* ----------------------------------------
-   TIMELINE CARD
-   ---------------------------------------- */

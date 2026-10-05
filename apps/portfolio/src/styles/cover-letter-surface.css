@@ -1,52 +1,26 @@
-/* ============================================================
-   COVER LETTER — clean manuscript card
-   Renders the SSoT coverLetter as a first-class scrollable section.
-   Tokens only (no hardcoded colors). Reduced-motion safe.
-   ============================================================ */
-
 .cover-letter-card {
   position: relative;
-  margin-top: var(--space-2);
-  padding: 0;
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  overflow: hidden;
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-  transition:
-    border-color var(--transition-base),
-    box-shadow var(--transition-base),
-    background var(--transition-base);
-}
-.cover-letter-card:hover {
-  border-color: rgb(var(--color-accent-rgb) / 0.22);
-  box-shadow: var(--shadow-md);
-  background: var(--glass-bg-hover);
+  background: var(--glass-bg);
+  box-shadow: var(--shadow-card);
 }
 
-/* Static manuscript surface texture (no motion) */
 .cover-letter-card::before {
   content: '';
   position: absolute;
   inset: 0;
   z-index: 0;
+  background: radial-gradient(ellipse at 8% 0%, var(--accent-wash-2), transparent 46%);
   pointer-events: none;
-  background:
-    linear-gradient(180deg, rgb(var(--color-accent-rgb) / 0.03), transparent var(--space-2)),
-    radial-gradient(ellipse at 10% 0%, rgb(var(--color-accent-rgb) / 0.07), transparent 42%);
-  background-size:
-    100% var(--space-4),
-    auto;
-  opacity: 0.55;
 }
+
 .cover-letter-card > * {
   position: relative;
   z-index: 1;
 }
 
-/* Header strip: file label + READ-ONLY pill */
 .cover-letter__chrome {
   display: flex;
   align-items: center;
@@ -54,13 +28,11 @@
   gap: var(--space-3);
   min-height: var(--space-12);
   padding: var(--space-3) var(--space-8);
+  border-bottom: 1px solid var(--border-primary);
+  background: rgb(var(--bg-primary-rgb) / 0.45);
+  color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--text-muted);
-  background:
-    linear-gradient(90deg, rgb(var(--color-accent-rgb) / 0.08), transparent),
-    rgb(var(--bg-primary-rgb) / 0.45);
-  border-bottom: 1px solid rgb(var(--color-accent-rgb) / 0.18);
 }
 
 .cover-letter__path {
@@ -69,30 +41,30 @@
   gap: var(--space-2);
   min-width: 0;
   overflow: hidden;
+  color: var(--text-secondary);
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--text-secondary);
 }
+
 .cover-letter__path::before {
   content: 'cat';
   display: inline-flex;
   align-items: center;
-  padding: var(--space-1) var(--space-2);
-  border: 1px solid rgb(var(--color-accent-rgb) / 0.3);
+  padding: 2px var(--space-2);
+  border: 1px solid var(--accent-line-soft);
   border-radius: var(--radius-sm);
+  background: var(--accent-wash-1);
   color: var(--color-success);
-  background: rgb(var(--color-accent-rgb) / 0.08);
-  letter-spacing: var(--tracking-wide);
 }
 
 .cover-letter__hint {
   flex: 0 0 auto;
-  padding: var(--space-1) var(--space-2);
-  border: 1px solid rgb(var(--color-accent-rgb) / 0.25);
+  padding: 2px var(--space-2);
+  border: 1px solid var(--accent-line-soft);
   border-radius: var(--radius-full);
-  background: rgb(var(--color-accent-rgb) / 0.08);
+  background: var(--accent-wash-1);
   color: var(--color-accent-strong);
-  letter-spacing: var(--tracking-wide);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  font-size: 0.65rem;
 }

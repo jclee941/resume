@@ -1,17 +1,14 @@
-/*
- * Print stylesheet — produce a clean, recruiter-readable resume when the page is
- * printed. Kept intentionally minimal: it overrides the clean dark theme to black-on-white, hides all
- * interactive / live-only chrome, and keeps the resume-relevant sections.
- *
- * Imported LAST from main.css so it wins the cascade for @media print.
- */
-
 @media print {
-  /* Force a clean, legible black-on-white document. */
+  @page {
+    margin: 1.5cm;
+  }
+
   html,
   body {
     background: #fff !important;
     color: #000 !important;
+    font-size: 11pt;
+    line-height: 1.5;
   }
 
   * {
@@ -23,86 +20,129 @@
     transition: none !important;
   }
 
-  /* Hide interactive / live-only / decorative chrome. */
-  .minimal-nav,
-  .lang-switcher,
+  .site-header,
+  .skip-link,
   .back-to-top,
   .scroll-progress,
   .deep-dive-overlay,
+  .recruiter-action-bar,
+  .hero-cta,
   .hero-download,
+  .hero-navigation,
+  .role-quick-paths,
+  .skill-radar__search,
+  .skill-domain-card__expand,
+  .timeline-expand-btn,
+  .project-more,
   .cover-letter__chrome,
   .cover-letter__index,
-  .cover-letter__para::before {
+  .section-hero::after {
     display: none !important;
   }
 
-  /* Keep resume-relevant sections visible and unconstrained. */
+  .page-shell {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .section-hero {
+    padding: 0;
+  }
+
+  .section-hero::before,
+  .section-title::before {
+    display: none;
+  }
+
+  .hero-intro {
+    display: block;
+  }
+
+  main > section + section {
+    margin-top: 0.8cm;
+    padding-top: 0.5cm;
+    border-top: 1px solid #999;
+  }
+
   #hero,
   #about,
   #cover-letter,
-  .section-cover-letter,
-  #about,
   #resume,
   #certifications,
-  #skills,
   #projects,
+  #skills,
   #contact {
     display: block !important;
-    page-break-inside: auto;
+    break-inside: auto;
   }
 
-  /* Avoid awkward breaks inside cards / list items. */
-  .resume-card,
-  .cert-card,
-  .project-card,
-  .cover-letter-card,
+  :where(
+    .about-content,
+    .expertise-block,
+    .profile-card,
+    .operated-card,
+    .project-item,
+    .timeline-card,
+    .cover-letter-card,
+    .skill-domain-card
+  ) {
+    border: 1px solid #bbb !important;
+  }
+
+  .project-item,
+  .timeline-node,
   .cover-letter__para,
+  .cert-item,
+  .profile-card,
   li {
-    page-break-inside: avoid;
     break-inside: avoid;
   }
 
-  /* Print the cover letter as a clean letter: drop the header strip + signature prompt. */
-  .cover-letter__headline {
-    padding: 0 0 0.4cm !important;
-    max-width: none !important;
+  .project-item--collapsed,
+  .timeline-details,
+  .skill-panel {
+    display: block !important;
   }
+
+  .incident-timeline::before,
+  .cover-letter__para::before {
+    display: none;
+  }
+
+  .cover-letter__headline {
+    max-width: none !important;
+    padding: 0 0 0.4cm !important;
+  }
+
   .cover-letter__headline::before,
-  .cover-letter__headline::after {
+  .cover-letter__headline::after,
+  .cover-letter__closing::before {
     content: '' !important;
     display: none !important;
   }
-  .cover-letter__paragraphs {
-    display: block !important;
-    padding: 0 !important;
-  }
+
+  .cover-letter__paragraphs,
   .cover-letter__para {
     display: block !important;
-    width: 100% !important;
     padding: 0 0 0.3cm !important;
   }
+
   .cover-letter__closing {
     display: block !important;
     padding: 0.3cm 0 0 !important;
     border-top: 1px solid #000 !important;
   }
-  .cover-letter__closing::before {
-    content: '' !important;
-  }
 
-  /* Reveal link targets so a printed page keeps its references. */
-  a[href^='http']::after {
+  a[href^='http']::after,
+  a[href^='mailto']::after {
     content: ' (' attr(href) ')';
     font-size: 0.85em;
     word-break: break-all;
   }
-  a[href^='mailto']::after {
-    content: ' (' attr(href) ')';
-    font-size: 0.85em;
-  }
 
-  /* Comfortable page margins. */
-  @page {
-    margin: 1.5cm;
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
   }
 }

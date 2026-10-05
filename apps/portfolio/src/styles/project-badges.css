@@ -1,0 +1,88 @@
+.project-meta-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-full);
+  background: rgb(var(--bg-primary-rgb) / 0.5);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.project-meta-badge--language,
+.project-meta-badge--active {
+  border-color: var(--accent-line-soft);
+  background: var(--accent-wash-1);
+  color: var(--color-accent-strong);
+}
+
+.project-meta-badge--completed {
+  color: var(--text-muted);
+}
+
+.project-meta-badge--live,
+.project-meta-badge--repo {
+  border-color: rgb(var(--color-success-rgb) / 0.3);
+  background: rgb(var(--color-success-rgb) / 0.08);
+  color: var(--color-success);
+}
+
+.tech-tag {
+  --tag-ink: var(--color-accent-strong);
+
+  padding: 2px var(--space-2);
+  border: 1px solid color-mix(in srgb, var(--tag-ink) 30%, transparent);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--tag-ink) 12%, transparent);
+  color: color-mix(in srgb, var(--tag-ink) 58%, var(--text-primary));
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.tech-tag--splunk {
+  --tag-ink: var(--tag-splunk);
+}
+
+.tech-tag--webhook {
+  --tag-ink: var(--tag-webhook);
+}
+
+.tech-tag--fortimanager,
+.tech-tag--fortigate {
+  --tag-ink: var(--tag-fortimanager);
+}
+
+.tech-tag--python {
+  --tag-ink: var(--tag-python);
+}
+
+.tech-tag--docker {
+  --tag-ink: var(--tag-docker);
+}
+
+.tech-tag--ansible {
+  --tag-ink: var(--tag-ansible);
+}
+
+.tech-tag--vmware {
+  --tag-ink: var(--tag-vmware);
+}
+
+.tech-tag--postgresql {
+  --tag-ink: var(--tag-postgresql);
+}
+
+.tech-tag--aws {
+  --tag-ink: var(--tag-aws);
+}
+
+.tech-tag--nsx {
+  --tag-ink: var(--tag-nsx);
+}
+
+.tech-tag--wazuh {
+  --tag-ink: var(--tag-wazuh);
+}

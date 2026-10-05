@@ -1,20 +1,20 @@
 .deep-dive-overlay {
   position: fixed;
   inset: 0;
-  background: var(--overlay-bg);
   z-index: var(--z-modal);
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: var(--space-4);
   overflow-y: auto;
+  padding: var(--space-4);
+  background: var(--overlay-bg);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   opacity: 0;
   visibility: hidden;
   transition:
-    opacity 0.3s ease,
-    visibility 0.3s ease;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+    opacity var(--transition-slow),
+    visibility var(--transition-slow);
 }
 
 .deep-dive-overlay.active {
@@ -23,50 +23,51 @@
 }
 
 .deep-dive-panel {
-  background: var(--deep-dive-bg);
-  border: 1px solid var(--deep-dive-border);
-  border-radius: 8px;
+  position: relative;
   width: 100%;
   max-width: 800px;
   margin: var(--space-8) 0;
-  transform: translateY(-20px);
+  overflow: hidden;
+  border: 1px solid var(--accent-line-soft);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  box-shadow: var(--highlight-top), var(--shadow-lg);
   opacity: 0;
+  transform: translateY(-12px);
   transition:
-    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 0.4s ease;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    opacity var(--transition-slow),
+    transform var(--transition-slow);
 }
 
 .deep-dive-overlay.active .deep-dive-panel {
-  transform: translateY(0);
   opacity: 1;
+  transform: none;
 }
 
 .deep-dive-header {
   display: flex;
   align-items: flex-start;
   gap: var(--space-4);
-  padding: var(--space-5);
+  padding: var(--space-6) var(--space-16) var(--space-5) var(--space-6);
   border-bottom: 1px solid var(--border-primary);
-  background: linear-gradient(135deg, rgb(var(--color-accent-rgb) / 0.08) 0%, transparent 50%);
+  background: linear-gradient(135deg, var(--accent-wash-2), transparent 55%);
 }
 
 .deep-dive-header__icon {
-  width: 64px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgb(var(--color-accent-rgb) / 0.1);
-  border-radius: 6px;
-  border: 1px solid rgb(var(--color-accent-rgb) / 0.16);
-  color: var(--color-accent-strong);
+  display: grid;
   flex-shrink: 0;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--accent-line-soft);
+  border-radius: var(--radius-md);
+  background: var(--accent-wash-2);
+  color: var(--color-accent-strong);
 }
 
 .deep-dive-header__icon .portfolio-icon {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
 }
 
 .deep-dive-header__content {
@@ -75,18 +76,16 @@
 }
 
 .deep-dive-header__title {
+  margin: 0 0 var(--space-2);
   font-size: var(--text-xl);
-  font-weight: var(--font-semibold);
-  color: var(--text-primary);
-  margin: 0 0 var(--space-2) 0;
-  line-height: 1.3;
+  line-height: var(--leading-snug);
 }
 
 .deep-dive-header__period {
-  font-size: var(--text-sm);
+  margin-bottom: var(--space-3);
   color: var(--text-muted);
   font-family: var(--font-mono);
-  margin-bottom: var(--space-3);
+  font-size: var(--text-sm);
 }
 
 .deep-dive-header__tags {
@@ -99,17 +98,18 @@
   position: absolute;
   top: var(--space-4);
   right: var(--space-4);
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: 1px solid var(--border-primary);
-  border-radius: 4px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
   color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.2s ease;
+  transition:
+    color var(--transition-base),
+    border-color var(--transition-base);
 }
 
 .deep-dive-close__icon {
@@ -118,39 +118,34 @@
 }
 
 .deep-dive-close:hover,
-.deep-dive-close:focus {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-  box-shadow: var(--card-shadow);
-}
-
-.deep-dive-close:focus {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+.deep-dive-close:focus-visible {
+  background: var(--accent-wash-2);
+  color: var(--color-accent-strong);
 }
 
 @media (max-width: 768px) {
-  .deep-dive-header {
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-
-  .deep-dive-header__icon {
-    width: 48px;
-    height: 48px;
-  }
-
-  .deep-dive-header__icon .portfolio-icon {
-    width: 26px;
-    height: 26px;
-  }
-
   .deep-dive-overlay {
     padding: var(--space-2);
   }
 
   .deep-dive-panel {
     margin: var(--space-3) 0;
+  }
+
+  .deep-dive-header {
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-5) var(--space-16) var(--space-4) var(--space-5);
+  }
+
+  .deep-dive-header__icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .deep-dive-header__icon .portfolio-icon {
+    width: 22px;
+    height: 22px;
   }
 
   .deep-dive-header__title {

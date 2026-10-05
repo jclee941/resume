@@ -13,9 +13,10 @@ const STYLES = path.join(__dirname, '..', '..', '..', 'apps', 'portfolio', 'src'
 const read = (f) => fs.readFileSync(path.join(STYLES, f), 'utf-8');
 
 describe('visual revamp: hero atmospheric depth', () => {
-  const layout = read('layout.css');
+  const hero = read('hero.css');
   test('hero section does not use glow/radial-gradient atmospheric pseudo-layer', () => {
-    expect(layout).not.toMatch(/\.section-hero::before[\s\S]{0,200}radial-gradient/);
+    expect(hero).toMatch(/\.section-hero::before/);
+    expect(hero).not.toMatch(/\.section-hero::before[\s\S]{0,200}radial-gradient/);
   });
 });
 
@@ -52,9 +53,13 @@ describe('visual revamp: restrained hero typography', () => {
 });
 
 describe('visual revamp: non-interactive cards stay still', () => {
-  const cards = read('cards.css');
+  const styles = fs
+    .readdirSync(STYLES)
+    .filter((fileName) => fileName.endsWith('.css'))
+    .map(read)
+    .join('\n');
   test('generic cards do not imply an interaction on hover', () => {
-    expect(cards).not.toMatch(/\.card:hover/);
+    expect(styles).not.toMatch(/\.card:hover/);
   });
 });
 

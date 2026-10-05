@@ -1,72 +1,79 @@
 .resume-list {
-  list-style: none;
-  padding: 0;
+  display: grid;
+  gap: var(--space-4);
   margin: 0;
+  padding: 0;
+  list-style: none;
 }
+
 .resume-item {
-  margin-bottom: var(--space-6);
-  padding: var(--space-4);
-  background: rgb(var(--color-accent-rgb) / 0.02);
-  border-left: 2px solid var(--color-success);
-  border-radius: 0 4px 4px 0;
-  font-family: var(--font-mono);
+  padding: var(--space-5) var(--space-6);
 }
+
 .resume-header {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  margin-bottom: var(--space-2);
   flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
   gap: var(--space-2);
+  margin-bottom: var(--space-2);
 }
+
 .resume-title {
-  font-size: var(--text-base);
-  font-weight: var(--font-medium);
-  color: var(--color-accent);
+  color: var(--color-accent-light);
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
 }
+
 .resume-period {
-  font-size: var(--text-xs);
   color: var(--text-muted);
   font-family: var(--font-mono);
+  font-size: var(--text-xs);
 }
+
 .resume-role {
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  font-weight: var(--font-bold);
-  color: var(--color-accent-strong);
-  text-shadow: var(--shadow-sm);
   margin-bottom: var(--space-2);
-  letter-spacing: var(--tracking-tight);
-}
-.resume-role::before {
-  content: '▸ ';
-  color: var(--color-accent);
-}
-.resume-description {
-  font-size: var(--text-sm);
   color: var(--text-primary);
-  line-height: 1.5;
-  margin-bottom: var(--space-2);
-  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
 }
+
+.resume-description {
+  margin-bottom: var(--space-3);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}
+
 .resume-tags {
   display: flex;
-  gap: var(--space-2);
   flex-wrap: wrap;
+  gap: var(--space-2);
 }
+
+.tag {
+  padding: 2px var(--space-2);
+  border: 1px solid var(--accent-line-soft);
+  border-radius: var(--radius-sm);
+  background: var(--accent-wash-2);
+  color: var(--color-accent-strong);
+  font-family: var(--font-label);
+  font-size: var(--text-xs);
+}
+
 .resume-metrics {
   margin-top: var(--space-2);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
   color: var(--color-success);
-  opacity: 0.95;
-}
-.tag {
-  font-size: var(--text-xs);
-  color: var(--color-accent-strong);
-  background: rgb(var(--color-accent-rgb) / 0.1);
-  border: 1px solid rgb(var(--color-accent-rgb) / 0.1);
-  padding: 2px 8px;
-  border-radius: 2px;
   font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+@media (max-width: 640px) {
+  .resume-item {
+    padding: var(--space-4);
+  }
+
+  .resume-header {
+    flex-direction: column;
+  }
 }

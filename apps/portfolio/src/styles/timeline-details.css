@@ -1,94 +1,82 @@
-/* ----------------------------------------
-   EXPANDABLE DETAILS
-   ---------------------------------------- */
 .timeline-details {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: all 0.3s ease;
+  display: none;
 }
 
 .timeline-node.is-expanded .timeline-details {
-  max-height: 500px;
-  opacity: 1;
-  margin-top: var(--space-3);
+  display: block;
+  margin-top: var(--space-4);
+  animation: timeline-details-in var(--duration-base) var(--ease-out);
+}
+
+@keyframes timeline-details-in {
+  from {
+    opacity: 0;
+  }
 }
 
 .details-description {
-  font-family: var(--font-sans);
+  margin: 0 0 var(--space-3);
+  color: var(--text-secondary);
   font-size: var(--text-sm);
-  color: var(--text-primary);
-  line-height: 1.6;
-  margin: 0 0 var(--space-3) 0;
+  line-height: var(--leading-relaxed);
 }
 
 .details-achievements {
-  list-style: none;
-  padding: 0;
+  display: grid;
+  gap: var(--space-2);
   margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .details-achievements li {
   position: relative;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  color: color-mix(in srgb, var(--color-success) 86%, white 14%);
-  padding-left: var(--space-4);
-  margin-bottom: var(--space-1);
+  padding-left: var(--space-5);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
 }
 
 .details-achievements li::before {
   content: '';
   position: absolute;
-  left: 0;
-  top: 0.25em;
+  top: 0.4em;
+  left: 2px;
   width: 6px;
   height: 10px;
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
-  color: var(--color-accent);
+  border-right: 2px solid var(--color-success);
+  border-bottom: 2px solid var(--color-success);
   transform: rotate(40deg);
 }
 
-/* ----------------------------------------
-   EXPAND BUTTON
-   ---------------------------------------- */
 .timeline-expand-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  margin-top: var(--space-3);
-  padding: var(--space-2) var(--space-3);
-  background: rgb(var(--bg-primary-rgb) / 0.42);
-  border: 1px solid color-mix(in srgb, var(--border-secondary) 50%, var(--text-secondary) 50%);
-  border-radius: 4px;
+  min-width: 44px;
+  min-height: 44px;
+  margin-top: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-full);
+  background: rgb(var(--bg-secondary-rgb) / 0.8);
   color: var(--text-primary);
-  font-family: var(--font-mono);
+  font-family: var(--font-label);
   font-size: var(--text-xs);
-  cursor: pointer;
-  transition: all 0.2s ease;
+  font-weight: var(--font-medium);
+  transition:
+    color var(--transition-base),
+    border-color var(--transition-base),
+    background-color var(--transition-base);
 }
 
 .timeline-expand-btn:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-}
-
-.timeline-expand-btn:focus {
-  outline: none;
-}
-
-.timeline-expand-btn:focus-visible {
-  border-color: var(--color-accent);
-  box-shadow: var(--shadow-sm);
+  background: var(--accent-wash-2);
+  color: var(--color-accent-strong);
 }
 
 .expand-icon {
   width: 16px;
   height: 16px;
-  transition: transform 0.3s ease;
+  transition: transform var(--transition-base);
 }
-
-/* ----------------------------------------
-   ANIMATIONS
-   ---------------------------------------- */
