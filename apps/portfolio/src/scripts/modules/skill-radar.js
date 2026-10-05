@@ -87,7 +87,7 @@ function createDomainCard(domainKey, domain) {
   );
   const expand = createElement('div', 'skill-domain-card__expand');
   expand.setAttribute('aria-hidden', 'true');
-  expand.appendChild(createIconElement('layers'));
+  expand.appendChild(createIconElement('chevron'));
   header.append(icon, info, expand);
 
   const indicator = createElement('div', 'skill-domain-card__level-indicator');
@@ -175,11 +175,18 @@ function createEvidenceItem(skill) {
 function createSkillDomainIcon(domainKey) {
   /** @type {Record<string, string>} */
   const icons = {
+    automation: 'automation',
     backendApi: 'server',
     cicdAutomation: 'sync',
+    cloud: 'cloud',
     cloudEdge: 'cloud',
+    compliance: 'check',
+    database: 'database',
+    devops: 'git',
     infrastructureAsCode: 'code',
     observability: 'chart',
+    programming: 'code',
+    security: 'shield',
     securityAutomation: 'shield',
   };
   return createIconElement(icons[domainKey] || 'layers');
