@@ -29,7 +29,7 @@ test.describe('Accessibility WCAG AA', () => {
   test('text contrast should meet WCAG AA 4.5:1 for key UI text', async ({ page }) => {
     const selectors = [
       '.hero-title',
-      '.project-description',
+      '.project-case-notes dd',
       '.project-link-title',
       '.contact-item',
     ];

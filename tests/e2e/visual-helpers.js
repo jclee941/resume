@@ -50,7 +50,7 @@ async function waitForRenderedFonts(page) {
     for (const [selector, fontName] of [
       ['.project-link-title', 'IBMPlexMono-Medium'],
       ['.project-tech', 'IBMPlexMono-Regular'],
-      ['.project-description', 'Inter-Regular'],
+      ['.project-case-notes dd', 'Inter-Regular'],
     ]) {
       const { nodeId } = await session.send('DOM.querySelector', { nodeId: root.nodeId, selector });
       await expect
