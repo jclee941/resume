@@ -1,0 +1,59 @@
+:where(
+  .about-content,
+  .expertise-block,
+  .profile-card,
+  .operated-card,
+  .project-item,
+  .resume-item,
+  .achievements-block .achievements-list,
+  .project-evidence-matrix,
+  .project-evidence-card,
+  .timeline-card
+) {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  box-shadow: var(--shadow-card);
+}
+
+:where(
+  .hero-public-proof a,
+  .hero-review-path a,
+  .role-chip,
+  .project-review-rail__link,
+  .project-cards-grid .project-card,
+  .skill-domain-card,
+  .contact-item
+) {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: rgb(var(--bg-card-rgb) / 0.72);
+  box-shadow: var(--shadow-card);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    box-shadow var(--transition-base),
+    color var(--transition-base);
+}
+
+:where(
+  .hero-public-proof a,
+  .hero-review-path a,
+  .role-chip:not(:disabled),
+  .project-review-rail__link,
+  .project-cards-grid .project-card,
+  .skill-domain-card,
+  .contact-item
+):is(:hover, :focus-visible) {
+  border-color: var(--border-secondary);
+  background-color: var(--accent-wash-2);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.role-chip[aria-pressed='true'],
+.skill-domain-card[aria-expanded='true'] {
+  border-color: var(--border-secondary);
+  background-color: var(--accent-wash-3);
+}

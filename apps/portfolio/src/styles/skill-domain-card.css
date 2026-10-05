@@ -1,0 +1,100 @@
+.skill-domain-card {
+  position: relative;
+  min-width: 0;
+  padding: var(--space-4) var(--space-5);
+  cursor: pointer;
+}
+
+.skill-domain-card:focus {
+  outline: none;
+}
+
+.skill-domain-card:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.skill-domain-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.skill-domain-card__icon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--accent-line-soft);
+  border-radius: var(--radius-md);
+  background: var(--accent-wash-2);
+  color: var(--color-accent-strong);
+}
+
+.skill-domain-card__icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.skill-domain-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.skill-domain-card__title {
+  margin: 0;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-snug);
+}
+
+.skill-domain-card__count {
+  color: var(--text-muted);
+  font-family: var(--font-label);
+  font-size: var(--text-xs);
+}
+
+.skill-domain-card__expand {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  color: var(--text-muted);
+}
+
+.skill-domain-card__expand svg {
+  width: 16px;
+  height: 16px;
+  transition: transform var(--transition-base);
+}
+
+.skill-domain-card[aria-expanded='true'] .skill-domain-card__expand {
+  color: var(--color-accent-strong);
+}
+
+.skill-domain-card__level-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-primary);
+}
+
+.skill-domain-card__level-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--level-color, var(--color-success));
+}
+
+.skill-domain-card__level-label {
+  color: var(--level-color, var(--color-success));
+  font-family: var(--font-label);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+}

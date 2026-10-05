@@ -1,23 +1,16 @@
-/* ========================================
-   PROFILE BENTO - education / languages / awards / OSS / military
-   ======================================== */
 .profile-bento {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--space-5);
-  margin-top: var(--space-10);
-  font-family: var(--font-mono);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-5);
 }
 
 .profile-card {
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg);
-  background: var(--glass-bg);
-  padding: var(--space-5);
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  box-shadow: var(--shadow-sm);
+  min-width: 0;
+  padding: var(--space-5);
 }
 
 .profile-card--photo {
@@ -27,21 +20,26 @@
 
 .profile-card__photo {
   display: block;
+  border: 1px solid var(--border-secondary);
   border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
 }
 
 .profile-card__label {
   color: var(--color-accent-strong);
+  font-family: var(--font-label);
   font-size: var(--text-xs);
-  letter-spacing: var(--tracking-wide);
+  font-weight: var(--font-medium);
+  letter-spacing: var(--tracking-label);
 }
 
-.profile-card__value {
+.profile-card__value,
+.profile-card__list li {
   margin: 0;
   color: var(--text-primary);
   font-size: var(--text-sm);
   line-height: var(--leading-relaxed);
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .profile-card__muted {
@@ -50,168 +48,50 @@
 }
 
 .profile-card__list {
-  list-style: none;
+  display: grid;
+  gap: var(--space-2);
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
+  list-style: none;
 }
 
 .profile-card__list li {
-  color: var(--text-primary);
-  font-size: var(--text-sm);
-  line-height: var(--leading-relaxed);
+  position: relative;
+  padding-left: var(--space-4);
 }
 
 .profile-card__list li::before {
-  content: '> ';
+  content: '>';
+  position: absolute;
+  left: 0;
   color: var(--color-accent);
+  font-family: var(--font-mono);
 }
 
 .profile-card__list a {
-  color: var(--color-accent);
-  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--color-accent-light);
+  font-family: var(--font-mono);
+  text-decoration: underline;
+  text-decoration-color: var(--accent-line);
+  text-underline-offset: 3px;
+  transition: color var(--transition-base);
 }
 
 .profile-card__list a:hover {
-  text-decoration: underline;
-}
-
-/* ── Achievements evidence list (surfaced SSoT achievements[]) ── */
-.achievements-block {
-  margin-top: var(--space-10);
-}
-
-.achievements-list {
-  list-style: none;
-  margin: var(--space-4) 0 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.achievement-card {
-  display: flex;
-  gap: var(--space-3);
-  align-items: flex-start;
-  padding: var(--space-4) var(--space-5);
-  border: 1px solid var(--glass-border);
-  border-left: 2px solid rgb(var(--color-accent-rgb) / 0.35);
-  background: var(--glass-bg);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  color: var(--text-primary);
-  font-size: var(--text-sm);
-  line-height: var(--leading-loose);
-  word-break: break-word;
-}
-
-.achievement-card__marker {
-  color: var(--color-accent);
-  flex-shrink: 0;
-  font-weight: 600;
-}
-
-/* ── Expertise tags + core competencies (surfaced SSoT summary.*) ── */
-.expertise-block {
-  margin-top: var(--space-10);
-  padding: var(--space-6);
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-.expertise-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  margin: var(--space-4) 0;
-}
-
-.expertise-tag {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--space-8);
-  padding: var(--space-1) var(--space-3);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-full);
   color: var(--color-accent-strong);
-  font-size: var(--text-sm);
-  font-family: var(--font-mono);
-  background: var(--bg-card);
 }
 
-.competency-list {
-  list-style: none;
-  margin: var(--space-5) 0 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.competency-item {
-  display: flex;
-  gap: var(--space-3);
-  align-items: flex-start;
-  color: var(--text-primary);
-  font-size: var(--text-base);
-  line-height: var(--leading-relaxed);
-  word-break: break-word;
-}
-
-:lang(ko) .competency-item {
-  word-break: keep-all;
-  overflow-wrap: anywhere;
-}
-
-@supports (word-break: auto-phrase) {
-  :where(:lang(ko), :lang(ja)) .competency-item {
-    word-break: auto-phrase;
+@media (max-width: 1023px) {
+  .profile-bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-.competency-item__marker {
-  color: var(--color-accent);
-  flex-shrink: 0;
-}
-
-/* About sub-section grouping: titled groups reduce clutter without removing content */
-.about-subsection {
-  margin-top: var(--space-5);
-}
-.about-subsection:first-child {
-  margin-top: 0;
-}
-.about-subsection__heading {
-  margin: 0 0 var(--space-3);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  font-weight: var(--font-medium);
-  letter-spacing: var(--tracking-wide);
-  color: var(--color-accent-light);
-  text-transform: lowercase;
-}
-
-/* About 2-column declutter: pair the career narrative and the expertise block
-   side-by-side on desktop so the section reads as two panels instead of a
-   four-card vertical wall. Bento + achievements stay full-width below. */
-.about-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-5);
-  align-items: start;
-}
-/* Inside its own column the narrative fills the column width; the standalone
-   70ch readable cap (components.css) would otherwise leave a large gutter. */
-.about-grid .about-content {
-  max-width: none;
-}
-/* expertise-block already carries its own card chrome; drop the stacking
-   margin so both columns align at the grid top. */
-.about-grid .expertise-block {
-  margin-top: 0;
+@media (max-width: 640px) {
+  .profile-bento {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

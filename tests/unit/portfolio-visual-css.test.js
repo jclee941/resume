@@ -6,49 +6,61 @@ describe('portfolio visual CSS contract', () => {
   const stylesDir = path.join(portfolioDir, 'src/styles');
 
   const readStyle = (fileName) => fs.readFileSync(path.join(stylesDir, fileName), 'utf8');
+  const styleFiles = fs.readdirSync(stylesDir).filter((fileName) => fileName.endsWith('.css'));
+  const mediaBlock = (css, query) => {
+    const start = css.indexOf(`@media ${query}`);
+    return start === -1 ? '' : css.slice(start);
+  };
 
   test('S1 desktop hero renders with a layered atmospheric backdrop', () => {
     const variablesCss = readStyle('variables.css');
     const baseCss = readStyle('base.css');
-    const layoutCss = readStyle('layout.css');
+    const heroCss = readStyle('hero.css');
 
     expect(variablesCss).toContain('--gradient-page-atmosphere');
     expect(variablesCss).toContain(
       'linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 44%, var(--bg-primary) 100%);'
     );
     expect(baseCss).toContain('background: var(--gradient-page-atmosphere);');
-    expect(layoutCss).toContain('.section-hero::before');
-    expect(layoutCss).toContain('var(--glass-border)');
-    expect(layoutCss).toContain('isolation: isolate;');
+    expect(heroCss).toContain('.section-hero::before');
+    expect(heroCss).toContain('var(--glass-border)');
+    expect(heroCss).toContain('isolation: isolate;');
   });
 
   test('S2 mobile hero keeps CTAs readable and preserves title scale', () => {
     const heroCss = readStyle('hero.css');
-    const mediaCss = readStyle('media.css');
+    const heroLayoutCss = readStyle('hero-layout.css');
 
     expect(heroCss).toContain('text-wrap: balance;');
-    expect(mediaCss).toContain('@media (max-width: 640px)');
-    expect(mediaCss).toContain('.hero-title {\n    font-size: var(--text-5xl);');
+    expect(mediaBlock(heroCss, '(max-width: 640px)')).toMatch(
+      /\.hero-title\s*{\s*font-size: var\(--text-5xl\);/
+    );
+    expect(mediaBlock(heroLayoutCss, '(max-width: 640px)')).toMatch(
+      /\.hero-cta\s*{[^}]*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/
+    );
   });
 
   test('S3 contact links remain plain anchors but gain card affordance', () => {
+    const surfacesCss = readStyle('surfaces.css');
     const contactCss = readStyle('contact.css');
 
-    expect(contactCss).toContain('border: 1px solid var(--glass-border);');
-    expect(contactCss).toContain('background: var(--glass-bg);');
-    expect(contactCss).toContain('transform: translateX(var(--space-1));');
+    expect(surfacesCss).toMatch(
+      /\.contact-item\s*\)\s*{[^}]*border: 1px solid var\(--border-subtle\);/
+    );
+    expect(contactCss).toMatch(
+      /\.contact-item:hover::before\s*{\s*transform: translateX\(var\(--space-1\)\);/
+    );
   });
 
-  test('S4 hero proof list groups evidence into a scan-friendly panel', () => {
-    const heroCss = readStyle('hero.css');
+  test('S4 hero proof list is one column on phones and two columns with a lead item above', () => {
+    const proofCss = readStyle('hero-proof.css');
 
-    expect(heroCss).toContain('grid-template-columns: repeat(2, minmax(0, 1fr));');
-    expect(heroCss).toContain('border: 1px solid var(--glass-border);');
-    expect(heroCss).toContain('background: var(--glass-bg);');
-    expect(heroCss).toContain('.hero-proof-list li:first-child');
-    expect(heroCss).toContain('grid-column: 1 / -1;');
-    expect(heroCss).toMatch(/\.hero-proof-list\s*{\s*grid-template-columns: 1fr;/);
-    expect(heroCss).toMatch(/\.hero-proof-list li:first-child\s*{\s*grid-column: auto;/);
+    expect(proofCss).toMatch(/\.hero-proof-list\s*{[^}]*grid-template-columns: minmax\(0, 1fr\);/);
+    const wide = mediaBlock(proofCss, '(min-width: 641px)');
+    expect(wide).toMatch(
+      /\.hero-proof-list\s*{\s*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\);/
+    );
+    expect(wide).toMatch(/\.hero-proof-list li:first-child\s*{\s*grid-column: 1 \/ -1;/);
   });
 
   test('S5 body keeps an opaque background-color base under the gradient (WCAG contrast)', () => {
@@ -97,45 +109,73 @@ describe('portfolio visual CSS contract', () => {
 
   test('S9 lang-switcher links meet 44px target size and have a focus-visible ring', () => {
     // WCAG 2.5.5 target size + 2.4.7 focus visible for keyboard nav.
-    const layoutCss = readStyle('layout.css');
-    const langLink = layoutCss.match(/\.lang-link\s*{[^}]*}/);
+    const headerCss = readStyle('site-header.css');
+    const langLink = headerCss.match(/\.lang-link\s*{[^}]*}/);
     expect(langLink).toBeTruthy();
     expect(langLink[0]).toMatch(/min-height:\s*44px/);
-    expect(layoutCss).toMatch(/\.lang-link:focus-visible\s*{[^}]*outline/);
+    expect(headerCss).toMatch(/\.lang-link:focus-visible\s*{[^}]*outline/);
   });
 
   test('S10 about-content uses a readable line measure (<= 75ch), not an over-wide block', () => {
     // Layout BP (web.dev typography): prose line length 45-75ch is the readable
     // window; 900px lets long Korean lines run far past that, hurting scanability.
-    const componentsCss = readStyle('components.css');
-    const aboutContent = componentsCss.match(/\.about-content\s*{[^}]*}/);
+    const aboutCss = readStyle('about.css');
+    const aboutContent = aboutCss.match(/\.about-content\s*{[^}]*}/);
     expect(aboutContent).toBeTruthy();
-    // measure must be expressed in ch (readability unit), within the 45-75ch window.
     const m = aboutContent[0].match(/max-width:\s*(\d+)ch/);
     expect(m).toBeTruthy();
     expect(Number(m[1])).toBeLessThanOrEqual(75);
     expect(Number(m[1])).toBeGreaterThanOrEqual(45);
-    // the old over-wide 900px block must be gone.
-    expect(aboutContent[0]).not.toMatch(/max-width:\s*900px/);
   });
 
   test('S11 about-grid pairs narrative + expertise in 2 columns on desktop, 1 on mobile', () => {
-    // Declutter the vertical About stack: .about-content (narrative, keeps its
-    // own 70ch measure) and .expertise-block sit side-by-side at desktop and
-    // stack on mobile. Bento + achievements remain full-width below.
-    const profileCss = readStyle('profile.css');
-    const mediaCss = readStyle('media.css');
-    const aboutGrid = profileCss.match(/\.about-grid\s*{[^}]*}/);
+    const aboutCss = readStyle('about.css');
+    const aboutGrid = aboutCss.match(/\.about-grid\s*{[^}]*}/);
     expect(aboutGrid).toBeTruthy();
     expect(aboutGrid[0]).toMatch(/display:\s*grid/);
-    // Desktop default is 2 columns.
     expect(aboutGrid[0]).toMatch(/grid-template-columns:\s*repeat\(2,\s*minmax\(0,\s*1fr\)\)/);
-    // The narrative inside the grid must NOT keep a 70ch cap that would leave a
-    // huge empty gutter in its column; it stretches to fill the column instead.
-    const scopedAbout = profileCss.match(/\.about-grid\s+\.about-content\s*{[^}]*}/);
+    // Inside its grid column the narrative fills the column instead of keeping
+    // the standalone 70ch cap, which would leave an empty gutter.
+    const scopedAbout = aboutCss.match(/\.about-grid\s+\.about-content\s*{[^}]*}/);
     expect(scopedAbout).toBeTruthy();
     expect(scopedAbout[0]).toMatch(/max-width:\s*none/);
-    // Mobile collapses to a single column.
-    expect(mediaCss).toMatch(/\.about-grid\s*{\s*grid-template-columns:\s*1fr/);
+    expect(mediaBlock(aboutCss, '(max-width: 768px)')).toMatch(
+      /\.about-grid\s*{\s*grid-template-columns:\s*minmax\(0,\s*1fr\)/
+    );
+  });
+
+  test('S12 the page shell stays centered at every width', () => {
+    // A mobile `.page-shell { margin: 0 }` override once pinned the column to
+    // the left edge with a 24px gap on the right.
+    const layoutCss = readStyle('layout.css');
+    expect(layoutCss).toMatch(/\.page-shell\s*{[^}]*margin-inline:\s*auto/);
+    for (const fileName of styleFiles.filter((name) => name !== 'print.css')) {
+      const css = readStyle(fileName);
+      expect(css).not.toMatch(/\.page-shell\s*{[^}]*\bmargin(?:-left|-right|-inline)?:\s*0\b/);
+    }
+  });
+
+  test('S13 case-study cards only start hidden when motion is allowed', () => {
+    // Reduced motion removes the entrance animation, so a hidden starting state
+    // outside the no-preference query would leave the cards invisible.
+    const gridCss = readStyle('project-case-study-grid.css');
+    const motionStart = gridCss.indexOf('@media (prefers-reduced-motion: no-preference)');
+    expect(motionStart).toBeGreaterThan(-1);
+    expect(gridCss.slice(0, motionStart)).not.toMatch(/opacity:\s*0\b/);
+  });
+
+  test('S14 every referenced custom property is defined', () => {
+    // Undefined tokens fail silently: the declaration is dropped and the
+    // surface renders without its background or border.
+    const runtimeProperties = new Set(['--scroll-progress', '--level-color']);
+    const allCss = styleFiles.map(readStyle).join('\n');
+    const defined = new Set([...allCss.matchAll(/(--[\w-]+)\s*:/g)].map((match) => match[1]));
+    const referenced = new Set(
+      [...allCss.matchAll(/var\(\s*(--[\w-]+)/g)].map((match) => match[1])
+    );
+    const undefinedProperties = [...referenced].filter(
+      (name) => !defined.has(name) && !runtimeProperties.has(name)
+    );
+    expect(undefinedProperties).toEqual([]);
   });
 });

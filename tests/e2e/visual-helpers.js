@@ -48,7 +48,7 @@ async function waitForRenderedFonts(page) {
     await session.send('CSS.enable');
     const { root } = await session.send('DOM.getDocument');
     for (const [selector, fontName] of [
-      ['.project-link-title', 'IBMPlexMono-Medium'],
+      ['.project-link-title', 'Inter-Bold'],
       ['.project-tech', 'IBMPlexMono-Regular'],
       ['.project-case-notes dd', 'Inter-Regular'],
     ]) {

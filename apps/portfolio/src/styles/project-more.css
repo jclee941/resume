@@ -3,7 +3,7 @@
 }
 
 .project-list.is-expanded .project-item--collapsed {
-  display: block;
+  display: grid;
 }
 
 .project-more {
@@ -16,22 +16,21 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-5);
-  background: transparent;
-  border: 1px solid var(--card-border, var(--glass-border));
-  border-radius: var(--radius-sm, 6px);
-  color: var(--color-accent);
-  font-family: var(--font-mono, monospace);
-  font-size: var(--text-sm, 0.85rem);
-  cursor: pointer;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-6);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-full);
+  background: rgb(var(--bg-secondary-rgb) / 0.8);
+  color: var(--color-accent-strong);
+  font-family: var(--font-label);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
   transition:
-    border-color 0.2s ease,
-    background 0.2s ease;
+    border-color var(--transition-base),
+    background-color var(--transition-base);
 }
 
 .project-more-btn:hover,
 .project-more-btn:focus-visible {
-  border-color: var(--card-border-hover, var(--color-accent));
-  background: var(--metric-bg, rgb(var(--color-accent-rgb) / 0.08));
-  outline: none;
+  background: var(--accent-wash-2);
 }

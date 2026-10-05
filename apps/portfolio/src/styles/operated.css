@@ -1,0 +1,43 @@
+.operated-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.operated-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-5);
+}
+
+.operated-card__title {
+  margin: 0;
+  color: var(--color-accent-strong);
+  font-family: var(--font-label);
+  font-size: var(--text-base);
+  line-height: var(--leading-snug);
+}
+
+.operated-card__desc {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}
+
+.operated-card__link {
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+@media (max-width: 768px) {
+  .operated-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+  }
+}

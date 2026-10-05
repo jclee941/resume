@@ -1,10 +1,13 @@
 :root {
+  color-scheme: dark;
+
   --bg-primary: #0f1115;
   --bg-secondary: #15181e;
   --bg-card: #171a21;
   --bg-tertiary: #1b1f27;
-  --bg-inverse: #e7e9ee;
   --bg-primary-rgb: 15 17 21;
+  --bg-secondary-rgb: 21 24 30;
+  --bg-card-rgb: 23 26 33;
 
   --text-primary: #e7e9ee;
   --text-secondary: #aab1bd;
@@ -16,59 +19,70 @@
   --color-accent-strong: #9bd8e1;
   --color-accent-dark: #3f8290;
   --color-accent-deep: #2c6470;
-  --color-accent-subtle: rgba(90, 169, 184, 0.12);
   --color-accent-rgb: 90 169 184;
 
-  --color-accent-secondary: var(--color-accent);
-  --color-accent-secondary-light: var(--color-accent-light);
-  --color-accent-secondary-dark: var(--color-accent-dark);
-  --color-accent-secondary-subtle: var(--color-accent-subtle);
-  --color-accent-tertiary: var(--color-accent);
-  --color-accent-tertiary-light: var(--color-accent-light);
-  --color-accent-tertiary-dark: var(--color-accent-dark);
-  --color-accent-tertiary-subtle: var(--color-accent-subtle);
+  --accent-wash-1: rgb(var(--color-accent-rgb) / 0.05);
+  --accent-wash-2: rgb(var(--color-accent-rgb) / 0.09);
+  --accent-wash-3: rgb(var(--color-accent-rgb) / 0.14);
+  --accent-line-soft: rgb(var(--color-accent-rgb) / 0.18);
+  --accent-line: rgb(var(--color-accent-rgb) / 0.36);
 
   --color-success: #79b88a;
+  --color-success-rgb: 121 184 138;
   --color-warning: #d8b568;
+  --color-warning-rgb: 216 181 104;
   --color-error: #e07a86;
 
   --border-primary: #262a33;
   --border-secondary: #333845;
-  --border-hover: var(--color-accent);
+  --border-subtle: rgb(170 177 189 / 0.1);
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.28);
-  --shadow-lg: 0 18px 42px rgba(0, 0, 0, 0.34);
-  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-elevated: var(--shadow-md);
+  --shadow-sm: 0 1px 2px rgb(4 6 10 / 0.45);
+  --shadow-md: 0 12px 28px -10px rgb(4 6 10 / 0.6);
+  --shadow-lg: 0 28px 56px -20px rgb(4 6 10 / 0.7);
+  --highlight-top: inset 0 1px 0 rgb(255 255 255 / 0.04);
+  --highlight-accent: inset 0 1px 0 rgb(255 255 255 / 0.28);
+  --sheen-accent: linear-gradient(180deg, rgb(255 255 255 / 0.18) 0%, rgb(255 255 255 / 0) 100%);
+  --shadow-card: var(--highlight-top), var(--shadow-sm);
+  --shadow-card-hover: var(--highlight-top), var(--shadow-md);
 
-  --glass-bg: rgba(23, 26, 33, 0.82);
-  --glass-bg-hover: rgba(27, 31, 39, 0.9);
-  --glass-border: rgba(170, 177, 189, 0.12);
-  --glass-border-hover: rgba(90, 169, 184, 0.34);
-  --glass-blur: blur(8px);
+  --glass-bg: rgb(var(--bg-card-rgb) / 0.82);
+  --glass-bg-hover: rgb(27 31 39 / 0.9);
+  --glass-border: rgb(170 177 189 / 0.12);
+  --glass-blur: blur(10px) saturate(140%);
+  --overlay-bg: rgb(8 10 14 / 0.88);
 
-  --gradient-hero-light: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-  --gradient-hero-dark: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-  --gradient-accent: linear-gradient(
-    135deg,
-    var(--color-accent) 0%,
-    var(--color-accent-light) 100%
-  );
-  --gradient-subtle: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
   --gradient-page-atmosphere:
     radial-gradient(circle at 18% 8%, rgb(var(--color-accent-rgb) / 0.14), transparent 28rem),
-    radial-gradient(circle at 78% 0%, rgba(121, 184, 138, 0.08), transparent 24rem),
+    radial-gradient(circle at 78% 0%, rgb(var(--color-success-rgb) / 0.08), transparent 24rem),
     linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 44%, var(--bg-primary) 100%);
+  --grid-line: rgb(var(--color-accent-rgb) / 0.07);
 
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  /* Technology brand colors: only inside project technology tags */
+  --tag-splunk: #ff6b35;
+  --tag-webhook: #ea4b71;
+  --tag-fortimanager: #00a8e0;
+  --tag-python: #3776ab;
+  --tag-docker: #2496ed;
+  --tag-ansible: #ee0000;
+  --tag-vmware: #607078;
+  --tag-postgresql: #4169e1;
+  --tag-aws: #ff9900;
+  --tag-nsx: #77bc43;
+  --tag-wazuh: #339966;
+
+  --font-latin: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI';
+  --font-cjk: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic';
+  --font-sans: var(--font-latin), var(--font-cjk), system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', 'JetBrains Mono', 'SF Mono', 'Fira Code', Consolas, monospace;
+  --font-label: var(--font-mono);
+  --tracking-label: 0.04em;
 
-  --text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);
-  --text-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.875rem);
-  --text-base: clamp(0.9rem, 0.85rem + 0.25vw, 1rem);
+  --text-xs: clamp(0.75rem, 0.72rem + 0.15vw, 0.8125rem);
+  --text-sm: clamp(0.8125rem, 0.78rem + 0.2vw, 0.875rem);
+  --text-base: clamp(0.9375rem, 0.9rem + 0.2vw, 1rem);
   --text-lg: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
-  --text-xl: clamp(1.1rem, 1rem + 0.5vw, 1.25rem);
+  --text-xl: clamp(1.125rem, 1.05rem + 0.4vw, 1.25rem);
   --text-2xl: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
   --text-3xl: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);
   --text-4xl: clamp(1.875rem, 1.5rem + 1.875vw, 2.5rem);
@@ -90,7 +104,6 @@
   --tracking-normal: 0;
   --tracking-wide: 0.025em;
 
-  --space-0: 0;
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -103,25 +116,61 @@
   --space-16: 4rem;
   --space-20: 5rem;
   --space-24: 6rem;
-  --space-32: 8rem;
 
   --container-max: 1040px;
   --container-narrow: 760px;
-  --section-padding: var(--space-20);
+  --gutter: clamp(1rem, 4vw, 2rem);
+  --section-gap: clamp(2.5rem, 1.5rem + 3.5vw, 4rem);
 
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
   --radius-full: 9999px;
-  --border-width: 1px;
 
-  --transition-fast: 150ms ease;
-  --transition-base: 200ms ease;
-  --transition-slow: 300ms ease;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+  --transition-fast: var(--duration-fast) var(--ease-out);
+  --transition-base: var(--duration-base) var(--ease-out);
+  --transition-slow: var(--duration-slow) var(--ease-out);
 
-  --z-dropdown: 100;
-  --z-sticky: 200;
+  --z-float: 900;
   --z-nav: 1000;
   --z-modal: 2000;
+  --z-skip: 3000;
+}
+
+/* Japanese pages: Japanese-first CJK faces so kanji keep Japanese glyph shapes */
+:root:lang(ja) {
+  --font-cjk:
+    'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', 'Yu Gothic UI', 'Meiryo';
+}
+
+/* Monospaced Hangul/Kana render full-cell word gaps; CJK labels use the sans face */
+:root:lang(ko),
+:root:lang(ja) {
+  --font-label: var(--font-sans);
+  --tracking-label: 0;
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --text-secondary: #d5d9e0;
+    --text-muted: #b8bec9;
+    --border-primary: #4a5160;
+    --border-secondary: #5c6475;
+    --border-subtle: rgb(213 217 224 / 0.38);
+    --glass-bg: var(--bg-card);
+    --glass-border: rgb(213 217 224 / 0.38);
+    --accent-line-soft: var(--color-accent);
+    --accent-line: var(--color-accent-strong);
+  }
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --container-max: 1120px;
+  }
 }

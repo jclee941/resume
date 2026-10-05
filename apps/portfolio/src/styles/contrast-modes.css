@@ -1,0 +1,75 @@
+@media (prefers-contrast: more) {
+  * {
+    text-shadow: none !important;
+  }
+
+  a {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+  }
+
+  :focus-visible {
+    outline-width: 3px;
+    outline-offset: 3px;
+  }
+}
+
+@media (forced-colors: active) {
+  :root {
+    --color-accent: LinkText;
+  }
+
+  :where(
+    .about-content,
+    .expertise-block,
+    .profile-card,
+    .operated-card,
+    .project-item,
+    .timeline-card,
+    .hero-public-proof a,
+    .hero-review-path a,
+    .role-chip,
+    .skill-domain-card,
+    .contact-item,
+    .link-subtle
+  ) {
+    border: 1px solid CanvasText;
+  }
+
+  .section-hero::before {
+    border: 1px solid CanvasText;
+  }
+
+  .section-hero::after {
+    display: none;
+  }
+
+  :focus-visible {
+    outline: 3px solid Highlight;
+    outline-offset: 2px;
+  }
+
+  a {
+    color: LinkText;
+  }
+
+  a:visited {
+    color: VisitedText;
+  }
+
+  .link-subtle--primary {
+    background: ButtonFace;
+    color: ButtonText;
+    border-color: ButtonText;
+  }
+
+  svg,
+  img {
+    forced-color-adjust: auto;
+  }
+
+  .hero-title,
+  .section-title {
+    color: CanvasText;
+  }
+}

@@ -18,14 +18,14 @@ function read(fileName) {
 
 describe('visual polish: skip-link hide is height-independent', () => {
   test('skip-link uses translateY off-screen hide, not fixed negative top', () => {
-    const css = read('utilities.css');
+    const css = read('accessibility.css');
     const block = css.slice(css.indexOf('.skip-link {'), css.indexOf('.skip-link:focus'));
     expect(block).toMatch(/transform:\s*translateY\(-1\d0%\)/);
     expect(block).not.toMatch(/^\s*top:\s*-40px/m);
   });
 
   test('skip-link focus state restores on-screen position', () => {
-    const css = read('utilities.css');
+    const css = read('accessibility.css');
     const focusBlock = css.slice(css.indexOf('.skip-link:focus'));
     expect(focusBlock).toMatch(/transform:\s*translateY\(0\)/);
   });
