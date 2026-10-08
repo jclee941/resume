@@ -100,34 +100,61 @@ export function mapToRememberProfile(ssot, current) {
 function careerChanges(careers, current) {
   /** @type {RememberCareer[]} */
   const changes = [];
-  const listed = careers.filter((career) => career.company);
-  for (const career of listed) {
-    const period = parsePeriod(career.period);
-    const desired = {
-      company: career.company,
-      position: career.role || null,
-      joined_date: period.startsAt || null,
-      left_date: period.isCurrent ? null : period.endsAt,
-      present: period.isCurrent,
-      description: careerDescription(career),
-      open_description: career.wantedSummary?.trim() || null,
-    };
-    const existing = current.find((entry) => sameName(entry.company, career.company));
-    if (!existing) changes.push({ ...desired, main: false, visibility: 'public' });
-    else if (differs(existing, desired)) changes.push({ id: existing.id, ...desired });
+  const desired = careers
+    .filter((career) => career.company)
+    .map((career) => {
+      const period = parsePeriod(career.period);
+      return {
+        company: career.company,
+        position: career.role || null,
+        joined_date: period.startsAt || null,
+        left_date: period.isCurrent ? null : period.endsAt,
+        present: period.isCurrent,
+        description: careerDescription(career),
+        open_description: career.wantedSummary?.trim() || null,
+      };
+    });
+  const matches = matchCareers(desired, current);
+  /** @type {Array<RememberCareer | undefined>} */
+  const updates = desired.map((career, i) => {
+    const existing = matches[i];
+    if (!existing) return { ...career, main: false, visibility: 'public' };
+    return differs(existing, career) ? { id: existing.id, ...career } : undefined;
+  });
+  for (const update of updates) {
+    if (update) changes.push(update);
   }
-  const stale = current.filter(
-    (entry) => !listed.some((career) => sameName(entry.company, career.company))
-  );
+  const stale = current.filter((entry) => !matches.includes(entry));
   for (const entry of stale) changes.push({ id: entry.id, _destroy: true });
-  if (listed.length > 0 && !current.some((entry) => entry.main && !stale.includes(entry))) {
-    const newest = listed[0];
-    const change = changes.find((entry) => sameName(entry.company, newest.company));
-    const existing = current.find((entry) => sameName(entry.company, newest.company));
-    if (change) change.main = true;
-    else if (existing) changes.push({ id: existing.id, main: true });
+  if (desired.length > 0 && !current.some((entry) => entry.main && !stale.includes(entry))) {
+    if (updates[0]) updates[0].main = true;
+    else if (matches[0]) changes.push({ id: matches[0].id, main: true });
   }
   return changes;
+}
+
+/**
+ * Pair each SSoT career with a current one of the same company, same start date first, so two
+ * stints at one company each keep their own entry.
+ * @param {RememberCareer[]} desired
+ * @param {RememberCareer[]} current
+ * @returns {Array<RememberCareer | undefined>}
+ */
+function matchCareers(desired, current) {
+  /** @type {Array<RememberCareer | undefined>} */
+  const matches = desired.map(() => undefined);
+  for (const sameStart of [true, false]) {
+    desired.forEach((career, i) => {
+      if (matches[i]) return;
+      matches[i] = current.find(
+        (entry) =>
+          !matches.includes(entry) &&
+          sameName(entry.company, career.company) &&
+          (!sameStart || entry.joined_date === career.joined_date)
+      );
+    });
+  }
+  return matches;
 }
 
 /**

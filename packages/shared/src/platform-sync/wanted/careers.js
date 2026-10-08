@@ -47,6 +47,7 @@ import { normalizeText, truncateWantedProjectDescription } from './text-formatti
  * @property {CompanyInfo} [company]
  * @property {string} [company_name]
  * @property {string | number} [id]
+ * @property {string | null} [start_time]
  */
 
 /**
@@ -54,6 +55,7 @@ import { normalizeText, truncateWantedProjectDescription } from './text-formatti
  * @property {string | number} id
  * @property {CompanyInfo} [company]
  * @property {string} [company_name]
+ * @property {string | null} [start_time]
  * @property {RemoteProject[]} [projects]
  */
 
@@ -206,6 +208,32 @@ async function syncCareerProjects(api, resume_id, careerId, ssotCareer = {}, rem
 }
 
 /**
+ * Pair each local career with a remote career of the same company, same start date first, so
+ * two stints at one company each keep their own remote career.
+ * @param {LocalCareer[]} localCareers
+ * @param {RemoteCareer[]} remoteCareers
+ * @returns {Array<RemoteCareer | undefined>}
+ */
+function matchRemoteCareers(localCareers, remoteCareers) {
+  /** @type {Array<RemoteCareer | undefined>} */
+  const matches = localCareers.map(() => undefined);
+  for (const sameStart of [true, false]) {
+    localCareers.forEach((career, i) => {
+      if (matches[i]) return;
+      const companyName = /** @type {string} */ (career.company?.name || career.company || '');
+      const normalizedName = normalizeCompanyName(companyName);
+      matches[i] = remoteCareers.find(
+        (rc) =>
+          !matches.includes(rc) &&
+          normalizeCompanyName(rc.company?.name || rc.company_name) === normalizedName &&
+          (!sameStart || rc.start_time === career.start_time)
+      );
+    });
+  }
+  return matches;
+}
+
+/**
  * @param {WantedCareersApiClient} api
  * @param {string | number} resume_id
  * @param {LocalCareer[]} localCareers
@@ -214,18 +242,13 @@ async function syncCareerProjects(api, resume_id, careerId, ssotCareer = {}, rem
  * @returns {Promise<void>}
  */
 export async function syncCareers(api, resume_id, localCareers, remoteCareers, ssotCareers) {
-  const matchedIds = new Set();
+  const matches = matchRemoteCareers(localCareers, remoteCareers);
   for (let i = 0; i < localCareers.length; i++) {
     const career = localCareers[i];
     const ssotCareer = ssotCareers[i] || {};
-    const companyName = /** @type {string} */ (career.company?.name || career.company || '');
-    const normalizedName = normalizeCompanyName(companyName);
-    const matchedCareer = remoteCareers.find(
-      (rc) => normalizeCompanyName(rc.company?.name || rc.company_name) === normalizedName
-    );
+    const matchedCareer = matches[i];
 
     if (matchedCareer) {
-      matchedIds.add(matchedCareer.id);
       await api.resumeCareer.update(resume_id, matchedCareer.id, career);
       await syncCareerProjects(
         api,
@@ -243,7 +266,7 @@ export async function syncCareers(api, resume_id, localCareers, remoteCareers, s
     }
   }
 
-  const toDelete = remoteCareers.filter((rc) => !matchedIds.has(rc.id));
+  const toDelete = remoteCareers.filter((rc) => !matches.includes(rc));
   for (const career of toDelete) {
     await api.resumeCareer.delete(resume_id, career.id);
   }

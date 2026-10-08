@@ -74,4 +74,23 @@ describe('syncCareers', () => {
     const deleted = calls.filter(([name]) => name === 'deleteProject').map((call) => call[3]);
     assert.deepEqual(deleted, [11]);
   });
+
+  it('keeps two stints at one company as separate careers', async () => {
+    const calls = [];
+    const stints = [
+      { company: { name: 'A', type: 'CUSTOM' }, start_time: '2024-03-01' },
+      { company: { name: 'A', type: 'CUSTOM' }, start_time: '2017-01-01' },
+    ];
+    const remote = [{ id: 1, company: { name: 'A' }, start_time: '2017-01-01', projects: [] }];
+
+    await syncCareers(createApi(calls), 'R', stints, remote, [{}, {}]);
+
+    assert.deepEqual(
+      calls.filter(([name]) => ['add', 'update', 'delete'].includes(name)),
+      [
+        ['add', 'R', stints[0]],
+        ['update', 'R', 1, stints[1]],
+      ]
+    );
+  });
 });

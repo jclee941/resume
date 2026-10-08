@@ -113,6 +113,35 @@ describe('mapToRememberProfile', () => {
     );
   });
 
+  it('keeps two stints at one company as separate careers', () => {
+    const twice = {
+      ...ssot,
+      careers: [
+        { company: '(주)에이', period: '2024.03 ~ 2025.02', role: 'SRE' },
+        { company: '(주)에이', period: '2017.01 ~ 2018.08', role: 'SI' },
+      ],
+    };
+    const synced = current();
+    synced.careers_attributes = [
+      {
+        id: 1,
+        company: '(주)에이',
+        position: 'SRE',
+        joined_date: '2024-03-01',
+        left_date: '2025-02-01',
+        present: false,
+        main: true,
+      },
+    ];
+
+    const careers = mapToRememberProfile(twice, synced).careers_attributes ?? [];
+
+    assert.deepEqual(
+      careers.map((career) => [career.id, career.joined_date, career.main]),
+      [[undefined, '2017-01-01', false]]
+    );
+  });
+
   it('updates the matched school in place with the expected graduation', () => {
     const { academic_histories_attributes: academic } = mapToRememberProfile(ssot, current());
 
