@@ -108,4 +108,33 @@ describe('syncCareers', () => {
     const titles = calls.filter(([name]) => name === 'addProject').map((call) => call[3].title);
     assert.deepEqual(titles, ['백엔드팀']);
   });
+
+  it('finds a career added without an id on a re-read and posts its projects', async () => {
+    const calls = [];
+    const api = createApi(calls);
+    api.resumeCareer.add = async (...args) => {
+      calls.push(['add', ...args]);
+      return {};
+    };
+    api.getResumeDetail = async () => ({
+      careers: [{ id: 9, company: { name: 'A' }, start_time: '2024-03-01', projects: [] }],
+    });
+    const added = { company: { name: 'A', type: 'CUSTOM' }, start_time: '2024-03-01' };
+
+    await syncCareers(api, 'R', [added], [], [ssotCareer]);
+
+    const projects = calls
+      .filter(([name]) => name === 'addProject')
+      .map((call) => [call[2], call[3].title]);
+    assert.deepEqual(projects, [[9, 'P1']]);
+  });
+
+  it('fails when an added career is missing from the re-read resume', async () => {
+    const api = createApi([]);
+    api.resumeCareer.add = async () => ({});
+    api.getResumeDetail = async () => ({ careers: [] });
+    const added = { company: { name: 'A', type: 'CUSTOM' }, start_time: '2024-03-01' };
+
+    await assert.rejects(syncCareers(api, 'R', [added], [], [ssotCareer]), /missing/);
+  });
 });
