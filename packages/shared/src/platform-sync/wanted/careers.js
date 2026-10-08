@@ -57,6 +57,7 @@ import { normalizeText, truncateWantedProjectDescription } from './text-formatti
  * @property {CompanyInfo} [company]
  * @property {string} [company_name]
  * @property {string | null} [start_time]
+ * @property {string | null} [end_time]
  * @property {RemoteProject[]} [projects]
  */
 
