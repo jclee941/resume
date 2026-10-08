@@ -80,8 +80,12 @@ describe('generateWebData → careers[] (SSoT timeline data)', () => {
         .filter((a) => typeof a === 'string' && a.length > 0);
       assert.deepEqual(career.achievements, expected, `careers[${i}].achievements`);
     });
-    // First career must carry real achievement bullets (the timeline Impact source).
-    assert.ok(out.careers[0].achievements.length > 0, 'first career has achievements');
+    // The timeline Impact source must carry real achievement bullets for at least one career;
+    // the newest career may have no detailed sub-projects yet.
+    assert.ok(
+      out.careers.some((career) => career.achievements.length > 0),
+      'a career has achievements'
+    );
   });
 
   it('S4: career with no projects yields achievements:[] (no throw)', () => {

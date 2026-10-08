@@ -89,7 +89,7 @@ const SENTENCE_FIELDS_KO = (data) => {
   (data.projects || []).forEach((project, i) =>
     add(`projects[${i}].description`, project.description)
   );
-  add('careerGap.reason', data.careerGap.reason);
+  add('careerGap.reason', data.careerGap?.reason);
   (data.personalProjects || []).forEach((project, i) =>
     add(`personalProjects[${i}].description`, project.description)
   );
@@ -116,7 +116,7 @@ const NOUN_FIELDS_KO = (data) => {
       )
     );
   });
-  add('careerGap.result', data.careerGap.result);
+  add('careerGap.result', data.careerGap?.result);
   (data.personalProjects || []).forEach((project, i) =>
     (project.highlights || []).forEach((t, h) => add(`personalProjects[${i}].highlights[${h}]`, t))
   );
