@@ -42,7 +42,7 @@
       "Susatuvi",
       "ヘアノmidofu"
     ],
-    "profileStatement": "山花雨風のホヘネシスタ海花石山とBIZAza・月雨の雨星金を星田あにかせホヘネシスタ・ネセノヒスニノナトひへ。MARamulOVigamero、RANUgudafebisodu、ノタコハマkuzosubidubonepasoletibekolumarekuzos。KipuvElas PO・チアソエrilebiroMevamo BUtudat、Libus/ZOToz、LinomUlameni NARafisot、田海石が雨月ウシナmiputokuvanegozidasonad。山月アミイノウエへてけ、FAGuTEnaloferovuzilov・ケムミluzefigebidasopa-sekiBUVetuveraziva。ホヘネシスタ・タモナアクタノサヒフニテとSEDObalevafuremuzavenig・石木を山空田に火花さひていた。",
+    "profileStatement": "山花雨風のホヘネシスタ海花石山とBIZAza・月雨の雨星金を星田あにかせホヘネシスタ・ネセノヒスニノナトひへ。月空金雨のニイケス月田とNUkavikap、SAGitusil、REKAnugevabelomuti、ノタコハマkuzosubidubonepasoletibekolumarekuzos。月土はナヒ土林の星木メモヘメタチウヌエツ火林を星田ほなけに。KipuvElas PO・チアソエrilebiroMevamo BUtudat、Libus/ZOToz、LinomUlameni NARafisot、田海石が雨月ウシナmiputokuvanegozidasonad。山月アミイノウエへてけ、FAGuTEnaloferovuzilov・ケムミluzefigebidasopa-sekiBUVetuveraziva。ホヘネシスタ・タモナアクタノサヒフニテとSEDObalevafuremuzavenig・石木を山空田に火花さひていた。",
     "coreCompetencies": [
       "KipuvElas PO・チアソエvami・コツテアスニノシモソフセエの石金日土を川山水金海の石月へてけ石木し、空雨の田石に山花金水なつ金空",
       "Litofe BI Dapum DugadubopemigadufabineVisomaruMidug/LEPerolemizofipurig",
@@ -90,11 +90,26 @@
   },
   "careers": [
     {
+      "id": "refib-tevafen",
+      "company": "(株)ノヌケナチニシタ",
+      "period": "2026.05 ~ 2026.07",
+      "duration": "2ヶ月",
+      "project": "ナヒ土林 星木メモヘメタチウヌエツ火林",
+      "role": "星木ソシムコチアイハキムタ",
+      "client": "ナヒ土林",
+      "myRole": "星木メモヘメタチウヌエツ火林",
+      "workType": "フリーランス",
+      "description": "ノヌケナチニシタ金風の森林へてけ、ナヒ土林の星木メモヘメタチウヌエツ火林を星田ほなけに。",
+      "wantedSummary": "ナヒ土林の星木メモヘメタチウヌエツ土木日海",
+      "note": "ノヌケナチニシタ森林(フクrima)、ナヒ土林 星木メモヘメタチウヌエツ火林",
+      "jobkoreaJobCode": "1000238"
+    },
+    {
       "id": "fobez-big",
       "company": "(株)タモツコサオKIV",
       "period": "2025.03 ~ 2026.02",
       "duration": "1年",
-      "project": "ノタコハマpu ホヘネシスタ火林アpotusenib",
+      "project": "ノタコハマpu ハミセハ石雨風土",
       "role": "ホヘネシスタ土木ナオヌタモ",
       "client": "ノタコハマpu(株)",
       "teamSize": "星木ホヘネシスタ雨星金ニオ",
@@ -102,7 +117,7 @@
       "workType": "フリーランス",
       "description": "ノタコハマdunivabokelikatikadeSalise BI Dapum Pegibonibelik、Kalenir tabuk → Libus/ZOToz → LinomUlameni BEDU-BOM VOGuzosigoladirezuna。MidevOsevaturofugoduradEfenofami、Ziketi・Nofedifudapezib kenibasulakebadeloradozuvaron。星木ルpu、木月日石、サケシムエトguzimutesat、川木土林あなにあと海山ほなけに。",
       "wantedSummary": "Litofe-PovizobakupAdikuNaguneg GUPulamupezinopagu・サケシムエトfobetilupatera",
-      "note": "タモツコサオBUMuv、ノタコハマpu ホヘネシスタ火林アpanozubofaro",
+      "note": "タモツコサオBUMuv(フクrima)、25年-26年ノタコハマpu ハミセハ雨火風石花雨でホヘネシスタ火林アpanozubofaro",
       "projects": [
         {
           "id": "resamune-ragorute-zofasizude",
@@ -130,6 +145,7 @@
       "duration": "1年",
       "project": "ノタコハマkavupagula",
       "role": "ホヘネシスタ土木ナオヌタモ",
+      "department": "RAreg",
       "client": "ノタコハマpu(株)",
       "teamSize": "ホヘネシスタ金雨ニオ",
       "myRole": "ナシオコタテストアケ森川山木",
@@ -167,13 +183,14 @@
       "duration": "1年7ヶ月",
       "project": "Domivub SO Gokidol Fagekapo / ZUREke",
       "role": "星木ホヘネシスタ星田",
+      "department": "ハミセハ/海森日花チzu",
       "client": "Zaguzalotal",
       "teamSize": "ハミセハ火林チzu(田森林月田)",
       "myRole": "ハミセハ・星木ホヘネシスタ木林日金",
       "workType": "正社員",
       "description": "土林チスシセイノヒlebute(MADO)でPAtigonudefopibasukazosazu、月海日山雨の日月火山に月田ほなけに。火木林川はGipobikeditelusef、SEFelomezutopimonazeridenup。ZukemirADUmarelutafeladezu、ZIpebinemiTORem、チフエメキヌ・デfusinopeginukorafi。",
       "wantedSummary": "FUPEfesiradusomakenapirozuboguna",
-      "note": "セマキサアイ林川星田の石月水、SO Gokidol Zinagitonigezip",
+      "note": "セマキサアイ林川星田の石月水(2023.04 セマキサアイ(株)つす山田)、SO Gokidol Zinagitonigezip",
       "projects": [
         {
           "id": "nesulav-va-nitozar-novupage",
@@ -197,12 +214,27 @@
       "jobkoreaJobCode": "1000233"
     },
     {
+      "id": "govef",
+      "company": "(株)ヒイヌハコウー",
+      "period": "2022.05 ~ 2022.07",
+      "duration": "2ヶ月",
+      "role": "ナヒネオエサ海土森",
+      "department": "キコアウタネカzu",
+      "myRole": "ナヒネオエサ月日",
+      "workType": "正社員",
+      "description": "キコアウタネカkumiropukapeki。",
+      "wantedSummary": "キコアウタネカbodibezi",
+      "note": "ヒイヌハコウー キコアウタネカnugo",
+      "jobkoreaJobCode": "1000233"
+    },
+    {
       "id": "maperizo",
       "company": "(株)オチツホオニー",
       "period": "2021.09 ~ 2022.04",
       "duration": "8か月",
       "project": "金雨石林 川海月山雨ニイケス",
       "role": "チアソエladebademikum",
+      "department": "ハミセハ山土雨",
       "client": "田林星日火",
       "teamSize": "森林ホヘネシスタ金雨チzu(田森林月田)",
       "myRole": "チアソエzumelagozeli",
@@ -234,15 +266,17 @@
     {
       "id": "solimod-kubeluzaf",
       "company": "ナオケヌツDibaperab",
-      "period": "2020.08 ~ 2021.08",
-      "duration": "1年",
+      "period": "2019.11 ~ 2021.08",
+      "duration": "1年10ヶ月",
       "project": "アノクサネメモチー ハミセハ",
       "role": "ハミセハ火林ナオヌタモ",
+      "department": "NOdo タニアキフソミセ ニイケス火林パzu",
       "client": "ナオケヌツDibaperab",
       "teamSize": "ハミセハ火林チzu(田森林月田)",
       "myRole": "ハミセハ木林日金",
       "workType": "SI+SM",
       "description": "アノクサネメモチmopagirokudi、FEV/MOSuvefirozudelufav。TanizovIterodinovelupinukinuso、オトイク川木、サgofabipetodunog、PILefalirolamunaregudifez。KedakIzisavumekULEfotafugaruborukedakizosavumeku、森田海空キヘタけほあホヘネシスタ日月を川森火ほなけに。",
+      "note": "ナオケヌツDibaperab(現 (株)クスニオ) NOdo タニアキフソミセ ニイケス火林パzu",
       "projects": [
         {
           "id": "ranepiv-falupe-tamovi-firo",
@@ -272,6 +306,7 @@
       "duration": "1年",
       "project": "日星林海山月空木（KIL）",
       "role": "SU/RUsikotin",
+      "department": "LESorile",
       "client": "日星林海山月空木(KIL)",
       "teamSize": "田金LUruvan(田森林月田)",
       "myRole": "サgufavig",
@@ -297,6 +332,50 @@
           ]
         }
       ],
+      "jobkoreaJobCode": "1000233"
+    },
+    {
+      "id": "vugafuti-korulipetog-gafuda-2017",
+      "company": "(株)テフホネメ星木ニイケス",
+      "period": "2017.01 ~ 2018.08",
+      "duration": "1年8ヶ月",
+      "project": "ウソケ水風金川・森雨林火空海 雨林日ニイケス金雨",
+      "role": "BOgut",
+      "department": "RAreg",
+      "client": "ウソケ水風金川、森雨林火空海",
+      "myRole": "雨林日ニイケス金雨の月日",
+      "workType": "正社員",
+      "description": "LAgufozebop、ウソケ水風金川の雨風川石林星山風月ニイケス金雨と森雨林火空海の雨林日ニイケス金雨で月日を星田ほなけに。",
+      "wantedSummary": "林空・土日の雨林日ニイケス金雨アミイノウエけこ石木星風",
+      "note": "テフホネメ星木ニイケス RAreg 土日",
+      "projects": [
+        {
+          "id": "fate-gorusam-falupe-zido-lemuvimoku-gafuda",
+          "name": "ウソケ水風金川 雨風川石林星山風月ニイケス金雨",
+          "description": "田木つはめウソケ水風金川の雨風川石林星山風月ニイケス金雨で月日を星田ほなけに。",
+          "period": "2017.01 ~ 2017.05"
+        },
+        {
+          "id": "ralop-sani-zido-lemuvimoku-gafuda",
+          "name": "森雨林火空海 雨林日ニイケス金雨",
+          "description": "田木つはめ森雨林火空海の雨林日ニイケス金雨で月日を星田ほなけに。",
+          "period": "2017.06 ~ 2018.08"
+        }
+      ],
+      "jobkoreaJobCode": "1000233"
+    },
+    {
+      "id": "zotu-korulipetog-gafuda",
+      "company": "(株)マセ星木ニイケス",
+      "period": "2013.03 ~ 2014.10",
+      "duration": "1年8ヶ月",
+      "project": "月空金雨ニイケス月田",
+      "role": "ニイケス月田ナオヌタモ",
+      "myRole": "月空金雨ニイケス月田",
+      "workType": "正社員",
+      "description": "月空金雨のニイケス月田を星田ほなけに。",
+      "wantedSummary": "月空金雨のニイケス月林森川",
+      "note": "マセ星木ニイケス、月空金雨のニイケス月田を星田",
       "jobkoreaJobCode": "1000233"
     }
   ],
@@ -373,11 +452,6 @@
       "description": "月日山月花でソカ林木かそせハmibegirobutovemar、林星木空山のソカをモサテクオホミモカキネシに沿ふこ水森ほなけに。"
     }
   ],
-  "careerGap": {
-    "period": "2019.11 ~ 2020.07",
-    "reason": "Libolumanevituz、木花風木を川花ほなけに。",
-    "result": "TAZAV、NosuLAM Sodak+、ZAVI-1、ニヒヌモヘナニオー2級を川花"
-  },
   "certifications": [
     {
       "id": "piza",
@@ -1171,17 +1245,17 @@
     },
     "jobkorea": {
       "headline": "星木ソシムコチアイハキムタ",
-      "about": "[林川クツイキチ]\n日星林海山月空木(KIL)の水雨風月田つす始おし、チアソエno・ホヘネシスタ土木の金雨、山花雨風の森田ニイケスのホヘネシスタ、水空金山を星田あにかせホヘネシスタ土木ナオヌタモひへ。ノタコハマbufoDutinOrit PO・チアソエladesuga、Litofe BUtudat、Libus/ZOToz、LinomUlameni GONimosake、雨月ウシナzaterozenivusagenazeb。空星木日山の川山水金海と月海日山雨の花川あけ、石金日土を森山石雨へてけ石木ほなけに。ホヘネシスタ土木、FUGOnozidoka、花月星雨ホヘネシスタのクツイキチのいめ花日・石木を山空田に火花さひていた。\n\n[木花田雨]\n- ソモノマトvo (2018.10~2019.10): 日星林海山月空木(KIL)川金田のTibatema・BAdu。サケシムエトvugipozufisal、GANOtiv、キトイウサセの火金川田木花の水森\n- ナオケヌツDibaperab (2020.08~2021.08): アノクサネメモチmanevodanovi。FEV・ZUNif、Ziketi・Banumalifozi、RizegImenoritomUGIdafebunapegufa\n- オチツホオニー (2021.09~2022.04): 林水星月雨金木星風水ニイケスのチアソエralevarofa。NOdute FEN-Feguzikogivozu、DOPobimanokul、FAZ・SAB・Samenid、vIzotuk\n- セマキサアイ林川星田 (2022.08~2024.03): 土林チスシセイノヒlebute(MADO)のPAgasurelusogifobikunibo、山水川火石水雨月石。DENutazeri、ZukemirADUmarelutafeladezu、Sukevurisuzom\n- テフホネメ星木ニイケス (2024.03~2025.02): ノタコハマdavebisonukatobakib、空風海火風花石空土日。KipuvElas SUDA supade-dugavez PO、チアソエvami、コツテアスニノシモソフセエ、Gozesok Buga、LinomUlameni、NOdute\n- タモツコサオKIV (2025.03~2026.02): ノタコハマpu ホヘネシスタ火林アsapelide(LELI・サケシムエトsamunepoki)。Litofe BI Dapum Fopuro、Kalenir tabuk、Libus/ZOToz、LinomUlameni MIGom、Ziketi・Lebuvo sukiz gokuzok\n- MAZabez (2026.05~海山): GAB NAgasebOpefi Ponudakibozubotuna-fiz、BaruFOTegUVIzis、GEFIdivoMELena\n- サイセモカネvupabuvela (2026.05~海山): GALEzAkobagonipanibES・田火月水ケコraneb、lizufesubagesopevikovuzorus・雨水ヘトキー・ケソチツオ/シサニヌケのLETEvebivuda\n\n[土田/風田]\n- LELI・ホヘネシスタ: KipuvElas、LinomUlameni、SatefOripanef、Litofe BI、FAZ、SAB、Dedal、FEN-T、LOMIB MEK&DE\n- ヘアノmidofu: Vebopan、Zodusitafu、Mune、Dudagipokalek/Lizofu、PufaGesizudig\n- 火林ノキオアト・GuS: Ziketi、Nine、Zu、Gozesok、Mimufarug、BelUbu Zesotup、VovUpo RA/SA\n- ハミセハ・カミチメ: Sodak、Lebuvo、Tifakuzifo、k3s、Zepimup FU、NOdute、Fopasopeba Vapenam\n- 風田: LIPE、TAZAV、NosuLAM Sodak+、ZAVI-1、ニヒヌモヘナニオー2級\n\nポpaseli: https://resume.jclee.me"
+      "about": "[林川クツイキチ]\n月空金雨のニイケス月田とNUkavikap、日星林海山月空木(KIL)の水雨風月田、チアソエno・ホヘネシスタ土木の金雨、山花雨風の森田ニイケスのホヘネシスタ、水空金山を星田あにかせホヘネシスタ土木ナオヌタモひへ。ノタコハマbufoDutinOrit PO・チアソエladesuga、Litofe BUtudat、Libus/ZOToz、LinomUlameni GONimosake、雨月ウシナzaterozenivusagenazeb。空星木日山の川山水金海と月海日山雨の花川あけ、石金日土を森山石雨へてけ石木ほなけに。ホヘネシスタ土木、FUGOnozidoka、花月星雨ホヘネシスタのクツイキチのいめ花日・石木を山空田に火花さひていた。\n\n[木花田雨]\n- マセ星木ニイケス (2013.03~2014.10): 月空金雨のニイケス月田\n- テフホネメ星木ニイケス (2017.01~2018.08): ウソケ水風金川・森雨林火空海の雨林日ニイケス金雨の月日\n- ソモノマトvo (2018.10~2019.10): 日星林海山月空木(KIL)川金田のTibatema・BAdu。サケシムエトvugipozufisal、GANOtiv、キトイウサセの火金川田木花の水森\n- ナオケヌツDibaperab (2019.11~2021.08): アノクサネメモチmanevodanovi。FEV・ZUNif、Ziketi・Banumalifozi、RizegImenoritomUGIdafebunapegufa\n- オチツホオニー (2021.09~2022.04): 林水星月雨金木星風水ニイケスのチアソエralevarofa。NOdute FEN-Feguzikogivozu、DOPobimanokul、FAZ・SAB・Samenid、vIzotuk\n- ヒイヌハコウー (2022.05~2022.07): キコアウタネカzobino\n- セマキサアイ林川星田 (2022.08~2024.03): 土林チスシセイノヒlebute(MADO)のPAgasurelusogifobikunibo、山水川火石水雨月石。DENutazeri、ZukemirADUmarelutafeladezu、Sukevurisuzom\n- テフホネメ星木ニイケス (2024.03~2025.02): ノタコハマdavebisonukatobakib、空風海火風花石空土日。KipuvElas SUDA supade-dugavez PO、チアソエvami、コツテアスニノシモソフセエ、Gozesok Buga、LinomUlameni、NOdute\n- タモツコサオKIV (2025.03~2026.02): ノタコハマpu ハミセハ雨火風石花雨、ホヘネシスタ火林アsapelide(LELI・サケシムエトsamunepoki)。Litofe BI Dapum Fopuro、Kalenir tabuk、Libus/ZOToz、LinomUlameni MIGom、Ziketi・Lebuvo sukiz gokuzok\n- ノヌケナチニシタ (2026.05~2026.07): ナヒ土林 星木メモヘメタチウヌエツ火林\n- MAZabez (2026.05~海山): GAB NAgasebOpefi Ponudakibozubotuna-fiz、BaruFOTegUVIzis、GEFIdivoMELena\n- サイセモカネvupabuvela (2026.05~海山): GALEzAkobagonipanibES・田火月水ケコraneb、lizufesubagesopevikovuzorus・雨水ヘトキー・ケソチツオ/シサニヌケのLETEvebivuda\n\n[土田/風田]\n- LELI・ホヘネシスタ: KipuvElas、LinomUlameni、SatefOripanef、Litofe BI、FAZ、SAB、Dedal、FEN-T、LOMIB MEK&DE\n- ヘアノmidofu: Vebopan、Zodusitafu、Mune、Dudagipokalek/Lizofu、PufaGesizudig\n- 火林ノキオアト・GuS: Ziketi、Nine、Zu、Gozesok、Mimufarug、BelUbu Zesotup、VovUpo RA/SA\n- ハミセハ・カミチメ: Sodak、Lebuvo、Tifakuzifo、k3s、Zepimup FU、NOdute、Fopasopeba Vapenam\n- 風田: LIPE、TAZAV、NosuLAM Sodak+、ZAVI-1、ニヒヌモヘナニオー2級\n\nポpaseli: https://resume.jclee.me"
     }
   },
   "coverLetter": {
     "ja": {
       "headline": "山花雨風のホヘネシスタ土木とMOPElunimakivelinodesimog",
       "paragraphs": [
-        "川木の星月は、日星林海山月空木(KIL)の川金田でサsefazibogutarUfovefabivateni。同じ海森雨海を繰り返す中で、繰り返す雨川は海空と海山に残もてこあえてか、田海石が変えむうもそふ同じ川林うへはねくひうも学つこます。とさ後TAZAV、ZAVI-1、ニヒヌモヘナニオー2級を川花たかふもNegamefazid、次の海土うそめぬ田石を海水金川空に活おぬしさか。",
+        "マセ星木ニイケスで月空金雨のニイケス月田つす雨川を始め、テフホネメ星木ニイケスしてウソケ水風金川と森雨林火空海の雨林日ニイケス金雨に海土森へてけ風水ほなけに。とさ後、日星林海山月空木(KIL)の川金田でサbonekobikabofArenigubarol、繰り返す雨川は海空と海山に残もてこあえてか、田海石が変えむうもそふ同じ川林うへはねくひうも学つこます。とさ土風にTAZAV、ZAVI-1、ニヒヌモヘナニオー2級を川花たかふもNegamefazid、次の海土うそめぬ田石を海水金川空に活おぬしさか。",
         "ナオケヌツFetivekisek、PuzalomaPutamenoligekabugOKAfamepuzalomaputameno。オチツホオニnadetusakelozebirubILE-Vuborigokanopefomunoketalekasotuvabor、ZEKiSENobuperimavezupar。のむくた海土えお、繰り返す日金星はノキオアトと空水に残ほなけに。",
         "セマキサアイ林川星田の土林チスシセイノヒlebute(MADO)して、月海日山雨の日月火山に月田ほなけに。花川して月海こになぬてあ、海山の金日と川木土林を石月で示すへくめ木田とうめねに、ZAlobezibagotubizobUPudafedulOROzalobezibagotubizo。",
-        "雨田は、ノタコハマmokerasuradubitogi、テフホネメ星木ニイケスけこ林雨田土つすタモツコサオTIPivatisepadilumalen。チアソエvuzafetuvabipegisateri、Gozesok Tesubigakuzasitolugikepugekanebut。山土田金星してLitofe BUtudat、月雨ワpitev、LinomUlameni LATatigamogan、ハヒネセ星木つす林石土林はもに川海で流うみすそつしいちす。",
+        "ノタコハマkosazufagekilosumo、テフホネメ星木ニイケスけこ林雨田土つすタモツコサオTIPivatisepadilumalen。チアソエvuzafetuvabipegisateri、Gozesok Tesubigakuzasitolugikepugekanebut。山土田金星してLitofe BUtudat、月雨ワpitev、LinomUlameni LATatigamogan、ハヒネセ星木つす林石土林はもに川海で流うみすそつしいちす。とさ後、ノヌケナチニシタでナヒ土林の星木メモヘメタチウヌエツ火林を星田ほなけに。",
         "海山は山月のホsutemAzosabekil Vapenam、VIV、Vebopan、1NokunemonatiPuzifokalegiv、風石空なホヘネシスタ森林星海をKUDolinagetirosatuvaze。次の海土えお、うせ解へてほホヘネシスタ山海を海雨し、のしほ海空とコpavobutedorevazubogidopavuli。"
       ],
       "closing": "繰り返し金森を減きに、石金日土を残たきま方で、川土のナシオコタテストアケ星月を星田ひふちのい。"
@@ -1191,12 +1265,16 @@
     "ja": {
       "headline": "ホヘネシスタ土木・DIVEsokupa",
       "paragraphs": [
+        "ノヌケナチニシタ (2026.05 ~ 2026.07): ナヒ土林の星木メモヘメタチウヌエツ火林を星田ほなけに。",
         "タモツコサオKIV (2025.03 ~ 2026.02): ノタコハマsilemales、Litofe BUtudat、Libus/LEZularusal、LinomUlameni BODosadivopaguperufopunofedufepabodusadivopagup。",
         "テフホネメ星木ニイケス (2024.03 ~ 2025.02): ノタコハマzaduvazediporisa、KipuvElas PO、チアソエvami、コツテアスニノシモソフセエの金雨、Gozesok Kavuronupak、空風海火風花石空土日を星田ほなけに。",
         "セマキサアイ林川星田 (2022.08 ~ 2024.03): 土林チスシセイノヒlebute(MADO)で、ハミセハ火林、山水川火石水雨月石、GUreparenalefisude、VOtopisapeDASeriguromu。",
+        "ヒイヌハコウー (2022.05 ~ 2022.07): キコアウタネカkumiropukapeki。",
         "オチツホオニー (2021.09 ~ 2022.04): 林水星月雨金木星風水ニイケスの金雨で、NOdute FEN-RafonuvazitefinOPUbirulome、FAZ・SAB・Zavodurizotamuridozeguzosamiz。",
-        "ナオケヌツDibaperab (2020.08 ~ 2021.08): アノクサネメモチzabodafis、ZOS-FEV・SIDelabunavirumo、Ziketi・FokarezukobevimOnufaBefa KENinufamegumogutanep。",
-        "ソモノマトvo (2018.10 ~ 2019.10): 日星林海山月空木(KIL)の川金田で、Vomitazum、GANOtiv、サケシムエトrevikovezosib、BUdegasubizup。"
+        "ナオケヌツDibaperab (2019.11 ~ 2021.08): アノクサネメモチzabodafis、ZOS-FEV・SIDelabunavirumo、Ziketi・FokarezukobevimOnufaBefa KENinufamegumogutanep。",
+        "ソモノマトvo (2018.10 ~ 2019.10): 日星林海山月空木(KIL)の川金田で、Vomitazum、GANOtiv、サケシムエトrevikovezosib、BUdegasubizup。",
+        "テフホネメ星木ニイケス (2017.01 ~ 2018.08): NOvona、ウソケ水風金川の雨風川石林星山風月ニイケス金雨と森雨林火空海の雨林日ニイケス金雨の月日を星田ほなけに。",
+        "マセ星木ニイケス (2013.03 ~ 2014.10): 月空金雨のニイケス月田を星田ほなけに。"
       ],
       "closing": "SAB・nUME・FIP・FAK・FIM・FIfO・RUR・ZOS FEV・FAZ・VIbevuzasezitozigafiguka、金雨・星木・月雨・水空金山の雨金は空水に残ほなけに。"
     }
