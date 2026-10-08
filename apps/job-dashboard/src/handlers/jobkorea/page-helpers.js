@@ -128,11 +128,13 @@ export async function isLoggedIn(page) {
   return safeEvaluate(
     page,
     () => {
-      const logoutLink = document.querySelector('a[href*="/Login/Logout"]');
+      const logoutLink = document.querySelector('a[href*="/Login/Logout"], a[href*="logout" i]');
       const userLink = document.querySelector(
         'header a[href*="/User/"], #header a[href*="/User/"], a[href*="/User/"]'
       );
-      return Boolean(logoutLink || userLink);
+      // A successful login now lands on the lowercase /user/mypage, whose links the selectors miss.
+      const onMyPage = /^\/user\/mypage/i.test(location.pathname);
+      return Boolean(logoutLink || userLink || onMyPage);
     },
     false
   );
