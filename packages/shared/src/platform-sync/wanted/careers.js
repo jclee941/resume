@@ -74,6 +74,7 @@ import { normalizeText, truncateWantedProjectDescription } from './text-formatti
 /**
  * @typedef {Object} WantedCareersApiClient
  * @property {WantedCareerApi} resumeCareer
+ * @property {(resumeId: string | number) => Promise<{ careers?: RemoteCareer[] }>} getResumeDetail
  */
 
 /**
@@ -249,6 +250,8 @@ function matchRemoteCareers(localCareers, remoteCareers) {
  */
 export async function syncCareers(api, resume_id, localCareers, remoteCareers, ssotCareers) {
   const matches = matchRemoteCareers(localCareers, remoteCareers);
+  /** @type {number[]} */
+  const addedWithoutId = [];
   for (let i = 0; i < localCareers.length; i++) {
     const career = localCareers[i];
     const ssotCareer = ssotCareers[i] || {};
@@ -268,6 +271,8 @@ export async function syncCareers(api, resume_id, localCareers, remoteCareers, s
       const newId = result?.data?.id || result?.id;
       if (newId) {
         await syncCareerProjects(api, resume_id, newId, ssotCareer, []);
+      } else {
+        addedWithoutId.push(i);
       }
     }
   }
@@ -275,5 +280,39 @@ export async function syncCareers(api, resume_id, localCareers, remoteCareers, s
   const toDelete = remoteCareers.filter((rc) => !matches.includes(rc));
   for (const career of toDelete) {
     await api.resumeCareer.delete(resume_id, career.id);
+  }
+
+  if (addedWithoutId.length > 0) {
+    await syncAddedCareerProjects(api, resume_id, localCareers, ssotCareers, addedWithoutId);
+  }
+}
+
+/**
+ * Give careers whose POST answer carried no id their projects, finding them in the re-read resume.
+ * @param {WantedCareersApiClient} api
+ * @param {string | number} resume_id
+ * @param {LocalCareer[]} localCareers
+ * @param {SsotCareer[]} ssotCareers
+ * @param {number[]} indices local careers that were added without an id
+ * @returns {Promise<void>}
+ */
+async function syncAddedCareerProjects(api, resume_id, localCareers, ssotCareers, indices) {
+  const detail = await api.getResumeDetail(resume_id);
+  const matches = matchRemoteCareers(localCareers, detail.careers || []);
+  for (const i of indices) {
+    const created = matches[i];
+    if (created) {
+      await syncCareerProjects(
+        api,
+        resume_id,
+        created.id,
+        ssotCareers[i] || {},
+        created.projects || []
+      );
+    }
+  }
+  const missing = indices.filter((i) => !matches[i]);
+  if (missing.length > 0) {
+    throw new Error(`Added Wanted careers are missing from the resume: ${missing.join(', ')}`);
   }
 }

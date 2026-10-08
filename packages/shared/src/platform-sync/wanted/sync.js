@@ -24,12 +24,12 @@ const SSOT_ACTIVITY_TYPES = new Set(['CERTIFICATE', 'AWARD']);
  *   about?: string;
  * } & Parameters<typeof syncContact>[3]} WantedResumeDetail
  *
- * @typedef {Parameters<typeof syncAbout>[0] &
- *   Parameters<typeof syncCareers>[0] &
- *   Parameters<typeof syncEducations>[0] & {
+ * @typedef {{
  *     getResumeDetail(resumeId: string | number): Promise<WantedResumeDetail>;
  *     updateProfile(profile: { headline?: string; description?: string }): Promise<unknown>;
- *   }} WantedResumeApi
+ *   } & Parameters<typeof syncAbout>[0] &
+ *   Parameters<typeof syncCareers>[0] &
+ *   Parameters<typeof syncEducations>[0]} WantedResumeApi
  *
  * @typedef {Parameters<typeof syncActivities>[2] &
  *   Parameters<typeof syncLanguageCerts>[2] &
