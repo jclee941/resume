@@ -1,6 +1,6 @@
 {
   "careerEn": {
-    "(주)부바사아 KIV": {
+    "(주)후아자모보파카소": {
       "title": "GOBAN KIV La., Sar.",
       "period": "2025.03 ~ 2026.02",
       "description": "Nokifaren Litofe BI Dapum Serusako, Zezokalu, Libus/VIR lidolu, gis LinomUlameni PIG gutame satedul reli a ragorute-vadot kafigavep roke gus dogumavo zofasizude."
@@ -24,6 +24,22 @@
     "(주)타포가하고": {
       "title": "LI Neni La., Sar.",
       "description": "Zafobukolun a regupaf zol gelazigo migopek gis bomakop do ragorute kodam rivogumado do remorumi difogeli fokafer tadusoraso nuzav te a nomanu melagid sotumapotum."
+    },
+    "(주)소초차카보": {
+      "title": "Ravid Razuman La., Sar.",
+      "description": "Zalugonu korulipetog ragorute vogunaz gus Fimo Vuvizonad."
+    },
+    "(주)조차아": {
+      "title": "BapEB La., Sar.",
+      "description": "Vifogi ma a lazup zobiro ka gul bitaseb livo."
+    },
+    "vugafuti-korulipetog-gafuda-2017": {
+      "title": "Gedoripa Notusavunar Pukebip La., Sar.",
+      "description": "Vifogi ma a mabegubek te gul GU Vuvidone Doketiro ka zido-lemuvimoku gafuda rugove gus Feri Dimolap Kumano gis Viper Kedi Godumelom."
+    },
+    "(주)투하아투추나하": {
+      "title": "Feza Notusavunar Kimoli La., Sar.",
+      "description": "Bonukiporu zobiku vogunaz."
     }
   },
   "projectEn": {
@@ -47,6 +63,11 @@
   "statsByIndex": {
     "ko": [
       [
+        "토조노우",
+        "추노코우",
+        "다노소 운영"
+      ],
+      [
         "Litofe BI",
         "초푸·마두",
         "부추 자포가 가코"
@@ -62,6 +83,9 @@
         "Ziketi Fogukam"
       ],
       [
+        "차두타파"
+      ],
+      [
         "FEN-T",
         "구수사마라카파다투호",
         "초타 초푸"
@@ -75,9 +99,22 @@
         "Sodak 운영",
         "푸초다 루차",
         "추수 루라"
+      ],
+      [
+        "GU 푸구",
+        "쿠도조 다노소",
+        "무바·코가"
+      ],
+      [
+        "다노소 나코쿠부"
       ]
     ],
     "en": [
+      [
+        "Fimo Vuvizonad",
+        "Notusavunar Pomudave",
+        "Kimoli Vatevinoku"
+      ],
       [
         "Litofe BI",
         "Demirozur & Manupani",
@@ -94,6 +131,9 @@
         "Ziketi Razikobi"
       ],
       [
+        "Ponuvaz Fapi"
+      ],
+      [
         "FEN-T",
         "Pasilakebomazosiz",
         "Fuzoluvib Demirozur"
@@ -107,9 +147,22 @@
         "Sodak Fum",
         "Gubenofa Gosula",
         "Purip Mufevibopa"
+      ],
+      [
+        "GU Bokumobuvir",
+        "Buvi-Zam Pukebip",
+        "Deforizobu & Godumelom"
+      ],
+      [
+        "Kimoli Pebilebosel"
       ]
     ],
     "ja": [
+      [
+        "ナヒ土林",
+        "星木ホヘネシスタ",
+        "ニイケス火林"
+      ],
       [
         "Litofe BI",
         "星木・月田",
@@ -126,6 +179,9 @@
         "Ziketi Fogukam"
       ],
       [
+        "キコアウタネカzu"
+      ],
+      [
         "FEN-T",
         "マニスミヘマイタニloku",
         "林水月空"
@@ -139,6 +195,14 @@
         "Dafegit",
         "サケシムエトragefo",
         "カキヌ水森"
+      ],
+      [
+        "PIve",
+        "雨林日ニイケス",
+        "林空・土日"
+      ],
+      [
+        "ニイケス月田"
       ]
     ]
   },
