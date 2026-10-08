@@ -67,6 +67,12 @@ export async function syncWantedFromSsot(env, ssot, options) {
       current: {
         educations: current.educations || [],
         activities: (current.activities || []).map((activity) => activity.title),
+        careers: (current.careers || []).map((career) => ({
+          company: career.company?.name || career.company_name,
+          start_time: career.start_time,
+          end_time: career.end_time,
+          projects: (career.projects || []).map((project) => project.title),
+        })),
       },
     };
   }
