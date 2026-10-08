@@ -38,6 +38,7 @@ import { normalizeText, truncateWantedProjectDescription } from './text-formatti
  * @property {string} [project]
  * @property {string} [description]
  * @property {string} [role]
+ * @property {string} [department]
  * @property {CompanyInfo} [company]
  * @property {string} [company_name]
  */
@@ -142,7 +143,11 @@ function normalizeCareerProjects(ssotCareer = {}) {
   if (ssotCareer.description) {
     return [
       {
-        title: normalizeText(ssotCareer.project) || 'Career Description',
+        title:
+          normalizeText(ssotCareer.project) ||
+          normalizeText(ssotCareer.department) ||
+          normalizeText(ssotCareer.role) ||
+          'Career Description',
         description: truncateWantedProjectDescription(normalizeText(ssotCareer.description)),
       },
     ];

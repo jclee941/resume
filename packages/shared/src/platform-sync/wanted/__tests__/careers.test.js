@@ -93,4 +93,19 @@ describe('syncCareers', () => {
       ]
     );
   });
+
+  it('titles a career without a project name after its department', async () => {
+    const calls = [];
+    const career = {
+      company: 'B',
+      role: '백엔드 개발자',
+      department: '백엔드팀',
+      description: '근무',
+    };
+
+    await syncCareers(createApi(calls), 'R', [{ company: { name: 'B' } }], [], [career]);
+
+    const titles = calls.filter(([name]) => name === 'addProject').map((call) => call[3].title);
+    assert.deepEqual(titles, ['백엔드팀']);
+  });
 });
