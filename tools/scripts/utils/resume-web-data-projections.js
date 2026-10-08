@@ -88,7 +88,7 @@ function careerCardFromSource(career, idx, statsByIndex, cardConfig) {
  * @returns {Record<string, unknown>}
  */
 function englishCareerCardFromSource(career, idx, statsByIndex, overrides, cardConfig) {
-  const translated = overrides[career.company] || {};
+  const translated = (career.id && overrides[career.id]) || overrides[career.company] || {};
   const entry = {
     id: career.id,
     icon: cardConfig.icons[idx] || '💼',
