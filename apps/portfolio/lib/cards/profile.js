@@ -116,21 +116,8 @@ function generateProfileBento(data, locale = 'ko') {
       </div>`);
   }
 
-  // Languages
-  if (Array.isArray(data.languages) && data.languages.length > 0) {
-    const langs = data.languages
-      .map(
-        (l) =>
-          `${escapeHtml(String(l.name))} <span class="profile-card__muted">${escapeHtml(String(l.level || ''))}</span>`
-      )
-      .join(' · ');
-    cards.push(`<div class="profile-card">
-        <span class="profile-card__label">${labels.languages}</span>
-        <p class="profile-card__value">${langs}</p>
-      </div>`);
-  }
-
-  // Awards
+  // Awards follow education (same school); on desktop this order also balances the two
+  // bento columns: education + awards | languages + open source + military.
   if (Array.isArray(data.awards) && data.awards.length > 0) {
     const items = data.awards
       .map((a) => {
@@ -147,6 +134,20 @@ function generateProfileBento(data, locale = 'ko') {
     cards.push(`<div class="profile-card">
         <span class="profile-card__label">${labels.awards}</span>
         <ul class="profile-card__list">${items}</ul>
+      </div>`);
+  }
+
+  // Languages
+  if (Array.isArray(data.languages) && data.languages.length > 0) {
+    const langs = data.languages
+      .map(
+        (l) =>
+          `${escapeHtml(String(l.name))} <span class="profile-card__muted">${escapeHtml(String(l.level || ''))}</span>`
+      )
+      .join(' · ');
+    cards.push(`<div class="profile-card">
+        <span class="profile-card__label">${labels.languages}</span>
+        <p class="profile-card__value">${langs}</p>
       </div>`);
   }
 

@@ -247,6 +247,9 @@ tests depend on them.
 - **Layout**: from 1024px the cards flow in two CSS columns inside the right column of the
   about grid (narrative and right column split 2:3), so a tall card never leaves a gap beside a
   short one; two grid columns from 641px, one below.
+- **Order**: education, awards, languages, open source, military. Awards sit beside
+  education because both come from the same school, and this order balances the two
+  desktop columns.
 - **Type**: labels in `--font-label`; values in `--font-sans`.
 
 ### Cover letter
