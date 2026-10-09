@@ -33,6 +33,7 @@ function applyExternalSri(html) {
  * @property {string} [resumeDescriptionHtml] - Resume description.
  * @property {string} resumeCardsHtml - Resume cards.
  * @property {string} projectCardsHtml - Project cards.
+ * @property {string} [projectRolePathsHtml] - Role filter chips above the project list.
  * @property {string} [projectSchemasHtml] - Project JSON-LD schemas.
  * @property {string} infrastructureCardsHtml - Infrastructure cards.
  * @property {string} [certCardsHtml] - Certification cards.
@@ -65,6 +66,7 @@ function injectPlaceholders(html, options) {
     .replace('<!-- RESUME_DESCRIPTION_PLACEHOLDER -->', options.resumeDescriptionHtml || '')
     .replace('<!-- RESUME_CARDS_PLACEHOLDER -->', options.resumeCardsHtml)
     .replace('<!-- PROJECT_CARDS_PLACEHOLDER -->', options.projectCardsHtml)
+    .replace('<!-- PROJECT_ROLE_PATHS_PLACEHOLDER -->', options.projectRolePathsHtml || '')
     .replace('<!-- PROJECT_SCHEMAS_PLACEHOLDER -->', options.projectSchemasHtml || '')
     .replace('<!-- INFRASTRUCTURE_CARDS_PLACEHOLDER -->', options.infrastructureCardsHtml)
     .replace('<!-- CERTIFICATION_CARDS_PLACEHOLDER -->', options.certCardsHtml || '')

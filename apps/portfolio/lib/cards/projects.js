@@ -6,11 +6,14 @@ const { escapeHtml } = require('../template-sanitizer');
 const logger = require('../../logger');
 const {
   buildProjectCaseNotes,
-  buildProjectReviewRail,
   projectAnchor,
   projectDescriptionRemainder,
   projectLabelsFor,
 } = require('./project-review');
+const { renderProjectDiagram } = require('./project-diagram');
+
+const FEATURED_VISIBLE = 3;
+const FEATURED_DIAGRAMS = 3;
 
 /**
  * @typedef {Object} Dashboard
@@ -34,6 +37,7 @@ const {
  * @property {string} [liveUrl]
  * @property {number} [displayOrder]
  * @property {Dashboard[]} [dashboards]
+ * @property {import('./project-diagram').DiagramSpec} [diagram]
  */
 
 /**
@@ -77,31 +81,14 @@ function projectActivityBadge(period) {
 
 /**
  * @param {Project} project
- * @param {string | undefined} [githubUrl]
  * @param {string | undefined} [demoUrl]
  * @returns {string}
  */
-function buildProjectMeta(project, githubUrl, demoUrl) {
-  const language = project.language ? escapeHtml(String(project.language)) : null;
-  const metaBadges = [];
-  const dashboards = projectDashboards(project);
-
-  if (language) {
-    metaBadges.push(
-      `<span class="project-meta-badge project-meta-badge--language">${language}</span>`
-    );
+function buildProjectMeta(project, demoUrl) {
+  if (demoUrl || projectDashboards(project).length > 0) {
+    return '<span class="project-meta-badge project-meta-badge--live">LIVE</span>';
   }
-
-  const activityBadge = projectActivityBadge(project.period);
-  if (activityBadge) metaBadges.push(activityBadge);
-
-  if (demoUrl || dashboards.length > 0) {
-    metaBadges.push('<span class="project-meta-badge project-meta-badge--live">LIVE</span>');
-  } else if (githubUrl) {
-    metaBadges.push('<span class="project-meta-badge project-meta-badge--repo">REPO</span>');
-  }
-
-  return metaBadges.join('');
+  return projectActivityBadge(project.period) || '';
 }
 
 /**
@@ -116,19 +103,19 @@ function buildProjectLinks(project, githubUrl, demoUrl) {
 
   if (githubUrl) {
     linkFragments.push(
-      `<a href="${escapeHtml(githubUrl)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="Open ${escapeHtml(project.title)} GitHub repository (opens in new tab)">[GitHub]</a>`
+      `<a href="${escapeHtml(githubUrl)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="Open ${escapeHtml(project.title)} GitHub repository (opens in new tab)">GitHub<span class="arrow" aria-hidden="true">↗</span></a>`
     );
   }
 
   if (dashboards.length > 0) {
     for (const dashboard of dashboards) {
       linkFragments.push(
-        `<a href="${escapeHtml(dashboard.url)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="Open ${escapeHtml(project.title)} ${escapeHtml(dashboard.name)} dashboard (opens in new tab)">[${escapeHtml(dashboard.name)}]</a>`
+        `<a href="${escapeHtml(dashboard.url)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="Open ${escapeHtml(project.title)} ${escapeHtml(dashboard.name)} dashboard (opens in new tab)">${escapeHtml(dashboard.name)}<span class="arrow" aria-hidden="true">↗</span></a>`
       );
     }
   } else if (demoUrl) {
     linkFragments.push(
-      `<a href="${escapeHtml(demoUrl)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="Open ${escapeHtml(project.title)} demo (opens in new tab)">[Demo]</a>`
+      `<a href="${escapeHtml(demoUrl)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="Open ${escapeHtml(project.title)} demo (opens in new tab)">Demo<span class="arrow" aria-hidden="true">↗</span></a>`
     );
   }
 
@@ -153,12 +140,10 @@ function generateProjectCards(projectsData, dataHash) {
     return TEMPLATE_CACHE.projectCardsHtml;
   }
 
-  const FEATURED_VISIBLE = 5;
   const labels = projectLabelsFor(projectsData);
   const sortedProjects = [...projectsData].sort(
     (a, b) => (a.displayOrder ?? 999) - (b.displayOrder ?? 999)
   );
-  const reviewRail = buildProjectReviewRail(sortedProjects, labels);
   const projectItems = sortedProjects
     .map((project, idx) => {
       const githubUrl = project.githubUrl || project.repoUrl;
@@ -168,26 +153,35 @@ function generateProjectCards(projectsData, dataHash) {
       const hasLink = demoUrl || dashboardUrl || githubUrl;
       const link = demoUrl || dashboardUrl || githubUrl;
       const titleElement = buildProjectTitle(project, link, hasLink);
-      const metaLine = buildProjectMeta(project, githubUrl, demoUrl);
+      const metaLine = buildProjectMeta(project, demoUrl);
       const projectLinks = buildProjectLinks(project, githubUrl, demoUrl);
-      const caseNotes = buildProjectCaseNotes(project, labels, githubUrl, demoUrl, dashboards);
+      const caseNotes = buildProjectCaseNotes(project, labels);
+      const diagram =
+        idx < FEATURED_DIAGRAMS && project.diagram
+          ? renderProjectDiagram(project.diagram, {
+              title: `${project.title} ${labels.diagram}`,
+              desc: project.diagram.nodes.map((node) => node.label).join(' → '),
+            })
+          : '';
       const descriptionRemainder = projectDescriptionRemainder(project);
       // Progressive disclosure: show the top FEATURED_VISIBLE projects (by
       // displayOrder) by default; collapse the rest behind a "\uB354\uBCF4\uAE30" toggle so
       // the section is curated without removing any project from the DOM.
       const collapsed = idx >= FEATURED_VISIBLE;
       const collapsedClass = collapsed ? ' project-item--collapsed' : '';
+      const featuredClass = diagram ? ' project-card--featured' : '';
       const collapsedAttr = collapsed ? ' data-project-extra="true"' : '';
       const anchor = projectAnchor(project, idx);
 
       return `
-         <li id="${escapeHtml(anchor)}" class="project-item project-card card${collapsedClass}"${collapsedAttr} data-tech="${escapeHtml(String(project.tech || ''))}">
+         <li id="${escapeHtml(anchor)}" class="project-item project-card card${featuredClass}${collapsedClass}"${collapsedAttr} data-tech="${escapeHtml(String(project.tech || ''))}">
              <div class="project-header">
                  <h3 class="project-title">
                      ${titleElement}
                  </h3>
              </div>
               ${caseNotes}
+              ${diagram}
               ${descriptionRemainder ? `<p class="project-description">${escapeHtml(descriptionRemainder)}</p>` : ''}
               <div class="project-tech">
                   ${escapeHtml(project.tech)}
@@ -198,7 +192,7 @@ function generateProjectCards(projectsData, dataHash) {
     })
     .join('\n');
 
-  const html = `${reviewRail}\n${projectItems}`;
+  const html = projectItems;
   TEMPLATE_CACHE.projectCardsHtml = html;
   return html;
 }

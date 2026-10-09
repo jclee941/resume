@@ -63,24 +63,24 @@ export function renderMobileActionBar(labels) {
   dismiss.addEventListener('click', () => {
     bar.hidden = true;
     bar.classList.remove('is-visible');
+    document.body.classList.remove('has-action-bar');
   });
   document.body.appendChild(bar);
 
   let coverLetterInView = false;
-  let reviewPacketInView = false;
+  let heroActionsInView = false;
   const updateVisibility = () => {
     if (bar.hidden) return;
-    bar.classList.toggle(
-      'is-visible',
-      window.scrollY > 120 && !coverLetterInView && !reviewPacketInView
-    );
+    const visible = window.scrollY > 120 && !coverLetterInView && !heroActionsInView;
+    bar.classList.toggle('is-visible', visible);
+    document.body.classList.toggle('has-action-bar', visible);
   };
   observeVisibilityBlocker('#cover-letter', '0px 0px -15% 0px', (isInView) => {
     coverLetterInView = isInView;
     updateVisibility();
   });
-  observeVisibilityBlocker('.hiring-review-packet', '0px 0px -10% 0px', (isInView) => {
-    reviewPacketInView = isInView;
+  observeVisibilityBlocker('#hero .hero-cta', '0px 0px -10% 0px', (isInView) => {
+    heroActionsInView = isInView;
     updateVisibility();
   });
   window.addEventListener('scroll', updateVisibility, { passive: true });

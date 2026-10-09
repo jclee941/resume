@@ -115,13 +115,17 @@ test.describe('Mobile - Navigation', () => {
     await expect(aboutLink).toBeVisible();
     await aboutLink.click();
 
-    await page.waitForTimeout(600);
-    const aboutInView = await page.evaluate(() => {
-      const about = document.getElementById('about');
-      if (!about) return false;
-      const r = about.getBoundingClientRect();
-      return r.top < window.innerHeight && r.bottom > 0;
-    });
-    expect(aboutInView).toBe(true);
+    await expect
+      .poll(
+        () =>
+          page.evaluate(() => {
+            const about = document.getElementById('about');
+            if (!about) return false;
+            const r = about.getBoundingClientRect();
+            return r.top < window.innerHeight && r.bottom > 0;
+          }),
+        { timeout: 5000 }
+      )
+      .toBe(true);
   });
 });

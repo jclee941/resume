@@ -19,11 +19,11 @@ describe('public portfolio hardening', () => {
     TEMPLATE_CACHE.projectCardsHtml = null;
   });
 
-  test.each(LOCALE_FILES)('%s exposes five featured project cards by default', (file) => {
+  test.each(LOCALE_FILES)('%s exposes three featured project cards by default', (file) => {
     const data = JSON.parse(read(`packages/data/resumes/master/${file}`));
     const html = generateProjectCards(data.projects, `public-surface:${file}`);
 
-    expect((html.match(/data-project-extra="true"/g) || []).length).toBe(data.projects.length - 5);
+    expect((html.match(/data-project-extra="true"/g) || []).length).toBe(data.projects.length - 3);
   });
 
   test.each(LOCALE_FILES)(

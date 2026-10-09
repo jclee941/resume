@@ -911,7 +911,7 @@ describe('Cards Module', () => {
       expect(html).not.toContain('ACTIVE');
     });
 
-    test('should render language, active, and live badges in meta line', () => {
+    test('should render a single LIVE status badge for a live project', () => {
       TEMPLATE_CACHE.dataHash = null;
       TEMPLATE_CACHE.projectCardsHtml = null;
       const projectData = [
@@ -927,10 +927,9 @@ describe('Cards Module', () => {
         },
       ];
       const html = generateProjectCards(projectData, 'stars-forks-lang-hash');
-      expect(html).toContain('project-meta-badge--language');
-      expect(html).toContain('JavaScript');
-      expect(html).toContain('project-meta-badge--active');
-      expect(html).toContain('ACTIVE');
+      expect(html).not.toContain('project-meta-badge--language');
+      expect(html).not.toContain('project-meta-badge--active');
+      expect(html.match(/project-meta-badge--/g)).toHaveLength(1);
       expect(html).toContain('project-meta-badge--live');
       expect(html).toContain('LIVE');
       expect(html).toContain('project-meta');
@@ -994,7 +993,7 @@ describe('Cards Module', () => {
       expect(html).toContain('project-meta');
     });
 
-    test('should render repo badge when only githubUrl exists', () => {
+    test('should render an unbracketed GitHub link and no status badge when only githubUrl exists', () => {
       TEMPLATE_CACHE.dataHash = null;
       TEMPLATE_CACHE.projectCardsHtml = null;
       const projectData = [
@@ -1007,9 +1006,9 @@ describe('Cards Module', () => {
       ];
       const html = generateProjectCards(projectData, 'github-only-hash');
       expect(html).toContain('href="https://github.com/test/repo"');
-      expect(html).toContain('GitHub');
-      expect(html).toContain('project-meta-badge--repo');
-      expect(html).toContain('REPO');
+      expect(html).toContain('>GitHub<span class="arrow" aria-hidden="true">↗</span></a>');
+      expect(html).not.toContain('[GitHub]');
+      expect(html).not.toContain('project-meta-badge');
     });
 
     test('should render live badge when only demoUrl exists', () => {

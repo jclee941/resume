@@ -71,9 +71,8 @@ test.describe('Cover Letter - visual section (scrollable page)', () => {
     await safeGoto(page, '/');
     const card = page.locator('#cover-letter .cover-letter-card');
     await card.scrollIntoViewIfNeeded();
-    await expect(card).toContainText(
-      '넥스트레이드 매매체결시스템 보안 트랙을 가온누리정보시스템 구축 단계부터 아이티센 CTS 운영 단계까지 연속 수행'
-    );
+    const [firstParagraph] = coverLetter.ko.paragraphs;
+    await expect(card).toContainText(String(firstParagraph).replace(/\s+/g, ' ').slice(0, 40));
     await expect(card).not.toContainText('직전에는 가온누리에서 시작해 아이티센 CTS로 이어지는');
   });
 

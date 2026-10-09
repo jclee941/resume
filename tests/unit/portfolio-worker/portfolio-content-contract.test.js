@@ -1,7 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const { buildHeroContent } = require('../../../apps/portfolio/lib/hero-content');
+const {
+  buildHeroContent,
+  buildProjectRolePaths,
+} = require('../../../apps/portfolio/lib/hero-content');
 const { HERO_CONTENT } = require('../../../apps/portfolio/lib/hero-content-data');
 
 const PORTFOLIO_DIR = path.resolve(__dirname, '../../../apps/portfolio');
@@ -56,7 +59,7 @@ describe('portfolio first-screen hiring decision contract', () => {
     }
   });
 
-  test('localized hero content frames a hiring decision through public evidence and contact/PDF', () => {
+  test('localized hero content frames a hiring decision through value, proof, and contact/PDF', () => {
     expect(
       Object.fromEntries(
         Object.entries(HERO_CONTENT).map(([locale, content]) => [locale, content.role])
@@ -71,22 +74,24 @@ describe('portfolio first-screen hiring decision contract', () => {
       Object.entries(HERO_CONTENT).map(([locale, content]) => [
         locale,
         [
-          content.packetLabel,
-          content.publicProofLabel,
-          content.reviewLinks[2][1],
           content.availability,
+          content.positioning,
+          ...content.proofItems.slice(0, 2),
+          content.actions[0],
+          content.actions[3],
         ],
       ])
     );
+    const escape = (text) => text.replace(/&/g, '&amp;').replace(/'/g, '&#39;');
 
     for (const [locale, requiredTerms] of Object.entries(expectations)) {
       const html = buildHeroContent(locale);
 
       for (const term of requiredTerms) {
-        expect(html).toContain(term);
+        expect(html).toContain(escape(term));
       }
-
-      for (const [, name] of HERO_CONTENT[locale].publicProofLinks) expect(html).toContain(name);
+      expect(html).toContain('href="/resume.pdf"');
+      expect(html).toMatch(/href="mailto:/);
     }
   });
 
@@ -102,20 +107,19 @@ describe('portfolio first-screen hiring decision contract', () => {
     expect(ja).not.toMatch(/\b(Security Ops|Security Infra|Ops Visibility|Ops Workflow)\b/);
   });
 
-  test('public proof details explain why each artifact is useful to hiring leads', () => {
+  test('the first screen leaves project shortcuts to the projects section', () => {
     for (const locale of ['ko', 'en', 'ja']) {
       const html = buildHeroContent(locale);
 
-      for (const [, name, description] of HERO_CONTENT[locale].publicProofLinks) {
-        expect(description.length).toBeGreaterThan(name.length);
-        expect(html).toContain(description);
-      }
+      expect(html).not.toContain('hero-public-proof');
+      expect(html).not.toContain('hero-review-path');
+      expect(html).not.toContain('hiring-review-packet');
     }
   });
 
   test('role chips use visible text as the accessible name (WCAG 2.5.3 Label in Name)', () => {
     for (const locale of ['ko', 'en', 'ja']) {
-      const html = buildHeroContent(locale);
+      const html = buildProjectRolePaths(locale);
       const chips = html.match(/<button[^>]*class="role-chip"[^>]*>/g) || [];
       expect(chips.length).toBeGreaterThan(0);
       for (const chip of chips) {

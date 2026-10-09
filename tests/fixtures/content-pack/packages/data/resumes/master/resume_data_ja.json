@@ -790,7 +790,67 @@
         }
       ],
       "featured": true,
-      "displayOrder": 2
+      "displayOrder": 2,
+      "diagram": {
+        "nodes": [
+          {
+            "id": "sonibuf",
+            "label": "Zepimup FU",
+            "kind": "rigezi"
+          },
+          {
+            "id": "tebi_nitudebo",
+            "label": "tebi_nitudebo",
+            "kind": "ravenas"
+          },
+          {
+            "id": "sedagibo",
+            "label": "Pugebido",
+            "kind": "ravenas"
+          },
+          {
+            "id": "kebolamula",
+            "label": "Zodusitafu",
+            "kind": "pibap"
+          },
+          {
+            "id": "zonu",
+            "label": "Mune",
+            "kind": "pibap"
+          },
+          {
+            "id": "difokuf",
+            "label": "Vebopan",
+            "kind": "gonu"
+          }
+        ],
+        "edges": [
+          {
+            "from": "sonibuf",
+            "to": "tebi_nitudebo"
+          },
+          {
+            "from": "sonibuf",
+            "to": "sedagibo"
+          },
+          {
+            "from": "tebi_nitudebo",
+            "to": "kebolamula"
+          },
+          {
+            "from": "sedagibo",
+            "to": "zonu"
+          },
+          {
+            "from": "kebolamula",
+            "to": "difokuf"
+          },
+          {
+            "from": "zonu",
+            "to": "difokuf"
+          }
+        ]
+      }
     },
     {
       "id": "ragorute-dufit-gafuda",
@@ -807,14 +867,57 @@
       "language": "Ziketi",
       "githubUrl": "https://github.com/tevus941/porifo",
       "demoUrl": "https://kibana.jclee.me/s/mipotigoz-nivo/pub/girotamitu?kure_lotuvazo_molu=mipotigoz_nivo#/tiko/mipotigoz-nivo-nokuteril",
-      "dashboards": [
-        {
-          "name": "ELK",
-          "url": "https://kibana.jclee.me/s/mipotigoz-nivo/pub/girotamitu?kure_lotuvazo_molu=mipotigoz_nivo#/tiko/mipotigoz-nivo-nokuteril"
-        }
-      ],
+      "dashboards": [],
       "featured": true,
-      "displayOrder": 1
+      "displayOrder": 1,
+      "diagram": {
+        "nodes": [
+          {
+            "id": "komidosag",
+            "label": "KipuvElas",
+            "kind": "rigezi"
+          },
+          {
+            "id": "bumegi",
+            "label": "bumegi",
+            "kind": "pibap"
+          },
+          {
+            "id": "porifo",
+            "label": "Litofe",
+            "kind": "ravenas"
+          },
+          {
+            "id": "gokuzok",
+            "label": "sukiz gokuzok",
+            "kind": "ravenas"
+          },
+          {
+            "id": "bofur",
+            "label": "Libus",
+            "kind": "gonu"
+          }
+        ],
+        "edges": [
+          {
+            "from": "komidosag",
+            "to": "bumegi"
+          },
+          {
+            "from": "bumegi",
+            "to": "porifo"
+          },
+          {
+            "from": "porifo",
+            "to": "gokuzok",
+            "label": "Kalenir"
+          },
+          {
+            "from": "gokuzok",
+            "to": "bofur"
+          }
+        ]
+      }
     },
     {
       "id": "do-rizabefas-novupage",
@@ -897,7 +1000,64 @@
         "k3s"
       ],
       "featured": true,
-      "displayOrder": 3
+      "displayOrder": 3,
+      "diagram": {
+        "nodes": [
+          {
+            "id": "lor",
+            "label": "Nek",
+            "kind": "rigezi"
+          },
+          {
+            "id": "ru",
+            "label": "LI",
+            "kind": "ravenas"
+          },
+          {
+            "id": "bodavusib",
+            "label": "Mimufarug rokide",
+            "kind": "ravenas"
+          },
+          {
+            "id": "sonibuf",
+            "label": "Zepimup SA/MEM",
+            "kind": "gonu"
+          },
+          {
+            "id": "finobetivu",
+            "label": "Fopasopeba",
+            "kind": "gonu"
+          },
+          {
+            "id": "k3s",
+            "label": "k3s",
+            "kind": "gonu"
+          }
+        ],
+        "edges": [
+          {
+            "from": "lor",
+            "to": "ru"
+          },
+          {
+            "from": "ru",
+            "to": "bodavusib",
+            "label": "kifu 空日"
+          },
+          {
+            "from": "bodavusib",
+            "to": "sonibuf"
+          },
+          {
+            "from": "bodavusib",
+            "to": "finobetivu"
+          },
+          {
+            "from": "bodavusib",
+            "to": "k3s"
+          }
+        ]
+      }
     },
     {
       "id": "luvominovape-pi-femafol-num",

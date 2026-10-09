@@ -3,7 +3,7 @@ const {
   buildLocalizedHtml,
   escapeForTemplateLiteral,
 } = require('./html-transformer');
-const { buildHeroContent } = require('./hero-content');
+const { buildHeroContent, buildProjectRolePaths } = require('./hero-content');
 const { defaultOwnerIdentity, escapeRegExp } = require('./owner-identity');
 
 /**
@@ -54,6 +54,11 @@ function contentOptions(templates, locale, identity) {
     achievementsHtml: templates[`achievements${suffix}Html`],
     expertiseHtml: templates[`expertise${suffix}Html`],
     coverLetterHtml: templates[`coverLetter${suffix}Html`],
+    projectRolePathsHtml: buildProjectRolePaths(locale),
+    heroContentHtml: buildHeroContent(locale, identity, {
+      portraitHtml: templates[`heroPortrait${suffix}Html`],
+      trustHtml: templates[`heroTrust${suffix}Html`],
+    }),
   };
 }
 
@@ -97,17 +102,14 @@ async function buildPortfolioPages(options) {
   const indexHtml = await buildLocalizedHtml(indexHtmlRaw, {
     ...shared,
     ...contentOptions(options.templates, 'ko', identity),
-    heroContentHtml: buildHeroContent('ko', identity),
   });
   const indexEnHtml = await buildLocalizedHtml(indexEnHtmlRaw, {
     ...shared,
     ...contentOptions(options.templates, 'en', identity),
-    heroContentHtml: buildHeroContent('en', identity),
   });
   const indexJaHtml = await buildLocalizedHtml(buildJapaneseTemplate(indexHtmlRaw, identity), {
     ...shared,
     ...contentOptions(options.templates, 'ja', identity),
-    heroContentHtml: buildHeroContent('ja', identity),
   });
 
   return { indexHtml, indexEnHtml, indexJaHtml };

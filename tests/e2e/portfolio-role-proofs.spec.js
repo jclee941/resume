@@ -87,7 +87,8 @@ test.describe('Portfolio role evidence routing', () => {
     );
 
     await expect(page.locator('.role-quick-paths')).toHaveCount(1);
-    await expect(page.locator('.project-evidence-matrix')).toHaveCount(1);
+    await expect(page.locator('#projects .role-quick-paths')).toHaveCount(1);
+    await expect(page.locator('.project-evidence-matrix')).toHaveCount(0);
 
     await page.getByRole('button', { name: new RegExp(escapeRegExp(SECURITY.label)) }).click();
 

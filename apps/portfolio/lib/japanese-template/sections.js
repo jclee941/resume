@@ -4,7 +4,11 @@
  */
 function applyJapaneseSections(html) {
   return html
-    .replace(/aria-label="exp — 경력"/g, 'aria-label="exp — 経歴"')
+    .replace(/(<a [^>]*class="nav-link"[^>]*>)경력(<\/a>)/g, '$1経歴$2')
+    .replace(/(<a [^>]*class="nav-link"[^>]*>)프로젝트(<\/a>)/g, '$1プロジェクト$2')
+    .replace(/(<a [^>]*class="nav-link"[^>]*>)기술(<\/a>)/g, '$1スキル$2')
+    .replace(/(<a [^>]*class="nav-link"[^>]*>)소개(<\/a>)/g, '$1概要$2')
+    .replace(/(<a [^>]*class="nav-link"[^>]*>)연락처(<\/a>)/g, '$1連絡先$2')
     .replace(/aria-label="採用相談 옵션"/g, 'aria-label="採用相談オプション"')
     .replace(/aria-label="이력서 PDF 다운로드"/g, 'aria-label="履歴書PDFダウンロード"')
     .replace(/>이력서 PDF 다운로드</g, '>履歴書PDFダウンロード<')
@@ -28,9 +32,6 @@ function applyJapaneseSections(html) {
     .replace(/aria-label="언어 선택 \/ Language"/g, 'aria-label="言語選択 / Language"')
     .replace(/aria-label="기술 역량 카드"/g, 'aria-label="スキルカード"')
     .replace(/aria-label="기술 역량 매트릭스"/g, 'aria-label="スキルマトリクス"')
-    .replace(/>기술 검색<\/label>/g, '>スキル検索</label>')
-    .replace(/placeholder="기술 검색\.\.\."/g, 'placeholder="スキル検索..."')
-    .replace(/aria-label="기술 이름으로 검색"/g, 'aria-label="スキル名で検索"')
     .replace(/>읽어주셔서 감사합니다\.</g, '>お読みいただきありがとうございます。<')
     .replace(/aria-label="연락처 및 소셜 링크"/g, 'aria-label="連絡先・ソーシャルリンク"')
     .replace(/"name": "홈"/g, '"name": "ホーム"');

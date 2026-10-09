@@ -46,12 +46,13 @@ describe('project dashboard links', () => {
 
     const html = generateProjectCards(projectData, 'named-dashboard-links-hash');
 
-    expect(html).toContain('[Grafana]');
-    expect(html).toContain('[ELK]');
+    expect(html).toContain('>Grafana<span class="arrow" aria-hidden="true">↗</span></a>');
+    expect(html).toContain('>ELK<span class="arrow" aria-hidden="true">↗</span></a>');
+    expect(html).not.toMatch(/>\[[^\]]+\]</);
     expect(html).toContain(`href="${GRAFANA_DEMO_URL}"`);
     expect(html).toContain(`href="${KIBANA_DEMO_URL.replace(/&/g, '&amp;')}"`);
     expect(html).toContain('project-meta-badge--live');
-    expect(html).not.toContain('[Demo]');
+    expect(html).not.toContain('>Demo<');
   });
 
   test.each([
@@ -66,9 +67,9 @@ describe('project dashboard links', () => {
       const html = generateProjectCards([project], `elk-dashboard-${locale}-${index}`);
       const elk = project.dashboards.find((dashboard) => dashboard.name === 'ELK');
 
-      expect(html).toContain('[ELK]');
+      expect(html).toContain('>ELK<span class="arrow" aria-hidden="true">↗</span></a>');
       expect(html).toContain(`href="${elk.url.replace(/&/g, '&amp;')}"`);
-      expect(html).not.toContain('[Demo]');
+      expect(html).not.toContain('>Demo<');
     });
   });
 });

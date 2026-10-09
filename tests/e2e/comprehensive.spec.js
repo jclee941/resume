@@ -14,7 +14,7 @@ const orderedProjects = [...projectData.projects].sort(
 const EXPECTED = {
   RESUMES: projectData.resume.length,
   PROJECTS: projectData.projects.length,
-  NAV_LINKS: 4,
+  NAV_LINKS: 5,
   CONTACT_LINKS: 5,
 };
 
@@ -42,10 +42,11 @@ test.describe('Navigation', () => {
     const navLinks = page.locator('.nav-links a');
     await expect(navLinks).toHaveCount(EXPECTED.NAV_LINKS);
 
-    await expect(navLinks.nth(0)).toHaveAttribute('href', '#about');
-    await expect(navLinks.nth(1)).toHaveAttribute('href', '#resume');
-    await expect(navLinks.nth(2)).toHaveAttribute('href', '#projects');
-    await expect(navLinks.nth(3)).toHaveAttribute('href', '#contact');
+    await expect(navLinks.nth(0)).toHaveAttribute('href', '#resume');
+    await expect(navLinks.nth(1)).toHaveAttribute('href', '#projects');
+    await expect(navLinks.nth(2)).toHaveAttribute('href', '#skills');
+    await expect(navLinks.nth(3)).toHaveAttribute('href', '#about');
+    await expect(navLinks.nth(4)).toHaveAttribute('href', '#contact');
   });
 
   test('navigation links should scroll to sections', async ({ page }) => {

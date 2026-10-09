@@ -28,17 +28,30 @@ test.describe('Portfolio visual accessibility', () => {
     }
   });
 
-  test('mobile skill search keeps a 44px touch target', async ({ page }) => {
+  test('mobile skill tags stay readable and inside their cards', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 812 });
     await page.goto('/ko/', { waitUntil: 'domcontentloaded' });
 
-    const search = page.locator('#skill-search-input');
-    await expect(search).toBeVisible();
-    await search.scrollIntoViewIfNeeded();
-    const box = await search.boundingBox();
+    const cards = page.locator('#skill-radar-grid .skill-domain-card');
+    await expect(cards.first()).toBeVisible({ timeout: 15000 });
+    const report = await cards.evaluateAll((elements) =>
+      elements.flatMap((card) => {
+        const cardRect = card.getBoundingClientRect();
+        return [...card.querySelectorAll('.skill-item')].map((item) => {
+          const rect = item.getBoundingClientRect();
+          return {
+            fontSize: Number.parseFloat(getComputedStyle(item).fontSize),
+            inside: rect.left >= cardRect.left - 0.5 && rect.right <= cardRect.right + 0.5,
+          };
+        });
+      })
+    );
 
-    expect(box).not.toBeNull();
-    expect(box.height).toBeGreaterThanOrEqual(44);
+    expect(report.length).toBeGreaterThan(0);
+    for (const item of report) {
+      expect(item.fontSize).toBeGreaterThanOrEqual(12);
+      expect(item.inside).toBe(true);
+    }
   });
 
   for (const locale of ['ko', 'en', 'ja']) {
@@ -57,16 +70,16 @@ test.describe('Portfolio visual accessibility', () => {
       }
     });
 
-    test(`${locale} skill search uses the shared component radius`, async ({ page }) => {
+    test(`${locale} skill cards use the shared surface radius`, async ({ page }) => {
       await page.goto(`/${locale}/`, { waitUntil: 'domcontentloaded' });
 
-      const search = page.getByRole('textbox');
-      await expect(search).toBeVisible();
-      const styles = await search.evaluate((input) => {
-        const computed = getComputedStyle(input);
+      const card = page.locator('#skill-radar-grid .skill-domain-card').first();
+      await expect(card).toBeVisible({ timeout: 15000 });
+      const styles = await card.evaluate((element) => {
+        const computed = getComputedStyle(element);
         return {
           radius: computed.borderTopLeftRadius,
-          token: computed.getPropertyValue('--radius-md').trim(),
+          token: computed.getPropertyValue('--radius-lg').trim(),
         };
       });
 

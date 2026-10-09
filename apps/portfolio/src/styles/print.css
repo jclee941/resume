@@ -28,10 +28,7 @@
   .recruiter-action-bar,
   .hero-cta,
   .hero-download,
-  .hero-navigation,
   .role-quick-paths,
-  .skill-radar__search,
-  .skill-domain-card__expand,
   .timeline-expand-btn,
   .project-more,
   .cover-letter__chrome,
@@ -54,7 +51,7 @@
     display: none;
   }
 
-  .hero-intro {
+  .hero-layout {
     display: block;
   }
 
@@ -99,8 +96,7 @@
   }
 
   .project-item--collapsed,
-  .timeline-details,
-  .skill-panel {
+  .timeline-details {
     display: block !important;
   }
 

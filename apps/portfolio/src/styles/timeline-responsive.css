@@ -14,7 +14,8 @@
     height: 12px;
   }
 
-  :lang(ja) .timeline-impact,
+  :lang(ja) .timeline-highlights,
+  :lang(ja) .timeline-summary,
   :lang(ja) .timeline-details {
     line-break: loose;
     word-break: normal;

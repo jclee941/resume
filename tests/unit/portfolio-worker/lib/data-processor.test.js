@@ -23,6 +23,8 @@ jest.mock('../../../../apps/portfolio/lib/cards', () => ({
   generateExpertiseSection: jest.fn(() => '<div class="expertise-tags"></div>'),
   generateCoverLetterSection: jest.fn(() => '<article class="cover-letter-card"></article>'),
   generateProjectSchemasHtml: jest.fn(() => '<script type="application/ld+json">{}</script>'),
+  generateHeroPortrait: jest.fn(() => '<figure class="hero-portrait"></figure>'),
+  generateHeroTrust: jest.fn(() => '<ul class="hero-trust"></ul>'),
 }));
 
 const { TEMPLATE_CACHE } = require('../../../../apps/portfolio/lib/config');
@@ -146,16 +148,16 @@ describe('data-processor', () => {
       expect(cards.generateContactGrid).toHaveBeenCalledWith(data.contact);
     });
 
-    it('should pass one content-versioned /assets/ photo URL to every profile bento', () => {
+    it('should pass one content-versioned /assets/ photo URL to every hero portrait', () => {
       const data = createValidData();
       const run = (bytes) => {
-        cards.generateProfileBento.mockClear();
+        cards.generateHeroPortrait.mockClear();
         processProjectData({
           projectDataRaw: JSON.stringify(data),
           profilePhotoBuffer: Buffer.from(bytes),
           logger: mockLogger,
         });
-        return cards.generateProfileBento.mock.calls.map(([, locale, photo]) => [locale, photo]);
+        return cards.generateHeroPortrait.mock.calls.map(([, locale, photo]) => [locale, photo]);
       };
 
       const first = run('jpeg-a');

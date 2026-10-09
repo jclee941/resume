@@ -2,87 +2,20 @@
   width: 100%;
 }
 
-.skill-radar__search {
-  margin-bottom: var(--space-5);
-}
-
-.skill-radar__search-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  max-width: 420px;
-}
-
-.skill-radar__search-icon {
-  position: absolute;
-  left: var(--space-4);
-  width: 18px;
-  height: 18px;
-  color: var(--text-muted);
-  pointer-events: none;
-}
-
-.skill-radar__search-input {
-  width: 100%;
-  min-height: 44px;
-  padding: var(--space-3) var(--space-4) var(--space-3) 2.75rem;
-  border: 1px solid var(--border-secondary);
-  border-radius: var(--radius-md);
-  outline: none;
-  background: rgb(var(--bg-secondary-rgb) / 0.8);
-  color: var(--text-primary);
-  font-family: var(--font-label);
-  font-size: var(--text-sm);
-  transition:
-    border-color var(--transition-base),
-    box-shadow var(--transition-base);
-}
-
-.skill-radar__search-input::placeholder {
-  color: var(--text-muted);
-}
-
-.skill-radar__search-input:focus {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px var(--accent-wash-3);
-}
-
-.skill-radar__search-count {
-  display: none;
-  margin-top: var(--space-2);
-  color: var(--color-accent-strong);
-  font-family: var(--font-label);
-  font-size: var(--text-xs);
-}
-
-.skill-radar__search-count:not(:empty) {
-  display: block;
-}
-
 .skill-radar__grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: start;
   gap: var(--space-4);
 }
 
-.skill-radar__no-results {
-  grid-column: 1 / -1;
-  padding: var(--space-8);
-  color: var(--text-muted);
-  font-family: var(--font-label);
-  font-size: var(--text-sm);
-  text-align: center;
+@media (max-width: 1023px) {
+  .skill-radar__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
-.skill-radar__no-results svg {
-  width: 48px;
-  height: 48px;
-  margin: 0 auto var(--space-4);
-  opacity: 0.5;
-}
-
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .skill-radar__grid {
     grid-template-columns: minmax(0, 1fr);
     gap: var(--space-3);

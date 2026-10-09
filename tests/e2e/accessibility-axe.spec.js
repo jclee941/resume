@@ -109,17 +109,12 @@ test.describe('Accessibility - axe-core WCAG 2.1 AA', () => {
     ).toEqual([]);
 
     const firstCard = page.locator('#skill-radar-grid .skill-domain-card').first();
-    await expect(firstCard).toHaveAccessibleName(
-      /^[^0-9]+ \d+개 기술 (?:주력|실무 적용|활용 가능)$/
-    );
+    const heading = (await firstCard.getByRole('heading', { level: 3 }).innerText()).trim();
+    await expect(firstCard).toHaveAccessibleName(heading);
     await expect(firstCard).not.toHaveAccessibleName(/Evidence|Recent proof|Related project/i);
-    await expect(firstCard).toHaveAttribute('aria-expanded', 'false');
-    await firstCard.click();
-    await expect(firstCard).toHaveAttribute('aria-expanded', 'true');
-    await firstCard.press('Enter');
-    await expect(firstCard).toHaveAttribute('aria-expanded', 'false');
-    await firstCard.press(' ');
-    await expect(firstCard).toHaveAttribute('aria-expanded', 'true');
+    await expect(firstCard).not.toHaveAttribute('aria-expanded', /.*/);
+    await expect(firstCard).not.toHaveAttribute('role', /.*/);
+    await expect(firstCard.getByRole('list', { name: heading }).locator('li')).not.toHaveCount(0);
   });
 
   test('timeline accessibility should not use disallowed ARIA roles', async ({ page }) => {

@@ -14,4 +14,6 @@ module.exports = {
   ...require('./cards/evidence'),
   ...require('./cards/cover-letter'),
   ...require('./cards/project-schemas'),
+  ...require('./cards/hero-profile'),
+  ...require('./cards/project-diagram'),
 };

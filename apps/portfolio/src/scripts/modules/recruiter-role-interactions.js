@@ -83,34 +83,3 @@ export function bindRoleControls(cards, proofCounts) {
     button.disabled = false;
   });
 }
-
-export function bindEvidenceLinks() {
-  /** @type {NodeListOf<HTMLElement>} */ (
-    document.querySelectorAll('[data-evidence-project]')
-  ).forEach((link) => {
-    if (link.dataset.evidenceLinkBound === 'true') return;
-    link.dataset.evidenceLinkBound = 'true';
-    link.addEventListener('click', (event) => {
-      event.preventDefault();
-      const title = link.getAttribute('data-evidence-project') || '';
-      const card = Array.from(document.querySelectorAll('#projects li.project-item')).find((item) =>
-        (item.textContent || '').includes(title)
-      );
-      if (card) {
-        const list = document.querySelector('#project-list');
-        const moreButton = /** @type {HTMLButtonElement | null} */ (
-          document.querySelector('.project-more-btn')
-        );
-        if (
-          card.classList.contains('project-item--collapsed') &&
-          !list?.classList.contains('is-expanded')
-        ) {
-          moreButton?.click();
-        }
-        clearRoleFocus(Array.from(document.querySelectorAll('#projects li.project-item')));
-        card.classList.add('is-role-match');
-        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    });
-  });
-}

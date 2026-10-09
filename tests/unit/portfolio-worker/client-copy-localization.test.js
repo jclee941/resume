@@ -58,13 +58,11 @@ describe('client copy localization', () => {
     expect(src).toContain('Primary operating evidence');
   });
 
-  test('skill-radar evidence drawer heading is locale-aware', () => {
+  test('skill-radar renders localized counts and no hardcoded drawer copy', () => {
     const src = read('skill-radar.js');
-    // No hardcoded English-only ' Evidence' drawer heading.
+    expect(src).toContain('skillCountText(domain.skills.length)');
     expect(src).not.toContain("createTextNode(' Evidence')");
-    expect(src).toContain('근거');
-    expect(src).toContain('根拠');
-    expect(src).toContain('Evidence');
+    expect(src).not.toContain('skill-evidence-drawer');
   });
 });
 

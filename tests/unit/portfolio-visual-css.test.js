@@ -30,14 +30,16 @@ describe('portfolio visual CSS contract', () => {
   test('S2 mobile hero keeps CTAs readable and preserves title scale', () => {
     const heroCss = readStyle('hero.css');
     const heroLayoutCss = readStyle('hero-layout.css');
+    const variablesCss = readStyle('variables.css');
 
     expect(heroCss).toContain('text-wrap: balance;');
-    expect(mediaBlock(heroCss, '(max-width: 640px)')).toMatch(
-      /\.hero-title\s*{\s*font-size: var\(--text-5xl\);/
-    );
-    expect(mediaBlock(heroLayoutCss, '(max-width: 640px)')).toMatch(
+    expect(heroCss).toMatch(/\.hero-title\s*{[^}]*font-size: var\(--text-7xl\);/);
+    expect(variablesCss).toMatch(/--text-7xl: clamp\(2\.75rem,/);
+    const phone = mediaBlock(heroLayoutCss, '(max-width: 640px)');
+    expect(phone).toMatch(
       /\.hero-cta\s*{[^}]*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/
     );
+    expect(phone).toMatch(/\.hero-cta \.link-subtle--primary\s*{\s*grid-column: 1 \/ -1;/);
   });
 
   test('S3 contact links remain plain anchors but gain card affordance', () => {
@@ -52,15 +54,12 @@ describe('portfolio visual CSS contract', () => {
     );
   });
 
-  test('S4 hero proof list is one column on phones and two columns with a lead item above', () => {
+  test('S4 hero proof list stays one readable column at every width', () => {
     const proofCss = readStyle('hero-proof.css');
 
-    expect(proofCss).toMatch(/\.hero-proof-list\s*{[^}]*grid-template-columns: minmax\(0, 1fr\);/);
-    const wide = mediaBlock(proofCss, '(min-width: 641px)');
-    expect(wide).toMatch(
-      /\.hero-proof-list\s*{\s*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\);/
-    );
-    expect(wide).toMatch(/\.hero-proof-list li:first-child\s*{\s*grid-column: 1 \/ -1;/);
+    expect(proofCss).toMatch(/\.hero-proof-list\s*{[^}]*display: grid;[^}]*max-width: 46rem;/);
+    expect(proofCss).not.toMatch(/grid-template-columns: repeat\(2/);
+    expect(proofCss).not.toContain('@media');
   });
 
   test('S5 body keeps an opaque background-color base under the gradient (WCAG contrast)', () => {

@@ -12,7 +12,7 @@
 }
 
 .company-link {
-  color: var(--color-accent-light);
+  color: var(--text-primary);
   text-decoration: none;
   word-break: keep-all;
   overflow-wrap: normal;
@@ -28,51 +28,61 @@ a.company-link:hover {
 
 .timeline-role {
   margin: 0 0 var(--space-1);
-  color: var(--text-primary);
-  font-size: var(--text-base);
+  color: var(--color-accent-strong);
+  font-size: var(--text-sm);
   font-weight: var(--font-medium);
 }
 
 .timeline-myrole {
   margin: 0;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.timeline-highlights,
+.timeline-summary {
+  margin: var(--space-4) 0 0;
   color: var(--text-secondary);
   font-size: var(--text-sm);
-}
-
-.timeline-impact {
-  margin-top: var(--space-4);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--border-primary);
-}
-
-.impact-summary {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1) var(--space-2);
-  font-size: var(--text-sm);
   line-height: var(--leading-relaxed);
+  word-break: keep-all;
 }
 
-.impact-label {
-  color: var(--color-success);
-  font-family: var(--font-label);
-  font-weight: var(--font-semibold);
+.timeline-highlights {
+  display: grid;
+  gap: var(--space-2);
+  padding: 0;
+  list-style: none;
 }
 
-.impact-text {
-  color: var(--text-primary);
+.timeline-highlights li {
+  position: relative;
+  padding-left: var(--space-5);
+}
+
+.timeline-highlights li::before {
+  content: '';
+  position: absolute;
+  top: 0.7em;
+  left: var(--space-1);
+  width: 5px;
+  height: 5px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
 }
 
 @media (min-width: 1024px) {
   .timeline-card {
     display: grid;
-    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
     grid-template-areas:
-      'company impact'
-      'role impact'
-      'myrole impact'
+      'company highlights'
+      'role highlights'
+      'myrole highlights'
+      '. highlights'
       'details details'
       'action action';
+    grid-template-rows: auto auto auto 1fr auto auto;
     align-items: start;
     column-gap: var(--space-8);
   }
@@ -89,13 +99,10 @@ a.company-link:hover {
     grid-area: myrole;
   }
 
-  .timeline-impact {
-    grid-area: impact;
-    align-self: stretch;
+  .timeline-highlights,
+  .timeline-summary {
+    grid-area: highlights;
     margin-top: 0;
-    padding: 0 0 0 var(--space-6);
-    border-top: 0;
-    border-left: 1px solid var(--border-primary);
   }
 
   .timeline-details {
