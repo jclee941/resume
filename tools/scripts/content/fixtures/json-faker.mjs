@@ -14,8 +14,9 @@ const KEEP_KEYS = new Set([
   'totalExperience',
 ]);
 // Dates and periods: digits and separators, optionally ending in a present-tense marker.
-// `parent.key` pairs whose values are tool names other code selects on.
-const KEEP_PAIRS = new Set(['dashboards.name']);
+// `parent.key` pairs whose values other code selects on: dashboard tool names, and the
+// node kinds, node ids and edge endpoints the project diagram renderer validates.
+const KEEP_PAIRS = new Set(['dashboards.name', 'nodes.kind', 'nodes.id', 'edges.from', 'edges.to']);
 // Skill proficiency codes are read by the radar widgets; language-level prose is not.
 const SKILL_LEVELS = new Set(['expert', 'advanced', 'intermediate', 'beginner']);
 const DIGITS_ONLY = /^[\d\s.:/~+-]*(?:현재|Present|現在)?$/;
