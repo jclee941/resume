@@ -30,7 +30,7 @@ main > .section-hero + section {
   display: flex;
   align-items: baseline;
   gap: var(--space-3);
-  margin: 0 0 var(--space-8);
+  margin: 0 0 var(--space-6);
   color: var(--text-primary);
   font-family: var(--font-sans);
   font-size: var(--text-3xl);

@@ -12,6 +12,12 @@
   }
 }
 
+@media (min-width: 1024px) {
+  .contact-grid {
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  }
+}
+
 .contact-item {
   display: inline-flex;
   align-items: center;

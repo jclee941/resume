@@ -241,8 +241,9 @@ tests depend on them.
 
 - **Structure**: `.profile-bento > .profile-card`. The photo card moved to the hero
   (`.hero-portrait`, still a `.profile-card--photo`).
-- **Layout**: two columns in the right column of the about grid from 1024px, two from 641px,
-  one below.
+- **Layout**: from 1024px the cards flow in two CSS columns inside the right column of the
+  about grid (narrative and right column split 2:3), so a tall card never leaves a gap beside a
+  short one; two grid columns from 641px, one below.
 - **Type**: labels in `--font-label`; values in `--font-sans`.
 
 ### Cover letter
@@ -324,8 +325,8 @@ tests depend on them.
 ### Operated, contact and footer
 
 - `.operated-grid`: three columns from 769px of surface cards.
-- `.contact-grid`: two columns on phones and three from 768px of interactive surfaces with a
-  `>` prompt.
+- `.contact-grid`: two columns on phones, three from 768px and a single row from 1024px of
+  interactive surfaces with a `>` prompt.
 - `.site-footer`: muted build line; links underlined.
 
 ### Mobile action bar and back-to-top
