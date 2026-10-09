@@ -1,89 +1,65 @@
 # AUTOMATION SCRIPTS KNOWLEDGE BASE
 
-**Generated:** 2026-07-22
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Automation suite for build, deployment, verification, release, and enrichment. New operational scripts are Go-first. Existing JS-domain generators and deterministic validators are explicit exceptions.
+Operational module containing asset generation, content transport, release, deployment, and data workflows.
+
+Boundary: retained script-domain hub; specialized guides own their local contracts.
 
 ## STRUCTURE
 
 ```text
 scripts/
-├── build/              # asset generation (PDF, PPTX, icons, screenshots)
-├── content/            # personal content pack CLI (D1 content_files <-> working tree)
-├── deployment/         # deploy helpers and preflight checks
-├── local-dev-up/       # local dev environment orchestrator
-├── verification/      # deterministic validators and remote probes
-├── release/           # version decisions and GitHub release publication
-├── enrichment/        # resume data proposal generators
-├── onepassword/       # secret-safe local operator wrappers
-├── security/          # committed security guard scripts
-├── monitoring/        # observability config helpers and deployers
-├── sync/              # data sync and proposal application
-├── utils/             # shared utilities and SSoT helpers
-└── setup/             # environment setup
+├── build/          # PDF/PPTX, variants, icons, screenshots
+├── content/        # private content transport and fixture generation
+├── deploy/         # standalone rollout and rollback helpers
+├── deployment/     # preflight and deployment orchestration
+├── dev/            # legacy Miniflare support
+├── enrichment/     # separate Go module producing proposals
+├── local-dev-up/   # local development process orchestration
+├── monitoring/     # observability setup and deployment helpers
+├── onepassword/    # reference resolution and allowed-field seeding
+├── release/        # version decisions and release publication
+├── security/       # committed Wrangler vars guard
+├── sync/           # approved proposal application
+├── utils/          # locale sync, validation, search helpers
+└── verification/   # deterministic checks and bounded remote probes
 ```
 
-## CHILD GUIDES
+## WHERE TO LOOK
 
-- `build/AGENTS.md` — Asset generation pipeline guardrails for artifacts and snapshots.
-- `deployment/AGENTS.md` — Deploy helper safety constraints and preflight checks.
-- `verification/AGENTS.md` — Deterministic validators and remote probes.
-- `release/AGENTS.md` — Version decisions and GitHub release publication.
-- `enrichment/AGENTS.md` — Resume data proposal generators.
-
-## CONTENT PACK CLI
-
-`content/` moves personal resume and portfolio content between the D1
-`content_files` table and the working tree (ADR 0011). The pack is defined by
-`content/content-pack.json`; run everything through the root scripts.
-
-| Command                                                     | Purpose                                                                                                                               |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run content:pull`                                      | Materialize the pack. Source: `--source d1\|fixtures`, else `CONTENT_SOURCE`, else `d1`; prunes unchanged files of the previous pull. |
-| `npm run content:push -- [--dry-run] [--prune]`             | Upload new/changed files; `--prune` deletes D1 rows missing locally; refreshes the `resumes` master row.                              |
-| `npm run content:status`                                    | Local vs D1 added/changed/deleted/unchanged counts and paths.                                                                         |
-| `npm run content:manifest -- [--out f]`                     | Local pack manifest (path, sha256, size) to prove D1 parity.                                                                          |
-| `npm run content:ensure -- [--force]`                       | Build-time policy run by `npm run build`: fixtures, D1 (`WORKERS_CI=1`), or a required pulled pack.                                   |
-| `node tools/scripts/content/make-fixtures.mjs`              | Regenerate `tests/fixtures/content-pack/` from a materialized real pack (fakers in `fixtures/`).                                      |
-| `npm run content:guard -- [--staged\|--tracked] [--report]` | Fail on pack paths or personal tokens in git; prints paths, kinds, and counts only.                                                   |
-
-Environment: `CONTENT_API_TOKEN` or `CLOUDFLARE_API_TOKEN` (Bearer), or
-`CLOUDFLARE_API_KEY` with `CLOUDFLARE_EMAIL`; `CONTENT_ACCOUNT_ID` or
-`CLOUDFLARE_ACCOUNT_ID`. The database id comes from the `JOB_DB` entry in the root
-`wrangler.jsonc`.
-
-Rules:
-
-- `pull` fails closed: source `d1` without credentials exits non-zero and never falls back to
-  fixtures, including under `WORKERS_CI=1`. Fixtures (`tests/fixtures/content-pack/`) are used only
-  when `CONTENT_SOURCE=fixtures` or `--source fixtures` is explicit.
-- Never print file contents, request bodies, tokens, or matched personal values; output is paths,
-  counts, and token kinds.
-- Keep every file under 200 LOC and add no npm dependencies (globs use the in-tree `glob.mjs`, so the guards run before `npm ci`).
-
-**Why JavaScript, not Go:** this CLI runs inside `npm run build` on Cloudflare Workers Builds, where
-only the Node toolchain is guaranteed. A Go binary would add a toolchain requirement to the deploy
-path. This is a documented exception to the Go-first rule, not a precedent for other scripts.
+| Task                      | Location                                        | Notes                                          |
+| ------------------------- | ----------------------------------------------- | ---------------------------------------------- |
+| Asset pipeline            | `build/AGENTS.md`                               | Go PDF, Python PPTX, JS images and variants    |
+| Content pack CLI          | `content/AGENTS.md`                             | Build-time Node exception and D1 transport     |
+| Deploy preflight          | `deployment/AGENTS.md`                          | Operator helper safety                         |
+| Proposal generation       | `enrichment/AGENTS.md`                          | Separate module; generation is not application |
+| Approved changes          | `sync/apply-proposals.go`, `sync/proposal-*.go` | Explicit transactional application             |
+| Secret references         | `onepassword/AGENTS.md`                         | CLI/SDK execution wrappers                     |
+| Release publication       | `release/AGENTS.md`                             | Immutable input and ownership checks           |
+| Config classification     | `security/AGENTS.md`                            | Vars-versus-secrets guard                      |
+| Locale sync               | `utils/AGENTS.md`                               | Path helpers and generation                    |
+| Repository/runtime checks | `verification/AGENTS.md`                        | Offline policies and remote probes             |
 
 ## CONVENTIONS
 
-- Child scripts inherit root/`tools/` conventions: prefer root package scripts,
-  respect Go module working directories, and prefer Go for operational behavior.
-- Node scripts are acceptable for existing JS-specific data sync/build helpers; do not broaden that exception without documenting why.
-- Generated-output ownership and tracking vary by child guide and `.gitignore`;
-  do not assume every generated file is committed.
-- Cloudflare Workers Builds owns production deploy authority; local helpers are emergency/operator tools only.
+- Root-level `healthcheck.go`, `merge-ulw-to-master.go`, and `add-gitlab-variables.go` are manual standalone programs.
+- `sync/` applies approved proposals through `npm run sync:proposals`; generation and approval are separate steps.
+- Existing Node data generators and deterministic validators stay with their JS-domain consumers.
+- The content CLI runs on Workers Builds with Node only; its dependency-free bootstrap is a specific exception.
+- The Miniflare support file under `dev/` is not the root `npm run dev` configuration.
+- Standalone rollout tools in `deploy/` are distinct from the orchestration tools in `deployment/`.
 
 ## ANTI-PATTERNS
 
-- Never use absolute paths.
-- Never add new `.sh` operational wrappers.
-- Never print resolved secret values or session contents.
-- Never treat local deployment helpers as production deploy authority.
+- Do not broaden a language exception without a concrete owning runtime requirement.
+- Do not add new shell wrappers around an existing Go operator program.
+- Do not silently apply pending proposals during evidence generation.
+- Do not interpret an operator helper's presence as an enabled scheduler or CI workflow.
 
 ---
 

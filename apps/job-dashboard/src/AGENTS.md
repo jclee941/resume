@@ -1,68 +1,56 @@
 # JOB DASHBOARD SOURCE KNOWLEDGE BASE
 
-**Generated:** 2026-07-22
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Source composition for the dashboard module merged into the portfolio Worker.
-`index.js` composes HTTP, queue, and scheduled surfaces; child domains own
-implementation details.
+Composition and request policy for the dashboard HTTP, queue, and scheduled surfaces.
+
+Scope reason: score 13; required runtime composition boundary.
 
 ## STRUCTURE
 
 ```text
 src/
-├── index.js          # fetch/queue/scheduled composition and Workflow exports
-├── router.js         # route matching and handler error boundary
-├── worker-env.js     # Worker env/ctx types derived from binding consumers
-├── mcp/              # job-mcp-server: MCP guard, handler, tools (mounted at /mcp)
-├── handlers/         # request adapters and scheduled dispatch
-├── middleware/       # CORS and CSRF helpers
-├── queues/           # queue validation, retry, metrics, Workflow dispatch
-├── routes/           # declarative route registrars
-├── services/         # dashboard-local auth, clients, config, notifications
-├── views/            # self-contained dashboard HTML/CSS/JS
-├── workflows/        # seven Cloudflare Workflow entry classes and helpers
-├── durable-objects/  # BrowserSessionDO
-└── utils/            # dashboard-local helpers
+  handlers/         Request adapters, repositories, and cron dispatch
+  mcp/              Remote MCP guard, SDK transport, and route-backed tools
+  middleware/       CORS and CSRF helpers
+  queues/           Message validation, metrics, retry, and dispatch
+  routes/           Route registrars
+  services/         Dashboard-local integrations
+  views/            Inline dashboard HTML, CSS, and scripts
+  workflows/        Workflow classes and orchestration helpers
+  durable-objects/  Browser-session broker and object
+  utils/            Environment adapter and colocated checks
 ```
 
 ## WHERE TO LOOK
 
-| Task                       | Location               | Notes                                              |
-| -------------------------- | ---------------------- | -------------------------------------------------- |
-| Request policy/order       | `index.js`             | CORS → rate limit → auth/signature → CSRF → routes |
-| MCP endpoint               | `mcp/`                 | `/mcp`: rate limit → Host/Origin → Bearer → tools  |
-| Route dispatch             | `router.js`, `routes/` | `/job` is stripped before matching                 |
-| HTTP behavior              | `handlers/`            | child guide owns adapter contracts                 |
-| Background messages        | `queues/`              | child guide owns payload/retry/DLQ rules           |
-| Long-running orchestration | `workflows/`           | child guide owns idempotency and gates             |
-| Operational UI             | `views/`               | child guide owns escaping and inline assets        |
+| Task              | Location                            | Notes                                             |
+| ----------------- | ----------------------------------- | ------------------------------------------------- |
+| HTTP pipeline     | `index.js`                          | Normalizes `/job`, applies policy, builds context |
+| Matching/errors   | `router.js`                         | Route patterns and handler boundary               |
+| Context types     | `worker-env.js`                     | Types derived from binding consumers              |
+| MCP tools         | `mcp/internal-api.js`, `mcp/tools/` | Reuse the registered REST routes                  |
+| Browser ownership | `durable-objects/`                  | Stateful object with pure broker helpers          |
 
 ## CONVENTIONS
 
-- Keep `index.js` as composition: instantiate handlers, register routes, and
-  delegate queue/scheduled work.
-- Preserve exports consumed by `apps/portfolio/entry.js`: seven Workflows and
-  `BrowserSessionDO`.
-- Use `@resume/shared` for logging, typed errors, rate limiting, and other
-  cross-app policy; keep dashboard-only behavior local.
-- Route registrars remain declarative; handlers parse/respond; services and
-  workflows own domain behavior.
-- Log through request-scoped `@resume/shared/logger`; attach response logging
-  with `ctx.waitUntil()`.
+- HTTP order: preflight, rate limit, auth/signature, CSRF, then route dispatch.
+- The public MCP endpoint is `/job/mcp`; normalized internal path is `/mcp`.
+- MCP skips CORS and uses Host/Origin checks plus admin Bearer authentication, never cookies.
+- MCP tools default workflow starts to dry runs and retain the REST real-submit gate.
+- Instantiate shared route context once per request; registrars consume it.
+- Attach request/response logging with `ctx.waitUntil()` using the request-scoped logger.
+- Delegate queue batches to `QueueConsumer` and cron events to `handlers/scheduled/cron-router.js`.
 
 ## ANTI-PATTERNS
 
-- Do not add a second Worker entry or standalone deploy path.
-- Do not move business logic into `index.js`, route tables, or middleware.
-- Do not bypass rate-limit, auth/signature, or CSRF gates for convenience.
-- Do not change queue or Workflow payload shape in only one producer/consumer.
-- Do not import portfolio internals; `apps/portfolio/entry.js` owns the sanctioned
-  cross-app direction.
-
----
+- Do not add MCP tools that duplicate handler behavior or bypass real-submit gates.
+- Do not change a queue or Workflow payload in only one producer or consumer.
+- Do not add route-local shortcuts around the shared request policy.
+- Do not move object lifecycle state into the pure browser-session broker.
 
 Parent: [../AGENTS.md](../AGENTS.md)

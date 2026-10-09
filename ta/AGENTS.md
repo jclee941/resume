@@ -1,43 +1,40 @@
 # TA PROFILE GENERATION KNOWLEDGE BASE
 
-**Generated:** 2026-06-10
-**Commit:** `b74e95d1`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-TA contains Python scripts and PPTX artifacts for presentation/profile
-generation. It is not an npm workspace package.
+Materialized TA presentation workspace; only this guidance file is tracked in this subtree.
 
-## STRUCTURE
+Boundary: retained distinct presentation-content domain outside npm workspaces.
 
-```text
-ta/
-├── inspect_overflow.py # PPTX overflow/data inspection
-├── improve_visual.py # PPTX visual adjustment script
-├── verify.py         # PPTX verification/report extraction
-├── output/           # generated verification reports and PPTX outputs
-└── *.pptx            # source/output presentation artifacts
-```
+## WHERE TO LOOK
+
+| Task                     | Repository location                       | Notes                             |
+| ------------------------ | ----------------------------------------- | --------------------------------- |
+| Tracked generation entry | `tools/scripts/build/generate_ta_pptx.py` | Thin TA template wrapper          |
+| Presentation engine      | `tools/scripts/build/pptx_engine.py`      | Shared generation pipeline        |
+| TA layout behavior       | `tools/scripts/build/pptx_ta.py`          | TA-specific slide assembly        |
+| Template selection       | `tools/scripts/build/pptx_templates.py`   | Generator-owned output selection  |
+| Safe publication         | `tools/scripts/build/pptx_publication.py` | Validation and atomic replacement |
+| Generation rules         | `tools/scripts/build/AGENTS.md`           | Tracked build-tool domain         |
 
 ## CONVENTIONS
 
-- Use Python tooling for PPTX inspection and generation.
-- Keep generated reports and output presentations in `output/` unless a script
-  explicitly documents another target.
-- Prefer relative repo paths in new scripts; existing absolute paths are legacy
-  and should not be copied.
-- Verify generated PPTX output with `verify.py` after visual changes.
+- `npm run sync:pptx` invokes the tracked TA generator, not a script inside this directory.
+- `npm run test:python` discovers the tracked PPTX profile and publication tests.
+- A clean checkout has no guaranteed local TA inspection scripts or output folders.
+- Resolve output paths from the selected template instead of assuming `ta/output/`.
+- Local presentation utilities are materialized content, not an alternate supported build pipeline.
 
 ## ANTI-PATTERNS
 
-- Do not add TA scripts to npm workspaces.
-- Do not commit credentials, private profile source data, or temp extraction
-  folders.
-- Do not hand-edit generated verification reports when a script can regenerate
-  them.
-- Do not introduce `.sh` operational wrappers; use Python or existing Go
-  tooling as appropriate.
+- Do not document local-only `verify.py` or inspection scripts as repository commands.
+- Do not add this content directory to npm workspaces.
+- Do not move generation logic here from the tracked build tools.
+- Do not treat a locally present PPTX as a tracked source artifact.
 
 ---
 

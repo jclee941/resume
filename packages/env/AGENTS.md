@@ -1,63 +1,42 @@
 # ENV PACKAGE KNOWLEDGE BASE
 
-**Generated:** 2026-05-07
-**Commit:** `713f507e`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
-
-**Package:** `@resume/env`
-**Type:** Environment validation + type-safe secrets
-**Scope:** Per-app Zod schemas for runtime env var validation
 
 ## OVERVIEW
 
-Type-safe environment variable validation for all workspace apps. Each app
-provides a Zod schema describing required and optional env vars; this package
-provides the `validateEnv()` runner that fails fast with a clear error when a
-required env var is missing.
+Zod-based parsing of environment values with named, structured validation errors.
 
-Created per SSOT-029 / issue #34.
+Scope reason: existing distinct environment-boundary domain.
 
-## STRUCTURE
+## WHERE TO LOOK
 
-```text
-packages/env/
-└── src/
-    ├── index.js              # barrel: validateEnv, EnvValidationError
-    ├── parse.js              # validator + error class
-    ├── schemas/
-    │   ├── portfolio.js      # portfolio worker env schema
-    │   └── job-dashboard.js  # dashboard worker env schema
-    └── __tests__/            # parse.test.js, schemas.test.js
-```
-
-## EXPORTS
-
-| Import Path                         | Source                         | Purpose                               |
-| ----------------------------------- | ------------------------------ | ------------------------------------- |
-| `@resume/env`                       | `src/index.js`                 | `validateEnv()`, `EnvValidationError` |
-| `@resume/env/parse`                 | `src/parse.js`                 | Direct parser access                  |
-| `@resume/env/schemas/portfolio`     | `src/schemas/portfolio.js`     | `portfolioEnvSchema`                  |
-| `@resume/env/schemas/job-dashboard` | `src/schemas/job-dashboard.js` | `jobDashboardEnvSchema`               |
+| Task             | Location                                    | Notes                                                          |
+| ---------------- | ------------------------------------------- | -------------------------------------------------------------- |
+| Public barrel    | `src/index.js`                              | `validateEnv` and `EnvValidationError`                         |
+| Parser           | `src/parse.js`                              | Validates schema/source arguments and returns parsed values    |
+| Portfolio values | `src/schemas/portfolio.js`                  | Portfolio-specific environment schema                          |
+| Dashboard values | `src/schemas/job-dashboard.js`              | Required encryption key; optional logging/OAuth/webhook values |
+| Parser checks    | `src/__tests__/parse.test.js`               | Invalid source/schema and error behavior                       |
+| Schema checks    | `src/__tests__/schemas.test.js`             | Per-app defaults and accepted values                           |
+| Consumer adapter | `../../apps/job-dashboard/src/utils/env.js` | Per-env-object memoization                                     |
 
 ## CONVENTIONS
 
-- **Zod is the only runtime dep.** No other validators.
-- **Per-app schemas** live under `./schemas/*.js` and are imported by each app
-  at bootstrap (`Worker fetch`, Node entry).
-- **Fail-fast:** `validateEnv()` throws `EnvValidationError` on missing/invalid
-  vars so CI/logs surface the exact key by name.
-- **Optional bindings** (e.g., `ASSETS`, `AI`, KV namespaces) are injected by
-  the Workers runtime as objects, not strings — they are NOT validated here.
-- **Type inference:** each schema exports a `@typedef` via `z.infer<typeof schema>`.
+- Zod is the only runtime dependency.
+- `validateEnv(schema, source, { appName })` returns the schema's parsed/coerced result.
+- Invalid parser arguments throw `TypeError`; failed validation throws `EnvValidationError`.
+- Validation errors expose the application name and structured issues, with property paths in the message.
+- Object bindings such as KV, D1, and R2 are injected separately, not checked as string environment variables.
+- Schema modules export inferred JSDoc types alongside their schemas.
+- `npm run test:schemas` runs both this package's tests and the schemas package's tests.
 
 ## ANTI-PATTERNS
 
-- Never skip env validation at app bootstrap — always call `validateEnv()`.
-- Never add secrets to schema defaults — secrets must come from the secrets
-  manager (Cloudflare Workers Secrets / 1Password).
-- Never validate Workers object bindings (KV, D1, R2) as strings — they are
-  runtime-injected objects.
-
----
+- Do not validate object bindings as serialized strings.
+- Do not place live secrets in defaults or validation messages.
+- Do not return raw source values after successful parsing; preserve coercions.
+- Do not claim every application entry currently invokes this package without checking its imports.
 
 Parent: [../AGENTS.md](../AGENTS.md)

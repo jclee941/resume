@@ -1,79 +1,43 @@
 # TOOLS KNOWLEDGE BASE
 
-**Generated:** 2026-07-22
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-CI validation, build automation, deployment helpers, and operational scripts.
-Organized by domain: CI (validation), build (asset generation), scripts (automation suite).
+Developer and operator tooling split between standalone CI checks and module-scoped automation programs.
 
-## STRUCTURE
-
-```text
-tools/
-├── ci/                   # CI validation scripts
-│   ├── affected/         # change-impact detection
-│   ├── validate-cloudflare-native.go  # wrangler config guards
-│   ├── check-env-schema-drift.go      # env contract validation
-│   └── validate-migrations.go         # D1 migration safety
-└── scripts/              # automation suite (build, deploy, verify, enrich, release)
-    ├── build/            # asset generation (PDF, PPTX, icons, screenshots)
-    ├── deployment/       # deploy helpers and preflight checks
-    ├── local-dev-up/     # local dev environment orchestrator
-    ├── verification/     # deterministic validators and remote probes
-    ├── release/          # version decisions and GitHub release publication
-    ├── enrichment/       # resume data proposal generators
-    ├── onepassword/      # secret-safe local operator wrappers
-    ├── security/         # committed security guard scripts
-    ├── monitoring/       # observability config helpers
-    ├── sync/             # data sync and proposal application
-    ├── utils/            # shared utilities and SSoT helpers
-    └── setup/            # environment setup
-```
+Boundary: retained tooling hub coordinating execution roots and specialized child guides.
 
 ## WHERE TO LOOK
 
-| Task               | Location                | Notes                                              |
-| ------------------ | ----------------------- | -------------------------------------------------- |
-| CI validation      | `ci/`                   | affected, wrangler config, env schema, migrations  |
-| Asset generation   | `scripts/build/`        | PDF, PPTX, icons, screenshots                      |
-| Deploy helpers     | `scripts/deployment/`   | quick-deploy, staged deploy, monitoring hooks      |
-| Verification       | `scripts/verification/` | validators, remote probes, Lighthouse, smoke tests |
-| Release automation | `scripts/release/`      | version decisions, GitHub release publication      |
-| Data enrichment    | `scripts/enrichment/`   | GitHub/skills/LLM proposal generators              |
-| Secret management  | `scripts/onepassword/`  | 1Password-safe local operator wrappers             |
-| Data sync          | `scripts/utils/`        | SSoT propagation and shared helpers                |
-
-## CHILD GUIDES
-
-- `ci/AGENTS.md` — CI validation scripts and change-impact detection.
-- `scripts/AGENTS.md` — Automation suite parent; links to build, deployment, verification, release, enrichment.
-- `scripts/build/AGENTS.md` — Asset generation pipeline guardrails.
-- `scripts/deployment/AGENTS.md` — Deploy helper safety constraints and preflight checks.
-- `scripts/verification/AGENTS.md` — Deterministic validators and remote probes.
-- `scripts/release/AGENTS.md` — Version decisions and GitHub release publication.
-- `scripts/enrichment/AGENTS.md` — Resume data proposal generators.
+| Task                        | Location                    | Notes                                          |
+| --------------------------- | --------------------------- | ---------------------------------------------- |
+| Repository checks           | `ci/AGENTS.md`              | Standalone Go policy and change-impact tools   |
+| Operational programs        | `scripts/AGENTS.md`         | Build, content, deploy, release, sync, secrets |
+| Asset generation            | `scripts/build/AGENTS.md`   | PDF/PPTX, image processing, resume variants    |
+| Browser performance budgets | `lighthouserc.json`         | Inputs to `npm run lighthouse:ci`              |
+| Go module ownership         | `scripts/go.mod`            | Main operational module                        |
+| Evidence enrichment module  | `scripts/enrichment/go.mod` | Independent nested Go module                   |
+| Human operator index        | `scripts/README.md`         | Check command references against current files |
 
 ## CONVENTIONS
 
-- Prefer root `npm` scripts; direct Go commands must use the owning module's
-  documented working directory.
-- Operational scripts are Go (.go); Node (.mjs) only for hooks/linters/validators.
-- Validators stay deterministic and read-only; mutating helpers must expose
-  preflight, dry-run, or safe-rerun behavior appropriate to the operation.
-- CI is validation-only; Cloudflare Workers Builds owns production deploy authority.
-- Artifact tracking is output-specific: application PDFs are tracked, while
-  generated master/variant PDFs and temporary reports are ignored.
+- Prefer the root package command when one exists; it carries the required working directory and test selection.
+- `tools/ci/` has no Go module; its package tests use `GO111MODULE=off`.
+- Main-module commands use `go -C tools/scripts ...`; enrichment commands use their nested module.
+- Some sibling Go files are separate `main` programs; do not assume `go test ./...` is the repository test entrypoint.
+- `npm run test:go` lists the supported Go test targets explicitly.
+- `npm run test:tools` runs colocated JS/MJS Node tests, separate from root Jest discovery.
+- Offline validators and mutating operator tools have different failure and execution contracts; consult the owning guide.
 
 ## ANTI-PATTERNS
 
-- Never use .sh for new operational scripts — use Go.
-- Never run a module-scoped Go command from the wrong module directory.
-- Never skip `affected` in CI.
-- Never treat local deployment helpers as production deploy authority.
-- Never commit secrets, session files, or API tokens.
+- Do not run a module-scoped command from an unrelated Go module.
+- Do not claim a helper is a required CI gate merely because it exists under `tools/ci/`.
+- Do not copy historical `scripts/setup/` paths; that tracked directory no longer exists.
+- Do not assume generated application PDFs are tracked exceptions to the content-pack policy.
 
 ---
 

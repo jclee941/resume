@@ -1,49 +1,43 @@
 # QUEUES KNOWLEDGE BASE
 
-**Generated:** 2026-07-22
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Queue modules own Cloudflare Queue ingestion, message prioritization, workflow
-dispatch, metrics, and notification dead-letter handling for dashboard
-automation.
+Queue batch ingestion, priority sorting, Workflow dispatch, metrics, and notification dead letters.
 
-## STRUCTURE
+Scope reason: existing distinct asynchronous-ingestion domain.
 
-```text
-queues/
-├── queue-consumer.js              # batch consumer orchestration
-├── queue-enqueuer.js              # enqueue helpers
-├── queue-message-processor.js     # per-message handling and retries
-├── queue-workflow-dispatcher.js   # workflow dispatch by message type
-├── queue-message-constants.js     # message types, priorities, retry delays
-├── queue-message-sorter.js        # priority ordering
-├── queue-metrics-recorder.js      # D1 metrics writes
-├── notification-consumer.js       # notification queue consumer
-└── notification-dlq-handler.js    # notification dead-letter persistence
-```
+## WHERE TO LOOK
+
+| Task                 | Location                                                  | Notes                                           |
+| -------------------- | --------------------------------------------------------- | ----------------------------------------------- |
+| Batch handling       | `queue-consumer.js`                                       | Consumer orchestration                          |
+| Enqueue capability   | `queue-request.js`                                        | `QUEUE_NAME`, capability check, request parsing |
+| Producer helper      | `queue-enqueuer.js`                                       | Queue send boundary                             |
+| Message contract     | `queue-message-constants.js`                              | Types, priorities, retry delays                 |
+| Processing           | `queue-message-processor.js`                              | Per-message results and retry decisions         |
+| Workflow dispatch    | `queue-workflow-dispatcher.js`                            | Binding selection by message type               |
+| Ordering and metrics | `queue-message-sorter.js`, `queue-metrics-recorder.js`    | Priority ordering and D1 metrics                |
+| Notifications        | `notification-consumer.js`, `notification-dlq-handler.js` | Delivery and dead-letter persistence            |
 
 ## CONVENTIONS
 
-- Message type constants are the contract; update processor, dispatcher, and
-  tests together when adding a type.
-- Keep retry behavior bounded and visible in result/metric output.
-- Preserve priority sorting before dispatch so urgent automation tasks run
-  first.
-- Dead-letter records in KV must include TTL and enough context for diagnosis
-  without storing secrets.
-- Queue payloads with `candidates`, `platforms`, `searchCriteria`, or `triggerType`
-  pass through to `APPLICATION_WORKFLOW` unchanged.
+- Sort batch messages by priority before dispatch.
+- Add message types in the constants module, processor, dispatcher, and associated tests together.
+- Preserve APPLY fields `candidates`, `platforms`, `searchCriteria`, and `triggerType` when forwarding to the application Workflow.
+- Record handled failures in metrics as well as retry results.
+- Dead-letter KV entries need expiry and diagnostic context without secrets.
+- Notification consumers export Worker-style default objects; queue infrastructure uses named classes/helpers.
+- Queue integration coverage is in `tests/unit/job-dashboard/`; this directory has no colocated tests.
 
 ## ANTI-PATTERNS
 
-- Do not dispatch unknown message types silently.
-- Do not perform destructive work before validating the message shape.
-- Do not add unbounded retry loops or sleeps in queue consumers.
-- Do not bypass metrics recording for handled failures.
-
----
+- Do not silently accept unknown message types.
+- Do not dispatch before validating message shape and queue capability.
+- Do not add unbounded retries or sleeps to consumers.
+- Do not acknowledge a failure without preserving its observable outcome.
 
 Parent: [../AGENTS.md](../AGENTS.md)

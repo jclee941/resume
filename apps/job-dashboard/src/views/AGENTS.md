@@ -1,47 +1,42 @@
 # VIEWS KNOWLEDGE BASE
 
-**Generated:** 2026-07-22
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Dashboard views generate the self-contained dashboard HTML, inline scripts, and
-inline CSS used by the Worker. This is operational UI, not marketing content.
+Inline HTML, CSS, and script modules for the operations dashboard.
 
-## STRUCTURE
+Scope reason: existing distinct template-string UI domain.
 
-```text
-views/
-├── dashboard.js       # HTML shell and dashboard markup
-├── scripts.js         # script bundle assembly
-├── scripts/           # automation, applications, resume-sync, core state
-├── styles.js          # style bundle assembly
-└── styles/            # variables, layout, components, tables, forms, etc.
-```
+## WHERE TO LOOK
+
+| Task               | Location                                                                     | Notes                                            |
+| ------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------ |
+| Shell and CSP      | `dashboard.js`                                                               | HTML template, script nonce, computed style hash |
+| Script composition | `scripts.js`                                                                 | Concatenates feature modules                     |
+| API and actions    | `scripts/core.js`                                                            | `apiFetch` and `DASHBOARD_ACTIONS`               |
+| Feature state      | `scripts/state.js`                                                           | Shared client state                              |
+| Feature behavior   | `scripts/automation.js`, `scripts/applications.js`, `scripts/resume-sync.js` | Operation-specific UI                            |
+| Styles             | `styles.js`, `styles/`                                                       | Variables, layout, component bundles             |
 
 ## CONVENTIONS
 
-- Keep scripts split by workflow surface (`automation`, `applications`,
-  `resume-sync`, shared `core`/`state`).
-- Escape user-controlled text before inserting into HTML strings.
-- Prefer existing CSS variables and component style modules over one-off colors.
-- Keep the UI dense and operations-focused; this dashboard is for repeated
-  job-automation work.
-- Wire controls with `data-action` attributes handled by `DASHBOARD_ACTIONS` in
-  `scripts/core.js`; the page CSP (nonce script-src, hash style-src) blocks
-  inline `on*` handlers and `style` attributes.
-- Call APIs through `apiFetch()` so requests keep the `/job` prefix and CSRF
-  header when served from the merged portfolio Worker.
+- Modules export template strings rather than standalone static assets.
+- Wire controls with `data-action`; dispatch through the deliberate action map.
+- Use `apiFetch` for the merged `/job` prefix and CSRF header behavior.
+- Escape user-controlled values before HTML interpolation.
+- Reuse dashboard CSS variables and component modules for dense operational layouts.
+- Preserve per-response script nonce and style-hash generation over final bundle bytes.
+- CSP has explicit Google identity/font allowances; the current shell bundles its own UI assets.
 
 ## ANTI-PATTERNS
 
-- Do not fetch third-party assets from dashboard views.
-- Do not place secrets, session tokens, or webhook credentials in generated UI.
-- Do not add broad global functions unless `scripts/core.js` needs to expose a
-  deliberate dashboard action.
-- Do not move API behavior into view scripts when a handler/service owns it.
-
----
+- Do not add inline event-handler or style attributes that violate the page CSP.
+- Do not place session tokens or webhook credentials in generated markup.
+- Do not expose new browser globals outside the deliberate action interface.
+- Do not move server-owned API decisions into view scripts.
+- Do not assume a CSP allowlist entry means the shell currently fetches that resource.
 
 Parent: [../AGENTS.md](../AGENTS.md)

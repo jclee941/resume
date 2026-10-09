@@ -1,64 +1,41 @@
 # DATA KNOWLEDGE BASE
 
-**Generated:** 2026-07-22
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
-
-**Scope:** `packages/data/`
-**Type:** Canonical resume and application content SSoT
 
 ## OVERVIEW
 
-Canonical resume and application content. `resumes/master/resume_data.json` and
-its locale JSON peers are the structured sources; Markdown, PDFs, generated
-variants, and platform snapshots are secondary outputs or independent corpora.
+Tracked resume schema, platform mapping data, and ownership guidance for materialized resume corpora.
 
-Everything under `resumes/` except `AGENTS.md` guides, `.gitkeep` files, and
-`master/resume_schema.json` is the D1 content pack (ADR 0011): gitignored,
-materialized by `npm run content:pull`, published by `npm run content:push`.
-Builds and tests in GitHub CI use the fake pack in `tests/fixtures/content-pack/`.
-See `docs/guides/CONTENT_PACK.md`.
+Scope reason: existing distinct data-ownership domain.
 
-## STRUCTURE
+## WHERE TO LOOK
 
-```text
-packages/data/
-├── resumes/
-│   ├── master/           # Canonical locale JSON; Markdown/PDF are secondary
-│   ├── applications/     # Hand-crafted role-specific variants (intentionally independent)
-│   ├── technical/        # Project-specific technical docs (Nextrade, etc.)
-│   ├── generated/        # Tracked derived resume/PPTX outputs
-│   ├── archive/          # Historical snapshots (2018-2025)
-│   └── wishket/          # Wishket proposal material
-├── platforms/         # Platform-specific mappings
-└── proposals/         # Enrichment proposal lifecycle (approved/applied/rejected)
-```
-
-## DATA FLOW
-
-```
-master/resume_data.json → npm run sync:data → portfolio-worker/data.json
-                                             → build pipeline
-```
+| Task                  | Location                                        | Notes                                             |
+| --------------------- | ----------------------------------------------- | ------------------------------------------------- |
+| Master schema         | `resumes/master/resume_schema.json`             | Tracked structural contract                       |
+| Resume ownership      | `resumes/AGENTS.md`                             | Canonical versus independent materialized content |
+| Role variants         | `resumes/applications/AGENTS.md`                | Deliberately separate minimum contract            |
+| Platform categories   | `platforms/jobkorea-categories.js`              | Tracked platform mapping                          |
+| Proposal states       | `proposals/`                                    | Tracked placeholders for proposal lifecycle       |
+| Materialization rules | `../../tools/scripts/content/content-pack.json` | Manifest includes and exceptions                  |
+| Sync implementation   | `../../tools/scripts/utils/sync-resume-data.js` | Master-to-portfolio generation                    |
 
 ## CONVENTIONS
 
-- `master/resume_data.json` is authoritative for Korean portfolio and platform
-  sync; `resume_data_en.json` and `resume_data_ja.json` are canonical locale sources.
-- Keep locale facts aligned while preserving locale-specific wording.
-- `applications/` is intentionally independent; see its child AGENTS for contract details.
-- Regenerate derived files through project commands, not hand-editing.
-- Edit content through the pack workflow: `content:pull` → edit → `content:push`, then
-  redeploy. D1 wins over any local copy.
+- The package has no `main`, `exports`, or script entry; consumers use its data paths.
+- Canonical locale JSON lives under materialized `resumes/master/`.
+- The tracked tree does not contain the full resume corpus; schema, guides, and placeholders survive separately.
+- Platform mappings belong outside the private resume tree when they contain only generic catalog values.
+- Role-specific variants have their own contract rather than automatic master parity.
+- Proposal lifecycle placeholders represent approved/applied/rejected states, not deployed runtime storage.
 
 ## ANTI-PATTERNS
 
-- Never edit PDFs directly. Edit source, regenerate.
-- Never put loose files outside the resumes/ hierarchy.
-- Never let derived artifacts drift from SSoT.
-- Never commit files under `resumes/` other than the schema, guides, and placeholders.
-- Never use absolute paths in data references.
-
----
+- Do not label materialized generated documents as tracked source outputs.
+- Do not use workstation-absolute paths inside data references.
+- Do not treat old archive or proposal content as the current canonical resume.
+- Do not add executable orchestration to this data-only package.
 
 Parent: [../AGENTS.md](../AGENTS.md)

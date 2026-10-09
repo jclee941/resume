@@ -1,48 +1,43 @@
 # PORTFOLIO SOURCE KNOWLEDGE BASE
 
-**Generated:** 2026-07-22
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Editable browser CSS and JavaScript. `main.css` and `scripts/main.js` are the
-composition roots consumed by the Worker build.
+Browser CSS and feature modules composed into the generated portfolio Worker.
 
-## STRUCTURE
+Scope reason: score 9; distinct browser-source domain.
 
-```text
-src/
-├── styles/
-│   ├── main.css       # ordered CSS import graph
-│   └── variables.css  # design-token source
-└── scripts/
-    ├── package.json   # "type": "module" marker so Node/Jest load these as ESM
-    ├── main.js        # browser bootstrap and service-worker registration
-    └── modules/       # project, timeline, recruiter, skills, UI, Web Vitals
-```
+## WHERE TO LOOK
+
+| Task                  | Location                                     | Notes                                                  |
+| --------------------- | -------------------------------------------- | ------------------------------------------------------ |
+| CSS composition       | `styles/main.css`                            | Ordered import graph                                   |
+| Design tokens         | `styles/variables.css`                       | Color, spacing, and typography source                  |
+| Browser bootstrap     | `scripts/main.js`                            | Feature initialization and service-worker registration |
+| ESM loading           | `scripts/package.json`                       | Module marker used by Node and Jest                    |
+| Shared DOM formatting | `scripts/modules/project-card-formatting.js` | Escaping, icons, technology classes                    |
+| Recruiter features    | `scripts/modules/recruiter-*.js`             | Role proofs, interactions, mobile actions              |
+| Timeline              | `scripts/modules/timeline*.js`               | View model, interactions, rendering                    |
+| Theme contract        | `scripts/modules/theme.js`                   | Dark-only compatibility behavior                       |
 
 ## CONVENTIONS
 
-- Preserve `main.css` import order; cascade order is part of component behavior.
-- Reuse tokens from `variables.css`; keep responsive, CJK, print, forced-color,
-  and reduced-motion rules aligned with component changes.
-- Keep browser modules focused and compose them in `scripts/main.js`.
-- Escape dynamic text before DOM insertion and use CSP-compatible CSS custom
-  properties for dynamic visual values.
-- Preserve keyboard operation, focus restoration/trapping, ARIA state, and
-  reduced-motion behavior for interactive features.
-- Keep locale data paths and labels consistent across KO, EN, and JA surfaces.
+- Preserve CSS import order; cascade order is part of feature behavior.
+- Keep component changes aligned with CJK, print, forced-color, and reduced-motion styles.
+- Compose feature `init*` functions in the bootstrap rather than adding competing entry points.
+- Dynamic text must be escaped before DOM insertion.
+- Preserve keyboard operation, focus restoration/trapping, and ARIA state for overlays.
+- Locale data and labels must remain aligned across KO, EN, and JA modules.
+- Imported `*-data.js` modules are materialized content inputs; they are not a new code-source location.
 
 ## ANTI-PATTERNS
 
-- Do not edit generated `worker.js` for source behavior or styling.
-- Do not add one-off colors, spacing, or typography outside the token system.
-- Do not add global browser functions unless the bootstrap deliberately exposes
-  a stable action.
-- Do not cache HTML in `sw.js`; response CSP nonces are request-specific.
-- Do not restore the removed light-mode/localStorage theme path.
-
----
+- Do not add one-off visual values outside `styles/variables.css` and the existing token system.
+- Do not restore a light-mode/localStorage theme path alongside the dark-only contract.
+- Do not expose browser globals unless the bootstrap deliberately owns the public action.
+- Do not initialize the same feature independently from multiple modules.
 
 Parent: [../AGENTS.md](../AGENTS.md)

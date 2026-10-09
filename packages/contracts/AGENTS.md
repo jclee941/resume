@@ -1,43 +1,40 @@
 # CONTRACTS PACKAGE KNOWLEDGE BASE
 
-**Generated:** 2026-05-06
-**Commit:** `HEAD`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
-
-**Package:** `@resume/contracts`
-**Type:** Cross-app API + binding contracts
 
 ## OVERVIEW
 
-Stable surface contracts shared between the Worker and its consumers.
+Published REST OpenAPI contract and the environment marker re-export surface.
 
-This package owns the single canonical version of:
+Scope reason: existing distinct external-contract domain.
 
-- `openapi.yaml` — the REST API spec
-- `Env` interface for Cloudflare Worker bindings (re-exports from `@resume/types/env`)
+## WHERE TO LOOK
 
-## STRUCTURE
-
-```text
-packages/contracts/
-├── openapi.yaml         # canonical API spec
-└── src/
-    ├── index.js         # barrel
-    └── env.js           # Env interface re-export
-```
+| Task                    | Location              | Notes                                          |
+| ----------------------- | --------------------- | ---------------------------------------------- |
+| REST contract           | `openapi.yaml`        | Canonical OpenAPI 3.0.3 document               |
+| Package exports         | `package.json`        | Root, environment, and OpenAPI subpaths        |
+| Barrel                  | `src/index.js`        | Re-exports the environment module              |
+| Environment marker      | `src/env.js`          | Re-exports only `ENV_TYPE_MARKER`              |
+| Actual binding typedefs | `../types/src/env.js` | `WorkerEnv`, `PortfolioEnv`, `JobDashboardEnv` |
+| Lint configuration      | `../../redocly.yaml`  | OpenAPI validation rules                       |
 
 ## CONVENTIONS
 
-- **OpenAPI is canonical.** `apps/job-dashboard` reads from this single spec.
-- **Env types live here, definitions in `@resume/types/env`.** This package
-  presents the contract; the type definitions themselves are SSoT in
-  `@resume/types`.
+- Run `npm run validate:openapi` after changing the published specification.
+- Match REST route behavior and status responses when updating contract paths.
+- The JavaScript export is a marker, not a runtime `Env` interface object.
+- Keep environment type definitions in the types package and presentation here minimal.
+- The API overview under `docs/api/` points consumers to this spec.
+- Internal validation schemas are not automatically public REST contracts.
 
 ## ANTI-PATTERNS
 
-- Never edit `openapi.yaml` in two places — this is the only writable copy.
-- Never define a binding type without also adding it to `@resume/types/env`.
-
----
+- Do not maintain another writable OpenAPI copy in an application directory.
+- Do not claim importing the marker performs runtime environment validation.
+- Do not document a runtime binding export absent from `src/env.js`.
+- Do not change a published path without checking its route and schema consumers.
 
 Parent: [../AGENTS.md](../AGENTS.md)

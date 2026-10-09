@@ -1,42 +1,42 @@
 # ROUTES KNOWLEDGE BASE
 
-**Generated:** 2026-07-22
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Route modules register dashboard API paths and bind them to handler methods.
-They are route tables, not business-logic containers.
+Dashboard route registration over the request-scoped handler context, with bounded health probes.
 
-## STRUCTURE
+Scope reason: existing distinct API-wiring domain.
 
-```text
-routes/
-├── index.js        # route registration barrel
-├── automation.js   # /api/automation and /api/auto-apply routes
-├── applications.js # application CRUD routes
-├── auth.js         # auth/session routes
-├── health.js       # health/status routes
-├── stats.js        # stats/report routes
-├── workflows.js    # workflow status/control routes
-└── admin.js        # admin/config-style route registration
-```
+## WHERE TO LOOK
+
+| Task                | Location          | Notes                                        |
+| ------------------- | ----------------- | -------------------------------------------- |
+| Registrar barrel    | `index.js`        | Public route registration exports            |
+| Automation          | `automation.js`   | Automation and auto-apply paths              |
+| Application records | `applications.js` | CRUD and approval operations                 |
+| Authentication      | `auth.js`         | Login and session routes                     |
+| Health/status       | `health.js`       | D1 probes and notification capability checks |
+| Statistics          | `stats.js`        | Reporting endpoints                          |
+| Workflow controls   | `workflows.js`    | Workflow status and operations               |
+| Administration      | `admin.js`        | Configuration and admin helpers              |
 
 ## CONVENTIONS
 
-- Keep route files declarative: URL, method, and handler method wiring only.
-- Preserve `/api/*` paths here; `src/index.js` owns any `/job` prefix handling.
-- Route handlers receive the shared context object and call existing handlers.
-- State-changing routes must continue through the middleware stack; do not add
-  convenience bypasses.
+- Each module exports a `registerXRoutes(router, ctx)` function.
+- Most API paths use `/api/*`; health also registers `/health`.
+- Registrars consume existing context handlers rather than constructing their own instances.
+- Keep `/job` normalization in `../index.js`, not in individual path tables.
+- `health.js` deliberately executes bounded database probes and shapes health responses inline.
+- Keep route additions aligned with `packages/contracts/openapi.yaml` when part of the published API.
 
 ## ANTI-PATTERNS
 
-- Do not put DB queries, workflow decisions, or response shaping in route files.
-- Do not instantiate handlers or services here.
-- Do not hide auth/CSRF assumptions in route-local conditionals.
-
----
+- Do not instantiate duplicate handlers or services per registered route.
+- Do not turn bounded health probes into application-domain persistence logic.
+- Do not hide authentication assumptions inside route-local branches.
+- Do not change a REST path without checking MCP's internal API consumers.
 
 Parent: [../AGENTS.md](../AGENTS.md)

@@ -1,50 +1,44 @@
 # TYPES PACKAGE KNOWLEDGE BASE
 
-**Generated:** 2026-07-22
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
-
-**Package:** `@resume/types`
-**Type:** Dependency-light JSDoc domain contracts and runtime constants
 
 ## OVERVIEW
 
-Canonical owner for shared domain typedefs, constants, and small pure helpers.
-The package is plain JavaScript with JSDoc contracts so JS consumers receive
-TypeScript Language Service checking without a runtime validation dependency.
+JSDoc domain contracts, frozen constants, and small pure normalization helpers.
 
-## STRUCTURE
+Scope reason: score 9; distinct domain-contract package.
 
-```text
-packages/types/src/
-├── index.js           # Barrel re-export
-├── application.js     # Application, ApplicationStatus, APPLICATION_STATUSES
-├── cloudflare-workers.d.ts # cloudflare:workers Workflow API subset for the strict typecheck
-├── env.js             # WorkerEnv, PortfolioEnv, JobDashboardEnv (CF bindings)
-├── job-categories.js  # JOB_CATEGORY_BY_NAME, JOB_CATEGORY_BY_KEY (canonical)
-├── notification.js    # NotificationJob, NotificationPriority, NotificationType
-├── queue.js           # Queue job types
-├── resume.js          # Resume, ResumeProfile, ResumeCareer, ResumeProject, ResumeSkill
-├── session.js         # PlatformSession, AdminSession, WebhookSignature
-└── wanted.js          # WantedJob, WantedJobDetail, WantedCompany + normalize* functions
-```
+## WHERE TO LOOK
+
+| Task                   | Location                              | Notes                                                          |
+| ---------------------- | ------------------------------------- | -------------------------------------------------------------- |
+| Export surface         | `src/index.js`, `package.json`        | Barrel plus per-module subpaths                                |
+| Application domain     | `src/application.js`                  | `Application`, `ApplicationStatus`, `APPLICATION_STATUSES`     |
+| Binding typedefs       | `src/env.js`                          | Worker/portfolio/dashboard environments and marker             |
+| Workflow ambient types | `src/cloudflare-workers.d.ts`         | Strict-check subset, not a barrel export                       |
+| Resume domain          | `src/resume.js`                       | `ResumePersonal`, career/project/skill and education contracts |
+| Wanted data            | `src/wanted.js`                       | Raw and normalized job/company types with normalizers          |
+| Notifications/queues   | `src/notification.js`, `src/queue.js` | Payload contracts and constants                                |
+| Session domain         | `src/session.js`                      | Platform/admin sessions and webhook signatures                 |
+| Categories             | `src/job-categories.js`               | Canonical category indexes and default                         |
 
 ## CONVENTIONS
 
-- Keep zero external runtime dependencies. I/O, crypto, and network clients belong
-  in `@resume/shared`.
-- Define canonical domain shapes with JSDoc; runtime constants and pure
-  normalization/predicate helpers may accompany those contracts.
-- Constants are `Object.freeze`d to prevent accidental mutation across consumers.
-- Backward-compat aliases marked `@deprecated` with canonical replacement named in message.
+- Plain JavaScript plus JSDoc supplies language-service types; there is no TypeScript source build.
+- Keep zero external runtime dependencies.
+- Freeze shared constant collections to prevent cross-consumer mutation.
+- Small pure normalizers may accompany the type they normalize.
+- Export-map subpaths mirror domain files; update them with any public module changes.
+- Strict typechecking explicitly includes the ambient Workflow declaration file.
+- Use `npm run typecheck` and `npm run typecheck:strict`; this package has no local test script.
 
 ## ANTI-PATTERNS
 
-- Never add I/O or environment-dependent runtime behavior here.
-- Never duplicate a domain typedef in `@resume/shared` or an app. Consolidate it
-  here, then import the canonical contract.
-- Never put validation logic here. That lives in `@resume/schemas`.
-
----
+- Do not add I/O or environment-dependent runtime initialization here.
+- Do not replace `ResumePersonal` with the nonexistent `ResumeProfile` name.
+- Do not add network or cryptography clients beside typedefs.
+- Do not assume the ambient Workflow declarations are runtime exports.
 
 Parent: [../AGENTS.md](../AGENTS.md)
