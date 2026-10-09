@@ -66,16 +66,16 @@ One ink at stepped alphas encodes interaction state. No second accent hue exists
 
 ### Scale
 
-| Level   | Size          | Weight            | Line Height         | Tracking            | Usage                    |
-| ------- | ------------- | ----------------- | ------------------- | ------------------- | ------------------------ |
-| Display | `--text-6xl`  | `--font-semibold` | `--leading-tight`   | `--tracking-tight`  | Hero name                |
-| H1      | `--text-5xl`  | `--font-semibold` | `--leading-tight`   | `--tracking-tight`  | Mobile hero name         |
-| H2      | `--text-3xl`  | `--font-semibold` | `--leading-tight`   | `--tracking-tight`  | Section titles           |
-| H3      | `--text-xl`   | `--font-semibold` | `--leading-snug`    | `--tracking-normal` | Card and dialog headings |
-| Body/lg | `--text-xl`   | `--font-normal`   | `--leading-relaxed` | `--tracking-normal` | Hero positioning copy    |
-| Body    | `--text-base` | `--font-normal`   | `--leading-relaxed` | `--tracking-normal` | Main copy                |
-| Body/sm | `--text-sm`   | `--font-normal`   | `--leading-relaxed` | `--tracking-normal` | Cards and descriptions   |
-| Label   | `--text-xs`   | `--font-medium`   | `--leading-snug`    | `--tracking-label`  | Eyebrows, metadata       |
+| Level   | Size          | Weight            | Line Height         | Tracking             | Usage                    |
+| ------- | ------------- | ----------------- | ------------------- | -------------------- | ------------------------ |
+| Display | `--text-7xl`  | `--font-bold`     | `--leading-none`    | `--tracking-display` | Hero name                |
+| H1      | `--text-5xl`  | `--font-semibold` | `--leading-tight`   | `--tracking-tight`   | Reserved                 |
+| H2      | `--text-3xl`  | `--font-semibold` | `--leading-tight`   | `--tracking-tight`   | Section titles           |
+| H3      | `--text-xl`   | `--font-semibold` | `--leading-snug`    | `--tracking-normal`  | Card and dialog headings |
+| Body/lg | `--text-2xl`  | `--font-medium`   | `--leading-snug`    | `--tracking-normal`  | Hero value sentence      |
+| Body    | `--text-base` | `--font-normal`   | `--leading-relaxed` | `--tracking-normal`  | Main copy                |
+| Body/sm | `--text-sm`   | `--font-normal`   | `--leading-relaxed` | `--tracking-normal`  | Cards and descriptions   |
+| Label   | `--text-xs`   | `--font-medium`   | `--leading-snug`    | `--tracking-label`   | Eyebrows, metadata       |
 
 `--text-xs` never renders below 12px and body text never goes below `--text-sm`.
 
@@ -173,70 +173,62 @@ var(--container-max))`, `margin-inline: auto`. `--gutter` is `clamp(1rem, 4vw, 2
 - **Signature**: a mono two-digit index from a CSS counter is drawn before the title
   (`content: counter(...) / ''`, hidden from assistive technology).
 
+### Section order
+
+Every locale renders the same order: hero → resume (experience) → projects → skills →
+about → certifications → cover letter → operated → contact. Experience and projects come
+first because they carry the hiring evidence; section ids never change because anchors and
+tests depend on them.
+
 ### Site header
 
 - **Structure**: `.site-header > nav.minimal-nav` with logo, toggle, links, language list.
+- **Links**: localized labels in section order (KO 경력/프로젝트/기술/소개/연락처, EN
+  Experience/Projects/Skills/About/Contact, JA 経歴/プロジェクト/スキル/概要/連絡先); never
+  English abbreviations on a KO or JA page.
 - **Surface**: full-bleed band of `rgb(var(--bg-primary-rgb) / 0.82)` with `--glass-blur`
   and a 1px bottom divider; inner content aligns to the page container.
 - **Accessibility**: 44px targets, localized toggle names, current language marked with
   `aria-current` and the strong border.
 
-### Hero content groups
+### Hero
 
-- **Structure**: `.hero-content` contains `.hero-intro` (identity, positioning,
-  primary actions and recruiter summary), `.hero-evidence` (career proof and public
-  projects), and `.hero-navigation` (section links and role filters).
-- **Layout**: only the introduction uses two desktop columns. Groups follow DOM order
-  with `--space-8` gaps separated by hairline dividers; no implicit row spans or CSS
-  order corrections. Public projects use four equal desktop columns, two at tablet, one
-  on mobile.
-- **Surface**: the hero shell (`.section-hero::before`) spans the container exactly and
-  provides the depth; `.section-hero::after` draws the faint operations grid, masked to
-  the top of the shell. Content is padded inside the shell (`--space-10` desktop,
-  `--space-5` mobile). Evidence and navigation use open spacing rather than enclosing
-  cards; project and path links keep their own interactive surface.
-- **Accessibility**: primary actions precede secondary navigation in keyboard order;
-  retained copy stays visible at every width. Role chips remain disabled in SSR until
-  enhanced. The document owns scrolling.
-- **Copy**: preserve all action links, public project details, availability/status copy
-  and career evidence; do not invent career claims.
-- **Accepted debt**: identity and target-role terminology still overlap to retain the
-  localized recruiter summary contract.
+- **Structure**: `.hero-content > .hero-layout` holds `.hero-identity` (name `h1`, role line,
+  one value sentence, `ul.hero-proof-list`, `.hero-cta`, `ul.hero-trust`) and `.hero-aside`
+  (the profile photo card `.hero-portrait` plus one `.hero-availability` status).
+- **Hierarchy**: the name uses `--text-7xl` (`--leading-none`, `--tracking-display`); the
+  value sentence uses `--text-2xl` in `--text-primary`; proof bullets stay `--text-base`.
+- **Actions**: exactly three — the primary interview contact, the resume PDF, and a quiet
+  link to projects. On phones the primary action spans the row above the other two.
+- **Trust chips**: built from data — the first two active certifications plus every award,
+  verbatim official names, outlined pills under a hairline.
+- **Layout**: two columns from 1024px (identity, then the aside); below that the aside
+  becomes a row above the name. The shell keeps the masked operations grid; no glow layer.
+- **Copy**: the value sentence states what the owner does, never what the page contains. One
+  availability status only. The hero carries no recruiter summary, public-project cards,
+  review-path cards or role filters.
 
 ### Hero proof list
 
-- **Structure**: `ul.hero-proof-list > li`.
-- **Variants**: one column on mobile, two columns from 641px with the first item
-  spanning both columns to retain the primary-experience hierarchy.
-- **Spacing**: `--space-3` gap; open layout without outer padding or panel.
+- **Structure**: `ul.hero-proof-list > li`, at most two items.
+- **Layout**: one readable column (max 46rem) at every width; `--space-3` gap.
 - **Markers**: a 6px accent dot with a soft ring. Static, no motion.
-
-### Hero review path
-
-- **Structure**: `nav.hero-review-path > a > span + strong`.
-- **Variants**: three equal columns on desktop; two columns with the final link
-  spanning the row on mobile.
-- **States**: interactive surface.
-
-### Hiring review packet
-
-- **Structure**: `.hiring-review-packet` header plus a definition list of numbered
-  `dt`/`dd` rows separated by hairlines.
-- **Surface**: glass surface with a 2px accent light along its top edge.
-- **Accessibility**: keeps definition-list semantics and its explicit label.
 
 ### Role chips
 
-- **Structure**: `button.role-chip > label + separator + proof` (+ JS count).
-- **Variants**: two columns from 769px, one column below.
+- **Placement**: `section.role-quick-paths` sits at the top of the projects section, above
+  `#project-list`, and filters that list.
+- **Structure**: `button.role-chip > label + separator + proof` (+ JS count); the separator is
+  hidden visually.
+- **Variants**: four columns from 1024px, two below.
 - **States**: disabled (SSR, `cursor: wait`, 72% opacity), hover/focus, pressed
   (`aria-pressed="true"`: `--accent-wash-3` fill and a check glyph before the label).
 
 ### About
 
 - **Structure**: `.about-grid` holds the narrative (`.about-content`) and the expertise
-  card (`.expertise-block`); both stretch to equal height. The profile bento and the
-  achievements list follow full width.
+  card (`.expertise-block`); both stretch to equal height. The profile bento follows full
+  width. The former achievements list is gone because it repeated the experience section.
 - **Narrative**: `.about-list` with short accent dashes; no side border.
 - **Expertise**: tags in `--font-label`; competencies with an accent `>` marker.
 - **Measure**: `.about-content` keeps a 70ch cap when standalone; inside the grid it fills
@@ -244,14 +236,10 @@ var(--container-max))`, `margin-inline: auto`. `--gutter` is `clamp(1rem, 4vw, 2
 
 ### Profile bento
 
-- **Structure**: `.profile-bento > .profile-card` (photo first when present).
+- **Structure**: `.profile-bento > .profile-card`. The photo card moved to the hero
+  (`.hero-portrait`, still a `.profile-card--photo`).
 - **Layout**: three columns from 1024px, two from 641px, one below.
 - **Type**: labels in `--font-label`; values in `--font-sans`.
-
-### Achievements
-
-- **Structure**: `.achievements-block > ul.achievements-list > li.achievement-card`.
-- **Recipe**: one surface card; rows separated by hairlines with an accent `>` marker.
 
 ### Cover letter
 
@@ -265,8 +253,12 @@ var(--container-max))`, `margin-inline: auto`. `--gutter` is `clamp(1rem, 4vw, 2
 - **Structure**: `ul.incident-timeline > li.timeline-node > marker + content(header + card)`.
 - **Layout**: a single left rail at every width. The rail sits in a fixed marker column
   (`--timeline-rail-x`), the dot is centered on it, and the card fills the remaining width.
-- **States**: active role dot carries a static success ring (no pulse); cards expand via
-  `.timeline-node.is-expanded .timeline-details`.
+- **Card**: company, role and team on the left; up to three achievements visible as
+  `ul.timeline-highlights` on the right (desktop) or below (mobile). A role without
+  achievements shows its full description as `.timeline-summary` — never a truncated line.
+- **States**: active role dot carries a static success ring (no pulse); the expand button
+  exists only when there is more (remaining achievements or the role description), and
+  cards expand via `.timeline-node.is-expanded .timeline-details`.
 
 ### Certifications
 
@@ -275,19 +267,25 @@ var(--container-max))`, `margin-inline: auto`. `--gutter` is `clamp(1rem, 4vw, 2
 
 ### Project list item
 
-- **Structure**: `li.project-item` with header, case notes (`dl.project-case-notes`),
-  optional description remainder, tech line, meta badges and links.
-- **Layout**: CSS grid areas; badges sit beside the title on desktop and below it on
-  mobile; tech line and links share the footer row.
-- **Case notes**: label/value rows (`dt` in `--font-label`, `dd` in body text) separated by
-  hairlines. The description paragraph renders only sentences not already shown in the
-  notes, so no sentence appears twice.
+- **Structure**: `li.project-item` with header, case notes (`dl.project-case-notes`), an
+  optional diagram, optional description remainder, tech line, one status badge and links.
+- **Case notes**: exactly three rows — 문제 / 한 일 / 결과 (EN Problem / What I did / Result,
+  JA 課題 / 担当 / 結果); no row whose value carries no information.
+- **Badges and links**: one status badge (LIVE when a demo or dashboard exists, otherwise the
+  activity badge); no language or REPO badge. Links are labelled pills with a `↗` glyph,
+  never bracketed text, and only links that belong to the project.
+- **Featured**: the first three projects (by `displayOrder`) render as
+  `.project-card--featured` with a diagram; the rest collapse behind the more button.
 
-### Project review rail
+### Architecture diagram
 
-- **Structure**: `li.project-review-rail` with eyebrow, header and three link cards.
-- **Rules**: the link eyebrow is clamped to one line because it comes from free-form
-  taglines.
+- **Structure**: `figure.project-diagram` with two build-time SVGs (`--wide` left-to-right,
+  `--narrow` top-to-bottom), each `role="img"` with its own `<title>`/`<desc>`.
+- **Data**: a `diagram` spec on the project in the SSoT; nodes name only components that the
+  project's own text mentions. Edge labels are localized; tech names stay identical.
+- **Layout**: SVGs render at intrinsic size (`max-width: 100%`) so text keeps one scale.
+  Featured cards place the narrow variant in a right column from 1024px; tablets show the
+  wide variant below the notes; phones show the narrow variant.
 
 ### Case-study grid and deep dive
 
@@ -296,17 +294,12 @@ var(--container-max))`, `margin-inline: auto`. `--gutter` is `clamp(1rem, 4vw, 2
 - **Motion**: cards fade in only under `prefers-reduced-motion: no-preference`; without
   motion they render visible immediately.
 
-### Skill search
+### Skill domain cards
 
-- **Structure**: a labeled textbox, polite live result count, domain cards and an inline
-  empty-result paragraph. KO, EN and JA use the same bundled styles.
-- **States**: an empty query shows all cards without a counter; a skill-name query counts
-  matching entries once across cards; a domain-name query retains every skill and its
-  evidence. No matches show a localized explanation and zero count. Clearing restores all
-  entries without changing expanded-card state.
-- **Accessibility**: retain keyboard card toggles and input focus while filtering;
-  announce counts through the existing live region. Search radius uses `--radius-md` and
-  the minimum input height remains 44px in every locale.
+- **Structure**: static `article.skill-domain-card` (icon, `h3`, count) with every skill as a
+  visible `li.skill-item` pill in a `ul.skill-list` labelled by the heading.
+- **Rules**: no accordion, no search box, no tier label; cards are static surfaces. Three
+  columns from 1024px, two from 641px, one below.
 
 ### Operated, contact and footer
 
@@ -317,8 +310,10 @@ var(--container-max))`, `margin-inline: auto`. `--gutter` is `clamp(1rem, 4vw, 2
 ### Mobile action bar and back-to-top
 
 - `.recruiter-action-bar`: fixed glass bar above the safe area on ≤768px, labels in
-  `--font-label`.
-- `.back-to-top`: 44px glass square, shown after 400px of scroll.
+  `--font-label`. It stays hidden while the hero actions or the cover letter are in view
+  and sets `body.has-action-bar` while visible.
+- `.back-to-top`: 44px glass square, shown after 400px of scroll; on ≤768px it hides while
+  the action bar is visible so two floating controls never cover the text.
 
 ## 6. Motion & Interaction
 
@@ -382,8 +377,6 @@ override layers; a fix lands in the file that owns the component.
 
 - The JA page is produced from the KO shell by string transforms
   (`lib/japanese-template/`), so JA-only layout needs land as CSS `:lang(ja)` rules.
-- Free-form project taglines feed the review-rail eyebrow; the one-line clamp hides the
-  overflow instead of the data supplying a short label.
 - Inline `<style>` blocks in the content-pack HTML shells (font faces, theme transitions)
   stay outside this stylesheet because their CSP hashes are computed at build time.
 
@@ -402,5 +395,5 @@ Current split points:
   existing placeholder generators.
 
 Allowed edits inside the oversized HTML shells are limited to stable document structure,
-SEO metadata, and placeholder placement. Copy, review-path content, cards, or interactive
-UI logic should live in generator modules or CSS modules instead.
+SEO metadata, section order, and placeholder placement. Copy, cards, or interactive UI logic
+should live in generator modules or CSS modules instead.
