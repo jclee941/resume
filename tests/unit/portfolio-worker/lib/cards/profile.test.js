@@ -66,21 +66,11 @@ describe('cards/profile generateProfileBento', () => {
     expect(html).toContain('(졸업 예정) 2024.03 ~ 2027.02');
   });
 
-  it('renders the profile photo first, with a localized alt text', () => {
-    const photo = '/assets/profile-photo.jpg?v=0123456789ab';
-    const ko = generateProfileBento({ ...full, hero: { title: '예시 이름' } }, 'ko', photo);
-    const en = generateProfileBento({ ...full, hero: { title: 'Example Person' } }, 'en', photo);
+  it('leaves the profile photo to the hero portrait card', () => {
+    const html = generateProfileBento({ ...full, hero: { title: '예시 이름' } }, 'ko');
 
-    expect(ko.indexOf('profile-card--photo')).toBeLessThan(ko.indexOf('profile-card__label'));
-    expect(ko).toContain(`src="${photo}" alt="예시 이름 증명사진"`);
-    expect(en).toContain('alt="Photo of Example Person"');
-  });
-
-  it('omits the photo card without a photo and escapes the photo URL', () => {
-    expect(generateProfileBento(full, 'ko')).not.toContain('<img');
-    expect(generateProfileBento(full, 'ko', '/a.jpg?"><script>')).toContain(
-      'src="/a.jpg?&quot;&gt;&lt;script&gt;"'
-    );
+    expect(html).not.toContain('<img');
+    expect(html).not.toContain('profile-card--photo');
   });
 
   it('omits the award year when the official award name already carries it', () => {

@@ -30,6 +30,7 @@
  *   businessImpact?: unknown;
  *   displayOrder?: number;
  *   featured?: boolean;
+ *   diagram?: unknown;
  *   [key: string]: unknown;
  * }} SourceProject
  */
@@ -125,6 +126,7 @@ function projectCardFromSource(project) {
     businessImpact: project.businessImpact,
     displayOrder: typeof project.displayOrder === 'number' ? project.displayOrder : 999,
     featured: project.featured === true,
+    diagram: project.diagram && typeof project.diagram === 'object' ? project.diagram : undefined,
   };
 }
 

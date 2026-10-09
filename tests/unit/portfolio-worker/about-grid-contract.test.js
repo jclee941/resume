@@ -31,9 +31,9 @@ describe('about grid: narrative + expertise paired without losing content', () =
     expect(count(worker, 'class="expertise-block"')).toBe(3);
   });
 
-  test('profile bento + achievements remain present once per locale', () => {
+  test('profile bento stays once per locale; the duplicate achievements list is gone', () => {
     expect(count(worker, 'class="profile-bento"')).toBe(3);
-    expect(count(worker, 'class="achievements-block"')).toBe(3);
+    expect(count(worker, 'class="achievements-block"')).toBe(0);
   });
 
   test('career-highlights narrative is preserved (single localized block per locale)', () => {

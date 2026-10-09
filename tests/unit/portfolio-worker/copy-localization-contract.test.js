@@ -18,29 +18,29 @@ function extractLocale(workerSrc, constName) {
   return match ? match[1] : '';
 }
 
-describe('copy localization: skills search UI', () => {
-  test('KO source page uses Korean skill-search labels', () => {
+describe('copy localization: skills section and navigation', () => {
+  test('KO source page keeps Korean skills labels and Korean navigation', () => {
     const ko = read('index.html');
     expect(ko).toContain('aria-label="기술 역량 매트릭스"');
-    expect(ko).toContain('>기술 검색</label>');
-    expect(ko).toContain('placeholder="기술 검색..."');
-    expect(ko).toContain('aria-label="기술 이름으로 검색"');
-    expect(ko).not.toContain('Filter skills');
+    expect(ko).not.toContain('skill-search-input');
     expect(ko).not.toContain('Skill Capability Matrix');
+    expect(ko).toMatch(/class="nav-link">경력<\/a>/);
+    expect(ko).not.toMatch(/class="nav-link">(about|exp|projects|contact)</);
   });
 
-  test('EN source page keeps English skill-search labels', () => {
+  test('EN source page uses English navigation without a skills filter', () => {
     const en = read('index-en.html');
-    expect(en).toContain('Filter skills');
+    expect(en).not.toContain('Filter skills');
+    expect(en).toMatch(/class="nav-link">Experience<\/a>/);
   });
 
-  test('generated JA locale uses Japanese skill-search labels', () => {
+  test('generated JA locale uses Japanese skills and navigation labels', () => {
     const worker = read('worker.js');
     const jaLocale = extractLocale(worker, 'INDEX_JA_HTML');
     expect(jaLocale).toContain('aria-label="スキルマトリクス"');
-    expect(jaLocale).toContain('>スキル検索</label>');
-    expect(jaLocale).toContain('placeholder="スキル検索..."');
-    expect(jaLocale).not.toContain('기술 검색');
+    expect(jaLocale).toContain('class="nav-link">経歴</a>');
+    expect(jaLocale).not.toMatch(/class="nav-link">[가-힣]+</);
+    expect(jaLocale).not.toContain('기술 역량');
   });
 });
 

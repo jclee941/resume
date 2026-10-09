@@ -25,7 +25,6 @@ const TIMELINE_LABELS = {
   ko: {
     period: '근무 기간',
     phase: '단계',
-    impact: '성과',
     detail: '상세 내용',
     expand: '상세 보기',
     collapse: '접기',
@@ -36,7 +35,6 @@ const TIMELINE_LABELS = {
   en: {
     period: 'Tenure',
     phase: 'Phase',
-    impact: 'Impact',
     detail: 'Details',
     expand: 'View details',
     collapse: 'Collapse',
@@ -53,7 +51,6 @@ const TIMELINE_LABELS = {
   ja: {
     period: '在籍期間',
     phase: 'フェーズ',
-    impact: '成果',
     detail: '詳細',
     expand: '詳細を見る',
     collapse: '閉じる',
@@ -82,16 +79,7 @@ export function getTimelineLabels() {
   return TIMELINE_LABELS[timelineLang()] || TIMELINE_LABELS.ko;
 }
 
-/**
- * @param {TimelineCareer} career
- * @returns {string}
- */
-function impactTextFor(career) {
-  const achievements = career.achievements || [];
-  if (achievements.length > 0) return achievements.map((item) => `• ${item}`).join('\n');
-  const description = career.description || '';
-  return description ? `${description.substring(0, 80)}...` : '';
-}
+const VISIBLE_ACHIEVEMENTS = 3;
 
 /**
  * @param {TimelineCareer} career
@@ -102,6 +90,7 @@ export function createTimelineViewModel(career, index) {
   const labels = getTimelineLabels();
   const isActive = career.status === 'active';
   const phaseLabel = (labels.phases && labels.phases[career.phase]) || career.phase;
+  const achievements = career.achievements || [];
   return {
     ...career,
     index,
@@ -109,9 +98,9 @@ export function createTimelineViewModel(career, index) {
     phaseIcon: phaseInfo.icon,
     phaseLabel,
     isActive,
-    achievements: career.achievements || [],
+    highlights: achievements.slice(0, VISIBLE_ACHIEVEMENTS),
+    extraAchievements: achievements.slice(VISIBLE_ACHIEVEMENTS),
     description: career.description || '',
-    impactText: impactTextFor(career).split('\n')[0],
   };
 }
 
@@ -160,6 +149,36 @@ function createExpandIcon() {
 }
 
 /**
+ * @param {TimelineViewModel} model
+ * @param {string} description
+ * @returns {DocumentFragment}
+ */
+function createDetails(model, description) {
+  const details = el('div', 'timeline-details');
+  details.id = `details-${model.index}`;
+  details.setAttribute('aria-hidden', 'true');
+  if (description) details.appendChild(el('p', 'details-description', description));
+  if (model.extraAchievements.length > 0) {
+    const list = el('ul', 'details-achievements');
+    model.extraAchievements.forEach((item) => list.appendChild(el('li', '', item)));
+    details.appendChild(list);
+  }
+
+  const button = el('button', 'timeline-expand-btn');
+  button.setAttribute('aria-expanded', 'false');
+  button.setAttribute('aria-controls', details.id);
+  button.setAttribute(
+    'aria-label',
+    `${model.labels.expand} ${model.labels.detail} ${model.company}`
+  );
+  button.append(el('span', 'expand-text', model.labels.expand), createExpandIcon());
+
+  const fragment = document.createDocumentFragment();
+  fragment.append(details, button);
+  return fragment;
+}
+
+/**
  * @param {TimelineCareer} career
  * @param {number} index
  * @returns {HTMLLIElement}
@@ -205,35 +224,18 @@ export function createTimelineNode(career, index) {
     el('p', 'timeline-myrole', model.myRole)
   );
 
-  const impact = el('div', 'timeline-impact');
-  const summary = el('div', 'impact-summary');
-  summary.append(
-    el('span', 'impact-label', `${model.labels.impact}:`),
-    el('span', 'impact-text', model.impactText)
-  );
-  impact.appendChild(summary);
-  card.appendChild(impact);
-
-  const details = el('div', 'timeline-details');
-  details.id = `details-${model.index}`;
-  details.setAttribute('aria-hidden', 'true');
-  details.appendChild(el('p', 'details-description', model.description));
-  if (model.achievements.length > 0) {
-    const list = el('ul', 'details-achievements');
-    model.achievements.forEach((item) => list.appendChild(el('li', '', item)));
-    details.appendChild(list);
+  if (model.highlights.length > 0) {
+    const highlights = el('ul', 'timeline-highlights');
+    model.highlights.forEach((item) => highlights.appendChild(el('li', '', item)));
+    card.appendChild(highlights);
+  } else if (model.description) {
+    card.appendChild(el('p', 'timeline-summary', model.description));
   }
-  card.appendChild(details);
 
-  const button = el('button', 'timeline-expand-btn');
-  button.setAttribute('aria-expanded', 'false');
-  button.setAttribute('aria-controls', details.id);
-  button.setAttribute(
-    'aria-label',
-    `${model.labels.expand} ${model.labels.detail} ${model.company}`
-  );
-  button.append(el('span', 'expand-text', model.labels.expand), createExpandIcon());
-  card.appendChild(button);
+  const detailDescription = model.highlights.length > 0 ? model.description : '';
+  if (detailDescription || model.extraAchievements.length > 0) {
+    card.appendChild(createDetails(model, detailDescription));
+  }
 
   content.append(header, card);
   node.append(marker, content);

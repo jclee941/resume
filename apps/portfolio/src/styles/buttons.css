@@ -95,8 +95,9 @@
 }
 
 @media (max-width: 768px) {
-  body:has(.recruiter-action-bar.is-visible) .back-to-top {
-    bottom: calc(var(--space-20) + env(safe-area-inset-bottom));
+  body.has-action-bar .back-to-top {
+    opacity: 0;
+    visibility: hidden;
   }
 }
 

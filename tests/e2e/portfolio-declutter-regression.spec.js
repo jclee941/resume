@@ -85,19 +85,31 @@ test.describe('Declutter — consolidated operated section + regression', () => 
      * @param {string} url
      * @param {string[]} expected
      */
-    const phasesFor = async (url, expected) => {
+    const phasesFor = async (url) => {
       await go(page, url);
-      const badges = await page
+      return page
         .locator('.phase-badge')
         .evaluateAll((els) =>
           els
             .map((e) => (e.textContent || '').replace(/[^\p{L}\p{N}]/gu, '').trim())
             .filter(Boolean)
         );
-      expect(badges).toEqual(expected);
     };
-    await phasesFor('/ja/', ['運用', '構築', '安定化', '構築', '自動化', '基礎']);
-    await phasesFor('/en/', ['Operate', 'Build', 'Stabilize', 'Build', 'Automate', 'Foundation']);
+    const LOCALIZED = {
+      en: {
+        운영: 'Operate',
+        구축: 'Build',
+        자동화: 'Automate',
+        안정화: 'Stabilize',
+        기초: 'Foundation',
+      },
+      ja: { 운영: '運用', 구축: '構築', 자동화: '自動化', 안정화: '安定化', 기초: '基礎' },
+    };
+    const ko = await phasesFor('/');
+    expect(ko.length).toBeGreaterThan(1);
+    expect(new Set(ko).size).toBeGreaterThan(1);
+    expect(await phasesFor('/ja/')).toEqual(ko.map((phase) => LOCALIZED.ja[phase]));
+    expect(await phasesFor('/en/')).toEqual(ko.map((phase) => LOCALIZED.en[phase]));
   });
 
   for (const loc of ['/', '/en/', '/ja/']) {

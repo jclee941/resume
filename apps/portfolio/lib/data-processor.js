@@ -24,6 +24,8 @@ const {
   generateExpertiseSection,
   generateCoverLetterSection,
   generateProjectSchemasHtml,
+  generateHeroPortrait,
+  generateHeroTrust,
 } = require('./cards');
 
 /**
@@ -153,9 +155,15 @@ function processProjectData({
       `${dataHash}:ja-about`,
       'ja'
     ),
-    profileBentoHtml: generateProfileBento(projectData, 'ko', photo),
-    profileBentoEnHtml: generateProfileBento(projectDataEn || projectData, 'en', photo),
-    profileBentoJaHtml: generateProfileBento(projectDataJa || projectData, 'ja', photo),
+    profileBentoHtml: generateProfileBento(projectData, 'ko'),
+    profileBentoEnHtml: generateProfileBento(projectDataEn || projectData, 'en'),
+    profileBentoJaHtml: generateProfileBento(projectDataJa || projectData, 'ja'),
+    heroPortraitHtml: generateHeroPortrait(projectData, 'ko', photo),
+    heroPortraitEnHtml: generateHeroPortrait(projectDataEn || projectData, 'en', photo),
+    heroPortraitJaHtml: generateHeroPortrait(projectDataJa || projectData, 'ja', photo),
+    heroTrustHtml: generateHeroTrust(projectData, 'ko'),
+    heroTrustEnHtml: generateHeroTrust(projectDataEn || projectData, 'en'),
+    heroTrustJaHtml: generateHeroTrust(projectDataJa || projectData, 'ja'),
     achievementsHtml: generateAchievementsSection(projectData),
     achievementsEnHtml: generateAchievementsSection(projectDataEn || projectData),
     achievementsJaHtml: generateAchievementsSection(projectDataJa || projectData),

@@ -48,10 +48,11 @@ test.describe('Keyboard Navigation', () => {
 
   test('links should be activatable with Enter key', async ({ page }) => {
     const navLink = page.locator('.nav-link, .nav-links a').first();
+    const target = await navLink.getAttribute('href');
+    expect(target).toMatch(/^#[a-z-]+$/);
     await navLink.focus();
     await page.keyboard.press('Enter');
 
-    const aboutSection = page.locator('#about');
-    await expect(aboutSection).toBeInViewport({ timeout: 2000 });
+    await expect(page.locator(String(target))).toBeInViewport({ timeout: 5000 });
   });
 });

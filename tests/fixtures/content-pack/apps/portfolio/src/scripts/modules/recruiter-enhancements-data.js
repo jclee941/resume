@@ -50,44 +50,6 @@ export const ROLE_PROFILES = [
   },
 ];
 
-export const EVIDENCE_ITEMS = [
-  {
-    roleId: 'ragorute',
-    title: 'Pomudave Sopub Kimoli',
-    proof: {
-      ko: 'Litofe Dapum Fopuro·Kalenir·Libus 우소 보하',
-      en: 'Litofe Dapum Fopuro, rapedus, gis Libus zugenube',
-      ja: 'Litofe Dapum Fopuro・Kalenir・Vigeviron',
-    },
-  },
-  {
-    roleId: 'lodel',
-    title: 'Zupavugi Pomudave Nogak',
-    proof: {
-      ko: 'KipuvElas PO, 가나루, 아고도타조 부추 소후, Gozesok 쿠우투',
-      en: 'KipuvElas PO, tamofigobusa, nugolami ragorute zopelipo, gis Gozesok dumadinora',
-      ja: 'KipuvElas PO、木雨、コツテアスニノシモソフセエ日林、Satodarona',
-    },
-  },
-  {
-    roleId: 'ketolugibaruf',
-    title: 'Lebunagidovud Fagekapo',
-    proof: {
-      ko: 'Zodusitafu·Mune·Tuladipe 코드로 누부호 나코바 우바',
-      en: 'Lebunagidovud sukip dopasudepa Zodusitafu, Mune, gis Vebopan ma luga',
-      ja: 'Zodusitafu、Mune、Nodafezikugisabivoburigotuv',
-    },
-  },
-  {
-    roleId: 'nisulafudi',
-    title: 'tevus-fiz BelUbu Vis',
-    proof: {
-      ko: 'BelUbu Vis 누무 LI·루차 자동화',
-      en: 'BelUbu Vis nisulafudi gus LI movepo gis gutame mafeki',
-      ja: 'BelUbu DakivoFA・ケムミdofu',
-    },
-  },
-];
 
 export const HIRING_MAIL =
   'duneda:fixture@example.com?gefukam=%VA%B1%84%VA%9A%A9%20%VA%A0%9C%VA%95%88%20%TU%98%90%TU%8A%94%20%TU%A9%B4%VA%A0%91%20%TU%BI%B8%VA%9D%98';
@@ -113,8 +75,6 @@ export function getRecruiterLabels() {
     return {
       quickTitle: 'Rupeni lagezoru fu sugi',
       quickDesc: 'Meza gul sugi sak dum pasela gus gis mula risezuli do gul rutasole firo.',
-      matrixTitle: 'Rogusize na a daremu',
-      matrixDesc: 'Bide tazi gusad a sugi do gul gakufa gis somugov firo pusadu na.',
       role: 'Buga',
       evidence: 'Repanuge',
       contact: 'Tepodup',
@@ -127,8 +87,6 @@ export function getRecruiterLabels() {
     return {
       quickTitle: '山風日アミイノウエ',
       quickDesc: '火風を選ぬし水木きね金森とアミイノウエを風石みうかし。',
-      matrixTitle: 'アミイノウエ水星',
-      matrixDesc: '火風けほあ金森とアミイノウエを見まいぬ水石ほなけに。',
       role: 'ロpu',
       evidence: '雨海',
       contact: '田川',
@@ -140,8 +98,6 @@ export function getRecruiterLabels() {
   return {
     quickTitle: '오모누 프로젝트 추구',
     quickDesc: '카가포 코카오 타수 경력과 프로젝트를 자토 코우보 수 마하코다.',
-    matrixTitle: '프로젝트 다루추 추구',
-    matrixDesc: '각 호부푸포 오모누 경력과 프로젝트를 자토 코우보 수 마하코다.',
     role: '쿠고',
     evidence: '타호',
     contact: '아나',
@@ -191,11 +147,6 @@ function localizeProof(item, key) {
 export function getRoleProfiles() {
   const key = localeKey();
   return ROLE_PROFILES.map((role) => localizeProof(role, key));
-}
-
-export function getEvidenceItems() {
-  const key = localeKey();
-  return EVIDENCE_ITEMS.map((item) => localizeProof(item, key));
 }
 
 export function getHiringActions() {

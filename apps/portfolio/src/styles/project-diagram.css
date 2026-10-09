@@ -1,0 +1,114 @@
+.project-diagram {
+  width: 100%;
+  margin: var(--space-6) 0;
+  padding: var(--space-5) var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(circle at 50% 0%, var(--accent-wash-1), transparent 70%),
+    rgb(var(--bg-primary-rgb) / 0.6);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.project-diagram__svg--wide,
+.project-diagram__svg--narrow {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}
+
+.project-diagram__svg--narrow {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .project-diagram__svg--wide {
+    display: none;
+  }
+  .project-diagram__svg--narrow {
+    display: block;
+  }
+}
+
+.project-diagram text {
+  font-family: var(--font-mono), var(--font-sans);
+  fill: var(--text-primary);
+  font-size: 14px;
+}
+
+.node__bg {
+  stroke-width: 1px;
+}
+
+.node--source .node__bg {
+  fill: var(--accent-wash-1);
+  stroke: var(--accent-line-soft);
+}
+.node--process .node__bg {
+  fill: var(--accent-wash-2);
+  stroke: var(--accent-line);
+}
+.node--store .node__bg {
+  fill: var(--bg-tertiary);
+  stroke: var(--border-secondary);
+}
+.node--sink .node__bg {
+  fill: var(--accent-wash-1);
+  stroke: var(--accent-line-soft);
+}
+.node--actor .node__bg {
+  fill: var(--bg-secondary);
+  stroke: var(--border-primary);
+}
+
+.node__sub {
+  fill: var(--text-secondary);
+  font-size: 12px;
+}
+
+.edge__path {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2px;
+}
+
+.edge__arrow {
+  fill: var(--color-accent);
+}
+
+.edge__label {
+  font-size: 12px;
+  fill: var(--text-secondary);
+  paint-order: stroke;
+  stroke: var(--bg-card);
+  stroke-width: 4px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (forced-colors: active) {
+  .project-diagram {
+    border: 1px solid CanvasText;
+    background: Canvas;
+  }
+  .node__bg {
+    fill: Canvas;
+    stroke: CanvasText;
+  }
+  .project-diagram text {
+    fill: CanvasText;
+  }
+  .edge__path {
+    stroke: CanvasText;
+  }
+  .edge__arrow {
+    fill: CanvasText;
+  }
+  .edge__label {
+    fill: CanvasText;
+    stroke: Canvas;
+  }
+}

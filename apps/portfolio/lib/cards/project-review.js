@@ -2,63 +2,35 @@ const { escapeHtml } = require('../template-sanitizer');
 
 const PROJECT_LABELS = {
   ko: {
-    railEyebrow: '검토 경로',
-    railTitle: '채용 검토용 프로젝트 바로가기',
-    railDesc: '긴 목록을 훑기 전에 운영 근거가 가장 분명한 사례로 바로 이동할 수 있습니다.',
     problem: '문제',
-    role: '역할',
-    proof: '근거',
-    review: '검토',
-    open: '사례 보기',
-    live: '운영 화면',
-    repo: '저장소 근거',
-    noLink: '상세 문맥',
+    role: '한 일',
+    proof: '결과',
     caseSummary: '프로젝트 사례 요약',
+    diagram: '구성 흐름',
   },
   en: {
-    railEyebrow: 'evidence route',
-    railTitle: 'Fast paths for recruiter review',
-    railDesc: 'Jump to the clearest operating evidence before scanning the full project list.',
     problem: 'Problem',
-    role: 'Role',
-    proof: 'Evidence',
-    review: 'Review',
-    open: 'Open case',
-    live: 'Live view',
-    repo: 'Code evidence',
-    noLink: 'Context',
+    role: 'What I did',
+    proof: 'Result',
     caseSummary: 'Project case summary',
+    diagram: 'Architecture flow',
   },
   ja: {
-    railEyebrow: 'レビュー経路',
-    railTitle: '採用レビュー向けプロジェクト導線',
-    railDesc: '長い一覧を読む前に、運用根拠が明確な事例へすぐ移動できます。',
     problem: '課題',
-    role: '役割',
-    proof: '根拠',
-    review: '確認',
-    open: '事例を見る',
-    live: '運用画面',
-    repo: 'コード根拠',
-    noLink: '文脈',
+    role: '担当',
+    proof: '結果',
     caseSummary: 'プロジェクト事例の要約',
+    diagram: '構成フロー',
   },
 };
 
 /**
  * @typedef {{
- *   railEyebrow: string;
- *   railTitle: string;
- *   railDesc: string;
  *   problem: string;
  *   role: string;
  *   proof: string;
- *   review: string;
- *   open: string;
- *   live: string;
- *   repo: string;
- *   noLink: string;
  *   caseSummary: string;
+ *   diagram: string;
  * }} ProjectLabels
  */
 
@@ -127,77 +99,31 @@ function projectDescriptionRemainder(project) {
 }
 
 /**
- * @param {ProjectLabels} labels
- * @param {string | null | undefined} githubUrl
- * @param {string | null | undefined} demoUrl
- * @param {unknown[]} dashboards
- * @returns {string}
- */
-function projectReviewTarget(labels, githubUrl, demoUrl, dashboards) {
-  if (dashboards.length > 0 || demoUrl) return labels.live;
-  if (githubUrl) return labels.repo;
-  return labels.noLink;
-}
-
-/**
  * @param {ProjectItem} project
  * @param {ProjectLabels} labels
- * @param {string | null | undefined} githubUrl
- * @param {string | null | undefined} demoUrl
- * @param {unknown[]} dashboards
  * @returns {string}
  */
-function buildProjectCaseNotes(project, labels, githubUrl, demoUrl, dashboards) {
+function buildProjectCaseNotes(project, labels) {
   const sentences = splitProjectSentences(project.description);
   const problem = sentences[0] || project.tagline || project.title;
   const role = sentences[1] || project.tagline || project.tech;
   const proof = sentences[2] || project.tech || project.tagline || project.title;
-  const review = projectReviewTarget(labels, githubUrl, demoUrl, dashboards);
-
-  return `<dl class="project-case-notes" aria-label="${escapeHtml(
-    /** @type {string} */ (project.title)
-  )} ${labels.caseSummary}">
-              <div><dt>${labels.problem}</dt><dd>${escapeHtml(/** @type {string} */ (problem))}</dd></div>
-              <div><dt>${labels.role}</dt><dd>${escapeHtml(/** @type {string} */ (role))}</dd></div>
-              <div><dt>${labels.proof}</dt><dd>${escapeHtml(/** @type {string} */ (proof))}</dd></div>
-              <div><dt>${labels.review}</dt><dd>${escapeHtml(review)}</dd></div>
-          </dl>`;
-}
-
-/**
- * @param {Array<ProjectItem>} projects
- * @param {ProjectLabels} labels
- * @returns {string}
- */
-function buildProjectReviewRail(projects, labels) {
-  if (projects.length < 3) {
-    return '';
-  }
-
-  const cards = projects.slice(0, 3).map((project, index) => {
-    const anchor = projectAnchor(project, index);
-    const summary =
-      splitProjectSentences(project.description)[0] || project.tagline || project.tech;
-    return `<a href="#${escapeHtml(anchor)}" class="project-review-rail__link">
-              <span>${escapeHtml(/** @type {string} */ (project.tagline || labels.open))}</span>
-              <strong>${escapeHtml(/** @type {string} */ (project.title))}</strong>
-              <small>${escapeHtml(/** @type {string} */ (summary))}</small>
-            </a>`;
-  });
-
-  return `<li class="project-review-rail" aria-labelledby="project-review-rail-title">
-            <p class="project-review-rail__eyebrow">${labels.railEyebrow}</p>
-            <div class="project-review-rail__header">
-              <h3 id="project-review-rail-title">${labels.railTitle}</h3>
-              <p>${labels.railDesc}</p>
-            </div>
-            <div class="project-review-rail__grid">${cards.join('')}</div>
-          </li>`;
+  const rows = [
+    [labels.problem, problem],
+    [labels.role, role],
+    [labels.proof, proof],
+  ]
+    .map(
+      ([term, detail]) =>
+        `<div><dt>${term}</dt><dd>${escapeHtml(/** @type {string} */ (detail))}</dd></div>`
+    )
+    .join('');
+  const summaryLabel = `${escapeHtml(/** @type {string} */ (project.title))} ${labels.caseSummary}`;
+  return `<dl class="project-case-notes" aria-label="${summaryLabel}">${rows}</dl>`;
 }
 
 module.exports = {
   buildProjectCaseNotes,
-  buildProjectReviewRail,
   projectAnchor,
   projectDescriptionRemainder,
   projectLabelsFor,

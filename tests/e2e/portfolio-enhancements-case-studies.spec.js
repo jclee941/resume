@@ -45,19 +45,23 @@ test.describe('Portfolio recruiter enhancements — case studies', () => {
     }
   });
 
-  test('project evidence links highlight the target project', async ({ page }) => {
-    const reviewerLink = page
-      .locator('.project-evidence-matrix .project-evidence-card__link')
-      .last();
-    const targetTitle = await reviewerLink.getAttribute('data-evidence-project');
-    expect(targetTitle).toBeTruthy();
-    await reviewerLink.click();
-
-    const reviewerCard = page.locator('#projects li.project-item', {
-      hasText: targetTitle,
+  test('deep dives follow the project list instead of a separate evidence shortcut', async ({
+    page,
+  }) => {
+    await expect(page.locator('.project-evidence-card__link, [data-evidence-project]')).toHaveCount(
+      0
+    );
+    await expect(page.locator('.case-study-deep-dives')).toBeVisible();
+    const deepDivesAfterList = await page.evaluate(() => {
+      const list = document.querySelector('#project-list');
+      const deepDives = document.querySelector('.case-study-deep-dives');
+      return Boolean(
+        list &&
+        deepDives &&
+        list.compareDocumentPosition(deepDives) & Node.DOCUMENT_POSITION_FOLLOWING
+      );
     });
-    await expect(reviewerCard).toBeVisible();
-    await expect(reviewerCard).toHaveClass(/is-role-match/);
+    expect(deepDivesAfterList).toBe(true);
   });
 
   test('mobile primary CTA keeps readable text on accent background', async ({ page }) => {

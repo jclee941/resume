@@ -3,6 +3,10 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 const { pathToFileURL } = require('url');
 const { HERO_CONTENT } = require('../../apps/portfolio/lib/hero-content-data');
+const {
+  buildHeroContent,
+  buildProjectRolePaths,
+} = require('../../apps/portfolio/lib/hero-content');
 
 describe('portfolio hiring appeal copy', () => {
   const portfolioDir = path.join(__dirname, '../../apps/portfolio');
@@ -20,8 +24,8 @@ describe('portfolio hiring appeal copy', () => {
       })
     );
   };
-  const buildHeroContent = (locale) =>
-    require('../../apps/portfolio/lib/hero-content').buildHeroContent(locale);
+  const escape = (text) =>
+    text.replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;');
 
   const extractHeroActions = (html) => {
     const groupMatch = html.match(/<div class="hero-cta"[^>]*>([\s\S]*?)<\/div>/);
@@ -35,123 +39,97 @@ describe('portfolio hiring appeal copy', () => {
     }));
   };
 
-  test('Korean hero gives recruiters a direct hiring-decision path', () => {
-    const html = buildHeroContent('ko');
+  test.each(['ko', 'en', 'ja'])('%s hero states the value and keeps one hiring path', (locale) => {
+    const content = HERO_CONTENT[locale];
+    const html = buildHeroContent(locale);
 
-    expect(html).toContain(HERO_CONTENT.ko.availability);
-    expect(html).toContain(HERO_CONTENT.ko.positioning);
+    expect(html).toContain(escape(content.availability));
+    expect(html).toContain(escape(content.positioning));
     expect(html).toContain(
-      `<ul class="hero-proof-list" aria-label="${HERO_CONTENT.ko.proofLabel}">`
+      `<ul class="hero-proof-list" aria-label="${escape(content.proofLabel)}">`
     );
-    expect(html).toContain(HERO_CONTENT.ko.publicProofLabel);
-    for (const item of HERO_CONTENT.ko.proofItems) expect(html).toContain(item);
-    expect(html).toContain(HERO_CONTENT.ko.packetStatus);
-    for (const [, , description] of HERO_CONTENT.ko.publicProofLinks) {
-      expect(html).toContain(description);
-    }
-    for (const [, label] of HERO_CONTENT.ko.quickRoles) expect(html).toContain(label);
-    expect(html).toContain(HERO_CONTENT.ko.reviewLinks[2][1]);
-    for (const [term, detail] of HERO_CONTENT.ko.packetItems) {
-      expect(html).toContain(`<dt>${term}</dt><dd>${detail}</dd>`);
-    }
-    expect(html).not.toContain('공개 증거 바로가기');
-    expect(html).not.toContain('검토할 핵심 증거');
-    expect(html).not.toContain('검토할 핵심 근거');
-    expect(html).not.toContain('보안 운영 · 보안 인프라 · SRE');
-    expect(html).not.toContain('DevSecOps');
-    expect(html).not.toContain('자동화 방식');
+    for (const item of content.proofItems.slice(0, 2)) expect(html).toContain(escape(item));
+    expect(html.match(/class="hero-availability"/g)).toHaveLength(1);
     expect(extractHeroActions(html)).toEqual([
       expect.objectContaining({
         href: expect.stringMatching(/^mailto:/),
-        label: HERO_CONTENT.ko.actions[0],
+        label: content.actions[0],
       }),
-      { href: '#resume', label: HERO_CONTENT.ko.actions[1] },
-      { href: '#projects', label: HERO_CONTENT.ko.actions[2] },
-      expect.objectContaining({ href: '/resume.pdf', label: HERO_CONTENT.ko.actions[3] }),
+      expect.objectContaining({ href: '/resume.pdf', label: content.actions[3] }),
+      { href: '#projects', label: content.actions[2] },
     ]);
-    expect(readPortfolioFile('index.html')).toContain('<!-- HERO_CONTENT_PLACEHOLDER -->');
-  });
-
-  test('English hero gives recruiters a direct hiring-decision path', () => {
-    const html = buildHeroContent('en');
-
-    expect(html).toContain(HERO_CONTENT.en.availability);
-    expect(html).toContain(HERO_CONTENT.en.positioning);
-    expect(html).toContain(HERO_CONTENT.en.proofItems[0].replace(/&/g, '&amp;'));
-    expect(html).toContain(HERO_CONTENT.en.proofItems[1]);
-    expect(html).toContain(HERO_CONTENT.en.packetStatus);
-    for (const [, , description] of HERO_CONTENT.en.publicProofLinks) {
-      expect(html).toContain(description);
-    }
-    for (const [, label] of HERO_CONTENT.en.quickRoles) {
-      expect(html).toContain(`class="role-chip__label">${label}</span>`);
-    }
-    expect(html).not.toContain('Automation Workflow');
-    expect(html).toContain(HERO_CONTENT.en.publicProofLabel);
-    expect(html).not.toContain('Public proof shortcuts');
-    expect(html).not.toContain('Review path');
-    expect(html).not.toContain('Security Infrastructure, and SRE');
-    expect(html).not.toContain('DevSecOps');
-    expect(html).not.toContain('Ready to review');
-    expect(html).not.toContain('Automation approach');
-    expect(html).not.toContain('>Automation<');
-    expect(extractHeroActions(html)).toEqual([
-      expect.objectContaining({
-        href: expect.stringMatching(/^mailto:/),
-        label: HERO_CONTENT.en.actions[0],
-      }),
-      { href: '#resume', label: HERO_CONTENT.en.actions[1] },
-      { href: '#projects', label: HERO_CONTENT.en.actions[2] },
-      expect.objectContaining({ href: '/resume.pdf', label: HERO_CONTENT.en.actions[3] }),
-    ]);
-    expect(readPortfolioFile('index-en.html')).toContain('<!-- HERO_CONTENT_PLACEHOLDER -->');
   });
 
   test.each(['ko', 'en', 'ja'])(
-    '%s hero groups keep actions before evidence and navigation',
+    '%s hero drops the recruiter panel, path cards, public-project cards and role chips',
     (locale) => {
       const html = buildHeroContent(locale);
-      const groups = ['hero-intro', 'hero-cta', 'hero-evidence', 'hero-navigation'];
-      const positions = groups.map((name) => html.indexOf(`class="${name}"`));
-      expect(positions.every((position) => position >= 0)).toBe(true);
-      expect(positions).toEqual([...positions].sort((left, right) => left - right));
-      expect(html).not.toContain('hiring-review-packet__summary');
-      expect(extractHeroActions(html)).toHaveLength(4);
+
+      for (const removed of [
+        'hiring-review-packet',
+        'hero-public-proof',
+        'hero-review-path',
+        'role-quick-paths',
+        'role-chip',
+      ]) {
+        expect(html).not.toContain(removed);
+      }
     }
   );
 
-  test('Japanese hero localizes recruiter evidence and hiring-decision actions', () => {
-    const html = buildHeroContent('ja');
-
-    expect(html).toContain(HERO_CONTENT.ja.availability);
-    expect(html).toContain(HERO_CONTENT.ja.positioning);
-    expect(html).toContain(
-      `<ul class="hero-proof-list" aria-label="${HERO_CONTENT.ja.proofLabel}">`
+  test.each(['ko', 'en', 'ja'])('%s hero keeps identity before the portrait aside', (locale) => {
+    const html = buildHeroContent(locale, undefined, {
+      portraitHtml: '<figure class="hero-portrait"></figure>',
+      trustHtml: '<ul class="hero-trust"></ul>',
+    });
+    const order = ['hero-title', 'hero-positioning', 'hero-cta', 'hero-trust', 'hero-portrait'].map(
+      (name) => html.indexOf(`class="${name}`)
     );
-    expect(html).toContain(HERO_CONTENT.ja.proofItems[0].replace(/&/g, '&amp;'));
-    expect(html).toContain(HERO_CONTENT.ja.proofItems[1]);
-    expect(html).toContain(HERO_CONTENT.ja.packetStatus);
-    for (const [, , description] of HERO_CONTENT.ja.publicProofLinks) {
-      expect(html).toContain(description);
-    }
-    for (const [, label] of HERO_CONTENT.ja.quickRoles) expect(html).toContain(label);
-    expect(html).not.toContain('職務別レビュー経路');
-    expect(html).not.toContain('セキュリティ基盤・SRE');
-    expect(html).not.toContain('DevSecOps');
-    expect(html).not.toContain('確認可能');
-    expect(html).not.toContain('自動化アプローチ');
-    expect(html).not.toContain('>Automation<');
-    expect(extractHeroActions(html)).toEqual([
-      expect.objectContaining({
-        href: expect.stringMatching(/^mailto:/),
-        label: HERO_CONTENT.ja.actions[0],
-      }),
-      { href: '#resume', label: HERO_CONTENT.ja.actions[1] },
-      { href: '#projects', label: HERO_CONTENT.ja.actions[2] },
-      expect.objectContaining({ href: '/resume.pdf', label: HERO_CONTENT.ja.actions[3] }),
-    ]);
 
-    expect(html).not.toMatch(/[\uac00-\ud7a3]{2,}/);
+    expect(order.every((position) => position >= 0)).toBe(true);
+    expect(order).toEqual([...order].sort((left, right) => left - right));
+  });
+
+  test.each(['ko', 'en', 'ja'])(
+    '%s role filter chips render for the projects section',
+    (locale) => {
+      const html = buildProjectRolePaths(locale);
+
+      expect(html).toContain(
+        `<h3 class="role-quick-paths__title">${escape(HERO_CONTENT[locale].quickTitle)}</h3>`
+      );
+      for (const [id, label] of HERO_CONTENT[locale].quickRoles) {
+        expect(html).toContain(`data-role-filter="${id}"`);
+        expect(html).toContain(`class="role-chip__label">${escape(label)}</span>`);
+      }
+    }
+  );
+
+  test('shells place the hero and the role filter in their sections', () => {
+    for (const shell of ['index.html', 'index-en.html']) {
+      const html = readPortfolioFile(shell);
+      const projects = html.slice(html.indexOf('id="projects"'));
+
+      expect(html).toContain('<!-- HERO_CONTENT_PLACEHOLDER -->');
+      expect(projects.indexOf('<!-- PROJECT_ROLE_PATHS_PLACEHOLDER -->')).toBeGreaterThan(0);
+      expect(projects.indexOf('<!-- PROJECT_ROLE_PATHS_PLACEHOLDER -->')).toBeLessThan(
+        projects.indexOf('id="project-list"')
+      );
+    }
+  });
+
+  test('copy avoids retired positioning and meta phrases', () => {
+    const allCopy = JSON.stringify(HERO_CONTENT);
+
+    for (const stale of [
+      'DevSecOps',
+      '한 페이지에 모았습니다',
+      'on one page',
+      '1ページにまとめました',
+    ]) {
+      expect(allCopy).not.toContain(stale);
+    }
+    expect(buildHeroContent('ja')).not.toMatch(/[\uac00-\ud7a3]{2,}/);
   });
 
   test('client recruiter role evidence labels avoid stale operations copy', () => {

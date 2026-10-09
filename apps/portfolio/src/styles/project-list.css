@@ -12,6 +12,7 @@
   grid-template-areas:
     'header meta'
     'notes notes'
+    'diagram diagram'
     'desc desc'
     'tech links';
   column-gap: var(--space-4);
@@ -118,6 +119,51 @@
   color: var(--color-accent-strong);
 }
 
+.project-link-btn .arrow {
+  margin-left: var(--space-1);
+  color: var(--color-accent);
+}
+
+.project-item .project-diagram {
+  grid-area: diagram;
+  margin-top: var(--space-6);
+}
+
+.project-card--featured {
+  padding: var(--space-8);
+  background: linear-gradient(180deg, var(--accent-wash-1), transparent 12rem), var(--glass-bg);
+}
+
+.project-card--featured .project-title {
+  font-size: var(--text-2xl);
+}
+
+@media (min-width: 1024px) {
+  .project-card--featured {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'header meta'
+      'notes diagram'
+      'desc diagram'
+      'tech links';
+    column-gap: var(--space-8);
+  }
+
+  .project-card--featured .project-diagram {
+    align-self: start;
+    width: auto;
+    margin: var(--space-4) 0 0;
+  }
+
+  .project-card--featured .project-diagram__svg--wide {
+    display: none;
+  }
+
+  .project-card--featured .project-diagram__svg--narrow {
+    display: block;
+  }
+}
+
 @media (max-width: 640px) {
   .project-item {
     grid-template-columns: minmax(0, 1fr);
@@ -125,9 +171,14 @@
       'header'
       'meta'
       'notes'
+      'diagram'
       'desc'
       'tech'
       'links';
+    padding: var(--space-5) var(--space-4);
+  }
+
+  .project-card--featured {
     padding: var(--space-5) var(--space-4);
   }
 

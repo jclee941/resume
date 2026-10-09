@@ -32,7 +32,7 @@ test.describe('Mobile recruiter actions', () => {
         };
       });
 
-      expect(layout.links).toHaveLength(4);
+      expect(layout.links).toHaveLength(3);
       expect(layout.scrollWidth).toBeLessThanOrEqual(layout.innerWidth);
       for (const link of layout.links) {
         expect(link.height, `${label} CTA target height: ${link.text}`).toBeGreaterThanOrEqual(44);
@@ -44,7 +44,7 @@ test.describe('Mobile recruiter actions', () => {
     });
   }
 
-  test('mobile hero CTA appears and focuses before recruiter review paths', async ({ page }) => {
+  test('mobile hero CTA appears and focuses before the project role filters', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
@@ -89,7 +89,7 @@ test.describe('Mobile recruiter actions', () => {
           return {
             text,
             isHeroCta: Boolean(active.closest('.hero-cta')),
-            isReviewOrRole: Boolean(active.closest('.hero-review-path, .role-quick-paths')),
+            isReviewOrRole: Boolean(active.closest('.role-quick-paths')),
           };
         })
       );

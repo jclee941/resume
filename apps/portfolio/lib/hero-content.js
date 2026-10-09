@@ -12,6 +12,12 @@ const RESUME_PDF_PATH = '/resume.pdf';
  */
 
 /**
+ * @typedef {Object} HeroParts
+ * @property {string} [portraitHtml]
+ * @property {string} [trustHtml]
+ */
+
+/**
  * @param {unknown} value
  * @returns {string}
  */
@@ -30,12 +36,22 @@ function escapeHtml(value) {
 }
 
 /**
+ * @param {string} [locale]
+ * @returns {HeroContent}
+ */
+function heroContentFor(locale) {
+  return HERO_CONTENT[/** @type {HeroLocale} */ (locale)] || HERO_CONTENT.ko;
+}
+
+/**
  * @param {HeroContent} content
  * @returns {string}
  */
 function renderHeroTitle(content) {
-  const srTitle = content.srTitle ? `<span class="sr-only"> ${content.srTitle}</span>` : '';
-  return `<h1 class="hero-title" role="heading" aria-level="1">${content.title}${srTitle}</h1>`;
+  const srTitle = content.srTitle
+    ? `<span class="sr-only"> ${escapeHtml(content.srTitle)}</span>`
+    : '';
+  return `<h1 class="hero-title" role="heading" aria-level="1">${escapeHtml(content.title)}${srTitle}</h1>`;
 }
 
 /**
@@ -43,65 +59,27 @@ function renderHeroTitle(content) {
  * @returns {string}
  */
 function renderProofList(content) {
-  const items = content.proofItems.map((item) => `<li>${escapeHtml(item)}</li>`).join('');
-  return `<ul class="hero-proof-list" aria-label="${content.proofLabel}">${items}</ul>`;
+  const items = content.proofItems
+    .slice(0, 2)
+    .map((item) => `<li>${escapeHtml(item)}</li>`)
+    .join('');
+  return `<ul class="hero-proof-list" aria-label="${escapeHtml(content.proofLabel)}">${items}</ul>`;
 }
 
 /**
  * @param {HeroContent} content
+ * @param {string} contactEmail
  * @returns {string}
  */
-function renderPublicProofLinks(content) {
-  const links = content.publicProofLinks
-    .map(
-      ([href, label, detail]) =>
-        `<a href="${escapeHtml(href)}"><span>${escapeHtml(label)}</span><strong>${escapeHtml(detail)}</strong></a>`
-    )
-    .join('');
+function renderActions(content, contactEmail) {
+  const [contact, , projects, pdf] = content.actions;
+  const mailto = `mailto:${contactEmail}?subject=${encodeURIComponent(content.mailSubject)}`;
   return (
-    `<section class="hero-public-proof" aria-label="${content.publicProofLabel}">` +
-    `<p class="hero-public-proof__label">${escapeHtml(content.publicProofLabel)}</p>` +
-    `<nav class="hero-public-proof__links">${links}</nav>` +
-    '</section>'
-  );
-}
-
-/**
- * @param {HeroContent} content
- * @returns {string}
- */
-function renderReviewPath(content) {
-  const links = content.reviewLinks
-    .map(
-      ([href, eyebrow, label]) =>
-        `<a href="${href}"><span>${eyebrow}</span><strong>${label}</strong></a>`
-    )
-    .join('');
-  return `<nav class="hero-review-path" aria-label="${content.reviewLabel}">${links}</nav>`;
-}
-
-/**
- * @param {HeroContent} content
- * @returns {string}
- */
-function renderReviewPacket(content) {
-  const items = content.packetItems
-    .map(([term, description], index) => {
-      const step = String(index + 1).padStart(2, '0');
-      return (
-        '<div>' +
-        `<span class="hiring-review-packet__step" aria-hidden="true">${step}</span>` +
-        `<dt>${escapeHtml(term)}</dt><dd>${escapeHtml(description)}</dd></div>`
-      );
-    })
-    .join('');
-  return (
-    `<div class="hiring-review-packet" aria-label="${content.packetLabel}">` +
-    '<div class="hiring-review-packet__header">' +
-    `<p class="hiring-review-packet__eyebrow">${content.packetEyebrow}</p>` +
-    `<p class="hiring-review-packet__status"><span aria-hidden="true"></span>${content.packetStatus}</p>` +
-    '</div>' +
-    `<dl class="hiring-review-packet__list">${items}</dl></div>`
+    `<div class="hero-cta" role="group" aria-label="${escapeHtml(content.actionsLabel)}">` +
+    `<a href="${escapeHtml(mailto)}" class="link-subtle link-subtle--primary">${escapeHtml(contact)}</a>` +
+    `<a href="${RESUME_PDF_PATH}" download="${escapeHtml(content.downloadName)}" class="link-subtle">${escapeHtml(pdf)}</a>` +
+    `<a href="#projects" class="link-subtle link-subtle--quiet">${escapeHtml(projects)}</a>` +
+    '</div>'
   );
 }
 
@@ -123,60 +101,49 @@ function renderRoleQuickPaths(content) {
       );
     })
     .join('');
+  const title = escapeHtml(content.quickTitle);
   return (
-    `<section class="role-quick-paths" aria-label="${content.quickTitle}">` +
+    `<section class="role-quick-paths" aria-label="${title}">` +
     '<div class="role-quick-paths__header">' +
-    `<h2 class="role-quick-paths__title">${content.quickTitle}</h2>` +
-    `<p class="role-quick-paths__desc">${content.quickDesc}</p>` +
+    `<h3 class="role-quick-paths__title">${title}</h3>` +
+    `<p class="role-quick-paths__desc">${escapeHtml(content.quickDesc)}</p>` +
     '</div>' +
-    `<div class="role-quick-paths__controls" role="group" aria-label="${content.quickTitle}">${roles}</div>` +
+    `<div class="role-quick-paths__controls" role="group" aria-label="${title}">${roles}</div>` +
     '</section>'
-  );
-}
-
-/**
- * @param {HeroContent} content
- * @param {string} contactEmail
- * @returns {string}
- */
-function renderActions(content, contactEmail) {
-  const [contact, resume, projects, pdf] = content.actions;
-  return (
-    `<div class="hero-cta" role="group" aria-label="${content.actionsLabel}">` +
-    `<a href="mailto:${contactEmail}?subject=${encodeURIComponent(content.mailSubject)}" class="link-subtle link-subtle--primary">${contact}</a>` +
-    `<a href="#resume" class="link-subtle">${resume}</a>` +
-    `<a href="#projects" class="link-subtle">${projects}</a>` +
-    `<a href="${RESUME_PDF_PATH}" download="${content.downloadName}" class="link-subtle">${pdf}</a>` +
-    '</div>'
   );
 }
 
 /**
  * @param {string} [locale]
  * @param {import('./owner-identity').OwnerIdentity} [identity] - contact owner; defaults to the master resume owner
+ * @param {HeroParts} [parts]
  * @returns {string}
  */
-function buildHeroContent(locale, identity = defaultOwnerIdentity()) {
-  const content = HERO_CONTENT[/** @type {HeroLocale} */ (locale)] || HERO_CONTENT.ko;
+function buildHeroContent(locale, identity = defaultOwnerIdentity(), parts = {}) {
+  const content = heroContentFor(locale);
+  const { portraitHtml = '', trustHtml = '' } = parts;
+  const availability = `<p class="hero-availability">${escapeHtml(content.availability)}</p>`;
   return [
-    '<div class="hero-intro"><header class="hero-identity">',
+    '<div class="hero-layout">',
+    '<header class="hero-identity">',
     renderHeroTitle(content),
     `<p class="hero-role">${escapeHtml(content.role)}</p>`,
-    `<p class="hero-availability">${content.availability}</p>`,
-    `<p class="hero-positioning">${content.positioning}</p>`,
+    `<p class="hero-positioning">${escapeHtml(content.positioning)}</p>`,
     renderActions(content, identity.email),
-    '</header>',
-    renderReviewPacket(content),
-    '</div>',
-    `<section class="hero-evidence" aria-label="${escapeHtml(content.proofLabel)}">`,
     renderProofList(content),
-    renderPublicProofLinks(content),
-    '</section>',
-    '<div class="hero-navigation">',
-    renderReviewPath(content),
-    renderRoleQuickPaths(content),
+    trustHtml,
+    '</header>',
+    `<div class="hero-aside">${portraitHtml}${availability}</div>`,
     '</div>',
   ].join('');
 }
 
-module.exports = { buildHeroContent };
+/**
+ * @param {string} [locale]
+ * @returns {string}
+ */
+function buildProjectRolePaths(locale) {
+  return renderRoleQuickPaths(heroContentFor(locale));
+}
+
+module.exports = { buildHeroContent, buildProjectRolePaths };
