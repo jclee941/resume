@@ -227,10 +227,13 @@ tests depend on them.
 ### About
 
 - **Structure**: `.about-grid` holds the narrative (`.about-content`) and the expertise
-  card (`.expertise-block`); both stretch to equal height. The profile bento follows full
-  width. The former achievements list is gone because it repeated the experience section.
+  card (`.expertise-block`, top-aligned so it never stretches into an empty card). The
+  profile bento follows full width below 1024px; from 1024px the section is one grid where
+  the narrative spans the left column and the expertise tags and the profile bento stack on
+  the right. The former achievements list and the core-competency bullets are gone because
+  they repeated the experience and project sections.
 - **Narrative**: `.about-list` with short accent dashes; no side border.
-- **Expertise**: tags in `--font-label`; competencies with an accent `>` marker.
+- **Expertise**: tags in `--font-label` only.
 - **Measure**: `.about-content` keeps a 70ch cap when standalone; inside the grid it fills
   its column.
 
@@ -238,7 +241,8 @@ tests depend on them.
 
 - **Structure**: `.profile-bento > .profile-card`. The photo card moved to the hero
   (`.hero-portrait`, still a `.profile-card--photo`).
-- **Layout**: three columns from 1024px, two from 641px, one below.
+- **Layout**: two columns in the right column of the about grid from 1024px, two from 641px,
+  one below.
 - **Type**: labels in `--font-label`; values in `--font-sans`.
 
 ### Cover letter
@@ -247,6 +251,10 @@ tests depend on them.
   paragraph rail and closing line.
 - **Rules**: the paragraph rail is a continuous spine with mono indices; the closing
   prompt is mono while the closing sentence is sans.
+- **Fold**: the server renders every paragraph; in the browser all but the first fold
+  behind `.cover-letter__toggle`, whose label names how many paragraphs it reveals (an
+  unlabeled fold once read as missing text). Print shows every paragraph. From 1024px the
+  card is a grid: the headline sits in a left column beside the paragraphs and the toggle.
 
 ### Career timeline
 
@@ -259,11 +267,14 @@ tests depend on them.
 - **States**: active role dot carries a static success ring (no pulse); the expand button
   exists only when there is more (remaining achievements or the role description), and
   cards expand via `.timeline-node.is-expanded .timeline-details`.
+- **Earlier roles**: the four most recent roles stay visible; older ones carry
+  `.timeline-node--older` and appear when `.timeline-more-btn`, labelled with their count,
+  is pressed. Print shows every role.
 
 ### Certifications
 
 - **Structure**: `ul.cert-list > li.cert-item` (status, name, issuer, date).
-- **Layout**: two columns from 769px, rows separated by hairlines.
+- **Layout**: two columns from 769px and three from 1200px, rows separated by hairlines.
 
 ### Project list item
 
@@ -276,6 +287,11 @@ tests depend on them.
   never bracketed text, and only links that belong to the project.
 - **Featured**: the first three projects (by `displayOrder`) render as
   `.project-card--featured` with a diagram; the rest collapse behind the more button.
+- **Phones**: at 640px and below the list is a horizontal snap carousel; cards take 88% of
+  the width so the next one peeks in, and the role filter scrolls the carousel to its first
+  match.
+- **Disclosure controls**: the project, earlier-role and cover-letter buttons share one pill
+  (`project-more.css`) and always state what they reveal.
 
 ### Architecture diagram
 
@@ -291,6 +307,8 @@ tests depend on them.
 
 - **Structure**: JS-rendered `.case-study-deep-dives` grid of `.project-card` buttons that
   open `.deep-dive-overlay`.
+- **Disclosure**: the section stays `hidden` until the project list's more button expands
+  it; that button's label mentions the case studies when they exist.
 - **Motion**: cards fade in only under `prefers-reduced-motion: no-preference`; without
   motion they render visible immediately.
 
@@ -298,13 +316,16 @@ tests depend on them.
 
 - **Structure**: static `article.skill-domain-card` (icon, `h3`, count) with every skill as a
   visible `li.skill-item` pill in a `ul.skill-list` labelled by the heading.
-- **Rules**: no accordion, no search box, no tier label; cards are static surfaces. Three
-  columns from 1024px, two from 641px, one below.
+- **Rules**: no accordion, no search box, no tier label; cards are static surfaces. Cards
+  flow in CSS columns (up to three, each at least 16rem) so short cards fill the gaps a row
+  grid leaves; reading order runs down each column. On phones the cards form a horizontal
+  snap carousel (82% wide) so the next domain peeks in.
 
 ### Operated, contact and footer
 
 - `.operated-grid`: three columns from 769px of surface cards.
-- `.contact-grid`: three columns from 768px of interactive surfaces with a `>` prompt.
+- `.contact-grid`: two columns on phones and three from 768px of interactive surfaces with a
+  `>` prompt.
 - `.site-footer`: muted build line; links underlined.
 
 ### Mobile action bar and back-to-top
