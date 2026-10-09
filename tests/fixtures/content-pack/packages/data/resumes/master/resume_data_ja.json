@@ -778,17 +778,6 @@
       "tagline": "金星オコケシサネzu",
       "language": "DabePI",
       "githubUrl": null,
-      "demoUrl": "https://grafana.jclee.me/dotazo-girotamitu/d179nez28po64b87877464527550396e",
-      "dashboards": [
-        {
-          "name": "Grafana",
-          "url": "https://grafana.jclee.me/dotazo-girotamitu/d179nez28po64b87877464527550396e"
-        },
-        {
-          "name": "ELK",
-          "url": "https://kibana.jclee.me/s/mipotigoz-nivo/pub/girotamitu?kure_lotuvazo_molu=mipotigoz_nivo#/tiko/mipotigoz-nivo-nokuteril"
-        }
-      ],
       "featured": true,
       "displayOrder": 2,
       "diagram": {
@@ -866,7 +855,6 @@
       "tagline": "シイケコヘエコメvuzis",
       "language": "Ziketi",
       "githubUrl": "https://github.com/tevus941/porifo",
-      "demoUrl": "https://kibana.jclee.me/s/mipotigoz-nivo/pub/girotamitu?kure_lotuvazo_molu=mipotigoz_nivo#/tiko/mipotigoz-nivo-nokuteril",
       "dashboards": [],
       "featured": true,
       "displayOrder": 1,
@@ -1103,19 +1091,16 @@
       "id": "tevus-fiz-bivake-pub",
       "name": "tevus-fiz BelUbu Vis",
       "period": "2026.04 ~ 現在",
-      "githubUrl": "https://github.com/tevus941/tevus-fiz",
-      "description": "星海スフイノミのNUgekilOFOnokulo、とさ川林を同じDIlipelamuvelipesagumavebip。tevus-moni、DOBImeguFIBadufaGEZ NAkumir、シlitebitor・dugepukage・ソノミメハオソトマgevotuvIzifo KovarizetiluzEdoMam Sagep。ノハヘpubofivafegusomab、森風ソカはTABadukalog。",
+      "description": "星海スフイノミのNUgekilOFOnokulo、とさ川林を同じDIlipelamuvelipesagumavebip。tevus-moni、DOBImeguFIBadufaGEZ NAkumir、シlitebitor・dugepukage・ソノミメハオソトマgevotuvIzifo KovarizetiluzEdoMam Sagep。ノハヘdofunomisevakusaziruk。",
       "highlights": [
         "TUVAboniFEBudoPUT KElanoti",
         "シlitebitor・dugepukage・ソノミメハオソトマvIgizo LuvoNEPesumo",
-        "川雨花木山ノハヘriguranegukil",
-        "BelUbu GugetumibadiVORipe"
+        "川雨花木山ノハヘriguranegukil"
       ],
       "technologies": [
         "Ziketi",
         "BelUbu Vis",
         "BelUbu Zesotup",
-        "SIR",
         "BelUbu PIG"
       ],
       "featured": true,
@@ -1150,7 +1135,6 @@
       "id": "tav-kuzifu-madit-badebuf",
       "name": "Nam Napozu Zadig Zepinat",
       "period": "2025.10 ~ 現在",
-      "githubUrl": "https://github.com/tevus941/tav",
       "description": "オケチフノアイの森日(テアヌエノモ石土、月雨、林田風アコヘサ)を星川こはえ日金星で繰り返す山星こさいみもあ。Ridozifom、vifod、MugikomIzamubomunasuVagozesu PIPinamevogumonuse、川林の林木はDumaresirev。新こさテアヌエノモが見えのまめFelumitev、Pimofalezulopisoduvizodel。",
       "highlights": [
         "森風花石アコヘサせけみて田風金山雨",
@@ -1286,16 +1270,7 @@
       "icon": "📊",
       "title": "Vebopan + Zodusitafu",
       "description": "Zurekosifepumikun（ネオタハカ火雨/空花森）",
-      "status": "sumapel",
-      "url": "https://grafana.jclee.me"
-    },
-    {
-      "id": "fok-telup",
-      "icon": "🔍",
-      "title": "SIR Vovez",
-      "description": "ソカ火雨/林木/空花森（Dudagipokalek + Lizofu）",
-      "status": "sumapel",
-      "url": "https://elk.jclee.me"
+      "status": "sumapel"
     },
     {
       "id": "pimusap",
@@ -1366,11 +1341,9 @@
     "email": "fixture@example.com",
     "phone": "010-0000-0000",
     "github": "https://github.com/tevus941",
-    "githubBot": "https://github.com/tevus941/tevus-fiz",
     "linkedin": "https://linkedin.com/in/tevus0109",
     "velog": "https://velog.io/@lob941",
-    "website": "https://resume.jclee.me",
-    "monitoring": "https://grafana.jclee.me"
+    "website": "https://resume.jclee.me"
   },
   "availability": "日山星 · 森星川花林土、月海雨土風",
   "awards": [
