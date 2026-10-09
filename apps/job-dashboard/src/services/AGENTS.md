@@ -1,50 +1,55 @@
 # SERVICES KNOWLEDGE BASE
 
-**Generated:** 2026-07-22
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Dashboard services contain Worker-side integrations for auth, notifications,
-browser helpers, external job clients, and runtime config. They sit below
-handlers/routes and above shared packages or Cloudflare bindings.
+Dashboard integrations for authentication, platform sessions, resume/history sync, and notifications.
+
+Scope reason: score 14; integration and persistence domain.
 
 ## STRUCTURE
 
 ```text
 services/
-├── auth.js                    # session/token policy and auth helpers
-├── auth-webhook-signature.js  # webhook HMAC + nonce replay checks
-├── config.js                  # config endpoint support
-├── linkedin-client.js         # LinkedIn scraping/search adapter
-├── remember-client.js         # Remember platform adapter
-├── notifications.js           # notification orchestration facade
-├── notifications/             # delivery, formatting, Telegram actions
-├── browser-session.js         # Browser Rendering session borrow/release (BROWSER_SESSION DO)
-├── platform-session.js        # encrypted KV platform sessions (auth:<platform>)
-├── remember/                  # Remember login, job search and apply APIs
-├── skcareers/                 # SK Careers login and MyPage resume editor/save
-├── resume-platform-sync/      # Worker-native resume sync (Wanted, JobKorea, SK Careers, Remember)
-└── rate-limiter/              # token-bucket service + tests
+  application-history/    Adapters, timestamps, repository, sync orchestration
+  notification/           Singular compatibility export barrel
+  notifications/          Delivery, formatting, history, Telegram actions
+  remember/               Login, search, apply, Browser Rendering REST
+  resume-platform-sync/   Platform-specific resume editors and dispatch
+  skcareers/              Login and resume editor/save helpers
+  rate-limiter/           Tests of shared limiter behavior; no service implementation
+  __tests__/              Service integration tests
 ```
+
+## WHERE TO LOOK
+
+| Task                   | Location                               | Notes                                        |
+| ---------------------- | -------------------------------------- | -------------------------------------------- |
+| Auth and replay policy | `auth.js`, `auth-webhook-signature.js` | Session tokens, HMAC, nonces                 |
+| Config                 | `config.js`                            | Persistent dashboard configuration           |
+| Browser lifecycle      | `browser-session.js`                   | Borrow/release sessions via broker           |
+| Session storage        | `platform-session.js`                  | Encrypted KV values under platform keys      |
+| Request filtering      | `jobkorea-request-filter.js`           | Avoid slow third-party browser traffic       |
+| Notification facade    | `notifications.js`                     | Both facade and singular barrel have callers |
+| Platform dispatch      | `resume-platform-sync/index.js`        | Supported sync list and structured outcomes  |
 
 ## CONVENTIONS
 
-- Keep platform clients and notification adapters deterministic and injectable.
-- Use `@resume/shared/*` and `@resume/env/*` for shared policy instead of
-  duplicating validators, loggers, retry logic, or rate-limit primitives.
-- KV writes need TTLs unless the parent AGENTS explicitly allows otherwise.
-- Webhook signature and nonce checks are security boundaries; keep failures
-  explicit and auditable.
+- Sync covers Wanted, JobKorea, SK Careers, and Remember; unsupported platforms return explicit outcomes.
+- Remember uses Browser Rendering REST because Worker and binding egress are blocked by its WAF.
+- Keep application-history adapters separate from the idempotent repository and sync orchestration.
+- Preserve exact application timestamps through platform-specific normalization.
+- Keep session encryption and expiry in `platform-session.js`, not individual clients.
+- Preserve both live notification entry paths when changing exports.
 
 ## ANTI-PATTERNS
 
-- Do not log tokens, cookies, Telegram payload secrets, or raw auth headers.
-- Do not add app-specific logic to `@resume/shared` just to simplify a service.
-- Do not make services call route modules or handlers.
-- Do not swallow delivery/search failures without structured error output.
-
----
+- Do not make services import route modules or request handlers.
+- Do not treat a failed platform sync as a successful empty result.
+- Do not restore a token-bucket implementation in the test-only `rate-limiter/` directory.
+- Do not discard a concurrent history update merely to avoid an insert conflict.
 
 Parent: [../AGENTS.md](../AGENTS.md)

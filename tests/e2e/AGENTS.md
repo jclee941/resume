@@ -1,54 +1,49 @@
 # E2E TESTS KNOWLEDGE BASE
 
-**Generated:** 2026-07-22
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Playwright end-to-end suite for portfolio, dashboard, security, accessibility,
-and deployment verification. It discovers 39 specs across desktop Chromium and
-four Chromium-backed mobile profiles (iPhone SE, iPhone 12 Pro, Pixel 5, iPad).
-Local runs default to `http://localhost:8787`; production verification sets
-`SKIP_WEBSERVER=1` and `PLAYWRIGHT_BASE_URL=https://resume.jclee.me`.
+Playwright suites exercise portfolio, dashboard, accessibility, security, and deployment surfaces.
+
+Boundary: retained browser-runtime domain with server, locale, device, and capture contracts.
 
 ## WHERE TO LOOK
 
-| Task                        | Location                                                                           | Notes                               |
-| --------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------- |
-| Baseline portfolio behavior | `portfolio.spec.js`, `portfolio-ui.spec.js`                                        | core UI and interaction coverage    |
-| Dashboard behavior          | `job-dashboard.spec.js`, `dashboard.spec.js`                                       | job automation and API-facing flows |
-| Security and auth checks    | `security.spec.js`, `deploy-verification.spec.js`                                  | policy and endpoint validation      |
-| Accessibility gates         | `accessibility.spec.js`, `accessibility-axe.spec.js`, `accessibility-wcag.spec.js` | a11y compliance checks              |
-| Mobile and performance      | `mobile.spec.js`, `mobile-responsive.spec.js`, `performance.spec.js`               | device and perf expectations        |
-| SEO/i18n behavior           | `seo.spec.js`, `seo-hreflang.spec.js`                                              | metadata, canonical, locale links   |
-| Visual regression           | `visual.spec.js`, `visual.spec.js-snapshots/`                                      | snapshot-based UI drift detection   |
-| Shared E2E helpers          | `fixtures/helpers.js`                                                              | common setup/helper utilities       |
+| Task                     | Location                                               | Notes                                             |
+| ------------------------ | ------------------------------------------------------ | ------------------------------------------------- |
+| Portfolio interaction    | `portfolio.spec.js`, `portfolio-ui.spec.js`            | Barrel plus focused behavior                      |
+| Dashboard coverage       | `dashboard*.spec.js`, `job-dashboard.spec.js`          | UI and API contracts                              |
+| Security and auth        | `security.spec.js`, `auth-login.spec.js`               | Policy and login behavior                         |
+| Accessibility            | `accessibility*.spec.js`                               | Semantic, keyboard, axe, visual checks            |
+| Device behavior          | `mobile.spec.js`, `mobile-*.spec.js`                   | Mobile-project matching differs                   |
+| Deployment smoke         | `worker-health.spec.js`, `deploy-verification.spec.js` | Root smoke commands                               |
+| Copy ledger              | `portfolio-public-copy-ledger*.js`                     | Capture and source-audit contracts                |
+| Mock and capture helpers | `fixtures/AGENTS.md`                                   | Dashboard environment, mock sites, ledger helpers |
+| Visual assertions        | `visual.spec.js`, `visual-helpers.js`                  | Local ignored baselines                           |
 
 ## CONVENTIONS
 
-- Use `*.spec.js` naming for Playwright tests in this directory.
-- Prefer resilient locators (data-testid, role-based) and deterministic waits.
-- Use `domcontentloaded` for page load state; avoid `networkidle` on portfolio pages.
-- Keep test flows independent; avoid cross-test state coupling.
-- Co-locate visual snapshots under `visual.spec.js-snapshots/` only.
-- Mobile specs match `mobile.spec.js` pattern; desktop specs run on Chromium.
-- Production verification sets `SKIP_WEBSERVER=1` and `PLAYWRIGHT_BASE_URL=https://resume.jclee.me`; local specs should not bake that host into assertions.
+- Root configuration discovers 73 tracked specs at this snapshot; thin barrels require split helper modules.
+- Chromium runs all specs; four Chromium-backed mobile projects match only `mobile.spec.js`.
+- Default local base URL is `http://localhost:8787`; root Wrangler configuration serves the deployed entrypoint.
+- `SKIP_WEBSERVER=1` targets the configured remote URL without starting Wrangler.
+- `PLAYWRIGHT_BASE_URL` and `PORTFOLIO_LEDGER_URL` must agree when both are supplied.
+- `PORTFOLIO_FORCE_NEW_SERVER=1` prevents local server reuse.
+- Locale and request headers use `ko-KR` to avoid a redirect changing root-route assertions.
+- Baselines are ignored materialized-content captures; `updateSnapshots: 'missing'` creates absent baselines only.
+- Screenshot mismatch ratio is 0.05; retries are 2 in CI and 0 locally; traces attach on first retry.
+- Run one suite with `npx playwright test <name> --project=chromium`.
 
 ## ANTI-PATTERNS
 
-- Never use `networkidle` as a required load state for portfolio pages (async widgets and animations cause timeouts).
-- Never rely on arbitrary sleep-heavy timing in place of explicit conditions.
-- Never hardcode environment-specific host assumptions inside test bodies.
-- Never commit broad `.skip`/`.only` patterns in shared E2E specs.
-- Never bypass security/accessibility suites to force green pipelines.
-- Never use `describe.skip` — use runtime `test.skip` for conditional skips.
-
-## NOTES
-
-- E2E runtime behavior is sensitive to animations and async widget loading; keep assertions phase-aware.
-- Update snapshots intentionally with review when UI semantics change.
-- Retries: 2 in CI, 0 locally; use `test.skip()` for known flaky tests pending fixes.
+- Do not assume every `mobile-*.spec.js` runs under every mobile project.
+- Do not bake the production hostname into local assertions.
+- Do not use broad `describe.skip`; conditional `test.skip` must name an actual unavailable capability.
+- Do not treat first-time baseline creation as a comparison against a reviewed screenshot.
+- Do not remove security or accessibility checks to accommodate an environment mismatch.
 
 ---
 

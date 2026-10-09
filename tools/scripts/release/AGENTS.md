@@ -1,73 +1,46 @@
 # RELEASE DOMAIN KNOWLEDGE BASE
 
-**Generated:** 2026-07-22
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Release tooling: deterministic version decisions, immutable source bundles,
-idempotent GitHub release publication, and separation from Cloudflare Workers
-production deploy. Operators invoke the two subpackages directly.
+Two Go CLIs calculate release decisions and publish verified assets through an ownership-checked transaction.
 
-## STRUCTURE
-
-```text
-./
-├── next-version/          # Decide next SemVer tag and release policy
-│   ├── main.go            # CLI entry, flag parsing
-│   ├── policy.go          # Release decision logic (publish/no-release/superseded)
-│   ├── repository.go      # Git tag/commit inspection
-│   ├── policy_test.go
-│   └── main_test.go
-├── publish/               # Publish verified draft to GitHub Releases
-│   ├── main.go            # CLI entry, flag parsing
-│   ├── transaction.go     # Idempotent publish state machine
-│   ├── github_client.go   # GitHub API client
-│   ├── input.go           # Manifest/notes loading
-│   ├── types.go           # Release, PublishRequest, Outcome types
-│   ├── transaction_test.go
-│   ├── fake_client_test.go
-│   └── github_client_test.go
-└── AGENTS.md              # This file
-```
+Boundary: retained immutable-release and publication-state-machine domain.
 
 ## WHERE TO LOOK
 
-| Task                  | Location                     | Notes                                                     |
-| --------------------- | ---------------------------- | --------------------------------------------------------- |
-| Version decision      | `next-version/policy.go`     | SemVer bump logic, release policy                         |
-| Git inspection        | `next-version/repository.go` | Tag listing, commit range, remote tip                     |
-| Publish state machine | `publish/transaction.go`     | Idempotent draft → publish flow                           |
-| GitHub API            | `publish/github_client.go`   | Release CRUD, asset upload, tag operations                |
-| Type contracts        | `publish/types.go`           | Release, PublishRequest, Outcome, ReleaseClient interface |
-| Manifest format       | `publish/input.go`           | release-manifest.json schema and loading                  |
+| Task                  | Location                      | Notes                                         |
+| --------------------- | ----------------------------- | --------------------------------------------- |
+| Decision CLI          | `next-version/main.go`        | Flags and JSON output                         |
+| Version policy        | `next-version/policy.go`      | Publish, no-release, superseded decisions     |
+| Repository inspection | `next-version/repository.go`  | Tags, commit range, remote tip                |
+| Publish CLI           | `publish/main.go`             | Publication inputs                            |
+| Asset validation      | `publish/input.go`            | Manifest and SHA-256 verification             |
+| Transaction           | `publish/transaction.go`      | Snapshot, ownership, upload, publish, cleanup |
+| API adapter           | `publish/github_client.go`    | Release and tag operations                    |
+| Test doubles          | `publish/fake_client_test.go` | Transaction behavior without external writes  |
 
 ## CONVENTIONS
 
-- **Immutable inputs**: `TARGET_SHA` (40-hex) pinned at prepare stage; all downstream steps use same commit.
-- **Deterministic source**: `git archive` run twice, byte-for-byte identical (gzip -n -9, no timestamps).
-- **Idempotent publish**: Publish transaction checks for existing release before any write; returns `OutcomeIdempotent` if already published.
-- **Ownership markers**: Draft releases tagged with `run-marker` (e.g., `release-run:12345`) to prevent cross-run interference.
-- **Separation of concerns**: Release tooling creates GitHub release metadata only; Cloudflare Workers Builds owns production deploy authority.
-- **Decision artifact**: `release-decision.json` created by `next-version`, uploaded before verify stage, downloaded by publish stage.
-- **Manifest contract**: `release-manifest.json` contains target SHA, tag, asset name, SHA-256 digest, and size; `publish` verifies it against the source asset.
+- Invoke packages with `go -C tools/scripts run ./release/next-version` or `./release/publish` plus required flags.
+- `next-version` accepts `--repo`, `--target`, `--remote-tip`, `--trigger`, and `--output`.
+- Decision output defaults to `release-decision.json`; no workflow automatically transfers it between stages.
+- Targets are immutable 40-hex SHAs; release tags use `vMAJOR.MINOR.PATCH`.
+- Manifest fields are `target_sha`, `tag`, `name`, `digest`, and `size`; the asset bytes must match.
+- Draft ownership uses a `release-run:<digits>` marker and a run-created-tag flag.
+- An already published matching release returns an idempotent outcome before writes.
+- Remote-tip guards run before first write and publication; cleanup rechecks ownership and target.
+- `go -C tools/scripts test ./release/publish ./release/next-version` covers both CLIs.
 
 ## ANTI-PATTERNS
 
-- Never edit generated artifacts (source bundle, manifest, release notes) by hand.
-- Never bypass the prepare stage decision; always pin `TARGET_SHA` to a specific commit.
-- Never treat GitHub release publication as production deployment; Cloudflare Workers Builds is the deploy authority.
-- Never reuse `run-marker` across different release runs.
-- Never publish without completing the verify stage first.
-- Never hardcode version numbers; derive from git tags and commit history via `next-version`.
-
-## NOTES
-
-- `next-version` exits with decision in `release-decision.json`; the operator validates its shape before proceeding.
-- `publish` is a pure transaction: checks for idempotency, creates draft, uploads asset, publishes, or cleans up on failure.
-- Release notes are generated from commit log range (`git log --format='- %s (%h)'`) and included in GitHub release body.
-- Source bundle is deterministic and reproducible; verification builds it twice and compares byte-for-byte.
+- Do not describe an absent prepare/archive workflow as automated behavior of these CLIs.
+- Do not reuse another run's marker or delete a tag this run did not create.
+- Do not publish an asset when its digest, size, target, or tag disagrees with the manifest.
+- Do not treat release metadata publication as proof of deployed Worker state.
 
 ---
 

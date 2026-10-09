@@ -1,154 +1,122 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-07-22 (verified 164e83ac)
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Resume monorepo: one Cloudflare Worker (portfolio plus the in-process job
-dashboard), Cloudflare-native job automation (Cron Triggers, Workflows, KV, D1,
-Browser Rendering), shared type/schema/contract packages, content SSoT data, and
-self-hosted observability support.
-
-Personal content (resume data, application packets, portfolio copy, HTML shells,
-assets, downloads, `ta/`) is not committed. The D1 `content_files` table is its
-SSoT (ADR 0011); the working tree holds a gitignored, materialized copy. See
-`docs/guides/CONTENT_PACK.md`.
+Cloudflare-native resume monorepo: one Worker serves portfolio and in-process
+dashboard, with Cron Triggers, six Workflows, queues, KV, D1, and Browser Rendering.
+Personal content belongs to D1 `content_files` (SSoT, ADR 0011); the working tree
+holds a gitignored materialized copy. See `docs/guides/CONTENT_PACK.md`.
 
 ## STRUCTURE
 
 ```text
 ./
-├── apps/
-│   ├── portfolio/        # public Cloudflare Worker; worker.js is generated
-│   └── job-dashboard/    # dashboard Worker, queues, workflows
-├── packages/
-│   ├── cli/              # resume operator CLI
-│   ├── data/             # authoritative resume/application content
-│   ├── env/              # runtime environment validation
-│   ├── shared/           # cross-package utilities and clients
-│   ├── types/            # canonical JSDoc/TS domain types
-│   ├── schemas/          # Zod runtime schemas
-│   └── contracts/        # OpenAPI and Worker env contracts
-├── applications/         # per-role application packets and generated run logs
-├── tools/                # CI/build/deploy/verification scripts
-├── tests/                # Jest, Node, Playwright suites
-├── infrastructure/       # Cloudflare, DB, monitoring, system automation
-├── docs/                 # ADRs, architecture, conventions, guides, security
-├── ta/                   # Python/PPTX TA profile generation
-├── third_party/          # dependency-license coordination; not a build system
-└── package.json          # workspace root and command hub
+├── apps/                 # portfolio edge entry + job-dashboard runtime
+├── packages/             # cli, data, env, shared, types, schemas, contracts
+├── applications/         # materialized application packets and run outputs
+├── tools/                # Go operations, JS validators, PDF/PPTX generators
+├── tests/                # Jest, Node, Playwright; app suites also colocated
+├── infrastructure/       # Cloudflare resources and observability configuration
+├── docs/                 # current contracts alongside historical records
+├── ta/                   # materialized presentations; only guidance is tracked
+├── third_party/          # license coordination and historical Bazel proposals
+├── wrangler.jsonc        # sole runtime configuration
+└── package.json          # npm workspace command hub
 ```
 
 ## WHERE TO LOOK
 
-| Task                    | Location                                                | Notes                                                                                       |
-| ----------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Portfolio runtime/build | `apps/portfolio/`                                       | edit `entry.js`, HTML, `src/`, or `lib/`; never hand-edit `worker.js`                       |
-| Dashboard/API workflows | `apps/job-dashboard/`                                   | Worker fetch/queue/scheduled entry, handlers, middleware, workflows                         |
-| Resume/content SSoT     | `packages/data/`                                        | `resumes/master/resume_data.json` is authoritative resume data (D1 content pack)            |
-| Content pack            | `docs/guides/CONTENT_PACK.md`, `tools/scripts/content/` | D1 SSoT for personal content: pull/push/ensure, guards, fake fixtures                       |
-| Application packets     | `applications/`                                         | role-specific resumes, cover letters, previews, run outputs                                 |
-| Types and validation    | `packages/types/`, `packages/schemas/`                  | define domain types once, validate with Zod schemas                                         |
-| Workspace packages      | `packages/`                                             | shared package boundary rules; child guides own package-local rules                         |
-| Contracts               | `packages/contracts/`                                   | OpenAPI spec and Cloudflare Worker env contract surface                                     |
-| Shared utilities        | `packages/shared/`                                      | errors, logger, retry, crypto, rate-limit, auth, browser, clients                           |
-| Operational scripts     | `tools/scripts/`                                        | Go-first operations; child guides own release, verification, enrichment, and secret tooling |
-| Tests                   | `tests/`                                                | unit/integration/e2e child guides define test-layer rules                                   |
-| Repository automation   | `.github/`                                              | minimal validation CI; production deploy authority is Cloudflare Workers Builds             |
-| Architecture rules      | `docs/conventions/architecture-rules.md`                | 200-LOC rule, naming, automation SSoT, script language policy                               |
-| Secrets/security        | `docs/security/`, `tools/scripts/onepassword/`          | secret rotation and local 1Password env tooling                                             |
+| Task                           | Location                                                          | Notes                                                                               |
+| ------------------------------ | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Edge routing and build         | `apps/portfolio/AGENTS.md`                                        | Source entry, browser assets, build/runtime split                                   |
+| Dashboard, MCP, automation     | `apps/job-dashboard/AGENTS.md`                                    | Child guides cover handlers, queues, workflows, services                            |
+| Canonical and tailored content | `packages/data/AGENTS.md`, `applications/AGENTS.md`               | Master locale JSON is canonical; role variants have an independent minimum contract |
+| Content transport and guards   | `tools/scripts/content/AGENTS.md`                                 | Manifest, D1 pull/push/ensure, generated fixtures                                   |
+| Package boundaries             | `packages/AGENTS.md`                                              | Types, schemas, contracts, env, shared exports, CLI                                 |
+| Operations and rendering       | `tools/scripts/AGENTS.md`, `tools/scripts/build/AGENTS.md`        | Go module roots; Pandoc/XeLaTeX PDFs and Python PPTX                                |
+| Tests and browser fixtures     | `tests/AGENTS.md`, `tests/e2e/fixtures/AGENTS.md`                 | Runner ownership and mock/external dashboard selection                              |
+| CI and architecture            | `.github/AGENTS.md`, `docs/conventions/architecture-rules.md`     | Validation-only CI, source limits, ownership                                        |
+| Infrastructure and secrets     | `infrastructure/AGENTS.md`, `tools/scripts/onepassword/AGENTS.md` | Resource ownership, observability, credential flows                                 |
 
 ## CODE MAP
 
-| Symbol/File                 | Type            | Location                                                     | Role                                                                |
-| --------------------------- | --------------- | ------------------------------------------------------------ | ------------------------------------------------------------------- |
-| `package.json`              | script hub      | `./package.json`                                             | root build/test/sync/deploy command surface                         |
-| `fetch` worker entry        | Worker          | `apps/portfolio/entry.js`                                    | merged edge router for portfolio plus in-process `/job/*` dashboard |
-| `generate-worker.js`        | build generator | `apps/portfolio/`                                            | creates `apps/portfolio/worker.js` from HTML/data/lib modules       |
-| `fetch`/`queue`/`scheduled` | Worker          | `apps/job-dashboard/src/index.js`                            | dashboard request, queue, and scheduled orchestrator                |
-| `Router`                    | class           | `apps/job-dashboard/src/router.js`                           | route matching and Worker request dispatch                          |
-| `QueueWorkflowDispatcher`   | class           | `apps/job-dashboard/src/queues/queue-workflow-dispatcher.js` | queue message to Workflow binding switchboard                       |
-| `ApplicationWorkflow`       | class           | `apps/job-dashboard/src/workflows/application.js`            | application automation workflow orchestration                       |
-| `validateEnv()`             | function        | `packages/env/src/parse.js`                                  | environment validation choke point                                  |
-| `AppError`/`HttpError`      | classes         | `packages/shared/src/errors/index.js`                        | shared typed error hierarchy                                        |
-| `resumeSchema`              | Zod schema      | `packages/schemas/src/resume.js`                             | runtime resume validation SSoT                                      |
-| `APPLICATION_STATUSES`      | domain constant | `packages/types/src/application.js`                          | canonical application status values                                 |
-| `openapi.yaml`              | contract        | `packages/contracts/`                                        | API contract source                                                 |
+Refs are textual matching lines / files, not semantic caller counts; tests count.
+Runtime counts include declarations and exclude `dist`; operations counts cover
+335 scoped JS/CJS/MJS files, excluding defining files and fake content packs.
+
+| Symbol                       | Type           | Location                                             | Refs     | Role                                              |
+| ---------------------------- | -------------- | ---------------------------------------------------- | -------- | ------------------------------------------------- |
+| `jsonResponse`               | function       | `apps/job-dashboard/src/middleware/cors.js:70`       | 172 / 39 | Dashboard responses                               |
+| `validateEnv`                | function       | `packages/env/src/parse.js:40`                       | 38 / 8   | Environment parser; portfolio also uses this name |
+| `AppError`                   | class          | `packages/shared/src/errors/index.js:44`             | 54 / 5   | Typed error base                                  |
+| `APPLICATION_STATUSES`       | constant       | `packages/types/src/application.js:18`               | 7 / 3    | Canonical application states                      |
+| `runWorkerBuild`             | function       | `apps/portfolio/lib/build-orchestrator.js:130`       | 26 / 3   | Worker build orchestration                        |
+| `ApplicationWorkflow`        | class          | `apps/job-dashboard/src/workflows/application.js:79` | 22 / 13  | Application orchestration                         |
+| `loadPack`                   | async function | `tools/scripts/content/pack.mjs:40`                  | 18 / 8   | Shared pack definition                            |
+| `runSync`                    | function       | `tools/scripts/utils/resume-sync-runner.js:124`      | 14 / 6   | Three-locale validation and generation            |
+| `ownerIdentity`              | function       | `tests/helpers/owner-data.js:50`                     | 16 / 7   | Materialized test identity                        |
+| `createDashboardEnvironment` | async function | `tests/e2e/fixtures/dashboard-environment.cjs:40`    | 12 / 6   | Mock/external dashboard selection                 |
 
 ## CONVENTIONS
 
-- npm workspaces are the only build orchestrator; Bazel was removed by ADR 0008.
-- Workspace dependencies use `*`; do not reintroduce `file:../..` links.
-- `npm run build` ensures the content pack (`content ensure`), runs SSoT sync, then
-  generates the portfolio worker.
-- Personal content is materialized, never committed: `npm run content:pull` locally
-  (needs Cloudflare credentials), `CONTENT_SOURCE=fixtures` in GitHub CI (the fake pack in
-  `tests/fixtures/content-pack/`), `WORKERS_CI=1` on Workers Builds (real pack from D1,
-  fail closed). `tools/scripts/content/content-pack.json` defines the pack and drives
-  `.gitignore`, the guards, and D1 sync.
-- Node is `>=22`; ESLint blocks unsanctioned cross-app imports.
-- Dashboard routes run through `apps/portfolio/entry.js` per ADR 0009.
-- Cloudflare Workers Builds owns production deploy authority. Local Wrangler
-  commands are verification or emergency tools, not the normal release path.
-- Shared TS flags and aliases live in `tsconfig.base.json`; root `checkJs` is off,
-  while `tsconfig.strict.json` ratchets strict checking across an explicit JS allowlist.
-- Entry points compose/register only. Runtime flow follows handlers → services →
-  repositories → clients, with external access behind adapters.
-- Secrets come from Cloudflare Workers Secrets or 1Password-managed local flows;
-  never commit `.env*`, session JSON, cookies, or API tokens.
-- New operational behavior is Go-first; existing JS-domain generators and
-  deterministic validators remain explicit child-guide exceptions.
+- npm workspaces alone orchestrate builds (Bazel removed, ADR 0008); workspace dependencies use `*`, never `file:../..`.
+- Node requires `>=22`; ESLint blocks unsanctioned cross-app imports.
+- `npm run build` ensures content, syncs SSoT, then generates the portfolio Worker.
+- GitHub CI uses `CONTENT_SOURCE=fixtures`; Workers Builds uses `WORKERS_CI=1`, refusing fixtures and pulling D1 fail-closed.
+- `tools/scripts/content/content-pack.json` drives pack membership, ignore rules, guards, and D1 sync; local ensure requires a materialization manifest and fixture ensure guards unpushed edits.
+- Dashboard routes enter through `apps/portfolio/entry.js` (ADR 0009); public `/job/mcp` maps to internal `/mcp`, retaining REST submission gates.
+- Cloudflare Workers Builds owns production deploys; local Wrangler is verification or emergency only. Root `npm run deploy` intentionally fails.
+- Shared TS flags/aliases live in `tsconfig.base.json`; root `checkJs` is off and `tsconfig.strict.json` ratchets an explicit JS allowlist.
+- Entry points only compose/register; handlers → services → repositories → clients, with external access behind adapters.
+- Secrets use Cloudflare Workers Secrets or 1Password flows; never commit `.env*`, session JSON, cookies, or API tokens.
+- Operations are Go-first; JS-domain generators and deterministic validators are child-guide exceptions.
+- Define each domain type once in dependency-free `@resume/types`, validate in `@resume/schemas`, publish contracts in `@resume/contracts`.
 
 ## ANTI-PATTERNS
 
-- Never edit generated artifacts directly: `apps/portfolio/worker.js`, derived
-  resume/application outputs, generated dashboards, or run artifacts.
-- Never hardcode credentials, resume IDs, worker bindings, Cloudflare resource
-  IDs, cookies, or session material.
-- Never bypass CI/security/verification gates to make a deploy or release look
-  green.
-- Never use `networkidle` as a required Playwright load state for portfolio
-  pages; use `domcontentloaded` or explicit waits.
-- Never define the same domain type in multiple packages; put it in
-  `@resume/types` and validate via `@resume/schemas`.
-- Never suppress type errors with `as any`, `@ts-ignore`, or broad unchecked
-  casts.
-- Never exceed the project 200-LOC source-file limit without splitting.
-- Never commit pack paths or personal content (names, contacts, employers, schools,
-  awards, certifications, project names). CI runs `content guard --tracked` and
-  pre-commit runs `content guard --staged`. Never hand-edit fixtures; regenerate them.
-- Never include concrete performance metrics in portfolio or resume text; keep
-  claims factual and verifiable without percentages, ratios, or absolute metrics.
+- Never hand-edit generated artifacts: `apps/portfolio/worker.js`, derived resume/application outputs, dashboards, run artifacts, or fixtures; regenerate from source.
+- Never commit pack paths or personal content, including application PDFs. CI runs `content guard --tracked`; pre-commit runs `content guard --staged`.
+- Never hardcode credentials, resume IDs, Worker bindings, Cloudflare resource IDs, cookies, or session material.
+- Never bypass CI, security, or verification gates.
+- Never require Playwright `networkidle` for portfolio pages; use `domcontentloaded` or explicit waits.
+- Never suppress type errors with `as any`, `@ts-ignore`, or broad unchecked casts.
+- Never exceed the 200-LOC source-file limit without splitting.
+- Never include concrete performance metrics in resume or portfolio text: no percentages, ratios, or absolute metrics.
 
 ## UNIQUE STYLES
 
-- Mixed runtime stack: Cloudflare Workers, Go operational
-  scripts, and selective Python/PPTX tooling.
-- Deep child AGENTS files already govern hot paths; add new child files only for
-  distinct domains, not just large directories.
-- Docs are split by purpose: ADRs for decisions, architecture for system shape,
-  conventions for rules, guides for procedures, security for secret handling.
-- Type/validation/contract split is intentional: `@resume/types` has no external
-  runtime dependency, `@resume/schemas` validates, `@resume/contracts` publishes API/env
-  contracts.
+- Child guides own domain detail; add guidance for distinct boundaries, not directory size.
+- Docs separate ADRs, architecture, conventions, guides, and security; historical docs are not current contracts.
+- `@resume/shared` is subpath-only: use `browser/service` and `crypto/webcrypto`; `crypto` exposes constants.
+- `@resume/contracts/src/env.js` exports `ENV_TYPE_MARKER`, not `Env`; binding typedefs live in `@resume/types/env`.
+- `packages/schemas/dist/index.cjs` is a tracked generated exception; rebuild via `npm run build:cjs --workspace=@resume/schemas`. ESM uses source.
+- Workers Logs is default; Loki is opt-in, Elasticsearch absent. Monitoring covers Grafana, Prometheus, Alertmanager, Tempo.
 
 ## COMMANDS
 
 ```bash
-npm run automate:ssot       # sync + build + typecheck
-npm run automate:full       # full validation pipeline
-npm run build               # ensure content pack, sync data, generate portfolio worker
-npm run content:pull        # materialize the real pack from D1 (needs credentials)
-npm run content:push        # upload edited pack files to D1
-node tools/scripts/content/make-fixtures.mjs  # regenerate the fake pack from a pulled pack
+npm run automate:ssot       # PDF sync, build, typecheck
+npm run automate:full       # adds PPTX, lint, tests, Cloudflare-native check
+npm run build              # content ensure, data sync, Worker generation
+npm run content:pull       # D1 materialization; credentials required
+npm run content:push       # upload edited content pack
+node tools/scripts/content/make-fixtures.mjs
 npm run lint
+npm run lint:agents
+npm run lint:loc
+npm run lint:naming
 npm run typecheck
-npm test
-npm run test:e2e
+npm run typecheck:strict
+npm test                   # Jest, Node, Python, explicit Go targets
+npm run test:e2e           # separate Playwright suite
 npm run verify:production
 npm run sync:data
+npm run verify:architecture-hardening:core
+npm run content:guard -- --tracked
 npm run deploy:wrangler:root:dry-run
 go run ./tools/ci/validate-cloudflare-native.go
 gitleaks detect --source . --config .gitleaks.toml --redact
@@ -156,7 +124,7 @@ gitleaks detect --source . --config .gitleaks.toml --redact
 
 ## NOTES
 
-- `applications/` is now scoped because it is a distinct top-level content
-  corpus outside npm workspaces; its packets are content-pack files, not git content.
-- `apps/portfolio/worker.js` is an ignored local build output; fix the generator
-  or source inputs instead of editing the generated bundle.
+- Sync capabilities cover Wanted, JobKorea, SK Careers, Remember (Browser Rendering REST); Saramin is disabled. Capability does not prove auto-apply is enabled.
+- `npm test` includes app-colocated dashboard suites; some dashboard tests use `node:test`. Only `mobile.spec.js` matches Playwright mobile projects.
+- CI validates with Node 22, Python 3.12, the scripts module's Go version, fixtures, pre-install content guard, and final Wrangler dry-run; Actions are SHA-pinned.
+- `affected` and env-drift are not mandatory CI steps; release CLIs have no automated prepare/archive workflow.

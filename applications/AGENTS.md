@@ -1,62 +1,39 @@
 # APPLICATION PACKETS
 
-**Generated:** 2026-06-28
-**Commit:** `76f0a897`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Top-level per-role application corpus: tailored resumes, cover letters, HTML/PDF
-previews, screenshots, and auto-apply run outputs outside npm workspaces.
+Role-specific packet source, printable previews, and automation run artifacts outside npm workspaces.
 
-The packets are D1 content-pack files (ADR 0011): gitignored, materialized by
-`npm run content:pull`, published by `npm run content:push`. Only this guide is
-tracked. See `docs/guides/CONTENT_PACK.md`.
-
-## STRUCTURE
-
-```text
-applications/
-├── DESIGN.md                 # application PDF visual system
-├── _auto-apply-runs/         # generated/ranked submission queues and run logs
-├── <company-role-year>/      # role-specific packet source and generated output
-└── infrastructure-architecture-2026/
-```
+Scope reason: existing distinct application-content domain.
 
 ## WHERE TO LOOK
 
-| Task                         | Location                              | Notes                                                   |
-| ---------------------------- | ------------------------------------- | ------------------------------------------------------- |
-| PDF/application visual rules | `DESIGN.md`                           | extend design tokens before adding raw colors/styles    |
-| Generated run output         | `_auto-apply-runs/`                   | automation artifacts; do not hand-edit for source truth |
-| Role packet source           | `<company-role-year>/cover_letter.md` | tailored copy source when present                       |
-| Role resume preview          | `<company-role-year>/*.html`          | generated or hand-authored preview depending on packet  |
-| Role PDF                     | `<company-role-year>/*.pdf`           | output artifact; regenerate from source where possible  |
+| Task                 | Location                                     | Notes                                     |
+| -------------------- | -------------------------------------------- | ----------------------------------------- |
+| Packet inventory     | `../tools/scripts/content/content-pack.json` | Manifest includes this entire corpus      |
+| Print design         | Materialized `DESIGN.md`                     | Packet-specific visual rules, when pulled |
+| Role copy            | Materialized role directories                | Markdown, HTML, and accompanying evidence |
+| Run artifacts        | Materialized `_auto-apply-runs/`             | Ranked queues and submission results      |
+| Shared resume inputs | `../packages/data/resumes/AGENTS.md`         | Master and independent variant ownership  |
 
 ## CONVENTIONS
 
-- Treat this directory as application content, not application code.
-- Keep each role packet isolated in a slugged directory named for company, role,
-  and year.
-- Keep generated run logs under `_auto-apply-runs/`; do not move them into
-  source package data.
-- Follow `applications/DESIGN.md` for application HTML/PDF styling.
-- Keep claims conservative and sourced from the resume SSoT or role-specific
-  evidence. Tailoring may reframe facts; it must not invent facts.
-- Prefer editing markdown/source inputs, then regenerating HTML/PDF outputs.
-- Publish packet edits with `npm run content:push`; never commit packets.
+- Only this guide is tracked in this directory; a missing packet is not a missing code module.
+- Keep each role packet isolated in a company-role-year slugged directory.
+- Keep run outputs separate from hand-authored packet sources.
+- Tailoring may reframe verified facts but must preserve their meaning.
+- Use packet source and its generator to update printable previews.
+- Check materialized design instructions before changing packet layout.
 
 ## ANTI-PATTERNS
 
-- Never commit credentials, session tokens, private recruiter messages, or raw
-  platform cookies in application packets or run logs.
-- Never hand-edit generated ranked queues, submission result JSON, or PDFs when
-  a source input or generator can produce the change.
-- Never introduce concrete performance metrics into resume/application copy.
-  Describe outcomes factually without percentages, ratios, or absolute numbers.
-- Never let role-specific tailoring drift back into `packages/data/resumes/master`
-  unless it is true for the canonical resume.
-- Never add JavaScript-dependent content to application PDFs; packet previews
-  must remain printable/static.
+- Do not move ranked run queues into canonical resume inputs.
+- Do not promote tailored role prose into master without checking that it is globally true.
+- Do not make application PDFs depend on JavaScript execution.
+- Do not infer a packet's availability from this guide; inspect the pulled inventory.
 
 Parent: [../AGENTS.md](../AGENTS.md)

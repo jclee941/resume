@@ -1,94 +1,44 @@
 # JOB DASHBOARD WORKER KNOWLEDGE BASE
 
-**Generated:** 2026-07-22
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Dashboard Worker module serving `resume.jclee.me/job/*` after it is imported
-in-process by `apps/portfolio/entry.js`. Standalone deploy is disabled; source
-composition lives in `src/AGENTS.md`.
+Dashboard API, database lineage, and automation package mounted by the portfolio entry.
 
-## STRUCTURE
-
-```text
-job-dashboard/
-├── src/                       # source composition and implementation
-│   ├── AGENTS.md             # source-level guide (new)
-│   ├── index.js              # fetch/queue/scheduled entry
-│   ├── handlers/             # request adapters
-│   ├── mcp/                  # job-mcp-server: remote MCP endpoint at /job/mcp
-│   ├── middleware/           # CORS/CSRF helpers
-│   ├── queues/               # queue validation and dispatch
-│   ├── routes/               # declarative route registrars
-│   ├── services/             # dashboard-local integrations
-│   ├── views/                # self-contained dashboard UI
-│   ├── workflows/            # 6 Cloudflare Workflow classes
-│   ├── durable-objects/      # BrowserSessionDO
-│   └── utils/                # dashboard-local helpers
-├── package.json              # standalone deploy intentionally fails
-├── migrations/               # Wrangler D1 migrations, 0001_init.sql baseline onward
-├── schema.sql                # snapshot the migrations must reproduce
-└── README.md                 # deployment and API reference
-```
+Scope reason: score 12; required application boundary.
 
 ## WHERE TO LOOK
 
-| Task                   | Location                    | Notes                                                |
-| ---------------------- | --------------------------- | ---------------------------------------------------- |
-| Source composition     | `src/AGENTS.md`             | HTTP/queue/scheduled entry and exports               |
-| Request routing        | `src/index.js`              | strips `/job` prefix after portfolio entry forwards  |
-| Handler contracts      | `src/handlers/AGENTS.md`    | adapter patterns and route-to-handler wiring         |
-| Middleware policy      | `src/middleware/AGENTS.md`  | CORS/CSRF ordering and auth behavior                 |
-| MCP server             | `src/mcp/`                  | `/job/mcp`; docs/guides/MCP_SERVER.md                |
-| Queue rules            | `src/queues/AGENTS.md`      | message shape, retry, and DLQ handling               |
-| Route tables           | `src/routes/AGENTS.md`      | declarative path registration                        |
-| Service boundaries     | `src/services/AGENTS.md`    | auth, clients, config, notifications                 |
-| Workflow orchestration | `src/workflows/AGENTS.md`   | idempotency, gates, and step contracts               |
-| Dashboard UI           | `src/views/AGENTS.md`       | HTML/CSS/JS escaping and inline assets               |
-| DB migrations          | `migrations/`, `schema.sql` | wrangler d1 migrations; mirror each change in schema |
-
-## BINDINGS & STORAGE
-
-- **D1** (`JOB_DB` / `job-dashboard-db`): the Worker's only database. Schema changes are
-  `npx wrangler d1 migrations create job-dashboard-db <name>` then `npx wrangler d1
-migrations apply job-dashboard-db --remote`; mirror the end state in `schema.sql`
-  (migration-lineage.test.js replays 0001_init.sql onward against it;
-  d1-schema-contract.test.js compiles all Worker SQL against it)
-- **KV**: `SESSIONS`, `RATE_LIMIT_KV`, `NONCE_KV` (all with TTL)
-- **Browser**: `MYBROWSER` (Browser Rendering), `BROWSER_SESSION` (Durable Object)
-- **Workflows**: 6 (job-crawling, application, resume-sync, daily-report, health-check, cleanup)
+| Task                | Location                                    | Notes                                            |
+| ------------------- | ------------------------------------------- | ------------------------------------------------ |
+| Runtime composition | `src/AGENTS.md`                             | HTTP, queue, scheduled, and export wiring        |
+| Database baseline   | `migrations/0001_init.sql`                  | Starting point for migration replay              |
+| Schema snapshot     | `schema.sql`                                | Must match cumulative migration DDL              |
+| Content storage     | `migrations/0006_content_files.sql`         | Content-pack table                               |
+| History correction  | `migrations/0008_wanted_applied_at_utc.sql` | Data-only timestamp normalization                |
+| Stubbed ATS checks  | `scripts/dev/foreign-apply-dry-run.mjs`     | Requires `--ats-stub`                            |
+| API documentation   | `API_REFERENCE.md`                          | Cross-check against routes and canonical OpenAPI |
+| Deployment switch   | `package.json`                              | Standalone deploy script intentionally fails     |
 
 ## CONVENTIONS
 
-- Use `BaseHandler(db, cache, env)` where shared response helpers fit; several
-  focused handlers remain standalone classes.
-- Request/response logging via middleware, not handlers.
-- KV entries MUST have TTL — never set without expiry.
-- Rate limiting uses path-class policies from `@resume/shared/rate-limit`
-  (`auth`, `api`, and `dashboard` have distinct limits; `/mcp` uses `api`).
-- `src/mcp/` serves `POST /job/mcp` (job-mcp-server, `@modelcontextprotocol/server` pinned to
-  2.2.0). Order: rate limit, Host/Origin, method, admin Bearer only (cookies ignored, so no CSRF),
-  then the SDK handler. Tools call the route table via `mcp/internal-api.js`, so REST handlers
-  and gates stay the single implementation; workflow starts default to `dryRun: true`, and real
-  submissions only pass through the existing real-submit gate. Keep each file within 200 LOC.
-- Queue `APPLY` payloads with `candidates`, `platforms`, `searchCriteria`, or `triggerType` pass through to `APPLICATION_WORKFLOW` unchanged.
-- Use `@resume/shared` for logging, errors, rate limiting, and cross-app policy.
-- Preserve exports consumed by `apps/portfolio/entry.js`: seven Workflows and `BrowserSessionDO`.
+- Preserve six Workflow exports plus `BrowserSessionDO` for the portfolio entry.
+- Wrangler's D1 migration directory is this package's `migrations/`.
+- Use sequential `NNNN_snake_case.sql` migrations; retain the baseline for replay.
+- Mirror schema-changing migrations in `schema.sql`; data-only corrections need no DDL change.
+- `tests/unit/job-dashboard/migration-lineage.test.js` replays the lineage against the snapshot.
+- `tests/unit/job-dashboard/d1-schema-contract.test.js` checks Worker SQL against the schema.
+- Run colocated Node tests with `npm run test:dashboard`; root Jest suites use `npm run test:jest`.
+- The foreign-apply dry run uses local ATS stubs, not live third-party submissions.
 
 ## ANTI-PATTERNS
 
-- Never skip rate limiting on any endpoint.
-- Never log credentials or session tokens.
-- Never set KV without TTL.
-- Never bypass CSRF for state-changing operations (the only exemptions are HMAC webhooks and
-  `/mcp`, which accepts a Bearer token and never a cookie).
-- Never add an MCP tool that reimplements a handler, skips the real-submit gate, or accepts
-  cookie authentication.
-- Never re-enable standalone deploy without updating ADR 0009 and portfolio entry routing.
-- Never send arbitrary external URLs to Browser Rendering; normalize and allowlist platform hosts first.
-
----
+- Do not remove the baseline when adding incremental migrations.
+- Do not describe a data-only migration as a schema change.
+- Do not treat a passing stubbed ATS run as proof of live submission.
+- Do not revive the standalone deploy command without revisiting ADR 0009.
 
 Parent: [../../AGENTS.md](../../AGENTS.md)

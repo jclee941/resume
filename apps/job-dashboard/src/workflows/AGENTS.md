@@ -1,51 +1,44 @@
 # WORKFLOWS KNOWLEDGE BASE
 
-**Generated:** 2026-07-22
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Workflow modules orchestrate background execution for crawling, application,
-resume sync, reporting, health checks, and cleanup.
+Background orchestration for applications, crawling, resume sync, reporting, health, and cleanup.
 
-## STRUCTURE
+Scope reason: score 14; retryable Workflow domain.
 
-```text
-workflows/
-├── index.js               # workflow export barrel
-├── job-crawling.js        # crawl orchestration
-├── application.js         # ApplicationWorkflow class
-├── application/           # scoring, gates, platform submitters, Browser Rendering
-├── resume-sync.js         # resume sync workflow (one step per platform)
-├── daily-report.js        # daily summary workflow
-├── health-check.js        # runtime health workflow
-└── cleanup.js             # stale-data cleanup workflow
-```
+## WHERE TO LOOK
+
+| Task                      | Location                                                                           | Notes                                    |
+| ------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------- |
+| Class exports             | `index.js`                                                                         | Worker-facing export barrel              |
+| Applications              | `application.js`, `application/workflow-runner.js`                                 | Class facade and orchestration           |
+| Approval and submit gates | `application/approval-gates.js`, `application/application-submission-gates.js`     | Approval metadata and real-submit checks |
+| Transports                | `application/application-submitters.js`, `application/browser-rendering-submit.js` | Platform-specific submission             |
+| Crawling                  | `job-crawling/`                                                                    | `job-crawling.js` is a re-export shim    |
+| Resume sync               | `resume-sync.js`, `resume-sync-steps.js`                                           | Platform steps and outcomes              |
+| Reports                   | `daily-report.js`, `daily-report-content.js`, `daily-report-stats.js`              | Report assembly                          |
+| Health and cleanup        | `health-check/`, `health-check.js`, `cleanup.js`                                   | Checks and guarded cleanup               |
 
 ## CONVENTIONS
 
-- Keep steps idempotent so retries do not duplicate side effects.
-- Make input/output contracts explicit between workflow stages.
-- Platform sync logic lives in `services/resume-platform-sync/`; workflows only
-  sequence steps and record outcomes.
-- Emit structured progress/status suitable for API status polling.
-- Explicit candidate runs should skip search and preserve candidate platform
-  source after normalization.
-- Approval metadata and preview text belong in `application-submission-gates.js`;
-  submission transport belongs in platform-specific submitter modules.
-- Browser Rendering submitters must validate platform URL hosts before opening
-  pages or hydrating sessions.
+- Keep steps idempotent so retrying does not duplicate external side effects.
+- Explicit candidates skip discovery while retaining normalized platform source.
+- Delegate profile editing to `../services/resume-platform-sync/`.
+- Keep preview text and approval metadata with gates, not submission transports.
+- Validate platform hosts before browser navigation or session hydration.
+- Keep durable step boundaries visible; preserve bounded retry configuration.
+- Existence of a platform submitter does not make that platform enabled in the catalog.
 
 ## ANTI-PATTERNS
 
-- Do not embed endpoint/request parsing logic in workflow files.
-- Do not hide retries with unbounded loops; keep bounded retry semantics.
-- Do not couple workflow steps directly to route handlers.
-- Do not perform destructive operations without explicit guard conditions.
-- Do not mix Wanted API submit behavior with JobKorea/Saramin Browser
-  Rendering behavior in the same module.
-
----
+- Do not invoke route handlers from Workflow steps.
+- Do not bypass approval, deduplication, or submission gates on explicit-candidate runs.
+- Do not couple Wanted API transport to browser-based submission implementations.
+- Do not reactivate a disabled platform solely because an old submitter remains exported.
+- Do not perform cleanup without its explicit eligibility conditions.
 
 Parent: [../AGENTS.md](../AGENTS.md)

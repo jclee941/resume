@@ -1,54 +1,40 @@
 # RESUME DATA TREE KNOWLEDGE BASE
 
-**Generated:** 2026-06-10
-**Commit:** `b74e95d1`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Resume data subtrees contain the canonical master resume, role-specific
-variants, historical archives, generated outputs, and supporting project docs.
-Only `master/` is the portfolio/platform-sync SSoT.
+Canonical locale inputs, independent role variants, and supporting document corpora.
 
-All of it except `AGENTS.md` guides, `.gitkeep` files, and `master/resume_schema.json`
-is the D1 content pack (ADR 0011): gitignored and materialized by
-`npm run content:pull`. GitHub CI builds against the fake pack in
-`tests/fixtures/content-pack/`. See `docs/guides/CONTENT_PACK.md`.
+Scope reason: existing distinct canonical-versus-tailored ownership boundary.
 
-## STRUCTURE
+## WHERE TO LOOK
 
-```text
-resumes/
-├── master/        # canonical JSON/Markdown/PDF source for portfolio + sync
-├── applications/  # hand-crafted role-specific variants (see child AGENTS)
-├── generated/     # derived PDFs/PPTX/Markdown outputs
-├── technical/     # project-specific technical source docs
-├── wishket/       # Wishket proposal/portfolio material
-└── archive/       # historical resume snapshots
-```
+| Task                    | Location                                                                | Notes                                  |
+| ----------------------- | ----------------------------------------------------------------------- | -------------------------------------- |
+| Canonical JSON contract | `master/resume_schema.json`                                             | Tracked schema                         |
+| Canonical facts         | Materialized `master/resume_data.json`                                  | Portfolio and platform-sync source     |
+| Locale wording          | Materialized `master/resume_data_en.json`, `master/resume_data_ja.json` | Same facts, locale-specific prose      |
+| Independent variants    | `applications/AGENTS.md`                                                | Minimum contract, not master mirroring |
+| Technical evidence      | Existing guide under `technical/`                                       | Compact/full document ownership        |
+| Generator outputs       | Materialized output directories                                         | Secondary files, not input authority   |
 
 ## CONVENTIONS
 
-- Edit `master/resume_data.json` for canonical resume facts.
-- Keep locale variants (`resume_data_en.json`, `resume_data_ja.json`) aligned
-  with master intent.
-- Treat `applications/` as intentionally independent; its child AGENTS overrides
-  master-parity assumptions.
-- Regenerate derived files through project commands instead of hand-editing
-  generated PDFs/PPTX/Markdown.
-- Publish edits with `npm run content:push`; the working tree copy is not committed.
+- Only master locale JSON is canonical for portfolio generation and automated platform sync.
+- Keep locale facts aligned without forcing literal translated wording.
+- Treat master Markdown/PDF as derived or secondary, not competing structured sources.
+- Keep role-specific narratives isolated from master facts.
+- Check the content manifest before assuming a local document belongs to a tracked directory.
+- Preserve existing output locations defined by generators; directory names alone do not establish authority.
 
 ## ANTI-PATTERNS
 
-- Do not copy role-specific prose back into `master/` without verifying it is
-  globally true.
-- Do not put generated artifacts outside `generated/` or documented output dirs.
-- Do not use absolute local paths in resume data.
-- Do not commit anything here except the schema, guides, and placeholders; the guard
-  rejects pack paths.
-- Do not add quantified resume/portfolio claims unless they are verifiable and
-  allowed by the root instruction.
-
----
+- Do not copy tailored career narratives into master without checking global truth.
+- Do not make historical snapshots drive current platform synchronization.
+- Do not infer a technical-document export tool exists merely from an old guide.
+- Do not add an automatic master-mirroring rule to independent role variants.
 
 Parent: [../AGENTS.md](../AGENTS.md)

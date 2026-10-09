@@ -1,67 +1,57 @@
 # DOCUMENTATION HUB KNOWLEDGE BASE
 
-**Generated:** 2026-03-17
-**Commit:** `882b837`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Documentation is split by responsibility: durable decisions, current
-architecture, operator guides, planning artifacts, and historical
-analysis/report output.
+Documentation hub containing current contracts alongside dated audits, plans, and operator procedures.
+
+Boundary: required domain guide; structural score 5 across seven documentation subdirectories.
 
 ## STRUCTURE
 
 ```text
 docs/
-├── adr/            # numbered architecture decisions
-├── api/            # API-specific reference docs
-├── architecture/   # current system shape and implementation docs
-├── conventions/    # shared engineering conventions and style guides
-├── guides/         # operational how-to guides
-├── runbooks/       # incident and operator runbooks
-└── security/       # secret management and security procedures
+├── adr/            # numbered decisions and template
+├── api/            # pointer to the published API contract
+├── architecture/   # live system descriptions plus dated analysis
+├── conventions/    # normative architecture and copy rules
+├── guides/         # operator procedures and older implementation reports
+├── runbooks/       # rotation and pending operator actions
+└── security/       # security policies and playbooks
 ```
 
 ## WHERE TO LOOK
 
-| Task                           | Location                         | Notes                                                    |
-| ------------------------------ | -------------------------------- | -------------------------------------------------------- |
-| Durable architecture decisions | `docs/adr/`                      | numbered ADRs + template                                 |
-| Current system shape           | `docs/architecture/`             | verify against live code before trusting generated files |
-| Operator runbooks              | `docs/guides/`, `docs/runbooks/` | deployment, Cloudflare, monitoring, testing, runbooks    |
-| Shared conventions             | `docs/conventions/`              | architecture rules, resume phrasing guides               |
-| Security procedures            | `docs/security/`                 | secret rotation, posture, and credential guides          |
+| Task                       | Location                                                              | Notes                                       |
+| -------------------------- | --------------------------------------------------------------------- | ------------------------------------------- |
+| Decision status            | `README.md`, `adr/`                                                   | Accepted and superseded ADR index           |
+| Live topology              | `ARCHITECTURE.md`, `architecture/system-overview.md`                  | Check against current source                |
+| Component and KV ownership | `architecture/component-inventory.md`, `architecture/kv-ownership.md` | Machine-checked current-state set           |
+| Delivery pipeline          | `architecture/DEPLOYMENT_PIPELINE.md`                                 | Current deployment boundaries               |
+| Content procedures         | `guides/CONTENT_PACK.md`                                              | Materialization and fixture generation      |
+| Remote MCP                 | `guides/MCP_SERVER.md`                                                | Operator-facing tool contract               |
+| Secret classification      | `security/wrangler-vars-vs-secrets.md`                                | Guard policy reference                      |
+| Engineering policy         | `conventions/architecture-rules.md`                                   | Normative rule owner                        |
+| API specification          | `api/README.md`                                                       | Defers to `packages/contracts/openapi.yaml` |
 
 ## CONVENTIONS
 
-- Use one documentation domain per file; do not mix operator procedure,
-  architecture rationale, and status reporting in a single doc.
-- `docs/adr/` uses numbered filenames plus a template-driven format.
-- `docs/guides/` contains operational docs and keeps many legacy uppercase
-  filenames; preserve existing naming where already established.
-- Historical audits and session reports have been archived; consult Git history
-  for time-bound context unless promoted elsewhere.
-- Prefer relative links when linking within the repo.
+- ADR filenames use sequential four-digit IDs; keep status and index links aligned.
+- Preserve established uppercase filenames; use relative links for repository references.
+- Historical audits and plans remain tracked, including retired-component descriptions.
+- Label time-bound findings rather than presenting them as current operational instructions.
+- `npm run verify:architecture-governance` checks ADR governance and selected current-state files, not every guide.
+- Validate procedure commands against `package.json` and the actual script path before documenting them.
 
 ## ANTI-PATTERNS
 
-- Never let docs drift silently when code/workflow ownership changes.
-- Never use historical records or audits as the sole source of truth for
-  live behavior.
-- Never duplicate the same normative rule across multiple docs when one
-  canonical file can own it.
-- Never add repo paths, commands, or system components that do not exist in the
-  current tree.
-
-## NOTES
-
-- `docs/architecture/system-overview.md` is generated and can lag behind the
-  real repo; cross-check against `apps/`, `package.json`, and
-  `.github/workflows/`.
-- This file intentionally covers the docs tree at the domain level; avoid adding
-  another child layer under `docs/guides/` unless guide-specific governance
-  becomes materially distinct.
+- Do not promote a historical plan or dated audit into live architecture authority.
+- Do not claim all historical reports were archived; several remain in this tree.
+- Do not duplicate normative rules when a canonical policy document can be linked.
+- Do not copy retired command names from older deployment or Bazel guides.
 
 ---
 

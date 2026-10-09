@@ -1,49 +1,41 @@
 # GITHUB CONTROL PLANE KNOWLEDGE BASE
 
-**Generated:** 2026-07-22 (verified 164e83ac)
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09 (verified f24027a0)
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Repository metadata, issue templates, CODEOWNERS, Dependabot configuration, and
-one validation-only GitHub Actions workflow. Production deployment authority
-remains Cloudflare Workers Builds.
+Repository review metadata, issue forms, dependency updates, and the validation workflow.
 
-## STRUCTURE
+Boundary: retained distinct domain for repository automation and review policy.
 
-```text
-.github/
-├── ISSUE_TEMPLATE/            # issue forms
-├── workflows/                 # minimal validation-only CI
-├── CODEOWNERS                 # review ownership
-├── PULL_REQUEST_TEMPLATE.md   # PR checklist
-└── dependabot.yml             # npm, pip, and Actions update policy
-```
+## WHERE TO LOOK
 
-## GITHUB ACTIONS
-
-| Workflow | Purpose                                                                      | Deploy Authority |
-| -------- | ---------------------------------------------------------------------------- | ---------------- |
-| `ci.yml` | Audit, lint, format, typecheck, tests, architecture checks, Wrangler dry-run | None             |
+| Task               | Location                   | Notes                                       |
+| ------------------ | -------------------------- | ------------------------------------------- |
+| CI gates           | `workflows/ci.yml`         | Single `validate` job                       |
+| Dependency updates | `dependabot.yml`           | npm, pip build requirements, GitHub Actions |
+| Review routing     | `CODEOWNERS`               | Path ownership                              |
+| Change description | `PULL_REQUEST_TEMPLATE.md` | Contributor checklist                       |
+| Issue intake       | `ISSUE_TEMPLATE/`          | Bug, feature, security forms and chooser    |
 
 ## CONVENTIONS
 
-- Production deployment remains Cloudflare Workers Builds owned. GitHub workflows
-  must remain validation-only and must not become a shadow deploy authority.
-- Prefer repository or environment secrets for credentials. Workflow files must
-  contain only secret names, not values.
-- Pin third-party actions to a release commit SHA with the version in a trailing
-  comment; Dependabot updates both.
+- CI runs on pull requests, pushes to master, and manual dispatch.
+- Workflow permissions are `contents: read`; concurrency cancels older runs for the same ref.
+- Pin external actions to commit SHAs with trailing version comments.
+- CI uses Node 22, Python 3.12, and the Go version from `tools/scripts/go.mod`.
+- The content guard precedes dependency installation; keep its bootstrap dependency-free.
+- Validation order: dependency audit, build, lint/format, types, tests, architecture contracts, bundle dry-run.
+- CI test commands are explicit; adding a root test script alone does not add a workflow step.
 
 ## ANTI-PATTERNS
 
-- Never inline live tokens, webhook secrets, Cloudflare IDs, or service
-  credentials in YAML.
-- Never treat a GitHub workflow or local Wrangler commands as the production
-  deploy source of truth.
-- Never add workflow writes to generated artifacts unless ownership is documented
-  in the owning subtree.
+- Do not add write permissions merely to make validation helpers work.
+- Do not put generated-output updates into the validation job.
+- Do not replace immutable action pins with floating tags.
+- Do not infer automated deployment or release publication from a successful CI run.
 
 ---
 

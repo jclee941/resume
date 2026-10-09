@@ -1,44 +1,45 @@
 # UNIT TESTS KNOWLEDGE BASE
 
-**Generated:** 2026-07-22
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Unit tests validate module-level behavior with deterministic inputs/outputs for portfolio worker, job dashboard, CLI helpers, and data utilities. Jest runs portfolio/job-dashboard suites;
-Node `--test` runs schemas, env, shared, tools, and CLI tests.
+Module regressions for portfolio generation/runtime, dashboard automation, shared helpers, and locale data.
 
-## STRUCTURE
+Boundary: retained module-test domain with mixed legacy test imports and shared fixture conventions.
 
-```text
-unit/
-├── portfolio-worker/      # worker/lib Jest suites
-├── job-dashboard/        # job-dashboard Jest suites
-├── job-automation/       # notification logic tests
-├── shared/               # shared utilities Node --test
-├── data/                 # resume data/schema Node --test
-├── generate-worker.test.js
-├── security-headers.test.js
-├── worker-preamble.test.js
-└── worker-routes.test.js
-```
+## WHERE TO LOOK
+
+| Task                      | Location                                           | Notes                                                    |
+| ------------------------- | -------------------------------------------------- | -------------------------------------------------------- |
+| Portfolio modules         | `portfolio-worker/`, `portfolio-worker/lib/`       | Builder, cards, runtime contracts                        |
+| Dashboard behavior        | `job-dashboard/`                                   | Routes, auth, application gates, migration/SQL contracts |
+| Shared utilities          | `shared/`                                          | Jest-discovered shared package tests                     |
+| Locale and data contracts | `data/`                                            | Jest-discovered parity/variant assertions                |
+| Notification logic        | `job-automation/telegram-notification.test.js`     | Notification regressions                                 |
+| Worker composition        | `generate-worker.test.js`, `worker-routes.test.js` | Generated entry/routing contracts                        |
+| Scheduled wiring          | `scheduled-cron-wiring.test.js`                    | Cron composition contract                                |
+| Shared content values     | `../helpers/owner-data.js`                         | Expected values from materialized data                   |
 
 ## CONVENTIONS
 
-- Keep tests deterministic; no external network calls or wall-clock sleeps.
-- Assert behavior at module boundaries, not implementation details.
-- Mirror source paths for discoverability (e.g., `src/foo.js` → `unit/foo.test.js`).
-- Use focused fixtures/mocks with explicit setup and cleanup.
-- Jest for portfolio/job-dashboard; Node `--test` for shared packages.
+- Every `*.test.js` here matches root Jest discovery, including `data/` and `shared/`.
+- Some dashboard files import `node:test`; preserve their existing runner contract and check invocation explicitly.
+- `npm run test:dashboard` targets app-colocated tests, not `tests/unit/job-dashboard/`.
+- Tests are predominantly CommonJS; keep `require`/`__dirname` compatibility with the Node 22 Jest lane.
+- Browser modules use dynamic import or VM harnesses where the suite already does so.
+- Dashboard migration contracts replay SQLite schemas rather than replacing SQL behavior with canned results.
+- Shared fixture modules use `*-fixtures.js`; cleanup restores mocks and fake timers after each case.
+- A generated Worker must exist for build-dependent assertions; an absent artifact is not a passing runtime check.
 
 ## ANTI-PATTERNS
 
-- Do not depend on wall-clock sleeps for unit assertions.
-- Do not hit real third-party services (Wanted, LinkedIn, etc.) in unit tests.
-- Do not couple tests to unstable generated output formatting.
-- Do not mute failures with broad skips; isolate and fix root causes.
-- Do not use `describe.skip` or `.only` in shared suites.
+- Do not infer Node test-runner ownership from a directory named `data` or `shared`.
+- Do not use `import.meta` in CommonJS Jest tests.
+- Do not hit live third-party job services from module tests.
+- Do not pin incidental generated formatting instead of observable behavior or parsed contracts.
 
 ---
 

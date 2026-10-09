@@ -1,40 +1,40 @@
 # MIDDLEWARE KNOWLEDGE BASE
 
-**Generated:** 2026-07-22
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Middleware modules enforce cross-cutting request policy (CORS, CSRF) before
-handlers run. Rate limiting is provided by `@resume/shared/rate-limit`.
+CORS response helpers and CSRF cookie/header validation for dashboard requests.
 
-## STRUCTURE
+Scope reason: existing distinct request-security domain.
 
-```text
-middleware/
-├── cors.js            # CORS validation and headers
-├── csrf.js            # CSRF checks for state-changing requests
-└── csrf.test.js       # CSRF middleware tests
-```
+## WHERE TO LOOK
+
+| Task            | Location                                              | Notes                                             |
+| --------------- | ----------------------------------------------------- | ------------------------------------------------- |
+| Origin policy   | `cors.js`                                             | Allowed origins and credentialed response headers |
+| JSON responses  | `cors.js`                                             | Shared `jsonResponse` helper used across handlers |
+| CSRF validation | `csrf.js`                                             | State-changing request token checks               |
+| Cookie issuance | `csrf.js`                                             | `addCsrfCookie` and token generation              |
+| Composition     | `../index.js`                                         | Owns invocation order and exemptions              |
+| Browser checks  | `../../../../tests/e2e/dashboard-config-cors.spec.js` | Cross-origin dashboard behavior                   |
 
 ## CONVENTIONS
 
-- Preserve intended middleware order from router composition.
-- Keep middleware deterministic and side-effect-light per request.
-- CSRF/auth protections are mandatory for state-changing operations. Documented exemptions
-  (both in `src/index.js`): `/api/webhooks/*` authenticates with an HMAC signature, and `/mcp`
-  authenticates with the admin Bearer token only. `/mcp` ignores the session cookie, so no
-  browser credential can be replayed against it, and it sends no CORS headers.
-- Rate limiting is applied in `src/index.js` via `@resume/shared/rate-limit`.
+- Keep `jsonResponse` status and header behavior stable across its many callers.
+- Apply origin policy from the request and environment, not a mutable module singleton.
+- CSRF exemption decisions belong to the entry composition, not these helpers.
+- HMAC-authenticated webhook paths and Bearer-only MCP are the documented exemptions.
+- Rate limiting comes from the shared package; there is no local rate-limit middleware module.
+- No colocated `csrf.test.js` exists; use the repository test surfaces when changing policy.
 
 ## ANTI-PATTERNS
 
-- Do not skip middleware for convenience paths in production routes.
-- Do not move domain/business decisions into middleware.
-- Do not introduce broad CORS wildcards without explicit requirement.
-- Do not remove tests when changing CSRF logic.
-
----
+- Do not combine credentialed CORS with an unrestricted origin wildcard.
+- Do not insert application-domain decisions into CORS or CSRF helpers.
+- Do not make token issuance depend on handler-specific state.
+- Do not assume every JSON response is a browser response requiring CORS.
 
 Parent: [../AGENTS.md](../AGENTS.md)

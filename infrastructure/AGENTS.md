@@ -1,51 +1,44 @@
 # INFRASTRUCTURE KNOWLEDGE BASE
 
-**Generated:** 2026-07-22 (verified 164e83ac)
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09 (verified f24027a0)
+**Commit:** `f24027a0`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Cloudflare infrastructure (Terraform), monitoring
-dashboards (Grafana), and monitoring compose configs. Scheduled automation is
-Cloudflare-native: Cron Triggers and Workflows declared in the root
-`wrangler.jsonc`.
+Infrastructure declarations, observability configuration, monitoring snapshots, and Cloudflare binding mocks.
 
-## STRUCTURE
+Boundary: required domain guide separating infrastructure state from application and test code.
 
-```text
-infrastructure/
-├── cloudflare/           # Terraform for DNS, routes, KV/D1 references
-├── monitoring/           # Grafana dashboards and alert rules
-├── configs/              # Grafana alert configurations
-├── docker/               # Monitoring compose file
-└── mocks/                # Test mocks
-```
+## WHERE TO LOOK
 
-## AUTHORITY BOUNDARIES
-
-| Scope                           | Owner                     | Changes Via                                                             |
-| ------------------------------- | ------------------------- | ----------------------------------------------------------------------- |
-| DNS and Cloudflare declarations | Terraform files           | Review `cloudflare/*.tf`; no active apply workflow                      |
-| Production Worker code          | Cloudflare Workers Builds | Build from `master`; local Wrangler is verification/emergency only      |
-| D1 schema (`JOB_DB`)            | Wrangler D1 migrations    | `apps/job-dashboard/migrations/*.sql` + `apps/job-dashboard/schema.sql` |
-| Monitoring dashboards           | Grafana UI                | `monitoring/*.json` (reference only)                                    |
+| Task                    | Location                                         | Notes                                      |
+| ----------------------- | ------------------------------------------------ | ------------------------------------------ |
+| Cloudflare declarations | `cloudflare/AGENTS.md`                           | Terraform resources and data references    |
+| Monitoring semantics    | `monitoring/AGENTS.md`                           | Logs, metrics, traces, uptime, SLOs        |
+| Grafana provisioning    | `configs/grafana/`                               | Datasources, alert rules, dashboard export |
+| Metrics and probes      | `configs/prometheus/`                            | Prometheus, blackbox, rule files           |
+| Alert delivery          | `configs/alertmanager/alertmanager.yml`          | Alert routing configuration                |
+| Trace storage           | `configs/tempo/tempo.yaml`                       | Tempo configuration                        |
+| Compose topology        | `docker/docker-compose.monitoring.yml`           | Supporting monitoring services             |
+| Binding test doubles    | `mocks/cf-bindings-mock.js`, `mocks/cloudflare/` | D1, KV, R2, queue, environment mocks       |
 
 ## CONVENTIONS
 
-- Terraform state is S3-compatible backend (bucket: `terraform-state`).
-- Never run `terraform apply` locally against production.
-- D1 migrations are immutable once deployed; create new migrations for changes.
-- Monitoring exports are reference snapshots, not deployment sources.
+- Terraform declarations have no active apply workflow in this repository.
+- Review declared resources separately from the bindings consumed by the deployed Worker.
+- D1 schema ownership stays with `apps/job-dashboard/migrations/` and its schema snapshot.
+- Treat monitoring exports as reference snapshots; deployed Grafana state can differ.
+- The monitoring tools under `tools/scripts/monitoring/` and `tools/scripts/deployment/` consume these assets.
+- Mocks are modular implementations, not proof that production supports every mocked behavior.
 
 ## ANTI-PATTERNS
 
-- Do not use the legacy Worker script resource in `cloudflare/workers.tf` as the
-  routine production deployment path.
-- Never hardcode Cloudflare resource IDs in prose.
-- Never edit deployed migrations.
-- Never add host schedulers (systemd timers, crontab entries); schedule through
-  Cloudflare Cron Triggers and Workflows.
+- Never run `terraform apply` locally against production.
+- Do not edit an already deployed D1 migration to change its meaning.
+- Do not infer that stored configuration means its remote service is currently live.
+- Do not add host schedulers or daemon loops for application automation here.
+- Do not confuse `configs/grafana/` provisioning inputs with `monitoring/` exports.
 
 ---
 

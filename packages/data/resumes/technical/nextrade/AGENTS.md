@@ -1,34 +1,39 @@
-# NEXTRADE PROJECT DOCS
+# TECHNICAL EVIDENCE DOCUMENTS
 
-**Generated:** 2026-07-22
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
-
-**Scope:** `packages/data/resumes/technical/nextrade/`
-**Type:** Technical documentation (architecture, DR, SOC)
 
 ## OVERVIEW
 
-Nextrade securities exchange project documentation. Covers 24 months of construction and operations phases. Architecture, disaster recovery plan, and SOC runbook available in compact (resume-ready) and full (technical deep-dive) variants.
+Materialized technical evidence maintained in compact and full narrative forms.
 
-## FILES
+Scope reason: existing distinct technical-document corpus.
 
-- `ARCHITECTURE*.md` — System architecture (compact + full)
-- `DR_PLAN*.md` — Disaster recovery procedures (compact + full)
-- `SOC_RUNBOOK*.md` — Security operations guide (compact + full)
-- `convert-to-pdf-docx.go` — Export script (Go, not shell)
-- `nextrade_*.docx` — Pre-generated DOCX exports
+## WHERE TO LOOK
+
+| Task                   | Location                                               | Notes                                       |
+| ---------------------- | ------------------------------------------------------ | ------------------------------------------- |
+| Architecture narrative | Materialized `ARCHITECTURE*.md`                        | Compact and deep-dive forms when available  |
+| Recovery narrative     | Materialized `DR_PLAN*.md`                             | Recovery procedures and supporting evidence |
+| Operations narrative   | Materialized `SOC_RUNBOOK*.md`                         | Security operations documentation           |
+| Derived documents      | Materialized PDF/DOCX files                            | Secondary exports, not editable source      |
+| Canonical facts        | `../../master/resume_schema.json` and canonical inputs | Validate factual alignment before reuse     |
 
 ## CONVENTIONS
 
-- `nextrade_` prefix for binary artifacts
-- Compact variants for quick reference; full variants for technical detail
-- Export via Go script, not shell
+- This guide is the only tracked file in this particular technical-document directory.
+- Compact narratives summarize evidence; full narratives preserve technical context.
+- Check the pulled inventory before relying on any document or exporter named by older guidance.
+- Keep the same verified facts across compact and full versions.
+- Maintain document source before regenerating a binary export.
+- Choose an exporter from the current tracked tooling or materialized packet instructions, not an assumed local script.
 
 ## ANTI-PATTERNS
 
-- Never edit PDFs/DOCX directly. Edit markdown, regenerate.
-
----
+- Do not present an untracked exporter as repository tooling.
+- Do not infer project duration or operational claims from old guide prose.
+- Do not treat a generated binary as the source for a factual update.
+- Do not copy private project identifiers into tracked documentation examples.
 
 Parent: [../../AGENTS.md](../../AGENTS.md)

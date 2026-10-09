@@ -1,76 +1,46 @@
 # SHARED PACKAGE KNOWLEDGE BASE
 
-**Generated:** 2026-07-22
-**Commit:** `164e83ac`
+**Generated:** 2026-10-09
+**Commit:** `f24027a0`
 **Branch:** `master`
-
-**Package:** `@resume/shared`
-**Type:** Cross-package utilities
-**Scope:** Validation, errors, cookies, logging, clients, browser, retry, crypto, rate-limit, session, auth, normalize
 
 ## OVERVIEW
 
-Shared runtime utilities consumed by `apps/job-dashboard` and other packages. Provides validation, error handling, logging, HTTP clients (Wanted), browser automation, retry/circuit-breaker, crypto, rate-limiting, session management, and auth helpers.
+Worker-compatible utility domains, platform clients, and reusable resume mappings behind explicit subpath exports.
 
-## STRUCTURE
+Scope reason: score 13; shared runtime and export boundary.
 
-```text
-packages/shared/src/
-├── validation/          # Input validation helpers
-├── errors/              # Custom error classes
-├── cookies/             # Cookie utilities
-├── logger/              # Structured logging and transport adapters
-├── clients/
-│   └── wanted/          # Wanted.kr API client (HTTP, jobs, profile, resume)
-├── browser/             # Cloudflare Puppeteer browser adapter + stealth patches
-├── retry/               # HTTP retry + circuit breaker
-├── crypto/              # WebCrypto AES-GCM helpers
-├── rate-limit/          # Token bucket, sliding window, KV-backed limiters
-├── session/             # Session cookies, constants, normalization
-├── auth/                # Cookie auth, HMAC signing
-├── normalize/           # Data normalization
-├── platform-sync/       # Wanted + JobKorea resume mapping/sync (Worker-safe, fetch only)
-├── ua.js                # User-Agent utilities
-├── employment-types.js  # Employment type constants
-└── job-categories.js    # Job category mappings
-```
+## WHERE TO LOOK
 
-## EXPORTS (via package.json)
-
-| Import Path                       | Purpose                                   |
-| --------------------------------- | ----------------------------------------- |
-| `@resume/shared/validation`       | Input validation                          |
-| `@resume/shared/errors`           | Custom error classes                      |
-| `@resume/shared/cookies`          | Cookie utilities                          |
-| `@resume/shared/logger`           | Structured logging                        |
-| `@resume/shared/browser`          | Cloudflare Browser Rendering adapter      |
-| `@resume/shared/browser/stealth`  | Stealth patches                           |
-| `@resume/shared/clients/wanted/*` | Wanted endpoints (jobs, profile, resume)  |
-| `@resume/shared/retry`            | HTTP retry + circuit breaker              |
-| `@resume/shared/crypto`           | WebCrypto AES-GCM helpers                 |
-| `@resume/shared/rate-limit`       | Token bucket, sliding window, KV limiters |
-| `@resume/shared/session`          | Session cookies, constants, normalization |
-| `@resume/shared/auth`             | Cookie auth, HMAC signing                 |
-| `@resume/shared/normalize`        | Data normalization                        |
-| `@resume/shared/platform-sync/*`  | Wanted/JobKorea resume mapping and sync   |
-| `@resume/shared/ua`               | User-Agent utilities                      |
-| `@resume/shared/employment-types` | Employment type constants                 |
-| `@resume/shared/job-categories`   | Job category mappings                     |
+| Task                  | Location                                    | Notes                                                                 |
+| --------------------- | ------------------------------------------- | --------------------------------------------------------------------- |
+| Export map            | `package.json`                              | No root export; explicit subpaths and one mapping wildcard            |
+| Errors/validation     | `src/errors/`, `src/validation/`            | Typed failures and schema adapters                                    |
+| Logging               | `src/logger/`                               | Logger, request context, console and optional Loki transports         |
+| Browser adapter       | `src/browser/`                              | Public imports are `browser/service` and `browser/stealth`            |
+| Wanted API            | `src/clients/wanted/`                       | Explicit client/profile/resume subpaths, no endpoint wildcard         |
+| Retry and rate limits | `src/retry/`, `src/rate-limit/`             | Circuit breaking, HTTP retries, KV-backed limits                      |
+| Encryption            | `src/crypto/`                               | Root exposes constants; `crypto/webcrypto` exposes encryption helpers |
+| Sessions/auth/cookies | `src/session/`, `src/auth/`, `src/cookies/` | Separate normalization, constants, cookie, and HMAC exports           |
+| Platform mappings     | `src/platform-sync/`                        | Wanted, JobKorea, Remember, SK Careers                                |
+| Job URL policy        | `src/job-url-canonicalization.js`           | Cross-application canonicalization                                    |
 
 ## CONVENTIONS
 
-- Subpath exports defined in `package.json` exports field
-- Pure functions preferred; minimal side effects
-- Error handling via custom error classes in `errors/`
-- Logging via Logger class with pluggable transports (console default, Loki optional)
-- Browser automation uses `@cloudflare/puppeteer` with stealth patches
+- Import `@resume/shared/<subpath>`; `@resume/shared` and `@resume/shared/browser` are not exported.
+- Nested platform directories have explicit entries; `platform-sync/*` covers flat helper files.
+- `session` exports normalization only; cookie and constant consumers use their dedicated subpaths.
+- Keep domain barrels thin and module I/O explicit.
+- Browser support uses optional `@cloudflare/puppeteer`; cryptography uses WebCrypto.
+- Prefer structured Logger transports for new logging; console transport and existing diagnostic calls are not forbidden by ESLint.
+- Run `npm run test:shared` for colocated Node tests; `npm run test:jest` also covers shared consumers.
+- Public export regression coverage lives in `tests/unit/shared/package-exports.test.js`.
 
 ## ANTI-PATTERNS
 
-- Never add app-specific logic here (belongs in `apps/`)
-- Never import from `apps/` packages (circular dependency)
-- Never use `console.log` directly (use logger)
-
----
+- Do not infer a Wanted endpoint subpath from the source directory layout.
+- Do not send encryption callers to the constants-only `crypto` barrel.
+- Do not restore removed host session stores or retired Elasticsearch exports.
+- Do not add app-specific route or orchestration policy to reusable helpers.
 
 Parent: [../AGENTS.md](../AGENTS.md)
