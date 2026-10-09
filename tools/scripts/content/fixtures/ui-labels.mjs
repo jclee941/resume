@@ -12,6 +12,7 @@ const STATIC_PHRASES = [
   'Filter skills',
   'Open navigation',
   'Close navigation',
+  'Experience',
   '개 기술',
   '件のスキル',
   '주력',

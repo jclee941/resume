@@ -794,60 +794,60 @@
       "diagram": {
         "nodes": [
           {
-            "id": "sonibuf",
+            "id": "proxmox",
             "label": "Zepimup FU",
-            "kind": "rigezi"
+            "kind": "source"
           },
           {
-            "id": "tebi_nitudebo",
+            "id": "node_exporter",
             "label": "tebi_nitudebo",
-            "kind": "ravenas"
+            "kind": "process"
           },
           {
-            "id": "sedagibo",
+            "id": "promtail",
             "label": "Pugebido",
-            "kind": "ravenas"
+            "kind": "process"
           },
           {
-            "id": "kebolamula",
+            "id": "prometheus",
             "label": "Zodusitafu",
-            "kind": "pibap"
+            "kind": "store"
           },
           {
-            "id": "zonu",
+            "id": "loki",
             "label": "Mune",
-            "kind": "pibap"
+            "kind": "store"
           },
           {
-            "id": "difokuf",
+            "id": "grafana",
             "label": "Vebopan",
-            "kind": "gonu"
+            "kind": "sink"
           }
         ],
         "edges": [
           {
-            "from": "sonibuf",
-            "to": "tebi_nitudebo"
+            "from": "proxmox",
+            "to": "node_exporter"
           },
           {
-            "from": "sonibuf",
-            "to": "sedagibo"
+            "from": "proxmox",
+            "to": "promtail"
           },
           {
-            "from": "tebi_nitudebo",
-            "to": "kebolamula"
+            "from": "node_exporter",
+            "to": "prometheus"
           },
           {
-            "from": "sedagibo",
-            "to": "zonu"
+            "from": "promtail",
+            "to": "loki"
           },
           {
-            "from": "kebolamula",
-            "to": "difokuf"
+            "from": "prometheus",
+            "to": "grafana"
           },
           {
-            "from": "zonu",
-            "to": "difokuf"
+            "from": "loki",
+            "to": "grafana"
           }
         ]
       }
@@ -873,48 +873,48 @@
       "diagram": {
         "nodes": [
           {
-            "id": "komidosag",
+            "id": "fortigate",
             "label": "KipuvElas",
-            "kind": "rigezi"
+            "kind": "source"
           },
           {
-            "id": "bumegi",
+            "id": "syslog",
             "label": "bumegi",
-            "kind": "pibap"
+            "kind": "store"
           },
           {
-            "id": "porifo",
+            "id": "splunk",
             "label": "Litofe",
-            "kind": "ravenas"
+            "kind": "process"
           },
           {
-            "id": "gokuzok",
+            "id": "tracker",
             "label": "sukiz gokuzok",
-            "kind": "ravenas"
+            "kind": "process"
           },
           {
-            "id": "bofur",
+            "id": "slack",
             "label": "Libus",
-            "kind": "gonu"
+            "kind": "sink"
           }
         ],
         "edges": [
           {
-            "from": "komidosag",
-            "to": "bumegi"
+            "from": "fortigate",
+            "to": "syslog"
           },
           {
-            "from": "bumegi",
-            "to": "porifo"
+            "from": "syslog",
+            "to": "splunk"
           },
           {
-            "from": "porifo",
-            "to": "gokuzok",
+            "from": "splunk",
+            "to": "tracker",
             "label": "Kalenir"
           },
           {
-            "from": "gokuzok",
-            "to": "bofur"
+            "from": "tracker",
+            "to": "slack"
           }
         ]
       }
@@ -1004,56 +1004,56 @@
       "diagram": {
         "nodes": [
           {
-            "id": "lor",
+            "id": "git",
             "label": "Nek",
-            "kind": "rigezi"
+            "kind": "source"
           },
           {
-            "id": "ru",
+            "id": "pr",
             "label": "LI",
-            "kind": "ravenas"
+            "kind": "process"
           },
           {
-            "id": "bodavusib",
+            "id": "terraform",
             "label": "Mimufarug rokide",
-            "kind": "ravenas"
+            "kind": "process"
           },
           {
-            "id": "sonibuf",
+            "id": "proxmox",
             "label": "Zepimup SA/MEM",
-            "kind": "gonu"
+            "kind": "sink"
           },
           {
-            "id": "finobetivu",
+            "id": "cloudflare",
             "label": "Fopasopeba",
-            "kind": "gonu"
+            "kind": "sink"
           },
           {
             "id": "k3s",
             "label": "k3s",
-            "kind": "gonu"
+            "kind": "sink"
           }
         ],
         "edges": [
           {
-            "from": "lor",
-            "to": "ru"
+            "from": "git",
+            "to": "pr"
           },
           {
-            "from": "ru",
-            "to": "bodavusib",
+            "from": "pr",
+            "to": "terraform",
             "label": "kifu 空日"
           },
           {
-            "from": "bodavusib",
-            "to": "sonibuf"
+            "from": "terraform",
+            "to": "proxmox"
           },
           {
-            "from": "bodavusib",
-            "to": "finobetivu"
+            "from": "terraform",
+            "to": "cloudflare"
           },
           {
-            "from": "bodavusib",
+            "from": "terraform",
             "to": "k3s"
           }
         ]
