@@ -4,6 +4,10 @@
   border-top: 1px solid var(--border-primary);
 }
 
+.case-study-deep-dives[hidden] {
+  display: none;
+}
+
 .case-study-deep-dives__header {
   display: grid;
   gap: var(--space-2);

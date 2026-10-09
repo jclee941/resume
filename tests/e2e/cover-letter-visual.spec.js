@@ -76,6 +76,28 @@ test.describe('Cover Letter - visual section (scrollable page)', () => {
     await expect(card).not.toContainText('직전에는 가온누리에서 시작해 아이티센 CTS로 이어지는');
   });
 
+  test('S5: the fold keeps the first paragraph visible and names how many it hides', async ({
+    page,
+  }) => {
+    await safeGoto(page, '/');
+    const paragraphs = page.locator('#cover-letter .cover-letter__para');
+    const total = coverLetter.ko.paragraphs.length;
+    await expect(paragraphs).toHaveCount(total);
+    await expect(paragraphs.first()).toBeVisible();
+    for (let index = 1; index < total; index += 1) {
+      await expect(paragraphs.nth(index)).toBeHidden();
+    }
+
+    const toggle = page.locator('#cover-letter .cover-letter__toggle');
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await expect(toggle).toContainText(String(total - 1));
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    for (let index = 0; index < total; index += 1) {
+      await expect(paragraphs.nth(index)).toBeVisible();
+    }
+  });
+
   test('S4 (XSS guard): section content is text, not injected markup', async ({ page }) => {
     await safeGoto(page, '/');
     // No stray <script> elements should have been injected from the data.

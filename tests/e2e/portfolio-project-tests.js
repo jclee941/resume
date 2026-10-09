@@ -28,6 +28,7 @@ test.describe('Portfolio Homepage', () => {
   });
 
   test('should render and open deep-dive project cards', async ({ page }) => {
+    await page.locator('.project-more-btn').click();
     const deepDiveGrid = page.locator(SELECTORS.DEEP_DIVE_GRID);
     await deepDiveGrid.scrollIntoViewIfNeeded();
     await expect(deepDiveGrid).toBeVisible();

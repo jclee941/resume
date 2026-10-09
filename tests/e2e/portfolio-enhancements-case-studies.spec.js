@@ -9,6 +9,9 @@ test.describe('Portfolio recruiter enhancements — case studies', () => {
 
   test('case-study deep dive section gives public context before cards', async ({ page }) => {
     const section = page.locator('.case-study-deep-dives');
+    await expect(section).toBeHidden();
+    await page.locator('.project-more-btn').click();
+    await expect(section).toBeVisible();
     await expect(section).toHaveAttribute('aria-labelledby', 'case-study-heading');
     await expect(page.locator('#case-study-heading')).toContainText('운영 사례 심층 검토');
     await expect(section.locator('.case-study-deep-dives__description')).toContainText('운영 맥락');
@@ -45,12 +48,14 @@ test.describe('Portfolio recruiter enhancements — case studies', () => {
     }
   });
 
-  test('deep dives follow the project list instead of a separate evidence shortcut', async ({
+  test('deep dives open with the project list instead of a separate evidence shortcut', async ({
     page,
   }) => {
     await expect(page.locator('.project-evidence-card__link, [data-evidence-project]')).toHaveCount(
       0
     );
+    await expect(page.locator('.case-study-deep-dives')).toBeHidden();
+    await page.locator('.project-more-btn').click();
     await expect(page.locator('.case-study-deep-dives')).toBeVisible();
     const deepDivesAfterList = await page.evaluate(() => {
       const list = document.querySelector('#project-list');

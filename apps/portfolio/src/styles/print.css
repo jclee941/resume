@@ -31,10 +31,16 @@
   .role-quick-paths,
   .timeline-expand-btn,
   .project-more,
+  .timeline-more,
+  .cover-letter__toggle,
   .cover-letter__chrome,
   .cover-letter__index,
   .section-hero::after {
     display: none !important;
+  }
+
+  .cover-letter__para[hidden] {
+    display: grid !important;
   }
 
   .page-shell {

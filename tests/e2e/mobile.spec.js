@@ -104,10 +104,7 @@ test.describe('Mobile Responsiveness', () => {
       .locator('#resume .timeline-company .company-link')
       .evaluateAll((links) =>
         links
-          .filter((link) => {
-            const style = window.getComputedStyle(link);
-            return style.visibility !== 'hidden' && style.display !== 'none';
-          })
+          .filter((link) => link.checkVisibility({ visibilityProperty: true }))
           .map((link) => {
             const rect = link.getBoundingClientRect();
             const wrapperRect = link.parentElement?.getBoundingClientRect();

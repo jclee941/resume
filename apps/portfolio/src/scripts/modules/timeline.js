@@ -13,6 +13,7 @@
 
 import { CAREER_UI_META, DEFAULT_CAREER_UI_META } from './timeline-career-meta.js';
 import { bindTimelineInteractions } from './timeline-interactions.js';
+import { initTimelineMore } from './timeline-more.js';
 import { createTimelineNode } from './timeline-rendering.js';
 
 /**
@@ -35,6 +36,7 @@ export function initCareerTimeline() {
 
   injectTimeline();
   bindTimelineInteractions(/** @type {HTMLUListElement} */ (timelineContainer));
+  initTimelineMore(/** @type {HTMLUListElement} */ (timelineContainer));
 
   console.log('[CareerTimeline] Initialized successfully.');
 }

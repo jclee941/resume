@@ -1,0 +1,17 @@
+@media screen and (max-width: 640px) {
+  .project-list {
+    display: flex;
+    align-items: stretch;
+    gap: var(--space-3);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    padding-bottom: var(--space-3);
+  }
+
+  .project-list > .project-item {
+    flex: 0 0 88%;
+    align-content: start;
+    scroll-snap-align: start;
+  }
+}
