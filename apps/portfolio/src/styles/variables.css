@@ -123,7 +123,7 @@
   --container-max: 1040px;
   --container-narrow: 760px;
   --gutter: clamp(1rem, 4vw, 2rem);
-  --section-gap: clamp(2rem, 1.25rem + 2.5vw, 3rem);
+  --section-gap: clamp(2rem, 1.25rem + 2.5vw, 2.5rem);
 
   --radius-sm: 4px;
   --radius-md: 8px;

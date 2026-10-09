@@ -8,7 +8,7 @@
   display: grid;
   grid-template-columns: 5.5rem minmax(0, 1fr);
   gap: var(--space-4);
-  padding: var(--space-3) 0;
+  padding: var(--space-2) 0;
   border-bottom: 1px solid var(--border-primary);
 }
 
