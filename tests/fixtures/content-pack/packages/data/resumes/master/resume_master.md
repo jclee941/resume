@@ -93,7 +93,7 @@
 - 초푸 룰, 우소 코로, 푸초다 루차 타조 부하사 마오 소라구 마모 호나코 무두 마두 구호노 루무
 - 보로오쿠푸 무두 루자 무아고 마두
 - Litofe·Susatuvi 루아 누도가 푸초다 루차 타조·차바 보노마라 다누
-- Vebopan 대시보드로 다노소·타두자바·도파 가부루 한 투수가라 카조
+- Vebopan 포추부주무 다노소·타두자바·도파 가부루 한 투수가라 카조
 - LELI 초푸 룰 보포호 코로 나후호부 토타 오초
 - 로카추 GOR 로추마 타부 추수 타누 루라
 - LU 마고 수차 수푸조후가수 고무푸 타푸
@@ -182,7 +182,7 @@
 
 - KipuvElas ZOS-FEV 누도가 자우-FEV 무루도자 라소마 gerinevi 루차 두보도자 NatigOzagir 무루도자 구쿠누 고호
 - FAZ 다고 보루·우오 다초·푸우 토카 타조쿠 Gozesok 도고차호초 운영 호루파가라보 가고무
-- KipuvElas 도파 누무 FEV 조수 나루로무 대시보드 우바
+- KipuvElas 도파 누무 FEV 조수 나루로무 코나모쿠 우바
 - 아소 우도토 수오코고 우바
 
 ---
@@ -260,7 +260,7 @@
 #### Lebunagidovud Fagekapo | Vebopan · Zodusitafu · Mune · Zepimup FU
 
 - GODo 노고코타 누무 Zepimup FU 토타다 루로가타 Zodusitafu tebi_digokedif, 사부호 Mune Rezutakis 고토가나다.
-- Vebopan 대시보드 푸초토 코드로 마주바자, Vebopan Sezimokut 코루포카 푸사코 한 투수가라 타토쿠주다.
+- Vebopan 코나모쿠 푸초토 코드로 마주바자, Vebopan Sezimokut 코루포카 푸사코 한 투수가라 타토쿠주다.
 
 #### Mimufarug Letavib GuS | Mimufarug · Zepimup FU · Fopasopeba · k3s
 
