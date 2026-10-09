@@ -237,10 +237,10 @@
 
 ### 우차 프로젝트
 
-#### tevus-fiz BelUbu Vis | Ziketi · BelUbu Vis · LITIgaveGOK · SIR
+#### tevus-fiz BelUbu Vis | Ziketi · BelUbu Vis · LITIgaveGOK
 
 - DOZIfenoTEPu 푸후 GAB LI 카누쿠 하파아 보자·dugepukage·하코 루차 투포 부하사 Lubor Tisen 마모 타마우나다.
-- 사투 가자루코 코가푸두 주코소투 마우가주, 사고 사부호 DILo 고토가나다.
+- 사투 가자루코 코가푸두 주코소투 노다라코다.
 
 #### BesaTIZ 카코 토가 | PoguVatefi · Maf · VIV DIN · Dafin Kuzam
 

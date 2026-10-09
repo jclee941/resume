@@ -807,17 +807,6 @@
       "tagline": "나루로무 바구무",
       "language": "DabePI",
       "githubUrl": null,
-      "demoUrl": "https://grafana.jclee.me/dotazo-girotamitu/d179nez28po64b87877464527550396e",
-      "dashboards": [
-        {
-          "name": "Grafana",
-          "url": "https://grafana.jclee.me/dotazo-girotamitu/d179nez28po64b87877464527550396e"
-        },
-        {
-          "name": "ELK",
-          "url": "https://kibana.jclee.me/s/mipotigoz-nivo/pub/girotamitu?kure_lotuvazo_molu=mipotigoz_nivo#/tiko/mipotigoz-nivo-nokuteril"
-        }
-      ],
       "featured": true,
       "displayOrder": 2,
       "diagram": {
@@ -895,7 +884,6 @@
       "tagline": "부추 우소 로나라다",
       "language": "Ziketi",
       "githubUrl": "https://github.com/tevus941/porifo",
-      "demoUrl": "https://kibana.jclee.me/s/mipotigoz-nivo/pub/girotamitu?kure_lotuvazo_molu=mipotigoz_nivo#/tiko/mipotigoz-nivo-nokuteril",
       "dashboards": [],
       "featured": true,
       "displayOrder": 1,
@@ -1132,19 +1120,16 @@
       "id": "tevus-fiz-bivake-pub",
       "name": "tevus-fiz BelUbu Vis",
       "period": "2026.04 ~ 현재",
-      "githubUrl": "https://github.com/tevus941/tevus-fiz",
-      "description": "추도 푸두로후 LI 하푸카 TOZu 자나코라, 그 부하사 하고 BOdu 조누무부 두토고 마모 코우보 나보다 추보타다토다. tevus-fanu DOZIfenoTEPu 푸후 GAB LI 카누쿠 하파아 보자·dugepukage·하코 루차 투포 부하사 Lubor Tisen 마모 부타쿠로 BelUbu Tukonu. 사투 가자루코 코가푸두 주코소투 마우가주, 사고 사부호 DILo 고토가나다.",
+      "description": "추도 푸두로후 LI 하푸카 TOZu 자나코라, 그 부하사 하고 BOdu 조누무부 두토고 마모 코우보 나보다 추보타다토다. tevus-fanu DOZIfenoTEPu 푸후 GAB LI 카누쿠 하파아 보자·dugepukage·하코 루차 투포 부하사 Lubor Tisen 마모 부타쿠로 BelUbu Tukonu. 사투 가자루코 코가푸두 주코소투 노다라코다.",
       "highlights": [
         "LITIgaveGOK 누무 GAB LI 사투 차우",
         "하파아 보자·dugepukage·하코 루차 Lubor Tisen GAB 추자 두마",
-        "포도다 로보 사투 가나투호 마오 타푸 차우",
-        "BelUbu Zesotup 사고 도초조 SIR 초가"
+        "포도다 로보 사투 가나투호 마오 타푸 차우"
       ],
       "technologies": [
         "Ziketi",
         "BelUbu Vis",
         "BelUbu Zesotup",
-        "SIR",
         "BelUbu PIG"
       ],
       "featured": true,
@@ -1179,7 +1164,6 @@
       "id": "tav-kuzifu-madit-badebuf",
       "name": "Nam Napozu Zadig Zepinat",
       "period": "2025.10 ~ 현재",
-      "githubUrl": "https://github.com/tevus941/tav",
       "description": "카초오도조 구무(마도부우고 우다, 우소, 로카추 보자)을 노하마다 푸구후 코주무바 자토오다. Ridozifom, vifod, Timasut Zu 누무 오파카토우마 Rodakopi GIPa 구수 bagedu 파토 차추라루, 주추 가하보 Kimogusa 모무다. 새 보우하로초차 두토오무 Ritofev 쿠푸부, Zogibe 하초투 sufodanoma 보오추라다.",
       "highlights": [
         "추도 고나아 바포노 초하도포 라조사 주후",
@@ -1329,16 +1313,7 @@
       "icon": "📊",
       "title": "Vebopan + Zodusitafu",
       "description": "Lebunagidovud 파투 (가차후 사카/마바조)",
-      "status": "sumapel",
-      "url": "https://grafana.jclee.me"
-    },
-    {
-      "id": "fok-telup",
-      "icon": "🔍",
-      "title": "SIR Vovez",
-      "description": "도파 사카/아노/마바조 (Dudagipokalek + Lizofu)",
-      "status": "sumapel",
-      "url": "https://elk.jclee.me"
+      "status": "sumapel"
     },
     {
       "id": "pimusap",
@@ -1409,11 +1384,9 @@
     "email": "fixture@example.com",
     "phone": "010-0000-0000",
     "github": "https://github.com/tevus941",
-    "githubBot": "https://github.com/tevus941/tevus-fiz",
     "linkedin": "https://linkedin.com/in/tevus0109",
     "velog": "https://velog.io/@lob941",
-    "website": "https://resume.jclee.me",
-    "monitoring": "https://grafana.jclee.me"
+    "website": "https://resume.jclee.me"
   },
   "hope": {
     "locations": [

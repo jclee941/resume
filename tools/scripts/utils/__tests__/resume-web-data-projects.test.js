@@ -30,17 +30,16 @@ describe('generateWebData → content policy', () => {
 
 describe('generateWebData → projects[] live demo dashboards', () => {
   it('propagates every SSoT project dashboard link verbatim', () => {
-    const out = generateWebData(ssot, 'ko');
-    const withDashboards = ssot.personalProjects.filter(
-      (source) => Array.isArray(source.dashboards) && source.dashboards.length > 0
-    );
+    const dashboards = [
+      { name: 'Grafana', url: 'https://grafana.example.com/public-dashboards/example' },
+    ];
+    const [first, ...rest] = ssot.personalProjects;
+    const source = { ...ssot, personalProjects: [{ ...first, dashboards }, ...rest] };
+    const out = generateWebData(source, 'ko');
+    const project = out.projects.find((item) => item.id === first.id);
 
-    assert.ok(withDashboards.length > 0, 'SSoT must define at least one project with dashboards');
-    for (const source of withDashboards) {
-      const project = out.projects.find((item) => item.id === source.id);
-      assert.ok(project, `${source.id} must be projected`);
-      assert.deepEqual(project.dashboards, source.dashboards);
-    }
+    assert.ok(project, `${first.id} must be projected`);
+    assert.deepEqual(project.dashboards, dashboards);
   });
 });
 

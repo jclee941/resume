@@ -29,7 +29,9 @@ test.describe('Card Interactions', () => {
   test('project card links should be distinguishable', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-    const projectLinks = page.locator('#projects a.project-link-title');
+    const projectLinks = page.locator(
+      '#projects li.project-item:not(.project-item--collapsed) a.project-link-title'
+    );
     const projectLinksCount = await projectLinks.count();
 
     if (projectLinksCount === 0) {

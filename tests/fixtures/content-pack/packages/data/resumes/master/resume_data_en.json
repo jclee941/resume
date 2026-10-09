@@ -772,17 +772,6 @@
       "tagline": "Kutazirubo Fagekapo",
       "language": "DabePI",
       "githubUrl": null,
-      "demoUrl": "https://grafana.jclee.me/dotazo-girotamitu/d179nez28po64b87877464527550396e",
-      "dashboards": [
-        {
-          "name": "Grafana",
-          "url": "https://grafana.jclee.me/dotazo-girotamitu/d179nez28po64b87877464527550396e"
-        },
-        {
-          "name": "ELK",
-          "url": "https://kibana.jclee.me/s/mipotigoz-nivo/pub/girotamitu?kure_lotuvazo_molu=mipotigoz_nivo#/tiko/mipotigoz-nivo-nokuteril"
-        }
-      ],
       "featured": true,
       "displayOrder": 2,
       "diagram": {
@@ -860,7 +849,6 @@
       "tagline": "Pomudave dufit bunipoza",
       "language": "Ziketi",
       "githubUrl": "https://github.com/tevus941/porifo",
-      "demoUrl": "https://kibana.jclee.me/s/mipotigoz-nivo/pub/girotamitu?kure_lotuvazo_molu=mipotigoz_nivo#/tiko/mipotigoz-nivo-nokuteril",
       "dashboards": [],
       "featured": true,
       "displayOrder": 1,
@@ -1097,19 +1085,16 @@
       "id": "tevus-fiz-bivake-pub",
       "name": "tevus-fiz BelUbu Vis",
       "period": "2026.04 ~ Present",
-      "githubUrl": "https://github.com/tevus941/tevus-fiz",
-      "description": "LI lodukas gozuto rifebaz ferizomegira rate pafedazob do gi GAB, gis gul rigepab boluta do pu pugivob nesukag zubagepabik mafeki ka gul pote LI. tevus-fiz ne a BelUbu Vis femo tiref GAB LI lodukas zaremo kemitug LITIgaveGOK vasumovu zafo lumevo-pedu, dugepukage, gis rase-gutame rigepab ma Lubor Binu. Kigadu nurepize dum zekugiz te Varodu lirog, gis bog kima dum rubopuraf te SIR.",
+      "description": "LI lodukas gozuto rifebaz ferizomegira rate pafedazob do gi GAB, gis gul rigepab boluta do pu pugivob nesukag zubagepabik mafeki ka gul pote LI. tevus-fiz ne a BelUbu Vis femo tiref GAB LI lodukas zaremo kemitug LITIgaveGOK vasumovu zafo lumevo-pedu, dugepukage, gis rase-gutame rigepab ma Lubor Binu. Kigadu nurepize dum zekugiz te Varodu lirog.",
       "highlights": [
         "GAB LI lodukas buv LITIgaveGOK",
         "Lubor Binu nulera GAB meduka zafo lumevo pedu, dugepukage, gis rase gutame",
-        "Varodu-lirog movepo nurepize gis LI fogenulazeva",
-        "BelUbu Zesotup bog kima sotuzekid do SIR"
+        "Varodu-lirog movepo nurepize gis LI fogenulazeva"
       ],
       "technologies": [
         "Ziketi",
         "BelUbu Vis",
         "BelUbu Zesotup",
-        "SIR",
         "BelUbu PIG"
       ],
       "featured": true,
@@ -1144,7 +1129,6 @@
       "id": "tav-kuzifu-madit-badebuf",
       "name": "Nam Napozu Zadig Zepinat",
       "period": "2025.10 ~ Present",
-      "githubUrl": "https://github.com/tevus941/tav",
       "description": "Nam-kuzifu vitulamelagofu (ramegilag sagitafig, ralitokugina, tisonusarepit nefigumo) mid do pu paverase fu lotu gus sopu binuba. Ridozifom, vifod, gis Zogibe dum nedivof zafo a Zu gasupeda gis a Rodakopi ZOD femo dale sumi ka a davemago, gis rigepab dum filaremo zafo Ziketi. Bil zidaletize goperol a Libus ralitokugina, gis Zogibe rigepab dum puzofu fu patenabi.",
       "highlights": [
         "Bamirokefo nefigumo pe vitogite zenarut",
@@ -1280,16 +1264,7 @@
       "icon": "📊",
       "title": "Vebopan + Zodusitafu",
       "description": "Lebunagidovud telup (busiden rifaludofa gis mapizabedibum)",
-      "status": "sumapel",
-      "url": "https://grafana.jclee.me"
-    },
-    {
-      "id": "fok-telup",
-      "icon": "🔍",
-      "title": "SIR Vovez",
-      "description": "Gon rifaludofa, gelazigo, gis mapizabedibum (Dudagipokalek + Lizofu)",
-      "status": "sumapel",
-      "url": "https://elk.jclee.me"
+      "status": "sumapel"
     },
     {
       "id": "pimusap",
@@ -1360,11 +1335,9 @@
     "email": "fixture@example.com",
     "phone": "010-0000-0000",
     "github": "https://github.com/tevus941",
-    "githubBot": "https://github.com/tevus941/tevus-fiz",
     "linkedin": "https://linkedin.com/in/tevus0109",
     "velog": "https://velog.io/@lob941",
-    "website": "https://resume.jclee.me",
-    "monitoring": "https://grafana.jclee.me"
+    "website": "https://resume.jclee.me"
   },
   "availability": "Nolu do firo · Nolu do nepiromun mufekiva",
   "awards": [
