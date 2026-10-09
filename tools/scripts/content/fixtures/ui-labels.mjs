@@ -9,7 +9,6 @@ const STATIC_PHRASES = [
   'Security & Infrastructure Engineer',
   'Security Engineering',
   'AI Engineering',
-  'Filter skills',
   'Open navigation',
   'Close navigation',
   'Experience',
@@ -28,15 +27,6 @@ const STATIC_PHRASES = [
   '主な運用経験',
   'skill',
   '제약',
-  '트레이드오프',
-  '설계 결정',
-  'trade-off',
-  'constraint',
-  'No matching skills.',
-  '개 기술 검색됨',
-  '검색 결과가 없습니다.',
-  '件のスキルが見つかりました',
-  '一致するスキルがありません。',
 ];
 
 /**
