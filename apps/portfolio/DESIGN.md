@@ -91,6 +91,9 @@ One ink at stepped alphas encodes interaction state. No second accent hue exists
   localized copy. Mono with `--tracking-label: 0.04em` on English pages; `--font-sans`
   with zero tracking on Korean and Japanese pages. Monospaced Hangul/Kana would render
   with full-cell word gaps, which reads as broken spacing.
+- **Loading**: the shells preload Inter 400/700 and IBM Plex Mono 400/500/700, and every
+  `@font-face` uses `font-display: swap`. With `optional`, a first visit over the network
+  missed the short block period and rendered the whole page in the platform fallback.
 
 ### Rules
 
