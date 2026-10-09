@@ -6,13 +6,16 @@
   display: grid;
 }
 
-.project-more {
+.project-more,
+.timeline-more {
   display: flex;
   justify-content: center;
   margin-top: var(--space-6);
 }
 
-.project-more-btn {
+.project-more-btn,
+.timeline-more-btn,
+.cover-letter__toggle {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
@@ -31,6 +34,10 @@
 }
 
 .project-more-btn:hover,
-.project-more-btn:focus-visible {
+.project-more-btn:focus-visible,
+.timeline-more-btn:hover,
+.timeline-more-btn:focus-visible,
+.cover-letter__toggle:hover,
+.cover-letter__toggle:focus-visible {
   background: var(--accent-wash-2);
 }

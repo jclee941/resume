@@ -45,6 +45,21 @@ function setRoleHistoryState(role) {
 }
 
 /**
+ * On phones the project list scrolls sideways; bring the first visible match into view.
+ * @param {Element[]} cards
+ */
+function scrollCarouselToFirstMatch(cards) {
+  const list = cards[0]?.parentElement;
+  if (!list || list.scrollWidth <= list.clientWidth) return;
+  const match = cards.find(
+    (card) => card.classList.contains('is-role-match') && card.getClientRects().length > 0
+  );
+  if (!match) return;
+  const offset = match.getBoundingClientRect().left - list.getBoundingClientRect().left;
+  list.scrollTo({ left: list.scrollLeft + offset, behavior: 'smooth' });
+}
+
+/**
  * @param {Element[]} cards
  * @param {Map<string, number>} proofCounts
  */
@@ -78,6 +93,7 @@ export function bindRoleControls(cards, proofCounts) {
         );
         setRoleHistoryState(selectedRole);
         document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        scrollCarouselToFirstMatch(cards);
       });
     }
     button.disabled = false;

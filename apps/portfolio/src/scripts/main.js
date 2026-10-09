@@ -5,6 +5,7 @@ import { initCareerTimeline } from './modules/timeline.js';
 import { initProjectCards } from './modules/project-cards.js';
 import { initProjectMore } from './modules/project-more.js';
 import { initRecruiterEnhancements } from './modules/recruiter-enhancements.js';
+import { initCoverLetterFold } from './modules/cover-letter-fold.js';
 
 /** @type {Record<string, string>} */
 const RESUME_DATA_PATHS = {
@@ -100,6 +101,7 @@ async function bootstrapPortfolio() {
   initProjectCards();
   initProjectMore();
   initRecruiterEnhancements();
+  initCoverLetterFold();
   await loadResumeData();
   initSkillRadar();
   initCareerTimeline();

@@ -4,6 +4,16 @@ test.describe('Portfolio visual accessibility', () => {
   test('timeline expand buttons control real detail regions', async ({ page }) => {
     await page.goto('/ko/', { waitUntil: 'domcontentloaded' });
 
+    const olderRoles = page.locator('button.timeline-more-btn');
+    const olderNodes = page.locator('.timeline-node--older');
+    await expect(olderRoles).toHaveAttribute('aria-expanded', 'false');
+    expect(await olderNodes.count()).toBeGreaterThan(0);
+    await expect(olderRoles).toContainText(String(await olderNodes.count()));
+    await expect(olderNodes.first()).toBeHidden();
+    await olderRoles.click();
+    await expect(olderRoles).toHaveAttribute('aria-expanded', 'true');
+    await expect(olderNodes.first()).toBeVisible();
+
     const buttons = page.locator('button.timeline-expand-btn');
     await expect(buttons.first()).toBeVisible();
     const count = await buttons.count();

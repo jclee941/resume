@@ -3,9 +3,9 @@
 const { escapeHtml } = require('../template-sanitizer');
 
 const EXPERTISE_LABELS = {
-  ko: { expertise: '전문 분야', competencies: '핵심 역량' },
-  en: { expertise: 'Areas of expertise', competencies: 'Core competencies' },
-  ja: { expertise: '専門分野', competencies: '中核スキル' },
+  ko: { expertise: '전문 분야' },
+  en: { expertise: 'Areas of expertise' },
+  ja: { expertise: '専門分野' },
 };
 
 /**
@@ -50,11 +50,11 @@ function generateAchievementsSection(data) {
 }
 
 /**
- * Generate an "expertise / core competencies" section surfacing the real
- * SSoT `summary.expertise` (keyword tags) and `summary.coreCompetencies`
- * (experience bullets) that were previously unsurfaced on the live portfolio.
+ * Generate the "areas of expertise" tags from the SSoT `summary.expertise`.
+ * `summary.coreCompetencies` stays in the SSoT but is not rendered here: its
+ * bullets repeat the experience and project achievements shown above.
  *
- * @param {EvidenceData | null | undefined} data - data.json (uses `expertise[]`, `coreCompetencies[]`).
+ * @param {EvidenceData | null | undefined} data - data.json (uses `expertise[]`).
  * @param {string} [locale='en'] - Locale for generated section headings.
  * @returns {string} HTML, or '' if nothing to show.
  */
@@ -63,37 +63,15 @@ function generateExpertiseSection(data, locale = 'en') {
   const expertise = Array.isArray(data.expertise)
     ? data.expertise.filter((e) => typeof e === 'string' && e.trim().length > 0)
     : [];
-  const competencies = Array.isArray(data.coreCompetencies)
-    ? data.coreCompetencies.filter((c) => typeof c === 'string' && c.trim().length > 0)
-    : [];
-  if (expertise.length === 0 && competencies.length === 0) return '';
+  if (expertise.length === 0) return '';
   const labels = EXPERTISE_LABELS[normalizeExpertiseLocale(locale)];
-
-  let html = '';
-  if (expertise.length > 0) {
-    const tags = expertise
-      .map((e) => `<span class="expertise-tag">${escapeHtml(String(e))}</span>`)
-      .join('\n          ');
-    html += `<div class="about-subsection about-subsection--expertise">
+  const tags = expertise
+    .map((e) => `<span class="expertise-tag">${escapeHtml(String(e))}</span>`)
+    .join('\n          ');
+  return `<div class="about-subsection about-subsection--expertise">
       <h3 class="about-subsection__heading">${labels.expertise}</h3>
       <div class="expertise-tags">\n          ${tags}\n      </div>
     </div>`;
-  }
-  if (competencies.length > 0) {
-    const items = competencies
-      .map(
-        (c) =>
-          `<li class="competency-item"><span class="competency-item__marker">&gt;</span><span>${escapeHtml(
-            String(c)
-          ).replace(/·/g, '·<wbr>')}</span></li>`
-      )
-      .join('\n          ');
-    html += `\n      <div class="about-subsection about-subsection--competencies">
-      <h3 class="about-subsection__heading">${labels.competencies}</h3>
-      <ul class="competency-list">\n          ${items}\n      </ul>
-    </div>`;
-  }
-  return html;
 }
 
 module.exports = { generateAchievementsSection, generateExpertiseSection };

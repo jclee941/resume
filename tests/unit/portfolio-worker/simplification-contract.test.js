@@ -131,6 +131,7 @@ describe('simplification: project cards do not re-present the description as bul
       initProjectCards: jest.fn(() => calls.push('project-cards')),
       initProjectMore: jest.fn(() => calls.push('project-more')),
       initRecruiterEnhancements: jest.fn(() => calls.push('recruiter-enhancements')),
+      initCoverLetterFold: jest.fn(() => calls.push('cover-letter-fold')),
     };
     context.window.window = context.window;
 

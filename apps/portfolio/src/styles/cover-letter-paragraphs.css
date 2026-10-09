@@ -71,3 +71,11 @@
 .cover-letter__atomic-phrase {
   white-space: nowrap;
 }
+
+.cover-letter__para[hidden] {
+  display: none;
+}
+
+.cover-letter__toggle {
+  margin: 0 var(--space-8) var(--space-6);
+}

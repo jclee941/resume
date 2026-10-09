@@ -4,7 +4,7 @@ const CASES = [
   {
     locale: 'ko',
     path: '/ko/',
-    tokens: ['구축하고', '문제를', '엔드포인트', '자동화했습니다', 'Splunk', 'MCP'],
+    tokens: ['구축하고', '운영했습니다', '엔드포인트', '자동화했습니다', 'Splunk', 'MCP'],
   },
   { locale: 'ja', path: '/ja/', tokens: ['セキュリティ', '自動化しました', '(株)ガオンヌリ'] },
 ];

@@ -131,3 +131,9 @@ a.company-link:hover {
     min-height: 44px;
   }
 }
+
+@media screen {
+  .incident-timeline:not(.is-older-visible) .timeline-node--older {
+    display: none;
+  }
+}

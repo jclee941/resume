@@ -61,8 +61,17 @@ test.describe('Responsive Design', () => {
     expect(firstCardBox).toBeTruthy();
     expect(secondCardBox).toBeTruthy();
     if (firstCardBox && secondCardBox) {
-      expect(secondCardBox.y).toBeGreaterThanOrEqual(firstCardBox.y + firstCardBox.height - 5);
+      expect(secondCardBox.x).toBeGreaterThanOrEqual(firstCardBox.x + firstCardBox.width - 5);
+      expect(Math.abs(secondCardBox.y - firstCardBox.y)).toBeLessThanOrEqual(5);
     }
+    const overflow = await page.evaluate(() => {
+      const list = document.querySelector('#project-list');
+      return {
+        list: Boolean(list && list.scrollWidth > list.clientWidth),
+        page: document.documentElement.scrollWidth > window.innerWidth,
+      };
+    });
+    expect(overflow).toEqual({ list: true, page: false });
   });
 
   test('should be mobile responsive (Samsung Galaxy S20)', async ({ page }) => {

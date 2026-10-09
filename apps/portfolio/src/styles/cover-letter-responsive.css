@@ -58,3 +58,38 @@
     padding: var(--space-4) var(--space-4) var(--space-5);
   }
 }
+
+@media (min-width: 1024px) {
+  .cover-letter-card {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    grid-template-areas:
+      'chrome chrome'
+      'headline paragraphs'
+      'headline toggle'
+      'closing closing';
+    grid-template-rows: auto auto 1fr auto;
+    align-items: start;
+  }
+
+  .cover-letter__chrome {
+    grid-area: chrome;
+  }
+
+  .cover-letter__headline {
+    grid-area: headline;
+  }
+
+  .cover-letter__paragraphs {
+    grid-area: paragraphs;
+  }
+
+  .cover-letter__toggle {
+    grid-area: toggle;
+    justify-self: start;
+  }
+
+  .cover-letter__closing {
+    grid-area: closing;
+  }
+}

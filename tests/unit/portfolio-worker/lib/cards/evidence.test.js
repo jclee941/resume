@@ -52,9 +52,10 @@ describe('cards/evidence generateExpertiseSection', () => {
     expect(generateExpertiseSection(null)).toBe('');
     expect(generateExpertiseSection({})).toBe('');
     expect(generateExpertiseSection({ expertise: [], coreCompetencies: [] })).toBe('');
+    expect(generateExpertiseSection({ coreCompetencies: ['SIEM 탐지 룰 검토 경험'] })).toBe('');
   });
 
-  it('renders expertise tags and core-competency items', () => {
+  it('renders expertise tags and leaves core competencies to the experience section', () => {
     const html = generateExpertiseSection(
       {
         expertise: ['보안', 'SRE', '클라우드 보안'],
@@ -64,103 +65,43 @@ describe('cards/evidence generateExpertiseSection', () => {
     );
     expect(html).toContain('expertise-tags');
     expect(html).toContain('전문 분야');
-    expect(html).toContain('핵심 역량');
-    expect(html).not.toContain('&gt; expertise');
-    expect(html).not.toContain('&gt; core_competencies');
     expect((html.match(/class="expertise-tag"/g) || []).length).toBe(3);
-    expect(html).toContain('보안');
-    expect((html.match(/class="competency-item"/g) || []).length).toBe(2);
-    expect(html).toContain('SIEM 탐지 룰');
+    expect((html.match(/about-subsection__heading/g) || []).length).toBe(1);
+    expect(html).not.toContain('competency');
+    expect(html).not.toContain('SIEM 탐지 룰');
   });
 
   it('escapes HTML (XSS-safe)', () => {
-    const html = generateExpertiseSection({
-      expertise: ['<b>x</b>'],
-      coreCompetencies: ['<i>y</i> & z'],
-    });
+    const html = generateExpertiseSection({ expertise: ['<b>x</b> & y'] });
     expect(html).not.toContain('<b>x</b>');
     expect(html).toContain('&lt;b&gt;');
     expect(html).toContain('&amp;');
   });
 
-  it('renders only expertise when coreCompetencies absent', () => {
-    const html = generateExpertiseSection({ expertise: ['보안'] });
-    expect(html).toContain('expertise-tags');
-    expect(html).not.toContain('competency-item');
-  });
-
-  it('allows breaks between technology names without splitting words or trusting markup', () => {
-    const html = generateExpertiseSection({
-      coreCompetencies: ['Linux·Terraform·Splunk SPL·<script>'],
-    });
-    expect(html).toContain('<span>Linux·<wbr>Terraform·<wbr>Splunk SPL·<wbr>&lt;script&gt;</span>');
-    expect(html).not.toContain('<script>');
-  });
-
-  it('localizes generated subsection headings for English and Japanese data', () => {
-    const englishHtml = generateExpertiseSection(
-      {
-        expertise: ['Security'],
-        coreCompetencies: ['Designed regulated security infrastructure'],
-      },
-      'en'
+  it('localizes the heading for English and Japanese data', () => {
+    expect(generateExpertiseSection({ expertise: ['Security'] }, 'en')).toContain(
+      'Areas of expertise'
     );
-    const japaneseHtml = generateExpertiseSection(
-      {
-        expertise: ['ネットワークセキュリティ'],
-        coreCompetencies: ['金融業界の規制環境でセキュリティインフラを運用した経験'],
-      },
-      'ja'
+    expect(generateExpertiseSection({ expertise: ['ネットワークセキュリティ'] }, 'ja')).toContain(
+      '専門分野'
     );
-
-    expect(englishHtml).toContain('Areas of expertise');
-    expect(englishHtml).toContain('Core competencies');
-    expect(japaneseHtml).toContain('専門分野');
-    expect(japaneseHtml).toContain('中核スキル');
   });
 
   it('uses explicit KO and JA locales even when content is English-heavy', () => {
-    const englishHeavyData = {
-      expertise: ['Security Engineering', 'SRE', 'Cloud Security'],
-      coreCompetencies: ['Designed regulated security infrastructure', 'Reviewed SIEM rules'],
-    };
-
+    const englishHeavyData = { expertise: ['Security Engineering', 'SRE', 'Cloud Security'] };
     const koreanHtml = generateExpertiseSection(englishHeavyData, 'ko');
     const japaneseHtml = generateExpertiseSection(englishHeavyData, 'ja');
 
     expect(koreanHtml).toContain('전문 분야');
-    expect(koreanHtml).toContain('핵심 역량');
     expect(koreanHtml).not.toContain('Areas of expertise');
     expect(japaneseHtml).toContain('専門分野');
-    expect(japaneseHtml).toContain('中核スキル');
     expect(japaneseHtml).not.toContain('Areas of expertise');
   });
 
   it('defaults unknown or missing locales to English without scanning content', () => {
-    const koreanData = {
-      expertise: ['보안'],
-      coreCompetencies: ['금융권 규제 환경 보안 인프라 경험'],
-    };
+    const koreanData = { expertise: ['보안'] };
 
     expect(generateExpertiseSection(koreanData)).toContain('Areas of expertise');
-    expect(generateExpertiseSection(koreanData, 'fr')).toContain('Core competencies');
-  });
-
-  it('B-S1: groups expertise and competencies as labeled sub-sections (declutter)', () => {
-    const html = generateExpertiseSection(
-      {
-        expertise: ['보안', 'SRE', 'SIEM/SOAR'],
-        coreCompetencies: ['금융권 보안 인프라 구축', 'SIEM 탐지 룰 설계'],
-      },
-      'ko'
-    );
-    // Each group is a titled sub-section so the dense block reads as structured
-    // groups, not loose content. Headings make the hierarchy scannable.
-    expect((html.match(/about-subsection__heading/g) || []).length).toBeGreaterThanOrEqual(2);
-    // No content lost: all tags + competencies still present.
-    expect(html).toContain('SIEM/SOAR');
-    expect(html).toContain('SIEM 탐지 룰 설계');
-    expect((html.match(/class="expertise-tag"/g) || []).length).toBe(3);
-    expect((html.match(/class="competency-item"/g) || []).length).toBe(2);
+    expect(generateExpertiseSection(koreanData, 'fr')).toContain('Areas of expertise');
   });
 });
