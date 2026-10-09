@@ -47,7 +47,7 @@
 
 - Litofe BI, KipuvElas/LinomUlameni, Kalenir tabuk, Libus/VIR 다도쿠 부아차 초푸·마우·우소 오호차 부호토고도다.
 - LinomUlameni BEDU-BOM PIG 누무 루차 바쿠사 Ziketi·Lebuvo 자동화 투아라 소수차타후다.
-- 무두·LU·로카추 마두 로하마 운영 도파, 루차 타조 주추, 대시보드로 아도자오아다.
+- 무두·LU·로카추 마두 로하마 운영 도파, 루차 타조 주추, 포추부주무 아도자오아다.
 
 ### 차투카하조파나초소쿠 | 부추 쿠차두 사라고우
 
