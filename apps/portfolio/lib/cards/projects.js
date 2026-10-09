@@ -110,7 +110,7 @@ function buildProjectLinks(project, githubUrl, demoUrl) {
   if (dashboards.length > 0) {
     for (const dashboard of dashboards) {
       linkFragments.push(
-        `<a href="${escapeHtml(dashboard.url)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="Open ${escapeHtml(project.title)} ${escapeHtml(dashboard.name)} dashboard (opens in new tab)">${escapeHtml(dashboard.name)}<span class="arrow" aria-hidden="true">↗</span></a>`
+        `<a href="${escapeHtml(dashboard.url)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="Open ${escapeHtml(project.title)} ${escapeHtml(dashboard.name)} (opens in new tab)">${escapeHtml(dashboard.name)}<span class="arrow" aria-hidden="true">↗</span></a>`
       );
     }
   } else if (demoUrl) {

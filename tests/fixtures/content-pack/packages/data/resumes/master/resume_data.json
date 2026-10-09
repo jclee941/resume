@@ -1134,7 +1134,13 @@
       ],
       "featured": true,
       "displayOrder": 6,
-      "language": "Ziketi"
+      "language": "Ziketi",
+      "dashboards": [
+        {
+          "name": "GitHub App",
+          "url": "https://github.com/pizu/tevus-fiz"
+        }
+      ]
     },
     {
       "id": "sepibed-nisulafudi-gasupeda",
