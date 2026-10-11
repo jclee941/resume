@@ -37,10 +37,11 @@ have are deleted from Wanted.
 - `POST /job/api/wanted/refresh-session` (admin) mints a fresh session into
   `auth:wanted`.
 - `POST /job/api/jobkorea/refresh-session` (admin) logs in to JobKorea through Browser Rendering
-  and stores the session in `auth:jobkorea` for 6 hours. A stored session can stall JobKorea pages
-  in a browser other than the one that minted it, so it is used right after a refresh.
-- The daily `0 21 * * *` Cron Trigger refreshes the Wanted and JobKorea sessions
-  before it starts the sync.
+  and stores the session in `auth:jobkorea` for 6 hours. A stored session stalls JobKorea pages in
+  any browser other than the one that minted it, and the browser pool lends whichever browser is
+  free, so the resume sync does not replay it: its JobKorea step logs in inside the browser that
+  edits the resume.
+- The daily `0 21 * * *` Cron Trigger refreshes the Wanted session before it starts the sync.
 
 ## Usage
 

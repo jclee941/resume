@@ -164,26 +164,40 @@ async function editorMissingError(page, dialogs) {
 }
 
 /**
- * Open the JobKorea resume editor with the stored session and hand `fn` the live
- * form, serialized the way the browser submits it, plus a save that posts from the
- * editor page. JobKorea honours the session only inside the browser: a plain Worker
- * fetch with the same cookies gets its "session expired" page.
+ * Logs in to JobKorea in the browser that `withBrowserSession` lends and returns the session
+ * cookies (`name=value; name2=value2`).
+ * @typedef {(
+ *   env: Parameters<typeof defaultWithBrowserSession>[0],
+ *   opts: { withBrowserSession: typeof defaultWithBrowserSession }
+ * ) => Promise<string>} JobKoreaLogin
+ */
+
+/**
+ * Open the JobKorea resume editor and hand `fn` the live form, serialized the way the browser
+ * submits it, plus a save that posts from the editor page. JobKorea honours a session only inside
+ * a browser (a plain Worker fetch with the same cookies gets its "session expired" page), and only
+ * in the Browser Rendering browser that logged in: elsewhere its pages stall. With `login` the
+ * editor's own browser logs in first and the editor opens with that login; otherwise
+ * `cookieString` (a stored session) is replayed.
  * @template T
  * @param {Parameters<typeof defaultWithBrowserSession>[0]} env
- * @param {{ cookieString: string; rNo: string }} session
+ * @param {{ rNo: string; cookieString?: string; login?: JobKoreaLogin }} session
  * @param {(editor: JobKoreaEditor) => Promise<T>} fn
  * @param {{ withBrowserSession?: typeof defaultWithBrowserSession }} [deps]
  * @returns {Promise<T>}
  */
 export async function withJobKoreaEditor(
   env,
-  { cookieString, rNo },
+  { cookieString = '', rNo, login },
   fn,
   { withBrowserSession = defaultWithBrowserSession } = {}
 ) {
   return withBrowserSession(
     env,
     async (browser) => {
+      const cookies = login
+        ? await login(env, { withBrowserSession: (_env, run) => run(browser) })
+        : cookieString;
       const page = await browser.newPage();
       /** @type {string[]} */
       const dialogs = [];
@@ -192,7 +206,7 @@ export async function withJobKoreaEditor(
         dialog.dismiss().catch(() => {});
       });
       try {
-        await page.setCookie(...toJobKoreaBrowserCookies(cookieString));
+        await page.setCookie(...toJobKoreaBrowserCookies(cookies));
         await page.goto(`${JOBKOREA_RESUME_EDIT_URL}?RNo=${encodeURIComponent(rNo)}`, {
           waitUntil: 'domcontentloaded',
         });

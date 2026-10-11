@@ -26,7 +26,12 @@ const DEFAULT_EDIT_TOKENS = { IsEditPage: 'True', IsCompleteSave: 'True', LastEd
  *   Parameters<typeof withJobKoreaEditor>[0] & { JOBKOREA_RNO?: string }} JobKoreaSyncEnv
  * @typedef {Parameters<typeof buildJobKoreaFormData>[0] &
  *   Parameters<typeof assertJobKoreaCareerPayloadCoverage>[0]} JobKoreaSsot
- * @typedef {{ dryRun: boolean; withEditor?: typeof withJobKoreaEditor; now?: number }} JobKoreaSyncOptions
+ * @typedef {{
+ *   dryRun: boolean;
+ *   withEditor?: typeof withJobKoreaEditor;
+ *   now?: number;
+ *   jobkoreaLogin?: import('./jobkorea-editor.js').JobKoreaLogin;
+ * }} JobKoreaSyncOptions
  * @typedef {{ platform: 'jobkorea'; success: boolean; dryRun: boolean; error?: string; code?: string; [key: string]: unknown }} JobKoreaSyncResult
  */
 
@@ -144,25 +149,34 @@ function parseSaveResult(text) {
 
 /**
  * Sync the SSoT resume to the JobKorea resume (JOBKOREA_RNO) inside the Browser
- * Rendering editor with the KV `auth:jobkorea` session: keep the live form, overlay
- * the SSoT sections, and save from the editor page.
+ * Rendering editor: keep the live form, overlay the SSoT sections, and save from the
+ * editor page. With `jobkoreaLogin` the editor's browser logs in first; without it the
+ * KV `auth:jobkorea` session is replayed, which JobKorea honours only in the browser
+ * that minted it.
  * @param {JobKoreaSyncEnv} env
  * @param {JobKoreaSsot} ssot
  * @param {JobKoreaSyncOptions} options
  * @returns {Promise<JobKoreaSyncResult>}
  */
 export async function syncJobKoreaFromSsot(env, ssot, options) {
-  const { dryRun, withEditor = withJobKoreaEditor, now = Date.now() } = options;
-  const cookieString = await readPlatformSession(env, 'jobkorea');
-  if (!cookieString) {
-    return {
-      platform: 'jobkorea',
-      success: false,
-      dryRun,
-      code: JOBKOREA_SESSION_EXPIRED,
-      error:
-        'No JobKorea session in KV (auth:jobkorea); mint one with POST /job/api/jobkorea/refresh-session',
-    };
+  const { dryRun, withEditor = withJobKoreaEditor, now = Date.now(), jobkoreaLogin } = options;
+  /** @type {{ login: import('./jobkorea-editor.js').JobKoreaLogin } | { cookieString: string }} */
+  let credentials;
+  if (jobkoreaLogin) {
+    credentials = { login: jobkoreaLogin };
+  } else {
+    const cookieString = await readPlatformSession(env, 'jobkorea');
+    if (!cookieString) {
+      return {
+        platform: 'jobkorea',
+        success: false,
+        dryRun,
+        code: JOBKOREA_SESSION_EXPIRED,
+        error:
+          'No JobKorea session in KV (auth:jobkorea); mint one with POST /job/api/jobkorea/refresh-session',
+      };
+    }
+    credentials = { cookieString };
   }
   const rNo = String(env.JOBKOREA_RNO || '').trim();
   if (!rNo) {
@@ -174,7 +188,7 @@ export async function syncJobKoreaFromSsot(env, ssot, options) {
     };
   }
 
-  return withEditor(env, { cookieString, rNo }, async (editor) => {
+  return withEditor(env, { ...credentials, rNo }, async (editor) => {
     if (editor.fields.length === 0) {
       return {
         platform: 'jobkorea',

@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { afterEach, beforeEach, describe, it } from 'node:test';
 
 import * as cronRouter from '../cron-router.js';
+import { fetchJobKoreaHistoryAfterLogin } from '../../applications/jobkorea-history-login.js';
 import { syncApplicationHistory } from '../../../services/application-history/sync.js';
 import {
   createSqliteD1,
@@ -164,6 +165,33 @@ describe('cron-router', () => {
       syncApplicationHistory,
     });
     assert.deepEqual(order, []);
+  });
+
+  it('logs in to JobKorea only inside the history read, never in the session refresh', async () => {
+    const borrowed = [];
+    const { env, ctx } = createHarness({
+      JOB_DB: createConfigDb({ ...ENABLED_CONFIG, auto_apply_enabled: 'false' }),
+      JOBKOREA_USERNAME: 'owner@example.com',
+      JOBKOREA_PASSWORD: 'secret',
+      BROWSER_SESSION: {
+        idFromName: (name) => borrowed.push(name),
+        get: () => {
+          throw new Error('no browser in cron-router tests');
+        },
+      },
+    });
+    let received;
+
+    await scheduled({ cron: RESUME_SYNC_CRON }, env, ctx, {
+      syncApplicationHistory: async (_env, options) => {
+        received = options;
+        return { ok: true, status: 'success', platforms: {} };
+      },
+    });
+
+    // A JobKorea login holds only in the browser that made it, so none is minted ahead of the read.
+    assert.deepEqual(borrowed, []);
+    assert.equal(received.adapters.jobkorea, fetchJobKoreaHistoryAfterLogin);
   });
 
   it('a failing history sync is logged and does not block any start', async () => {

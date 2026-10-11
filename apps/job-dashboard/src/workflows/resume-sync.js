@@ -3,6 +3,7 @@ import {
   RESUME_SYNC_PLATFORMS,
   syncResumePlatform,
 } from '../services/resume-platform-sync/index.js';
+import { mintJobKoreaSession } from '../handlers/jobkorea/mint-session.js';
 import { getMasterResumeRecord } from './resume-sync-data.js';
 import { recordSyncHistory } from './resume-sync-steps.js';
 import { notifyResumeSyncOutcome } from './resume-sync-notifications.js';
@@ -28,7 +29,9 @@ import { notifyResumeSyncOutcome } from './resume-sync-notifications.js';
  * Resume Sync Workflow
  *
  * Syncs the JOB_DB master resume to job platforms from inside the Worker, one
- * step per platform, with platform sessions read from KV (`auth:<platform>`).
+ * step per platform, with platform sessions read from KV (`auth:<platform>`), except
+ * JobKorea: its login holds only in the Browser Rendering browser that made it, so its
+ * step logs in inside the browser that edits the resume.
  * Platform sync steps never throw, so one platform failing is reported without
  * retrying writes that may have partially landed.
  *
@@ -72,6 +75,7 @@ export class ResumeSyncWorkflow extends WorkflowEntrypoint {
           syncResumePlatform(this.env, platform, master.data, {
             dryRun,
             targetResumeId: platformResumeId,
+            jobkoreaLogin: mintJobKoreaSession,
           })
       );
     }

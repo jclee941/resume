@@ -1,5 +1,5 @@
 import { settleWithin } from '../../services/browser-session.js';
-import { refreshJobKoreaSession } from '../jobkorea/mint-session.js';
+import { fetchJobKoreaHistoryAfterLogin } from '../applications/jobkorea-history-login.js';
 import { syncApplicationHistory } from '../../services/application-history/sync.js';
 import { refreshWantedSession } from '../wanted/mint-session.js';
 import { planAutoApplyStart } from './auto-apply-start.js';
@@ -8,15 +8,16 @@ export const RESUME_SYNC_CRON = '0 21 * * *';
 export const HEALTH_CHECK_CRON = '0 * * * *';
 const HISTORY_SYNC_TIMEOUT_MS = 120_000;
 /**
- * JobKorea's login page has slow spells lasting a minute or two, during which even an immediate
- * retry times out; the daily cron can afford to wait them out before the history sync needs the
- * session (4 tries at most, 90 s apart, well inside the scheduled-event limit).
+ * A JobKorea login holds only in the Browser Rendering browser that made it, and the browser pool
+ * lends whichever browser is free, so a session minted before the history read stalls JobKorea's
+ * pages whenever the read gets another browser. The read logs in inside its own browser instead,
+ * as the on-demand route does.
  */
-export const JOBKOREA_CRON_REFRESH = Object.freeze({ attempts: 4, retryDelayMs: 90_000 });
+const HISTORY_ADAPTERS = Object.freeze({ jobkorea: fetchJobKoreaHistoryAfterLogin });
 /**
- * A scheduled event gets 15 minutes of wall time. Protocol calls on a stalled page can hang for
- * minutes, so the cron waits at most 9 for the session refresh; whatever it has not finished by
- * then is left behind (not cancelled), and the history sync and the workflow starts still run.
+ * A scheduled event gets 15 minutes of wall time. The cron waits at most 9 for the session
+ * refresh; whatever it has not finished by then is left behind (not cancelled), and the history
+ * sync and the workflow starts still run.
  */
 export const SESSION_REFRESH_BUDGET_MS = 9 * 60_000;
 /**
@@ -33,7 +34,7 @@ export const CONFIG_READ_BUDGET_MS = 60_000;
 /**
  * @typedef {{ create(options: { params: unknown }): Promise<unknown> }} WorkflowStarter
  * @typedef {'RESUME_SYNC_WORKFLOW' | 'CLEANUP_WORKFLOW' | 'APPLICATION_WORKFLOW' | 'HEALTH_CHECK_WORKFLOW' | 'DAILY_REPORT_WORKFLOW'} WorkflowBindingName
- * @typedef {Parameters<typeof refreshWantedSession>[0] & Parameters<typeof refreshJobKoreaSession>[0] & Parameters<typeof planAutoApplyStart>[0] & Parameters<typeof syncApplicationHistory>[0] & {
+ * @typedef {Parameters<typeof refreshWantedSession>[0] & Parameters<typeof fetchJobKoreaHistoryAfterLogin>[0] & Parameters<typeof planAutoApplyStart>[0] & Parameters<typeof syncApplicationHistory>[0] & {
  *   RESUME_SYNC_CRON_DRY_RUN?: string;
  * } & { [Name in WorkflowBindingName]?: WorkflowStarter }} CronEnv
  * @typedef {{ waitUntil(promise: Promise<unknown>): void }} CronContext
@@ -41,16 +42,15 @@ export const CONFIG_READ_BUDGET_MS = 60_000;
  */
 
 /**
+ * Refreshes the Wanted session that the history sync and the workflows read from KV. JobKorea is
+ * not refreshed here: each JobKorea step logs in inside the browser it works in
+ * (HISTORY_ADAPTERS here, the editor in ResumeSyncWorkflow).
  * @param {CronEnv} env
  * @returns {Promise<void>}
  */
 async function refreshPlatformSessions(env) {
-  const [wanted, jobkorea] = await Promise.all([
-    refreshWantedSession(env),
-    refreshJobKoreaSession(env, JOBKOREA_CRON_REFRESH),
-  ]);
+  const wanted = await refreshWantedSession(env);
   if (!wanted.ok) console.warn('[cron] Wanted session refresh failed:', wanted.error);
-  if (!jobkorea.ok) console.warn('[cron] JobKorea session refresh failed:', jobkorea.error);
 }
 
 /**
@@ -84,7 +84,12 @@ async function refreshWithinBudget(env, refresh, budgetMs) {
  */
 async function syncHistoryBestEffort(env, sync, deadline, clock) {
   const outcome = await settleWithin(
-    sync(env, { timeoutMs: HISTORY_SYNC_TIMEOUT_MS, deadline, clock }).then(
+    sync(env, {
+      timeoutMs: HISTORY_SYNC_TIMEOUT_MS,
+      deadline,
+      clock,
+      adapters: HISTORY_ADAPTERS,
+    }).then(
       (summary) => ({ summary }),
       (error) => ({ error })
     ),
@@ -195,8 +200,8 @@ function describeReason(reason) {
 /**
  * Route a Cloudflare scheduled() invocation by its matched cron expression.
  * - RESUME_SYNC_CRON   -> ResumeSyncWorkflow (dryRun unless RESUME_SYNC_CRON_DRY_RUN=false,
- *   after a best-effort Wanted/JobKorea session refresh (bounded by SESSION_REFRESH_BUDGET_MS)
- *   and application-history sync, which
+ *   after a best-effort Wanted session refresh (bounded by SESSION_REFRESH_BUDGET_MS)
+ *   and application-history sync (JobKorea logs in inside the browser that reads), which
  *   runs before the discovery start so the approval gate dedupes against it) plus CleanupWorkflow, plus a dry-run
  *   ApplicationWorkflow discovery run for Wanted unless auto-apply is disabled in D1 config
  *   or AUTO_APPLY_CRON_ENABLED=false.

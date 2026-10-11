@@ -357,11 +357,10 @@ onto `applications` rows keyed by (source, job_id) so the auto-apply approval ga
 
 - **Wanted**: `GET /api/v4/applications?status={complete|pass|hire|reject}&limit=50&offset=N` with the
   KV session cookie, paged by `links.next`. The `status` filter is mandatory (422 without it).
-- **JobKorea**: the KV cookies are replayed in Browser Rendering on `/User/ApplyMng` (입사지원 현황)
-  and the rendered HTML is parsed. The page is only read; nothing is clicked. A stored session can
-  stall JobKorea pages in a browser other than the one that minted it, so this route (and MCP
-  `sync_application_history`) logs in first, in the browser that reads; the cron reads right
-  after its session refresh.
+- **JobKorea**: Browser Rendering opens `/User/ApplyMng` (입사지원 현황) and the rendered HTML is
+  parsed. The page is only read; nothing is clicked. A JobKorea session stalls its pages in any
+  browser other than the one that logged in, so this route, MCP `sync_application_history` and
+  the daily cron log in first, in the browser that reads, and read with that login.
 - **Remember**: `GET /open_profiles/me/job_postings/application_histories?page=N&per=50` on the
   career API with the account token, through Browser Rendering REST. An entry that carries
   `canceled_at` is stored as `withdrawn`. Remember can also drop a cancelled application from the
@@ -371,7 +370,7 @@ onto `applications` rows keyed by (source, job_id) so the auto-apply approval ga
   `application-history`.
 - A missing or expired session reports `SESSION_MISSING` / `SESSION_EXPIRED` for that platform
   only. HTTP 502 means every requested platform failed.
-- Runs in the `0 21 * * *` cron after the session refresh and before the auto-apply discovery
+- Runs in the `0 21 * * *` cron after the Wanted session refresh and before the auto-apply discovery
   start (120 s budget, failures never block the other starts), and as the MCP tool
   `sync_application_history`.
 
