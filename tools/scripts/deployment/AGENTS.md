@@ -1,14 +1,14 @@
 # DEPLOYMENT SCRIPTS KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Operator helpers combine preflight checks, Worker deployment, monitoring hooks, and Grafana configuration import.
 
-Boundary: retained deployment-orchestration domain with external mutation and verification responsibilities.
+Boundary: score 2; retained deployment-orchestration domain with external mutation and verification responsibilities.
 
 ## WHERE TO LOOK
 

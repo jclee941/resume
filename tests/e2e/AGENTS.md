@@ -1,14 +1,14 @@
 # E2E TESTS KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Playwright suites exercise portfolio, dashboard, accessibility, security, and deployment surfaces.
 
-Boundary: retained browser-runtime domain with server, locale, device, and capture contracts.
+Boundary: score 12; retained browser-runtime domain with server, locale, device, and capture contracts.
 
 ## WHERE TO LOOK
 
@@ -36,6 +36,7 @@ Boundary: retained browser-runtime domain with server, locale, device, and captu
 - Baselines are ignored materialized-content captures; `updateSnapshots: 'missing'` creates absent baselines only.
 - Screenshot mismatch ratio is 0.05; retries are 2 in CI and 0 locally; traces attach on first retry.
 - Run one suite with `npx playwright test <name> --project=chromium`.
+- Worker concurrency is one in CI and two locally; the local Wrangler startup timeout is 300 seconds.
 
 ## ANTI-PATTERNS
 

@@ -1,7 +1,7 @@
 # SHARED PACKAGE KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -30,6 +30,7 @@ Scope reason: score 13; shared runtime and export boundary.
 - Import `@resume/shared/<subpath>`; `@resume/shared` and `@resume/shared/browser` are not exported.
 - Nested platform directories have explicit entries; `platform-sync/*` covers flat helper files.
 - `session` exports normalization only; cookie and constant consumers use their dedicated subpaths.
+- Cookie signing uses `auth/hmac`; the old cookie-header comment names a nonexistent crypto subpath.
 - Keep domain barrels thin and module I/O explicit.
 - Browser support uses optional `@cloudflare/puppeteer`; cryptography uses WebCrypto.
 - Prefer structured Logger transports for new logging; console transport and existing diagnostic calls are not forbidden by ESLint.

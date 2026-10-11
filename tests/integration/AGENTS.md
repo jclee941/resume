@@ -1,14 +1,14 @@
 # INTEGRATION TESTS KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Jest suites cover sync/schema contracts, network failures, and Worker HTML boundaries without full browser flows.
 
-Boundary: retained cross-module contract domain between unit and E2E coverage.
+Boundary: score 4; retained cross-module contract domain between unit and E2E coverage.
 
 ## WHERE TO LOOK
 

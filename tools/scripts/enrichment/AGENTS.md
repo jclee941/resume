@@ -1,14 +1,14 @@
 # ENRICHMENT KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Independent Go module turns GitHub, application-history, and model evidence into pending change proposals.
 
-Boundary: retained evidence-to-proposal domain with its own module and provenance contract.
+Boundary: score 3; retained evidence-to-proposal domain with its own module and provenance contract.
 
 ## WHERE TO LOOK
 
@@ -25,6 +25,7 @@ Boundary: retained evidence-to-proposal domain with its own module and provenanc
 ## CONVENTIONS
 
 - Run within this Go module; `go -C tools/scripts/enrichment test ./...` covers its tests.
+- Root `npm run test:go` includes this module after its explicit main-module targets.
 - `npm run enrich:github`, `enrich:skills`, and `enrich:ai` select generators; `enrich:all` chains GitHub and AI only.
 - Skill enrichment accepts an application-record file through `-data`.
 - Use `lib.RepoRoot()` and repository-relative constants for inputs and proposal destinations.

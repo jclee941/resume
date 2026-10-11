@@ -1,14 +1,14 @@
 # INFRASTRUCTURE KNOWLEDGE BASE
 
-**Generated:** 2026-10-09 (verified f24027a0)
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Infrastructure declarations, observability configuration, monitoring snapshots, and Cloudflare binding mocks.
 
-Boundary: required domain guide separating infrastructure state from application and test code.
+Boundary: score 0; required domain guide separating infrastructure state from application and test code.
 
 ## WHERE TO LOOK
 
@@ -19,7 +19,7 @@ Boundary: required domain guide separating infrastructure state from application
 | Grafana provisioning    | `configs/grafana/`                               | Datasources, alert rules, dashboard export |
 | Metrics and probes      | `configs/prometheus/`                            | Prometheus, blackbox, rule files           |
 | Alert delivery          | `configs/alertmanager/alertmanager.yml`          | Alert routing configuration                |
-| Trace storage           | `configs/tempo/tempo.yaml`                       | Tempo configuration                        |
+| Trace configuration     | `configs/tempo/tempo.yaml`                       | Standalone Tempo reference, not Compose    |
 | Compose topology        | `docker/docker-compose.monitoring.yml`           | Supporting monitoring services             |
 | Binding test doubles    | `mocks/cf-bindings-mock.js`, `mocks/cloudflare/` | D1, KV, R2, queue, environment mocks       |
 
@@ -30,7 +30,9 @@ Boundary: required domain guide separating infrastructure state from application
 - D1 schema ownership stays with `apps/job-dashboard/migrations/` and its schema snapshot.
 - Treat monitoring exports as reference snapshots; deployed Grafana state can differ.
 - The monitoring tools under `tools/scripts/monitoring/` and `tools/scripts/deployment/` consume these assets.
-- Mocks are modular implementations, not proof that production supports every mocked behavior.
+- Compose declares Jaeger for traces; the standalone Tempo configuration does not establish a running Tempo service.
+- Mocks are not used by tracked application/test consumers; their D1 adapter imports undeclared `better-sqlite3`.
+- Treat those mocks as reference implementations, not a ready test environment.
 
 ## ANTI-PATTERNS
 

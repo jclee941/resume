@@ -1,14 +1,14 @@
 # MONITORING KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Grafana dashboard exports and the logging, SLO, tracing, and uptime contracts around them.
 
-Boundary: retained distinct observability semantics and dashboard-reference domain.
+Boundary: score 1; retained distinct observability semantics and dashboard-reference domain.
 
 ## WHERE TO LOOK
 
@@ -31,6 +31,7 @@ Boundary: retained distinct observability semantics and dashboard-reference doma
 - Grafana alert queries use Prometheus; name the datasource and query family in related changes.
 - Provisioning and alert routing live in sibling `../configs/`, not this dashboard export directory.
 - Record dashboard ownership and export origin when synchronizing a reference snapshot.
+- Sibling Compose declares Jaeger; `../configs/tempo/tempo.yaml` is a separate reference, not its trace service.
 
 ## ANTI-PATTERNS
 

@@ -1,14 +1,14 @@
 # CONTRACTS PACKAGE KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Published REST OpenAPI contract and the environment marker re-export surface.
 
-Scope reason: existing distinct external-contract domain.
+Scope reason: score 3; retained external-contract boundary.
 
 ## WHERE TO LOOK
 

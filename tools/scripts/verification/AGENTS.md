@@ -1,14 +1,14 @@
 # VERIFICATION SCRIPTS KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Offline repository validators and bounded remote probes verify structural contracts and deployment state.
 
-Boundary: retained policy-verification domain with distinct offline and network execution contracts.
+Boundary: score 6; retained policy-verification domain with distinct offline and network execution contracts.
 
 ## WHERE TO LOOK
 
@@ -33,7 +33,8 @@ Boundary: retained policy-verification domain with distinct offline and network 
 - `verify:architecture-hardening:core` composes worker, SSoT, workspace, and architecture checks.
 - `npm run test:tools` covers adjacent Node suites; deployment waiting has its own explicit Go test target.
 - `check-source-loc.mjs` excludes tests and counts code rather than raw blank/comment/template lines.
-- Guide compliance reports required coverage, H1, metadata, and parent links; inspect diagnostics as well as exit status.
+- Guide compliance sets failure status for missing required files, but some content defects only print diagnostics.
+- Inspect H1, metadata, parent links, and forbidden-marker output even when `lint:agents` exits zero.
 - Root `npm run lighthouse:ci` supplies `tools/lighthouserc.json` to the profile runner.
 
 ## ANTI-PATTERNS

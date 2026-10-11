@@ -1,14 +1,14 @@
 # CLI KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Commander-based ESM command entry for manual Worker deployment and endpoint verification.
 
-Scope reason: required existing operator-command boundary.
+Scope reason: score 3; required existing operator-command boundary.
 
 ## WHERE TO LOOK
 

@@ -1,14 +1,14 @@
 # PORTFOLIO WORKER KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Public edge routing, Worker generation, and static-asset ownership for the portfolio.
 
-Scope reason: score 10; required public application boundary.
+Scope reason: score 9; required public application boundary.
 
 ## WHERE TO LOOK
 
@@ -34,6 +34,7 @@ Scope reason: score 10; required public application boundary.
 - `sw.js` caches static assets, never response-nonce-bearing HTML.
 - Source shells, locale snapshots, manifests, downloads, and private assets are materialized inputs or generated outputs; consult the content manifest for exact ownership.
 - `entry.js` is ESM; build scripts use CommonJS, and browser scripts have their own ESM marker.
+- `/` stays the Korean canonical route; `/en/` and `/ja/` are explicit locale paths.
 
 ## ANTI-PATTERNS
 

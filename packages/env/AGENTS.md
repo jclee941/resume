@@ -1,14 +1,14 @@
 # ENV PACKAGE KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Zod-based parsing of environment values with named, structured validation errors.
 
-Scope reason: existing distinct environment-boundary domain.
+Scope reason: score 8; distinct environment-validation boundary.
 
 ## WHERE TO LOOK
 

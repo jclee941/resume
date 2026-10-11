@@ -1,14 +1,14 @@
 # TOOLS KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Developer and operator tooling split between standalone CI checks and module-scoped automation programs.
 
-Boundary: retained tooling hub coordinating execution roots and specialized child guides.
+Boundary: score 1; retained tooling hub coordinating execution roots and specialized child guides.
 
 ## WHERE TO LOOK
 
@@ -27,6 +27,7 @@ Boundary: retained tooling hub coordinating execution roots and specialized chil
 - Prefer the root package command when one exists; it carries the required working directory and test selection.
 - `tools/ci/` has no Go module; its package tests use `GO111MODULE=off`.
 - Main-module commands use `go -C tools/scripts ...`; enrichment commands use their nested module.
+- `scripts/go.mod` declares Go 1.25.0; `scripts/enrichment/go.mod` declares Go 1.22.
 - Some sibling Go files are separate `main` programs; do not assume `go test ./...` is the repository test entrypoint.
 - `npm run test:go` lists the supported Go test targets explicitly.
 - `npm run test:tools` runs colocated JS/MJS Node tests, separate from root Jest discovery.

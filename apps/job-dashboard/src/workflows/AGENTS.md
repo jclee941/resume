@@ -1,7 +1,7 @@
 # WORKFLOWS KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -28,9 +28,11 @@ Scope reason: score 14; retryable Workflow domain.
 - Keep steps idempotent so retrying does not duplicate external side effects.
 - Explicit candidates skip discovery while retaining normalized platform source.
 - Delegate profile editing to `../services/resume-platform-sync/`.
+- `ResumeSyncWorkflow` injects `mintJobKoreaSession` as `jobkoreaLogin` for editor-local login.
 - Keep preview text and approval metadata with gates, not submission transports.
 - Validate platform hosts before browser navigation or session hydration.
 - Keep durable step boundaries visible; preserve bounded retry configuration.
+- Keep `step.*` calls outside `step.do` callbacks; the nesting regression test enforces this.
 - Existence of a platform submitter does not make that platform enabled in the catalog.
 
 ## ANTI-PATTERNS

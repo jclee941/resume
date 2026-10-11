@@ -1,14 +1,14 @@
 # THIRD PARTY KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Dependency-license coordination notes and a reserved license archive, not vendored application code.
 
-Boundary: retained distinct license-review domain despite a structural score of 0.
+Boundary: score 0; retained distinct license-review domain.
 
 ## WHERE TO LOOK
 

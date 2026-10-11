@@ -1,14 +1,14 @@
 # CLOUDFLARE TERRAFORM KNOWLEDGE BASE
 
-**Generated:** 2026-10-09 (verified f24027a0)
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Terraform DNS and Worker declarations, existing KV/D1 references, and supporting edge-storage examples.
 
-Boundary: retained distinct Terraform state and resource-ownership domain.
+Boundary: score 1; retained distinct Terraform state and resource-ownership domain.
 
 ## WHERE TO LOOK
 
@@ -31,6 +31,8 @@ Boundary: retained distinct Terraform state and resource-ownership domain.
 - Data-source entries may include historical namespaces; compare with root `wrangler.jsonc` before treating them as active bindings.
 - `workers.tf` still references a generated bundle through a relative file path; validate that path before any deliberate reconciliation.
 - Region and R2 JSON are supporting configuration examples, not additional deploy entrypoints.
+- Provider authentication currently uses API key/email variables; the backend is S3-compatible.
+- The legacy script resource reads `apps/portfolio/worker.js`; it does not compose the root Worker entrypoint.
 
 ## ANTI-PATTERNS
 
