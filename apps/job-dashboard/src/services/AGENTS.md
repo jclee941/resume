@@ -1,7 +1,7 @@
 # SERVICES KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -26,15 +26,16 @@ services/
 
 ## WHERE TO LOOK
 
-| Task                   | Location                               | Notes                                        |
-| ---------------------- | -------------------------------------- | -------------------------------------------- |
-| Auth and replay policy | `auth.js`, `auth-webhook-signature.js` | Session tokens, HMAC, nonces                 |
-| Config                 | `config.js`                            | Persistent dashboard configuration           |
-| Browser lifecycle      | `browser-session.js`                   | Borrow/release sessions via broker           |
-| Session storage        | `platform-session.js`                  | Encrypted KV values under platform keys      |
-| Request filtering      | `jobkorea-request-filter.js`           | Avoid slow third-party browser traffic       |
-| Notification facade    | `notifications.js`                     | Both facade and singular barrel have callers |
-| Platform dispatch      | `resume-platform-sync/index.js`        | Supported sync list and structured outcomes  |
+| Task                   | Location                                  | Notes                                                  |
+| ---------------------- | ----------------------------------------- | ------------------------------------------------------ |
+| Auth and replay policy | `auth.js`, `auth-webhook-signature.js`    | Session tokens, HMAC, nonces                           |
+| Config                 | `config.js`                               | Persistent dashboard configuration                     |
+| Browser lifecycle      | `browser-session.js`                      | Borrow/release sessions via broker                     |
+| Session storage        | `platform-session.js`                     | Encrypted KV values under platform keys                |
+| Request filtering      | `jobkorea-request-filter.js`              | Avoid slow third-party browser traffic                 |
+| Notification facade    | `notifications.js`                        | Handler and queue imports target this facade           |
+| Platform dispatch      | `resume-platform-sync/index.js`           | Supported sync list and structured outcomes            |
+| JobKorea editor        | `resume-platform-sync/jobkorea-editor.js` | Browser-local login, form sections, photo preservation |
 
 ## CONVENTIONS
 
@@ -43,7 +44,9 @@ services/
 - Keep application-history adapters separate from the idempotent repository and sync orchestration.
 - Preserve exact application timestamps through platform-specific normalization.
 - Keep session encryption and expiry in `platform-session.js`, not individual clients.
-- Preserve both live notification entry paths when changing exports.
+- `notification/index.js` is a compatibility re-export; no tracked source imports it.
+- `withJobKoreaEditor` accepts `login` and invokes it inside the borrowed editor browser.
+- Use the injected `jobkoreaLogin` from callers; stored `auth:jobkorea` cookies are not portable.
 
 ## ANTI-PATTERNS
 
@@ -51,5 +54,6 @@ services/
 - Do not treat a failed platform sync as a successful empty result.
 - Do not restore a token-bucket implementation in the test-only `rate-limiter/` directory.
 - Do not discard a concurrent history update merely to avoid an insert conflict.
+- Do not infer successful JobKorea authentication from a stored KV session alone.
 
 Parent: [../AGENTS.md](../AGENTS.md)

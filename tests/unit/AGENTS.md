@@ -1,14 +1,14 @@
 # UNIT TESTS KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Module regressions for portfolio generation/runtime, dashboard automation, shared helpers, and locale data.
 
-Boundary: retained module-test domain with mixed legacy test imports and shared fixture conventions.
+Boundary: score 4; retained module-test domain with mixed legacy test imports and shared fixture conventions.
 
 ## WHERE TO LOOK
 
@@ -18,7 +18,7 @@ Boundary: retained module-test domain with mixed legacy test imports and shared 
 | Dashboard behavior        | `job-dashboard/`                                   | Routes, auth, application gates, migration/SQL contracts |
 | Shared utilities          | `shared/`                                          | Jest-discovered shared package tests                     |
 | Locale and data contracts | `data/`                                            | Jest-discovered parity/variant assertions                |
-| Notification logic        | `job-automation/telegram-notification.test.js`     | Notification regressions                                 |
+| Notification logic        | `job-automation/telegram-notification.test.js`     | Inline model; does not import production logic           |
 | Worker composition        | `generate-worker.test.js`, `worker-routes.test.js` | Generated entry/routing contracts                        |
 | Scheduled wiring          | `scheduled-cron-wiring.test.js`                    | Cron composition contract                                |
 | Shared content values     | `../helpers/owner-data.js`                         | Expected values from materialized data                   |
@@ -33,6 +33,8 @@ Boundary: retained module-test domain with mixed legacy test imports and shared 
 - Dashboard migration contracts replay SQLite schemas rather than replacing SQL behavior with canned results.
 - Shared fixture modules use `*-fixtures.js`; cleanup restores mocks and fake timers after each case.
 - A generated Worker must exist for build-dependent assertions; an absent artifact is not a passing runtime check.
+- `portfolio-worker/lib/` mirrors builder modules; top-level portfolio suites also inspect source contracts.
+- Shared-package export tests exercise published subpaths; colocated package tests have separate ownership.
 
 ## ANTI-PATTERNS
 

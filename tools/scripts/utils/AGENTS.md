@@ -1,14 +1,14 @@
 # SCRIPTS UTILS KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Locale-data synchronization, validation, path handling, version utilities, and the standalone job-search CLI.
 
-Boundary: retained reusable data-generation domain with explicit source and output boundaries.
+Boundary: score 9; retained reusable data-generation domain with explicit source and output boundaries.
 
 ## WHERE TO LOOK
 
@@ -32,7 +32,7 @@ Boundary: retained reusable data-generation domain with explicit source and outp
 - Use `resume-data-paths.js` for canonical reads and writes rather than duplicating path strings.
 - The sync manifest must contain exactly ko/en/ja and the corresponding three portfolio output names.
 - Validate every source before preparing output directories or generating locale snapshots.
-- Preserve explicit as-of-date handling for deterministic derived experience fields.
+- CLI options are `--as-of`, `--source-dir`, and `--output-dir`; date precedence is flag, `RESUME_AS_OF`, UTC today.
 - Output helpers bind directory identity, clean partially written snapshots on error, and close handles.
 - Keep application-variant validation distinct from the canonical master schema.
 

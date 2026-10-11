@@ -1,14 +1,14 @@
 # MIDDLEWARE KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 CORS response helpers and CSRF cookie/header validation for dashboard requests.
 
-Scope reason: existing distinct request-security domain.
+Scope reason: score 3; retained request-security boundary with widely used response helpers.
 
 ## WHERE TO LOOK
 

@@ -1,14 +1,14 @@
 # DOCUMENTATION HUB KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Documentation hub containing current contracts alongside dated audits, plans, and operator procedures.
 
-Boundary: required domain guide; structural score 5 across seven documentation subdirectories.
+Boundary: score 5; required domain guide.
 
 ## STRUCTURE
 
@@ -45,6 +45,8 @@ docs/
 - Label time-bound findings rather than presenting them as current operational instructions.
 - `npm run verify:architecture-governance` checks ADR governance and selected current-state files, not every guide.
 - Validate procedure commands against `package.json` and the actual script path before documenting them.
+- The guarded current-state set is declared in `tools/scripts/verification/architecture-docs-current-state.mjs`.
+- Older deployment and rotation guides can reference absent workflows; verify those references before use.
 
 ## ANTI-PATTERNS
 

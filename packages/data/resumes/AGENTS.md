@@ -1,14 +1,14 @@
 # RESUME DATA TREE KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Canonical locale inputs, independent role variants, and supporting document corpora.
 
-Scope reason: existing distinct canonical-versus-tailored ownership boundary.
+Scope reason: score 0 outside child domains; retained canonical-versus-tailored ownership boundary.
 
 ## WHERE TO LOOK
 

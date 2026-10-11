@@ -1,14 +1,14 @@
 # AUTOMATION SCRIPTS KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Operational module containing asset generation, content transport, release, deployment, and data workflows.
 
-Boundary: retained script-domain hub; specialized guides own their local contracts.
+Boundary: score 3; retained script-domain hub; specialized guides own their local contracts.
 
 ## STRUCTURE
 
@@ -53,6 +53,8 @@ scripts/
 - The content CLI runs on Workers Builds with Node only; its dependency-free bootstrap is a specific exception.
 - The Miniflare support file under `dev/` is not the root `npm run dev` configuration.
 - Standalone rollout tools in `deploy/` are distinct from the orchestration tools in `deployment/`.
+- `deploy/`, `deployment/`, and `monitoring/` are manual helpers, absent from root Go test targets.
+- `local-dev-up --all` enables only the portfolio service; it does not restore a local job-server.
 
 ## ANTI-PATTERNS
 

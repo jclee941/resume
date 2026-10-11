@@ -1,14 +1,14 @@
 # JOB DASHBOARD WORKER KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Dashboard API, database lineage, and automation package mounted by the portfolio entry.
 
-Scope reason: score 12; required application boundary.
+Scope reason: score 9; required application and migration boundary.
 
 ## WHERE TO LOOK
 
@@ -29,6 +29,7 @@ Scope reason: score 12; required application boundary.
 - Wrangler's D1 migration directory is this package's `migrations/`.
 - Use sequential `NNNN_snake_case.sql` migrations; retain the baseline for replay.
 - Mirror schema-changing migrations in `schema.sql`; data-only corrections need no DDL change.
+- Migration `0008` shifts existing timestamps once; do not replay it as an idempotent repair.
 - `tests/unit/job-dashboard/migration-lineage.test.js` replays the lineage against the snapshot.
 - `tests/unit/job-dashboard/d1-schema-contract.test.js` checks Worker SQL against the schema.
 - Run colocated Node tests with `npm run test:dashboard`; root Jest suites use `npm run test:jest`.

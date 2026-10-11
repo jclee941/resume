@@ -1,14 +1,14 @@
 # APPLICATION PACKETS
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Role-specific packet source, printable previews, and automation run artifacts outside npm workspaces.
 
-Scope reason: existing distinct application-content domain.
+Scope reason: score 0 in tracked code; retained application-content ownership boundary.
 
 ## WHERE TO LOOK
 

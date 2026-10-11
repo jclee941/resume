@@ -1,14 +1,14 @@
 # RELEASE DOMAIN KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Two Go CLIs calculate release decisions and publish verified assets through an ownership-checked transaction.
 
-Boundary: retained immutable-release and publication-state-machine domain.
+Boundary: score 2; retained immutable-release and publication-state-machine domain.
 
 ## WHERE TO LOOK
 

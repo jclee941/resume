@@ -1,14 +1,14 @@
 # SCHEMAS PACKAGE KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Boundary-specific Zod validators distributed as ESM source and a tracked CommonJS bundle.
 
-Scope reason: score 9; distinct runtime-validation distribution.
+Scope reason: score 12; distinct runtime-validation distribution.
 
 ## WHERE TO LOOK
 

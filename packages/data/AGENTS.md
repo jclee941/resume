@@ -1,14 +1,14 @@
 # DATA KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Tracked resume schema, platform mapping data, and ownership guidance for materialized resume corpora.
 
-Scope reason: existing distinct data-ownership domain.
+Scope reason: score 1 in tracked code; retained materialized-data ownership boundary.
 
 ## WHERE TO LOOK
 

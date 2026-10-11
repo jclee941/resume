@@ -1,14 +1,14 @@
 # E2E FIXTURES KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Browser-test support modules provide mock services, owner-derived copy, and public-copy ledger extraction.
 
-Boundary: score 9; distinct reusable mock-server and capture-contract domain.
+Boundary: score 12; distinct reusable mock-server and capture-contract domain.
 
 ## WHERE TO LOOK
 
@@ -31,7 +31,8 @@ Boundary: score 9; distinct reusable mock-server and capture-contract domain.
 - `owner-copy.js` derives expected copy rather than embedding the owner's identity in tests.
 - Most modules use CommonJS; `auth-login.js` uses ESM exports.
 - Ledger extraction separates browser-visible occurrences from repository-source auditing.
-- Some unit tests import ledger helpers; keep their module contract usable outside Playwright fixtures.
+- `tests/unit/portfolio-worker/public-copy-allowlist.test.js` imports ledger helpers outside Playwright.
+- `public-copy-source-map.json` maps rendered occurrences to source pointers; keep schema checks intact.
 
 ## ANTI-PATTERNS
 

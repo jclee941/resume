@@ -1,14 +1,14 @@
 # BUILD SCRIPTS KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Tracked generators and publication helpers for PDF/PPTX presentations, resume variants, icons, and screenshots.
 
-Boundary: retained multi-format build domain with renderer-specific output contracts.
+Boundary: score 15; retained multi-format build domain with renderer-specific output contracts.
 
 ## WHERE TO LOOK
 

@@ -1,14 +1,14 @@
 # GITHUB CONTROL PLANE KNOWLEDGE BASE
 
-**Generated:** 2026-10-09 (verified f24027a0)
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Repository review metadata, issue forms, dependency updates, and the validation workflow.
 
-Boundary: retained distinct domain for repository automation and review policy.
+Boundary: score 1; retained distinct domain for repository automation and review policy.
 
 ## WHERE TO LOOK
 
@@ -29,6 +29,9 @@ Boundary: retained distinct domain for repository automation and review policy.
 - The content guard precedes dependency installation; keep its bootstrap dependency-free.
 - Validation order: dependency audit, build, lint/format, types, tests, architecture contracts, bundle dry-run.
 - CI test commands are explicit; adding a root test script alone does not add a workflow step.
+- Master also requires `jclee-bot` checks `pr-metadata`, `secret-scan`, and `actionlint`.
+- Those checks do not report on Dependabot PRs; a passing Validate job can still leave them BLOCKED.
+- Playwright E2E is on demand, not a step in the validation workflow.
 
 ## ANTI-PATTERNS
 

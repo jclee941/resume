@@ -1,14 +1,14 @@
 # TECHNICAL EVIDENCE DOCUMENTS
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Materialized technical evidence maintained in compact and full narrative forms.
 
-Scope reason: existing distinct technical-document corpus.
+Scope reason: score 0 in tracked code; retained technical-document ownership boundary.
 
 ## WHERE TO LOOK
 

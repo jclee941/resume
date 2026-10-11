@@ -1,14 +1,14 @@
 # PORTFOLIO SOURCE KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Browser CSS and feature modules composed into the generated portfolio Worker.
 
-Scope reason: score 9; distinct browser-source domain.
+Scope reason: score 10; distinct browser-source domain.
 
 ## WHERE TO LOOK
 
@@ -32,6 +32,7 @@ Scope reason: score 9; distinct browser-source domain.
 - Preserve keyboard operation, focus restoration/trapping, and ARIA state for overlays.
 - Locale data and labels must remain aligned across KO, EN, and JA modules.
 - Imported `*-data.js` modules are materialized content inputs; they are not a new code-source location.
+- `__SKILL_DATA__` is injected by the build and declared in `scripts/client-globals.d.ts`.
 
 ## ANTI-PATTERNS
 

@@ -1,14 +1,14 @@
 # 1PASSWORD SCRIPT KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Go wrappers resolve secret references for child processes and seed explicitly allowed environment fields.
 
-Boundary: retained credential-resolution domain with CLI and SDK authentication modes.
+Boundary: score 2; retained credential-resolution domain with CLI and SDK authentication modes.
 
 ## WHERE TO LOOK
 

@@ -1,14 +1,14 @@
 # TA PROFILE GENERATION KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Materialized TA presentation workspace; only this guidance file is tracked in this subtree.
 
-Boundary: retained distinct presentation-content domain outside npm workspaces.
+Boundary: score 0; retained distinct presentation-content domain outside npm workspaces.
 
 ## WHERE TO LOOK
 

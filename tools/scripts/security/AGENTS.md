@@ -1,14 +1,14 @@
 # SECURITY SCRIPTS KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Committed Wrangler configuration guard checks secret classification without resolving operator credentials.
 
-Boundary: retained narrow security-policy domain rather than general deployment tooling.
+Boundary: score 2; retained narrow security-policy domain rather than general deployment tooling.
 
 ## WHERE TO LOOK
 
@@ -27,6 +27,7 @@ Boundary: retained narrow security-policy domain rather than general deployment 
 - Report offending key names and file paths rather than resolved values.
 - A passing classification check does not establish that production secrets exist or authenticate.
 - This standalone guard is not currently a root npm script or a tested Go package target.
+- Exit codes distinguish clean input (0), suspicious values (1), and invocation failure (2).
 
 ## ANTI-PATTERNS
 

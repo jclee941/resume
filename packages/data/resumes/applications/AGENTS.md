@@ -1,14 +1,14 @@
 # INDEPENDENT APPLICATION VARIANTS
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Hand-authored role-specific resume JSON and prose with a deliberately smaller validation contract.
 
-Scope reason: existing distinct variant-schema boundary.
+Scope reason: score 0 in tracked code; retained independent variant-schema boundary.
 
 ## WHERE TO LOOK
 

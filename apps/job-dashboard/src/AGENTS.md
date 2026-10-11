@@ -1,14 +1,14 @@
 # JOB DASHBOARD SOURCE KNOWLEDGE BASE
 
-**Generated:** 2026-10-09
-**Commit:** `f24027a0`
+**Generated:** 2026-10-11
+**Commit:** `28de5bcd`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Composition and request policy for the dashboard HTTP, queue, and scheduled surfaces.
 
-Scope reason: score 13; required runtime composition boundary.
+Scope reason: score 11; required runtime composition boundary.
 
 ## STRUCTURE
 
@@ -28,13 +28,13 @@ src/
 
 ## WHERE TO LOOK
 
-| Task              | Location                            | Notes                                             |
-| ----------------- | ----------------------------------- | ------------------------------------------------- |
-| HTTP pipeline     | `index.js`                          | Normalizes `/job`, applies policy, builds context |
-| Matching/errors   | `router.js`                         | Route patterns and handler boundary               |
-| Context types     | `worker-env.js`                     | Types derived from binding consumers              |
-| MCP tools         | `mcp/internal-api.js`, `mcp/tools/` | Reuse the registered REST routes                  |
-| Browser ownership | `durable-objects/`                  | Stateful object with pure broker helpers          |
+| Task              | Location           | Notes                                             |
+| ----------------- | ------------------ | ------------------------------------------------- |
+| HTTP pipeline     | `index.js`         | Normalizes `/job`, applies policy, builds context |
+| Matching/errors   | `router.js`        | Route patterns and handler boundary               |
+| Context types     | `worker-env.js`    | Types derived from binding consumers              |
+| MCP tools         | `mcp/AGENTS.md`    | Protocol guard, route bridge, and content reads   |
+| Browser ownership | `durable-objects/` | Stateful object with pure broker helpers          |
 
 ## CONVENTIONS
 
@@ -42,6 +42,7 @@ src/
 - The public MCP endpoint is `/job/mcp`; normalized internal path is `/mcp`.
 - MCP skips CORS and uses Host/Origin checks plus admin Bearer authentication, never cookies.
 - MCP tools default workflow starts to dry runs and retain the REST real-submit gate.
+- MCP content-file reads query D1 directly; operation tools reuse the registered REST routes.
 - Instantiate shared route context once per request; registrars consume it.
 - Attach request/response logging with `ctx.waitUntil()` using the request-scoped logger.
 - Delegate queue batches to `QueueConsumer` and cron events to `handlers/scheduled/cron-router.js`.
