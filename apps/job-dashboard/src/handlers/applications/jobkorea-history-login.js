@@ -1,10 +1,11 @@
 /**
- * @fileoverview On-demand JobKorea history reads log in first, in the browser that reads, and read
- * with that login's cookies. A stored `auth:jobkorea` session keeps working in the Browser
- * Rendering browser that minted it but can stall JobKorea pages in others (2026-10-02: of three
- * concurrent browsers, only the minting one stayed logged in), and an admin or MCP sync usually
- * gets another browser. The login is not stored: another login may replace `auth:jobkorea` at any
- * time, and the daily cron reads the stored session right after its own refresh.
+ * @fileoverview JobKorea history reads (on demand, over MCP and in the daily cron) log in first, in
+ * the browser that reads, and read with that login's cookies. A stored `auth:jobkorea` session
+ * keeps working in the Browser Rendering browser that minted it but can stall JobKorea pages in
+ * others (2026-10-02: of three concurrent browsers, only the minting one stayed logged in), and
+ * the browser pool lends whichever browser is free: the cron's former refresh-then-read stalled
+ * this way on 2026-10-03 and 2026-10-10. The login is not stored: another login may replace
+ * `auth:jobkorea` at any time.
  * @module handlers/applications/jobkorea-history-login
  */
 import { fetchJobKoreaHistory as defaultFetchHistory } from '../../services/application-history/jobkorea-adapter.js';

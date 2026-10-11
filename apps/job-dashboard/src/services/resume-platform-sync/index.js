@@ -38,7 +38,11 @@ function errorCode(error) {
  * @param {ResumePlatformSyncEnv} env
  * @param {string} platform
  * @param {ResumePlatformSsot} ssot
- * @param {{ dryRun: boolean; targetResumeId?: string | null }} options
+ * @param {{
+ *   dryRun: boolean;
+ *   targetResumeId?: string | null;
+ *   jobkoreaLogin?: import('./jobkorea-editor.js').JobKoreaLogin;
+ * }} options `jobkoreaLogin` logs JobKorea in inside the browser that edits its resume
  * @returns {Promise<PlatformSyncOutcome>}
  */
 export async function syncResumePlatform(env, platform, ssot, options) {

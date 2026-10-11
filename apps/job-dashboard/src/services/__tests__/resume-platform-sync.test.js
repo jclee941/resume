@@ -194,6 +194,22 @@ describe('Cloudflare-native JobKorea resume sync', () => {
     assert.match(noRno.error, /JOBKOREA_RNO/);
     assert.equal(withEditor.mock.callCount(), 0);
   });
+
+  it('hands the editor a login instead of reading the KV session when one is given', async () => {
+    const env = await envWithSessions({}, { JOBKOREA_RNO: '777' });
+    const { withEditor } = fakeEditor();
+    const jobkoreaLogin = async () => 'L=1';
+
+    const result = await syncJobKoreaFromSsot(env, SSOT, {
+      dryRun: true,
+      withEditor,
+      jobkoreaLogin,
+      now: 1000,
+    });
+
+    assert.equal(result.success, true);
+    assert.deepEqual(withEditor.mock.calls[0].arguments[1], { login: jobkoreaLogin, rNo: '777' });
+  });
 });
 
 function fakeEditorPage({
@@ -333,6 +349,43 @@ describe('JobKorea editor over Browser Rendering', () => {
       }
     );
     assert.equal(page.close.mock.callCount(), 1);
+  });
+
+  it('logs in inside the browser it borrowed and opens the editor with that login', async () => {
+    const { page, withBrowserSession } = fakeEditorPage();
+    let loginBrowser;
+    const login = mock.fn(async (_env, { withBrowserSession: sameBrowser }) =>
+      sameBrowser({}, async (browser) => {
+        loginBrowser = browser;
+        return 'L=1; M=2';
+      })
+    );
+
+    await withJobKoreaEditor({}, { login, rNo: '42' }, async () => 'edited', {
+      withBrowserSession,
+    });
+
+    assert.equal(withBrowserSession.mock.callCount(), 1);
+    assert.equal(await loginBrowser.newPage(), page);
+    assert.deepEqual(page.setCookie.mock.calls[0].arguments, toJobKoreaBrowserCookies('L=1; M=2'));
+  });
+
+  it('rejects with the login failure itself and opens no editor page', async () => {
+    const { page, withBrowserSession } = fakeEditorPage();
+    const captcha = Object.assign(new Error('JobKorea presented a CAPTCHA'), {
+      code: 'JOBKOREA_CAPTCHA_REQUIRED',
+    });
+    const login = async () => {
+      throw captcha;
+    };
+
+    await assert.rejects(
+      withJobKoreaEditor({}, { login, rNo: '42' }, async () => 'unreachable', {
+        withBrowserSession,
+      }),
+      (error) => error === captcha
+    );
+    assert.equal(page.goto.mock.callCount(), 0);
   });
 });
 

@@ -40,12 +40,14 @@ describe('ResumeSyncWorkflow resume identifiers', () => {
 
   function createEnv({ targetResumeId = 'W-100' } = {}) {
     const binds = [];
+    const kvReads = [];
     const row = {
       data: JSON.stringify({ personal: { name: 'Tester' }, careers: [], skills: [] }),
       target_resume_id: targetResumeId,
     };
     return {
       binds,
+      kvReads,
       JOB_DB: {
         prepare: () => ({
           bind: (...values) => {
@@ -55,7 +57,18 @@ describe('ResumeSyncWorkflow resume identifiers', () => {
         }),
       },
       ENCRYPTION_KEY: TEST_ENCRYPTION_KEY,
-      SESSIONS: { get: async (key) => (key === 'auth:wanted' ? wantedSession : null) },
+      JOBKOREA_RNO: '777',
+      // The JobKorea step borrows a browser to log in; these tests lend none.
+      BROWSER_SESSION: {
+        idFromName: (name) => name,
+        get: () => ({ fetch: async () => Response.json({ error: 'no browser in tests' }) }),
+      },
+      SESSIONS: {
+        get: async (key) => {
+          kvReads.push(key);
+          return key === 'auth:wanted' ? wantedSession : null;
+        },
+      },
     };
   }
 
@@ -72,7 +85,9 @@ describe('ResumeSyncWorkflow resume identifiers', () => {
     expect(env.binds[0]).toEqual(['master']);
     expect(result.platforms).toEqual(['wanted', 'jobkorea', 'skcareers', 'remember']);
     expect(result.results.wanted).toMatchObject({ success: true, dryRun: true });
-    expect(result.results.jobkorea.error).toMatch('auth:jobkorea');
+    // JobKorea logs in inside the browser that edits instead of replaying a stored session.
+    expect(result.results.jobkorea.error).toBe('no browser in tests');
+    expect(env.kvReads).not.toContain('auth:jobkorea');
     expect(result.results.skcareers.error).toMatch('SKCAREERS_EMAIL');
     expect(result.results.remember.error).toMatch(/REMEMBER_EMAIL|session/i);
     expect(global.fetch.mock.calls[0][0]).toBe(
