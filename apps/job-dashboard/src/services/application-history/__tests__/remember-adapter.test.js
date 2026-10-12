@@ -18,7 +18,7 @@ const posting = (id, application = {}) => ({
   organization: { name: `Company ${id}` },
   application: {
     status: 'applied',
-    created_at: '2026-10-02T19:25:25.412+09:00',
+    applied_at: '2026-10-02T19:25:25.412+09:00',
     canceled_at: null,
     ...application,
   },
@@ -62,6 +62,18 @@ describe('toRememberRecord', () => {
   it('maps a cancelled application to withdrawn', () => {
     const record = toRememberRecord(posting(7, { canceled_at: '2026-10-02T19:37:25+09:00' }));
     assert.equal(record?.status, 'withdrawn');
+  });
+
+  it('maps the progress timestamps Remember keeps beside status "applied"', () => {
+    const at = '2026-10-09T16:44:42.400+09:00';
+    const statusOf = (application) => toRememberRecord(posting(9, application))?.status;
+    assert.equal(statusOf({}), 'applied');
+    assert.equal(statusOf({ first_read_at: at }), 'viewed');
+    assert.equal(statusOf({ reviewed_at: at }), 'viewed');
+    assert.equal(statusOf({ first_read_at: at, resume_accepted_at: at }), 'in_progress');
+    assert.equal(statusOf({ resume_accepted_at: at, final_accepted_at: at }), 'offer');
+    assert.equal(statusOf({ resume_accepted_at: at, rejected_at: at }), 'rejected');
+    assert.equal(statusOf({ rejected_at: at, canceled_at: at }), 'withdrawn');
   });
 
   it('skips a posting without an id', () => {
@@ -123,5 +135,21 @@ describe('syncApplicationHistory for remember', () => {
     );
     assert.equal(first.platforms.remember.inserted, 2);
     assert.equal(second.platforms.remember.inserted, 0);
+  });
+
+  it('moves a stored application to rejected once Remember records the rejection', async () => {
+    const db = createSqliteD1();
+    const env = await sessionEnv(db, ['remember']);
+    serveHistory([[posting(3)]]);
+    await syncApplicationHistory(env, { platforms: ['remember'] });
+
+    serveHistory([[posting(3, { rejected_at: '2026-10-11T10:00:00+09:00' })]]);
+    const resync = await syncApplicationHistory(env, { platforms: ['remember'] });
+
+    const row = db.sqlite
+      .prepare("SELECT status FROM applications WHERE job_id = 'remember-3'")
+      .get();
+    assert.equal(row.status, 'rejected');
+    assert.equal(resync.platforms.remember.updated, 1);
   });
 });
