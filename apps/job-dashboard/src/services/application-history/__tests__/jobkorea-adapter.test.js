@@ -230,6 +230,8 @@ describe('fetchJobKoreaHistory overall deadline', () => {
         fetchJobKoreaHistory(env, {
           withBrowserSession: async () => new Promise(() => {}),
           deadlineMs: 5,
+          // A frozen clock keeps the in-work window checks open, so only the outer timer decides.
+          clock: () => 0,
         }),
         { code: 'TIMEOUT', message: 'JobKorea history fetch gave up after 5 ms; pending: none' }
       );
