@@ -1,8 +1,10 @@
 /**
  * @fileoverview Reads the owner's Remember application history from the career API with the KV
  * session token (`withRememberToken` logs in again when KV has none or it expired). Each posting
- * carries one `application` (`created_at` with a +09:00 offset, `canceled_at` once withdrawn);
- * pages hold up to `per` postings and a shorter page is the last one.
+ * carries one `application` whose `status` stays "applied"; the times beside it (+09:00 offsets)
+ * hold `applied_at` and the employer's progress: read, reviewed, document pass, final offer,
+ * rejection, and `canceled_at` once withdrawn. Pages hold up to `per` postings and a shorter page
+ * is the last one.
  * @module services/application-history/remember-adapter
  */
 import {
@@ -22,12 +24,38 @@ const SESSION_FAILURE = /^(Remember session refresh failed|No Remember session a
 
 /**
  * @typedef {{
+ *   status?: string;
+ *   applied_at?: string | null;
+ *   first_read_at?: string | null;
+ *   reviewed_at?: string | null;
+ *   resume_accepted_at?: string | null;
+ *   final_accepted_at?: string | null;
+ *   rejected_at?: string | null;
+ *   canceled_at?: string | null;
+ * }} RememberApplication
+ *
+ * @typedef {{
  *   id?: number | string;
  *   title?: string;
  *   organization?: { name?: string } | null;
- *   application?: { status?: string; created_at?: string | null; canceled_at?: string | null } | null;
+ *   application?: RememberApplication | null;
  * }} RememberHistoryPosting
  */
+
+/**
+ * The furthest stage the application reached: a withdrawal, then a rejection, a final offer, a
+ * passed document review, an employer read or review, else a plain application.
+ * @param {RememberApplication | null | undefined} application
+ * @returns {string}
+ */
+export function rememberStatus(application) {
+  if (application?.canceled_at) return 'withdrawn';
+  if (application?.rejected_at) return 'rejected';
+  if (application?.final_accepted_at) return 'offer';
+  if (application?.resume_accepted_at) return 'in_progress';
+  if (application?.first_read_at || application?.reviewed_at) return 'viewed';
+  return 'applied';
+}
 
 /**
  * @param {string | null | undefined} value ISO string with an offset
@@ -52,8 +80,8 @@ export function toRememberRecord(posting) {
     company: posting.organization?.name?.trim() || 'Unknown',
     position: posting.title?.trim() || 'Unknown',
     url: `${REMEMBER_CAREER_URL}/job/posting/${id}`,
-    appliedAt: toUtcIso(application?.created_at),
-    status: application?.canceled_at ? 'withdrawn' : 'applied',
+    appliedAt: toUtcIso(application?.applied_at),
+    status: rememberStatus(application),
   };
 }
 

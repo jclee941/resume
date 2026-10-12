@@ -362,9 +362,12 @@ onto `applications` rows keyed by (source, job_id) so the auto-apply approval ga
   browser other than the one that logged in, so this route, MCP `sync_application_history` and
   the daily cron log in first, in the browser that reads, and read with that login.
 - **Remember**: `GET /open_profiles/me/job_postings/application_histories?page=N&per=50` on the
-  career API with the account token, through Browser Rendering REST. An entry that carries
-  `canceled_at` is stored as `withdrawn`. Remember can also drop a cancelled application from the
-  list; rows are never deleted, so that row keeps its last stored status.
+  career API with the account token, through Browser Rendering REST. `application.status` stays
+  `applied`, so the stage comes from the times beside it: `canceled_at` -> `withdrawn`,
+  `rejected_at` -> `rejected`, `final_accepted_at` -> `offer`, `resume_accepted_at` ->
+  `in_progress`, `first_read_at` or `reviewed_at` -> `viewed`; `applied_at` is the application
+  time. Remember can also drop a cancelled application from the list; rows are never deleted, so
+  that row keeps its last stored status.
 - Existing rows matching (source, job_id) only have their status advanced; new rows are inserted
   as `history-<job_id>`; rows are never deleted. Each run adds a `sync_logs` row of type
   `application-history`.
