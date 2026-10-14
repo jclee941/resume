@@ -1,8 +1,29 @@
 const { buildLanguageLink } = require('./nav.js');
 const { HERO_CONTENT } = require('../hero-content-data');
 const { defaultOwnerIdentity, escapeRegExp, familyNameFirst } = require('../owner-identity');
+const { escapeHtml } = require('../template-sanitizer');
+
+const TITLE_ROLE = 'Security & Infrastructure Engineer';
 
 const LANGUAGE_LINK_RE = /<a\b([^>]*\bhreflang="(ko|en|ja)"[^>]*)>\s*(KO|EN|JA)\s*<\/a\s*>/g;
+
+/**
+ * Escape a value for use inside a JSON string literal embedded in an HTML script block.
+ * @param {string} value
+ * @returns {string}
+ */
+function escapeJsonString(value) {
+  return JSON.stringify(value).slice(1, -1).replace(/</g, '\\u003c');
+}
+
+/**
+ * Wrap a text in a replacer function so `$&`, `$1` and friends stay literal.
+ * @param {string} text
+ * @returns {() => string}
+ */
+function literal(text) {
+  return () => text;
+}
 
 /**
  * @param {string} html
@@ -12,15 +33,26 @@ const LANGUAGE_LINK_RE = /<a\b([^>]*\bhreflang="(ko|en|ja)"[^>]*)>\s*(KO|EN|JA)\
 function applyJapaneseMeta(html, identity = defaultOwnerIdentity()) {
   const { nameKo, nameJa } = identity;
   const latinName = familyNameFirst(identity.nameEn);
-  const title = `${nameJa} - Security & Infrastructure Engineer`;
   // The owner's career copy comes from the content pack, not tracked code.
   const { metaDescription } = /** @type {{ metaDescription?: string }} */ (HERO_CONTENT.ja);
-  const description = metaDescription
-    ? `${title.replace(' - ', ' — ')} ポートフォリオ。${metaDescription}`
-    : `${title} ポートフォリオ`;
+  /**
+   * Compose title and description with every identity/pack-derived value escaped by `escape`.
+   * @param {(value: string) => string} escape
+   */
+  const compose = (escape) => {
+    const title = `${escape(nameJa)} - ${TITLE_ROLE}`;
+    const description = metaDescription
+      ? `${title.replace(' - ', ' — ')} ポートフォリオ。${escape(metaDescription)}`
+      : `${title} ポートフォリオ`;
+    return { title, description };
+  };
+  const { title, description } = compose(escapeHtml);
+  const { title: jsonTitle, description: jsonDescription } = compose(escapeJsonString);
+  const htmlName = escapeHtml(nameJa);
+  const htmlLatin = escapeHtml(latinName);
   return html
     .replace(/<html lang="ko"/i, '<html lang="ja"')
-    .replace(/<title>[^<]*<\/title>/i, `<title>${title}</title>`)
+    .replace(/<title>[^<]*<\/title>/i, literal(`<title>${title}</title>`))
     .replace(
       /<link rel="canonical" href="https:\/\/resume\.jclee\.me\/?" \/>/i,
       '<link rel="canonical" href="https://resume.jclee.me/ja/" />'
@@ -43,7 +75,7 @@ function applyJapaneseMeta(html, identity = defaultOwnerIdentity()) {
     )
     .replace(
       /<meta property="og:title" content="[^"]*" \/>/i,
-      `<meta property="og:title" content="${title}" />`
+      literal(`<meta property="og:title" content="${title}" />`)
     )
     .replace(
       /<meta property="og:locale" content="ko_KR" \/>/i,
@@ -60,13 +92,16 @@ function applyJapaneseMeta(html, identity = defaultOwnerIdentity()) {
     )
     .replace(
       /<meta name="twitter:title" content="[^"]*" \/>/i,
-      `<meta name="twitter:title" content="${title}" />`
+      literal(`<meta name="twitter:title" content="${title}" />`)
     )
     .replace(
       new RegExp(escapeRegExp(`"name": "${nameKo} - Security & Infrastructure Engineer"`), 'g'),
-      `"name": "${title}"`
+      literal(`"name": "${jsonTitle}"`)
     )
-    .replace(new RegExp(escapeRegExp(`"name": "${nameKo}"`), 'g'), `"name": "${nameJa}"`)
+    .replace(
+      new RegExp(escapeRegExp(`"name": "${nameKo}"`), 'g'),
+      literal(`"name": "${escapeJsonString(nameJa)}"`)
+    )
     .replace(/"inLanguage": "ko-KR"/g, '"inLanguage": "ja-JP"')
     .replace(/"url": "https:\/\/resume\.jclee\.me\/"/g, '"url": "https://resume.jclee.me/ja/"')
     .replace(/"item": "https:\/\/resume\.jclee\.me\/"/g, '"item": "https://resume.jclee.me/ja/"')
@@ -80,25 +115,27 @@ function applyJapaneseMeta(html, identity = defaultOwnerIdentity()) {
     )
     .replace(
       /<meta\s+name="description"[\s\S]*?\/>/i,
-      `<meta name="description" content="${description}" />`
+      literal(`<meta name="description" content="${description}" />`)
     )
     .replace(
       /<meta\s+name="keywords"[\s\S]*?\/>/i,
-      `<meta name="keywords" content="${nameJa}, ${latinName}, Security Automation, Security Infrastructure" />`
+      literal(
+        `<meta name="keywords" content="${htmlName}, ${htmlLatin}, Security Automation, Security Infrastructure" />`
+      )
     )
     .replace(
       /<meta\s+name="author"[\s\S]*?\/>/i,
-      `<meta name="author" content="${nameJa} (${latinName})" />`
+      literal(`<meta name="author" content="${htmlName} (${htmlLatin})" />`)
     )
     .replace(
       /<meta\s+property="og:description"[\s\S]*?\/>/i,
-      `<meta property="og:description" content="${description}" />`
+      literal(`<meta property="og:description" content="${description}" />`)
     )
     .replace(
       /<meta\s+name="twitter:description"[\s\S]*?\/>/i,
-      `<meta name="twitter:description" content="${description}" />`
+      literal(`<meta name="twitter:description" content="${description}" />`)
     )
-    .replace(/"description": "[^"]*"/g, `"description": "${description}"`)
+    .replace(/"description": "[^"]*"/g, literal(`"description": "${jsonDescription}"`))
     .replace(
       LANGUAGE_LINK_RE,
       /**
