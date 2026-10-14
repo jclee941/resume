@@ -134,9 +134,12 @@ function buildProjectLinks(project, locale, githubUrl, demoUrl) {
       );
     }
   } else if (demoUrl) {
+    // The visible text is localized like the accessible name so the name contains the label
+    // (WCAG 2.5.3); the English name stays lowercase and matches case-insensitively.
     const name = { ko: '데모', en: 'demo', ja: 'デモ' }[locale];
+    const visible = { ko: '데모', en: 'Demo', ja: 'デモ' }[locale];
     linkFragments.push(
-      `<a href="${escapeHtml(demoUrl)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="${projectLinkLabel(project.title, name, locale)}">Demo<span class="arrow" aria-hidden="true">↗</span></a>`
+      `<a href="${escapeHtml(demoUrl)}" target="_blank" rel="noopener noreferrer" class="project-link-btn" aria-label="${projectLinkLabel(project.title, name, locale)}">${visible}<span class="arrow" aria-hidden="true">↗</span></a>`
     );
   }
 
