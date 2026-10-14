@@ -658,26 +658,137 @@ describe('Worker Routes', () => {
       }
     );
 
-    it('serves the PNG when the client sends conditional headers', async () => {
-      const bytes = Buffer.from('png-bytes');
-      const fetch = jest.fn(async (/** @type {Request} */ assetRequest) =>
-        assetRequest.headers.has('If-None-Match') || assetRequest.headers.has('If-Modified-Since')
-          ? new Response(null, { status: 304 })
-          : new Response(bytes)
+    describe('conditional and range requests (mocked env.ASSETS)', () => {
+      const etag = '"asset-etag"';
+      const bytes = Buffer.from(Array.from({ length: 300 }, (_, index) => index % 256));
+      const url = 'https://example.com/og-image.png';
+
+      // Like workerd's ASSETS binding: strong ETag, 304 for a matching If-None-Match,
+      // and Range ignored (always the full 200 body).
+      function mockAssets() {
+        return jest.fn(async (/** @type {Request} */ assetRequest) => {
+          const match = assetRequest.headers.get('If-None-Match');
+          if (match && match.split(',').some((tag) => tag.trim() === etag)) {
+            return new Response(null, { status: 304, headers: { ETag: etag } });
+          }
+          return new Response(assetRequest.method === 'HEAD' ? null : bytes, {
+            headers: { ETag: etag, 'Content-Type': 'image/png' },
+          });
+        });
+      }
+
+      /** @param {Record<string, string>} headers @param {string} [method] */
+      function request(headers, method = 'GET') {
+        const fetch = mockAssets();
+        return runRoute(code, new Request(url, { method, headers }), { ASSETS: { fetch } }).then(
+          (response) => ({ response, fetch })
+        );
+      }
+
+      it('serves a 200 with exactly the asset ETag', async () => {
+        const { response } = await request({});
+        expect(response.status).toBe(200);
+        expect(response.headers.get('ETag')).toBe(etag);
+        expect(response.headers.get('Accept-Ranges')).toBe('bytes');
+        expect(response.headers.get('Content-Type')).toBe('image/png');
+        expect(Buffer.from(await response.arrayBuffer())).toEqual(bytes);
+      });
+
+      it('answers a matching If-None-Match with a bodiless 304 and the same headers', async () => {
+        const { response, fetch } = await request({
+          'If-None-Match': etag,
+          'If-Modified-Since': 'Wed, 01 Jan 2025 00:00:00 GMT',
+        });
+        expect(response.status).toBe(304);
+        expect(response.headers.get('ETag')).toBe(etag);
+        expect(response.headers.get('Content-Type')).toBe('image/png');
+        expect(response.headers.get('Cache-Control')).toBe(
+          getCacheHeaders('STATIC')['Cache-Control']
+        );
+        expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
+        expect(await response.text()).toBe('');
+        const forwarded = fetch.mock.calls[0][0].headers;
+        expect(forwarded.get('If-None-Match')).toBe(etag);
+        expect(forwarded.get('If-Modified-Since')).toBe('Wed, 01 Jan 2025 00:00:00 GMT');
+      });
+
+      it('serves the full PNG when If-None-Match does not match', async () => {
+        const { response } = await request({ 'If-None-Match': '"other"' });
+        expect(response.status).toBe(200);
+        expect(Buffer.from(await response.arrayBuffer())).toEqual(bytes);
+      });
+
+      it('answers a byte range with 206, Content-Range and exactly those bytes', async () => {
+        const { response, fetch } = await request({ Range: 'bytes=0-99' });
+        expect(response.status).toBe(206);
+        expect(response.headers.get('Content-Range')).toBe('bytes 0-99/300');
+        expect(response.headers.get('ETag')).toBe(etag);
+        expect(Buffer.from(await response.arrayBuffer())).toEqual(bytes.subarray(0, 100));
+        expect(fetch.mock.calls[0][0].headers.has('Range')).toBe(false);
+      });
+
+      it.each([
+        ['bytes=250-', 'bytes 250-299/300', 50],
+        ['bytes=-20', 'bytes 280-299/300', 20],
+        ['bytes=290-9999', 'bytes 290-299/300', 10],
+      ])('resolves %s to %s', async (range, contentRange, length) => {
+        const { response } = await request({ Range: range });
+        expect(response.status).toBe(206);
+        expect(response.headers.get('Content-Range')).toBe(contentRange);
+        expect((await response.arrayBuffer()).byteLength).toBe(length);
+      });
+
+      it.each(['bytes=300-', 'bytes=999999999-', 'bytes=-0'])(
+        'answers unsatisfiable %s with 416 and the size',
+        async (range) => {
+          const { response } = await request({ Range: range });
+          expect(response.status).toBe(416);
+          expect(response.headers.get('Content-Range')).toBe('bytes */300');
+          expect(await response.text()).toBe('');
+        }
       );
-      const response = await runRoute(
-        code,
-        new Request('https://example.com/og-image.png', {
-          headers: {
-            'If-None-Match': '"etag"',
-            'If-Modified-Since': 'Wed, 01 Jan 2025 00:00:00 GMT',
-          },
-        }),
-        { ASSETS: { fetch } }
+
+      it.each(['bytes=0-1,5-9', 'bytes=9-2', 'items=0-5', 'bytes=-'])(
+        'ignores the unsupported range %s and serves the full PNG',
+        async (range) => {
+          const { response } = await request({ Range: range });
+          expect(response.status).toBe(200);
+          expect(Buffer.from(await response.arrayBuffer())).toEqual(bytes);
+        }
       );
-      expect(response.status).toBe(200);
-      expect(response.headers.get('Content-Type')).toBe('image/png');
-      expect(Buffer.from(await response.arrayBuffer())).toEqual(bytes);
+
+      it('honors If-Range only when it equals the current ETag', async () => {
+        const fresh = await request({ Range: 'bytes=0-9', 'If-Range': etag });
+        expect(fresh.response.status).toBe(206);
+        const stale = await request({ Range: 'bytes=0-9', 'If-Range': '"old"' });
+        expect(stale.response.status).toBe(200);
+        expect((await stale.response.arrayBuffer()).byteLength).toBe(bytes.length);
+      });
+
+      it('answers HEAD with 200, the ETag and no body', async () => {
+        const { response } = await request({ Range: 'bytes=0-9' }, 'HEAD');
+        expect(response.status).toBe(200);
+        expect(response.headers.get('ETag')).toBe(etag);
+        expect(response.headers.get('Content-Type')).toBe('image/png');
+        expect(await response.text()).toBe('');
+      });
+
+      it('never turns an ASSETS 206 into a 404', async () => {
+        const fetch = jest.fn(async () => new Response('part', { status: 206 }));
+        const response = await runRoute(code, new Request(url), { ASSETS: { fetch } });
+        expect(response.status).toBe(206);
+      });
+
+      it('keeps the plain-text 404 for other ASSETS failures', async () => {
+        const fetch = jest.fn(async () => new Response('boom', { status: 500 }));
+        const response = await runRoute(
+          code,
+          new Request(url, { headers: { 'If-None-Match': etag } }),
+          { ASSETS: { fetch } }
+        );
+        expect(response.status).toBe(404);
+        expect(response.headers.get('Content-Type')).toBe('text/plain');
+      });
     });
   });
 
