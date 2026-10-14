@@ -274,11 +274,11 @@ describe('portfolio visual CSS contract', () => {
       /\.project-item\.is-role-match\s*{[^}]*border-color:\s*var\(--color-accent\);/
     );
     expect(roleFilterCss).toMatch(
-      /\.project-item\.is-role-dimmed\s*{[^}]*border-color:\s*var\(--border-primary\);[^}]*filter:\s*saturate\(0\.25\);/
+      /\.project-item\.is-role-dimmed:not\(:hover\):not\(:focus-within\)\s*{[^}]*border-color:\s*var\(--border-primary\);[^}]*filter:\s*saturate\(0\.25\);/
     );
-    expect(roleFilterCss).toMatch(
-      /\.project-item\.is-role-dimmed:hover,\s*\.project-item\.is-role-dimmed:focus-within\s*{[^}]*filter:\s*none;/
-    );
+    // Hover and focus restore the untouched base/featured card styles: no restore rule exists.
+    expect(roleFilterCss).not.toMatch(/\.is-role-dimmed(?::hover|:focus-within)/);
+    expect(roleFilterCss).not.toMatch(/--glass-bg|--border-secondary|--shadow-card(?![\w-])/);
     expect(roleFilterCss).not.toMatch(/opacity/);
   });
 });
