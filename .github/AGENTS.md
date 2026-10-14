@@ -29,8 +29,8 @@ Boundary: score 1; retained distinct domain for repository automation and review
 - The content guard precedes dependency installation; keep its bootstrap dependency-free.
 - Validation order: dependency audit, build, lint/format, types, tests, architecture contracts, bundle dry-run.
 - CI test commands are explicit; adding a root test script alone does not add a workflow step.
-- Master branch protection also requires the `jclee-bot / pr-metadata`, `jclee-bot / secret-scan`, and `jclee-bot / actionlint` checks.
-- Those checks do not report on Dependabot PRs; a passing Validate job can still leave them BLOCKED.
+- Master protection (ruleset `Default Branch Protection` and classic branch protection) requires only the GitHub Actions `Validate` check, so Dependabot and other PRs merge once it passes.
+- `jclee-bot` checks are no longer required because the App posts none on this repository; its managed-repo reconciliation (`config/repos.yaml` in `jclee941/jclee-bot`) may restore them if it runs again.
 - Playwright E2E is on demand, not a step in the validation workflow.
 
 ## ANTI-PATTERNS
