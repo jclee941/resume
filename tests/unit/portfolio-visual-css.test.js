@@ -266,4 +266,19 @@ describe('portfolio visual CSS contract', () => {
       /\.skill-radar__grid\s*>\s*\.skill-domain-card\s+\.skill-domain-card__count\s*{[^}]*margin-left:\s*calc\(36px\s*\+\s*var\(--space-3\)\);/
     );
   });
+
+  test('S20 role filter marks matches with accent border and desaturates non-matches without lowering opacity', () => {
+    const roleFilterCss = readStyle('project-role-filter.css');
+
+    expect(roleFilterCss).toMatch(
+      /\.project-item\.is-role-match\s*{[^}]*border-color:\s*var\(--color-accent\);/
+    );
+    expect(roleFilterCss).toMatch(
+      /\.project-item\.is-role-dimmed\s*{[^}]*border-color:\s*var\(--border-primary\);[^}]*filter:\s*saturate\(0\.25\);/
+    );
+    expect(roleFilterCss).toMatch(
+      /\.project-item\.is-role-dimmed:hover,\s*\.project-item\.is-role-dimmed:focus-within\s*{[^}]*filter:\s*none;/
+    );
+    expect(roleFilterCss).not.toMatch(/opacity/);
+  });
 });

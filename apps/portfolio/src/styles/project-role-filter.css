@@ -2,17 +2,33 @@
   display: grid;
 }
 
+.project-item.is-role-match {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-card-hover);
+}
+
 .project-item.is-role-dimmed {
-  opacity: 0.45;
+  border-color: var(--border-primary);
+  background: var(--bg-primary);
+  box-shadow: none;
+  filter: saturate(0.25);
 }
 
 .project-item.is-role-dimmed:hover,
 .project-item.is-role-dimmed:focus-within {
-  opacity: 1;
+  border-color: var(--border-secondary);
+  background: var(--glass-bg);
+  box-shadow: var(--shadow-card);
+  filter: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  .project-item.is-role-match,
   .project-item.is-role-dimmed {
-    transition: opacity var(--transition-base);
+    transition:
+      border-color var(--transition-base),
+      background-color var(--transition-base),
+      box-shadow var(--transition-base),
+      filter var(--transition-base);
   }
 }
