@@ -17,6 +17,14 @@ function fakeElement(tag) {
     children: [],
     scrollWidth: 0,
     clientWidth: 0,
+    focused: false,
+    listeners: {},
+    matches(selector) {
+      return selector === ':focus-within' && this.focused;
+    },
+    addEventListener(type, handler) {
+      (this.listeners[type] ||= []).push(handler);
+    },
     setAttribute(name, value) {
       this.attributes[name] = String(value);
     },
@@ -82,6 +90,10 @@ async function mount(locale, withGrid = true, { scrollWidth = 0, clientWidth = 0
     grid,
     domains: data.namespace.resolveSkillData(),
     observed,
+    blurGrid() {
+      grid.focused = false;
+      (grid.listeners.focusout || []).forEach((handler) => handler());
+    },
     triggerResize(nextScrollWidth, nextClientWidth) {
       grid.scrollWidth = nextScrollWidth;
       grid.clientWidth = nextClientWidth;
@@ -158,6 +170,28 @@ describe('skill radar renders every skill as a visible tag', () => {
       expect(grid.attributes.tabindex).toBeUndefined();
     }
   );
+
+  test('keeps tabindex while the grid has focus and drops it on focusout once there is no overflow', async () => {
+    const { grid, triggerResize, blurGrid } = await mount('ko', true, {
+      scrollWidth: 1280,
+      clientWidth: 390,
+    });
+    expect(grid.attributes.tabindex).toBe('0');
+
+    grid.focused = true;
+    triggerResize(1040, 1040);
+    expect(grid.attributes.tabindex).toBe('0');
+
+    blurGrid();
+    expect(grid.attributes.tabindex).toBeUndefined();
+  });
+
+  test('keeps tabindex after focusout when the grid still overflows', async () => {
+    const { grid, blurGrid } = await mount('ko', true, { scrollWidth: 1280, clientWidth: 390 });
+    grid.focused = true;
+    blurGrid();
+    expect(grid.attributes.tabindex).toBe('0');
+  });
 
   test('marks CJK skill pills with skill-item--cjk while keeping ASCII pills on skill-item', async () => {
     const grid = fakeElement('div');
