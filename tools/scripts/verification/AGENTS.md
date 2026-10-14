@@ -1,7 +1,7 @@
 # VERIFICATION SCRIPTS KNOWLEDGE BASE
 
-**Generated:** 2026-10-11
-**Commit:** `28de5bcd`
+**Generated:** 2026-10-14
+**Commit:** `493d44f6`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -28,7 +28,7 @@ Boundary: score 6; retained policy-verification domain with distinct offline and
 ## CONVENTIONS
 
 - Node validators are an explicit exception for repository-local deterministic checks.
-- Offline checks parse committed inputs and return actionable identifiers with nonzero status on violations.
+- Deterministic Node policy checks parse repository inputs and return nonzero status on violations.
 - Remote probes distinguish transport failure from a failed application contract and use bounded timeouts.
 - `verify:architecture-hardening:core` composes worker, SSoT, workspace, and architecture checks.
 - `npm run test:tools` covers adjacent Node suites; deployment waiting has its own explicit Go test target.
@@ -36,6 +36,7 @@ Boundary: score 6; retained policy-verification domain with distinct offline and
 - Guide compliance sets failure status for missing required files, but some content defects only print diagnostics.
 - Inspect H1, metadata, parent links, and forbidden-marker output even when `lint:agents` exits zero.
 - Root `npm run lighthouse:ci` supplies `tools/lighthouserc.json` to the profile runner.
+- `security:audit` invokes network-backed `npm audit --omit=dev`; it is not a license audit.
 
 ## ANTI-PATTERNS
 

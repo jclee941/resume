@@ -1,14 +1,14 @@
 # SERVICES KNOWLEDGE BASE
 
-**Generated:** 2026-10-11
-**Commit:** `28de5bcd`
+**Generated:** 2026-10-14
+**Commit:** `493d44f6`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Dashboard integrations for authentication, platform sessions, resume/history sync, and notifications.
 
-Scope reason: score 14; integration and persistence domain.
+Scope reason: score 12; integration and persistence domain.
 
 ## STRUCTURE
 
@@ -35,6 +35,7 @@ services/
 | Request filtering      | `jobkorea-request-filter.js`              | Avoid slow third-party browser traffic                 |
 | Notification facade    | `notifications.js`                        | Handler and queue imports target this facade           |
 | Platform dispatch      | `resume-platform-sync/index.js`           | Supported sync list and structured outcomes            |
+| Remember history       | `application-history/remember-adapter.js` | Timestamp-based application progress mapping           |
 | JobKorea editor        | `resume-platform-sync/jobkorea-editor.js` | Browser-local login, form sections, photo preservation |
 
 ## CONVENTIONS
@@ -43,6 +44,9 @@ services/
 - Remember uses Browser Rendering REST because Worker and binding egress are blocked by its WAF.
 - Keep application-history adapters separate from the idempotent repository and sync orchestration.
 - Preserve exact application timestamps through platform-specific normalization.
+- Remember derives progress from timestamps, not its unchanged `application.status` field.
+- Remember precedence: withdrawn, rejected, offer, in_progress, viewed, then applied.
+- History insert conflicts retry as guarded updates; concurrent status changes must survive.
 - Keep session encryption and expiry in `platform-session.js`, not individual clients.
 - `notification/index.js` is a compatibility re-export; no tracked source imports it.
 - `withJobKoreaEditor` accepts `login` and invokes it inside the borrowed editor browser.

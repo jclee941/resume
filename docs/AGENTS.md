@@ -1,7 +1,7 @@
 # DOCUMENTATION HUB KNOWLEDGE BASE
 
-**Generated:** 2026-10-11
-**Commit:** `28de5bcd`
+**Generated:** 2026-10-14
+**Commit:** `493d44f6`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -47,6 +47,7 @@ docs/
 - Validate procedure commands against `package.json` and the actual script path before documenting them.
 - The guarded current-state set is declared in `tools/scripts/verification/architecture-docs-current-state.mjs`.
 - Older deployment and rotation guides can reference absent workflows; verify those references before use.
+- Current-state validation rejects selected stale strings; it does not prove every topology claim is current.
 
 ## ANTI-PATTERNS
 

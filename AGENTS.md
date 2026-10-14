@@ -1,142 +1,136 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-10-11
-**Commit:** `28de5bcd`
+**Generated:** 2026-10-14
+**Commit:** `493d44f6`
 **Branch:** `master`
 
 ## OVERVIEW
 
-Cloudflare-native resume monorepo: one Worker serves portfolio and in-process
-dashboard, with Cron Triggers, six Workflows, `BrowserSessionDO`, queues, KV, D1, and Browser Rendering.
-Personal content belongs to D1 `content_files` (SSoT, ADR 0011); the working tree
-holds a gitignored materialized copy. See `docs/guides/CONTENT_PACK.md`.
+Cloudflare-native resume monorepo: one Worker serves portfolio and in-process dashboard,
+with Cron Triggers, six Workflows, `BrowserSessionDO`, queues, KV, D1, and Browser Rendering.
+D1 `content_files` is the content source of truth under ADR 0011
+(`docs/adr/0011-content-pack-in-d1.md`); the working tree holds gitignored materialized copies.
+See `docs/guides/CONTENT_PACK.md` for the content-pack workflow.
 
 ## STRUCTURE
 
 ```text
 ./
-├── apps/                 # portfolio edge entry + job-dashboard runtime
-├── packages/             # cli, data, env, shared, types, schemas, contracts
+├── apps/                 # portfolio edge entry + dashboard runtime
+├── packages/             # nine-workspace build's shared package boundaries
 ├── applications/         # materialized application packets and run outputs
 ├── tools/                # Go operations, JS validators, PDF/PPTX generators
 ├── tests/                # Jest, Node, Playwright; app suites also colocated
-├── infrastructure/       # Cloudflare resources and observability configuration
+├── infrastructure/       # resources and observability configuration
 ├── docs/                 # current contracts alongside historical records
 ├── ta/                   # materialized presentations; only guidance is tracked
-├── third_party/          # license coordination and historical Bazel proposals
+├── third_party/          # license-review records and historical proposals
 ├── wrangler.jsonc        # sole runtime configuration
 └── package.json          # npm workspace command hub
 ```
 
 ## WHERE TO LOOK
 
-| Task                           | Location                                                                      | Notes                                                                               |
-| ------------------------------ | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| Edge routing and build         | `apps/portfolio/AGENTS.md`                                                    | Source entry, browser assets, build/runtime split                                   |
-| Dashboard, MCP, automation     | `apps/job-dashboard/AGENTS.md`                                                | Child guides cover handlers, queues, workflows, services                            |
-| MCP protocol and tools         | `apps/job-dashboard/src/mcp/AGENTS.md`                                        | Stateless HTTP guards, REST-backed operations, D1 content reads                     |
-| Canonical and tailored content | `packages/data/AGENTS.md`, `applications/AGENTS.md`                           | Master locale JSON is canonical; role variants have an independent minimum contract |
-| Content transport and guards   | `tools/scripts/content/AGENTS.md`                                             | Manifest, D1 pull/push/ensure, generated fixtures                                   |
-| Package boundaries             | `packages/AGENTS.md`                                                          | Types, schemas, contracts, env, shared exports, CLI                                 |
-| Operations and rendering       | `tools/AGENTS.md`, `tools/scripts/AGENTS.md`, `tools/scripts/build/AGENTS.md` | Go module roots; Pandoc/XeLaTeX PDFs and Python PPTX                                |
-| Tests and browser fixtures     | `tests/AGENTS.md`, `tests/e2e/fixtures/AGENTS.md`                             | Runner ownership and mock/external dashboard selection                              |
-| CI and architecture            | `.github/AGENTS.md`, `docs/AGENTS.md`                                         | Validation-only CI, current contracts versus history                                |
-| Infrastructure and secrets     | `infrastructure/AGENTS.md`, `tools/scripts/onepassword/AGENTS.md`             | Resource ownership, observability, credential flows                                 |
-| Presentations and licenses     | `ta/AGENTS.md`, `third_party/AGENTS.md`                                       | Materialized presentations; historical Bazel proposals are not build authority      |
+| Task                       | Location                                                                      | Notes                                         |
+| -------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------- |
+| Edge and dashboard runtime | `apps/portfolio/AGENTS.md`, `apps/job-dashboard/AGENTS.md`                    | Entry composition and runtime domains         |
+| MCP protocol               | `apps/job-dashboard/src/mcp/AGENTS.md`                                        | In-process transport and REST gates           |
+| Content ownership          | `packages/data/AGENTS.md`, `applications/AGENTS.md`                           | Canonical data, role variants, packets        |
+| Content transport          | `tools/scripts/content/AGENTS.md`                                             | Manifest, D1 materialization, fixtures        |
+| Package boundaries         | `packages/AGENTS.md`                                                          | Types, schemas, contracts, shared exports     |
+| Operations and rendering   | `tools/AGENTS.md`, `tools/scripts/AGENTS.md`, `tools/scripts/build/AGENTS.md` | Execution roots and document generation       |
+| Tests and browser fixtures | `tests/AGENTS.md`, `tests/e2e/fixtures/AGENTS.md`                             | Runner ownership and mock/external selection  |
+| CI and documentation       | `.github/AGENTS.md`, `docs/AGENTS.md`                                         | Validation pipeline and document authority    |
+| Infrastructure and secrets | `infrastructure/AGENTS.md`, `tools/scripts/onepassword/AGENTS.md`             | Resources, observability, credential flows    |
+| Presentations and licenses | `ta/AGENTS.md`, `third_party/AGENTS.md`                                       | Materialized presentations and review records |
 
 ## CODE MAP
 
-Refs are textual matching lines / files, not semantic caller counts; tests count.
-Runtime counts cover tracked JS/CJS/MJS, including declarations, excluding schemas `dist`.
-Operations counts cover all tracked files, including definitions, docs, dist, and tests;
-counts are the digests' snapshot before guide edits.
+Runtime rows through `ApplicationWorkflow`: LSP references, including declarations, imports,
+type uses and visible tests; not runtime callers or repo-wide textual hits.
+Remaining rows: literal matching lines / files in tracked JS/CJS/MJS under `tools/` and `tests/`,
+including definitions and tests; LSP confirmed definitions, not repo-wide reference counts.
 
-| Symbol                       | Type           | Location                                                | Refs     | Role                                              |
-| ---------------------------- | -------------- | ------------------------------------------------------- | -------- | ------------------------------------------------- |
-| `jsonResponse`               | function       | `apps/job-dashboard/src/middleware/cors.js:70`          | 172 / 39 | Dashboard responses                               |
-| `validateEnv`                | function       | `packages/env/src/parse.js:40`                          | 38 / 8   | Environment parser; portfolio also uses this name |
-| `AppError`                   | class          | `packages/shared/src/errors/index.js:44`                | 54 / 5   | Typed error base                                  |
-| `withBrowserSession`         | function       | `apps/job-dashboard/src/services/browser-session.js:40` | 132 / 18 | Borrow/release Browser Rendering sessions         |
-| `runWorkerBuild`             | function       | `apps/portfolio/lib/build-orchestrator.js:130`          | 26 / 3   | Worker build orchestration                        |
-| `ApplicationWorkflow`        | class          | `apps/job-dashboard/src/workflows/application.js:79`    | 22 / 13  | Application orchestration                         |
-| `loadPack`                   | async function | `tools/scripts/content/pack.mjs:40`                     | 20 / 10  | Shared pack definition                            |
-| `runSync`                    | function       | `tools/scripts/utils/resume-sync-runner.js:124`         | 17 / 8   | Three-locale validation and generation            |
-| `generateWebData`            | function       | `tools/scripts/utils/resume-web-data-generator.js:99`   | 44 / 5   | Portfolio projections                             |
-| `ownerIdentity`              | function       | `tests/helpers/owner-data.js:50`                        | 19 / 9   | Materialized test identity                        |
-| `createDashboardEnvironment` | async function | `tests/e2e/fixtures/dashboard-environment.cjs:41`       | 15 / 8   | Mock/external dashboard selection                 |
+| Symbol                       | Type           | Location                                                | Refs   | Role                                                                       |
+| ---------------------------- | -------------- | ------------------------------------------------------- | ------ | -------------------------------------------------------------------------- |
+| `jsonResponse`               | function       | `apps/job-dashboard/src/middleware/cors.js:70`          | 74     | HTTP responses                                                             |
+| `validateEnv`                | function       | `packages/env/src/parse.js:40`                          | 4      | Environment parsing; separate `validateEnv` in `apps/portfolio/lib/env.js` |
+| `AppError`                   | class          | `packages/shared/src/errors/index.js:44`                | 13     | Typed errors                                                               |
+| `withBrowserSession`         | function       | `apps/job-dashboard/src/services/browser-session.js:40` | 43     | Browser borrowing                                                          |
+| `runWorkerBuild`             | function       | `apps/portfolio/lib/build-orchestrator.js:130`          | 2      | Worker generation                                                          |
+| `ApplicationWorkflow`        | class          | `apps/job-dashboard/src/workflows/application.js:79`    | 11     | Application orchestration                                                  |
+| `loadPack`                   | async function | `tools/scripts/content/pack.mjs:40`                     | 19 / 9 | Pack definition                                                            |
+| `runSync`                    | function       | `tools/scripts/utils/resume-sync-runner.js:124`         | 16 / 7 | Locale generation                                                          |
+| `generateWebData`            | function       | `tools/scripts/utils/resume-web-data-generator.js:99`   | 44 / 5 | Public projections                                                         |
+| `ownerIdentity`              | function       | `tests/helpers/owner-data.js:50`                        | 18 / 8 | Materialized expectations                                                  |
+| `createDashboardEnvironment` | async function | `tests/e2e/fixtures/dashboard-environment.cjs:41`       | 14 / 7 | Mock/external selection                                                    |
 
 ## CONVENTIONS
 
-- Nine npm workspaces alone orchestrate builds (Bazel removed, ADR 0008); workspace dependencies use `*`, never `file:../..`.
-- Node requires `>=22`; ESLint blocks unsanctioned cross-app imports.
-- `npm run build` ensures content, syncs SSoT, then generates the portfolio Worker.
-- GitHub CI uses `CONTENT_SOURCE=fixtures`; Workers Builds uses `WORKERS_CI=1`, refusing fixtures and pulling D1 fail-closed.
-- `tools/scripts/content/content-pack.json` drives pack membership, ignore rules, guards, and D1 sync; local ensure requires a materialization manifest and fixture ensure guards unpushed edits.
-- Dashboard HTTP, queue, and scheduled events enter through `apps/portfolio/entry.js` (ADR 0009); `/job/mcp` maps to `/mcp`, retaining REST submission gates.
-- MCP uses stateless Streamable HTTP, admin Bearer and Host/Origin validation; no cookie authentication or CORS.
-- Public `/` is Korean; `/en/` and `/ja/` are explicit routes, not language redirects.
-- Cloudflare Workers Builds owns production deploys; local Wrangler is verification or emergency only. Root `npm run deploy` intentionally fails.
-- Shared TS flags/aliases live in `tsconfig.base.json`; root `checkJs` is off and `tsconfig.strict.json` ratchets an explicit JS allowlist.
-- Entry points only compose/register; handlers → services → repositories → clients, with external access behind adapters.
-- Secrets use Cloudflare Workers Secrets or 1Password flows; never commit `.env*`, session JSON, cookies, or API tokens.
-- Operations are Go-first; JS-domain generators and deterministic validators are child-guide exceptions.
-- Define each domain type once in dependency-free `@resume/types`, validate in `@resume/schemas`, publish contracts in `@resume/contracts`.
+- Nine npm workspaces orchestrate builds; Node requires `>=22`. Workspace dependencies use `*`, not `file:../..`.
+- `npm run build`: content ensure -> `sync:data` -> `build:worker`.
+- GitHub CI uses `CONTENT_SOURCE=fixtures`; Workers Builds uses `WORKERS_CI=1`, refuses fixtures and pulls D1 fail-closed.
+- `wrangler.jsonc` composes `apps/portfolio/entry.js`, assets, JOB_DB, three KV bindings, Browser Rendering, AI, one Durable Object, six Workflows and two queue consumers.
+- The portfolio entry forwards dashboard HTTP, queue and cron events; MCP stays in-process with REST submission gates.
+- Workers Builds owns production deployments; root `npm run deploy` deliberately fails. Production sync and scheduled automation remain Cloudflare-native.
+- `tsconfig.base.json` owns NodeNext aliases and `checkJs:false`; `tsconfig.strict.json` enables checking on an explicit allowlist.
+- ESLint forbids cross-app imports except the composed dashboard entry.
+- Domain types belong in `@resume/types`, boundary validation in `@resume/schemas`, published contracts in `@resume/contracts`.
+- The content-pack manifest controls materialization, fixtures and guards; local ensure requires a manifest. Master, role variants and packets retain separate ownership.
 
 ## ANTI-PATTERNS
 
-- Never hand-edit generated artifacts: `apps/portfolio/worker.js`, derived resume/application outputs, dashboards, run artifacts, or fixtures; regenerate from source.
-- Never commit pack paths or personal content, including application PDFs. CI runs `content guard --tracked`; pre-commit runs `content guard --staged`.
-- Never hardcode credentials, resume IDs, Worker bindings, Cloudflare resource IDs, cookies, or session material.
-- Never bypass CI, security, approval, disabled-platform, or company-history gates; avoid duplicate application side effects.
-- Never nest Workflow `step.*` calls inside `step.do` or fall back from D1 to fixtures.
-- Never require Playwright `networkidle` for portfolio pages; use `domcontentloaded` or explicit waits.
-- Never suppress type errors with `as any`, `@ts-ignore`, or broad unchecked casts.
-- Never exceed the 200-LOC source-file limit without splitting.
-- Never include concrete performance metrics in resume or portfolio text: no percentages, ratios, or absolute metrics.
+- Never hand-edit generated Worker bundles, derived content, dashboards, run artifacts or fixtures; regenerate from source.
+- Never commit personal content, application PDFs, credentials, cookies or session material; never hardcode resource identifiers.
+- Never bypass security, approval, disabled-platform or historical-company gates; avoid duplicate application side effects.
+- Never substitute fixtures for D1 content or treat build, proposal, release or stub success as proof of production behavior.
+- Never suppress type errors with `as any`, `@ts-ignore` or broad unchecked casts.
+- Keep source files within the 200-LOC limit; `lint:loc` excludes blank/comment lines, multiline literal bodies, tests and generated bundles.
+- Never include concrete performance metrics in resume or portfolio text: no percentages, ratios or absolute metrics.
 
 ## UNIQUE STYLES
 
 - Child guides own domain detail; add guidance for distinct boundaries, not directory size.
-- Docs separate ADRs, architecture, conventions, guides, and security; historical docs are not current contracts.
-- `@resume/shared` is subpath-only: use `browser/service`, `crypto/webcrypto`, `auth/hmac`, and explicit platform subpaths; `crypto` exposes constants.
-- `@resume/contracts/src/env.js` exports `ENV_TYPE_MARKER`, not `Env`; binding typedefs live in `@resume/types/env`.
-- `packages/schemas/dist/index.cjs` is a tracked generated exception; rebuild via `npm run build:cjs --workspace=@resume/schemas`. ESM uses source.
-- Workers Logs is default; Loki is opt-in, Elasticsearch absent. Compose declares Jaeger; Tempo is a separate configuration reference, not the active Compose backend.
-- Most runtime code is ESM JS/JSDoc; portfolio build modules are CommonJS. Scripts use Go 1.25.0, enrichment Go 1.22; moduleless `tools/ci` tests use `GO111MODULE=off`.
+- Most runtime code is ESM JS/JSDoc; portfolio build modules are CommonJS.
+- Operations are Go-first; Node bootstrap/validators and JS generators are documented exceptions. Module roots: scripts Go 1.25.0, enrichment Go 1.22, moduleless `tools/ci`.
+- `@resume/shared` is subpath-only. Its `crypto` export includes encryption, decryption, WebCrypto aliases and constants; `session` includes constants, cookies and normalization. Explicit narrower subpaths remain available.
+- Minimal resume Zod schemas validate API slices, not the full-master JSON Schema contract.
+- Prettier uses width 100, two spaces, single quotes, semicolons and LF.
 
 ## COMMANDS
 
 ```bash
 npm run automate:ssot       # PDF sync, build, typecheck
-npm run automate:full       # adds PPTX, lint, tests, Cloudflare-native check
-npm run build              # content ensure, data sync, Worker generation
-npm run content:pull       # D1 materialization; credentials required
-npm run content:push       # upload edited content pack
+npm run automate:full       # adds PPTX, lint, tests, native check
+npm run build
+npm run content:pull        # D1 materialization; credentials required
+npm run content:push        # upload edited content pack
 node tools/scripts/content/make-fixtures.mjs
+npm run content:guard -- --tracked
 npm run lint
 npm run lint:agents
 npm run lint:loc
 npm run lint:naming
 npm run typecheck
 npm run typecheck:strict
-npm test                   # Jest, Node, Python, explicit Go targets
+npm test                   # Jest, five Node groups, Python, explicit Go targets
 npm run test:e2e           # separate Playwright suite
 npm run verify:production
 npm run sync:data
 npm run verify:architecture-hardening:core
-npm run content:guard -- --tracked
 npm run deploy:wrangler:root:dry-run
-go run ./tools/ci/validate-cloudflare-native.go
+npm run foreign-apply:dry-run -- --ats-stub
+npm run security:audit
 gitleaks detect --source . --config .gitleaks.toml --redact
+go run ./tools/ci/validate-cloudflare-native.go
 ```
 
 ## NOTES
 
-- Sync capabilities cover Wanted, JobKorea, SK Careers, Remember (Browser Rendering REST); Saramin is disabled. Capability does not prove auto-apply is enabled.
-- Daily cron refreshes only Wanted sessions. JobKorea login is browser-local: history logs in before fetching; profile/workflow inject `mintJobKoreaSession`; never replay `auth:jobkorea` in another borrowed browser.
-- Migrations retain `0001_init.sql`; `0008` is a one-time timestamp correction, not repeatable DDL.
-- `npm test` chains Jest, five Node groups, Python, and explicit Go targets. Playwright is separate, absent from CI; only `mobile.spec.js` matches mobile projects.
-- CI validates with Node 22, Python 3.12, the scripts module's Go version, fixtures, pre-install content guard, and final Wrangler dry-run; Actions are SHA-pinned.
-- Terraform has no apply workflow; legacy upload/data sources are not runtime binding authority. Build, proposal, and release success do not prove production state.
-- `lint:agents` may print content defects without a failing exit status; inspect diagnostics as well as the exit code.
-- `affected` and env-drift are not mandatory CI steps; release CLIs have no automated prepare/archive workflow.
+- CI has one read-only validation job: SHA-pinned actions, Node 22, Python 3.12, the scripts module's Go version, pre-install content guard, explicit test lanes and Wrangler dry-run. No Playwright or deployment step.
+- Daily/hourly crons belong to the root runtime configuration; preview has neither routes nor crons.
+- Terraform has no apply workflow; legacy uploads are not runtime binding authority.
+- Workers Logs is default; Loki is opt-in; Elasticsearch is absent. Compose uses Jaeger; Tempo is a reference configuration.
+- Historical documentation may retain stale topology/CI claims; current configuration takes precedence.
+- `lint:agents` may print defects without failing; inspect diagnostics. `security:audit` checks vulnerabilities, not licenses; the Wrangler secrets classifier is not a CI step.
+- External branch rules are not established by `ci.yml`; infrastructure mocks remain reference-only with undeclared `better-sqlite3`.

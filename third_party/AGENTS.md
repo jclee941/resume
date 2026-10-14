@@ -1,7 +1,7 @@
 # THIRD PARTY KNOWLEDGE BASE
 
-**Generated:** 2026-10-11
-**Commit:** `28de5bcd`
+**Generated:** 2026-10-14
+**Commit:** `493d44f6`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -27,6 +27,7 @@ Boundary: score 0; retained distinct license-review domain.
 - Critical dependency additions require security review through the listed owners.
 - Version coordination happens in workspace manifests and the lockfile; this directory enforces no version resolver.
 - The empty archive is a reserved location, not evidence that every dependency license was audited.
+- `security:audit` checks npm vulnerability advisories, not this domain's license policy.
 
 ## ANTI-PATTERNS
 
