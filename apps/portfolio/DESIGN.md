@@ -171,6 +171,9 @@ var(--container-max))`, `margin-inline: auto`. `--gutter` is `clamp(1rem, 4vw, 2
 - **Recipe**: `--font-label` (tech tags and badges with Latin values use `--font-mono`),
   `--text-xs`, `--radius-sm` (pills use `--radius-full`), tinted text with a matching
   `--accent-wash-*` or status wash; edges at most `--accent-line-soft`.
+- **Accessibility**: badges are plain text and never carry `aria-label`. The timeline phase
+  badge adds a visually hidden prefix (`.sr-only`, e.g. 단계:), and the active status badge
+  gives assistive tech its longer wording the same way while the short label stays visible.
 
 #### Section heading
 
@@ -230,9 +233,12 @@ tests depend on them.
   (`aria-pressed="true"`: `--accent-wash-3` fill and a check glyph before the label).
 - **Filtering**: selecting a chip moves the matching projects to the top of the list, each
   group in its original order. A match that sits behind the more button appears without
-  expanding the list. Every other project dims to 0.45 opacity and returns to full opacity on
-  hover or focus. Pressing the selected chip again restores the original order, clears the
-  status text and removes the dimming; on phones the carousel returns to its first card.
+  expanding the list. Matches take the accent border and the hover shadow. Every other project
+  is desaturated (`saturate(0.25)`) on the darker `--bg-primary` surface with a plain border;
+  its text keeps its colour and full opacity, so contrast stays at WCAG AA, and hover or focus
+  restores the normal card. Pressing the selected chip again restores the original order,
+  clears the status text and removes both treatments; on phones the carousel returns to its
+  first card.
 
 ### About
 
@@ -300,7 +306,7 @@ tests depend on them.
 - **Structure**: `li.project-item` with header, case notes (`dl.project-case-notes`), an
   optional diagram, optional description remainder, tech line, one status badge and links.
 - **Case notes**: up to three rows — 문제 / 한 일 / 결과 (EN Problem / What I did / Result,
-  JA 課題 / 担当 / 結果), one per description sentence. A row whose sentence is missing is left
+  JA 背景 / 担当 / 結果), one per description sentence. A row whose sentence is missing is left
   out rather than filled with the tagline or the tech list, and the `dl` carries no ARIA role or
   label so its `dt`/`dd` pairs keep description-list semantics.
 - **Badges and links**: one status badge (LIVE when a demo or dashboard exists, otherwise the
@@ -308,7 +314,9 @@ tests depend on them.
   language or REPO badge. A demo URL equal to the repository URL (ignoring one trailing
   slash) is ignored, so a repository-only project keeps its activity badge and shows no Demo
   link. Links are labelled pills with a `↗` glyph,
-  never bracketed text, and only links that belong to the project.
+  never bracketed text, and only links that belong to the project. Pill text follows the
+  locale where a word is translated (demo link: KO 데모, EN Demo, JA デモ; GitHub and dashboard
+  names stay as written), and every link's accessible name contains its visible text.
 - **Featured**: the first three projects (by `displayOrder`) render as
   `.project-card--featured` with a diagram; the rest collapse behind the more button.
 - **Phones**: at 640px and below the list is a horizontal snap carousel; cards take 88% of
@@ -340,7 +348,8 @@ tests depend on them.
 - **Architecture**: the project's box diagram is rendered as an ordered step list
   (`ol.architecture-steps > li.architecture-step`) at every width, with a down-arrow
   connector between steps and any text written between two boxes shown as that connector's
-  caption. Only a diagram that yields fewer than two steps falls back to preformatted text.
+  caption. Captions sit on their own row above the step and wrap rather than being cut off.
+  Only a diagram that yields fewer than two steps falls back to preformatted text.
 - **Motion**: cards fade in only under `prefers-reduced-motion: no-preference`; without
   motion they render visible immediately.
 
@@ -353,8 +362,9 @@ tests depend on them.
   grid leaves; reading order runs down each column. On phones the cards form a horizontal
   snap carousel (82% wide) so the next domain peeks in. Cards keep their natural height
   in the carousel instead of stretching to the tallest one.
-- **Carousel access**: the carousel is a focusable region with a localized name (KO 기술
-  스택, EN Skills, JA スキル) and a 2px accent focus ring, so keyboard users can scroll it.
+- **Carousel access**: the skills grid is a named group (KO 기술 스택, EN Skills, JA スキル).
+  It takes `tabindex="0"` and the 2px accent focus ring only while it overflows sideways (the
+  phone carousel), so keyboard users can scroll it there and desktop has no extra tab stop.
 - **Pills**: skills with Korean or Japanese text use `--font-sans` with no tracking, never
   the mono face.
 
