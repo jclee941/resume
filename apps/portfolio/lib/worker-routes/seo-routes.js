@@ -57,24 +57,19 @@ function generateSeoRoutes({ contactEmail = defaultOwnerIdentity().email } = {})
 
       if (['/og-image.png', '/og-image-en.png', '/og-image-ja.png'].includes(url.pathname)) {
         const assetUrl = new URL('/social' + url.pathname, request.url);
-        // ASSETS answers If-None-Match / If-Modified-Since with 304 plus its strong ETag, so
-        // only those two are forwarded (a full header copy once turned that 304 into a 404).
-        // ASSETS ignores Range, so byte ranges are cut from the full body below.
-        const assetHeaders = new Headers();
-        for (const name of ['If-None-Match', 'If-Modified-Since']) {
-          if (request.headers.has(name)) assetHeaders.set(name, request.headers.get(name));
-        }
+        // Only the method is forwarded: ASSETS compares the whole If-None-Match value with its
+        // ETag (no lists, no *) and ignores Range, so it always returns the full response and its
+        // strong ETag. Conditional and range handling happen below. ASSETS sends no Last-Modified,
+        // so If-Modified-Since has nothing to compare with and is ignored.
         const assetResponse = env.ASSETS
-          ? await env.ASSETS.fetch(
-              new Request(assetUrl, { method: request.method, headers: assetHeaders })
-            )
+          ? await env.ASSETS.fetch(new Request(assetUrl, { method: request.method }))
           : null;
         const headers = {
           ...applyNonceToHeaders(SECURITY_HEADERS, ''),
           ...CACHE_POLICIES.static,
           ...rateLimitHeaders,
         };
-        if (assetResponse && (assetResponse.ok || assetResponse.status === 304)) {
+        if (assetResponse && assetResponse.ok) {
           metrics.requests_success++;
           // Carrying the asset ETag keeps the response-header post-processing from adding its
           // own weak ETag, so the client sees exactly one validator.
@@ -83,7 +78,17 @@ function generateSeoRoutes({ contactEmail = defaultOwnerIdentity().email } = {})
           if (etag) imageHeaders.ETag = etag;
           // Also on the 304: without it the runtime labels the bodiless response text/html.
           imageHeaders['Content-Type'] = 'image/png';
-          if (assetResponse.status === 304) {
+          // RFC 9110 13.1.2: If-None-Match takes * or a tag list, compared weakly, and 13.2.2
+          // evaluates it before Range / If-Range, so a match wins over a byte range.
+          const ifNoneMatch = request.headers.get('If-None-Match');
+          const bareTag = (tag) => (tag.trim().startsWith('W/') ? tag.trim().slice(2) : tag.trim());
+          if (
+            etag &&
+            ifNoneMatch &&
+            (ifNoneMatch.trim() === '*' ||
+              ifNoneMatch.split(',').some((tag) => bareTag(tag) === bareTag(etag)))
+          ) {
+            if (assetResponse.body) await assetResponse.body.cancel();
             return new Response(null, { status: 304, headers: imageHeaders });
           }
           const range = /^bytes=([0-9]*)-([0-9]*)$/.exec(request.headers.get('Range') || '');
