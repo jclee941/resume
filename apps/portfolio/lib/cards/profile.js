@@ -2,6 +2,22 @@
 
 const { escapeHtml } = require('../template-sanitizer');
 
+/** @type {Record<string, Record<string, string>>} */
+const LANGUAGE_LABELS = {
+  ko: {
+    Korean: '한국어',
+    English: '영어',
+    Native: '모국어',
+    'Working proficiency (technical reading & writing)': '업무 수준 (기술 문서 읽기·쓰기)',
+  },
+  ja: {
+    Korean: '韓国語',
+    English: '英語',
+    Native: 'ネイティブ',
+    'Working proficiency (technical reading & writing)': 'ビジネスレベル（技術文書の読み書き）',
+  },
+};
+
 const PROFILE_LABELS = {
   ko: {
     education: '학력',
@@ -107,7 +123,9 @@ function generateProfileBento(data, locale = 'ko') {
   if (data.education && data.education.school) {
     const e = data.education;
     const major = e.major ? ` · ${escapeHtml(String(e.major))}` : '';
-    const status = e.status ? ` (${escapeHtml(String(e.status))})` : '';
+    const status = e.status
+      ? ` <span class="profile-card__status">(${escapeHtml(String(e.status))})</span>`
+      : '';
     const end = e.endDate ? ` ~ ${escapeHtml(String(e.endDate))}` : '';
     const period = e.startDate ? ` ${escapeHtml(String(e.startDate))}${end}` : '';
     cards.push(`<div class="profile-card">
@@ -139,10 +157,13 @@ function generateProfileBento(data, locale = 'ko') {
 
   // Languages
   if (Array.isArray(data.languages) && data.languages.length > 0) {
+    const translations = LANGUAGE_LABELS[locale] || {};
+    /** @param {string} value */
+    const localize = (value) => (Object.hasOwn(translations, value) ? translations[value] : value);
     const langs = data.languages
       .map(
         (l) =>
-          `${escapeHtml(String(l.name))} <span class="profile-card__muted">${escapeHtml(String(l.level || ''))}</span>`
+          `${escapeHtml(localize(String(l.name)))} <span class="profile-card__muted">${escapeHtml(localize(String(l.level || '')))}</span>`
       )
       .join(' · ');
     cards.push(`<div class="profile-card">

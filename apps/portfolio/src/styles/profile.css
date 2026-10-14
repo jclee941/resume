@@ -47,6 +47,10 @@
   font-size: var(--text-sm);
 }
 
+.profile-card__status {
+  white-space: nowrap;
+}
+
 .profile-card__list {
   display: grid;
   gap: var(--space-2);

@@ -199,8 +199,40 @@ describe('Cards Module', () => {
 
       expect(html).toContain('https://github.com/example-user/example-bot');
       expect(html).toContain('GitHub Bot');
-      expect(html).toContain('aria-label="GitHub Bot (opens in new tab)"');
+      expect(html).toContain('aria-label="GitHub Bot (새 탭에서 열림)"');
     });
+
+    test.each([
+      ['ko', '이메일', ' (새 탭에서 열림)'],
+      ['en', 'Email', ' (opens in new tab)'],
+      ['ja', 'メール', '（新しいタブで開きます）'],
+    ])(
+      'renders localized contact links and a visible plain email for %s',
+      (locale, emailLabel, newTab) => {
+        const html = generateContactGrid(
+          {
+            email: 'mailto:applicant@example.com?subject=Hello',
+            github: 'https://github.com/example-user',
+            githubBot: 'https://github.com/example-user/example-bot',
+            linkedin: 'https://linkedin.com/in/example-user',
+            velog: 'https://velog.io/@example-user',
+            website: 'https://resume.example.com',
+          },
+          locale
+        );
+
+        for (const name of ['GitHub', 'GitHub Bot', 'LinkedIn', 'Velog']) {
+          expect(html).toContain(`aria-label="${name}${newTab}"`);
+        }
+        expect(html).toContain(`<span class="contact-item__label">${emailLabel}</span>`);
+        expect(html).toContain('<span class="contact-item__value">applicant@example.com</span>');
+        expect(html).toContain('href="mailto:applicant@example.com"');
+        expect(html).toContain('data-contact-email="applicant@example.com"');
+        expect(html).not.toContain('subject=');
+        expect(html).not.toContain('Website');
+        expect(html).not.toContain('https://resume.example.com');
+      }
+    );
   });
 
   describe('generateProjectCards', () => {
@@ -829,12 +861,12 @@ describe('Cards Module', () => {
       expect(html).toContain('contact-copy-status');
     });
 
-    test('should generate website link', () => {
+    test('should omit the redundant website link', () => {
       const contactData = { website: 'https://example.com' };
       const html = generateContactGrid(contactData);
 
-      expect(html).toContain('href="https://example.com"');
-      expect(html).toContain('target="_blank"');
+      expect(html).not.toContain('href="https://example.com"');
+      expect(html).not.toContain('Website');
     });
 
     test('should render contact items as plain anchors (no list roles)', () => {
@@ -852,12 +884,12 @@ describe('Cards Module', () => {
         github: 'https://github.com/test',
         email: 'test@example.com',
       };
-      const html = generateContactGrid(contactData);
+      const html = generateContactGrid(contactData, 'en');
       // target="_blank" links need an aria-label indicating a new tab opens.
       expect(html).toContain('GitHub (opens in new tab)');
-      // mailto link does NOT open a new tab; its label now also signals the
-      // copy-to-clipboard affordance but must NOT claim a new tab opens.
-      expect(html).toContain('aria-label="Email (click to copy address)"');
+      // The email is named by its visible label and selectable address.
+      expect(html).toContain('<span class="contact-item__label">Email</span>');
+      expect(html).toContain('<span class="contact-item__value">test@example.com</span>');
       expect(html).not.toContain('Email (opens in new tab)');
     });
 
@@ -873,7 +905,7 @@ describe('Cards Module', () => {
       expect(html).toContain('github.com/test');
       expect(html).toContain('linkedin.com/in/test');
       expect(html).toContain('mailto:test@example.com');
-      expect(html).toContain('https://example.com');
+      expect(html).not.toContain('href="https://example.com"');
     });
 
     test('should include velog link with consistent plain text styling', () => {
@@ -891,6 +923,135 @@ describe('Cards Module', () => {
   });
 
   describe('generateProjectCards - activity metadata branches', () => {
+    test.each([
+      ['ko', '프로젝트 설명입니다.', '현재', '공개 중', '운영 중', '완료'],
+      ['ja', 'プロジェクトの説明です。', '現在', '公開中', '運用中', '完了'],
+      ['en', 'Project description.', 'Present', 'LIVE', 'ACTIVE', 'COMPLETED'],
+    ])(
+      'localizes each status without changing badge classes for %s',
+      (locale, description, end, live, active, completed) => {
+        const project = {
+          title: 'Example',
+          tech: 'Node.js',
+          description,
+          period: `2025.01 ~ ${end}`,
+        };
+        for (const [extra, status, label] of [
+          [{ demoUrl: 'https://demo.example.com' }, 'live', live],
+          [{}, 'active', active],
+          [{ period: '2025.01 ~ 2025.02' }, 'completed', completed],
+        ]) {
+          const html = generateProjectCards([{ ...project, ...extra }], `${locale}-${status}`);
+          expect(html).toContain(
+            `class="project-meta-badge project-meta-badge--${status}">${label}</span>`
+          );
+          expect(html).toContain('<div class="project-meta">');
+          expect(html).not.toContain('aria-label="Project activity metadata"');
+        }
+      }
+    );
+
+    test.each(['demoUrl', 'liveUrl'])(
+      'ignores %s when the projected project URL is the GitHub repository',
+      (field) => {
+        const githubUrl = 'https://github.com/example-user/example';
+        for (const [repo, demo] of [
+          [githubUrl, githubUrl],
+          [githubUrl, `${githubUrl}/`],
+          [`${githubUrl}/`, githubUrl],
+        ]) {
+          const html = generateProjectCards(
+            [
+              {
+                title: 'Example',
+                description: 'Repository only.',
+                tech: 'Node.js',
+                period: '2025.01 ~ Present',
+                url: repo,
+                githubUrl: repo,
+                [field]: demo,
+              },
+            ],
+            `same-url-${field}-${repo}-${demo}`
+          );
+          expect(html).not.toContain('project-meta-badge--live');
+          expect(html).not.toContain('>Demo<');
+          expect(html).toContain('project-meta-badge--active">ACTIVE</span>');
+          expect(html).toContain(`href="${repo}"`);
+        }
+      }
+    );
+
+    test('uses a distinct live URL when the demo URL repeats the repository', () => {
+      const githubUrl = 'https://github.com/example-user/example';
+      const html = generateProjectCards(
+        [
+          {
+            title: 'Example',
+            description: 'Live project.',
+            tech: 'Node.js',
+            githubUrl,
+            demoUrl: githubUrl,
+            liveUrl: 'https://demo.example.com',
+          },
+        ],
+        'distinct-live-fallback'
+      );
+      expect(html).toContain('project-meta-badge--live">LIVE</span>');
+      expect(html).toContain('href="https://demo.example.com"');
+      expect(html).toContain('>Demo<span');
+    });
+
+    test.each([
+      [
+        'ko',
+        '프로젝트 설명입니다.',
+        'Example 프로젝트 새 탭에서 열기',
+        'Example GitHub 새 탭에서 열기',
+        'Example 데모 새 탭에서 열기',
+        'Example Dashboard 새 탭에서 열기',
+      ],
+      [
+        'ja',
+        'プロジェクトの説明です。',
+        'Example プロジェクト（新しいタブで開く）',
+        'Example GitHub（新しいタブで開く）',
+        'Example デモ（新しいタブで開く）',
+        'Example Dashboard（新しいタブで開く）',
+      ],
+      [
+        'en',
+        'Project description.',
+        'View Example project (opens in new tab)',
+        'Open Example GitHub repository (opens in new tab)',
+        'Open Example demo (opens in new tab)',
+        'Open Example Dashboard (opens in new tab)',
+      ],
+    ])(
+      'localizes title, repository, demo and dashboard accessible names for %s',
+      (locale, description, title, repo, demo, dashboard) => {
+        const project = {
+          title: 'Example',
+          tech: 'Node.js',
+          description,
+          githubUrl: 'https://github.com/example-user/example',
+          demoUrl: 'https://demo.example.com',
+        };
+        const html = generateProjectCards([project], `${locale}-link-labels`);
+        for (const label of [title, repo, demo]) expect(html).toContain(`aria-label="${label}"`);
+        const withDashboard = generateProjectCards(
+          [
+            {
+              ...project,
+              dashboards: [{ name: 'Dashboard', url: 'https://dashboard.example.com' }],
+            },
+          ],
+          `${locale}-dashboard-label`
+        );
+        expect(withDashboard).toContain(`aria-label="${dashboard}"`);
+      }
+    );
+
     test('should render completed metadata for a project with a closed period', () => {
       TEMPLATE_CACHE.dataHash = null;
       TEMPLATE_CACHE.projectCardsHtml = null;

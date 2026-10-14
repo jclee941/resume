@@ -5,22 +5,28 @@ const PROJECT_LABELS = {
     problem: '문제',
     role: '한 일',
     proof: '결과',
-    caseSummary: '프로젝트 사례 요약',
     diagram: '구성 흐름',
+    live: '공개 중',
+    active: '운영 중',
+    completed: '완료',
   },
   en: {
     problem: 'Problem',
     role: 'What I did',
     proof: 'Result',
-    caseSummary: 'Project case summary',
     diagram: 'Architecture flow',
+    live: 'LIVE',
+    active: 'ACTIVE',
+    completed: 'COMPLETED',
   },
   ja: {
     problem: '課題',
     role: '担当',
     proof: '結果',
-    caseSummary: 'プロジェクト事例の要約',
     diagram: '構成フロー',
+    live: '公開中',
+    active: '運用中',
+    completed: '完了',
   },
 };
 
@@ -29,8 +35,10 @@ const PROJECT_LABELS = {
  *   problem: string;
  *   role: string;
  *   proof: string;
- *   caseSummary: string;
  *   diagram: string;
+ *   live: string;
+ *   active: string;
+ *   completed: string;
  * }} ProjectLabels
  */
 
@@ -84,7 +92,7 @@ function projectAnchor(project, index) {
 function splitProjectSentences(description) {
   return String(description || '')
     .replace(/\s+/g, ' ')
-    .split(/(?<=[.!?。！？])\s+/)
+    .split(/(?<=[.!?])\s+|(?<=[。！？])\s*/)
     .map((part) => part.trim())
     .filter(Boolean);
 }
@@ -99,31 +107,31 @@ function projectDescriptionRemainder(project) {
 }
 
 /**
+ * Renders one row per description sentence (problem, what I did, result). An empty description
+ * falls back to the tagline, then the title, so the problem row always exists.
  * @param {ProjectItem} project
  * @param {ProjectLabels} labels
  * @returns {string}
  */
 function buildProjectCaseNotes(project, labels) {
   const sentences = splitProjectSentences(project.description);
-  const problem = sentences[0] || project.tagline || project.title;
-  const role = sentences[1] || project.tagline || project.tech;
-  const proof = sentences[2] || project.tech || project.tagline || project.title;
   const rows = [
-    [labels.problem, problem],
-    [labels.role, role],
-    [labels.proof, proof],
+    [labels.problem, sentences[0] || project.tagline || project.title],
+    [labels.role, sentences[1]],
+    [labels.proof, sentences[2]],
   ]
+    .filter(([, detail]) => detail)
     .map(
       ([term, detail]) =>
         `<div><dt>${term}</dt><dd>${escapeHtml(/** @type {string} */ (detail))}</dd></div>`
     )
     .join('');
-  const summaryLabel = `${escapeHtml(/** @type {string} */ (project.title))} ${labels.caseSummary}`;
-  return `<dl class="project-case-notes" aria-label="${summaryLabel}">${rows}</dl>`;
+  return `<dl class="project-case-notes">${rows}</dl>`;
 }
 
 module.exports = {
   buildProjectCaseNotes,
+  detectLocale,
   projectAnchor,
   projectDescriptionRemainder,
   projectLabelsFor,

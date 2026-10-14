@@ -46,7 +46,7 @@ describe('cards/profile generateProfileBento', () => {
   });
 
   it('includes real SSoT values', () => {
-    const html = generateProfileBento(full);
+    const html = generateProfileBento(full, 'en');
     expect(html).toContain(full.education.school);
     expect(html).toContain(full.languages[0].name);
     expect(html).toContain(full.awards[0].name);
@@ -63,7 +63,44 @@ describe('cards/profile generateProfileBento', () => {
         endDate: '2027.02',
       },
     });
-    expect(html).toContain('(졸업 예정) 2024.03 ~ 2027.02');
+    expect(html).toContain(
+      '<span class="profile-card__status">(졸업 예정)</span> 2024.03 ~ 2027.02'
+    );
+  });
+
+  it.each([
+    ['ko', '한국어', '영어', '모국어', '업무 수준 (기술 문서 읽기·쓰기)'],
+    ['ja', '韓国語', '英語', 'ネイティブ', 'ビジネスレベル（技術文書の読み書き）'],
+    ['en', 'Korean', 'English', 'Native', 'Working proficiency (technical reading &amp; writing)'],
+  ])(
+    'localizes language values at render time for %s',
+    (locale, korean, english, native, level) => {
+      const languages = [
+        { name: 'Korean', level: 'Native' },
+        { name: 'English', level: 'Working proficiency (technical reading & writing)' },
+        { name: 'Example language', level: 'Example level' },
+        { name: 'toString' },
+      ];
+      const original = JSON.stringify(languages);
+      const html = generateProfileBento({ languages }, locale);
+
+      expect(html).toContain(`${korean} <span class="profile-card__muted">${native}</span>`);
+      expect(html).toContain(`${english} <span class="profile-card__muted">${level}</span>`);
+      expect(html).toContain(
+        'Example language <span class="profile-card__muted">Example level</span>'
+      );
+      expect(html).toContain('toString <span class="profile-card__muted"></span>');
+      expect(JSON.stringify(languages)).toBe(original);
+    }
+  );
+
+  it.each([
+    ['ko', '졸업 예정'],
+    ['en', 'Expected Graduation'],
+    ['ja', '卒業見込み'],
+  ])('keeps the full education status inside one span for %s', (locale, status) => {
+    const html = generateProfileBento({ education: { school: 'Example', status } }, locale);
+    expect(html).toContain(`<span class="profile-card__status">(${status})</span>`);
   });
 
   it('leaves the profile photo to the hero portrait card', () => {

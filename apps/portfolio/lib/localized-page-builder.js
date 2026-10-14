@@ -21,13 +21,12 @@ const { defaultOwnerIdentity, escapeRegExp } = require('./owner-identity');
  */
 
 /** @param {PortfolioPageOptions} options */
-function sharedPageOptions({ cssContent, templates, version, buildDeployedAt, buildDeployedDate }) {
+function sharedPageOptions({ cssContent, version, buildDeployedAt, buildDeployedDate }) {
   return {
     cssContent,
     buildVersion: version,
     buildDeployedAt,
     buildDeployedDate,
-    contactGridHtml: templates.contactGridHtml,
   };
 }
 
@@ -51,6 +50,7 @@ function contentOptions(templates, locale, identity) {
     certCardsHtml: templates[`certCards${suffix}Html`],
     aboutContentHtml: templates[`aboutContent${suffix}Html`],
     profileBentoHtml: templates[`profileBento${suffix}Html`],
+    contactGridHtml: templates[`contactGrid${suffix}Html`],
     achievementsHtml: templates[`achievements${suffix}Html`],
     expertiseHtml: templates[`expertise${suffix}Html`],
     coverLetterHtml: templates[`coverLetter${suffix}Html`],

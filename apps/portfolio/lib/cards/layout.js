@@ -1,6 +1,12 @@
 const { escapeHtml } = require('../template-sanitizer');
 const { defaultOwnerIdentity } = require('../owner-identity');
 
+const CONTACT_LABELS = {
+  ko: { email: '이메일', newTab: ' (새 탭에서 열림)' },
+  en: { email: 'Email', newTab: ' (opens in new tab)' },
+  ja: { email: 'メール', newTab: '（新しいタブで開きます）' },
+};
+
 /**
  * @typedef {Object} HeroData
  * @property {string} titleEn
@@ -75,23 +81,25 @@ function generateInfrastructureCards(infraData) {
 
 /**
  * Generate contact grid HTML from data
- * ✅ FIXED: Added aria-labels to all links for accessibility
- * ✅ FIXED: Added target="_blank" and rel to website link
  * @param {ContactData} contactData - Contact information object
+ * @param {'ko' | 'en' | 'ja'} [locale='ko'] - Locale for contact labels.
  * @returns {string} HTML string with accessible footer links
  */
-function generateContactGrid(contactData) {
+function generateContactGrid(contactData, locale = 'ko') {
+  const labels = CONTACT_LABELS[locale];
+  const email = String(contactData.email || '')
+    .replace(/^mailto:/i, '')
+    .split('?')[0];
   const velog = contactData.velog || 'https://velog.io/@qws941';
   const githubBotLink = contactData.githubBot
-    ? `<a href="${escapeHtml(contactData.githubBot)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="GitHub Bot (opens in new tab)">GitHub Bot</a>`
+    ? `<a href="${escapeHtml(contactData.githubBot)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="GitHub Bot${labels.newTab}">GitHub Bot</a>`
     : '';
   return `
-        <a href="${escapeHtml(contactData.github)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="GitHub (opens in new tab)">GitHub</a>
+        <a href="${escapeHtml(contactData.github)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="GitHub${labels.newTab}">GitHub</a>
         ${githubBotLink}
-        <a href="${escapeHtml(contactData.linkedin)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="LinkedIn (opens in new tab)">LinkedIn</a>
-        <a href="${escapeHtml(velog)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="Velog (opens in new tab)">Velog</a>
-        <a href="mailto:${escapeHtml(contactData.email)}" class="contact-item contact-item--email" data-contact-email="${escapeHtml(contactData.email)}" aria-label="Email (click to copy address)">Email</a>
-        <a href="${escapeHtml(contactData.website)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="Website (opens in new tab)">Website</a>
+        <a href="${escapeHtml(contactData.linkedin)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="LinkedIn${labels.newTab}">LinkedIn</a>
+        <a href="${escapeHtml(velog)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="Velog${labels.newTab}">Velog</a>
+        <a class="contact-item contact-item--email" href="mailto:${escapeHtml(email)}" data-contact-email="${escapeHtml(email)}"><span class="contact-item__label">${labels.email}</span><span class="contact-item__value">${escapeHtml(email)}</span></a>
         <span class="contact-copy-status" role="status" aria-live="polite" aria-atomic="true"></span>
   `;
 }
