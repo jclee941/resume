@@ -7,19 +7,11 @@
   box-shadow: var(--shadow-card-hover);
 }
 
-.project-item.is-role-dimmed {
+.project-item.is-role-dimmed:not(:hover):not(:focus-within) {
   border-color: var(--border-primary);
   background: var(--bg-primary);
   box-shadow: none;
   filter: saturate(0.25);
-}
-
-.project-item.is-role-dimmed:hover,
-.project-item.is-role-dimmed:focus-within {
-  border-color: var(--border-secondary);
-  background: var(--glass-bg);
-  box-shadow: var(--shadow-card);
-  filter: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {

@@ -329,11 +329,9 @@ describe('recruiter-role-interactions module', () => {
       /\.project-item\.is-role-match\s*\{[^}]*border-color:\s*var\(--color-accent\)/
     );
     expect(roleFilterCss).toMatch(
-      /\.project-item\.is-role-dimmed\s*\{[^}]*border-color:\s*var\(--border-primary\)[\s\S]*?filter:\s*saturate\(0\.25\)/
+      /\.project-item\.is-role-dimmed:not\(:hover\):not\(:focus-within\)\s*\{[^}]*border-color:\s*var\(--border-primary\)[\s\S]*?filter:\s*saturate\(0\.25\)/
     );
-    expect(roleFilterCss).toMatch(
-      /\.project-item\.is-role-dimmed:hover,\s*\.project-item\.is-role-dimmed:focus-within\s*\{[^}]*filter:\s*none/
-    );
+    expect(roleFilterCss).not.toMatch(/\.is-role-dimmed:(?:hover|focus-within)/);
     expect(roleFilterCss).toMatch(
       /@media\s*\(prefers-reduced-motion:\s*no-preference\)\s*\{[\s\S]*?transition:[\s\S]*?border-color\s+var\(--transition-base\)[\s\S]*?filter\s+var\(--transition-base\)/
     );
