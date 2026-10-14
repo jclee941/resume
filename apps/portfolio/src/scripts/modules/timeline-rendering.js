@@ -204,12 +204,21 @@ export function createTimelineNode(career, index) {
   date.appendChild(el('time', '', model.period));
   const badges = el('div', 'timeline-badges');
   const phase = el('span', `phase-badge phase-badge--${model.phase}`);
-  phase.setAttribute('aria-label', `${model.labels.phase}: ${model.phaseLabel}`);
-  phase.append(createIconElement(model.phaseIcon, 'phase-badge__icon'), ` ${model.phaseLabel}`);
+  phase.append(
+    createIconElement(model.phaseIcon, 'phase-badge__icon'),
+    el('span', 'sr-only', `${model.labels.phase}: `),
+    model.phaseLabel
+  );
   badges.appendChild(phase);
   if (model.isActive) {
-    const status = el('span', 'status-badge status-badge--active', model.labels.inProgress);
-    status.setAttribute('aria-label', model.labels.inProgressAria);
+    const status = el('span', 'status-badge status-badge--active');
+    if (model.labels.inProgressAria && model.labels.inProgressAria !== model.labels.inProgress) {
+      const visible = el('span', '', model.labels.inProgress);
+      visible.setAttribute('aria-hidden', 'true');
+      status.append(el('span', 'sr-only', model.labels.inProgressAria), visible);
+    } else {
+      status.textContent = model.labels.inProgress;
+    }
     badges.appendChild(status);
   }
   header.append(date, badges);

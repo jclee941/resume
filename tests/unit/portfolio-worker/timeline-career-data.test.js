@@ -110,8 +110,9 @@ describe('mergeCareerUiMeta()', () => {
 
 describe('createTimelineViewModel()', () => {
   let createTimelineViewModel;
+  let createTimelineNode;
   beforeAll(async () => {
-    ({ createTimelineViewModel } = await import(TIMELINE_RENDERING_PATH));
+    ({ createTimelineViewModel, createTimelineNode } = await import(TIMELINE_RENDERING_PATH));
     global.document = { documentElement: { lang: 'ko' } };
   });
 
@@ -137,4 +138,101 @@ describe('createTimelineViewModel()', () => {
 
     expect(model.companyUrl).toBeNull();
   });
+
+  test.each([
+    ['ko', '단계: 구축', '현재 진행 중', '진행 중'],
+    ['en', 'Phase: Build', 'Currently in progress', 'In progress'],
+    ['ja', 'フェーズ: 構築', '現在進行中', '進行中'],
+  ])(
+    '%s createTimelineNode exposes phase and active status via sr-only spans without aria-label on generic spans',
+    (lang, expectedPhaseText, expectedStatusSrText, expectedStatusVisibleText) => {
+      const makeFakeElement = (tag) => {
+        const node = {
+          tagName: tag.toUpperCase(),
+          className: '',
+          id: '',
+          tabIndex: -1,
+          dataset: {},
+          attributes: {},
+          children: [],
+          _text: '',
+          get textContent() {
+            if (this.children.length === 0) return this._text;
+            return (
+              this._text +
+              this.children
+                .map((child) => (typeof child === 'string' ? child : child.textContent))
+                .join('')
+            );
+          },
+          set textContent(value) {
+            this._text = String(value);
+            this.children = [];
+          },
+          setAttribute(name, value) {
+            this.attributes[name] = String(value);
+          },
+          getAttribute(name) {
+            return Object.prototype.hasOwnProperty.call(this.attributes, name)
+              ? this.attributes[name]
+              : null;
+          },
+          append(...items) {
+            this.children.push(...items);
+          },
+          appendChild(child) {
+            this.children.push(child);
+            return child;
+          },
+        };
+        return node;
+      };
+
+      global.document = {
+        documentElement: { lang },
+        createElement: makeFakeElement,
+        createElementNS: (_ns, tag) => makeFakeElement(tag),
+        createDocumentFragment: () => makeFakeElement('#fragment'),
+      };
+
+      const item = createTimelineNode(
+        {
+          company: 'Example Co',
+          period: '2026.01 ~ 현재',
+          phase: '구축',
+          status: 'active',
+          role: 'Engineer',
+          myRole: 'Owner',
+          description: 'Description',
+          achievements: ['One'],
+        },
+        0
+      );
+
+      const [, content] = item.children;
+      const [header] = content.children;
+      const [, badges] = header.children;
+      const [phaseBadge, statusBadge] = badges.children;
+
+      expect(phaseBadge.getAttribute('aria-label')).toBeNull();
+      expect(phaseBadge.textContent).toBe(expectedPhaseText);
+      const phaseSr = phaseBadge.children.find(
+        (child) => typeof child === 'object' && child.className === 'sr-only'
+      );
+      expect(phaseSr).toBeDefined();
+      expect(phaseSr.textContent).toBe(`${expectedPhaseText.split(':')[0]}: `);
+
+      expect(statusBadge.getAttribute('aria-label')).toBeNull();
+      const statusSr = statusBadge.children.find(
+        (child) => typeof child === 'object' && child.className === 'sr-only'
+      );
+      const statusVisible = statusBadge.children.find(
+        (child) => typeof child === 'object' && child.getAttribute('aria-hidden') === 'true'
+      );
+      expect(statusSr).toBeDefined();
+      expect(statusSr.textContent).toBe(expectedStatusSrText);
+      expect(statusVisible).toBeDefined();
+      expect(statusVisible.textContent).toBe(expectedStatusVisibleText);
+    }
+  );
 });
