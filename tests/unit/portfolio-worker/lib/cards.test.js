@@ -1052,6 +1052,37 @@ describe('Cards Module', () => {
       }
     );
 
+    test.each([
+      ['ko', '프로젝트 설명입니다.', '데모'],
+      ['ja', 'プロジェクトの説明です。', 'デモ'],
+      ['en', 'Project description.', 'Demo'],
+    ])(
+      'shows a localized visible demo label inside its accessible name for %s',
+      (locale, description, demo) => {
+        const html = generateProjectCards(
+          [
+            {
+              title: 'Example',
+              tech: 'Node.js',
+              description,
+              githubUrl: 'https://github.com/example-user/example',
+              demoUrl: 'https://demo.example.com',
+              dashboards: [],
+            },
+          ],
+          `${locale}-visible-label`
+        );
+        expect(html).toContain(`>${demo}<span`);
+        const links = [...html.matchAll(/<a [^>]*aria-label="([^"]*)"[^>]*>([^<]+)<span/g)].map(
+          (match) => ({ name: match[1], visible: match[2] })
+        );
+        expect(links.length).toBeGreaterThanOrEqual(3);
+        for (const { name, visible } of links) {
+          expect(name.toLowerCase()).toContain(visible.toLowerCase());
+        }
+      }
+    );
+
     test('should render completed metadata for a project with a closed period', () => {
       TEMPLATE_CACHE.dataHash = null;
       TEMPLATE_CACHE.projectCardsHtml = null;

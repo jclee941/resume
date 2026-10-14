@@ -20,7 +20,7 @@ const PROJECT_LABELS = {
     completed: 'COMPLETED',
   },
   ja: {
-    problem: '課題',
+    problem: '背景',
     role: '担当',
     proof: '結果',
     diagram: '構成フロー',

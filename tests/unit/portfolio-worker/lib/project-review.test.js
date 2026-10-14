@@ -25,7 +25,7 @@ describe('project review cards', () => {
     ).toMatchObject({ problem: 'Problem', role: 'What I did', proof: 'Result' });
     expect(
       projectLabelsFor([{ title: '運用', description: '運用根拠が明確な事例です。' }])
-    ).toMatchObject({ problem: '課題', role: '担当', proof: '結果' });
+    ).toMatchObject({ problem: '背景', role: '担当', proof: '結果' });
   });
 
   test('creates stable anchors from ids, titles, and fallback indexes', () => {
