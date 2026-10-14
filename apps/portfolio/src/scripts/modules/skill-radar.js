@@ -82,7 +82,8 @@ function createDomainCard(domainKey, domain) {
 
 /** @param {HTMLElement} container */
 function syncOverflowTabIndex(container) {
-  if (container.scrollWidth > container.clientWidth) {
+  const hasFocus = container.matches(':focus-within');
+  if (hasFocus || container.scrollWidth > container.clientWidth) {
     container.setAttribute('tabindex', '0');
   } else {
     container.removeAttribute('tabindex');
@@ -100,6 +101,7 @@ function initSkillRadar() {
     )
   );
   syncOverflowTabIndex(container);
+  container.addEventListener('focusout', () => syncOverflowTabIndex(container));
   if (typeof ResizeObserver === 'function') {
     new ResizeObserver(() => syncOverflowTabIndex(container)).observe(container);
   }
