@@ -45,7 +45,8 @@ describe('public portfolio hardening', () => {
       const html = read(file);
       const { github } = JSON.parse(read('packages/data/resumes/master/resume_data.json')).contact;
 
-      expect(html).toContain('"telephone"');
+      // The telephone property was removed from the Person JSON-LD on purpose for privacy.
+      expect(html).not.toContain('"telephone"');
       expect(html).toContain(github.replace('https://', ''));
     }
   );
