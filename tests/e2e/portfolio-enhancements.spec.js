@@ -32,7 +32,7 @@ test.describe('Portfolio recruiter enhancements', () => {
       .locator('#projects li.project-item.is-role-dimmed')
       .first()
       .evaluate((element) => Number.parseFloat(getComputedStyle(element).opacity));
-    expect(dimmedOpacity).toBeGreaterThanOrEqual(0.75);
+    expect(dimmedOpacity).toBeCloseTo(0.45, 2);
     await expect(projectCards).toHaveCount(initialProjectCount);
   });
 

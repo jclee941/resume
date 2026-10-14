@@ -9,6 +9,67 @@ function clearRoleFocus(cards) {
 }
 
 /**
+ * @param {Element} card
+ * @returns {number}
+ */
+function getOriginalIndex(card) {
+  return Number.parseInt(card.getAttribute('data-original-index') || '0', 10);
+}
+
+/**
+ * @param {Element[]} cards
+ */
+function recordOriginalOrder(cards) {
+  cards.forEach((card, index) => {
+    if (card.getAttribute('data-original-index') === null) {
+      card.setAttribute('data-original-index', String(index));
+    }
+  });
+}
+
+/**
+ * @param {Element} card
+ * @param {string} role
+ * @returns {boolean}
+ */
+function cardMatchesRole(card, role) {
+  const roles = (card.getAttribute('data-role') || '').split(/\s+/).filter(Boolean);
+  return roles.includes(role);
+}
+
+/**
+ * @param {Element[]} orderedCards
+ */
+function applyCardOrder(orderedCards) {
+  const list = orderedCards[0]?.parentElement;
+  if (!list) return;
+  orderedCards.forEach((card) => {
+    list.appendChild(card);
+  });
+  list.scrollLeft = 0;
+}
+
+/**
+ * @param {Element[]} cards
+ * @param {string} [role]
+ * @returns {Element[]}
+ */
+function reorderCardsForRole(cards, role) {
+  const sortedByOriginal = [...cards].sort(
+    (left, right) => getOriginalIndex(left) - getOriginalIndex(right)
+  );
+  if (!role) {
+    applyCardOrder(sortedByOriginal);
+    return sortedByOriginal;
+  }
+  const matches = sortedByOriginal.filter((card) => cardMatchesRole(card, role));
+  const nonMatches = sortedByOriginal.filter((card) => !cardMatchesRole(card, role));
+  const ordered = [...matches, ...nonMatches];
+  applyCardOrder(ordered);
+  return ordered;
+}
+
+/**
  * @param {{ id: string, label: string }} role
  * @param {string} countText
  * @returns {string}
@@ -44,6 +105,25 @@ function setRoleHistoryState(role) {
   );
 }
 
+function clearRoleHistoryState() {
+  if (!window.history?.replaceState) return;
+  const currentState =
+    window.history.state && typeof window.history.state === 'object' ? window.history.state : {};
+  const nextState = { ...currentState };
+  delete nextState.selectedRole;
+  delete nextState.selectedRoleLabel;
+  window.history.replaceState(nextState, '', window.location.href);
+}
+
+/**
+ * @param {Element[]} cards
+ */
+function scrollCarouselToStart(cards) {
+  const list = cards[0]?.parentElement;
+  if (!list || list.scrollWidth <= list.clientWidth) return;
+  list.scrollTo?.({ left: 0, behavior: 'smooth' });
+}
+
 /**
  * On phones the project list scrolls sideways; bring the first visible match into view.
  * @param {Element[]} cards
@@ -54,7 +134,10 @@ function scrollCarouselToFirstMatch(cards) {
   const match = cards.find(
     (card) => card.classList.contains('is-role-match') && card.getClientRects().length > 0
   );
-  if (!match) return;
+  if (!match) {
+    list.scrollTo?.({ left: 0, behavior: 'smooth' });
+    return;
+  }
   const offset = match.getBoundingClientRect().left - list.getBoundingClientRect().left;
   list.scrollTo({ left: list.scrollLeft + offset, behavior: 'smooth' });
 }
@@ -64,6 +147,7 @@ function scrollCarouselToFirstMatch(cards) {
  * @param {Map<string, number>} proofCounts
  */
 export function bindRoleControls(cards, proofCounts) {
+  recordOriginalOrder(cards);
   const buttons = /** @type {HTMLButtonElement[]} */ (
     Array.from(document.querySelectorAll('.role-chip'))
   );
@@ -76,24 +160,35 @@ export function bindRoleControls(cards, proofCounts) {
         const role = button.getAttribute('data-role-filter') || '';
         const roleProfile = roleProfiles.find((candidate) => candidate.id === role);
         if (!roleProfile) return;
+        if (button.getAttribute('aria-pressed') === 'true') {
+          buttons.forEach((candidate) => candidate.setAttribute('aria-pressed', 'false'));
+          clearRoleFocus(cards);
+          reorderCardsForRole(cards);
+          if (status) status.textContent = '';
+          clearRoleHistoryState();
+          scrollCarouselToStart(cards);
+          return;
+        }
         buttons.forEach((candidate) =>
           candidate.setAttribute('aria-pressed', String(candidate === button))
         );
         clearRoleFocus(cards);
         cards.forEach((card) => {
-          const roles = (card.getAttribute('data-role') || '').split(/\s+/);
-          card.classList.add(roles.includes(role) ? 'is-role-match' : 'is-role-dimmed');
+          card.classList.add(cardMatchesRole(card, role) ? 'is-role-match' : 'is-role-dimmed');
         });
+        const orderedCards = reorderCardsForRole(cards, role);
         const visibleLabel =
           button.querySelector('.role-chip__label')?.textContent?.trim() || roleProfile.label;
         const selectedRole = { ...roleProfile, label: visibleLabel };
-        /** @type {NonNullable<typeof status>} */ (status).textContent = selectedRoleStatusText(
-          selectedRole,
-          roleProofCountText(proofCounts, role)
-        );
+        if (status) {
+          status.textContent = selectedRoleStatusText(
+            selectedRole,
+            roleProofCountText(proofCounts, role)
+          );
+        }
         setRoleHistoryState(selectedRole);
         document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        scrollCarouselToFirstMatch(cards);
+        scrollCarouselToFirstMatch(orderedCards);
       });
     }
     button.disabled = false;

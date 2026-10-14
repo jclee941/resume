@@ -1,0 +1,18 @@
+.project-item--collapsed.is-role-match {
+  display: grid;
+}
+
+.project-item.is-role-dimmed {
+  opacity: 0.45;
+}
+
+.project-item.is-role-dimmed:hover,
+.project-item.is-role-dimmed:focus-within {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .project-item.is-role-dimmed {
+    transition: opacity var(--transition-base);
+  }
+}
