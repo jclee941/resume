@@ -12,13 +12,13 @@ Boundary: score 1; retained distinct domain for repository automation and review
 
 ## WHERE TO LOOK
 
-| Task               | Location                   | Notes                                       |
-| ------------------ | -------------------------- | ------------------------------------------- |
-| CI gates           | `workflows/ci.yml`         | Single `validate` job                       |
-| Dependency updates | `dependabot.yml`           | npm, pip build requirements, GitHub Actions |
-| Review routing     | `CODEOWNERS`               | Path ownership                              |
-| Change description | `PULL_REQUEST_TEMPLATE.md` | Contributor checklist                       |
-| Issue intake       | `ISSUE_TEMPLATE/`          | Bug, feature, security forms and chooser    |
+| Task               | Location                   | Notes                                                   |
+| ------------------ | -------------------------- | ------------------------------------------------------- |
+| CI gates           | `workflows/ci.yml`         | Single `validate` job                                   |
+| Dependency updates | `dependabot.yml`           | npm, pip build requirements, GitHub Actions, Go modules |
+| Review routing     | `CODEOWNERS`               | Path ownership                                          |
+| Change description | `PULL_REQUEST_TEMPLATE.md` | Contributor checklist                                   |
+| Issue intake       | `ISSUE_TEMPLATE/`          | Bug, feature, security forms and chooser                |
 
 ## CONVENTIONS
 
@@ -27,10 +27,11 @@ Boundary: score 1; retained distinct domain for repository automation and review
 - Pin external actions to commit SHAs with trailing version comments.
 - CI uses Node 22, Python 3.12, and the Go version from `tools/scripts/go.mod`.
 - The content guard precedes dependency installation; keep its bootstrap dependency-free.
-- Validation order: dependency audit, build, lint/format, types, tests, architecture contracts, bundle dry-run.
+- Secret scan (gitleaks `dir`, `.gitleaks.toml`) and workflow lint (actionlint) follow the guard, before Node setup. Both tools are downloaded at a pinned version and verified against a hardcoded SHA-256 from the release checksums file; update the version and hash together.
+- Validation order: content guard, secret scan, workflow lint, dependency audit, build, lint/format, types, tests, architecture contracts, bundle dry-run.
 - CI test commands are explicit; adding a root test script alone does not add a workflow step.
 - Master protection (ruleset `Default Branch Protection` and classic branch protection) requires only the GitHub Actions `Validate` check, so Dependabot and other PRs merge once it passes.
-- `jclee-bot` checks are no longer required because the App posts none on this repository; its managed-repo reconciliation (`config/repos.yaml` in `jclee941/jclee-bot`) may restore them if it runs again.
+- `jclee-bot` checks are no longer required because the App posts none on this repository; the `secret-scan` and `actionlint` checks now run inside `validate`. Its managed-repo reconciliation (`config/repos.yaml` in `jclee941/jclee-bot`) may restore them if it runs again.
 - Playwright E2E is on demand, not a step in the validation workflow.
 
 ## ANTI-PATTERNS
