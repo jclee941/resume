@@ -15,7 +15,7 @@ function buildJapaneseTemplate(html, identity = defaultOwnerIdentity()) {
     (/** @type {string} */ current) => applyJapaneseMeta(current, identity),
     (/** @type {string} */ current) => applyJapaneseHero(current, identity),
     applyJapaneseReviewPacket,
-    applyJapaneseSections,
+    (/** @type {string} */ current) => applyJapaneseSections(current, identity),
     applyJapaneseSecurity,
   ].reduce((current, transform) => transform(current), html);
 }
