@@ -663,12 +663,13 @@ describe('Worker Routes', () => {
       const bytes = Buffer.from(Array.from({ length: 300 }, (_, index) => index % 256));
       const url = 'https://example.com/og-image.png';
 
-      // Like workerd's ASSETS binding: strong ETag, 304 for a matching If-None-Match,
-      // and Range ignored (always the full 200 body).
+      // Like workerd's ASSETS binding: strong ETag, no Last-Modified, Range ignored (always the
+      // full 200 body), and the WHOLE If-None-Match value compared with the ETag (exact or W/
+      // prefixed), so a list or * never matches and only a lone tag earns a 304.
       function mockAssets() {
         return jest.fn(async (/** @type {Request} */ assetRequest) => {
           const match = assetRequest.headers.get('If-None-Match');
-          if (match && match.split(',').some((tag) => tag.trim() === etag)) {
+          if (match && (match === etag || match === `W/${etag}`)) {
             return new Response(null, { status: 304, headers: { ETag: etag } });
           }
           return new Response(assetRequest.method === 'HEAD' ? null : bytes, {
@@ -707,15 +708,74 @@ describe('Worker Routes', () => {
         );
         expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
         expect(await response.text()).toBe('');
+        // The route decides itself: ASSETS only ever sees the method.
         const forwarded = fetch.mock.calls[0][0].headers;
-        expect(forwarded.get('If-None-Match')).toBe(etag);
-        expect(forwarded.get('If-Modified-Since')).toBe('Wed, 01 Jan 2025 00:00:00 GMT');
+        expect(forwarded.has('If-None-Match')).toBe(false);
+        expect(forwarded.has('If-Modified-Since')).toBe(false);
       });
 
       it('serves the full PNG when If-None-Match does not match', async () => {
         const { response } = await request({ 'If-None-Match': '"other"' });
         expect(response.status).toBe(200);
         expect(Buffer.from(await response.arrayBuffer())).toEqual(bytes);
+      });
+
+      it.each([
+        ['a matching tag list', `"old", ${etag}`],
+        ['a list with the match first', `${etag}, "old"`],
+        ['the wildcard', '*'],
+        ['a weak tag', `W/${etag}`],
+        ['a weak tag inside a list', `"old", W/${etag}`],
+      ])('answers %s with a bodiless 304 and one strong ETag', async (_name, value) => {
+        const { response } = await request({ 'If-None-Match': value });
+        expect(response.status).toBe(304);
+        expect(response.headers.get('ETag')).toBe(etag);
+        expect(response.headers.get('Content-Type')).toBe('image/png');
+        expect(response.headers.get('Cache-Control')).toBe(
+          getCacheHeaders('STATIC')['Cache-Control']
+        );
+        expect(await response.text()).toBe('');
+      });
+
+      it.each(['"old", "older"', '"asset-etag-2"', 'W/"other"'])(
+        'serves the full PNG for the non-matching list %s',
+        async (value) => {
+          const { response } = await request({ 'If-None-Match': value });
+          expect(response.status).toBe(200);
+          expect(Buffer.from(await response.arrayBuffer())).toEqual(bytes);
+        }
+      );
+
+      it('ignores If-Modified-Since because ASSETS sends no Last-Modified', async () => {
+        const { response } = await request({
+          'If-Modified-Since': 'Wed, 01 Jan 2099 00:00:00 GMT',
+        });
+        expect(response.status).toBe(200);
+      });
+
+      it('answers HEAD plus a matching If-None-Match with 304', async () => {
+        const { response } = await request({ 'If-None-Match': `"old", ${etag}` }, 'HEAD');
+        expect(response.status).toBe(304);
+        expect(response.headers.get('ETag')).toBe(etag);
+        expect(await response.text()).toBe('');
+      });
+
+      it('lets a matching If-None-Match list beat Range and If-Range with a 304', async () => {
+        const listed = await request({ 'If-None-Match': `"old", ${etag}`, Range: 'bytes=0-9' });
+        expect(listed.response.status).toBe(304);
+        const withIfRange = await request({
+          'If-None-Match': '*',
+          Range: 'bytes=0-9',
+          'If-Range': etag,
+        });
+        expect(withIfRange.response.status).toBe(304);
+      });
+
+      it('still serves the range when the If-None-Match list does not match', async () => {
+        const { response } = await request({ 'If-None-Match': '"old"', Range: 'bytes=0-99' });
+        expect(response.status).toBe(206);
+        expect(response.headers.get('Content-Range')).toBe('bytes 0-99/300');
+        expect((await response.arrayBuffer()).byteLength).toBe(100);
       });
 
       it('answers a byte range with 206, Content-Range and exactly those bytes', async () => {
