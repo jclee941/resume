@@ -615,6 +615,28 @@ describe('Worker Routes', () => {
         expect(await response.text()).toBe('Not Found');
       }
     );
+
+    it('serves the PNG when the client sends conditional headers', async () => {
+      const bytes = Buffer.from('png-bytes');
+      const fetch = jest.fn(async (/** @type {Request} */ assetRequest) =>
+        assetRequest.headers.has('If-None-Match') || assetRequest.headers.has('If-Modified-Since')
+          ? new Response(null, { status: 304 })
+          : new Response(bytes)
+      );
+      const response = await runRoute(
+        code,
+        new Request('https://example.com/og-image.png', {
+          headers: {
+            'If-None-Match': '"etag"',
+            'If-Modified-Since': 'Wed, 01 Jan 2025 00:00:00 GMT',
+          },
+        }),
+        { ASSETS: { fetch } }
+      );
+      expect(response.status).toBe(200);
+      expect(response.headers.get('Content-Type')).toBe('image/png');
+      expect(Buffer.from(await response.arrayBuffer())).toEqual(bytes);
+    });
   });
 
   describe('generate404', () => {
@@ -664,7 +686,7 @@ describe('Worker Routes', () => {
       ['GET', '/fonts/missing'],
       ['GET', '/missing.png'],
       ['GET', '/missing.js'],
-      ['HEAD', '/missing-page'],
+      ['HEAD', '/missing.png'],
       ['POST', '/missing-page'],
     ])('keeps the plain-text 404 for %s %s', async (method, pathname) => {
       const response = await runRoute(
@@ -674,6 +696,17 @@ describe('Worker Routes', () => {
       expect(response.status).toBe(404);
       expect(response.headers.get('Content-Type')).toBe('text/plain');
       expect(await response.text()).toBe('Not Found');
+    });
+
+    it('gives HEAD the same status and Content-Type as GET for a page path', async () => {
+      const get = await runRoute(code, new Request('https://example.com/nope'));
+      const head = await runRoute(
+        code,
+        new Request('https://example.com/nope', { method: 'HEAD' })
+      );
+      expect(head.status).toBe(get.status);
+      expect(head.headers.get('Content-Type')).toBe('text/html; charset=utf-8');
+      expect(head.headers.get('Content-Type')).toBe(get.headers.get('Content-Type'));
     });
   });
 

@@ -113,6 +113,15 @@ describe('Security Headers Module', () => {
       const connectSrc = csp.split('; ').find((directive) => directive.startsWith('connect-src '));
 
       expect(connectSrc).toContain('https://www.google-analytics.com');
+      expect(connectSrc).toContain('https://cloudflareinsights.com');
+    });
+
+    test('portfolio connect-src omits the Google sign-in endpoints it never calls', () => {
+      const csp = generateSecurityHeaders([])['Content-Security-Policy'];
+      const connectSrc = csp.split('; ').find((directive) => directive.startsWith('connect-src '));
+
+      expect(connectSrc).not.toContain('https://www.google.com');
+      expect(connectSrc).not.toContain('https://oauth2.googleapis.com');
     });
 
     test('allows data: URIs in img-src for inline noise SVG', () => {

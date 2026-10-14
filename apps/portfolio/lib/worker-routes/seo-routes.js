@@ -57,8 +57,10 @@ function generateSeoRoutes({ contactEmail = defaultOwnerIdentity().email } = {})
 
       if (['/og-image.png', '/og-image-en.png', '/og-image-ja.png'].includes(url.pathname)) {
         const assetUrl = new URL('/social' + url.pathname, request.url);
+        // Method only: forwarding If-None-Match / If-Modified-Since lets ASSETS answer 304,
+        // which this route cannot serve as an image.
         const assetResponse = env.ASSETS
-          ? await env.ASSETS.fetch(new Request(assetUrl, request))
+          ? await env.ASSETS.fetch(new Request(assetUrl, { method: request.method }))
           : null;
         const headers = {
           ...applyNonceToHeaders(SECURITY_HEADERS, ''),
