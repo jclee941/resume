@@ -1,7 +1,7 @@
 # GITHUB CONTROL PLANE KNOWLEDGE BASE
 
-**Generated:** 2026-10-11
-**Commit:** `28de5bcd`
+**Generated:** 2026-10-14
+**Commit:** `493d44f6`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -29,7 +29,7 @@ Boundary: score 1; retained distinct domain for repository automation and review
 - The content guard precedes dependency installation; keep its bootstrap dependency-free.
 - Validation order: dependency audit, build, lint/format, types, tests, architecture contracts, bundle dry-run.
 - CI test commands are explicit; adding a root test script alone does not add a workflow step.
-- Master also requires `jclee-bot` checks `pr-metadata`, `secret-scan`, and `actionlint`.
+- Master branch protection also requires the `jclee-bot / pr-metadata`, `jclee-bot / secret-scan`, and `jclee-bot / actionlint` checks.
 - Those checks do not report on Dependabot PRs; a passing Validate job can still leave them BLOCKED.
 - Playwright E2E is on demand, not a step in the validation workflow.
 

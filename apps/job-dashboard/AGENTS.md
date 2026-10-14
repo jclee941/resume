@@ -1,14 +1,14 @@
 # JOB DASHBOARD WORKER KNOWLEDGE BASE
 
-**Generated:** 2026-10-11
-**Commit:** `28de5bcd`
+**Generated:** 2026-10-14
+**Commit:** `493d44f6`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Dashboard API, database lineage, and automation package mounted by the portfolio entry.
 
-Scope reason: score 9; required application and migration boundary.
+Scope reason: score 4; required application and migration boundary.
 
 ## WHERE TO LOOK
 
@@ -33,7 +33,7 @@ Scope reason: score 9; required application and migration boundary.
 - `tests/unit/job-dashboard/migration-lineage.test.js` replays the lineage against the snapshot.
 - `tests/unit/job-dashboard/d1-schema-contract.test.js` checks Worker SQL against the schema.
 - Run colocated Node tests with `npm run test:dashboard`; root Jest suites use `npm run test:jest`.
-- The foreign-apply dry run uses local ATS stubs, not live third-party submissions.
+- Run `npm run foreign-apply:dry-run -- --ats-stub`; the script refuses an unflagged invocation.
 
 ## ANTI-PATTERNS
 

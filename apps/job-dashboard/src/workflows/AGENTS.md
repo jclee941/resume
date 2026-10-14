@@ -1,14 +1,14 @@
 # WORKFLOWS KNOWLEDGE BASE
 
-**Generated:** 2026-10-11
-**Commit:** `28de5bcd`
+**Generated:** 2026-10-14
+**Commit:** `493d44f6`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Background orchestration for applications, crawling, resume sync, reporting, health, and cleanup.
 
-Scope reason: score 14; retryable Workflow domain.
+Scope reason: score 7; retryable Workflow domain.
 
 ## WHERE TO LOOK
 

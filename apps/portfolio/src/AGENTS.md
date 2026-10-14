@@ -1,14 +1,14 @@
 # PORTFOLIO SOURCE KNOWLEDGE BASE
 
-**Generated:** 2026-10-11
-**Commit:** `28de5bcd`
+**Generated:** 2026-10-14
+**Commit:** `493d44f6`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Browser CSS and feature modules composed into the generated portfolio Worker.
 
-Scope reason: score 10; distinct browser-source domain.
+Scope reason: score 7; distinct browser-source domain.
 
 ## WHERE TO LOOK
 

@@ -1,14 +1,14 @@
 # VIEWS KNOWLEDGE BASE
 
-**Generated:** 2026-10-11
-**Commit:** `28de5bcd`
+**Generated:** 2026-10-14
+**Commit:** `493d44f6`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Inline HTML, CSS, and script modules for the operations dashboard.
 
-Scope reason: score 9; distinct template-string UI boundary.
+Scope reason: score 5; distinct template-string UI boundary.
 
 ## WHERE TO LOOK
 

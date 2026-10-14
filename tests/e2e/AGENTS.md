@@ -1,7 +1,7 @@
 # E2E TESTS KNOWLEDGE BASE
 
-**Generated:** 2026-10-11
-**Commit:** `28de5bcd`
+**Generated:** 2026-10-14
+**Commit:** `493d44f6`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -32,7 +32,7 @@ Boundary: score 12; retained browser-runtime domain with server, locale, device,
 - `SKIP_WEBSERVER=1` targets the configured remote URL without starting Wrangler.
 - `PLAYWRIGHT_BASE_URL` and `PORTFOLIO_LEDGER_URL` must agree when both are supplied.
 - `PORTFOLIO_FORCE_NEW_SERVER=1` prevents local server reuse.
-- Locale and request headers use `ko-KR` to avoid a redirect changing root-route assertions.
+- Browser locale and Accept-Language default to `ko-KR`; locale headers do not select the public route.
 - Baselines are ignored materialized-content captures; `updateSnapshots: 'missing'` creates absent baselines only.
 - Screenshot mismatch ratio is 0.05; retries are 2 in CI and 0 locally; traces attach on first retry.
 - Run one suite with `npx playwright test <name> --project=chromium`.

@@ -1,14 +1,14 @@
 # QUEUES KNOWLEDGE BASE
 
-**Generated:** 2026-10-11
-**Commit:** `28de5bcd`
+**Generated:** 2026-10-14
+**Commit:** `493d44f6`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Queue batch ingestion, priority sorting, Workflow dispatch, metrics, and notification dead letters.
 
-Scope reason: score 6; retained asynchronous-ingestion boundary.
+Scope reason: score 2; retained asynchronous-ingestion boundary.
 
 ## WHERE TO LOOK
 

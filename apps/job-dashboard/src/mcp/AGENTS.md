@@ -1,14 +1,14 @@
 # MCP KNOWLEDGE BASE
 
-**Generated:** 2026-10-11
-**Commit:** `28de5bcd`
+**Generated:** 2026-10-14
+**Commit:** `493d44f6`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Stateless Streamable HTTP MCP transport with route-backed operations and direct D1 content reads.
 
-Scope reason: score 9; distinct protocol, authentication, and tool-result boundary.
+Scope reason: score 4; distinct protocol, authentication, and tool-result boundary.
 
 ## WHERE TO LOOK
 
