@@ -33,6 +33,9 @@ jest.mock('../../../../apps/portfolio/lib/content-lastmod', () => ({
 jest.mock('../../../../apps/portfolio/lib/worker-writer', () => ({
   buildAndWriteWorker: jest.fn(),
 }));
+jest.mock('../../../../apps/portfolio/lib/build-static-assets', () => ({
+  copySocialImages: jest.fn(),
+}));
 
 const { readBuildInputs } = require('../../../../apps/portfolio/lib/file-reader');
 const {
@@ -50,6 +53,7 @@ const {
 const { generateSecurityHeaders } = require('../../../../apps/portfolio/lib/security-headers');
 const { injectScriptNoncePlaceholder } = require('../../../../apps/portfolio/lib/templates');
 const { buildAndWriteWorker } = require('../../../../apps/portfolio/lib/worker-writer');
+const { copySocialImages } = require('../../../../apps/portfolio/lib/build-static-assets');
 const { runWorkerBuild } = require('../../../../apps/portfolio/lib/build-orchestrator');
 
 describe('build-orchestrator', () => {
@@ -170,6 +174,11 @@ describe('build-orchestrator', () => {
     it('calls generateSecurityHeaders', async () => {
       await runWorkerBuild(buildOpts);
       expect(generateSecurityHeaders).toHaveBeenCalled();
+    });
+
+    it('copies social images using the base dir', async () => {
+      await runWorkerBuild(buildOpts);
+      expect(copySocialImages).toHaveBeenCalledWith('/base');
     });
 
     it('calls buildAndWriteWorker', async () => {

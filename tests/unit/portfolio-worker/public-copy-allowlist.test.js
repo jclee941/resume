@@ -32,7 +32,7 @@ function baselineFixture() {
     occurrences: [
       {
         locale: 'ko',
-        route: '/ko/',
+        route: '/',
         state: 'initial',
         viewport: { key: 'desktop-1280x900', width: 1280, height: 900, dpr: 1 },
         kind: 'dom-text',
@@ -94,7 +94,7 @@ describe('public-copy ledger harness', () => {
   test('normalizes public values and includes accessiblePath in the address', () => {
     const occurrence = {
       locale: 'ko',
-      route: '/ko/',
+      route: '/',
       state: 'initial',
       viewport: { key: 'desktop-1280x900', width: 1280, height: 900, dpr: 1 },
       kind: 'accessible-tree',
@@ -213,7 +213,7 @@ describe('public-copy source audit allowlist', () => {
     };
     const entry = {
       locale: 'ko',
-      route: '/ko/',
+      route: '/',
       state: 'initial',
       viewport: { key: 'desktop-1280x900', width: 1280, height: 900, dpr: 1 },
       kind: 'dom-text',

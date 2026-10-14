@@ -11,6 +11,7 @@ const { buildAndWriteWorker } = require('./worker-writer');
 const { escapeForTemplateLiteral } = require('./html-transformer');
 const { resolveContentLastmod } = require('./content-lastmod');
 const { ownerIdentityFromPortfolioData } = require('./owner-identity');
+const { copySocialImages } = require('./build-static-assets');
 
 /**
  * @typedef {{ log: (message: string) => void, warn: (message: string) => void, error: (message: string) => void, debug: (message: string) => void }} BuildLogger
@@ -152,6 +153,7 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
 
   logInputSummary({ logger, projectData, ...inputs });
   copyResumePdfs(logger);
+  copySocialImages(baseDir);
 
   const buildDeployedAt = process.env.DEPLOYED_AT || new Date().toISOString();
   const buildDeployedDate = `${buildDeployedAt.slice(0, 10)} ${buildDeployedAt.slice(11, 16)}Z`;

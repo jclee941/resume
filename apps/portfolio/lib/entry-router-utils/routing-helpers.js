@@ -8,10 +8,6 @@ function getPortfolioTargetPath(pathname, _language) {
     return '/en/';
   }
 
-  if (pathname === '/ko' || pathname === '/ko/') {
-    return '/';
-  }
-
   if (pathname === '/ja' || pathname === '/ja/') {
     return '/ja/';
   }

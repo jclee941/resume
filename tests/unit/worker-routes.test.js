@@ -12,8 +12,71 @@ const {
   generateErrorHandler,
 } = require('../../apps/portfolio/lib/worker-routes');
 const { ownerIdentity } = require('../helpers/owner-data');
+const fs = require('fs');
+const path = require('path');
+const {
+  generateSecurityHeaders,
+  getCacheHeaders,
+} = require('../../apps/portfolio/lib/security-headers');
+const { applyJapaneseMeta } = require('../../apps/portfolio/lib/japanese-template/meta');
+const { copySocialImages } = require('../../apps/portfolio/lib/build-static-assets');
+
+function loadSeoHelpers() {
+  const source = ['constants.js', 'routing-helpers.js', 'html-localization.js']
+    .map((file) =>
+      fs.readFileSync(
+        path.resolve(__dirname, '../../apps/portfolio/lib/entry-router-utils', file),
+        'utf8'
+      )
+    )
+    .join('\n')
+    .replace(/^import\s+[\s\S]*?from\s+['"].*?['"];\n?/gm, '')
+    .replace(/^export\s*\{[\s\S]*?\};\n?/gm, '');
+  return new Function(
+    `const CONTENT_LASTMOD = '2026-10-14'; ${source}
+     return { SITEMAP_XML, getPortfolioTargetPath, localizeHtmlDocument };`
+  )();
+}
+
+function runRoute(code, request, env = {}) {
+  return new Function(
+    'request',
+    'env',
+    'SECURITY_HEADERS',
+    'CACHE_POLICIES',
+    `return (async () => {
+      const url = new URL(request.url);
+      const metrics = { requests_success: 0, requests_error: 0 };
+      const rateLimitHeaders = { 'X-RateLimit-Limit': '120' };
+      const applyNonceToHeaders = headers => headers;
+      ${code}
+      return null;
+    })();`
+  )(request, env, generateSecurityHeaders([]), {
+    static: getCacheHeaders('STATIC'),
+    api: getCacheHeaders('API'),
+  });
+}
 
 describe('Worker Routes', () => {
+  it('copies exactly the three social PNGs to the private static asset directory', () => {
+    const mkdir = jest.spyOn(fs, 'mkdirSync').mockImplementation(() => undefined);
+    const copy = jest.spyOn(fs, 'copyFileSync').mockImplementation(() => undefined);
+    try {
+      copySocialImages('/portfolio');
+      expect(mkdir).toHaveBeenCalledWith('/portfolio/assets/social', { recursive: true });
+      expect(copy.mock.calls).toEqual(
+        ['og-image.png', 'og-image-en.png', 'og-image-ja.png'].map((filename) => [
+          `/portfolio/${filename}`,
+          `/portfolio/assets/social/${filename}`,
+        ])
+      );
+    } finally {
+      copy.mockRestore();
+      mkdir.mockRestore();
+    }
+  });
+
   describe('generateFetchAndRateLimit', () => {
     let code;
     beforeAll(() => {
@@ -98,6 +161,99 @@ describe('Worker Routes', () => {
 
     it('should not reference Elasticsearch logging', () => {
       expect(code).not.toContain('logToElasticsearch');
+    });
+
+    it.each([
+      ['GET', '/ko'],
+      ['GET', '/ko/'],
+      ['HEAD', '/ko'],
+      ['HEAD', '/ko/'],
+    ])('redirects %s %s to the Korean canonical with its query', async (method, pathname) => {
+      const { getPortfolioTargetPath } = loadSeoHelpers();
+      const url = new URL(`https://example.com${pathname}?source=a%2Fb&lang=ko`);
+      url.pathname = getPortfolioTargetPath(url.pathname, 'ko');
+      const response = await runRoute(code, new Request(url, { method }));
+      expect(response.status).toBe(301);
+      expect(response.headers.get('Location')).toBe('/?source=a%2Fb&lang=ko');
+      expect(await response.text()).toBe('');
+    });
+
+    it('does not redirect unsafe methods from a Korean alias', async () => {
+      expect(
+        await runRoute(code, new Request('https://example.com/ko/', { method: 'POST' }))
+      ).toBeNull();
+    });
+  });
+
+  describe('canonical language discovery', () => {
+    it('uses only the three canonical pages in both sitemap sources', () => {
+      const { SITEMAP_XML } = loadSeoHelpers();
+      const staticSitemap = fs.readFileSync(
+        path.resolve(__dirname, '../../apps/portfolio/sitemap.xml'),
+        'utf8'
+      );
+      for (const xml of [SITEMAP_XML, staticSitemap]) {
+        expect([...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1])).toEqual([
+          'https://resume.jclee.me/',
+          'https://resume.jclee.me/en/',
+          'https://resume.jclee.me/ja/',
+        ]);
+        for (const language of ['ko-KR', 'x-default']) {
+          const alternates = [
+            ...xml.matchAll(new RegExp(`hreflang="${language}" href="([^"]+)"`, 'g')),
+          ];
+          expect(alternates).toHaveLength(3);
+          expect(alternates.map((match) => match[1])).toEqual(
+            Array(3).fill('https://resume.jclee.me/')
+          );
+        }
+      }
+    });
+
+    it.each(['/', '/ko', '/ko/'])(
+      'points Korean canonical and alternates at root for %s',
+      (route) => {
+        const { localizeHtmlDocument } = loadSeoHelpers();
+        const html = localizeHtmlDocument(
+          '<html><head><link rel="canonical" href="https://example.com/old" /></head></html>',
+          'ko',
+          route
+        );
+        expect(html.match(/rel="canonical" href="([^"]+)"/)[1]).toBe('https://resume.jclee.me/');
+        expect(html.match(/hreflang="ko-KR" href="([^"]+)"/)[1]).toBe('https://resume.jclee.me/');
+        expect(html.match(/hreflang="x-default" href="([^"]+)"/)[1]).toBe(
+          'https://resume.jclee.me/'
+        );
+      }
+    );
+  });
+
+  describe('Japanese social metadata', () => {
+    it.each(['png', 'webp'])('localizes images and descriptions from the %s shell', (extension) => {
+      const identity = { nameKo: 'Example', nameJa: 'サンプル', nameEn: 'Example', email: '' };
+      const html = applyJapaneseMeta(
+        `<html lang="ko"><head><title>Example</title>
+          <meta name="description" content="old" />
+          <meta property="og:description" content="old" />
+          <meta name="twitter:description" content="old" />
+          <meta property="og:image" content="https://resume.jclee.me/og-image.${extension}" />
+          <meta name="twitter:image" content="https://resume.jclee.me/og-image.${extension}" />
+          <meta property="og:image:type" content="image/${extension}" />
+        </head></html>`,
+        identity
+      );
+      const meta = Object.fromEntries(
+        [...html.matchAll(/<meta (?:name|property)="([^"]+)" content="([^"]+)" \/>/g)].map(
+          (match) => [match[1], match[2]]
+        )
+      );
+      const description = `${identity.nameJa} — Security & Infrastructure Engineer ポートフォリオ。FortiGate HA、Splunk ES、FortiManager API、金融系セキュリティ基盤、SIEM検知・通知自動化の経験。`;
+      expect(meta.description).toBe(description);
+      expect(meta['og:description']).toBe(description);
+      expect(meta['twitter:description']).toBe(description);
+      expect(meta['og:image']).toBe('https://resume.jclee.me/og-image-ja.png');
+      expect(meta['twitter:image']).toBe(meta['og:image']);
+      expect(meta['og:image:type']).toBe('image/png');
     });
   });
 
@@ -430,6 +586,35 @@ describe('Worker Routes', () => {
       expect(code).toContain('atob');
       expect(code).toContain('OG_IMAGE_BASE64');
     });
+
+    it.each(['og-image.png', 'og-image-en.png', 'og-image-ja.png'])(
+      'serves %s bytes through ASSETS with the WebP cache policy',
+      async (filename) => {
+        const bytes = fs.readFileSync(path.resolve(__dirname, '../../apps/portfolio', filename));
+        const fetch = jest.fn(async () => new Response(bytes));
+        const response = await runRoute(code, new Request(`https://example.com/${filename}`), {
+          ASSETS: { fetch },
+        });
+        expect(new URL(fetch.mock.calls[0][0].url).pathname).toBe(`/social/${filename}`);
+        expect(response.status).toBe(200);
+        expect(response.headers.get('Content-Type')).toBe('image/png');
+        expect(response.headers.get('Cache-Control')).toBe(
+          getCacheHeaders('STATIC')['Cache-Control']
+        );
+        expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
+        expect(Buffer.from(await response.arrayBuffer())).toEqual(bytes);
+      }
+    );
+
+    it.each([{}, { ASSETS: { fetch: async () => new Response('Not Found', { status: 404 }) } }])(
+      'preserves a plain-text miss when PNG assets are unavailable',
+      async (env) => {
+        const response = await runRoute(code, new Request('https://example.com/og-image.png'), env);
+        expect(response.status).toBe(404);
+        expect(response.headers.get('Content-Type')).toBe('text/plain');
+        expect(await response.text()).toBe('Not Found');
+      }
+    );
   });
 
   describe('generate404', () => {
@@ -448,6 +633,47 @@ describe('Worker Routes', () => {
 
     it('should contain Not Found message', () => {
       expect(code).toContain('Not Found');
+    });
+
+    it('returns a noindex multilingual HTML page with security headers', async () => {
+      const response = await runRoute(code, new Request('https://example.com/missing-page'));
+      const html = await response.text();
+      expect(response.status).toBe(404);
+      expect(response.headers.get('Content-Type')).toBe('text/html; charset=utf-8');
+      expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
+      expect(response.headers.get('Content-Security-Policy')).toBe(
+        generateSecurityHeaders([])['Content-Security-Policy']
+      );
+      expect(html).toMatch(/^<!doctype html>/);
+      expect(html).toContain('<html lang="ko">');
+      expect(html).toContain('<meta name="robots" content="noindex">');
+      expect(html).toContain('<meta name="color-scheme" content="dark">');
+      expect(html).toContain('<h1>404</h1>');
+      expect([...html.matchAll(/<a href="([^"]+)"/g)].map((match) => match[1])).toEqual([
+        '/',
+        '/en/',
+        '/ja/',
+      ]);
+      expect(html).not.toMatch(/<style|<script|style=/i);
+    });
+
+    it.each([
+      ['GET', '/api/missing'],
+      ['GET', '/api'],
+      ['GET', '/assets/missing'],
+      ['GET', '/fonts/missing'],
+      ['GET', '/missing.png'],
+      ['GET', '/missing.js'],
+      ['HEAD', '/missing-page'],
+      ['POST', '/missing-page'],
+    ])('keeps the plain-text 404 for %s %s', async (method, pathname) => {
+      const response = await runRoute(
+        code,
+        new Request(`https://example.com${pathname}`, { method })
+      );
+      expect(response.status).toBe(404);
+      expect(response.headers.get('Content-Type')).toBe('text/plain');
+      expect(await response.text()).toBe('Not Found');
     });
   });
 

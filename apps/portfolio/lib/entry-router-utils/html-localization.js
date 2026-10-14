@@ -2,8 +2,8 @@ import { DEFAULT_LANGUAGE, HREFLANG_LINKS, SUPPORTED_LANGUAGES } from './constan
 
 const CANONICAL_BY_PATH = new Map([
   ['/', 'https://resume.jclee.me/'],
-  ['/ko', 'https://resume.jclee.me/ko/'],
-  ['/ko/', 'https://resume.jclee.me/ko/'],
+  ['/ko', 'https://resume.jclee.me/'],
+  ['/ko/', 'https://resume.jclee.me/'],
   ['/en', 'https://resume.jclee.me/en/'],
   ['/en/', 'https://resume.jclee.me/en/'],
   ['/ja', 'https://resume.jclee.me/ja/'],

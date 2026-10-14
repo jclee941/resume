@@ -222,6 +222,7 @@ applications/_auto-apply-runs/
 /apps/portfolio/og-image*.webp
 /apps/portfolio/assets/profile-photo.jpg
 /apps/portfolio/assets/resume*.pdf
+/apps/portfolio/assets/social/og-image*.png
 /apps/portfolio/downloads/**
 /ProfileView.jpg
 # Keep directories traversable so the exceptions below can re-include files inside them.
