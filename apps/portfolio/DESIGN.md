@@ -56,6 +56,8 @@ One ink at stepped alphas encodes interaction state. No second accent hue exists
 ### Rules
 
 - Accent is functional: primary action, focus, current state, evidence markers.
+- Browser chrome matches the page: the `theme-color` meta tag in every shell and the
+  `theme_color` and `background_color` of both web manifests equal `--bg-primary` (`#0f1115`).
 - Status colors stay muted, always pair with a text label, and never compete with accent.
 - Raw technology brand colors (`--tag-*`) are allowed only inside project technology tags.
 - State is never a colored border on a rounded surface. Hover and selection use the wash
@@ -205,8 +207,8 @@ tests depend on them.
   link to projects. On phones the primary action spans the row above the other two.
 - **Trust chips**: built from data — the first two active certifications plus every award,
   verbatim official names, outlined pills under a hairline.
-- **Layout**: two columns from 1024px (identity, then the aside); below that the aside
-  becomes a row above the name. The shell keeps the masked operations grid; no glow layer.
+- **Layout**: two columns from 1024px (identity, then the aside, vertically centered against
+  the identity column); below that the aside becomes a row above the name. The shell keeps the masked operations grid; no glow layer.
 - **Copy**: the value sentence states what the owner does, never what the page contains. One
   availability status only. The hero carries no recruiter summary, public-project cards,
   review-path cards or role filters.
@@ -226,6 +228,11 @@ tests depend on them.
 - **Variants**: four columns from 1024px, two below.
 - **States**: disabled (SSR, `cursor: wait`, 72% opacity), hover/focus, pressed
   (`aria-pressed="true"`: `--accent-wash-3` fill and a check glyph before the label).
+- **Filtering**: selecting a chip moves the matching projects to the top of the list, each
+  group in its original order. A match that sits behind the more button appears without
+  expanding the list. Every other project dims to 0.45 opacity and returns to full opacity on
+  hover or focus. Pressing the selected chip again restores the original order, clears the
+  status text and removes the dimming; on phones the carousel returns to its first card.
 
 ### About
 
@@ -251,13 +258,18 @@ tests depend on them.
   education because both come from the same school, and this order balances the two
   desktop columns.
 - **Type**: labels in `--font-label`; values in `--font-sans`.
+- **Languages**: names and proficiency levels are translated at render time on KO and JA
+  pages; the EN page shows the source values.
+- **Education status**: the status and its parentheses sit in `.profile-card__status` and
+  never wrap, whatever the card width.
 
 ### Cover letter
 
 - **Structure**: `article.cover-letter-card` with chrome strip, headline, numbered
   paragraph rail and closing line.
 - **Rules**: the paragraph rail is a continuous spine with mono indices; the closing
-  prompt is mono while the closing sentence is sans.
+  prompt is mono while the closing sentence is sans. The decorative quote glyph sits in the
+  headline's top padding, clear of the headline text at every width.
 - **Fold**: the server renders every paragraph; in the browser all but the first fold
   behind `.cover-letter__toggle`, whose label names how many paragraphs it reveals (an
   unlabeled fold once read as missing text). Print shows every paragraph. From 1024px the
@@ -287,10 +299,15 @@ tests depend on them.
 
 - **Structure**: `li.project-item` with header, case notes (`dl.project-case-notes`), an
   optional diagram, optional description remainder, tech line, one status badge and links.
-- **Case notes**: exactly three rows — 문제 / 한 일 / 결과 (EN Problem / What I did / Result,
-  JA 課題 / 担当 / 結果); no row whose value carries no information.
+- **Case notes**: up to three rows — 문제 / 한 일 / 결과 (EN Problem / What I did / Result,
+  JA 課題 / 担当 / 結果), one per description sentence. A row whose sentence is missing is left
+  out rather than filled with the tagline or the tech list, and the `dl` carries no ARIA role or
+  label so its `dt`/`dd` pairs keep description-list semantics.
 - **Badges and links**: one status badge (LIVE when a demo or dashboard exists, otherwise the
-  activity badge); no language or REPO badge. Links are labelled pills with a `↗` glyph,
+  activity badge), localized: KO 공개 중 / 운영 중, JA 公開中 / 運用中, EN LIVE / ACTIVE. No
+  language or REPO badge. A demo URL equal to the repository URL (ignoring one trailing
+  slash) is ignored, so a repository-only project keeps its activity badge and shows no Demo
+  link. Links are labelled pills with a `↗` glyph,
   never bracketed text, and only links that belong to the project.
 - **Featured**: the first three projects (by `displayOrder`) render as
   `.project-card--featured` with a diagram; the rest collapse behind the more button.
@@ -305,7 +322,9 @@ tests depend on them.
 - **Structure**: `figure.project-diagram` with two build-time SVGs (`--wide` left-to-right,
   `--narrow` top-to-bottom), each `role="img"` with its own `<title>`/`<desc>`.
 - **Data**: a `diagram` spec on the project in the SSoT; nodes name only components that the
-  project's own text mentions. Edge labels are localized; tech names stay identical.
+  project's own text mentions. Edge labels are localized; tech names stay identical. Labels
+  are offset from their line and carry a `--bg-card` halo so the line never cuts through
+  the text.
 - **Layout**: SVGs render at intrinsic size (`max-width: 100%`) so text keeps one scale.
   Featured cards place the narrow variant in a right column from 1024px; tablets show the
   wide variant below the notes; phones show the narrow variant.
@@ -316,6 +335,12 @@ tests depend on them.
   open `.deep-dive-overlay`.
 - **Disclosure**: the section stays `hidden` until the project list's more button expands
   it; that button's label mentions the case studies when they exist.
+- **Overlay body**: the component tiles sit under a localized heading (KO 핵심 구성, EN Key
+  components, JA 主な構成要素).
+- **Architecture**: the project's box diagram is rendered as an ordered step list
+  (`ol.architecture-steps > li.architecture-step`) at every width, with a down-arrow
+  connector between steps and any text written between two boxes shown as that connector's
+  caption. Only a diagram that yields fewer than two steps falls back to preformatted text.
 - **Motion**: cards fade in only under `prefers-reduced-motion: no-preference`; without
   motion they render visible immediately.
 
@@ -326,20 +351,29 @@ tests depend on them.
 - **Rules**: no accordion, no search box, no tier label; cards are static surfaces. Cards
   flow in CSS columns (up to three, each at least 16rem) so short cards fill the gaps a row
   grid leaves; reading order runs down each column. On phones the cards form a horizontal
-  snap carousel (82% wide) so the next domain peeks in.
+  snap carousel (82% wide) so the next domain peeks in. Cards keep their natural height
+  in the carousel instead of stretching to the tallest one.
+- **Carousel access**: the carousel is a focusable region with a localized name (KO 기술
+  스택, EN Skills, JA スキル) and a 2px accent focus ring, so keyboard users can scroll it.
+- **Pills**: skills with Korean or Japanese text use `--font-sans` with no tracking, never
+  the mono face.
 
 ### Operated, contact and footer
 
 - `.operated-grid`: three columns from 769px of surface cards.
-- `.contact-grid`: two columns on phones, three from 768px and a single row from 1024px of
-  interactive surfaces with a `>` prompt.
+- `.contact-grid`: two columns on phones, three from 768px and four equal columns from
+  1024px of interactive surfaces with a `>` prompt. Items are GitHub, LinkedIn, Velog and
+  Email (an optional GitHub Bot link adds one cell); none points back to the site itself.
+  Email shows its visible address as a stacked, muted, selectable value that wraps anywhere.
 - `.site-footer`: muted build line; links underlined.
 
 ### Mobile action bar and back-to-top
 
 - `.recruiter-action-bar`: fixed glass bar above the safe area on ≤768px, labels in
   `--font-label`. It stays hidden while the hero actions or the cover letter are in view
-  and sets `body.has-action-bar` while visible.
+  and sets `body.has-action-bar` while visible. Its three links size to their labels (at
+  least 44px wide) and never wrap, so localized labels such as PDF（韓国語） stay on one
+  line at 320px; the dismiss button stays a 44px square.
 - `.back-to-top`: 44px glass square, shown after 400px of scroll; on ≤768px it hides while
   the action bar is visible so two floating controls never cover the text.
 
