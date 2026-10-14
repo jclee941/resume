@@ -4,7 +4,7 @@
 }
 
 .architecture-steps {
-  display: none;
+  display: grid;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -14,26 +14,58 @@
   position: relative;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-3);
-  padding: var(--space-3);
+  padding: var(--space-3) var(--space-4);
   border: 1px solid var(--accent-line-soft);
   border-radius: var(--radius-md);
   background: var(--bg-card);
 }
 
 .architecture-step + .architecture-step {
-  margin-top: var(--space-2);
+  margin-top: var(--space-5);
+}
+
+.architecture-step + .architecture-step.architecture-step--captioned {
+  margin-top: var(--space-6);
 }
 
 .architecture-step + .architecture-step::before {
-  content: '';
+  content: '↓';
   position: absolute;
-  top: calc(var(--space-2) * -1);
-  left: calc(var(--space-3) + 0.72rem);
-  width: 1px;
-  height: var(--space-2);
-  background: var(--accent-line);
+  top: calc(var(--space-5) * -1);
+  left: var(--space-4);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.45rem;
+  height: var(--space-5);
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: 1;
+}
+
+.architecture-step + .architecture-step.architecture-step--captioned::before {
+  top: calc(var(--space-6) * -1);
+  height: var(--space-6);
+}
+
+.architecture-step__caption {
+  position: absolute;
+  top: calc(var(--space-6) * -1);
+  right: var(--space-3);
+  left: calc(var(--space-4) + 1.45rem + var(--space-3));
+  display: inline-flex;
+  align-items: center;
+  height: var(--space-6);
+  color: var(--text-muted);
+  font-family: var(--font-label);
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .architecture-step__index {
@@ -88,10 +120,18 @@
 
 @media (max-width: 768px) {
   .architecture-steps {
-    display: block;
+    display: grid;
   }
 
-  .architecture-diagram {
-    display: none;
+  .architecture-step {
+    padding: var(--space-3);
+  }
+
+  .architecture-step + .architecture-step::before {
+    left: var(--space-3);
+  }
+
+  .architecture-step__caption {
+    left: calc(var(--space-3) + 1.45rem + var(--space-3));
   }
 }

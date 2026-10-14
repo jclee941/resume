@@ -45,6 +45,13 @@ function dialogLabels() {
   return { dialog: '프로젝트 상세 정보', close: '닫기', esc: '닫기', tab: '탐색' };
 }
 
+function componentsHeading() {
+  const lang = (document.documentElement.lang || 'ko').toLowerCase();
+  if (lang.startsWith('en')) return 'Key components';
+  if (lang.startsWith('ja')) return '主な構成要素';
+  return '핵심 구성';
+}
+
 /**
  * @template {keyof HTMLElementTagNameMap} K
  * @param {K} tagName
@@ -166,7 +173,7 @@ function createDeepDiveBody(project) {
       createElement('p', 'project-detail__description', project.description)
     ),
     createTextSection('주요 성과', createAchievements(project.achievements)),
-    createTextSection('운영 지표', createMetrics(project.metrics)),
+    createTextSection(componentsHeading(), createMetrics(project.metrics)),
     createTextSection('구성 흐름', createArchitectureElement(project)),
     createTextSection('사용 도구', createTools(project.tools))
   );

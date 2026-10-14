@@ -21,7 +21,10 @@ export function createArchitectureElement(project) {
   flow.setAttribute('role', 'group');
   flow.setAttribute('aria-label', `${project.title} architecture flow`);
   const steps = createArchitectureSteps(project.architecture);
-  if (steps) flow.appendChild(steps);
+  if (steps) {
+    flow.appendChild(steps);
+    return flow;
+  }
   const diagram = createElement('div', 'architecture-diagram');
   diagram.tabIndex = 0;
   diagram.setAttribute('role', 'img');
@@ -37,14 +40,18 @@ export function createArchitectureElement(project) {
  */
 function createArchitectureSteps(architecture) {
   const steps = architectureSteps(architecture);
-  if (steps.length === 0) return null;
+  if (steps.length < 2) return null;
 
   const list = createElement('ol', 'architecture-steps');
   steps.forEach((step, index) => {
     const item = createElement('li', 'architecture-step');
+    if (index > 0 && step.caption) {
+      item.classList.add('architecture-step--captioned');
+      item.appendChild(createElement('span', 'architecture-step__caption', step.caption));
+    }
     item.append(
       createElement('span', 'architecture-step__index', String(index + 1).padStart(2, '0')),
-      createElement('span', 'architecture-step__label', step)
+      createElement('span', 'architecture-step__label', step.label)
     );
     list.appendChild(item);
   });
@@ -52,9 +59,16 @@ function createArchitectureSteps(architecture) {
 }
 
 /**
+ * @typedef {Object} ArchitectureStep
+ * @property {string} label
+ * @property {string} [caption]
+ */
+
+/**
  * @typedef {Object} ArchitectureBox
  * @property {number} start
  * @property {string[]} parts
+ * @property {string} [caption]
  */
 
 /**
@@ -64,21 +78,41 @@ function createArchitectureSteps(architecture) {
  */
 
 /**
- * @param {string} architecture
- * @returns {string[]}
+ * @param {ArchitectureBox} box
+ * @returns {ArchitectureStep}
  */
-function architectureSteps(architecture) {
-  /** @type {string[]} */
+function finalizeBox(box) {
+  const label = box.parts.join(' ').replace(/\s+/g, ' ').trim();
+  return box.caption ? { label, caption: box.caption } : { label };
+}
+
+/**
+ * @param {string} architecture
+ * @returns {ArchitectureStep[]}
+ */
+export function architectureSteps(architecture) {
+  /** @type {ArchitectureStep[]} */
   const steps = [];
   /** @type {ArchitectureBox[]} */
   let activeBoxes = [];
+  /** @type {string[]} */
+  let pendingCaptions = [];
 
-  for (const line of architecture.split('\n')) {
+  for (const line of String(architecture || '').split('\n')) {
     const cells = architectureLineCells(line);
 
     if (cells.length === 0) {
-      steps.push(...activeBoxes.map((box) => box.parts.join(' ')));
-      activeBoxes = [];
+      if (activeBoxes.length > 0) {
+        steps.push(...activeBoxes.map(finalizeBox));
+        activeBoxes = [];
+      }
+      const caption = line
+        .replace(/[┌┐└┘├┤┬┴┼─│▼▽↓↑←→]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+      if (caption && steps.length > 0) {
+        pendingCaptions.push(caption);
+      }
       continue;
     }
 
@@ -90,20 +124,26 @@ function architectureSteps(architecture) {
         box.parts.push(cell.text);
         nextBoxes.push(box);
       } else {
-        nextBoxes.push({ start: cell.start, parts: [cell.text] });
+        const caption = pendingCaptions.length > 0 ? pendingCaptions.join(' ') : '';
+        pendingCaptions = [];
+        nextBoxes.push({
+          start: cell.start,
+          parts: [cell.text],
+          ...(caption ? { caption } : {}),
+        });
       }
     }
 
     for (const box of activeBoxes) {
       if (!nextBoxes.includes(box)) {
-        steps.push(box.parts.join(' '));
+        steps.push(finalizeBox(box));
       }
     }
     activeBoxes = nextBoxes;
   }
 
-  steps.push(...activeBoxes.map((box) => box.parts.join(' ')));
-  return steps.filter(Boolean);
+  steps.push(...activeBoxes.map(finalizeBox));
+  return steps.filter((step) => Boolean(step.label));
 }
 
 /**
