@@ -121,13 +121,13 @@ npm run verify:architecture-hardening:core
 npm run deploy:wrangler:root:dry-run
 npm run foreign-apply:dry-run -- --ats-stub
 npm run security:audit
-gitleaks detect --source . --config .gitleaks.toml --redact
+gitleaks dir . --config .gitleaks.toml --redact
 go run ./tools/ci/validate-cloudflare-native.go
 ```
 
 ## NOTES
 
-- CI has one read-only validation job: SHA-pinned actions, Node 22, Python 3.12, the scripts module's Go version, pre-install content guard, explicit test lanes and Wrangler dry-run. No Playwright or deployment step.
+- CI has one read-only validation job: SHA-pinned actions, Node 22, Python 3.12, the scripts module's Go version, pre-install content guard, gitleaks secret scan and actionlint (both pinned and checksum-verified), explicit test lanes and Wrangler dry-run. No Playwright or deployment step.
 - Daily/hourly crons belong to the root runtime configuration; preview has neither routes nor crons.
 - Terraform has no apply workflow; legacy uploads are not runtime binding authority.
 - Workers Logs is default; Loki is opt-in; Elasticsearch is absent. Compose uses Jaeger; Tempo is a reference configuration.
