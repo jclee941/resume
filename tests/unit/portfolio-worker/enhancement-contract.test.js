@@ -177,7 +177,7 @@ describe('Project deep-dive architecture diagram accessibility', () => {
     path.join(PORTFOLIO, 'src', 'scripts', 'modules', 'project-architecture-renderer.js')
   );
 
-  test('architecture diagram is keyboard focusable and exposed as an image-like flow', () => {
+  test('architecture diagram fallback is keyboard focusable and exposed as an image-like flow', () => {
     expect(renderer).toMatch(/createElement\('div', 'architecture-diagram'\)/);
     expect(renderer).toMatch(/diagram\.tabIndex = 0/);
     expect(renderer).toMatch(/diagram\.setAttribute\('role', 'img'\)/);
@@ -187,21 +187,230 @@ describe('Project deep-dive architecture diagram accessibility', () => {
     expect(overlay).toMatch(/createArchitectureElement\(project\)/);
   });
 
-  test('architecture flow includes a mobile-readable step list before the ascii diagram', () => {
+  test('architecture flow renders step nodes and falls back to pre only when fewer than 2 steps', () => {
     expect(renderer).toMatch(/function createArchitectureSteps/);
     expect(renderer).toMatch(/function architectureSteps/);
+    expect(renderer).toMatch(/if \(steps\.length < 2\) return null/);
     expect(renderer).toMatch(/createElement\('ol', 'architecture-steps'\)/);
     expect(renderer).toMatch(/createElement\('span', 'architecture-step__index'/);
     expect(renderer).toMatch(/createElement\('span', 'architecture-step__label'/);
+    expect(renderer).toMatch(/createElement\('span', 'architecture-step__caption'/);
   });
 
-  test('mobile hides the ascii diagram and shows only the step list (no clipped box art)', () => {
+  test('stylesheet shows step nodes at all widths with down-arrow connector and caption styles', () => {
     const css = read(path.join(PORTFOLIO, 'src', 'styles', 'project-architecture-flow.css'));
+    const stepsRule = css.slice(
+      css.indexOf('.architecture-steps {'),
+      css.indexOf('.architecture-step {')
+    );
+    expect(stepsRule).not.toMatch(/display:\s*none/);
+    expect(css).toMatch(/\.architecture-step \+ \.architecture-step::before[\s\S]*?content:\s*'↓'/);
+    expect(css).toContain('.architecture-step__caption');
     const mobileBlock = css.slice(css.indexOf('@media (max-width: 768px)'));
     expect(mobileBlock).toContain('.architecture-steps');
-    expect(mobileBlock).toMatch(/\.architecture-diagram\s*\{[^}]*display:\s*none/);
-    // The clipped-scroll presentation that rendered as broken box art is gone.
     expect(mobileBlock).not.toContain('max-block-size');
+  });
+
+  test('parses real ASCII samples from project-cards-data.js and project-cards-automation-data.js into at least 2 step nodes', async () => {
+    const modulesDir = path.join(PORTFOLIO, 'src', 'scripts', 'modules');
+    const { PROJECTS } = await import(path.join(modulesDir, 'project-cards-data.js'));
+    const { AUTOMATION_PROJECTS } = await import(
+      path.join(modulesDir, 'project-cards-automation-data.js')
+    );
+    const { architectureSteps, createArchitectureElement } = await import(
+      path.join(modulesDir, 'project-architecture-renderer.js')
+    );
+
+    const makeEl = (tag) => ({
+      tagName: tag.toUpperCase(),
+      className: '',
+      textContent: '',
+      tabIndex: -1,
+      attributes: {},
+      children: [],
+      classList: {
+        classes: new Set(),
+        add(cls) {
+          this.classes.add(cls);
+        },
+        contains(cls) {
+          return this.classes.has(cls);
+        },
+      },
+      setAttribute(name, value) {
+        this.attributes[name] = String(value);
+      },
+      append(...nodes) {
+        this.children.push(...nodes);
+      },
+      appendChild(node) {
+        this.children.push(node);
+        return node;
+      },
+    });
+    const prevDocument = global.document;
+    global.document = { createElement: makeEl };
+
+    try {
+      const allSamples = [...PROJECTS, ...AUTOMATION_PROJECTS];
+      expect(PROJECTS.length).toBeGreaterThan(0);
+      expect(AUTOMATION_PROJECTS.length).toBeGreaterThan(0);
+
+      for (const project of allSamples) {
+        const steps = architectureSteps(project.architecture);
+        expect(steps.length).toBeGreaterThanOrEqual(2);
+        for (const step of steps) {
+          expect(step.label.length).toBeGreaterThan(0);
+          expect(step.label).not.toMatch(/[┌┐└┘│─]/);
+        }
+
+        const flow = createArchitectureElement(project);
+        expect(flow.children).toHaveLength(1);
+        const list = flow.children[0];
+        expect(list.tagName).toBe('OL');
+        expect(list.className).toBe('architecture-steps');
+        expect(list.children.length).toBe(steps.length);
+        expect(list.children.length).toBeGreaterThanOrEqual(2);
+      }
+
+      const captionedSample = [
+        '┌────────────┐',
+        '│ Edge Entry │',
+        '│ Worker     │',
+        '└─────┬──────┘',
+        '      │ HTTPS webhook',
+        '      ▼',
+        '┌────────────┐',
+        '│ Queue      │',
+        '│ Consumer   │',
+        '└────────────┘',
+      ].join('\n');
+      const captionedSteps = architectureSteps(captionedSample);
+      expect(captionedSteps).toEqual([
+        { label: 'Edge Entry Worker' },
+        { label: 'Queue Consumer', caption: 'HTTPS webhook' },
+      ]);
+      const captionedFlow = createArchitectureElement({
+        title: 'Captioned',
+        architecture: captionedSample,
+      });
+      const secondItem = captionedFlow.children[0].children[1];
+      expect(secondItem.classList.contains('architecture-step--captioned')).toBe(true);
+      expect(secondItem.children[0].className).toBe('architecture-step__caption');
+      expect(secondItem.children[0].textContent).toBe('HTTPS webhook');
+
+      const singleBoxFlow = createArchitectureElement({
+        title: 'Fallback',
+        architecture: '┌───────┐\n│ Alone │\n└───────┘',
+      });
+      expect(singleBoxFlow.children).toHaveLength(1);
+      expect(singleBoxFlow.children[0].className).toBe('architecture-diagram');
+      expect(singleBoxFlow.children[0].children[0].tagName).toBe('PRE');
+    } finally {
+      global.document = prevDocument;
+    }
+  });
+
+  test('deep-dive overlay uses localized 핵심 구성 / Key components / 主な構成要素 heading instead of 운영 지표', async () => {
+    expect(overlay).not.toContain('운영 지표');
+    expect(overlay).toContain('핵심 구성');
+    expect(overlay).toContain('Key components');
+    expect(overlay).toContain('主な構成要素');
+
+    const modulesDir = path.join(PORTFOLIO, 'src', 'scripts', 'modules');
+    const { PROJECTS } = await import(path.join(modulesDir, 'project-cards-data.js'));
+    const { createDeepDiveOverlay } = await import(
+      path.join(modulesDir, 'project-deep-dive-overlay.js')
+    );
+
+    const makeEl = (tag) => {
+      const el = {
+        tagName: tag.toUpperCase(),
+        className: '',
+        id: '',
+        type: '',
+        textContent: '',
+        dataset: {},
+        style: {},
+        attributes: {},
+        children: [],
+        classList: {
+          add() {},
+          remove() {},
+        },
+        setAttribute(name, value) {
+          this.attributes[name] = String(value);
+        },
+        append(...nodes) {
+          this.children.push(...nodes);
+        },
+        appendChild(node) {
+          this.children.push(node);
+          return node;
+        },
+        replaceChildren(...nodes) {
+          this.children = nodes;
+        },
+        addEventListener() {},
+        focus() {},
+        querySelector(selector) {
+          const visit = (node) => {
+            if (selector === '#deep-dive-content' && node.id === 'deep-dive-content') return node;
+            if (selector === '.deep-dive-close' && node.className === 'deep-dive-close') {
+              return node;
+            }
+            for (const child of node.children || []) {
+              const found = visit(child);
+              if (found) return found;
+            }
+            return null;
+          };
+          return visit(this);
+        },
+        querySelectorAll() {
+          return [];
+        },
+      };
+      return el;
+    };
+
+    const collectH3 = (node, acc = []) => {
+      if (node && node.tagName === 'H3') acc.push(node.textContent);
+      for (const child of (node && node.children) || []) collectH3(child, acc);
+      return acc;
+    };
+
+    const prevDocument = global.document;
+    const prevWindow = global.window;
+    const body = makeEl('body');
+    global.window = { setTimeout: () => 0 };
+    global.document = {
+      documentElement: { lang: 'ko' },
+      body,
+      activeElement: null,
+      createElement: makeEl,
+      createElementNS: (_ns, tag) => makeEl(tag),
+      createTextNode: (text) => ({ textContent: text }),
+      addEventListener() {},
+    };
+
+    try {
+      const instance = createDeepDiveOverlay();
+      for (const [lang, expectedHeading] of [
+        ['ko', '핵심 구성'],
+        ['en', 'Key components'],
+        ['ja', '主な構成要素'],
+      ]) {
+        global.document.documentElement.lang = lang;
+        instance.open(PROJECTS[0]);
+        const headings = collectH3(body);
+        expect(headings).toContain(expectedHeading);
+        expect(headings).not.toContain('운영 지표');
+      }
+    } finally {
+      global.document = prevDocument;
+      global.window = prevWindow;
+    }
   });
 });
 
