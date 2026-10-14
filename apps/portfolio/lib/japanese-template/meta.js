@@ -1,4 +1,5 @@
 const { buildLanguageLink } = require('./nav.js');
+const { HERO_CONTENT } = require('../hero-content-data');
 const { defaultOwnerIdentity, escapeRegExp, familyNameFirst } = require('../owner-identity');
 
 const LANGUAGE_LINK_RE = /<a\b([^>]*\bhreflang="(ko|en|ja)"[^>]*)>\s*(KO|EN|JA)\s*<\/a\s*>/g;
@@ -12,7 +13,11 @@ function applyJapaneseMeta(html, identity = defaultOwnerIdentity()) {
   const { nameKo, nameJa } = identity;
   const latinName = familyNameFirst(identity.nameEn);
   const title = `${nameJa} - Security & Infrastructure Engineer`;
-  const description = `${title.replace(' - ', ' — ')} ポートフォリオ。FortiGate HA、Splunk ES、FortiManager API、金融系セキュリティ基盤、SIEM検知・通知自動化の経験。`;
+  // The owner's career copy comes from the content pack, not tracked code.
+  const { metaDescription } = /** @type {{ metaDescription?: string }} */ (HERO_CONTENT.ja);
+  const description = metaDescription
+    ? `${title.replace(' - ', ' — ')} ポートフォリオ。${metaDescription}`
+    : `${title} ポートフォリオ`;
   return html
     .replace(/<html lang="ko"/i, '<html lang="ja"')
     .replace(/<title>[^<]*<\/title>/i, `<title>${title}</title>`)

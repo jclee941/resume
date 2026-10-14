@@ -71,7 +71,9 @@ const HERO_CONTENT = {
     actionsLabel: '金川山空',
     mailSubject: '金田林森ぬはの雨花田土',
     actions: ['雨花田土', '木山雨林', 'アミイノウエを見る', '山日金FAZ（川月星）'],
-    downloadName: 'Kub-Kakezovu-Ruvofe-KI.nub',
+    downloadName: 'Kub-Kakezovu-Ruvofe-VA.nub',
+    metaDescription:
+      'KipuvElas PO、Litofe BI、LinomUlameni PIG、金山風ホヘネシスタ土木、BIZAza・土空金土風の金空。',
   },
 };
 

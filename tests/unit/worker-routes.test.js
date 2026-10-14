@@ -19,6 +19,8 @@ const {
   getCacheHeaders,
 } = require('../../apps/portfolio/lib/security-headers');
 const { applyJapaneseMeta } = require('../../apps/portfolio/lib/japanese-template/meta');
+const { applyJapaneseSections } = require('../../apps/portfolio/lib/japanese-template/sections');
+const { HERO_CONTENT } = require('../../apps/portfolio/lib/hero-content-data');
 const { copySocialImages } = require('../../apps/portfolio/lib/build-static-assets');
 
 function loadSeoHelpers() {
@@ -247,13 +249,53 @@ describe('Worker Routes', () => {
           (match) => [match[1], match[2]]
         )
       );
-      const description = `${identity.nameJa} — Security & Infrastructure Engineer ポートフォリオ。FortiGate HA、Splunk ES、FortiManager API、金融系セキュリティ基盤、SIEM検知・通知自動化の経験。`;
+      const { metaDescription } = HERO_CONTENT.ja;
+      expect(metaDescription).toBeTruthy();
+      const description = `${identity.nameJa} — Security & Infrastructure Engineer ポートフォリオ。${metaDescription}`;
       expect(meta.description).toBe(description);
       expect(meta['og:description']).toBe(description);
       expect(meta['twitter:description']).toBe(description);
       expect(meta['og:image']).toBe('https://resume.jclee.me/og-image-ja.png');
       expect(meta['twitter:image']).toBe(meta['og:image']);
       expect(meta['og:image:type']).toBe('image/png');
+    });
+
+    it('falls back to a bare title when the content pack has no meta description', () => {
+      const identity = { nameKo: 'Example', nameJa: 'サンプル', nameEn: 'Example', email: '' };
+      jest.isolateModules(() => {
+        jest.doMock('../../apps/portfolio/lib/hero-content-data', () => ({
+          HERO_CONTENT: { ja: {} },
+        }));
+        const isolated = require('../../apps/portfolio/lib/japanese-template/meta');
+        const html = isolated.applyJapaneseMeta(
+          '<html lang="ko"><head><meta name="description" content="old" /></head></html>',
+          identity
+        );
+        jest.dontMock('../../apps/portfolio/lib/hero-content-data');
+        expect(html).toContain(
+          '<meta name="description" content="サンプル - Security & Infrastructure Engineer ポートフォリオ" />'
+        );
+      });
+    });
+  });
+
+  describe('Japanese resume download names', () => {
+    it('gives every /resume.pdf link the Korean-document name from the owner identity', () => {
+      const identity = { nameKo: '샘플', nameJa: 'サンプル', nameEn: 'Given Family', email: '' };
+      const html = applyJapaneseSections(
+        [
+          '<a href="/resume.pdf" download="샘플_이력서.pdf" class="a">이력서 PDF 다운로드</a>',
+          '<a class="b" download="Given-Family-Resume.pdf" href="/resume.pdf">x</a>',
+          '<a href="/other.pdf" download="이력서.pdf">y</a>',
+        ].join(''),
+        identity
+      );
+      const downloads = [...html.matchAll(/download="([^"]*)"/g)].map((match) => match[1]);
+      expect(downloads).toEqual([
+        'Family-Given-Resume-KO.pdf',
+        'Family-Given-Resume-KO.pdf',
+        '履歴書.pdf',
+      ]);
     });
   });
 

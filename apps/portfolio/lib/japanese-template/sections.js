@@ -1,9 +1,26 @@
+const { defaultOwnerIdentity, familyNameFirst } = require('../owner-identity');
+
 /**
  * @param {string} html
+ * @param {string} downloadName
+ * @returns {string} html with the resume PDF links' download name replaced
+ */
+function setResumeDownloadName(html, downloadName) {
+  return html.replace(/<a\b[^>]*\bhref="\/resume\.pdf"[^>]*>/g, (tag) =>
+    tag.replace(/\bdownload="[^"]*"/, `download="${downloadName}"`)
+  );
+}
+
+/**
+ * @param {string} html
+ * @param {import('../owner-identity').OwnerIdentity} [identity]
  * @returns {string}
  */
-function applyJapaneseSections(html) {
-  return html
+function applyJapaneseSections(html, identity = defaultOwnerIdentity()) {
+  // Both resume links serve the Korean PDF. Set the name first so the global
+  // 이력서 replacement below never rewrites a download attribute.
+  const downloadName = `${familyNameFirst(identity.nameEn).split(' ').join('-')}-Resume-KO.pdf`;
+  return setResumeDownloadName(html, downloadName)
     .replace(/(<a [^>]*class="nav-link"[^>]*>)경력(<\/a>)/g, '$1経歴$2')
     .replace(/(<a [^>]*class="nav-link"[^>]*>)프로젝트(<\/a>)/g, '$1プロジェクト$2')
     .replace(/(<a [^>]*class="nav-link"[^>]*>)기술(<\/a>)/g, '$1スキル$2')
