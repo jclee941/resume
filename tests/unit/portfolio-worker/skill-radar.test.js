@@ -15,8 +15,13 @@ function fakeElement(tag) {
     dataset: {},
     attributes: {},
     children: [],
+    scrollWidth: 0,
+    clientWidth: 0,
     setAttribute(name, value) {
       this.attributes[name] = String(value);
+    },
+    removeAttribute(name) {
+      delete this.attributes[name];
     },
     append(...nodes) {
       this.children.push(...nodes);
@@ -36,22 +41,54 @@ function walk(node, visit) {
   for (const child of node.children || []) walk(child, visit);
 }
 
-async function mount(locale, withGrid = true) {
+async function mount(locale, withGrid = true, { scrollWidth = 0, clientWidth = 0 } = {}) {
   const grid = fakeElement('div');
+  grid.scrollWidth = scrollWidth;
+  grid.clientWidth = clientWidth;
+  const resizeListeners = [];
+  const observed = [];
+  let resizeObserverCallback = null;
+  class FakeResizeObserver {
+    constructor(callback) {
+      resizeObserverCallback = callback;
+    }
+    observe(target) {
+      observed.push(target);
+    }
+  }
+  const window = {
+    addEventListener(type, handler) {
+      if (type === 'resize') resizeListeners.push(handler);
+    },
+  };
   const document = {
     documentElement: { lang: locale },
     getElementById: (id) => (withGrid && id === 'skill-radar-grid' ? grid : null),
     createElement: fakeElement,
     createElementNS: (_namespace, tag) => fakeElement(tag),
   };
-  const context = vm.createContext({ document });
+  const context = vm.createContext({
+    document,
+    window,
+    ResizeObserver: FakeResizeObserver,
+  });
   const data = new vm.SourceTextModule(read('skill-radar-data.js'), { context });
   const formatting = new vm.SourceTextModule(read('project-card-formatting.js'), { context });
   const radar = new vm.SourceTextModule(read('skill-radar.js'), { context });
   await radar.link((specifier) => (specifier.includes('skill-radar-data') ? data : formatting));
   await radar.evaluate();
   radar.namespace.initSkillRadar();
-  return { grid, domains: data.namespace.resolveSkillData() };
+  return {
+    grid,
+    domains: data.namespace.resolveSkillData(),
+    observed,
+    triggerResize(nextScrollWidth, nextClientWidth) {
+      grid.scrollWidth = nextScrollWidth;
+      grid.clientWidth = nextClientWidth;
+      if (resizeObserverCallback) resizeObserverCallback();
+      resizeListeners.forEach((handler) => handler());
+    },
+  };
 }
 
 describe('skill radar renders every skill as a visible tag', () => {
@@ -102,13 +139,23 @@ describe('skill radar renders every skill as a visible tag', () => {
     ['en', 'Skills'],
     ['ja', 'スキル'],
   ])(
-    '%s makes the skill grid a focusable region with a localized aria-label',
+    '%s sets role="group" with localized aria-label and toggles tabindex="0" only on horizontal overflow',
     async (locale, expectedLabel) => {
-      const { grid } = await mount(locale);
+      const { grid, observed, triggerResize } = await mount(locale, true, {
+        scrollWidth: 960,
+        clientWidth: 960,
+      });
 
-      expect(grid.attributes.tabindex).toBe('0');
-      expect(grid.attributes.role).toBe('region');
+      expect(grid.attributes.role).toBe('group');
       expect(grid.attributes['aria-label']).toBe(expectedLabel);
+      expect(grid.attributes.tabindex).toBeUndefined();
+      expect(observed).toEqual([grid]);
+
+      triggerResize(1280, 390);
+      expect(grid.attributes.tabindex).toBe('0');
+
+      triggerResize(1040, 1040);
+      expect(grid.attributes.tabindex).toBeUndefined();
     }
   );
 
