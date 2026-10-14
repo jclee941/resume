@@ -315,7 +315,7 @@ describe('recruiter-role-interactions module', () => {
     expect(list.scrollTo).toHaveBeenLastCalledWith({ left: 0, behavior: 'smooth' });
   });
 
-  test('project-role-filter.css and main.css define collapsed match reveal and reduced-motion dimmed state', () => {
+  test('project-role-filter.css and main.css define collapsed match reveal and contrast-safe dimmed state', () => {
     const mainCss = fs.readFileSync(path.join(STYLES_DIR, 'main.css'), 'utf8');
     const roleFilterCss = fs.readFileSync(path.join(STYLES_DIR, 'project-role-filter.css'), 'utf8');
 
@@ -325,13 +325,18 @@ describe('recruiter-role-interactions module', () => {
     expect(roleFilterCss).toMatch(
       /\.project-item--collapsed\.is-role-match\s*\{[^}]*display:\s*grid/
     );
-    expect(roleFilterCss).toMatch(/\.project-item\.is-role-dimmed\s*\{[^}]*opacity:\s*0\.45/);
     expect(roleFilterCss).toMatch(
-      /\.project-item\.is-role-dimmed:hover,\s*\.project-item\.is-role-dimmed:focus-within\s*\{[^}]*opacity:\s*1/
+      /\.project-item\.is-role-match\s*\{[^}]*border-color:\s*var\(--color-accent\)/
     );
     expect(roleFilterCss).toMatch(
-      /@media\s*\(prefers-reduced-motion:\s*no-preference\)\s*\{[\s\S]*?transition:\s*opacity\s+var\(--transition-base\)/
+      /\.project-item\.is-role-dimmed\s*\{[^}]*border-color:\s*var\(--border-primary\)[\s\S]*?filter:\s*saturate\(0\.25\)/
     );
-    expect(roleFilterCss).not.toMatch(/border/);
+    expect(roleFilterCss).toMatch(
+      /\.project-item\.is-role-dimmed:hover,\s*\.project-item\.is-role-dimmed:focus-within\s*\{[^}]*filter:\s*none/
+    );
+    expect(roleFilterCss).toMatch(
+      /@media\s*\(prefers-reduced-motion:\s*no-preference\)\s*\{[\s\S]*?transition:[\s\S]*?border-color\s+var\(--transition-base\)[\s\S]*?filter\s+var\(--transition-base\)/
+    );
+    expect(roleFilterCss).not.toMatch(/opacity/);
   });
 });

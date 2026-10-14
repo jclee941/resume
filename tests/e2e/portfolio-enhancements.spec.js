@@ -28,11 +28,16 @@ test.describe('Portfolio recruiter enhancements', () => {
     await expect(
       page.locator('#projects li.project-item[data-role~="security"]').first()
     ).toHaveClass(/is-role-match/);
-    const dimmedOpacity = await page
-      .locator('#projects li.project-item.is-role-dimmed')
-      .first()
-      .evaluate((element) => Number.parseFloat(getComputedStyle(element).opacity));
-    expect(dimmedOpacity).toBeCloseTo(0.45, 2);
+    const dimmedCard = page.locator('#projects li.project-item.is-role-dimmed').first();
+    const { dimmedOpacity, dimmedFilter } = await dimmedCard.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return {
+        dimmedOpacity: Number.parseFloat(style.opacity),
+        dimmedFilter: style.filter,
+      };
+    });
+    expect(dimmedOpacity).toBeGreaterThanOrEqual(0.75);
+    expect(dimmedFilter).toContain('saturate');
     await expect(projectCards).toHaveCount(initialProjectCount);
   });
 
