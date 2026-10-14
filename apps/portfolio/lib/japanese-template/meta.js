@@ -12,7 +12,7 @@ function applyJapaneseMeta(html, identity = defaultOwnerIdentity()) {
   const { nameKo, nameJa } = identity;
   const latinName = familyNameFirst(identity.nameEn);
   const title = `${nameJa} - Security & Infrastructure Engineer`;
-  const description = `${title} ポートフォリオ`;
+  const description = `${title.replace(' - ', ' — ')} ポートフォリオ。FortiGate HA、Splunk ES、FortiManager API、金融系セキュリティ基盤、SIEM検知・通知自動化の経験。`;
   return html
     .replace(/<html lang="ko"/i, '<html lang="ja"')
     .replace(/<title>[^<]*<\/title>/i, `<title>${title}</title>`)
@@ -29,8 +29,12 @@ function applyJapaneseMeta(html, identity = defaultOwnerIdentity()) {
       '<meta property="og:url" content="https://resume.jclee.me/ja/" />'
     )
     .replace(
-      /<meta property="og:image" content="https:\/\/resume\.jclee\.me\/og-image\.webp" \/>/i,
-      '<meta property="og:image" content="https://resume.jclee.me/og-image-ja.webp" />'
+      /<meta property="og:image" content="https:\/\/resume\.jclee\.me\/og-image\.(?:png|webp)" \/>/i,
+      '<meta property="og:image" content="https://resume.jclee.me/og-image-ja.png" />'
+    )
+    .replace(
+      /<meta property="og:image:type" content="[^"]*" \/>/i,
+      '<meta property="og:image:type" content="image/png" />'
     )
     .replace(
       /<meta property="og:title" content="[^"]*" \/>/i,
@@ -46,8 +50,8 @@ function applyJapaneseMeta(html, identity = defaultOwnerIdentity()) {
       '<meta name="twitter:url" content="https://resume.jclee.me/ja/" />'
     )
     .replace(
-      /<meta name="twitter:image" content="https:\/\/resume\.jclee\.me\/og-image\.webp" \/>/i,
-      '<meta name="twitter:image" content="https://resume.jclee.me/og-image-ja.webp" />'
+      /<meta name="twitter:image" content="https:\/\/resume\.jclee\.me\/og-image\.(?:png|webp)" \/>/i,
+      '<meta name="twitter:image" content="https://resume.jclee.me/og-image-ja.png" />'
     )
     .replace(
       /<meta name="twitter:title" content="[^"]*" \/>/i,
@@ -62,8 +66,8 @@ function applyJapaneseMeta(html, identity = defaultOwnerIdentity()) {
     .replace(/"url": "https:\/\/resume\.jclee\.me\/"/g, '"url": "https://resume.jclee.me/ja/"')
     .replace(/"item": "https:\/\/resume\.jclee\.me\/"/g, '"item": "https://resume.jclee.me/ja/"')
     .replace(
-      /"image": "https:\/\/resume\.jclee\.me\/og-image\.webp"/g,
-      '"image": "https://resume.jclee.me/og-image-ja.webp"'
+      /"image": "https:\/\/resume\.jclee\.me\/og-image\.(?:png|webp)"/g,
+      '"image": "https://resume.jclee.me/og-image-ja.png"'
     )
     .replace(
       /"name": "Security & Infrastructure Engineer — 면접 제안 접수 중"/g,

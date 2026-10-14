@@ -106,7 +106,8 @@ describe('entry-router-utils', () => {
     test('normalizes locale roots', () => {
       expect(utils.getPortfolioTargetPath('/en', 'en')).toBe('/en/');
       expect(utils.getPortfolioTargetPath('/en/', 'en')).toBe('/en/');
-      expect(utils.getPortfolioTargetPath('/ko', 'ko')).toBe('/');
+      // '/ko' is kept as-is: the 301 to '/' is emitted by the locale page route.
+      expect(utils.getPortfolioTargetPath('/ko', 'ko')).toBe('/ko');
       expect(utils.getPortfolioTargetPath('/ja', 'ja')).toBe('/ja/');
       expect(utils.getPortfolioTargetPath('/ja/', 'ja')).toBe('/ja/');
     });

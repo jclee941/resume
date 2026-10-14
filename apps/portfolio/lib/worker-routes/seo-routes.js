@@ -55,6 +55,30 @@ function generateSeoRoutes({ contactEmail = defaultOwnerIdentity().email } = {})
         });
       }
 
+      if (['/og-image.png', '/og-image-en.png', '/og-image-ja.png'].includes(url.pathname)) {
+        const assetUrl = new URL('/social' + url.pathname, request.url);
+        const assetResponse = env.ASSETS
+          ? await env.ASSETS.fetch(new Request(assetUrl, request))
+          : null;
+        const headers = {
+          ...applyNonceToHeaders(SECURITY_HEADERS, ''),
+          ...CACHE_POLICIES.static,
+          ...rateLimitHeaders,
+        };
+        if (assetResponse && assetResponse.ok) {
+          metrics.requests_success++;
+          return new Response(assetResponse.body, {
+            status: assetResponse.status,
+            headers: { ...headers, 'Content-Type': 'image/png' },
+          });
+        }
+        metrics.requests_error++;
+        return new Response('Not Found', {
+          status: 404,
+          headers: { ...headers, 'Content-Type': 'text/plain' },
+        });
+      }
+
       if (url.pathname === '/og-image.webp') {
         const imageBuffer = Uint8Array.from(atob(OG_IMAGE_BASE64), c => c.charCodeAt(0));
         metrics.requests_success++;

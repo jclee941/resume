@@ -23,6 +23,20 @@ function generatePageRoutes() {
 
        // Routing
 
+      if (
+        (request.method === 'GET' || request.method === 'HEAD') &&
+        (url.pathname === '/ko' || url.pathname === '/ko/')
+      ) {
+        return new Response(null, {
+          status: 301,
+          headers: {
+            ...applyNonceToHeaders(SECURITY_HEADERS, ''),
+            ...rateLimitHeaders,
+            Location: '/' + url.search,
+          },
+        });
+      }
+
       if (url.pathname === '/') {
         const nonce = generateCspNonce();
         const response = new Response(applyNonceToHtml(INDEX_HTML, nonce), {
