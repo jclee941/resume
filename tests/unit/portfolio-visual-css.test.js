@@ -241,4 +241,29 @@ describe('portfolio visual CSS contract', () => {
       /\.skill-item--cjk\s*{[^}]*font-family:\s*var\(--font-sans\);[^}]*letter-spacing:\s*normal;/
     );
   });
+
+  test('S19 recruiter action bar sizes links to content on one line and skill card headers wrap count below unbroken titles at narrow widths', () => {
+    const actionBarCss = readStyle('recruiter-action-bar.css');
+    const skillCardCss = readStyle('skill-domain-card.css');
+    const skillRadarCss = readStyle('skill-radar.css');
+    const mobileBar = mediaBlock(actionBarCss, '(max-width: 768px)');
+    const narrowCarousel = mediaBlock(skillRadarCss, 'screen and (max-width: 360px)');
+
+    expect(actionBarCss).toMatch(
+      /\.recruiter-action-bar__link\s*{[^}]*flex:\s*1 1 auto;[^}]*white-space:\s*nowrap;/
+    );
+    expect(actionBarCss).toMatch(/\.recruiter-action-bar__dismiss\s*{[^}]*flex:\s*0 0 44px;/);
+    expect(mobileBar).toMatch(/\.recruiter-action-bar\.is-visible\s*{[^}]*display:\s*flex;/);
+
+    expect(skillCardCss).toMatch(/\.skill-domain-card__header\s*{[^}]*flex-wrap:\s*wrap;/);
+    expect(skillCardCss).toMatch(
+      /\.skill-domain-card__title\s*{[^}]*flex:\s*1 1 auto;[^}]*word-break:\s*keep-all;[^}]*overflow-wrap:\s*normal;/
+    );
+    expect(narrowCarousel).toMatch(
+      /\.skill-radar__grid\s*>\s*\.skill-domain-card\s+\.skill-domain-card__title\s*{[^}]*flex-basis:\s*calc\(100%\s*-\s*36px\s*-\s*var\(--space-3\)\);/
+    );
+    expect(narrowCarousel).toMatch(
+      /\.skill-radar__grid\s*>\s*\.skill-domain-card\s+\.skill-domain-card__count\s*{[^}]*margin-left:\s*calc\(36px\s*\+\s*var\(--space-3\)\);/
+    );
+  });
 });

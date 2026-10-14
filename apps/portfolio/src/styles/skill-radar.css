@@ -35,3 +35,13 @@
     scroll-snap-align: start;
   }
 }
+
+@media screen and (max-width: 360px) {
+  .skill-radar__grid > .skill-domain-card .skill-domain-card__title {
+    flex-basis: calc(100% - 36px - var(--space-3));
+  }
+
+  .skill-radar__grid > .skill-domain-card .skill-domain-card__count {
+    margin-left: calc(36px + var(--space-3));
+  }
+}

@@ -5,8 +5,9 @@
 
 .skill-domain-card__header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-1) var(--space-3);
 }
 
 .skill-domain-card__icon {
@@ -27,7 +28,7 @@
 }
 
 .skill-domain-card__title {
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
   margin: 0;
   color: var(--text-primary);
@@ -35,6 +36,8 @@
   font-size: var(--text-base);
   font-weight: var(--font-semibold);
   line-height: var(--leading-snug);
+  word-break: keep-all;
+  overflow-wrap: normal;
 }
 
 .skill-domain-card__count {
