@@ -94,10 +94,18 @@ describe('Security Headers Module', () => {
       expect(headers['Origin-Agent-Cluster']).toBe('?1');
     });
 
-    test('restricts framing and script origins', () => {
+    test('portfolio restricts framing and excludes Google Identity scripts', () => {
       const headers = generateSecurityHeaders([]);
       expect(headers['Content-Security-Policy']).toContain('frame-src https://grafana.jclee.me');
-      expect(headers['Content-Security-Policy']).toContain('https://accounts.google.com');
+      expect(headers['Content-Security-Policy']).not.toContain('https://accounts.google.com');
+    });
+
+    test('dashboard keeps its separate Google Identity script allowance', async () => {
+      const { serveStatic } = await import('../../../../apps/job-dashboard/src/views/dashboard.js');
+      const response = await serveStatic('/dashboard');
+      expect(response.headers.get('Content-Security-Policy')).toMatch(
+        /script-src [^;]*https:\/\/accounts\.google\.com/
+      );
     });
 
     test('allows the configured Google Analytics collection origin', () => {

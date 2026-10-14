@@ -32,13 +32,7 @@ const CACHE_STRATEGIES = {
  * @returns {string}
  */
 function buildScriptSrc(nonce) {
-  return [
-    "'self'",
-    `'nonce-${nonce}'`,
-    "'strict-dynamic'",
-    CLOUDFLARE_ANALYTICS.script,
-    'https://accounts.google.com',
-  ].join(' ');
+  return ["'self'", `'nonce-${nonce}'`, "'strict-dynamic'", CLOUDFLARE_ANALYTICS.script].join(' ');
 }
 
 /**
