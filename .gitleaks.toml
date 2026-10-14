@@ -1,8 +1,8 @@
 # Gitleaks configuration for resume monorepo
 # See: https://github.com/gitleaks/gitleaks#configuration
 # This file is the SINGLE SOURCE OF TRUTH for secret-scanning rules.
-# CI runs `gitleaks detect --source . --config .gitleaks.toml --redact -v`
-# Pre-commit runs `gitleaks protect --staged --config .gitleaks.toml -v`
+# CI runs `gitleaks dir . --config .gitleaks.toml --redact` (v8.30.1) on the checked-out tree.
+# Pre-commit runs `gitleaks protect --staged --config .gitleaks.toml --redact --verbose`.
 
 title = "Resume Monorepo Gitleaks Config"
 

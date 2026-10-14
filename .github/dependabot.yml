@@ -31,6 +31,41 @@ updates:
           - 'minor'
           - 'patch'
 
+  # Go modules built and tested by CI's test:go step and the Go operations tooling.
+  - package-ecosystem: 'gomod'
+    directory: '/tools/scripts'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
+    labels:
+      - 'dependencies'
+      - 'go'
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+    groups:
+      go-scripts-minor-patch:
+        update-types:
+          - 'minor'
+          - 'patch'
+
+  - package-ecosystem: 'gomod'
+    directory: '/tools/scripts/enrichment'
+    schedule:
+      interval: 'weekly'
+    open-pull-requests-limit: 5
+    labels:
+      - 'dependencies'
+      - 'go'
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+    groups:
+      go-enrichment-minor-patch:
+        update-types:
+          - 'minor'
+          - 'patch'
+
   # npm workspaces share the root package-lock.json.
   - package-ecosystem: 'npm'
     directory: '/'
