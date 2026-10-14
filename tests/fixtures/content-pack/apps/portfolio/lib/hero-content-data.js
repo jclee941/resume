@@ -45,7 +45,7 @@ const HERO_CONTENT = {
     ],
     actionsLabel: 'Primary rebadem',
     mailSubject: 'Tigovu rusadufa le nepiromun difupok',
-    actions: ['Vazedikev difupok', 'Rizeri libodu', 'Vuti lagezoru', 'Ruvofe FAZ'],
+    actions: ['Vazedikev difupok', 'Rizeri libodu', 'Vuti lagezoru', 'Ruvofe FAZ (Varodu)'],
     downloadName: 'Kakezovu-Kub-Ruvofe.nub',
   },
   ja: {
@@ -70,7 +70,7 @@ const HERO_CONTENT = {
     ],
     actionsLabel: '金川山空',
     mailSubject: '金田林森ぬはの雨花田土',
-    actions: ['雨花田土', '木山雨林', 'アミイノウエを見る', '山日金FAZ'],
+    actions: ['雨花田土', '木山雨林', 'アミイノウエを見る', '山日金FAZ（川月星）'],
     downloadName: 'Kub-Kakezovu-Ruvofe-KI.nub',
   },
 };

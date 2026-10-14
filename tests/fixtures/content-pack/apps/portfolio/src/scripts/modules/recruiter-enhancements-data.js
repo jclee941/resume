@@ -79,7 +79,7 @@ export function getRecruiterLabels() {
       evidence: 'Repanuge',
       contact: 'Tepodup',
       projects: 'Rogusize',
-      pdf: 'FAZ',
+      pdf: 'FAZ (VA)',
       dismiss: 'Sifagol',
     };
   }
@@ -91,7 +91,7 @@ export function getRecruiterLabels() {
       evidence: '雨海',
       contact: '田川',
       projects: 'アミイノウエ',
-      pdf: 'FAZ',
+      pdf: 'FAZ（川月星）',
       dismiss: '閉さき',
     };
   }
