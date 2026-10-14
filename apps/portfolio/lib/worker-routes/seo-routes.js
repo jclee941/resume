@@ -57,21 +57,67 @@ function generateSeoRoutes({ contactEmail = defaultOwnerIdentity().email } = {})
 
       if (['/og-image.png', '/og-image-en.png', '/og-image-ja.png'].includes(url.pathname)) {
         const assetUrl = new URL('/social' + url.pathname, request.url);
-        // Method only: forwarding If-None-Match / If-Modified-Since lets ASSETS answer 304,
-        // which this route cannot serve as an image.
+        // ASSETS answers If-None-Match / If-Modified-Since with 304 plus its strong ETag, so
+        // only those two are forwarded (a full header copy once turned that 304 into a 404).
+        // ASSETS ignores Range, so byte ranges are cut from the full body below.
+        const assetHeaders = new Headers();
+        for (const name of ['If-None-Match', 'If-Modified-Since']) {
+          if (request.headers.has(name)) assetHeaders.set(name, request.headers.get(name));
+        }
         const assetResponse = env.ASSETS
-          ? await env.ASSETS.fetch(new Request(assetUrl, { method: request.method }))
+          ? await env.ASSETS.fetch(
+              new Request(assetUrl, { method: request.method, headers: assetHeaders })
+            )
           : null;
         const headers = {
           ...applyNonceToHeaders(SECURITY_HEADERS, ''),
           ...CACHE_POLICIES.static,
           ...rateLimitHeaders,
         };
-        if (assetResponse && assetResponse.ok) {
+        if (assetResponse && (assetResponse.ok || assetResponse.status === 304)) {
           metrics.requests_success++;
+          // Carrying the asset ETag keeps the response-header post-processing from adding its
+          // own weak ETag, so the client sees exactly one validator.
+          const imageHeaders = { ...headers, 'Accept-Ranges': 'bytes' };
+          const etag = assetResponse.headers.get('ETag');
+          if (etag) imageHeaders.ETag = etag;
+          // Also on the 304: without it the runtime labels the bodiless response text/html.
+          imageHeaders['Content-Type'] = 'image/png';
+          if (assetResponse.status === 304) {
+            return new Response(null, { status: 304, headers: imageHeaders });
+          }
+          const range = /^bytes=([0-9]*)-([0-9]*)$/.exec(request.headers.get('Range') || '');
+          const ifRange = request.headers.get('If-Range');
+          // A single well-formed byte range on GET; anything else (multi-range, last < first,
+          // stale If-Range) is ignored and answered with the full 200 per RFC 9110.
+          const rangeApplies =
+            request.method === 'GET' &&
+            range &&
+            (range[1] || range[2]) &&
+            (!range[1] || !range[2] || Number(range[2]) >= Number(range[1])) &&
+            (!ifRange || ifRange === etag);
+          if (rangeApplies) {
+            const bytes = new Uint8Array(await assetResponse.arrayBuffer());
+            const size = bytes.length;
+            const first = range[1] ? Number(range[1]) : Math.max(size - Number(range[2]), 0);
+            const last = range[1] && range[2] ? Math.min(Number(range[2]), size - 1) : size - 1;
+            if (first >= size || (!range[1] && Number(range[2]) === 0)) {
+              return new Response(null, {
+                status: 416,
+                headers: { ...imageHeaders, 'Content-Range': 'bytes */' + size },
+              });
+            }
+            return new Response(bytes.slice(first, last + 1), {
+              status: 206,
+              headers: {
+                ...imageHeaders,
+                'Content-Range': 'bytes ' + first + '-' + last + '/' + size,
+              },
+            });
+          }
           return new Response(assetResponse.body, {
             status: assetResponse.status,
-            headers: { ...headers, 'Content-Type': 'image/png' },
+            headers: imageHeaders,
           });
         }
         metrics.requests_error++;
