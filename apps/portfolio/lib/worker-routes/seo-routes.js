@@ -57,8 +57,10 @@ function generateSeoRoutes({ contactEmail = defaultOwnerIdentity().email } = {})
 
       if (['/og-image.png', '/og-image-en.png', '/og-image-ja.png'].includes(url.pathname)) {
         const assetUrl = new URL('/social' + url.pathname, request.url);
-        // Method only: forwarding If-None-Match / If-Modified-Since lets ASSETS answer 304,
-        // which this route cannot serve as an image.
+        // Only the method is forwarded: ASSETS compares the whole If-None-Match value with its
+        // ETag (no lists, no *) and ignores Range, so it always returns the full response and its
+        // strong ETag. Conditional and range handling happen below. ASSETS sends no Last-Modified,
+        // so If-Modified-Since has nothing to compare with and is ignored.
         const assetResponse = env.ASSETS
           ? await env.ASSETS.fetch(new Request(assetUrl, { method: request.method }))
           : null;
@@ -69,9 +71,58 @@ function generateSeoRoutes({ contactEmail = defaultOwnerIdentity().email } = {})
         };
         if (assetResponse && assetResponse.ok) {
           metrics.requests_success++;
+          // Carrying the asset ETag keeps the response-header post-processing from adding its
+          // own weak ETag, so the client sees exactly one validator.
+          const imageHeaders = { ...headers, 'Accept-Ranges': 'bytes' };
+          const etag = assetResponse.headers.get('ETag');
+          if (etag) imageHeaders.ETag = etag;
+          // Also on the 304: without it the runtime labels the bodiless response text/html.
+          imageHeaders['Content-Type'] = 'image/png';
+          // RFC 9110 13.1.2: If-None-Match takes * or a tag list, compared weakly, and 13.2.2
+          // evaluates it before Range / If-Range, so a match wins over a byte range.
+          const ifNoneMatch = request.headers.get('If-None-Match');
+          const bareTag = (tag) => (tag.trim().startsWith('W/') ? tag.trim().slice(2) : tag.trim());
+          if (
+            etag &&
+            ifNoneMatch &&
+            (ifNoneMatch.trim() === '*' ||
+              ifNoneMatch.split(',').some((tag) => bareTag(tag) === bareTag(etag)))
+          ) {
+            if (assetResponse.body) await assetResponse.body.cancel();
+            return new Response(null, { status: 304, headers: imageHeaders });
+          }
+          const range = /^bytes=([0-9]*)-([0-9]*)$/.exec(request.headers.get('Range') || '');
+          const ifRange = request.headers.get('If-Range');
+          // A single well-formed byte range on GET; anything else (multi-range, last < first,
+          // stale If-Range) is ignored and answered with the full 200 per RFC 9110.
+          const rangeApplies =
+            request.method === 'GET' &&
+            range &&
+            (range[1] || range[2]) &&
+            (!range[1] || !range[2] || Number(range[2]) >= Number(range[1])) &&
+            (!ifRange || ifRange === etag);
+          if (rangeApplies) {
+            const bytes = new Uint8Array(await assetResponse.arrayBuffer());
+            const size = bytes.length;
+            const first = range[1] ? Number(range[1]) : Math.max(size - Number(range[2]), 0);
+            const last = range[1] && range[2] ? Math.min(Number(range[2]), size - 1) : size - 1;
+            if (first >= size || (!range[1] && Number(range[2]) === 0)) {
+              return new Response(null, {
+                status: 416,
+                headers: { ...imageHeaders, 'Content-Range': 'bytes */' + size },
+              });
+            }
+            return new Response(bytes.slice(first, last + 1), {
+              status: 206,
+              headers: {
+                ...imageHeaders,
+                'Content-Range': 'bytes ' + first + '-' + last + '/' + size,
+              },
+            });
+          }
           return new Response(assetResponse.body, {
             status: assetResponse.status,
-            headers: { ...headers, 'Content-Type': 'image/png' },
+            headers: imageHeaders,
           });
         }
         metrics.requests_error++;
