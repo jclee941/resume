@@ -65,7 +65,7 @@ const HIRING_ACTIONS = {
   },
   ja: {
     mail: 'duneda:fixture@example.com?gefukam=Tigovu%20rusadufa%20le%20nepiromun%20difupok',
-    downloadName: 'Kub-Kakezovu-Ruvofe-KI.nub',
+    downloadName: 'Kub-Kakezovu-Ruvofe-VA.nub',
   },
 };
 
