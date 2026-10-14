@@ -80,17 +80,32 @@ function createDomainCard(domainKey, domain) {
   return card;
 }
 
+/** @param {HTMLElement} container */
+function syncOverflowTabIndex(container) {
+  if (container.scrollWidth > container.clientWidth) {
+    container.setAttribute('tabindex', '0');
+  } else {
+    container.removeAttribute('tabindex');
+  }
+}
+
 function initSkillRadar() {
   const container = document.getElementById('skill-radar-grid');
   if (!container) return;
-  container.setAttribute('tabindex', '0');
-  container.setAttribute('role', 'region');
+  container.setAttribute('role', 'group');
   container.setAttribute('aria-label', skillGridLabel());
   container.replaceChildren(
     ...Object.entries(resolveSkillData()).map(([domainKey, domain]) =>
       createDomainCard(domainKey, domain)
     )
   );
+  syncOverflowTabIndex(container);
+  if (typeof ResizeObserver === 'function') {
+    new ResizeObserver(() => syncOverflowTabIndex(container)).observe(container);
+  }
+  if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+    window.addEventListener('resize', () => syncOverflowTabIndex(container), { passive: true });
+  }
 }
 
 export { initSkillRadar };
