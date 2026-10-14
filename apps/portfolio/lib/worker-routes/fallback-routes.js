@@ -19,7 +19,7 @@ function generate404() {
   return `
       // 404 Not Found
       metrics.requests_error++;
-      const isPageRequest = request.method === 'GET' &&
+      const isPageRequest = (request.method === 'GET' || request.method === 'HEAD') &&
         !/^\\/(?:api|assets|fonts)(?:\\/|$)/.test(url.pathname) &&
         !/\\.[^/]+$/.test(url.pathname);
       const notFoundHtml = \`<!doctype html>
