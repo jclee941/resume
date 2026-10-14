@@ -14,7 +14,7 @@
 
 @media (min-width: 1024px) {
   .contact-grid {
-    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
@@ -40,6 +40,28 @@
 
 .contact-item:hover::before {
   transform: translateX(var(--space-1));
+}
+
+.contact-item--email {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  row-gap: var(--space-1);
+}
+
+.contact-item--email::before {
+  grid-row: 1 / 3;
+}
+
+.contact-item__label {
+  font-family: var(--font-label);
+}
+
+.contact-item--email .contact-item__value {
+  grid-column: 2;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  overflow-wrap: anywhere;
+  user-select: text;
 }
 
 .contact-copy-status {

@@ -187,7 +187,7 @@ function renderEdge(from, to, isWide, markerId, label) {
     const my = (y1 + y2) / 2;
     svg += isWide
       ? `<text x="${mx}" y="${my - 4}" class="edge__label" text-anchor="middle">${escapeHtml(label)}</text>`
-      : `<text x="${mx + 6}" y="${my + 4}" class="edge__label" text-anchor="start">${escapeHtml(label)}</text>`;
+      : `<text x="${mx + 10}" y="${my + 4}" class="edge__label" text-anchor="start">${escapeHtml(label)}</text>`;
   }
   return svg;
 }

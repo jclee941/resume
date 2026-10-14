@@ -123,6 +123,8 @@ describe('data-processor', () => {
       expect(result.templates).toHaveProperty('resumeDescriptionHtml');
       expect(result.templates).toHaveProperty('infrastructureCardsHtml');
       expect(result.templates).toHaveProperty('contactGridHtml');
+      expect(result.templates).toHaveProperty('contactGridEnHtml');
+      expect(result.templates).toHaveProperty('contactGridJaHtml');
     });
 
     it('should call card generators with correct arguments', () => {
@@ -145,7 +147,9 @@ describe('data-processor', () => {
         email: data.contact && data.contact.email,
       });
       expect(cards.generateInfrastructureCards).toHaveBeenCalledWith(data.infrastructure);
-      expect(cards.generateContactGrid).toHaveBeenCalledWith(data.contact);
+      expect(cards.generateContactGrid).toHaveBeenCalledWith(data.contact, 'ko');
+      expect(cards.generateContactGrid).toHaveBeenCalledWith(data.contact, 'en');
+      expect(cards.generateContactGrid).toHaveBeenCalledWith(data.contact, 'ja');
     });
 
     it('should pass one content-versioned /assets/ photo URL to every hero portrait', () => {

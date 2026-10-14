@@ -198,8 +198,13 @@ describe('project-diagram', () => {
     const cN = getCoords(narrowMatch, 'Collector');
     const sN = getCoords(narrowMatch, 'SIEM');
     const aN = getCoords(narrowMatch, 'Alerting');
+    const edgeLabel = narrowMatch.match(
+      /<text x="([^"]+)" y="[^"]+" class="edge__label" text-anchor="start">Trigger<\/text>/
+    );
 
     expect(cN.y).toBeLessThan(sN.y);
     expect(sN.y).toBeLessThan(aN.y);
+    expect(edgeLabel).not.toBeNull();
+    expect(Number(edgeLabel[1])).toBe((sN.x + aN.x) / 2 + 10);
   });
 });

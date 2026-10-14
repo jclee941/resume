@@ -143,7 +143,9 @@ function processProjectData({
     infrastructureCardsJaHtml: generateInfrastructureCards(
       (projectDataJa && projectDataJa.infrastructure) || projectData.infrastructure
     ),
-    contactGridHtml: generateContactGrid(projectData.contact),
+    contactGridHtml: generateContactGrid(projectData.contact, 'ko'),
+    contactGridEnHtml: generateContactGrid((projectDataEn || projectData).contact, 'en'),
+    contactGridJaHtml: generateContactGrid((projectDataJa || projectData).contact, 'ja'),
     aboutContentHtml: generateAboutContent(projectData.aboutSection, dataHash, 'ko'),
     aboutContentEnHtml: generateAboutContent(
       (projectDataEn && projectDataEn.aboutSection) || projectData.aboutSection,
