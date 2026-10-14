@@ -3,6 +3,9 @@ const path = require('path');
 
 const STYLES_DIR = path.resolve(__dirname, '../../../apps/portfolio/src/styles');
 
+let ROLE_IDS;
+let PROOF_COUNT_TWO_LABEL;
+
 function toDatasetKey(attrName) {
   return attrName.slice(5).replace(/-([a-z])/g, (_, char) => char.toUpperCase());
 }
@@ -86,11 +89,11 @@ function installFakeDom({
   initialScrollLeft = 0,
 } = {}) {
   const cards = [
-    makeCard({ id: 'card-0', role: 'infra', collapsed: false, left: 0 }),
-    makeCard({ id: 'card-1', role: 'security automation', collapsed: false, left: 120 }),
-    makeCard({ id: 'card-2', role: 'observability', collapsed: false, left: 240 }),
-    makeCard({ id: 'card-3', role: 'security', collapsed: true, left: 360 }),
-    makeCard({ id: 'card-4', role: 'automation infra', collapsed: true, left: 480 }),
+    makeCard({ id: 'card-0', role: ROLE_IDS[1], collapsed: false, left: 0 }),
+    makeCard({ id: 'card-1', role: `${ROLE_IDS[0]} ${ROLE_IDS[3]}`, collapsed: false, left: 120 }),
+    makeCard({ id: 'card-2', role: ROLE_IDS[2], collapsed: false, left: 240 }),
+    makeCard({ id: 'card-3', role: ROLE_IDS[0], collapsed: true, left: 360 }),
+    makeCard({ id: 'card-4', role: `${ROLE_IDS[3]} ${ROLE_IDS[1]}`, collapsed: true, left: 480 }),
   ];
 
   const list = {
@@ -116,8 +119,8 @@ function installFakeDom({
   });
 
   const chips = [
-    makeChip({ role: 'security', label: '보안 엔지니어링' }),
-    makeChip({ role: 'automation', label: 'AI 엔지니어링' }),
+    makeChip({ role: ROLE_IDS[0], label: '보안 엔지니어링' }),
+    makeChip({ role: ROLE_IDS[3], label: 'AI 엔지니어링' }),
   ];
   const status = { textContent: '' };
   const projectsSection = { scrollIntoView: jest.fn() };
@@ -157,10 +160,10 @@ function installFakeDom({
   };
 
   const proofCounts = new Map([
-    ['security', 2],
-    ['automation', 2],
-    ['infra', 2],
-    ['observability', 1],
+    [ROLE_IDS[0], 2],
+    [ROLE_IDS[3], 2],
+    [ROLE_IDS[1], 2],
+    [ROLE_IDS[2], 1],
   ]);
 
   return { cards, list, chips, status, projectsSection, history, proofCounts };
@@ -172,6 +175,16 @@ describe('recruiter-role-interactions module', () => {
   beforeAll(async () => {
     ({ bindRoleControls } =
       await import('../../../apps/portfolio/src/scripts/modules/recruiter-role-interactions.js'));
+    const { getRoleProfiles, getProofCountLabel } =
+      await import('../../../apps/portfolio/src/scripts/modules/recruiter-enhancements-data.js');
+    global.document = { documentElement: { lang: 'ko' } };
+    const profiles = getRoleProfiles();
+    PROOF_COUNT_TWO_LABEL = getProofCountLabel(2);
+    delete global.document;
+    if (profiles.length < 4) {
+      throw new Error(`expected at least 4 role profiles, got ${profiles.length}`);
+    }
+    ROLE_IDS = profiles.slice(0, 4).map((profile) => profile.id);
   });
 
   afterEach(() => {
@@ -215,11 +228,11 @@ describe('recruiter-role-interactions module', () => {
       expect(nonMatch.classList.contains('is-role-match')).toBe(false);
     }
 
-    expect(status.textContent).toBe('보안 엔지니어링 선택됨: 근거 2건');
+    expect(status.textContent).toBe(`보안 엔지니어링 선택됨: ${PROOF_COUNT_TWO_LABEL}`);
     expect(history.pushState).toHaveBeenCalledTimes(1);
     expect(history.state).toMatchObject({
       existingKey: 'preserved',
-      selectedRole: 'security',
+      selectedRole: ROLE_IDS[0],
       selectedRoleLabel: '보안 엔지니어링',
       projectAnchor: 'projects',
     });
