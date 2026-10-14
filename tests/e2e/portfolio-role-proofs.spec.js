@@ -29,6 +29,11 @@ test.describe('Portfolio role evidence routing', () => {
       await expect(roleChip).toContainText(COUNT_LABELS.ko(await roleProjects(page, id).count()));
     }
 
+    const initialIds = await page
+      .locator('#projects li.project-item')
+      .evaluateAll((elements) =>
+        elements.map((el) => el.querySelector('.project-title')?.textContent?.trim())
+      );
     const securityCount = await roleProjects(page, SECURITY.id).count();
     expect(securityCount).toBeGreaterThan(0);
     const securityButton = page.getByRole('button', {
@@ -60,6 +65,23 @@ test.describe('Portfolio role evidence routing', () => {
     await expect(
       page.locator(`#projects li.project-item.is-role-match:not([data-role~="${SECURITY.id}"])`)
     ).toHaveCount(0);
+    const matchClasses = await page
+      .locator('#projects li.project-item')
+      .evaluateAll((elements) => elements.map((el) => el.classList.contains('is-role-match')));
+    expect(matchClasses.slice(0, securityCount).every(Boolean)).toBe(true);
+    expect(matchClasses.slice(securityCount).some(Boolean)).toBe(false);
+
+    await securityButton.click();
+    await expect(securityButton).toHaveAttribute('aria-pressed', 'false');
+    await expect(roleOrientation).toHaveText('');
+    await expect(page.locator('#projects li.project-item.is-role-match')).toHaveCount(0);
+    await expect(page.locator('#projects li.project-item.is-role-dimmed')).toHaveCount(0);
+    const restoredIds = await page
+      .locator('#projects li.project-item')
+      .evaluateAll((elements) =>
+        elements.map((el) => el.querySelector('.project-title')?.textContent?.trim())
+      );
+    expect(restoredIds).toEqual(initialIds);
   });
 
   test('reinitializing recruiter enhancements keeps role handlers single-bound', async ({
