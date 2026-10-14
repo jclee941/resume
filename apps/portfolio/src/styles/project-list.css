@@ -141,12 +141,20 @@
 @media (min-width: 1024px) {
   .project-card--featured {
     grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto auto 1fr;
     grid-template-areas:
       'header meta'
       'notes diagram'
       'desc diagram'
-      'tech links';
+      'tech diagram'
+      'links diagram';
     column-gap: var(--space-8);
+  }
+
+  .project-card--featured .project-tech,
+  .project-card--featured .project-links {
+    align-self: start;
+    justify-content: flex-start;
   }
 
   .project-card--featured .project-diagram {

@@ -6,9 +6,9 @@
   border-radius: var(--radius-full);
   background: rgb(var(--bg-primary-rgb) / 0.5);
   color: var(--text-secondary);
-  font-family: var(--font-mono);
+  font-family: var(--font-label);
   font-size: var(--text-xs);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 

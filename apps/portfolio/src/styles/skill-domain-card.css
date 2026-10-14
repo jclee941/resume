@@ -63,3 +63,8 @@
   font-size: var(--text-xs);
   line-height: var(--leading-normal);
 }
+
+.skill-item--cjk {
+  font-family: var(--font-sans);
+  letter-spacing: normal;
+}

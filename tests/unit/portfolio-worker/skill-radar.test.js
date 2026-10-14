@@ -85,14 +85,71 @@ describe('skill radar renders every skill as a visible tag', () => {
   test('cards are static: no accordion state, hidden panels, or evidence drawer', async () => {
     const { grid } = await mount('ko');
 
-    walk(grid, (node) => {
-      expect(node.attributes?.role).toBeUndefined();
-      expect(node.attributes?.['aria-expanded']).toBeUndefined();
-      expect(node.hidden).toBeUndefined();
-      expect(node.className || '').not.toMatch(
-        /skill-panel|skill-evidence|__expand|level-indicator/
-      );
-    });
+    for (const card of grid.children) {
+      walk(card, (node) => {
+        expect(node.attributes?.role).toBeUndefined();
+        expect(node.attributes?.['aria-expanded']).toBeUndefined();
+        expect(node.hidden).toBeUndefined();
+        expect(node.className || '').not.toMatch(
+          /skill-panel|skill-evidence|__expand|level-indicator/
+        );
+      });
+    }
+  });
+
+  test.each([
+    ['ko', '기술 스택'],
+    ['en', 'Skills'],
+    ['ja', 'スキル'],
+  ])(
+    '%s makes the skill grid a focusable region with a localized aria-label',
+    async (locale, expectedLabel) => {
+      const { grid } = await mount(locale);
+
+      expect(grid.attributes.tabindex).toBe('0');
+      expect(grid.attributes.role).toBe('region');
+      expect(grid.attributes['aria-label']).toBe(expectedLabel);
+    }
+  );
+
+  test('marks CJK skill pills with skill-item--cjk while keeping ASCII pills on skill-item', async () => {
+    const grid = fakeElement('div');
+    const document = {
+      documentElement: { lang: 'ko' },
+      getElementById: (id) => (id === 'skill-radar-grid' ? grid : null),
+      createElement: fakeElement,
+      createElementNS: (_namespace, tag) => fakeElement(tag),
+    };
+    const window = {
+      __RESUME_CHAT_DATA__: {
+        skills: {
+          automation: {
+            title: '자동화',
+            items: [
+              { name: 'Python', level: 'expert' },
+              { name: '알림 워크플로', level: 'advanced' },
+              { name: '1Password(홈랩 운영)', level: 'intermediate' },
+              { name: 'ログ収集', level: 'intermediate' },
+            ],
+          },
+        },
+      },
+    };
+    const context = vm.createContext({ document, window });
+    const data = new vm.SourceTextModule(read('skill-radar-data.js'), { context });
+    const formatting = new vm.SourceTextModule(read('project-card-formatting.js'), { context });
+    const radar = new vm.SourceTextModule(read('skill-radar.js'), { context });
+    await radar.link((specifier) => (specifier.includes('skill-radar-data') ? data : formatting));
+    await radar.evaluate();
+    radar.namespace.initSkillRadar();
+
+    const [, list] = grid.children[0].children;
+    expect(list.children.map((item) => [item.textContent, item.className])).toEqual([
+      ['Python', 'skill-item'],
+      ['알림 워크플로', 'skill-item skill-item--cjk'],
+      ['1Password(홈랩 운영)', 'skill-item skill-item--cjk'],
+      ['ログ収集', 'skill-item skill-item--cjk'],
+    ]);
   });
 
   test('pages without the grid render nothing', async () => {

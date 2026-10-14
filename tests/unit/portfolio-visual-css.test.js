@@ -54,6 +54,15 @@ describe('portfolio visual CSS contract', () => {
     );
   });
 
+  test('project status badges use the locale-aware label face', () => {
+    const badgesCss = readStyle('project-badges.css');
+
+    expect(badgesCss).toMatch(/\.project-meta-badge\s*{[^}]*font-family: var\(--font-label\);/);
+    expect(badgesCss).toMatch(
+      /\.project-meta-badge\s*{[^}]*letter-spacing: var\(--tracking-label\);/
+    );
+  });
+
   test('S4 hero proof list stays one readable column at every width', () => {
     const proofCss = readStyle('hero-proof.css');
 
@@ -176,5 +185,60 @@ describe('portfolio visual CSS contract', () => {
       (name) => !defined.has(name) && !runtimeProperties.has(name)
     );
     expect(undefinedProperties).toEqual([]);
+  });
+
+  test('S15 featured project cards stack tech and links under case notes while diagram spans right column on desktop', () => {
+    const projectListCss = readStyle('project-list.css');
+    const desktop = mediaBlock(projectListCss, '(min-width: 1024px)');
+
+    expect(desktop).toMatch(
+      /\.project-card--featured\s*{[^}]*grid-template-rows:\s*auto auto auto auto 1fr;/
+    );
+    expect(desktop).toMatch(
+      /grid-template-areas:\s*'header meta'\s*'notes diagram'\s*'desc diagram'\s*'tech diagram'\s*'links diagram';/
+    );
+    expect(desktop).toMatch(
+      /\.project-card--featured \.project-tech,\s*\.project-card--featured \.project-links\s*{[^}]*align-self:\s*start;[^}]*justify-content:\s*flex-start;/
+    );
+  });
+
+  test('S16 desktop hero centers .hero-aside vertically against the identity column', () => {
+    const heroLayoutCss = readStyle('hero-layout.css');
+    const desktop = mediaBlock(heroLayoutCss, '(min-width: 1024px)');
+
+    expect(desktop).toMatch(/\.hero-aside\s*{[^}]*align-self:\s*center;/);
+  });
+
+  test('S17 cover-letter decorative quote sits in top padding clearance above the headline text', () => {
+    const headlineCss = readStyle('cover-letter-headline.css');
+    const responsiveCss = readStyle('cover-letter-responsive.css');
+    const mobile = mediaBlock(responsiveCss, '(max-width: 600px)');
+
+    expect(headlineCss).toMatch(
+      /\.cover-letter__headline\s*{[^}]*padding:\s*var\(--space-16\)\s+var\(--space-8\)\s+var\(--space-5\);/
+    );
+    expect(headlineCss).toMatch(
+      /\.cover-letter__headline::before\s*{[^}]*top:\s*var\(--space-4\);[^}]*left:\s*var\(--space-8\);[^}]*font-size:\s*var\(--text-4xl\);[^}]*line-height:\s*var\(--leading-none\);/
+    );
+    expect(mobile).toMatch(
+      /\.cover-letter__headline\s*{[^}]*padding:\s*var\(--space-12\)\s+var\(--space-4\)\s+var\(--space-3\);/
+    );
+    expect(mobile).toMatch(
+      /\.cover-letter__headline::before\s*{[^}]*top:\s*var\(--space-3\);[^}]*left:\s*var\(--space-4\);[^}]*font-size:\s*var\(--text-3xl\);/
+    );
+  });
+
+  test('S18 skills carousel has a focus-visible ring, top-aligned mobile cards, and sans font for CJK skill pills', () => {
+    const skillRadarCss = readStyle('skill-radar.css');
+    const skillCardCss = readStyle('skill-domain-card.css');
+    const mobile = mediaBlock(skillRadarCss, 'screen and (max-width: 640px)');
+
+    expect(skillRadarCss).toMatch(
+      /\.skill-radar__grid:focus-visible\s*{[^}]*outline:\s*2px solid var\(--color-accent\);[^}]*outline-offset:\s*2px;/
+    );
+    expect(mobile).toMatch(/\.skill-radar__grid\s*{[^}]*align-items:\s*start;/);
+    expect(skillCardCss).toMatch(
+      /\.skill-item--cjk\s*{[^}]*font-family:\s*var\(--font-sans\);[^}]*letter-spacing:\s*normal;/
+    );
   });
 });

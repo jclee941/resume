@@ -7,6 +7,12 @@
   column-gap: var(--space-4);
 }
 
+.skill-radar__grid:focus-visible {
+  border-radius: var(--radius-md);
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 .skill-radar__grid > .skill-domain-card {
   break-inside: avoid;
   margin-bottom: var(--space-4);
@@ -15,6 +21,7 @@
 @media screen and (max-width: 640px) {
   .skill-radar__grid {
     display: flex;
+    align-items: start;
     gap: var(--space-3);
     overflow-x: auto;
     overscroll-behavior-x: contain;

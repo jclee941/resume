@@ -1,6 +1,15 @@
 import { createIconElement } from './project-card-formatting.js';
 import { resolveSkillData, skillCountText } from './skill-radar-data.js';
 
+const CJK_SKILL_PATTERN = /[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]/;
+
+function skillGridLabel() {
+  const lang = (document.documentElement.lang || 'ko').toLowerCase();
+  if (lang.startsWith('en')) return 'Skills';
+  if (lang.startsWith('ja')) return 'スキル';
+  return '기술 스택';
+}
+
 /**
  * @param {keyof HTMLElementTagNameMap} tagName
  * @param {string} className
@@ -59,7 +68,10 @@ function createDomainCard(domainKey, domain) {
   const list = createElement('ul', 'skill-list');
   list.setAttribute('aria-labelledby', headingId);
   domain.skills.forEach((skill) => {
-    const item = createElement('li', 'skill-item', skill.name);
+    const className = CJK_SKILL_PATTERN.test(skill.name)
+      ? 'skill-item skill-item--cjk'
+      : 'skill-item';
+    const item = createElement('li', className, skill.name);
     item.dataset.skill = skill.name;
     list.appendChild(item);
   });
@@ -71,6 +83,9 @@ function createDomainCard(domainKey, domain) {
 function initSkillRadar() {
   const container = document.getElementById('skill-radar-grid');
   if (!container) return;
+  container.setAttribute('tabindex', '0');
+  container.setAttribute('role', 'region');
+  container.setAttribute('aria-label', skillGridLabel());
   container.replaceChildren(
     ...Object.entries(resolveSkillData()).map(([domainKey, domain]) =>
       createDomainCard(domainKey, domain)
