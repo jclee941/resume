@@ -1,11 +1,14 @@
 import { settleWithin } from '../../services/browser-session.js';
 import { fetchJobKoreaHistoryAfterLogin } from '../applications/jobkorea-history-login.js';
 import { syncApplicationHistory } from '../../services/application-history/sync.js';
+import { collectPublicJobs } from '../../services/public-jobs/collect.js';
 import { refreshWantedSession } from '../wanted/mint-session.js';
 import { planAutoApplyStart } from './auto-apply-start.js';
 
 export const RESUME_SYNC_CRON = '0 21 * * *';
 export const HEALTH_CHECK_CRON = '0 * * * *';
+/** UTC hours of the hourly trigger that also collect public-sector postings: 07, 13, 19 KST. */
+export const PUBLIC_JOBS_HOURS_UTC = Object.freeze([22, 4, 10]);
 const HISTORY_SYNC_TIMEOUT_MS = 120_000;
 /**
  * A JobKorea login holds only in the Browser Rendering browser that made it, and the browser pool
@@ -36,7 +39,7 @@ export const CONFIG_READ_BUDGET_MS = 60_000;
  * @typedef {'RESUME_SYNC_WORKFLOW' | 'CLEANUP_WORKFLOW' | 'APPLICATION_WORKFLOW' | 'HEALTH_CHECK_WORKFLOW' | 'DAILY_REPORT_WORKFLOW'} WorkflowBindingName
  * @typedef {Parameters<typeof refreshWantedSession>[0] & Parameters<typeof fetchJobKoreaHistoryAfterLogin>[0] & Parameters<typeof planAutoApplyStart>[0] & Parameters<typeof syncApplicationHistory>[0] & {
  *   RESUME_SYNC_CRON_DRY_RUN?: string;
- * } & { [Name in WorkflowBindingName]?: WorkflowStarter }} CronEnv
+ * } & Partial<Parameters<typeof collectPublicJobs>[0]> & { [Name in WorkflowBindingName]?: WorkflowStarter }} CronEnv
  * @typedef {{ waitUntil(promise: Promise<unknown>): void }} CronContext
  * @typedef {{ binding: WorkflowBindingName; params: unknown }} WorkflowStart
  */
@@ -179,6 +182,32 @@ async function planStarts(cron, env, scheduledTime, steps) {
 }
 
 /**
+ * @param {string | undefined} cron
+ * @param {number | undefined} scheduledTime
+ * @returns {boolean}
+ */
+function isPublicJobsRun(cron, scheduledTime) {
+  if (cron !== HEALTH_CHECK_CRON || typeof scheduledTime !== 'number') return false;
+  return PUBLIC_JOBS_HOURS_UTC.includes(new Date(scheduledTime).getUTCHours());
+}
+
+/**
+ * Collects public-sector postings into D1; a failure is logged and never fails the cron.
+ * @param {CronEnv} env
+ * @param {typeof collectPublicJobs} collect
+ * @returns {Promise<void>}
+ */
+async function collectPublicJobsBestEffort(env, collect) {
+  if (!env.JOB_DB) return;
+  try {
+    const summary = await collect({ JOB_DB: env.JOB_DB });
+    console.info('[cron] public jobs collection', summary.status, JSON.stringify(summary.sources));
+  } catch (error) {
+    console.warn('[cron] public jobs collection failed:', describeReason(error));
+  }
+}
+
+/**
  * @param {CronEnv} env
  * @param {WorkflowStart} start
  * @returns {Promise<unknown>}
@@ -206,14 +235,15 @@ function describeReason(reason) {
  *   ApplicationWorkflow discovery run for Wanted unless auto-apply is disabled in D1 config
  *   or AUTO_APPLY_CRON_ENABLED=false.
  * - HEALTH_CHECK_CRON  -> HealthCheckWorkflow, plus DailyReportWorkflow with type 'weekly'
- *   when the scheduled time is Monday 00:00 UTC.
+ *   when the scheduled time is Monday 00:00 UTC, plus a best-effort public-sector posting
+ *   collection into D1 at PUBLIC_JOBS_HOURS_UTC.
  * - anything else      -> logged and ignored.
  * Every start is attempted; if any rejects (or its binding is missing) the run throws
  * after all have settled so Cloudflare records the cron invocation as failed.
  * @param {{ cron?: string; scheduledTime?: number } | undefined} controller
  * @param {CronEnv} env
  * @param {CronContext} ctx
- * @param {{ syncApplicationHistory?: typeof syncApplicationHistory; refreshSessions?: CronSteps['refresh']; refreshBudgetMs?: number; preflightBudgetMs?: number; configBudgetMs?: number; clock?: () => number }} [deps]
+ * @param {{ syncApplicationHistory?: typeof syncApplicationHistory; refreshSessions?: CronSteps['refresh']; refreshBudgetMs?: number; preflightBudgetMs?: number; configBudgetMs?: number; clock?: () => number; collectPublicJobs?: typeof collectPublicJobs }} [deps]
  * @returns {Promise<void>}
  */
 export async function scheduled(controller, env, ctx, deps = {}) {
@@ -225,6 +255,10 @@ export async function scheduled(controller, env, ctx, deps = {}) {
     configBudgetMs: deps.configBudgetMs ?? CONFIG_READ_BUDGET_MS,
     clock: deps.clock ?? Date.now,
   };
+  const collecting = isPublicJobsRun(controller?.cron, controller?.scheduledTime)
+    ? collectPublicJobsBestEffort(env, deps.collectPublicJobs ?? collectPublicJobs)
+    : null;
+  if (collecting) ctx.waitUntil(collecting);
   const starts = await planStarts(controller?.cron, env, controller?.scheduledTime, steps);
   const runs = starts.map((start) => {
     const run = startWorkflow(env, start);
@@ -232,6 +266,7 @@ export async function scheduled(controller, env, ctx, deps = {}) {
     return run;
   });
   const results = await Promise.allSettled(runs);
+  await collecting;
   const failures = starts.flatMap((start, index) => {
     const result = results[index];
     return result.status === 'rejected'

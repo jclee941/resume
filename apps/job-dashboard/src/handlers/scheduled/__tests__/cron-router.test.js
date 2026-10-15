@@ -445,6 +445,60 @@ describe('cron-router', () => {
     assert.deepEqual(startedNames(missingCleanup.calls), ['RESUME_SYNC_WORKFLOW']);
   });
 
+  it('the hourly cron collects public jobs at the collection hours only', async () => {
+    const runs = [];
+    const collectPublicJobs = async (env) => {
+      runs.push(env.JOB_DB);
+      return { status: 'success', collectedAt: 'now', sources: {} };
+    };
+    const db = { name: 'job-db' };
+    for (const [hour, expected] of [
+      [22, 1],
+      [4, 1],
+      [10, 1],
+      [23, 0],
+      [14, 0],
+    ]) {
+      runs.length = 0;
+      const { calls, env, ctx } = createHarness({ JOB_DB: db });
+      const scheduledTime = Date.UTC(2026, 9, 14, hour, 0);
+      await scheduled({ cron: HEALTH_CHECK_CRON, scheduledTime }, env, ctx, { collectPublicJobs });
+      assert.equal(runs.length, expected, `hour ${hour}`);
+      assert.deepEqual(startedNames(calls), ['HEALTH_CHECK_WORKFLOW']);
+    }
+    assert.deepEqual([...cronRouter.PUBLIC_JOBS_HOURS_UTC], [22, 4, 10]);
+  });
+
+  it('a failing public jobs collection is logged and never fails the hourly cron', async () => {
+    const { calls, env, ctx } = createHarness({ JOB_DB: {} });
+    const collectPublicJobs = async () => {
+      throw new Error('portal down');
+    };
+    const scheduledTime = Date.UTC(2026, 9, 14, 22, 0);
+    await scheduled({ cron: HEALTH_CHECK_CRON, scheduledTime }, env, ctx, { collectPublicJobs });
+    assert.deepEqual(startedNames(calls), ['HEALTH_CHECK_WORKFLOW']);
+    assert.ok(
+      warnings.some(
+        ([message, detail]) =>
+          /public jobs collection failed/.test(message) && detail === 'portal down'
+      )
+    );
+  });
+
+  it('skips the public jobs collection without a JOB_DB binding or on the daily cron', async () => {
+    let called = 0;
+    const collectPublicJobs = async () => {
+      called += 1;
+      return { status: 'success', collectedAt: 'now', sources: {} };
+    };
+    const scheduledTime = Date.UTC(2026, 9, 14, 22, 0);
+    const bare = createHarness();
+    await scheduled({ cron: HEALTH_CHECK_CRON, scheduledTime }, bare.env, bare.ctx, {
+      collectPublicJobs,
+    });
+    assert.equal(called, 0);
+  });
+
   it('names every failed workflow in the thrown error', async () => {
     const { env, ctx } = createHarness({}, ['RESUME_SYNC_WORKFLOW', 'CLEANUP_WORKFLOW']);
     await assert.rejects(scheduled({ cron: RESUME_SYNC_CRON }, env, ctx), (error) => {
