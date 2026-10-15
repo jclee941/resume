@@ -7,6 +7,7 @@
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 
 const REQUEST_TIMEOUT_MS = 15_000;
+const RETRIES = 1;
 const KST_OFFSET_MS = 9 * 3_600_000;
 
 /** @type {Record<string, string>} */
@@ -91,25 +92,36 @@ export function summarize(fields, limit = 300) {
 }
 
 /**
- * GETs `url`, or POSTs `form` as application/x-www-form-urlencoded when given.
+ * GETs `url`, or POSTs `form` as application/x-www-form-urlencoded when given. A timeout, network
+ * error, 429 or 5xx is retried once, so one slow page does not fail a whole source.
  * @param {Fetcher} fetcher
  * @param {string} url
  * @param {Record<string, string>} [form]
  * @returns {Promise<string>}
  */
 export async function fetchText(fetcher, url, form) {
-  const response = await fetcher(url, {
-    method: form ? 'POST' : 'GET',
-    headers: {
-      'User-Agent': DEFAULT_USER_AGENT,
-      Accept: 'text/html,application/json;q=0.9,*/*;q=0.8',
-      ...(form ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {}),
-    },
-    body: form ? new URLSearchParams(form).toString() : undefined,
-    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-  });
-  if (!response.ok) throw new Error(`${new URL(url).hostname} answered ${response.status}`);
-  return response.text();
+  /** @type {unknown} */
+  let failure;
+  for (let attempt = 0; attempt <= RETRIES; attempt += 1) {
+    try {
+      const response = await fetcher(url, {
+        method: form ? 'POST' : 'GET',
+        headers: {
+          'User-Agent': DEFAULT_USER_AGENT,
+          Accept: 'text/html,application/json;q=0.9,*/*;q=0.8',
+          ...(form ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {}),
+        },
+        body: form ? new URLSearchParams(form).toString() : undefined,
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      });
+      if (response.ok) return await response.text();
+      failure = new Error(`${new URL(url).hostname} answered ${response.status}`);
+      if (response.status < 500 && response.status !== 429) break;
+    } catch (error) {
+      failure = error;
+    }
+  }
+  throw failure;
 }
 
 /**
