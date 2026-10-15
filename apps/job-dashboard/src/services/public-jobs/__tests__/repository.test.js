@@ -79,6 +79,22 @@ describe('public-jobs repository', () => {
     assert.equal(fresh.match_score, 50);
   });
 
+  it('keeps a reviewed same-day deadline time and takes a moved deadline', async () => {
+    const db = createSqliteD1();
+    await upsertPublicPostings(db, [posting('alio-1')], new Date('2026-10-15T00:00:00Z'));
+    db.sqlite
+      .prepare(
+        "UPDATE job_search_results SET status = 'recommended', expires_at = '2026-10-15T09:00:00Z' WHERE id = 'alio-1'"
+      )
+      .run();
+    const deadline = (value) =>
+      upsertPublicPostings(db, [posting('alio-1', { deadline: value })], new Date());
+    await deadline('2026-10-15T14:59:59Z');
+    assert.equal(rows(db)[0].expires_at, '2026-10-15T09:00:00Z');
+    await deadline('2026-10-22T14:59:59Z');
+    assert.equal(rows(db)[0].expires_at, '2026-10-22T14:59:59Z');
+  });
+
   it('writes nothing for an empty harvest', async () => {
     const db = createSqliteD1();
     assert.equal(await upsertPublicPostings(db, [], new Date()), 0);
