@@ -2,7 +2,8 @@
  * @fileoverview Upserts public-sector postings into D1 `job_search_results` under the ids
  * `alio-<idx>`, `cleaneye-<year>-<entity>-<seq>` and `gojobs-<sn>`. New rows start as `new`. A row
  * already moved off `new` (a review's `recommended`/`ineligible`, or the owner's own status) keeps
- * its status and every curated field; only its address, deadline and crawl time are refreshed.
+ * its status and every curated field; only its address, deadline and crawl time are refreshed,
+ * and a deadline on the same Korean date keeps the reviewed time (e.g. 18:00 instead of 23:59).
  * @module services/public-jobs/repository
  */
 import { canonicalizeJobUrl } from '../../job-url-canonicalization.js';
@@ -15,7 +16,9 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?, ?, ?, ?)
 ON CONFLICT (id) DO UPDATE SET
   source_url = excluded.source_url,
   canonical_url = excluded.canonical_url,
-  expires_at = excluded.expires_at,
+  expires_at = CASE WHEN job_search_results.status = 'new' OR job_search_results.expires_at IS NULL
+    OR date(job_search_results.expires_at, '+9 hours') != date(excluded.expires_at, '+9 hours')
+    THEN excluded.expires_at ELSE job_search_results.expires_at END,
   crawled_at = excluded.crawled_at,
   updated_at = excluded.updated_at,
   position = CASE WHEN job_search_results.status = 'new' THEN excluded.position ELSE job_search_results.position END,
