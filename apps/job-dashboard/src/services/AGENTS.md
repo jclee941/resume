@@ -17,6 +17,7 @@ services/
   application-history/    Adapters, timestamps, repository, sync orchestration
   notification/           Singular compatibility export barrel
   notifications/          Delivery, formatting, history, Telegram actions
+  public-jobs/            잡알리오, 클린아이, 나라일터 posting collection into job_search_results
   remember/               Login, search, apply, Browser Rendering REST
   resume-platform-sync/   Platform-specific resume editors and dispatch
   skcareers/              Login and resume editor/save helpers
