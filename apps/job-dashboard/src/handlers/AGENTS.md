@@ -18,6 +18,7 @@ handlers/
   auto-apply/    Run/start/status/config, scoring, and duplicate checks
   browser/       Browser Rendering smoke check
   jobkorea/      Session minting and page helpers
+  public-jobs/   On-demand public-sector posting collection
   scheduled/     Cron router and auto-apply start plan
   sync/          Profile-sync status
   wanted/        Wanted session minting

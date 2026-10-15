@@ -217,6 +217,73 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApplicationHistorySyncResult'
 
+  /api/public-jobs/collect:
+    post:
+      operationId: collectPublicJobs
+      security:
+        - AdminSessionCookie: []
+          CsrfHeader: []
+          CsrfCookie: []
+        - LegacyAdminBearer: []
+          CsrfHeader: []
+          CsrfCookie: []
+      tags: [Search]
+      summary: Collect open public-sector IT/security postings into D1
+      description: >
+        Reads 잡알리오 (job.alio.go.kr), 클린아이 잡플러스 (job.cleaneye.go.kr, 서울·인천·경기 only)
+        and 나라일터 (gojobs.go.kr), keeps postings whose text reads as an IT/security job, and
+        upserts them into `job_search_results` as `alio-<idx>`, `cleaneye-<year>-<entity>-<seq>`
+        and `gojobs-<sn>`. Rows already moved off `new` keep their status and curated fields.
+        Also runs on the hourly cron at 22:00, 04:00 and 10:00 UTC.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sources:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    enum: [alio, cleaneye, gojobs]
+      responses:
+        '200':
+          description: Collection summary; `status` is success or partial
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, collectedAt, sources]
+                properties:
+                  status:
+                    type: string
+                    enum: [success, partial, failed]
+                  collectedAt:
+                    type: string
+                    format: date-time
+                  sources:
+                    type: object
+                    description: Per source either counts or an error message
+                    additionalProperties:
+                      type: object
+                      properties:
+                        listed:
+                          type: integer
+                        candidates:
+                          type: integer
+                        failed:
+                          type: integer
+                        saved:
+                          type: integer
+                        error:
+                          type: string
+        '400':
+          description: Invalid sources or body
+        '502':
+          description: Every requested source failed
+
   /api/applications/{id}:
     parameters:
       - name: id
