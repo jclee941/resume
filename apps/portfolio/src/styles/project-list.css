@@ -37,7 +37,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: 44px;
+  min-height: var(--control-min);
   color: var(--text-primary);
 }
 

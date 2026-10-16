@@ -1,0 +1,121 @@
+:root {
+  /* Technology brand colors: only inside project technology tags */
+  --tag-splunk: #ff6b35;
+  --tag-webhook: #ea4b71;
+  --tag-fortimanager: #00a8e0;
+  --tag-python: #3776ab;
+  --tag-docker: #2496ed;
+  --tag-ansible: #ee0000;
+  --tag-vmware: #607078;
+  --tag-postgresql: #4169e1;
+  --tag-aws: #ff9900;
+  --tag-nsx: #77bc43;
+  --tag-wazuh: #339966;
+
+  --surface-header: rgb(var(--bg-primary-rgb) / 0.82);
+  --surface-interactive: rgb(var(--bg-card-rgb) / 0.72);
+  --surface-ghost: rgb(var(--bg-secondary-rgb) / 0.8);
+  --surface-inset: rgb(var(--bg-primary-rgb) / 0.5);
+  --surface-pill: rgb(var(--bg-secondary-rgb) / 0.7);
+  --surface-bar: rgb(var(--bg-card-rgb) / 0.9);
+  --surface-chrome: rgb(var(--bg-primary-rgb) / 0.45);
+  --surface-diagram: rgb(var(--bg-primary-rgb) / 0.6);
+  --surface-featured:
+    linear-gradient(180deg, var(--accent-wash-1), transparent 12rem), var(--glass-bg);
+  --surface-hero: linear-gradient(
+    160deg,
+    rgb(var(--bg-card-rgb) / 0.96) 0%,
+    rgb(var(--bg-primary-rgb) / 0.84) 62%,
+    rgb(var(--color-accent-rgb) / 0.08) 100%
+  );
+  --success-wash: rgb(var(--color-success-rgb) / 0.08);
+  --success-line: rgb(var(--color-success-rgb) / 0.3);
+  --success-ring: rgb(var(--color-success-rgb) / 0.2);
+  --warning-wash: rgb(var(--color-warning-rgb) / 0.1);
+  --warning-line: rgb(var(--color-warning-rgb) / 0.32);
+  --tag-mix-edge: 30%;
+  --tag-mix-wash: 12%;
+  --tag-mix-ink: 58%;
+  --overlay-blur: blur(6px);
+
+  --ring-marker: 0 0 0 3px var(--accent-wash-3);
+  --ring-marker-success: 0 0 0 3px var(--success-ring);
+  --ring-node: 0 0 0 2px var(--accent-line);
+  --ring-node-current:
+    0 0 0 2px rgb(var(--color-success-rgb) / 0.5), 0 0 0 6px rgb(var(--color-success-rgb) / 0.12);
+  --marker-dot: 6px;
+  --marker-dot-hero: 7px;
+  --marker-pip: 5px;
+  --marker-node: 14px;
+  --marker-node-compact: 12px;
+  --marker-node-edge: 3px;
+  --check-glyph-width: 6px;
+  --check-glyph-height: 10px;
+  --glyph-stroke: 2px;
+  --rule-thick: 2px;
+
+  --icon-xs: 13px;
+  --icon-sm: 16px;
+  --icon-md: 18px;
+  --icon-lg: 22px;
+  --icon-xl: 28px;
+  --icon-box-sm: 24px;
+  --icon-box-md: 36px;
+  --icon-box-lg: 44px;
+  --icon-box-xl: 56px;
+  --menu-glyph-width: 20px;
+  --menu-glyph-gap: 6px;
+  --portrait-width: 100px;
+  --portrait-height: 128px;
+  --portrait-width-compact: 64px;
+  --portrait-height-compact: 82px;
+
+  --space-0-5: 2px;
+  --space-1-5: 6px;
+  --case-note-label-width: 5.5rem;
+  --modal-max-width: 800px;
+  --metric-min-width: 150px;
+  --skill-column-width: 16rem;
+  --step-index-size: 1.45rem;
+
+  --measure-hero: 30em;
+  --measure-proof: 46rem;
+  --measure-headline: 26ch;
+  --measure-letter: 66ch;
+  --measure-closing: 62ch;
+
+  --diagram-text: 14px;
+  --diagram-text-sm: 12px;
+  --diagram-stroke: 2px;
+  --diagram-halo: 4px;
+  --leading-diagram: 1.45;
+
+  /* Latin-only label tracking; localized labels keep --tracking-label */
+  --tracking-index: 0.04em;
+  --tracking-caps: 0.12em;
+  --tracking-chrome: 0.06em;
+  --tracking-meta: 0.02em;
+
+  --motion-enter: 12px;
+  --motion-nudge: 4px;
+  --motion-glyph: 2px;
+  --motion-press: 1px;
+
+  --focus-ring-width: 2px;
+  --focus-ring-width-strong: 3px;
+  --focus-ring-offset: 2px;
+  --focus-ring-offset-wide: 3px;
+  --underline-offset: 3px;
+  --underline-thickness: 2px;
+
+  --print-paper: #fff;
+  --print-ink: #000;
+  --print-rule: #999;
+  --print-rule-soft: #bbb;
+  --print-space-lg: 0.8cm;
+  --print-space-md: 0.5cm;
+  --print-space-sm: 0.4cm;
+  --print-space-xs: 0.3cm;
+  --print-text: 11pt;
+  --print-small: 0.85em;
+}

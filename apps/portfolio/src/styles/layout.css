@@ -46,7 +46,7 @@ main > .section-hero + section {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   font-weight: var(--font-medium);
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-index);
 }
 
 .site-footer {

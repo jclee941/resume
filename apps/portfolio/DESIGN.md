@@ -454,14 +454,18 @@ full `--bg-secondary` band lose their tonal step exactly where the reader is loo
 - `prefers-contrast: more` strengthens the dark theme (brighter secondary/muted text,
   stronger borders, solid surfaces); it never swaps individual tokens to a light theme.
 - `forced-colors: active` hands surfaces and focus to system colors.
-- Touch targets are at least 44×44px; focus-visible rings are 2px accent with offset.
+- Touch targets are at least 44×44px (`--control-min`) with at least 8px between
+  neighbours; focus-visible rings are 2px accent with offset (`--focus-ring-*`).
+- Control edges keep 3:1 against their surface (`--border-control`).
 - Print renders black on white with link targets and no interactive chrome.
 
 ## 9. CSS Architecture
 
 `src/styles/main.css` is the ordered import graph; cascade order is part of behavior:
 
-1. Tokens: `variables.css` (the only token source).
+1. Tokens: `variables.css` (foundations: palette, washes, states, type, spacing, motion)
+   and `variables-components.css` (technology tag colors and component recipes: surfaces,
+   rings, markers, icons, measures, diagram type, focus, print). No other file defines tokens.
 2. Base: `base.css`, `accessibility.css`.
 3. Layout: `layout.css`, `site-header.css`.
 4. Primitives: `surfaces.css`, `buttons.css`.
@@ -479,6 +483,8 @@ override layers; a fix lands in the file that owns the component.
   (`lib/japanese-template/`), so JA-only layout needs land as CSS `:lang(ja)` rules.
 - Inline `<style>` blocks in the content-pack HTML shells (font faces, theme transitions)
   stay outside this stylesheet because their CSP hashes are computed at build time.
+- `@page` cannot read `:root` custom properties, so the print page margin stays a literal in
+  `print.css`.
 
 ## 11. Template Size Exception
 

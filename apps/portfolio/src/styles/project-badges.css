@@ -1,10 +1,10 @@
 .project-meta-badge {
   display: inline-flex;
   align-items: center;
-  padding: 2px var(--space-2);
+  padding: var(--space-0-5) var(--space-2);
   border: 1px solid var(--border-secondary);
   border-radius: var(--radius-full);
-  background: rgb(var(--bg-primary-rgb) / 0.5);
+  background: var(--surface-inset);
   color: var(--text-secondary);
   font-family: var(--font-label);
   font-size: var(--text-xs);
@@ -25,19 +25,19 @@
 
 .project-meta-badge--live,
 .project-meta-badge--repo {
-  border-color: rgb(var(--color-success-rgb) / 0.3);
-  background: rgb(var(--color-success-rgb) / 0.08);
+  border-color: var(--success-line);
+  background: var(--success-wash);
   color: var(--color-success);
 }
 
 .tech-tag {
   --tag-ink: var(--color-accent-strong);
 
-  padding: 2px var(--space-2);
-  border: 1px solid color-mix(in srgb, var(--tag-ink) 30%, transparent);
+  padding: var(--space-0-5) var(--space-2);
+  border: 1px solid color-mix(in srgb, var(--tag-ink) var(--tag-mix-edge), transparent);
   border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--tag-ink) 12%, transparent);
-  color: color-mix(in srgb, var(--tag-ink) 58%, var(--text-primary));
+  background: color-mix(in srgb, var(--tag-ink) var(--tag-mix-wash), transparent);
+  color: color-mix(in srgb, var(--tag-ink) var(--tag-mix-ink), var(--text-primary));
   font-family: var(--font-mono);
   font-size: var(--text-xs);
 }

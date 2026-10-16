@@ -1,6 +1,6 @@
 .cover-letter__closing {
   display: grid;
-  grid-template-columns: max-content minmax(0, 62ch);
+  grid-template-columns: max-content minmax(0, var(--measure-closing));
   align-items: baseline;
   gap: var(--space-3);
   margin: 0;
@@ -9,7 +9,7 @@
   background: var(--accent-wash-1);
   color: var(--text-primary);
   font-family: var(--font-sans);
-  font-size: var(--text-sm);
+  font-size: var(--text-support);
   font-weight: var(--font-medium);
   line-height: var(--leading-relaxed);
 }

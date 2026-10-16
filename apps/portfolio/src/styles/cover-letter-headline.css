@@ -1,6 +1,6 @@
 .cover-letter__headline {
   position: relative;
-  max-width: 26ch;
+  max-width: var(--measure-headline);
   margin: 0;
   padding: var(--space-16) var(--space-8) var(--space-5);
   color: var(--text-primary);
@@ -39,7 +39,7 @@
   content: '';
   display: block;
   width: var(--space-12);
-  height: 2px;
+  height: var(--rule-thick);
   margin-top: var(--space-5);
   border-radius: var(--radius-full);
   background: linear-gradient(90deg, var(--color-accent), transparent);

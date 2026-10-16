@@ -30,8 +30,8 @@
 
 .hero-portrait .profile-card__photo {
   display: block;
-  width: 100px;
-  height: 128px;
+  width: var(--portrait-width);
+  height: var(--portrait-height);
   border-radius: var(--radius-lg);
   object-fit: cover;
 }
@@ -91,8 +91,8 @@
   }
 
   .hero-portrait .profile-card__photo {
-    width: 64px;
-    height: 82px;
+    width: var(--portrait-width-compact);
+    height: var(--portrait-height-compact);
   }
 
   .hero-cta {

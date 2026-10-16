@@ -24,10 +24,10 @@
   align-items: center;
   column-gap: var(--space-3);
   row-gap: var(--space-1);
-  min-height: 48px;
+  min-height: var(--space-12);
   padding: var(--space-3) var(--space-4);
   font-family: var(--font-mono);
-  font-size: var(--text-sm);
+  font-size: var(--text-support);
 }
 
 .contact-item::before {
@@ -52,7 +52,7 @@
 .contact-item__value {
   grid-column: 2;
   color: var(--text-muted);
-  font-size: var(--text-sm);
+  font-size: var(--text-support);
   overflow-wrap: anywhere;
   user-select: text;
 }
@@ -62,7 +62,7 @@
   grid-column: 1 / -1;
   min-height: 1em;
   color: var(--color-accent-light);
-  font-size: var(--text-sm);
+  font-size: var(--text-support);
 }
 
 .contact-item--email.is-copied {

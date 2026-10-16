@@ -64,10 +64,20 @@ describe('portfolio visual CSS contract', () => {
     );
   });
 
+  // Component styles reference tokens; resolve them against variables.css before checking values.
+  const tokenSource = readStyle('variables.css') + readStyle('variables-components.css');
+  const resolveTokens = (css) =>
+    css.replace(/var\((--[\w-]+)\)/g, (match, name) => {
+      const value = tokenSource.match(new RegExp(`${name}:\\s*([^;]+);`));
+      return value ? value[1].trim() : match;
+    });
+
   test('S4 hero proof list stays one readable column at every width', () => {
     const proofCss = readStyle('hero-proof.css');
 
-    expect(proofCss).toMatch(/\.hero-proof-list\s*{[^}]*display: grid;[^}]*max-width: 46rem;/);
+    expect(resolveTokens(proofCss)).toMatch(
+      /\.hero-proof-list\s*{[^}]*display: grid;[^}]*max-width: 46rem;/
+    );
     expect(proofCss).not.toMatch(/grid-template-columns: repeat\(2/);
     expect(proofCss).not.toContain('@media');
   });
@@ -131,7 +141,7 @@ describe('portfolio visual CSS contract', () => {
     const aboutCss = readStyle('about.css');
     const aboutContent = aboutCss.match(/\.about-content\s*{[^}]*}/);
     expect(aboutContent).toBeTruthy();
-    const m = aboutContent[0].match(/max-width:\s*(\d+)ch/);
+    const m = resolveTokens(aboutContent[0]).match(/max-width:\s*(\d+)ch/);
     expect(m).toBeTruthy();
     expect(Number(m[1])).toBeLessThanOrEqual(75);
     expect(Number(m[1])).toBeGreaterThanOrEqual(45);
