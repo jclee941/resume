@@ -140,7 +140,7 @@
 
 @media (min-width: 1024px) {
   .project-card--featured {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) var(--featured-diagram-width);
     grid-template-rows: auto auto auto auto 1fr;
     grid-template-areas:
       'header meta'
