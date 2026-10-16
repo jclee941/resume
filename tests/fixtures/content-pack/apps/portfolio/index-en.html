@@ -278,8 +278,23 @@
         <header class="site-header">
           <nav class="minimal-nav" role="navigation" aria-label="Zite zidapemino">
             <a href="/" class="nav-logo">~/tevus</a>
+            <ul class="lang-switcher lang-switcher--phone" aria-label="Kikolevi">
+              <li><a href="/" hreflang="ko" class="lang-link" lang="ko">VA</a></li>
+              <li>
+                <a
+                  href="/en/"
+                  hreflang="en"
+                  aria-current="true"
+                  class="lang-link lang-link--active"
+                  lang="en"
+                  >FU</a
+                >
+              </li>
+              <li><a href="/ja/" hreflang="ja" class="lang-link" lang="ja">KI</a></li>
+            </ul>
             <button
               class="nav-toggle"
+              data-tooltip
               aria-label="Open navigation"
               data-nav-label-open="Open navigation"
               data-nav-label-close="Close navigation"
@@ -295,7 +310,7 @@
               <a href="#about" class="nav-link">Sizap</a>
               <a href="#contact" class="nav-link">Tepodup</a>
             </div>
-            <ul class="lang-switcher" aria-label="Kikolevi">
+            <ul class="lang-switcher lang-switcher--desktop" aria-label="Kikolevi">
               <li><a href="/" hreflang="ko" class="lang-link" lang="ko">VA</a></li>
               <li>
                 <a

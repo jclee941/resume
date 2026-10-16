@@ -2,10 +2,27 @@
   display: none;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: var(--control-min);
+  height: var(--control-min);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-md);
   color: var(--text-primary);
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base);
+}
+
+@media (hover: hover) {
+  .nav-toggle:hover {
+    border-color: var(--state-hover-border);
+    background-image: var(--state-hover-fill);
+  }
+}
+
+.nav-toggle:active {
+  border-color: var(--state-hover-border);
+  background-image: var(--state-pressed-fill);
+  transition-duration: 0s;
 }
 
 .hamburger,

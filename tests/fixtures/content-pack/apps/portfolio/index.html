@@ -289,8 +289,23 @@
         <header class="site-header">
           <nav class="minimal-nav" role="navigation" aria-label="Zite zidapemino">
             <a href="/" class="nav-logo" aria-label="~/tevus 홈으로 이동">~/tevus</a>
+            <ul class="lang-switcher lang-switcher--phone" aria-label="언어 선택 / Kikolevi">
+              <li>
+                <a
+                  href="/"
+                  hreflang="ko"
+                  aria-current="true"
+                  class="lang-link lang-link--active"
+                  lang="ko"
+                  >VA</a
+                >
+              </li>
+              <li><a href="/en/" hreflang="en" class="lang-link" lang="en">FU</a></li>
+              <li><a href="/ja/" hreflang="ja" class="lang-link" lang="ja">KI</a></li>
+            </ul>
             <button
               class="nav-toggle"
+              data-tooltip
               aria-label="메뉴 열기"
               data-nav-label-open="메뉴 열기"
               data-nav-label-close="메뉴 닫기"
@@ -306,7 +321,7 @@
               <a href="#about" class="nav-link">소개</a>
               <a href="#contact" class="nav-link">연락처</a>
             </div>
-            <ul class="lang-switcher" aria-label="언어 선택 / Kikolevi">
+            <ul class="lang-switcher lang-switcher--desktop" aria-label="언어 선택 / Kikolevi">
               <li>
                 <a
                   href="/"
