@@ -26,9 +26,9 @@
   align-items: center;
   justify-content: center;
   min-width: 0;
-  min-height: 44px;
+  min-height: var(--control-min);
   padding: var(--space-2);
-  border: 1px solid var(--border-secondary);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-md);
   background: var(--accent-wash-1);
   color: var(--text-primary);
@@ -41,8 +41,23 @@
 
 .recruiter-action-bar__link {
   flex: 1 1 auto;
-  min-width: 44px;
+  min-width: var(--control-min);
   white-space: nowrap;
+}
+
+@media (hover: hover) {
+  .recruiter-action-bar__link:hover,
+  .recruiter-action-bar__dismiss:hover {
+    border-color: var(--state-hover-border);
+    background-image: var(--state-hover-fill);
+  }
+}
+
+.recruiter-action-bar__link:active,
+.recruiter-action-bar__dismiss:active {
+  border-color: var(--state-hover-border);
+  background-image: var(--state-pressed-fill);
+  transition-duration: 0s;
 }
 
 .recruiter-action-bar__link:first-child {
@@ -55,9 +70,25 @@
 }
 
 .recruiter-action-bar__dismiss {
-  flex: 0 0 44px;
-  width: 44px;
+  position: relative;
+  flex: 0 0 var(--control-min);
+  width: var(--control-min);
   color: var(--text-muted);
+}
+
+@media (hover: hover) {
+  .recruiter-action-bar__link:first-child:hover {
+    border-color: transparent;
+    background-color: var(--color-accent-light);
+    background-image: var(--sheen-accent);
+  }
+}
+
+.recruiter-action-bar__link:first-child:active {
+  border-color: transparent;
+  background-color: var(--color-accent);
+  background-image: none;
+  box-shadow: none;
 }
 
 .recruiter-action-bar__dismiss-icon {
@@ -77,10 +108,20 @@
 
 @media (max-width: 420px) {
   .recruiter-action-bar {
-    gap: var(--space-1);
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 360px) {
+  .recruiter-action-bar__link:first-child {
+    flex-basis: 100%;
   }
 
-  .recruiter-action-bar__link {
-    padding: var(--space-1);
+  .recruiter-action-bar__link:not(:first-child) {
+    flex-basis: 0;
+  }
+
+  body {
+    padding-bottom: calc(var(--space-20) + var(--control-min) + var(--space-2));
   }
 }

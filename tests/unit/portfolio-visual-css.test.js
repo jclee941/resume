@@ -131,7 +131,7 @@ describe('portfolio visual CSS contract', () => {
     const headerCss = readStyle('site-header.css');
     const langLink = headerCss.match(/\.lang-link\s*{[^}]*}/);
     expect(langLink).toBeTruthy();
-    expect(langLink[0]).toMatch(/min-height:\s*44px/);
+    expect(langLink[0]).toMatch(/min-height:\s*(?:44px|var\(--control-min\))/);
     expect(headerCss).toMatch(/\.lang-link:focus-visible\s*{[^}]*outline/);
   });
 
@@ -266,7 +266,9 @@ describe('portfolio visual CSS contract', () => {
     expect(actionBarCss).toMatch(
       /\.recruiter-action-bar__link\s*{[^}]*flex:\s*1 1 auto;[^}]*white-space:\s*nowrap;/
     );
-    expect(actionBarCss).toMatch(/\.recruiter-action-bar__dismiss\s*{[^}]*flex:\s*0 0 44px;/);
+    expect(actionBarCss).toMatch(
+      /\.recruiter-action-bar__dismiss\s*{[^}]*flex:\s*0 0 (?:44px|var\(--control-min\));/
+    );
     expect(mobileBar).toMatch(/\.recruiter-action-bar\.is-visible\s*{[^}]*display:\s*flex;/);
 
     expect(skillCardCss).toMatch(/\.skill-domain-card__header\s*{[^}]*flex-wrap:\s*wrap;/);

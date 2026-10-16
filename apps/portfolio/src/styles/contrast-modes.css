@@ -55,6 +55,12 @@
     color: VisitedText;
   }
 
+  [data-tooltip]::after {
+    border-color: CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
+
   .link-subtle--primary {
     background: ButtonFace;
     color: ButtonText;

@@ -4,9 +4,9 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  min-height: 44px;
+  min-height: var(--control-min);
   padding: var(--space-2) var(--space-5);
-  border: 1px solid var(--border-secondary);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-full);
   background: rgb(var(--bg-secondary-rgb) / 0.8);
   color: var(--text-primary);
@@ -24,15 +24,27 @@
     transform var(--transition-fast);
 }
 
-.link-subtle:hover,
-.hero-link:hover {
-  background: var(--accent-wash-2);
-  color: var(--color-accent-strong);
+@media (hover: hover) {
+  .link-subtle:hover,
+  .hero-link:hover {
+    border-color: var(--state-hover-border);
+    background-image: var(--state-hover-fill);
+  }
 }
 
 .link-subtle:active,
 .hero-link:active {
+  border-color: var(--state-hover-border);
+  background-image: var(--state-pressed-fill);
   transform: translateY(1px);
+  transition-duration: 0s;
+}
+
+.link-subtle:disabled,
+.link-subtle[aria-disabled='true'],
+.hero-link[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.72;
 }
 
 .link-subtle--primary {
@@ -44,10 +56,19 @@
   font-weight: var(--font-semibold);
 }
 
-.link-subtle--primary:hover {
-  background-color: var(--color-accent-light);
-  background-image: var(--sheen-accent);
-  color: var(--text-inverse);
+@media (hover: hover) {
+  .link-subtle--primary:hover {
+    border-color: transparent;
+    background-color: var(--color-accent-light);
+    background-image: var(--sheen-accent);
+  }
+}
+
+.link-subtle--primary:active {
+  border-color: transparent;
+  background-color: var(--color-accent);
+  background-image: none;
+  box-shadow: none;
 }
 
 .hero-download,
@@ -67,9 +88,9 @@
   z-index: var(--z-float);
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--glass-border);
+  width: var(--control-min);
+  height: var(--control-min);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-md);
   background: var(--glass-bg);
   -webkit-backdrop-filter: var(--glass-blur);
@@ -91,8 +112,17 @@
   visibility: visible;
 }
 
-.back-to-top:hover {
-  background: var(--glass-bg-hover);
+@media (hover: hover) {
+  .back-to-top:hover {
+    border-color: var(--state-hover-border);
+    background-image: var(--state-hover-fill);
+  }
+}
+
+.back-to-top:active {
+  border-color: var(--state-hover-border);
+  background-image: var(--state-pressed-fill);
+  transition-duration: 0s;
 }
 
 @media (max-width: 768px) {

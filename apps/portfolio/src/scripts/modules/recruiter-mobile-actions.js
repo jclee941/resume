@@ -53,6 +53,7 @@ export function renderMobileActionBar(labels) {
   dismiss.type = 'button';
   dismiss.className = 'recruiter-action-bar__dismiss';
   dismiss.setAttribute('aria-label', labels.dismiss);
+  dismiss.setAttribute('data-tooltip', 'above');
   dismiss.appendChild(createIconElement('x', 'recruiter-action-bar__dismiss-icon'));
   bar.append(
     createActionLink(actions.mail, labels.contact),

@@ -130,6 +130,8 @@
   --section-gap: clamp(2rem, 1.25rem + 2.5vw, 2.5rem);
   --measure-prose: 70ch;
   --control-min: 44px;
+  --state-hover-fill: linear-gradient(var(--state-hover-bg), var(--state-hover-bg));
+  --state-pressed-fill: linear-gradient(var(--state-pressed-bg), var(--state-pressed-bg));
 
   --radius-sm: 4px;
   --radius-md: 8px;
