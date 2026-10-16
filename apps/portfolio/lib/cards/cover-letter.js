@@ -1,5 +1,5 @@
 const { escapeHtml } = require('../template-sanitizer');
-const { glueKoreanPhrases, keepHyphenatedTokens } = require('./text-breaks');
+const { breakJapanesePhrases, glueKoreanPhrases, keepHyphenatedTokens } = require('./text-breaks');
 
 const JAPANESE_ATOMIC_PHRASE = /(?:\(株\))?[\p{Script=Katakana}ー]{2,}/gu;
 const ATOMIC_CLASS = 'cover-letter__atomic-phrase';
@@ -23,7 +23,10 @@ const ATOMIC_CLASS = 'cover-letter__atomic-phrase';
  * @returns {string}
  */
 function renderParagraphText(value) {
-  const text = keepHyphenatedTokens(glueKoreanPhrases(escapeHtml(value)), ATOMIC_CLASS);
+  const text = keepHyphenatedTokens(
+    breakJapanesePhrases(glueKoreanPhrases(escapeHtml(value))),
+    ATOMIC_CLASS
+  ).replace(/·/g, '·<wbr>');
   return text.replace(JAPANESE_ATOMIC_PHRASE, `<span class="${ATOMIC_CLASS}">$&</span>`);
 }
 

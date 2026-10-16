@@ -142,14 +142,14 @@ describe('generateCareerTimeline()', () => {
     );
   });
 
-  test('Japanese prose keeps katakana runs unbroken; other locales are left alone', () => {
+  test('Japanese prose keeps katakana runs unbroken and may wrap between words; other locales are left alone', () => {
     const entry = career(0, {
       achievements: ['セキュリティ基盤を構築', 'two', 'three', 'エンドポイント監視'],
       description: 'システムを運用しました',
     });
     const ja = generateCareerTimeline([entry], 'ja');
-    expect(ja).toContain('<span class="atomic-phrase">セキュリティ</span>基盤を構築');
-    expect(ja).toContain('<span class="atomic-phrase">エンドポイント</span>監視');
+    expect(ja).toContain('<span class="atomic-phrase">セキュリティ</span><wbr>基盤を構築');
+    expect(ja).toContain('<span class="atomic-phrase">エンドポイント</span><wbr>監視');
     expect(ja).toContain('<span class="atomic-phrase">システム</span>を運用しました');
     expect(generateCareerTimeline([entry], 'ko')).not.toContain('atomic-phrase');
     expect(generateCareerTimeline([entry], 'en')).not.toContain('atomic-phrase');

@@ -2,6 +2,7 @@ const {
   formatAwardName,
   glueKoreanPhrases,
   keepHyphenatedTokens,
+  breakJapanesePhrases,
 } = require('../../../../../apps/portfolio/lib/cards/text-breaks');
 
 describe('cards/text-breaks', () => {
@@ -34,5 +35,19 @@ describe('cards/text-breaks', () => {
       '2026\u00a0全国<wbr>ロボットコンテスト<wbr>優秀賞'
     );
     expect(formatAwardName('<b>Award</b>')).toBe('&lt;b&gt;Award&lt;/b&gt;');
+  });
+
+  it('lets long Japanese phrases wrap between words and before the verb after ように', () => {
+    expect(breakJapanesePhrases('情報セキュリティシステム運用を担当しました。')).toBe(
+      '情報<wbr>セキュリティシステム<wbr>運用を担当しました。'
+    );
+    expect(breakJapanesePhrases('再利用できるようにしました。')).toBe(
+      '再利用できるように<wbr>しました。'
+    );
+    // One-character suffixes and prefixes stay attached; other scripts pass through.
+    expect(breakJapanesePhrases('スクリプト化と各セキュリティ')).toBe(
+      'スクリプト化と各セキュリティ'
+    );
+    expect(breakJapanesePhrases('보안 운영 automation')).toBe('보안 운영 automation');
   });
 });
