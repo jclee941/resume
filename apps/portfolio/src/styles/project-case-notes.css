@@ -25,7 +25,7 @@
   max-width: var(--measure-prose);
   margin: 0;
   color: var(--text-secondary);
-  font-size: var(--text-support);
+  font-size: var(--text-prose-compact);
   line-height: var(--leading-relaxed);
   overflow-wrap: anywhere;
 }
