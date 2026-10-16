@@ -264,6 +264,10 @@ tests depend on them.
 - **Order**: education, awards, languages, open source, military. Awards sit beside
   education because both come from the same school, and this order balances the two
   desktop columns.
+- **Award names**: a leading year is joined to the next word with a no-break space, so a
+  narrow column never leaves the year alone on its line, and Japanese names get `<wbr>` where
+  kanji meet katakana so they wrap between words instead of inside one; the visible text stays
+  verbatim.
 - **Type**: labels in `--font-label`; values in `--font-sans`.
 - **Languages**: names and proficiency levels are translated at render time on KO and JA
   pages; the EN page shows the source values. Each language sits on its own line, and a
