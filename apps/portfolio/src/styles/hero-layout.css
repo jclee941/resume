@@ -21,7 +21,6 @@
 
 .hero-portrait {
   margin: 0;
-  padding: var(--space-2);
   border: 1px solid var(--accent-line-soft);
   border-radius: var(--radius-xl);
   background: linear-gradient(160deg, var(--accent-wash-3), var(--accent-wash-1));
@@ -83,11 +82,19 @@
     flex-direction: row;
     align-items: center;
   }
+
+  .hero-portrait {
+    flex: none;
+  }
 }
 
 @media (max-width: 640px) {
   .hero-layout {
     gap: var(--space-6);
+  }
+
+  .hero-portrait.profile-card {
+    padding: var(--space-2);
   }
 
   .hero-portrait .profile-card__photo {
