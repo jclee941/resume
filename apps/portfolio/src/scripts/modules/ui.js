@@ -1,7 +1,10 @@
 import { initContactCopy } from './contact-copy.js';
+import { initAnchorScroll } from './anchor-scroll.js';
+import { onCoverLetterResize, overlapsCoverLetterText } from './cover-letter-overlap.js';
+import { preferredScrollBehavior } from './scroll-behavior.js';
 
 export function initUI() {
-  initSmoothScroll();
+  initAnchorScroll();
   initNavScrollEffect();
   initScrollReveal();
   initSectionAnalytics();
@@ -39,30 +42,6 @@ function initSectionAnalytics() {
     { threshold: 0.1 }
   );
   sections.forEach((el) => obs.observe(el));
-}
-
-function initSmoothScroll() {
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener(
-      'click',
-      /**
-       * @this {Element}
-       * @param {Event} e
-       */
-      function (e) {
-        e.preventDefault();
-        const target = document.querySelector(/** @type {string} */ (this.getAttribute('href')));
-        if (target) {
-          const offset = 80;
-          const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
-          window.scrollTo({
-            top: targetPosition,
-            behavior: 'smooth',
-          });
-        }
-      }
-    );
-  });
 }
 
 function initNavScrollEffect() {
@@ -169,21 +148,24 @@ function initBackToTop() {
   const btn = document.createElement('button');
   btn.className = 'back-to-top';
   btn.setAttribute('aria-label', backToTopLabel);
+  btn.setAttribute('data-tooltip', 'above');
   btn.textContent = '↑';
   document.body.appendChild(btn);
 
   function toggleVisibility() {
-    const visible = window.scrollY > 400;
+    const visible = window.scrollY > 400 && !overlapsCoverLetterText(btn);
     btn.classList.toggle('visible', visible);
     btn.setAttribute('aria-hidden', String(!visible));
     btn.tabIndex = visible ? 0 : -1;
   }
 
   btn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: preferredScrollBehavior() });
   });
 
   window.addEventListener('scroll', toggleVisibility, { passive: true });
+  window.addEventListener('resize', toggleVisibility, { passive: true });
+  onCoverLetterResize(toggleVisibility);
   toggleVisibility();
 }
 

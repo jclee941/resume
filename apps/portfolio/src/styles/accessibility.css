@@ -44,6 +44,7 @@ button:focus-visible,
   outline-offset: 3px;
 }
 
-:focus:not(:focus-visible) {
+:focus:not(:focus-visible),
+[data-anchor-target]:focus {
   outline: none;
 }
