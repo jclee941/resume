@@ -1,5 +1,13 @@
 import { createIconElement, getTechClass } from './project-card-formatting.js';
 import { createArchitectureElement } from './project-architecture-renderer.js';
+import {
+  createAchievements,
+  createElement,
+  createKeyHint,
+  createMetrics,
+  createPeriod,
+  createTools,
+} from './project-deep-dive-parts.js';
 
 /**
  * @typedef {Object} DeepDiveMetric
@@ -33,6 +41,8 @@ let overlay = null;
 let isOpen = false;
 /** @type {HTMLElement | null} */
 let previousFocus = null;
+let openToken = 0;
+let counterTimer = 0;
 
 function dialogLabels() {
   const lang = (document.documentElement.lang || 'ko').toLowerCase();
@@ -53,20 +63,6 @@ function componentsHeading() {
 }
 
 /**
- * @template {keyof HTMLElementTagNameMap} K
- * @param {K} tagName
- * @param {string} [className]
- * @param {string} [text]
- * @returns {HTMLElementTagNameMap[K]}
- */
-function createElement(tagName, className, text = '') {
-  const element = document.createElement(tagName);
-  if (className) element.className = className;
-  if (text) element.textContent = text;
-  return element;
-}
-
-/**
  * @returns {{ open: (project: DeepDiveProject) => void }}
  */
 export function createDeepDiveOverlay() {
@@ -78,10 +74,12 @@ export function createDeepDiveOverlay() {
   overlay.setAttribute('aria-modal', 'true');
   const labels = dialogLabels();
   overlay.setAttribute('aria-label', labels.dialog);
+  overlay.inert = true;
   const panel = createElement('div', 'deep-dive-panel');
   const close = createElement('button', 'deep-dive-close');
   close.type = 'button';
   close.setAttribute('aria-label', labels.close);
+  close.setAttribute('data-tooltip', '');
   close.appendChild(createIconElement('x', 'deep-dive-close__icon'));
   const content = createElement('div', 'deep-dive-content');
   content.id = 'deep-dive-content';
@@ -108,35 +106,29 @@ function openDeepDive(project) {
   const content = /** @type {HTMLElement} */ (overlay.querySelector('#deep-dive-content'));
   content.replaceChildren(createDeepDiveHeader(project), createDeepDiveBody(project));
 
-  previousFocus = /** @type {HTMLElement | null} */ (document.activeElement);
+  if (!isOpen) previousFocus = /** @type {HTMLElement | null} */ (document.activeElement);
+  cancelEntryWork();
+  const token = ++openToken;
+  overlay.inert = false;
+  overlay.scrollTop = 0;
   overlay.classList.add('active');
   isOpen = true;
   document.body.style.overflow = 'hidden';
-  const focusCloseButton = () => {
-    /** @type {{ querySelector(s: string): HTMLElement | null } | null} */ (overlay)
-      ?.querySelector('.deep-dive-close')
-      ?.focus({
-        preventScroll: true,
-      });
-  };
-  window.setTimeout(focusCloseButton, 0);
-  window.setTimeout(focusCloseButton, 120);
-  window.setTimeout(() => {
-    /** @type {NonNullable<typeof overlay>} */ (overlay)
+  /** @type {{ querySelector(s: string): HTMLElement | null }} */ (overlay)
+    .querySelector('.deep-dive-close')
+    ?.focus({ preventScroll: true });
+  counterTimer = window.setTimeout(() => {
+    if (token !== openToken || !overlay) return;
+    overlay
       .querySelectorAll('.metric-card__value')
       .forEach((el) => el.classList.add('animate-counter'));
   }, 400);
 }
 
-/**
- * @param {string} key
- * @param {string} text
- * @returns {HTMLSpanElement}
- */
-function createKeyHint(key, text) {
-  const hint = createElement('span', 'key-hint');
-  hint.append(createElement('span', 'key-hint__key', key), document.createTextNode(` ${text}`));
-  return hint;
+function cancelEntryWork() {
+  if (!counterTimer) return;
+  window.clearTimeout(counterTimer);
+  counterTimer = 0;
 }
 
 /**
@@ -154,7 +146,7 @@ function createDeepDiveHeader(project) {
   });
   body.append(
     createElement('h2', 'deep-dive-header__title', project.title),
-    createElement('div', 'deep-dive-header__period', project.period),
+    createPeriod(project.period),
     tags
   );
   header.append(icon, body);
@@ -191,63 +183,19 @@ function createTextSection(title, content) {
   return section;
 }
 
-/**
- * @param {string[]} achievements
- * @returns {HTMLUListElement}
- */
-function createAchievements(achievements) {
-  const list = createElement('ul', 'achievements-list');
-  achievements.forEach((achievement) => {
-    const item = createElement('li', 'achievements-list__item');
-    const check = createElement('span', 'achievements-list__check');
-    check.appendChild(createIconElement('check', 'achievements-list__icon'));
-    item.append(check, createElement('span', 'achievements-list__text', achievement));
-    list.appendChild(item);
-  });
-  return list;
-}
-
-/**
- * @param {DeepDiveMetric[]} metrics
- * @returns {HTMLDivElement}
- */
-function createMetrics(metrics) {
-  const grid = createElement('div', 'metrics-grid');
-  metrics.forEach((metric) => {
-    const card = createElement('div', 'metric-card');
-    const value = createElement('div', 'metric-card__value', metric.value);
-    value.dataset.target = metric.value;
-    card.append(value, createElement('div', 'metric-card__label', metric.label));
-    grid.appendChild(card);
-  });
-  return grid;
-}
-
-/**
- * @param {DeepDiveTool[]} tools
- * @returns {HTMLDivElement}
- */
-function createTools(tools) {
-  const grid = createElement('div', 'tools-grid');
-  tools.forEach((tool) => {
-    const item = createElement('div', 'tool-item');
-    const icon = createElement('span', 'tool-item__icon');
-    icon.appendChild(createIconElement(tool.icon));
-    item.append(icon, createElement('span', '', tool.name));
-    grid.appendChild(item);
-  });
-  return grid;
-}
-
 function closeDeepDive() {
   if (!overlay || !isOpen) return;
+  openToken += 1;
+  cancelEntryWork();
   overlay.classList.remove('active');
+  overlay.inert = true;
   isOpen = false;
   document.body.style.overflow = '';
-  if (previousFocus && typeof previousFocus.focus === 'function' && previousFocus.isConnected) {
-    previousFocus.focus();
-  }
+  const launcher = previousFocus;
   previousFocus = null;
+  if (launcher && typeof launcher.focus === 'function' && launcher.isConnected) {
+    launcher.focus();
+  }
 }
 
 /**
