@@ -36,9 +36,7 @@
 }
 
 .cover-letter__path {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
+  display: block;
   min-width: 0;
   overflow: hidden;
   color: var(--text-secondary);
@@ -48,8 +46,8 @@
 
 .cover-letter__path::before {
   content: 'cat';
-  display: inline-flex;
-  align-items: center;
+  display: inline-block;
+  margin-right: var(--space-2);
   padding: 2px var(--space-2);
   border: 1px solid var(--accent-line-soft);
   border-radius: var(--radius-sm);
