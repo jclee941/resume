@@ -41,9 +41,11 @@
   .contact-item:hover {
     color: var(--color-accent-strong);
   }
+}
 
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .contact-item:hover::before {
-    transform: translateX(var(--space-1));
+    transform: translateX(var(--motion-nudge));
   }
 }
 
