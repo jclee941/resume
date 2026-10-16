@@ -110,7 +110,14 @@
   inset: 0;
 }
 
-.project-card:hover .project-card__cta-icon,
-.project-card__launcher:focus-visible .project-card__cta-icon {
-  transform: translateX(4px);
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .project-card:hover .project-card__cta-icon {
+    transform: translateX(var(--motion-nudge));
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .project-card__launcher:focus-visible .project-card__cta-icon {
+    transform: translateX(var(--motion-nudge));
+  }
 }

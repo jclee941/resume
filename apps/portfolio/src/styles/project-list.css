@@ -55,7 +55,9 @@
   .project-link-title:hover {
     color: var(--color-accent-strong);
   }
+}
 
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .project-link-title:hover .arrow {
     transform: translate(var(--motion-glyph), calc(var(--motion-glyph) * -1));
   }
