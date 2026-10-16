@@ -2,6 +2,8 @@ import { createIconElement } from './project-card-formatting.js';
 import { resolveSkillData, skillCountText } from './skill-radar-data.js';
 
 const CJK_SKILL_PATTERN = /[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]/;
+// Domains above this size span both rows of the two-row phone carousel.
+const TALL_DOMAIN_SKILLS = 10;
 
 function skillGridLabel() {
   const lang = (document.documentElement.lang || 'ko').toLowerCase();
@@ -49,6 +51,7 @@ function createSkillDomainIcon(domainKey) {
  */
 function createDomainCard(domainKey, domain) {
   const card = createElement('article', 'skill-domain-card');
+  if (domain.skills.length > TALL_DOMAIN_SKILLS) card.classList.add('skill-domain-card--tall');
   card.dataset.domain = domainKey;
   const headingId = `skill-domain-${domainKey}`;
   card.setAttribute('aria-labelledby', headingId);
