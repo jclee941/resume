@@ -227,7 +227,8 @@ tests depend on them.
 - **Placement**: `section.role-quick-paths` sits at the top of the projects section, above
   `#project-list`, and filters that list.
 - **Structure**: `button.role-chip > label + separator + proof` (+ JS count); the separator is
-  hidden visually.
+  hidden visually. The label and count share the first line; when both do not fit, the count
+  wraps under the label so the label never breaks mid-word.
 - **Variants**: four columns from 1024px, two below.
 - **States**: disabled (SSR, `cursor: wait`, 72% opacity), hover/focus, pressed
   (`aria-pressed="true"`: `--accent-wash-3` fill and a check glyph before the label).
@@ -265,7 +266,8 @@ tests depend on them.
   desktop columns.
 - **Type**: labels in `--font-label`; values in `--font-sans`.
 - **Languages**: names and proficiency levels are translated at render time on KO and JA
-  pages; the EN page shows the source values.
+  pages; the EN page shows the source values. Each language sits on its own line, and a
+  trailing parenthetical note (ASCII or full-width) never wraps inside itself.
 - **Education status**: the status and its parentheses sit in `.profile-card__status` and
   never wrap, whatever the card width.
 
@@ -275,7 +277,8 @@ tests depend on them.
   paragraph rail and closing line.
 - **Rules**: the paragraph rail is a continuous spine with mono indices; the closing
   prompt is mono while the closing sentence is sans. The decorative quote glyph sits in the
-  headline's top padding, clear of the headline text at every width.
+  headline's top padding, clear of the headline text at every width. The chrome path truncates
+  with an ellipsis when the strip is too narrow.
 - **Fold**: the server renders every paragraph; in the browser all but the first fold
   behind `.cover-letter__toggle`, whose label names how many paragraphs it reveals (an
   unlabeled fold once read as missing text). Print shows every paragraph. From 1024px the
@@ -294,7 +297,8 @@ tests depend on them.
   cards expand via `.timeline-node.is-expanded .timeline-details`.
 - **Earlier roles**: the four most recent roles stay visible; older ones carry
   `.timeline-node--older` and appear when `.timeline-more-btn`, labelled with their count,
-  is pressed. Print shows every role.
+  is pressed. Print shows every role. The resume actions row (PDF, contact) is centered under
+  that button.
 
 ### Certifications
 
@@ -318,7 +322,10 @@ tests depend on them.
   locale where a word is translated (demo link: KO 데모, EN Demo, JA デモ; GitHub and dashboard
   names stay as written), and every link's accessible name contains its visible text.
 - **Featured**: the first three projects (by `displayOrder`) render as
-  `.project-card--featured` with a diagram; the rest collapse behind the more button.
+  `.project-card--featured` with a diagram; the rest collapse behind the more button. From
+  1024px every featured card uses the same diagram column (`--featured-diagram-width`, the
+  widest narrow diagram plus its panel), so case notes and diagram panels line up from card
+  to card.
 - **Phones**: at 640px and below the list is a horizontal snap carousel; cards take 88% of
   the width so the next one peeks in, and the role filter scrolls the carousel to its first
   match.
@@ -335,7 +342,9 @@ tests depend on them.
   the text.
 - **Layout**: SVGs render at intrinsic size (`max-width: 100%`) so text keeps one scale.
   Featured cards place the narrow variant in a right column from 1024px; tablets show the
-  wide variant below the notes; phones show the narrow variant.
+  wide variant below the notes; phones show the narrow variant. The wide variant spaces its
+  columns by content (the widest node plus a 56px gap, or the widest edge label leaving the
+  column), so tablets show it close to intrinsic size.
 
 ### Case-study grid and deep dive
 
@@ -359,9 +368,10 @@ tests depend on them.
   visible `li.skill-item` pill in a `ul.skill-list` labelled by the heading.
 - **Rules**: no accordion, no search box, no tier label; cards are static surfaces. Cards
   flow in CSS columns (up to three, each at least 16rem) so short cards fill the gaps a row
-  grid leaves; reading order runs down each column. On phones the cards form a horizontal
-  snap carousel (82% wide) so the next domain peeks in. Cards keep their natural height
-  in the carousel instead of stretching to the tallest one.
+  grid leaves; reading order runs down each column. On phones the cards form a two-row
+  horizontal snap carousel of 82%-wide columns so the next column peeks in; a domain with
+  more than ten skills (`.skill-domain-card--tall`) spans both rows, so a short card never
+  leaves an empty band under the carousel.
 - **Carousel access**: the skills grid is a named group (KO 기술 스택, EN Skills, JA スキル).
   It takes `tabindex="0"` and the 2px accent focus ring only while it overflows sideways (the
   phone carousel), so keyboard users can scroll it there and desktop has no extra tab stop.
@@ -371,10 +381,12 @@ tests depend on them.
 ### Operated, contact and footer
 
 - `.operated-grid`: three columns from 769px of surface cards.
-- `.contact-grid`: two columns on phones, three from 768px and four equal columns from
-  1024px of interactive surfaces with a `>` prompt. Items are GitHub, LinkedIn, Velog and
-  Email (an optional GitHub Bot link adds one cell); none points back to the site itself.
-  Email shows its visible address as a stacked, muted, selectable value that wraps anywhere.
+- `.contact-grid`: one column on phones, two from 768px and four equal columns from 1024px
+  of interactive surfaces with a `>` prompt, so four items never leave an orphan cell. Items
+  are GitHub, LinkedIn, Velog and Email (an optional GitHub Bot link adds one cell); none
+  points back to the site itself. Every item stacks its label over a muted, selectable value:
+  the profile handle (the URL's last path segment) for links, whose accessible name includes
+  it, and the address for Email.
 - `.site-footer`: muted build line; links underlined.
 
 ### Mobile action bar and back-to-top
@@ -420,6 +432,10 @@ Shadows are tinted to the page hue (`rgb(4 6 10 / …)`), never neutral black. S
 layered through tonal shifts first, then low-opacity borders, then shadows only where
 elevation communicates interaction or focus.
 
+The page atmosphere (`--gradient-page-atmosphere`) is fixed to the viewport. Its middle band
+is `--bg-secondary` at 35% over `--bg-primary`, never the full `--bg-secondary`: cards over a
+full `--bg-secondary` band lose their tonal step exactly where the reader is looking.
+
 ## 8. Accessibility Constraints
 
 - Text contrast meets WCAG AA on every surface; `--text-muted` is the floor for text.
@@ -451,6 +467,9 @@ override layers; a fix lands in the file that owns the component.
   (`lib/japanese-template/`), so JA-only layout needs land as CSS `:lang(ja)` rules.
 - Inline `<style>` blocks in the content-pack HTML shells (font faces, theme transitions)
   stay outside this stylesheet because their CSP hashes are computed at build time.
+- On phones a narrow diagram with a three-node layer (Terraform Homelab IaC, 392px wide)
+  still scales to about 0.63 at 390px and 0.47 at 320px; a fan-out layout that stacks wide
+  layers would keep it at intrinsic size.
 
 ## 11. Template Size Exception
 
