@@ -85,33 +85,28 @@ describe('simplification: project cards do not re-present the description as bul
     expect(mainSrc).not.toMatch(/initProjectExpand/);
   });
 
-  test('main.js registers the service worker even when imported after window load', async () => {
-    let resolveFetch;
+  function runMain({ failing } = {}) {
     const registration = { scope: 'http://localhost/', update: jest.fn() };
     const calls = [];
+    const initialiser = (name) =>
+      jest.fn(() => {
+        if (name === failing) throw new Error('boom');
+        calls.push(name);
+      });
+    const root = {
+      attrs: new Set(),
+      classes: new Set(),
+      setAttribute: (name) => root.attrs.add(name),
+      classList: { add: (name) => root.classes.add(name) },
+    };
     const context = {
-      console: { log: jest.fn(), warn: jest.fn() },
+      console: { log: jest.fn(), warn: jest.fn(), error: jest.fn() },
       setInterval: jest.fn(),
-      requestAnimationFrame: (callback) => callback(),
-      fetch: jest.fn(
-        () =>
-          new Promise((resolve) => {
-            resolveFetch = () =>
-              resolve({
-                ok: true,
-                json: async () => ({ careers: [], skills: {} }),
-              });
-          })
-      ),
-      window: {
-        __RESUME_CHAT_DATA__: undefined,
-        location: { hash: '' },
-        addEventListener: jest.fn(),
-        reload: jest.fn(),
-      },
+      fetch: jest.fn(),
+      window: { location: { hash: '' }, addEventListener: jest.fn() },
       document: {
         readyState: 'complete',
-        documentElement: { lang: 'ko' },
+        documentElement: root,
         addEventListener: jest.fn(),
         getElementById: jest.fn(),
       },
@@ -124,32 +119,60 @@ describe('simplification: project cards do not re-present the description as bul
           addEventListener: jest.fn(),
         },
       },
-      initWebVitals: jest.fn(() => calls.push('web-vitals')),
-      initUI: jest.fn(() => calls.push('ui')),
-      initSkillRadar: jest.fn(() => calls.push('skill-radar')),
-      initCareerTimeline: jest.fn(() => calls.push('career-timeline')),
-      initProjectCards: jest.fn(() => calls.push('project-cards')),
-      initProjectMore: jest.fn(() => calls.push('project-more')),
-      initRecruiterEnhancements: jest.fn(() => calls.push('recruiter-enhancements')),
-      initCoverLetterFold: jest.fn(() => calls.push('cover-letter-fold')),
     };
+    for (const name of [
+      'initWebVitals',
+      'initUI',
+      'initSkillRadar',
+      'initCareerTimeline',
+      'initProjectCards',
+      'initProjectMore',
+      'initRecruiterEnhancements',
+      'initCoverLetterFold',
+    ]) {
+      context[name] = initialiser(name);
+    }
     context.window.window = context.window;
+    vm.runInNewContext(mainSrc.replace(/^import .*;\n/gm, ''), context);
+    return { context, calls, root };
+  }
 
-    const executableMain = mainSrc.replace(/^import .*;\n/gm, '');
-    vm.runInNewContext(executableMain, context);
-
+  test('main.js registers the service worker even when imported after window load', () => {
+    const { context, calls } = runMain();
     expect(context.navigator.serviceWorker.register).toHaveBeenCalledWith('/sw.js');
-    expect(context.fetch).toHaveBeenCalledWith('/resume-data.json', {
-      headers: { Accept: 'application/json' },
-      credentials: 'same-origin',
-    });
     expect(calls).toContain('register-service-worker');
-    expect(calls).not.toContain('skill-radar');
+  });
 
-    resolveFetch();
-    await new Promise((resolve) => setImmediate(resolve));
+  test('main.js binds every server-rendered feature immediately and never fetches resume data', () => {
+    const { context, root } = runMain();
+    for (const name of [
+      'initUI',
+      'initWebVitals',
+      'initProjectCards',
+      'initProjectMore',
+      'initRecruiterEnhancements',
+      'initCoverLetterFold',
+      'initSkillRadar',
+      'initCareerTimeline',
+    ]) {
+      expect(context[name]).toHaveBeenCalledTimes(1);
+    }
+    expect(context.fetch).not.toHaveBeenCalled();
+    expect(root.attrs.has('data-js-ready')).toBe(true);
+    expect(root.classes.has('js')).toBe(true);
+  });
 
-    expect(context.initSkillRadar).toHaveBeenCalledTimes(1);
+  test('project cards mount before the project disclosure so the case studies join it', () => {
+    const { calls } = runMain();
+    expect(calls.indexOf('initProjectCards')).toBeLessThan(calls.indexOf('initProjectMore'));
+  });
+
+  test('one failing initialiser does not stop the others and withholds the ready flag', () => {
+    const { context, root } = runMain({ failing: 'initProjectMore' });
     expect(context.initCareerTimeline).toHaveBeenCalledTimes(1);
+    expect(context.initCoverLetterFold).toHaveBeenCalledTimes(1);
+    expect(context.console.error).toHaveBeenCalled();
+    expect(root.attrs.has('data-js-ready')).toBe(false);
+    expect(root.classes.has('js')).toBe(false);
   });
 });

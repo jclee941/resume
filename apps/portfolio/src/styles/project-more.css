@@ -1,16 +1,20 @@
-.project-item--collapsed {
-  display: none;
-}
-
-.project-list.is-expanded .project-item--collapsed {
-  display: grid;
-}
-
 .project-more,
 .timeline-more {
-  display: flex;
+  display: none;
   justify-content: center;
   margin-top: var(--space-6);
+}
+
+html.js .project-more,
+html.js .timeline-more {
+  display: flex;
+}
+
+/* Extras collapse only once a working disclosure is bound (html.js); without it they render. */
+@media screen {
+  html.js .project-list:not(.is-expanded) .project-item--collapsed:not(.is-role-match) {
+    display: none;
+  }
 }
 
 .project-more-btn,
@@ -19,9 +23,9 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: 44px;
+  min-height: var(--control-min);
   padding: var(--space-2) var(--space-6);
-  border: 1px solid var(--border-secondary);
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-full);
   background: rgb(var(--bg-secondary-rgb) / 0.8);
   color: var(--color-accent-strong);
@@ -33,11 +37,28 @@
     background-color var(--transition-base);
 }
 
-.project-more-btn:hover,
-.project-more-btn:focus-visible,
-.timeline-more-btn:hover,
-.timeline-more-btn:focus-visible,
-.cover-letter__toggle:hover,
-.cover-letter__toggle:focus-visible {
-  background: var(--accent-wash-2);
+.cover-letter__toggle {
+  display: none;
+}
+
+html.js .cover-letter__toggle {
+  display: inline-flex;
+}
+
+@media (hover: hover) {
+  .project-more-btn:hover,
+  .timeline-more-btn:hover,
+  .cover-letter__toggle:hover,
+  .timeline-expand-btn:hover {
+    border-color: var(--state-hover-border);
+    background: var(--state-hover-bg);
+  }
+}
+
+.project-more-btn:active,
+.timeline-more-btn:active,
+.cover-letter__toggle:active,
+.timeline-expand-btn:active {
+  background: var(--state-pressed-bg);
+  transition-duration: 0s;
 }

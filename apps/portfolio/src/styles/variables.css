@@ -133,6 +133,7 @@
   --control-min: 44px;
   --state-hover-fill: linear-gradient(var(--state-hover-bg), var(--state-hover-bg));
   --state-pressed-fill: linear-gradient(var(--state-pressed-bg), var(--state-pressed-bg));
+  --target-slop: 0.625rem;
 
   --radius-sm: 4px;
   --radius-md: 8px;

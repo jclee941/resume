@@ -10,6 +10,8 @@ jest.mock('../../../../apps/portfolio/lib/content-hashing', () => ({
 
 jest.mock('../../../../apps/portfolio/lib/cards', () => ({
   generateResumeCards: jest.fn(() => '<div class="resume">cards</div>'),
+  generateCareerSection: jest.fn((_careers, _locale, fallback) => fallback),
+  generateSkillDomainCards: jest.fn(() => '<article class="skill-domain-card"></article>'),
   generateProjectCards: jest.fn(() => '<div class="projects">cards</div>'),
   generateCertificationCards: jest.fn(() => '<div class="certs">cards</div>'),
   generateSkillsList: jest.fn(() => '<div class="skills">list</div>'),

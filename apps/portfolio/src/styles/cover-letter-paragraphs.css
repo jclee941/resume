@@ -62,7 +62,7 @@
   margin: 0;
   color: var(--text-secondary);
   font-family: var(--font-sans);
-  font-size: var(--text-base);
+  font-size: var(--text-prose);
   line-height: var(--leading-loose);
   word-break: keep-all;
   overflow-wrap: anywhere;
@@ -72,8 +72,13 @@
   white-space: nowrap;
 }
 
-.cover-letter__para[hidden] {
-  display: none;
+/* Paragraphs after the first fold only once the toggle is bound (html.js); without it they render. */
+@media screen {
+  html.js
+    .cover-letter__paragraphs[data-fold]:not(.is-expanded)
+    > .cover-letter__para:not(:first-child) {
+    display: none;
+  }
 }
 
 .cover-letter__toggle {

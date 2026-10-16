@@ -3,6 +3,9 @@ const { defaultOwnerIdentity } = require('./owner-identity');
 
 const RESUME_PDF_PATH = '/resume.pdf';
 
+/** Widest proof-count text per locale; the slot reserves its width so the client count never reflows the chip. */
+const PROOF_COUNT_SIZER = { ko: '근거 00건', en: '00 evidence items', ja: '00件の根拠' };
+
 /**
  * @typedef {'ko' | 'en' | 'ja'} HeroLocale
  */
@@ -85,9 +88,11 @@ function renderActions(content, contactEmail) {
 
 /**
  * @param {HeroContent} content
+ * @param {string} [locale]
  * @returns {string}
  */
-function renderRoleQuickPaths(content) {
+function renderRoleQuickPaths(content, locale) {
+  const sizer = PROOF_COUNT_SIZER[/** @type {HeroLocale} */ (locale)] || PROOF_COUNT_SIZER.ko;
   const roles = content.quickRoles
     .map(([id, label, proof]) => {
       // No aria-label: the accessible name comes from the visible
@@ -95,6 +100,7 @@ function renderRoleQuickPaths(content) {
       return (
         `<button type="button" class="role-chip" data-role-filter="${escapeHtml(id)}" aria-pressed="false" disabled>` +
         `<span class="role-chip__label">${escapeHtml(label)}</span>` +
+        `<span class="role-chip__count" data-sizer="${escapeHtml(sizer)}" aria-hidden="true"></span>` +
         '<span class="role-chip__separator" aria-hidden="true"></span>' +
         `<span class="role-chip__proof">${escapeHtml(proof)}</span>` +
         '</button>'
@@ -143,7 +149,7 @@ function buildHeroContent(locale, identity = defaultOwnerIdentity(), parts = {})
  * @returns {string}
  */
 function buildProjectRolePaths(locale) {
-  return renderRoleQuickPaths(heroContentFor(locale));
+  return renderRoleQuickPaths(heroContentFor(locale), locale);
 }
 
 module.exports = { buildHeroContent, buildProjectRolePaths };

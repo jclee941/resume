@@ -24,15 +24,16 @@ lib/
 
 ## WHERE TO LOOK
 
-| Task                   | Location                                                                | Notes                             |
-| ---------------------- | ----------------------------------------------------------------------- | --------------------------------- |
-| Build I/O              | `build-orchestrator.js`, `file-reader.js`, `worker-writer.js`           | Read inputs and write bundle      |
-| Transform pipeline     | `data-processor.js`, `html-transformer.js`, `localized-page-builder.js` | Deterministic input transforms    |
-| Template safety        | `template-sanitizer.js`, `csp-hash-generator.js`                        | Escaping and exact-byte hashing   |
-| Runtime headers        | `security-headers.js`, `entry-router-utils/response-headers.js`         | CSP, caching, response adaptation |
-| Runtime emission       | `worker-preamble.js`, `worker-routes.js`                                | Assemble generated JavaScript     |
-| Identity/content dates | `owner-identity.js`, `content-lastmod.js`                               | Derive metadata from inputs       |
-| Unit coverage          | `tests/unit/portfolio-worker/lib/`                                      | Repository-root Jest suites       |
+| Task                    | Location                                                                                            | Notes                                                 |
+| ----------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| Build I/O               | `build-orchestrator.js`, `file-reader.js`, `worker-writer.js`                                       | Read inputs and write bundle                          |
+| Transform pipeline      | `data-processor.js`, `html-transformer.js`, `localized-page-builder.js`                             | Deterministic input transforms                        |
+| Template safety         | `template-sanitizer.js`, `csp-hash-generator.js`                                                    | Escaping and exact-byte hashing                       |
+| Progressive enhancement | `progressive-enhancement.js`, `cards/timeline.js`, `cards/skill-domains.js`, `cards/disclosures.js` | Early `js` flag with fail-safe; settled server markup |
+| Runtime headers         | `security-headers.js`, `entry-router-utils/response-headers.js`                                     | CSP, caching, response adaptation                     |
+| Runtime emission        | `worker-preamble.js`, `worker-routes.js`                                                            | Assemble generated JavaScript                         |
+| Identity/content dates  | `owner-identity.js`, `content-lastmod.js`                                                           | Derive metadata from inputs                           |
+| Unit coverage           | `tests/unit/portfolio-worker/lib/`                                                                  | Repository-root Jest suites                           |
 
 ## CONVENTIONS
 

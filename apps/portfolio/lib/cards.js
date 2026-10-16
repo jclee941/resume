@@ -16,4 +16,7 @@ module.exports = {
   ...require('./cards/project-schemas'),
   ...require('./cards/hero-profile'),
   ...require('./cards/project-diagram'),
+  ...require('./cards/skill-domains'),
+  ...require('./cards/timeline'),
+  ...require('./cards/disclosures'),
 };

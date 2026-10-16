@@ -7,37 +7,6 @@ import { initProjectMore } from './modules/project-more.js';
 import { initRecruiterEnhancements } from './modules/recruiter-enhancements.js';
 import { initCoverLetterFold } from './modules/cover-letter-fold.js';
 
-/** @type {Record<string, string>} */
-const RESUME_DATA_PATHS = {
-  ko: '/resume-data.json',
-  en: '/en/resume-data.json',
-  ja: '/ja/resume-data.json',
-};
-
-function currentLocale() {
-  const lang = document.documentElement.lang || 'ko';
-  return Object.prototype.hasOwnProperty.call(RESUME_DATA_PATHS, lang) ? lang : 'ko';
-}
-
-async function loadResumeData() {
-  const existing = window.__RESUME_CHAT_DATA__;
-  if (existing && Object.keys(existing).length > 0) return;
-
-  try {
-    const response = await fetch(RESUME_DATA_PATHS[currentLocale()], {
-      headers: { Accept: 'application/json' },
-      credentials: 'same-origin',
-    });
-    if (!response.ok) throw new Error(`resume data request failed: ${response.status}`);
-    window.__RESUME_CHAT_DATA__ = await response.json();
-  } catch (error) {
-    if (typeof console !== 'undefined' && console.warn) {
-      console.warn('[ResumeData] Failed to load resume data', error);
-    }
-    window.__RESUME_CHAT_DATA__ = {};
-  }
-}
-
 function restoreHashScrollTarget() {
   if (!window.location.hash) return;
 
@@ -94,18 +63,39 @@ function registerServiceWorker() {
   });
 }
 
-async function bootstrapPortfolio() {
+/**
+ * Runs every feature initialiser, isolating failures so one broken feature cannot stop the rest.
+ * The ready flag and the `js` class (which the early head script may already have lifted after its
+ * fail-safe delay) are set only when all succeed, so nothing stays collapsed behind controls that
+ * never bound.
+ */
+function bootstrapPortfolio() {
   registerServiceWorker();
-  initUI();
-  initWebVitals();
-  initProjectCards();
-  initProjectMore();
-  initRecruiterEnhancements();
-  initCoverLetterFold();
-  await loadResumeData();
-  initSkillRadar();
-  initCareerTimeline();
-  restoreHashScrollTarget();
+  const initialisers = [
+    initUI,
+    initWebVitals,
+    initProjectCards,
+    initProjectMore,
+    initRecruiterEnhancements,
+    initCoverLetterFold,
+    initSkillRadar,
+    initCareerTimeline,
+    restoreHashScrollTarget,
+  ];
+  const failed = initialisers.filter((initialise) => {
+    try {
+      initialise();
+      return false;
+    } catch (error) {
+      console.error('[Portfolio] initialiser failed', initialise.name, error);
+      return true;
+    }
+  });
+  if (failed.length === 0) {
+    const root = document.documentElement;
+    root.setAttribute('data-js-ready', '');
+    root.classList.add('js');
+  }
 }
 
 if (document.readyState === 'loading') {
