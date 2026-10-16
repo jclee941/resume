@@ -1,4 +1,4 @@
-export const CAREER_UI_META = {
+const CAREER_UI_META = {
   '2026.05 ~ 2026.07': { phase: '운영', status: 'completed' },
   '2025.03 ~ 2026.02': { phase: '운영', status: 'completed' },
   '2024.03 ~ 2025.02': { phase: '구축', status: 'completed' },
@@ -11,4 +11,6 @@ export const CAREER_UI_META = {
   '2013.03 ~ 2014.10': { phase: '기초', status: 'completed' },
 };
 
-export const DEFAULT_CAREER_UI_META = { phase: '기초', status: 'completed' };
+const DEFAULT_CAREER_UI_META = { phase: '기초', status: 'completed' };
+
+module.exports = { CAREER_UI_META, DEFAULT_CAREER_UI_META };

@@ -10,6 +10,7 @@ const { minify } =
     require
   )('html-minifier-terser');
 const { buildJapaneseTemplate } = require('./japanese-template/index.js');
+const { injectEarlyScript } = require('./progressive-enhancement');
 
 const EXTERNAL_SRI = {
   GOOGLE_GSI: 'sha384-Li3+JwrJUjnnr4ZvOP9SRczNCfPkOLWRVCzUTrD2TOhgQLBfRKs5Q5/lxh2tWguw',
@@ -34,6 +35,8 @@ function applyExternalSri(html) {
  * @property {string} resumeCardsHtml - Resume cards.
  * @property {string} projectCardsHtml - Project cards.
  * @property {string} [projectRolePathsHtml] - Role filter chips above the project list.
+ * @property {string} [projectMoreHtml] - Disclosure button after the project list.
+ * @property {string} [skillDomainsHtml] - Server-rendered skill domain cards.
  * @property {string} [projectSchemasHtml] - Project JSON-LD schemas.
  * @property {string} infrastructureCardsHtml - Infrastructure cards.
  * @property {string} [certCardsHtml] - Certification cards.
@@ -67,6 +70,8 @@ function injectPlaceholders(html, options) {
     .replace('<!-- RESUME_CARDS_PLACEHOLDER -->', options.resumeCardsHtml)
     .replace('<!-- PROJECT_CARDS_PLACEHOLDER -->', options.projectCardsHtml)
     .replace('<!-- PROJECT_ROLE_PATHS_PLACEHOLDER -->', options.projectRolePathsHtml || '')
+    .replace('<!-- PROJECT_MORE_PLACEHOLDER -->', options.projectMoreHtml || '')
+    .replace('<!-- SKILL_RADAR_PLACEHOLDER -->', options.skillDomainsHtml || '')
     .replace('<!-- PROJECT_SCHEMAS_PLACEHOLDER -->', options.projectSchemasHtml || '')
     .replace('<!-- INFRASTRUCTURE_CARDS_PLACEHOLDER -->', options.infrastructureCardsHtml)
     .replace('<!-- CERTIFICATION_CARDS_PLACEHOLDER -->', options.certCardsHtml || '')
@@ -127,7 +132,7 @@ function escapeForTemplateLiteral(html, escapePatterns) {
  */
 async function buildLocalizedHtml(html, options) {
   const injected = injectPlaceholders(html, options);
-  return minifyHtml(applyExternalSri(injected));
+  return minifyHtml(injectEarlyScript(applyExternalSri(injected)));
 }
 
 module.exports = {

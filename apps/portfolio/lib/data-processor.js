@@ -11,6 +11,8 @@ const { calculateDataHash } = require('./content-hashing');
 const { ownerIdentityFromPortfolioData } = require('./owner-identity');
 const {
   generateResumeCards,
+  generateCareerSection,
+  generateSkillDomainCards,
   generateResumeDescription,
   generateProjectCards,
   generateCertificationCards,
@@ -82,19 +84,31 @@ function processProjectData({
   }
 
   const templates = {
-    resumeCardsHtml: generateResumeCards(projectData.resume, dataHash),
+    resumeCardsHtml: generateCareerSection(
+      projectData.careers,
+      'ko',
+      generateResumeCards(projectData.resume, dataHash)
+    ),
     projectCardsHtml: generateProjectCards(projectData.projects, dataHash),
-    resumeCardsEnHtml: generateResumeCards(
-      (projectDataEn && projectDataEn.resume) || projectData.resumeEn || projectData.resume,
-      `${dataHash}:en-resume`
+    resumeCardsEnHtml: generateCareerSection(
+      projectDataEn && projectDataEn.careers,
+      'en',
+      generateResumeCards(
+        (projectDataEn && projectDataEn.resume) || projectData.resumeEn || projectData.resume,
+        `${dataHash}:en-resume`
+      )
     ),
     projectCardsEnHtml: generateProjectCards(
       (projectDataEn && projectDataEn.projects) || projectData.projectsEn || projectData.projects,
       `${dataHash}:en-projects`
     ),
-    resumeCardsJaHtml: generateResumeCards(
-      (projectDataJa && projectDataJa.resume) || projectData.resume,
-      `${dataHash}:ja-resume`
+    resumeCardsJaHtml: generateCareerSection(
+      projectDataJa && projectDataJa.careers,
+      'ja',
+      generateResumeCards(
+        (projectDataJa && projectDataJa.resume) || projectData.resume,
+        `${dataHash}:ja-resume`
+      )
     ),
     projectCardsJaHtml: generateProjectCards(
       (projectDataJa && projectDataJa.projects) || projectData.projects,
@@ -133,6 +147,15 @@ function processProjectData({
       ...projectData.hero,
       email: projectData.contact && projectData.contact.email,
     }),
+    skillDomainsHtml: generateSkillDomainCards(projectData.skills, 'ko'),
+    skillDomainsEnHtml: generateSkillDomainCards(
+      (projectDataEn && projectDataEn.skills) || projectData.skills,
+      'en'
+    ),
+    skillDomainsJaHtml: generateSkillDomainCards(
+      (projectDataJa && projectDataJa.skills) || projectData.skills,
+      'ja'
+    ),
     resumeDescriptionHtml: /** @type {(resume?: typeof projectData.resume) => string} */ (
       generateResumeDescription
     )(projectData.resume),

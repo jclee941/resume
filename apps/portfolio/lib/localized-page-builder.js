@@ -5,6 +5,7 @@ const {
 } = require('./html-transformer');
 const { buildHeroContent, buildProjectRolePaths } = require('./hero-content');
 const { defaultOwnerIdentity, escapeRegExp } = require('./owner-identity');
+const { generateProjectMore, withCoverLetterFold } = require('./cards/disclosures');
 
 /**
  * @typedef {Object} PortfolioPageOptions
@@ -40,6 +41,8 @@ function contentOptions(templates, locale, identity) {
   return {
     resumeCardsHtml: templates[`resumeCards${suffix}Html`],
     projectCardsHtml: templates[`projectCards${suffix}Html`],
+    projectMoreHtml: generateProjectMore(templates[`projectCards${suffix}Html`], locale),
+    skillDomainsHtml: templates[`skillDomains${suffix}Html`],
     projectSchemasHtml: localizeProjectSchemas(
       templates[`projectSchemas${suffix}Html`],
       locale,
@@ -53,7 +56,7 @@ function contentOptions(templates, locale, identity) {
     contactGridHtml: templates[`contactGrid${suffix}Html`],
     achievementsHtml: templates[`achievements${suffix}Html`],
     expertiseHtml: templates[`expertise${suffix}Html`],
-    coverLetterHtml: templates[`coverLetter${suffix}Html`],
+    coverLetterHtml: withCoverLetterFold(templates[`coverLetter${suffix}Html`], locale),
     projectRolePathsHtml: buildProjectRolePaths(locale),
     heroContentHtml: buildHeroContent(locale, identity, {
       portraitHtml: templates[`heroPortrait${suffix}Html`],

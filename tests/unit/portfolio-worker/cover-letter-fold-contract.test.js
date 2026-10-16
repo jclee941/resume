@@ -15,7 +15,14 @@ describe('cover-letter fold', () => {
 
   test('the bootstrap initializes the fold exactly once', () => {
     const main = read('apps/portfolio/src/scripts/main.js');
-    expect(main.match(/initCoverLetterFold\(\)/g)).toHaveLength(1);
+    expect(main.match(/^\s+initCoverLetterFold,$/gm)).toHaveLength(1);
+  });
+
+  test('the fold is gated on the script-enabled flag and the paragraphs never use hidden', () => {
+    const css = read('apps/portfolio/src/styles/cover-letter-paragraphs.css');
+    expect(css).toMatch(/html\.js\s+\.cover-letter__paragraphs\[data-fold\]:not\(\.is-expanded\)/);
+    expect(css).not.toMatch(/\[hidden\]/);
+    expect(read('apps/portfolio/src/scripts/modules/cover-letter-fold.js')).not.toMatch(/hidden/);
   });
 
   test('print output shows folded paragraphs and drops the toggle', () => {

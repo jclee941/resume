@@ -20,7 +20,8 @@ Scope reason: score 7; distinct browser-source domain.
 | ESM loading           | `scripts/package.json`                                    | Module marker used by Node and Jest                      |
 | Shared DOM formatting | `scripts/modules/project-card-formatting.js`              | Escaping, icons, technology classes                      |
 | Recruiter features    | `scripts/modules/recruiter-*.js`                          | Role proofs, interactions, mobile actions                |
-| Timeline              | `scripts/modules/timeline*.js`                            | View model, interactions, rendering                      |
+| Timeline              | `scripts/modules/timeline.js`                             | Binds the server-rendered `lib/cards/timeline*.js`       |
+| Disclosures           | `scripts/modules/disclosure.js`                           | Shared geometry animation and toggle binding             |
 | Theme contract        | `scripts/modules/theme.js`                                | Dark-only compatibility behavior                         |
 
 ## CONVENTIONS
@@ -33,6 +34,7 @@ Scope reason: score 7; distinct browser-source domain.
 - Locale data and labels must remain aligned across KO, EN, and JA modules.
 - Imported `*-data.js` modules are materialized content inputs; they are not a new code-source location.
 - `__SKILL_DATA__` is injected by the build and declared in `scripts/client-globals.d.ts`.
+- Skills, the career timeline and every disclosure control are server-rendered; modules bind to them and never replace them. Content collapses only under `html.js`, so it stays reachable without JavaScript.
 
 ## ANTI-PATTERNS
 

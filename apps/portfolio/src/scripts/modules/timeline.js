@@ -1,133 +1,37 @@
-/**
- * Career Incident Timeline Module
- * Incident Response Timeline visualization for resume.jclee.me
- *
- * Features:
- * - Vertical timeline with incident response metaphor
- * - One compact phase badge per role
- * - Active/Completed status indicators
- * - Expandable role cards with impact metrics
- * - Keyboard navigation & accessibility
- *
- */
+import { bindDisclosure } from './disclosure.js';
 
-import { CAREER_UI_META, DEFAULT_CAREER_UI_META } from './timeline-career-meta.js';
-import { bindTimelineInteractions } from './timeline-interactions.js';
-import { initTimelineMore } from './timeline-more.js';
-import { createTimelineNode } from './timeline-rendering.js';
+const EXPANDED_CLASS = 'is-expanded';
+const OLDER_VISIBLE_CLASS = 'is-older-visible';
 
 /**
- * @typedef {import('./timeline-rendering.js').TimelineCareer} TimelineCareer
- * @typedef {Omit<TimelineCareer, 'phase' | 'status'> & Partial<Pick<TimelineCareer, 'phase' | 'status'>>} SourceCareer
- */
-
-/** @type {HTMLUListElement | null} */
-let timelineContainer = null;
-
-/**
- * Initialize Timeline module
+ * Binds behaviour to the server-rendered career timeline. The list is never replaced, so the
+ * first rendered surface is the settled one.
  * @returns {void}
  */
 export function initCareerTimeline() {
-  if (!isTimelineSectionPresent()) {
-    console.warn('[CareerTimeline] Timeline section not found, skipping initialization.');
-    return;
-  }
+  const timeline = document.querySelector('.incident-timeline');
+  if (!timeline) return;
 
-  injectTimeline();
-  bindTimelineInteractions(/** @type {HTMLUListElement} */ (timelineContainer));
-  initTimelineMore(/** @type {HTMLUListElement} */ (timelineContainer));
-
-  console.log('[CareerTimeline] Initialized successfully.');
-}
-
-/**
- * Check if timeline section exists
- * @returns {boolean}
- */
-function isTimelineSectionPresent() {
-  return document.querySelector('.section-resume') !== null;
-}
-
-/**
- * Merge build-injected SSoT career DATA with UI-only presentation metadata.
- * Pure function (no globals) so it can be unit-tested in isolation.
- * @param {SourceCareer[]} careers - SSoT career entries from generated portfolio data.
- * @returns {TimelineCareer[]} Render-ready career nodes with phase/status attached.
- */
-export function mergeCareerUiMeta(careers) {
-  if (!Array.isArray(careers)) return [];
-  return careers.map((career) => {
-    const meta = /** @type {Pick<TimelineCareer, 'phase' | 'status'>} */ (
-      /** @type {Record<string, typeof DEFAULT_CAREER_UI_META>} */ (CAREER_UI_META)[
-        career.period
-      ] || DEFAULT_CAREER_UI_META
-    );
-    return { ...career, phase: career.phase || meta.phase, status: career.status || meta.status };
-  });
-}
-
-/**
- * Get career data from the client-loaded SSoT snapshot.
- *
- * The build pipeline exposes locale-specific portfolio data at
- * /resume-data.json and main.js loads it into window.__RESUME_CHAT_DATA__.
- * Its `careers[]` is derived from the SSoT
- * (packages/data/resumes/master/resume_data.json) by
- * tools/scripts/utils/resume-web-data-generator.js, so there is no hardcoded
- * career content here to drift out of sync. UI-only phase/status are merged on.
- * @returns {TimelineCareer[]}
- */
-function getCareerData() {
-  const injected = (typeof window !== 'undefined' && window.__RESUME_CHAT_DATA__) || {};
-  const careers = Array.isArray(injected.careers) ? injected.careers : [];
-
-  if (careers.length === 0) {
-    console.warn(
-      '[CareerTimeline] No careers found in __RESUME_CHAT_DATA__; rendering empty timeline.'
-    );
-    return [];
-  }
-
-  return mergeCareerUiMeta(/** @type {SourceCareer[]} */ (careers));
-}
-
-/**
- * Inject timeline HTML into the DOM
- * @returns {void}
- */
-function injectTimeline() {
-  const resumeSection = document.querySelector('.section-resume');
-  if (!resumeSection) return;
-
-  const existingList = resumeSection.querySelector('.resume-list');
-  if (!existingList) return;
-
-  const careers = getCareerData();
-
-  const timeline = document.createElement('ul');
-  timeline.className = 'incident-timeline resume-list';
-  const lang = (document.documentElement.lang || 'ko').toLowerCase();
-  const timelineLabel = lang.startsWith('en')
-    ? 'Career timeline'
-    : lang.startsWith('ja')
-      ? '経歴タイムライン'
-      : '경력 타임라인';
-  timeline.setAttribute('aria-label', timelineLabel);
-  careers.forEach((career, index) => timeline.appendChild(createTimelineNode(career, index)));
-
-  // Swap the <ul> placeholder for the semantic timeline container.
-  existingList.replaceWith(timeline);
-
-  // Store reference to container
-  timelineContainer = timeline;
-  requestAnimationFrame(() => {
-    const nodes = /** @type {HTMLUListElement} */ (timelineContainer).querySelectorAll(
-      '.timeline-node'
-    );
-    nodes.forEach((node, i) => {
-      /** @type {HTMLElement} */ (node).style.animationDelay = `${i * 100}ms`;
-      node.classList.add('timeline-node--animate');
+  timeline.querySelectorAll('.timeline-expand-btn').forEach((button) => {
+    const node = button.closest('.timeline-node');
+    const card = button.closest('.timeline-card');
+    if (!node || !card) return;
+    const details = document.getElementById(button.getAttribute('aria-controls') || '');
+    details?.setAttribute('aria-hidden', 'true');
+    bindDisclosure(/** @type {HTMLElement} */ (button), {
+      owner: node,
+      openClass: EXPANDED_CLASS,
+      animate: [card],
+      onChange: (open) => details?.setAttribute('aria-hidden', String(!open)),
     });
   });
+
+  const older = document.querySelector(`.timeline-more-btn[aria-controls="${timeline.id}"]`);
+  if (older) {
+    bindDisclosure(/** @type {HTMLElement} */ (older), {
+      owner: timeline,
+      openClass: OLDER_VISIBLE_CLASS,
+      animate: [timeline],
+    });
+  }
 }

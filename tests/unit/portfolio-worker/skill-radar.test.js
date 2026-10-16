@@ -1,149 +1,57 @@
-const fs = require('fs');
-const path = require('path');
-const vm = require('vm');
+const { createFakeDocument, createFakeElement } = require('../../helpers/fake-dom');
 
-const portfolio = path.join(__dirname, '../../../apps/portfolio');
-const modules = path.join(portfolio, 'src/scripts/modules');
-const read = (file) => fs.readFileSync(path.join(modules, file), 'utf8');
+const MODULE = '../../../apps/portfolio/src/scripts/modules/skill-radar.js';
 
-function fakeElement(tag) {
-  return {
-    tagName: tag.toUpperCase(),
-    className: '',
-    id: '',
-    textContent: '',
-    dataset: {},
-    attributes: {},
-    children: [],
-    scrollWidth: 0,
-    clientWidth: 0,
-    focused: false,
-    listeners: {},
-    matches(selector) {
-      return selector === ':focus-within' && this.focused;
-    },
-    addEventListener(type, handler) {
-      (this.listeners[type] ||= []).push(handler);
-    },
-    setAttribute(name, value) {
-      this.attributes[name] = String(value);
-    },
-    removeAttribute(name) {
-      delete this.attributes[name];
-    },
-    append(...nodes) {
-      this.children.push(...nodes);
-    },
-    appendChild(node) {
-      this.children.push(node);
-      return node;
-    },
-    replaceChildren(...nodes) {
-      this.children = nodes;
-    },
-  };
-}
-
-function walk(node, visit) {
-  visit(node);
-  for (const child of node.children || []) walk(child, visit);
-}
-
-async function mount(locale, withGrid = true, { scrollWidth = 0, clientWidth = 0 } = {}) {
-  const grid = fakeElement('div');
+async function mount(locale, { withGrid = true, scrollWidth = 0, clientWidth = 0 } = {}) {
+  const document = createFakeDocument({ lang: locale });
+  const grid = createFakeElement('div');
   grid.scrollWidth = scrollWidth;
   grid.clientWidth = clientWidth;
-  const resizeListeners = [];
-  const observed = [];
-  let resizeObserverCallback = null;
-  class FakeResizeObserver {
+  grid.focused = false;
+  grid.matches = (selector) => selector === ':focus-within' && grid.focused;
+  const cards = [createFakeElement('article'), createFakeElement('article')];
+  cards.forEach((card) => grid.appendChild(card));
+  document.getElementById = (id) => (withGrid && id === 'skill-radar-grid' ? grid : null);
+  let observe;
+  global.ResizeObserver = class {
     constructor(callback) {
-      resizeObserverCallback = callback;
+      observe = callback;
     }
-    observe(target) {
-      observed.push(target);
-    }
-  }
-  const window = {
-    addEventListener(type, handler) {
-      if (type === 'resize') resizeListeners.push(handler);
-    },
+    observe() {}
   };
-  const document = {
-    documentElement: { lang: locale },
-    getElementById: (id) => (withGrid && id === 'skill-radar-grid' ? grid : null),
-    createElement: fakeElement,
-    createElementNS: (_namespace, tag) => fakeElement(tag),
+  const resizeListeners = [];
+  global.window = {
+    addEventListener: (type, handler) => type === 'resize' && resizeListeners.push(handler),
   };
-  const context = vm.createContext({
-    document,
-    window,
-    ResizeObserver: FakeResizeObserver,
-  });
-  const data = new vm.SourceTextModule(read('skill-radar-data.js'), { context });
-  const formatting = new vm.SourceTextModule(read('project-card-formatting.js'), { context });
-  const radar = new vm.SourceTextModule(read('skill-radar.js'), { context });
-  await radar.link((specifier) => (specifier.includes('skill-radar-data') ? data : formatting));
-  await radar.evaluate();
-  radar.namespace.initSkillRadar();
+  global.document = document;
+  const { initSkillRadar } = await import(MODULE);
+  initSkillRadar();
   return {
     grid,
-    domains: data.namespace.resolveSkillData(),
-    observed,
-    blurGrid() {
-      grid.focused = false;
-      (grid.listeners.focusout || []).forEach((handler) => handler());
-    },
-    triggerResize(nextScrollWidth, nextClientWidth) {
+    cards,
+    resize(nextScrollWidth, nextClientWidth) {
       grid.scrollWidth = nextScrollWidth;
       grid.clientWidth = nextClientWidth;
-      if (resizeObserverCallback) resizeObserverCallback();
-      resizeListeners.forEach((handler) => handler());
+      observe();
+    },
+    blur() {
+      grid.focused = false;
+      grid.listeners.focusout.forEach((handler) => handler());
     },
   };
 }
 
-describe('skill radar renders every skill as a visible tag', () => {
-  test.each(['ko', 'en', 'ja'])(
-    '%s shows one card per domain with all of its skills',
-    async (locale) => {
-      const { grid, domains } = await mount(locale);
-      const entries = Object.entries(domains);
+afterEach(() => {
+  delete global.document;
+  delete global.window;
+  delete global.ResizeObserver;
+});
 
-      expect(grid.children).toHaveLength(entries.length);
-      grid.children.forEach((card, index) => {
-        const [key, domain] = entries[index];
-        const [header, list] = card.children;
-        const title = header.children.find((child) => child.tagName === 'H3');
-
-        expect(card.tagName).toBe('ARTICLE');
-        expect(card.className).toBe('skill-domain-card');
-        expect(card.dataset.domain).toBe(key);
-        expect(title.textContent).toBe(domain.title);
-        expect(list.attributes['aria-labelledby']).toBe(title.id);
-        expect(list.children.map((item) => item.textContent)).toEqual(
-          domain.skills.map((skill) => skill.name)
-        );
-        expect(list.children.map((item) => item.dataset.skill)).toEqual(
-          domain.skills.map((skill) => skill.name)
-        );
-      });
-    }
-  );
-
-  test('cards are static: no accordion state, hidden panels, or evidence drawer', async () => {
-    const { grid } = await mount('ko');
-
-    for (const card of grid.children) {
-      walk(card, (node) => {
-        expect(node.attributes?.role).toBeUndefined();
-        expect(node.attributes?.['aria-expanded']).toBeUndefined();
-        expect(node.hidden).toBeUndefined();
-        expect(node.className || '').not.toMatch(
-          /skill-panel|skill-evidence|__expand|level-indicator/
-        );
-      });
-    }
+describe('skill radar hydration', () => {
+  test('keeps the server-rendered cards: nothing is replaced or rebuilt', async () => {
+    const { grid, cards } = await mount('ko');
+    expect(grid.children).toEqual(cards);
+    expect(grid.children[0].parentElement).toBe(grid);
   });
 
   test.each([
@@ -151,99 +59,45 @@ describe('skill radar renders every skill as a visible tag', () => {
     ['en', 'Skills'],
     ['ja', 'スキル'],
   ])(
-    '%s sets role="group" with localized aria-label and toggles tabindex="0" only on horizontal overflow',
-    async (locale, expectedLabel) => {
-      const { grid, observed, triggerResize } = await mount(locale, true, {
-        scrollWidth: 960,
-        clientWidth: 960,
-      });
-
-      expect(grid.attributes.role).toBe('group');
-      expect(grid.attributes['aria-label']).toBe(expectedLabel);
-      expect(grid.attributes.tabindex).toBeUndefined();
-      expect(observed).toEqual([grid]);
-
-      triggerResize(1280, 390);
-      expect(grid.attributes.tabindex).toBe('0');
-
-      triggerResize(1040, 1040);
-      expect(grid.attributes.tabindex).toBeUndefined();
+    '%s names the group and adds tabindex only while the grid overflows',
+    async (locale, label) => {
+      const { grid, resize } = await mount(locale, { scrollWidth: 960, clientWidth: 960 });
+      expect(grid.getAttribute('role')).toBe('group');
+      expect(grid.getAttribute('aria-label')).toBe(label);
+      expect(grid.hasAttribute('tabindex')).toBe(false);
+      resize(1280, 390);
+      expect(grid.getAttribute('tabindex')).toBe('0');
+      resize(1040, 1040);
+      expect(grid.hasAttribute('tabindex')).toBe(false);
     }
   );
 
-  test('keeps tabindex while the grid has focus and drops it on focusout once there is no overflow', async () => {
-    const { grid, triggerResize, blurGrid } = await mount('ko', true, {
-      scrollWidth: 1280,
-      clientWidth: 390,
-    });
-    expect(grid.attributes.tabindex).toBe('0');
-
+  test('keeps tabindex while focused and drops it on focusout once nothing overflows', async () => {
+    const { grid, resize, blur } = await mount('ko', { scrollWidth: 1280, clientWidth: 390 });
+    expect(grid.getAttribute('tabindex')).toBe('0');
     grid.focused = true;
-    triggerResize(1040, 1040);
-    expect(grid.attributes.tabindex).toBe('0');
-
-    blurGrid();
-    expect(grid.attributes.tabindex).toBeUndefined();
+    resize(1040, 1040);
+    expect(grid.getAttribute('tabindex')).toBe('0');
+    blur();
+    expect(grid.hasAttribute('tabindex')).toBe(false);
   });
 
   test('keeps tabindex after focusout when the grid still overflows', async () => {
-    const { grid, blurGrid } = await mount('ko', true, { scrollWidth: 1280, clientWidth: 390 });
+    const { grid, blur } = await mount('ko', { scrollWidth: 1280, clientWidth: 390 });
     grid.focused = true;
-    blurGrid();
-    expect(grid.attributes.tabindex).toBe('0');
+    blur();
+    expect(grid.getAttribute('tabindex')).toBe('0');
   });
 
-  test('marks CJK skill pills with skill-item--cjk while keeping ASCII pills on skill-item', async () => {
-    const grid = fakeElement('div');
-    const document = {
-      documentElement: { lang: 'ko' },
-      getElementById: (id) => (id === 'skill-radar-grid' ? grid : null),
-      createElement: fakeElement,
-      createElementNS: (_namespace, tag) => fakeElement(tag),
-    };
-    const window = {
-      __RESUME_CHAT_DATA__: {
-        skills: {
-          automation: {
-            title: '자동화',
-            items: [
-              { name: 'Python', level: 'expert' },
-              { name: '알림 워크플로', level: 'advanced' },
-              { name: '1Password(홈랩 운영)', level: 'intermediate' },
-              { name: 'ログ収集', level: 'intermediate' },
-            ],
-          },
-        },
-      },
-    };
-    const context = vm.createContext({ document, window });
-    const data = new vm.SourceTextModule(read('skill-radar-data.js'), { context });
-    const formatting = new vm.SourceTextModule(read('project-card-formatting.js'), { context });
-    const radar = new vm.SourceTextModule(read('skill-radar.js'), { context });
-    await radar.link((specifier) => (specifier.includes('skill-radar-data') ? data : formatting));
-    await radar.evaluate();
-    radar.namespace.initSkillRadar();
-
-    const [, list] = grid.children[0].children;
-    expect(list.children.map((item) => [item.textContent, item.className])).toEqual([
-      ['Python', 'skill-item'],
-      ['알림 워크플로', 'skill-item skill-item--cjk'],
-      ['1Password(홈랩 운영)', 'skill-item skill-item--cjk'],
-      ['ログ収集', 'skill-item skill-item--cjk'],
-    ]);
+  test('pages without the grid do nothing', async () => {
+    await expect(mount('ko', { withGrid: false })).resolves.toBeDefined();
   });
 
-  test('pages without the grid render nothing', async () => {
-    await expect(mount('ko', false)).resolves.toBeDefined();
-  });
-
-  test('no skill-search UI remains in the module or the source pages', () => {
-    expect(read('skill-radar.js')).not.toMatch(/skill-search|initSkillSearch/);
-    expect(fs.existsSync(path.join(modules, 'skill-radar-search.js'))).toBe(false);
-    for (const shell of ['index.html', 'index-en.html']) {
-      expect(fs.readFileSync(path.join(portfolio, shell), 'utf8')).not.toContain(
-        'skill-search-input'
-      );
-    }
+  test('the module no longer waits for or reads the resume-data fetch', () => {
+    const source = require('fs').readFileSync(
+      require.resolve('../../../apps/portfolio/src/scripts/modules/skill-radar.js'),
+      'utf8'
+    );
+    expect(source).not.toMatch(/__RESUME_CHAT_DATA__|resolveSkillData|replaceChildren/);
   });
 });

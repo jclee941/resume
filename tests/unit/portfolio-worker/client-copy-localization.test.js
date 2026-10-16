@@ -21,7 +21,10 @@ describe('client copy localization', () => {
   });
 
   test('timeline aria-label drops incident-response jargon and localizes', () => {
-    const src = read('timeline.js');
+    const src = fs.readFileSync(
+      path.resolve(__dirname, '../../../apps/portfolio/lib/cards/timeline-labels.js'),
+      'utf8'
+    );
     expect(src).not.toContain('Career incident response timeline');
     expect(src).toContain('경력 타임라인');
     expect(src).toContain('経歴タイムライン');
@@ -59,8 +62,12 @@ describe('client copy localization', () => {
   });
 
   test('skill-radar renders localized counts and no hardcoded drawer copy', () => {
+    const server = fs.readFileSync(
+      path.resolve(__dirname, '../../../apps/portfolio/lib/cards/skill-domains.js'),
+      'utf8'
+    );
+    expect(server).toContain('skillCountText(domain.skills.length, locale)');
     const src = read('skill-radar.js');
-    expect(src).toContain('skillCountText(domain.skills.length)');
     expect(src).not.toContain("createTextNode(' Evidence')");
     expect(src).not.toContain('skill-evidence-drawer');
   });
