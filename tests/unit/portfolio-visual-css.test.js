@@ -229,7 +229,7 @@ describe('portfolio visual CSS contract', () => {
     );
   });
 
-  test('S18 skills carousel has a focus-visible ring, top-aligned mobile cards, and sans font for CJK skill pills', () => {
+  test('S18 skills carousel has a focus-visible ring, a two-row mobile grid, and sans font for CJK skill pills', () => {
     const skillRadarCss = readStyle('skill-radar.css');
     const skillCardCss = readStyle('skill-domain-card.css');
     const mobile = mediaBlock(skillRadarCss, 'screen and (max-width: 640px)');
@@ -237,7 +237,10 @@ describe('portfolio visual CSS contract', () => {
     expect(skillRadarCss).toMatch(
       /\.skill-radar__grid:focus-visible\s*{[^}]*outline:\s*2px solid var\(--color-accent\);[^}]*outline-offset:\s*2px;/
     );
-    expect(mobile).toMatch(/\.skill-radar__grid\s*{[^}]*align-items:\s*start;/);
+    expect(mobile).toMatch(
+      /\.skill-radar__grid\s*{[^}]*grid-auto-flow:\s*column dense;[^}]*grid-template-rows:\s*auto auto;/
+    );
+    expect(mobile).toMatch(/\.skill-domain-card--tall\s*{[^}]*grid-row:\s*span 2;/);
     expect(skillCardCss).toMatch(
       /\.skill-item--cjk\s*{[^}]*font-family:\s*var\(--font-sans\);[^}]*letter-spacing:\s*normal;/
     );

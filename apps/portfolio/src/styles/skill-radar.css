@@ -20,8 +20,10 @@
 
 @media screen and (max-width: 640px) {
   .skill-radar__grid {
-    display: flex;
-    align-items: start;
+    display: grid;
+    grid-auto-columns: 82%;
+    grid-auto-flow: column dense;
+    grid-template-rows: auto auto;
     gap: var(--space-3);
     overflow-x: auto;
     overscroll-behavior-x: contain;
@@ -30,9 +32,12 @@
   }
 
   .skill-radar__grid > .skill-domain-card {
-    flex: 0 0 82%;
     margin-bottom: 0;
     scroll-snap-align: start;
+  }
+
+  .skill-radar__grid > .skill-domain-card--tall {
+    grid-row: span 2;
   }
 }
 
