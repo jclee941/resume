@@ -312,6 +312,10 @@ tests depend on them.
 ### Certifications
 
 - **Structure**: `ul.cert-list > li.cert-item` (status, name, issuer, date).
+- **Parentheticals**: a short trailing parenthetical (an abbreviation or an English name)
+  stays whole (`.cert-paren`); a longer one on the issuer is a translated institution name and
+  moves to a full-width row of its own (`.cert-issuer-alt`, `lang="en"` when Latin), so it
+  never wraps beside the date.
 - **Layout**: two columns from 769px and three from 1200px, rows separated by hairlines.
 
 ### Project list item

@@ -603,6 +603,29 @@ describe('Cards Module', () => {
       expect(html).toContain('Cert A');
       expect(html).toContain('Cert B');
     });
+
+    test('keeps short parentheticals whole and gives long issuer translations their own row', () => {
+      const html = generateCertificationCards(
+        [
+          {
+            name: '例示資格2級（Example Level 2）',
+            issuer: '例示機関 (Example Agency for Testing)',
+            status: 'active',
+            date: '2020-01',
+          },
+          { name: 'Example Specialist (EXS)', issuer: 'Example Body (EB)', status: 'active' },
+        ],
+        'paren-hash',
+        'ja'
+      );
+      expect(html).toContain('例示資格2級<span class="cert-paren">（Example Level 2）</span>');
+      expect(html).toContain('<li class="cert-item cert-item--issuer-alt">');
+      expect(html).toContain('<span class="cert-issuer">例示機関</span>');
+      expect(html).toContain(
+        '<span class="cert-issuer-alt" lang="en">(Example Agency for Testing)</span>'
+      );
+      expect(html).toContain('Example Body <span class="cert-paren">(EB)</span>');
+    });
   });
 
   describe('generateSkillsList', () => {
