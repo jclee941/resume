@@ -36,8 +36,15 @@
 .hero-link:active {
   border-color: var(--state-hover-border);
   background-image: var(--state-pressed-fill);
-  transform: translateY(1px);
+  transform: translateY(var(--motion-press));
   transition-duration: 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link-subtle:active,
+  .hero-link:active {
+    transform: none;
+  }
 }
 
 .link-subtle:disabled,
