@@ -10,7 +10,7 @@ const crypto = require('crypto');
  * }} PlacedNode
  */
 
-const COL = 240;
+const COL_GAP = 56;
 const ROW = 96;
 const LAYER_Y = 72;
 const GAP = 16;
@@ -147,13 +147,28 @@ function layout(spec, isWide) {
   const maxS = Math.max(...layers.map((l) => l.length));
   /** @param {PlacedNode[]} layer */
   const layerWidth = (layer) => layer.reduce((sum, n) => sum + n.w, 0) + GAP * (layer.length - 1);
-  const W = isWide ? 160 + maxL * COL : Math.max(...layers.map(layerWidth)) + PAD * 2;
+  // Wide columns sit as close as their widest node and the edge labels leaving them allow.
+  const colW = layers.map((l) => Math.max(...l.map((n) => n.w)));
+  /** @param {number} L */
+  const gapAfter = (L) =>
+    Math.max(
+      COL_GAP,
+      ...spec.edges.filter((e) => e.label && node(e.from).layer === L).map((e) => estWidth(e.label))
+    );
+  /** @type {number[]} */
+  const colX = [];
+  colW.forEach((w, L) =>
+    colX.push(L ? colX[L - 1] + colW[L - 1] / 2 + gapAfter(L - 1) + w / 2 : PAD + w / 2)
+  );
+  const W = Math.ceil(
+    isWide ? colX[maxL] + colW[maxL] / 2 + PAD : Math.max(...layers.map(layerWidth)) + PAD * 2
+  );
   const H = isWide ? maxS * ROW + 16 : 56 + maxL * LAYER_Y;
   layers.forEach((layer, L) => {
     let cursor = (W - layerWidth(layer)) / 2;
     layer.forEach((n, i) => {
       if (isWide) {
-        n.x = 80 + L * COL;
+        n.x = colX[L];
         n.y = H / 2 + (i - (layer.length - 1) / 2) * ROW;
       } else {
         n.x = cursor + n.w / 2;
