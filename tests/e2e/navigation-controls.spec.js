@@ -27,7 +27,7 @@ const frames = (page, count = 2) =>
 async function openFirstDialog(page) {
   const more = page.locator('.project-more-btn');
   if (await more.isVisible()) await more.click();
-  const launcher = page.locator('.project-card[data-project-id]').first();
+  const launcher = page.locator('.project-card[data-project-id] .project-card__launcher').first();
   await launcher.scrollIntoViewIfNeeded();
   await launcher.click();
   await page.waitForSelector('.deep-dive-overlay.active');
@@ -246,7 +246,9 @@ test.describe('Deep-dive dialog', () => {
     const events = await page.evaluate(() => window.__focus);
     const closeIndex = events.findIndex((e) => e.cls === 'deep-dive-close');
     expect(events.filter((e) => e.cls === 'deep-dive-close')).toHaveLength(1);
-    expect(events.slice(closeIndex).filter((e) => e.cls === 'project-card')).toHaveLength(1);
+    expect(events.slice(closeIndex).filter((e) => e.cls === 'project-card__launcher')).toHaveLength(
+      1
+    );
     expect(events.filter((e) => e.outgoing && e.inDialog)).toEqual([]);
   });
 

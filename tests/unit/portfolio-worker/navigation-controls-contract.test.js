@@ -66,10 +66,11 @@ describe.each(['index.html', 'index-en.html'])('header markup in %s', (file) => 
       built.indexOf('<header class="site-header">'),
       built.indexOf('</header>')
     );
-    const current = [
-      ...switchers.matchAll(/<a\b[^>]*aria-current="true"[^>]*>\s*(KO|EN|JA)\s*<\/a\s*>/g),
-    ].map((match) => match[1]);
-    expect(current).toEqual(['JA', 'JA']);
+    const current = [...switchers.matchAll(/<a\b[^>]*>/g)]
+      .map(([tag]) => tag)
+      .filter((tag) => /\baria-current="true"/.test(tag))
+      .map((tag) => (tag.match(/\bhreflang="([a-z]+)"/) || [])[1]);
+    expect(current).toEqual(['ja', 'ja']);
   });
 });
 
