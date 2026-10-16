@@ -1,5 +1,6 @@
 import { getHiringActions } from './recruiter-enhancements-data.js';
 import { createIconElement } from './project-card-formatting.js';
+import { onInitialScrollOffset } from './scroll-offset.js';
 
 /**
  * @typedef {ReturnType<typeof import('./recruiter-enhancements-data.js').getRecruiterLabels>} RecruiterLabels
@@ -70,11 +71,17 @@ export function renderMobileActionBar(labels) {
 
   let coverLetterInView = false;
   let heroActionsInView = false;
+  let scrollTop = 0;
   const updateVisibility = () => {
     if (bar.hidden) return;
-    const visible = window.scrollY > 120 && !coverLetterInView && !heroActionsInView;
+    const visible = scrollTop > 120 && !coverLetterInView && !heroActionsInView;
     bar.classList.toggle('is-visible', visible);
     document.body.classList.toggle('has-action-bar', visible);
+  };
+  /** @param {number} offset */
+  const setScrollTop = (offset) => {
+    scrollTop = offset;
+    updateVisibility();
   };
   observeVisibilityBlocker('#cover-letter', '0px 0px -15% 0px', (isInView) => {
     coverLetterInView = isInView;
@@ -84,6 +91,7 @@ export function renderMobileActionBar(labels) {
     heroActionsInView = isInView;
     updateVisibility();
   });
-  window.addEventListener('scroll', updateVisibility, { passive: true });
-  updateVisibility();
+  window.addEventListener('scroll', () => setScrollTop(window.scrollY), { passive: true });
+  // The first state follows the browser's own layout instead of forcing one at init.
+  onInitialScrollOffset(setScrollTop);
 }

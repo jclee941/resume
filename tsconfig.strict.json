@@ -376,6 +376,7 @@
     "apps/portfolio/lib/html-transformer.js",
     "apps/portfolio/lib/worker-writer.js",
     "apps/portfolio/src/scripts/modules/project-cards.js",
+    "apps/portfolio/src/scripts/modules/scroll-offset.js",
     "apps/portfolio/src/scripts/modules/skill-radar-search.js",
     "apps/job-dashboard/src/workflows/application/application-submission-gates.js",
     "apps/job-dashboard/src/workflows/application/application-submissions.js",

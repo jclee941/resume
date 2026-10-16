@@ -2,6 +2,7 @@ import { initContactCopy } from './contact-copy.js';
 import { initAnchorScroll } from './anchor-scroll.js';
 import { onCoverLetterResize, overlapsCoverLetterText } from './cover-letter-overlap.js';
 import { preferredScrollBehavior } from './scroll-behavior.js';
+import { onInitialScrollOffset } from './scroll-offset.js';
 
 export function initUI() {
   initAnchorScroll();
@@ -83,6 +84,19 @@ export function initScrollReveal(options = {}) {
 
   /** @type {IntersectionObserver} */
   let observer;
+  /** @type {IntersectionObserver} */
+  let initial;
+
+  /** @param {Element} el */
+  const reveal = (el) => {
+    el.classList.add('revealed');
+    try {
+      observer.unobserve(el);
+    } catch {
+      /* unobserve is best-effort */
+    }
+  };
+
   try {
     observer = new IntersectionObserver(
       (entries) => {
@@ -101,32 +115,28 @@ export function initScrollReveal(options = {}) {
         rootMargin: '0px 0px -50px 0px',
       }
     );
+    // FAIL-SAFE 1: reveal anything already in or above the viewport, so content
+    // visible on first paint never waits for a scroll event (fixes the
+    // "blank/잘림" impression on fast scroll or full-page capture). Positions come
+    // from this observer's first delivery, measured in the browser's own layout,
+    // so init never forces a reflow.
+    initial = new IntersectionObserver((entries) => {
+      // Only NOW, with positions from a working observer, opt into the hidden state.
+      document.documentElement.classList.add('reveal-ready');
+      entries.forEach((entry) => {
+        initial.unobserve(entry.target);
+        // top above the fold bottom => in view OR already scrolled past: reveal now.
+        // Only elements still below the fold wait for the scroll observer (normal fade).
+        const foldBottom = entry.rootBounds ? entry.rootBounds.bottom : Infinity;
+        if (entry.boundingClientRect.top < foldBottom) reveal(entry.target);
+        else observer.observe(entry.target);
+      });
+    });
   } catch {
     return;
   }
 
-  // Only NOW, with a working observer wired up, opt into the hidden state.
-  document.documentElement.classList.add('reveal-ready');
-
-  /** @param {Element} el */
-  const reveal = (el) => {
-    el.classList.add('revealed');
-    try {
-      observer.unobserve(el);
-    } catch {
-      /* unobserve is best-effort */
-    }
-  };
-
-  // FAIL-SAFE 1: reveal anything already in or above the viewport at init, so
-  // content visible on first paint never waits for a scroll event (fixes the
-  // "blank/잘림" impression on fast scroll or full-page capture).
-  const vh = window.innerHeight || 0;
-  // Read every position before adding any class, so the loop never forces a reflow.
-  // top above the fold bottom => in view OR already scrolled past: reveal now.
-  // Only elements still below the fold wait for the observer (normal fade).
-  const startsInView = revealElements.map((el) => el.getBoundingClientRect().top < vh);
-  revealElements.forEach((el, i) => (startsInView[i] ? reveal(el) : observer.observe(el)));
+  revealElements.forEach((el) => initial.observe(el));
 
   // FAIL-SAFE 2: bounded safety timeout. If the IO callback never fires for a
   // pending element (throttled main thread, headless capture, fast scroll),
@@ -149,24 +159,34 @@ function initBackToTop() {
   btn.className = 'back-to-top';
   btn.setAttribute('aria-label', backToTopLabel);
   btn.setAttribute('data-tooltip', 'above');
+  btn.setAttribute('aria-hidden', 'true');
+  btn.tabIndex = -1;
   btn.textContent = '↑';
   document.body.appendChild(btn);
 
+  let scrollTop = 0;
   function toggleVisibility() {
-    const visible = window.scrollY > 400 && !overlapsCoverLetterText(btn);
+    const visible = scrollTop > 400 && !overlapsCoverLetterText(btn);
     btn.classList.toggle('visible', visible);
     btn.setAttribute('aria-hidden', String(!visible));
     btn.tabIndex = visible ? 0 : -1;
   }
+  /** @param {number} offset */
+  function setScrollTop(offset) {
+    scrollTop = offset;
+    toggleVisibility();
+  }
+  const readScrollTop = () => setScrollTop(window.scrollY);
 
   btn.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: preferredScrollBehavior() });
   });
 
-  window.addEventListener('scroll', toggleVisibility, { passive: true });
-  window.addEventListener('resize', toggleVisibility, { passive: true });
+  window.addEventListener('scroll', readScrollTop, { passive: true });
+  window.addEventListener('resize', readScrollTop, { passive: true });
   onCoverLetterResize(toggleVisibility);
-  toggleVisibility();
+  // The first state follows the browser's own layout instead of forcing one at init.
+  onInitialScrollOffset(setScrollTop);
 }
 
 function initMobileNav() {

@@ -4,7 +4,8 @@
  * Problem: when IntersectionObserver works but its callback lags (fast scroll,
  * full-page screenshot, throttled main thread), `.reveal` sections stay at
  * opacity:0 and the page looks blank/"잘린". The reveal must:
- *  - reveal elements already in/above the viewport immediately at init
+ *  - reveal elements already in/above the viewport on the observer's first
+ *    delivery, reading no layout during init (no forced reflow)
  *  - force-reveal any still-pending element after a bounded safety timeout
  *  - keep the reduced-motion path (reveal all, no reveal-ready) unchanged
  *
@@ -28,11 +29,14 @@ function makeEl({ top = 0, bottom = 0 } = {}) {
 
 function installFakeDom({ reducedMotion = false, ioWorks = true } = {}) {
   const htmlClasses = new Set();
-  const observed = [];
-  let ioCallback = null;
+  const observers = [];
+  const layoutReads = { innerHeight: 0 };
 
   global.window = {
-    innerHeight: 800,
+    get innerHeight() {
+      layoutReads.innerHeight += 1;
+      return 800;
+    },
     matchMedia: (q) => ({ matches: reducedMotion && /reduced-motion/.test(q) }),
     setTimeout: (fn, ms) => setTimeout(fn, ms),
     clearTimeout: (id) => clearTimeout(id),
@@ -49,18 +53,35 @@ function installFakeDom({ reducedMotion = false, ioWorks = true } = {}) {
   if (ioWorks) {
     global.IntersectionObserver = class {
       constructor(cb) {
-        ioCallback = cb;
+        this.cb = cb;
+        this.targets = new Set();
+        observers.push(this);
       }
       observe(el) {
-        observed.push(el);
+        this.targets.add(el);
       }
-      unobserve() {}
-      disconnect() {}
+      unobserve(el) {
+        this.targets.delete(el);
+      }
+      disconnect() {
+        this.targets.clear();
+      }
     };
   } else {
     delete global.IntersectionObserver;
   }
-  return { htmlClasses, observed, triggerIO: (entries) => ioCallback && ioCallback(entries) };
+  // One browser delivery: every observer gets an entry per target it holds, against a 0..800 viewport.
+  const deliver = () =>
+    observers.forEach((observer) => {
+      const entries = [...observer.targets].map((target) => ({
+        target,
+        boundingClientRect: target._rect,
+        rootBounds: { top: 0, bottom: 800 },
+        isIntersecting: target._rect.top < 800 && target._rect.bottom > 0,
+      }));
+      if (entries.length > 0) observer.cb(entries, observer);
+    });
+  return { htmlClasses, layoutReads, deliver };
 }
 
 describe('scroll-reveal fail-safe', () => {
@@ -75,14 +96,21 @@ describe('scroll-reveal fail-safe', () => {
     delete global.IntersectionObserver;
   });
 
-  test('A-S1: reveals in-viewport and above-viewport sections during init (no scroll needed)', () => {
+  test('A-S1: reveals in-viewport and above-viewport sections on the first delivery, reading no layout at init', () => {
     jest.useFakeTimers();
-    installFakeDom({ ioWorks: true });
+    const { htmlClasses, layoutReads, deliver } = installFakeDom({ ioWorks: true });
     const inView = makeEl({ top: 100, bottom: 700 }); // within 0..800
     const above = makeEl({ top: -500, bottom: -100 }); // scrolled past
     const below = makeEl({ top: 1500, bottom: 2200 }); // off-screen below
     const els = [inView, above, below];
+    els.forEach((el) => jest.spyOn(el, 'getBoundingClientRect'));
     initScrollReveal({ root: { querySelectorAll: () => els } });
+    els.forEach((el) => expect(el.getBoundingClientRect).not.toHaveBeenCalled());
+    expect(layoutReads.innerHeight).toBe(0);
+    // Nothing is hidden before the positions are known.
+    expect(htmlClasses.has('reveal-ready')).toBe(false);
+    deliver();
+    expect(htmlClasses.has('reveal-ready')).toBe(true);
     expect(inView.classList.contains('revealed')).toBe(true);
     expect(above.classList.contains('revealed')).toBe(true);
     // below-viewport stays hidden until it scrolls in (normal fade preserved)
