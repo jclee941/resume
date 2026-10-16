@@ -363,7 +363,8 @@ tests depend on them.
 - **Disclosure**: the section stays `hidden` until the project list's more button expands
   it; that button's label mentions the case studies when they exist.
 - **Overlay body**: the component tiles sit under a localized heading (KO 핵심 구성, EN Key
-  components, JA 主な構成要素).
+  components, JA 主な構成要素). Tiles use the resting accent wash and soft accent edge with
+  the component name in `--text-primary`; the success green stays reserved for status.
 - **Architecture**: the project's box diagram is rendered as an ordered step list
   (`ol.architecture-steps > li.architecture-step`) at every width, with a down-arrow
   connector between steps and any text written between two boxes shown as that connector's
