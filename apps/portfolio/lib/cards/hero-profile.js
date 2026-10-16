@@ -2,6 +2,7 @@
 
 const { escapeHtml } = require('../template-sanitizer');
 const { profileLabels } = require('./profile');
+const { formatAwardName, glueKoreanPhrases } = require('./text-breaks');
 
 const TRUST_LABELS = { ko: '자격·수상', en: 'Certifications and awards', ja: '資格・受賞' };
 const MAX_CERTIFICATION_CHIPS = 2;
@@ -39,14 +40,14 @@ function generateHeroTrust(data, locale) {
   const certifications = (data.certifications || [])
     .filter((certification) => certification.name && certification.status === 'active')
     .slice(0, MAX_CERTIFICATION_CHIPS)
-    .map((certification) => String(certification.name));
+    .map((certification) => glueKoreanPhrases(escapeHtml(String(certification.name))));
   const awards = (data.awards || [])
     .filter((award) => award.name)
-    .map((award) => String(award.name));
+    .map((award) => formatAwardName(String(award.name)));
   const names = [...certifications, ...awards];
   if (names.length === 0) return '';
   const label = escapeHtml(TRUST_LABELS[locale] || TRUST_LABELS.ko);
-  const chips = names.map((name) => `<li class="hero-trust__item">${escapeHtml(name)}</li>`);
+  const chips = names.map((html) => `<li class="hero-trust__item">${html}</li>`);
   return `<ul class="hero-trust" aria-label="${label}">${chips.join('')}</ul>`;
 }
 

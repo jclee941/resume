@@ -104,6 +104,11 @@ One ink at stepped alphas encodes interaction state. No second accent hue exists
 - Korean copy keeps word grouping (`word-break: keep-all`, `auto-phrase` where supported)
   and Japanese keeps kinsoku (`line-break: strict`); `cjk-typography.css` owns both.
 - Headlines use `text-wrap: balance`; paragraphs use `text-wrap: pretty`.
+- Build-time line-break helpers (`lib/cards/text-breaks.js`) keep phrases whole without
+  changing the text: Korean pairs that read as one unit (modifier + bound noun, 수 + 있다/없다,
+  -아/-어 verb + auxiliary, -고 있다, a one-syllable determiner + its noun, a credential + its
+  grade) are joined with no-break spaces in the cover letter, About bullets, hero chips and
+  certification names; short Latin hyphenated tokens (NSX-T) never break at the hyphen.
 
 ## 4. Spacing & Layout
 

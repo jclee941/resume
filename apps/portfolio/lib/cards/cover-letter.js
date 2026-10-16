@@ -1,6 +1,8 @@
 const { escapeHtml } = require('../template-sanitizer');
+const { glueKoreanPhrases, keepHyphenatedTokens } = require('./text-breaks');
 
 const JAPANESE_ATOMIC_PHRASE = /(?:\(株\))?[\p{Script=Katakana}ー]{2,}/gu;
+const ATOMIC_CLASS = 'cover-letter__atomic-phrase';
 
 /**
  * @typedef {Object} CoverLetterLocaleEntry
@@ -21,10 +23,8 @@ const JAPANESE_ATOMIC_PHRASE = /(?:\(株\))?[\p{Script=Katakana}ー]{2,}/gu;
  * @returns {string}
  */
 function renderParagraphText(value) {
-  return escapeHtml(value).replace(
-    JAPANESE_ATOMIC_PHRASE,
-    '<span class="cover-letter__atomic-phrase">$&</span>'
-  );
+  const text = keepHyphenatedTokens(glueKoreanPhrases(escapeHtml(value)), ATOMIC_CLASS);
+  return text.replace(JAPANESE_ATOMIC_PHRASE, `<span class="${ATOMIC_CLASS}">$&</span>`);
 }
 
 /**
@@ -81,11 +81,11 @@ function generateCoverLetterSection(entry) {
           <span class="cover-letter__path">~/resume/coverletter.txt</span>
           <span class="cover-letter__hint" aria-hidden="true">read-only</span>
         </header>
-        <blockquote class="cover-letter__headline">${escapeHtml(entry.headline)}</blockquote>
+        <blockquote class="cover-letter__headline">${glueKoreanPhrases(escapeHtml(entry.headline))}</blockquote>
         <ol class="cover-letter__paragraphs">
           ${paragraphsHtml}
         </ol>
-        <p class="cover-letter__closing">${escapeHtml(entry.closing)}</p>
+        <p class="cover-letter__closing">${glueKoreanPhrases(escapeHtml(entry.closing))}</p>
       </article>`;
 }
 

@@ -43,7 +43,7 @@ describe('cards/hero-profile', () => {
     expect(chips).toEqual([
       'Cert A',
       'Cert C',
-      '2026 예시 공모전 장려상',
+      '2026\u00a0예시 공모전 장려상',
       '&lt;b&gt;Award&lt;/b&gt;',
     ]);
   });

@@ -21,9 +21,13 @@ describe('generateCoverLetterSection', () => {
 
   test('S1 (happy): KO entry renders escaped headline, every paragraph, and closing', () => {
     const ko = coverLetter.ko;
-    const html = generateCoverLetterSection(ko);
+    const rendered = generateCoverLetterSection(ko);
+    // Line-break helpers add atomic spans and no-break spaces; the visible text stays verbatim.
+    const html = rendered
+      .replace(/<span class="cover-letter__atomic-phrase">([^<]*)<\/span>/g, '$1')
+      .replace(/\u00a0/g, ' ');
 
-    expect(typeof html).toBe('string');
+    expect(typeof rendered).toBe('string');
     expect(html).toContain(esc(ko.headline));
     ko.paragraphs.forEach((p) => {
       expect(html).toContain(esc(p));
@@ -61,6 +65,17 @@ describe('generateCoverLetterSection', () => {
     const html = generateCoverLetterSection(coverLetter.ja);
     expect(html).toContain(coverLetter.ja.headline);
     expect(html).not.toContain(coverLetter.ko.headline);
+  });
+
+  test('keeps Korean phrases and hyphenated tokens together without changing their text', () => {
+    const html = generateCoverLetterSection({
+      headline: '절차로 바꿔 온 사람',
+      paragraphs: ['할 수 있는 일을 그 시기에 정리했고 Wi-Fi 점검도 맡았다'],
+      closing: '끝',
+    });
+    expect(html).toContain('절차로 바꿔\u00a0온 사람');
+    expect(html).toContain('할\u00a0수\u00a0있는 일을 그\u00a0시기에 정리했고');
+    expect(html).toContain('<span class="cover-letter__atomic-phrase">Wi-Fi</span>');
   });
 
   test('S3 (locale): keeps Japanese katakana phrases atomic without changing their text', () => {
