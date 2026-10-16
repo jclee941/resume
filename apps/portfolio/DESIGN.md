@@ -345,6 +345,12 @@ tests depend on them.
   wide variant below the notes; phones show the narrow variant. The wide variant spaces its
   columns by content (the widest node plus a 56px gap, or the widest edge label leaving the
   column), so tablets show it close to intrinsic size.
+- **Phone layer list**: a diagram whose narrow SVG is wider than 200px (it would shrink in a
+  320-390px phone column) also renders `ol.project-diagram__layers` and the figure gets
+  `.project-diagram--layered`. At 640px and below that figure hides the narrow SVG and shows
+  the list instead: one row of wrapping node chips per layer, a decorative down arrow between
+  rows, and the labels of the edges entering a row above it. Chips reuse the node-kind washes
+  and edges; Latin labels use the mono face, Korean or Japanese labels the sans face.
 
 ### Case-study grid and deep dive
 
@@ -467,9 +473,6 @@ override layers; a fix lands in the file that owns the component.
   (`lib/japanese-template/`), so JA-only layout needs land as CSS `:lang(ja)` rules.
 - Inline `<style>` blocks in the content-pack HTML shells (font faces, theme transitions)
   stay outside this stylesheet because their CSP hashes are computed at build time.
-- On phones a narrow diagram with a three-node layer (392px wide, the widest featured
-  diagram) still scales to about 0.63 at 390px and 0.47 at 320px; a fan-out layout that
-  stacks wide layers would keep it at intrinsic size.
 
 ## 11. Template Size Exception
 

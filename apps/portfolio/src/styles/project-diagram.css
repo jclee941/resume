@@ -31,6 +31,87 @@
   .project-diagram__svg--narrow {
     display: block;
   }
+  .project-diagram--layered .project-diagram__svg--narrow {
+    display: none;
+  }
+  .project-diagram--layered .project-diagram__layers {
+    display: grid;
+  }
+}
+
+.project-diagram__layers {
+  display: none;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.project-diagram__layer {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+}
+
+.project-diagram__layer + .project-diagram__layer::before {
+  content: '↓' / '';
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  line-height: 1;
+}
+
+.project-diagram__via {
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+}
+
+.project-diagram__nodes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.project-diagram__node {
+  display: inline-grid;
+  justify-items: center;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--accent-line-soft);
+  border-radius: var(--radius-md);
+  background: var(--accent-wash-1);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+}
+
+.project-diagram__node--process {
+  border-color: var(--accent-line);
+  background: var(--accent-wash-2);
+}
+
+.project-diagram__node--store {
+  border-color: var(--border-secondary);
+  background: var(--bg-tertiary);
+}
+
+.project-diagram__node--actor {
+  border-color: var(--border-primary);
+  background: var(--bg-secondary);
+}
+
+.project-diagram__node small {
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+}
+
+.project-diagram__node--cjk,
+.project-diagram__via--cjk {
+  font-family: var(--font-sans);
 }
 
 .project-diagram text {

@@ -152,6 +152,30 @@ describe('project-diagram', () => {
     expect(html).toContain('role="img"');
   });
 
+  test('phones get a layer list only when the narrow SVG is wider than a phone column', () => {
+    const fanOut = {
+      nodes: [
+        { id: 'src', label: 'Pipeline', kind: 'process' },
+        { id: 'a', label: 'Store A', kind: 'store' },
+        { id: 'b', label: 'Sink B', kind: 'sink' },
+        { id: 'c', label: 'Sink C', kind: 'sink' },
+      ],
+      edges: [
+        { from: 'src', to: 'a' },
+        { from: 'src', to: 'b', label: '적용' },
+        { from: 'src', to: 'c' },
+      ],
+    };
+    const layered = renderProjectDiagram(fanOut, meta);
+    expect(layered).toContain('<figure class="project-diagram project-diagram--layered">');
+    const list = layered.match(/<ol class="project-diagram__layers"[^>]*>(.*)<\/ol>/s)[1];
+    expect(list.match(/class="project-diagram__layer"/g)).toHaveLength(2);
+    expect(list).toMatch(
+      /Pipeline.*project-diagram__via--cjk">적용<\/span>.*Store A.*Sink B.*Sink C/s
+    );
+    expect(renderProjectDiagram(validSpec, meta)).not.toContain('project-diagram__layers');
+  });
+
   test('identical input yields identical output', () => {
     const out1 = renderProjectDiagram(validSpec, meta);
     const out2 = renderProjectDiagram(validSpec, meta);
