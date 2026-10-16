@@ -5,12 +5,12 @@
 
   a {
     text-decoration: underline;
-    text-decoration-thickness: 2px;
+    text-decoration-thickness: var(--underline-thickness);
   }
 
   :focus-visible {
-    outline-width: 3px;
-    outline-offset: 3px;
+    outline-width: var(--focus-ring-width-strong);
+    outline-offset: var(--focus-ring-offset-wide);
   }
 }
 
@@ -43,8 +43,8 @@
   }
 
   :focus-visible {
-    outline: 3px solid Highlight;
-    outline-offset: 2px;
+    outline: var(--focus-ring-width-strong) solid Highlight;
+    outline-offset: var(--focus-ring-offset);
   }
 
   a {
