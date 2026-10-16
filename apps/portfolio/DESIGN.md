@@ -398,7 +398,8 @@ tests depend on them.
   points back to the site itself. Every item stacks its label over a muted, selectable value:
   the profile handle (the URL's last path segment) for links, whose accessible name includes
   it, and the address for Email.
-- `.site-footer`: muted build line; links underlined.
+- `.site-footer`: muted build line; links underlined. At 480px and below the build line drops
+  its middle-dot separators and spaces its items, so a wrapped line never ends in a dot.
 
 ### Mobile action bar and back-to-top
 
