@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const { PHONE_SVG_MAX_WIDTH, renderDiagramLayers } = require('./project-diagram-layers');
 
 /**
  * @typedef {{ id: string, label: string, sub?: string, kind: string }} DiagramNode
@@ -258,7 +259,12 @@ function renderProjectDiagram(spec, { title, desc }) {
   const idPrefix = `diag-${slug}-${hash}`;
   const wide = renderSvg(spec, idPrefix, true, title, desc);
   const narrow = renderSvg(spec, idPrefix, false, title, desc);
-  return `<figure class="project-diagram">\n${wide}\n${narrow}\n</figure>`;
+  // Too wide for a phone column at full size: phones get the layer list instead.
+  const { nodes, W } = layout(spec, false);
+  if (W <= PHONE_SVG_MAX_WIDTH)
+    return `<figure class="project-diagram">\n${wide}\n${narrow}\n</figure>`;
+  const list = renderDiagramLayers(nodes, spec.edges, title, escapeHtml);
+  return `<figure class="project-diagram project-diagram--layered">\n${wide}\n${narrow}\n${list}\n</figure>`;
 }
 
 module.exports = { renderProjectDiagram, validateDiagramSpec };
