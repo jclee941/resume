@@ -1,10 +1,27 @@
-.project-item--collapsed.is-role-match {
-  display: grid;
+.project-item.is-role-match {
+  border-color: var(--border-control);
+  background-image: linear-gradient(var(--accent-wash-2), var(--accent-wash-2));
 }
 
-.project-item.is-role-match {
-  border-color: var(--color-accent);
-  box-shadow: var(--shadow-card-hover);
+.project-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-bottom: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--accent-wash-3);
+  color: var(--color-accent-strong);
+  font-family: var(--font-label);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  line-height: var(--leading-snug);
+}
+
+.project-role-badge__icon {
+  flex-shrink: 0;
+  width: 1.2em;
+  height: 1.2em;
 }
 
 .project-item.is-role-dimmed:not(:hover):not(:focus-within) {

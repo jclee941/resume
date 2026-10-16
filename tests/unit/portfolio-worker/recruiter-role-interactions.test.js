@@ -1,85 +1,33 @@
 const fs = require('fs');
 const path = require('path');
+const { createFakeElement, createFakeDocument } = require('../../helpers/fake-dom');
 
 const STYLES_DIR = path.resolve(__dirname, '../../../apps/portfolio/src/styles');
+const MODULES = '../../../apps/portfolio/src/scripts/modules';
 
 let ROLE_IDS;
 let PROOF_COUNT_TWO_LABEL;
 
-function toDatasetKey(attrName) {
-  return attrName.slice(5).replace(/-([a-z])/g, (_, char) => char.toUpperCase());
-}
-
-function makeClassList(initial = []) {
-  const set = new Set(initial);
-  return {
-    add: (...names) => names.forEach((name) => set.add(name)),
-    remove: (...names) => names.forEach((name) => set.delete(name)),
-    contains: (name) => set.has(name),
-    toArray: () => Array.from(set),
-  };
-}
-
 function makeCard({ id, role = '', collapsed = false, left = 0, visible = true }) {
-  const attrs = { id };
-  if (role) attrs['data-role'] = role;
-  const dataset = {};
-  if (role) dataset.role = role;
-  const classes = ['project-item'];
-  if (collapsed) classes.push('project-item--collapsed');
-
-  return {
-    id,
-    dataset,
-    parentElement: null,
-    classList: makeClassList(classes),
-    getAttribute(name) {
-      return Object.prototype.hasOwnProperty.call(attrs, name) ? attrs[name] : null;
-    },
-    setAttribute(name, value) {
-      const str = String(value);
-      attrs[name] = str;
-      if (name.startsWith('data-')) {
-        dataset[toDatasetKey(name)] = str;
-      }
-    },
-    getClientRects() {
-      return visible ? [{ left }] : [];
-    },
-    getBoundingClientRect() {
-      return { left };
-    },
-  };
+  const card = createFakeElement('li');
+  card.id = id;
+  card.className = collapsed ? 'project-item project-item--collapsed' : 'project-item';
+  if (role) card.setAttribute('data-role', role);
+  card.rect = { left, top: 0, width: visible ? 100 : 0, height: 100 };
+  card.appendChild(createFakeElement('div')).className = 'project-header';
+  return card;
 }
 
 function makeChip({ role, label }) {
-  const listeners = {};
-  const attrs = {
-    'data-role-filter': role,
-    'aria-pressed': 'false',
-  };
-  return {
-    disabled: true,
-    dataset: { roleFilter: role },
-    getAttribute(name) {
-      return Object.prototype.hasOwnProperty.call(attrs, name) ? attrs[name] : null;
-    },
-    setAttribute(name, value) {
-      attrs[name] = String(value);
-    },
-    querySelector(selector) {
-      if (selector === '.role-chip__label') {
-        return { textContent: label };
-      }
-      return null;
-    },
-    addEventListener(type, handler) {
-      (listeners[type] ||= []).push(handler);
-    },
-    click() {
-      (listeners.click || []).forEach((handler) => handler());
-    },
-  };
+  const chip = createFakeElement('button');
+  chip.disabled = true;
+  chip.setAttribute('data-role-filter', role);
+  chip.setAttribute('aria-pressed', 'false');
+  const labelNode = createFakeElement('span');
+  labelNode.className = 'role-chip__label';
+  labelNode.textContent = label;
+  chip.appendChild(labelNode);
+  return chip;
 }
 
 function installFakeDom({
@@ -87,36 +35,25 @@ function installFakeDom({
   scrollWidth = 600,
   clientWidth = 600,
   initialScrollLeft = 0,
+  reducedMotion = false,
 } = {}) {
   const cards = [
-    makeCard({ id: 'card-0', role: ROLE_IDS[1], collapsed: false, left: 0 }),
-    makeCard({ id: 'card-1', role: `${ROLE_IDS[0]} ${ROLE_IDS[3]}`, collapsed: false, left: 120 }),
-    makeCard({ id: 'card-2', role: ROLE_IDS[2], collapsed: false, left: 240 }),
+    makeCard({ id: 'card-0', role: ROLE_IDS[1], left: 0 }),
+    makeCard({ id: 'card-1', role: `${ROLE_IDS[0]} ${ROLE_IDS[3]}`, left: 120 }),
+    makeCard({ id: 'card-2', role: ROLE_IDS[2], left: 240 }),
     makeCard({ id: 'card-3', role: ROLE_IDS[0], collapsed: true, left: 360 }),
     makeCard({ id: 'card-4', role: `${ROLE_IDS[3]} ${ROLE_IDS[1]}`, collapsed: true, left: 480 }),
   ];
-
-  const list = {
-    id: 'project-list',
-    children: [...cards],
-    scrollWidth,
-    clientWidth,
-    scrollLeft: initialScrollLeft,
-    scrollTo: jest.fn(({ left }) => {
-      if (typeof left === 'number') list.scrollLeft = left;
-    }),
-    getBoundingClientRect: () => ({ left: 0 }),
-    appendChild(card) {
-      const idx = this.children.indexOf(card);
-      if (idx !== -1) this.children.splice(idx, 1);
-      this.children.push(card);
-      card.parentElement = this;
-      return card;
-    },
-  };
-  cards.forEach((card) => {
-    card.parentElement = list;
+  const list = createFakeElement('ul');
+  list.id = 'project-list';
+  list.scrollWidth = scrollWidth;
+  list.clientWidth = clientWidth;
+  list.scrollLeft = initialScrollLeft;
+  list.rect = { left: 0, top: 0, width: 600, height: 400 };
+  list.scrollTo = jest.fn(({ left }) => {
+    if (typeof left === 'number') list.scrollLeft = left;
   });
+  cards.forEach((card) => list.appendChild(card));
 
   const chips = [
     makeChip({ role: ROLE_IDS[0], label: '보안 엔지니어링' }),
@@ -124,7 +61,6 @@ function installFakeDom({
   ];
   const status = { textContent: '' };
   const projectsSection = { scrollIntoView: jest.fn() };
-
   const history = {
     state: { existingKey: 'preserved' },
     pushState: jest.fn((state, _unused, url) => {
@@ -138,45 +74,45 @@ function installFakeDom({
     }),
   };
 
+  global.getComputedStyle = () => ({
+    getPropertyValue: (name) =>
+      ({ '--duration-base': '200ms', '--ease-out': 'ease-out' })[name] || '',
+  });
   global.window = {
-    location: {
-      href: 'https://resume.example.com/',
-      hash: '',
-    },
+    location: { href: 'https://resume.example.com/', hash: '' },
     history,
+    matchMedia: () => ({ matches: reducedMotion }),
   };
-
   global.document = {
-    documentElement: { lang },
-    querySelectorAll(selector) {
-      if (selector === '.role-chip') return chips;
-      return [];
-    },
-    querySelector(selector) {
-      if (selector === '[data-role-status]') return status;
-      if (selector === '#projects') return projectsSection;
-      return null;
-    },
+    ...createFakeDocument({ lang }),
+    querySelectorAll: (selector) => (selector === '.role-chip' ? chips : []),
+    querySelector: (selector) =>
+      selector === '[data-role-status]'
+        ? status
+        : selector === '#projects'
+          ? projectsSection
+          : null,
   };
-
   const proofCounts = new Map([
     [ROLE_IDS[0], 2],
     [ROLE_IDS[3], 2],
     [ROLE_IDS[1], 2],
     [ROLE_IDS[2], 1],
   ]);
-
   return { cards, list, chips, status, projectsSection, history, proofCounts };
 }
+
+const ids = (list) => list.children.map((card) => card.id);
+const badgeOf = (card) => card.querySelector('.project-role-badge');
 
 describe('recruiter-role-interactions module', () => {
   let bindRoleControls;
 
   beforeAll(async () => {
-    ({ bindRoleControls } =
-      await import('../../../apps/portfolio/src/scripts/modules/recruiter-role-interactions.js'));
-    const { getRoleProfiles, getProofCountLabel } =
-      await import('../../../apps/portfolio/src/scripts/modules/recruiter-enhancements-data.js');
+    ({ bindRoleControls } = await import(`${MODULES}/recruiter-role-interactions.js`));
+    const { getRoleProfiles, getProofCountLabel } = await import(
+      `${MODULES}/recruiter-enhancements-data.js`
+    );
     global.document = { documentElement: { lang: 'ko' } };
     const profiles = getRoleProfiles();
     PROOF_COUNT_TWO_LABEL = getProofCountLabel(2);
@@ -190,6 +126,7 @@ describe('recruiter-role-interactions module', () => {
   afterEach(() => {
     delete global.window;
     delete global.document;
+    delete global.getComputedStyle;
   });
 
   test('selecting a role records original indices, reorders matches first, reveals collapsed matches via class, and dims non-matches', () => {
@@ -209,20 +146,12 @@ describe('recruiter-role-interactions module', () => {
 
     expect(chips[0].getAttribute('aria-pressed')).toBe('true');
     expect(chips[1].getAttribute('aria-pressed')).toBe('false');
-
-    expect(list.children.map((card) => card.id)).toEqual([
-      'card-1',
-      'card-3',
-      'card-0',
-      'card-2',
-      'card-4',
-    ]);
+    expect(ids(list)).toEqual(['card-1', 'card-3', 'card-0', 'card-2', 'card-4']);
 
     const collapsedMatch = cards[3];
     expect(collapsedMatch.classList.contains('project-item--collapsed')).toBe(true);
     expect(collapsedMatch.classList.contains('is-role-match')).toBe(true);
     expect(collapsedMatch.classList.contains('is-role-dimmed')).toBe(false);
-
     for (const nonMatch of [cards[0], cards[2], cards[4]]) {
       expect(nonMatch.classList.contains('is-role-dimmed')).toBe(true);
       expect(nonMatch.classList.contains('is-role-match')).toBe(false);
@@ -247,24 +176,12 @@ describe('recruiter-role-interactions module', () => {
     bindRoleControls(cards, proofCounts);
 
     chips[0].click();
-    expect(list.children.map((card) => card.id)).toEqual([
-      'card-1',
-      'card-3',
-      'card-0',
-      'card-2',
-      'card-4',
-    ]);
+    expect(ids(list)).toEqual(['card-1', 'card-3', 'card-0', 'card-2', 'card-4']);
 
     chips[1].click();
     expect(chips[0].getAttribute('aria-pressed')).toBe('false');
     expect(chips[1].getAttribute('aria-pressed')).toBe('true');
-    expect(list.children.map((card) => card.id)).toEqual([
-      'card-1',
-      'card-4',
-      'card-0',
-      'card-2',
-      'card-3',
-    ]);
+    expect(ids(list)).toEqual(['card-1', 'card-4', 'card-0', 'card-2', 'card-3']);
     expect(cards.map((card) => card.getAttribute('data-original-index'))).toEqual([
       '0',
       '1',
@@ -274,24 +191,50 @@ describe('recruiter-role-interactions module', () => {
     ]);
 
     chips[1].click();
-    expect(chips[0].getAttribute('aria-pressed')).toBe('false');
-    expect(chips[1].getAttribute('aria-pressed')).toBe('false');
-    expect(list.children.map((card) => card.id)).toEqual([
-      'card-0',
-      'card-1',
-      'card-2',
-      'card-3',
-      'card-4',
-    ]);
+    expect(chips.map((chip) => chip.getAttribute('aria-pressed'))).toEqual(['false', 'false']);
+    expect(ids(list)).toEqual(['card-0', 'card-1', 'card-2', 'card-3', 'card-4']);
     for (const card of cards) {
       expect(card.classList.contains('is-role-match')).toBe(false);
       expect(card.classList.contains('is-role-dimmed')).toBe(false);
+      expect(badgeOf(card)).toBeNull();
     }
     expect(status.textContent).toBe('');
     expect(history.replaceState).toHaveBeenCalledTimes(1);
     expect(history.state.selectedRole).toBeUndefined();
-    expect(history.state.selectedRoleLabel).toBeUndefined();
     expect(history.state.existingKey).toBe('preserved');
+  });
+
+  test.each([
+    ['ko', '역할 일치'],
+    ['en', 'Role match'],
+    ['ja', 'ロール一致'],
+  ])(
+    '%s matched cards carry a glyph-and-label badge that is removed when the filter clears',
+    (lang, label) => {
+      const { cards, chips, proofCounts } = installFakeDom({ lang });
+      bindRoleControls(cards, proofCounts);
+
+      chips[0].click();
+      for (const card of [cards[1], cards[3]]) {
+        const badge = badgeOf(card);
+        expect(badge.textContent).toBe(label);
+        expect(badge.querySelector('svg')).not.toBeNull();
+        expect(card.querySelector('.project-header').children[0]).toBe(badge);
+      }
+      for (const card of [cards[0], cards[2], cards[4]]) expect(badgeOf(card)).toBeNull();
+
+      chips[0].click();
+      cards.forEach((card) => expect(badgeOf(card)).toBeNull());
+    }
+  );
+
+  test('re-selecting does not duplicate badges', () => {
+    const { cards, chips, proofCounts } = installFakeDom();
+    bindRoleControls(cards, proofCounts);
+    chips[0].click();
+    chips[1].click();
+    chips[0].click();
+    expect(cards[1].querySelectorAll('.project-role-badge')).toHaveLength(1);
   });
 
   test('on phone horizontal snap carousels, reordering and restoring scroll the list back to start', () => {
@@ -300,41 +243,103 @@ describe('recruiter-role-interactions module', () => {
       clientWidth: 360,
       initialScrollLeft: 280,
     });
-    cards[1].getBoundingClientRect = () => ({ left: 0 });
+    cards[1].rect = { left: 0, top: 0, width: 100, height: 100 };
 
     bindRoleControls(cards, proofCounts);
     chips[0].click();
-
     expect(list.scrollLeft).toBe(0);
     expect(list.scrollTo).toHaveBeenLastCalledWith({ left: 0, behavior: 'smooth' });
 
     list.scrollLeft = 320;
     chips[0].click();
-
     expect(list.scrollLeft).toBe(0);
     expect(list.scrollTo).toHaveBeenLastCalledWith({ left: 0, behavior: 'smooth' });
   });
 
-  test('project-role-filter.css and main.css define collapsed match reveal and contrast-safe dimmed state', () => {
-    const mainCss = fs.readFileSync(path.join(STYLES_DIR, 'main.css'), 'utf8');
-    const roleFilterCss = fs.readFileSync(path.join(STYLES_DIR, 'project-role-filter.css'), 'utf8');
+  test('prefers-reduced-motion switches every role-filter scroll to behavior auto, evaluated at call time', () => {
+    const { cards, list, chips, projectsSection, proofCounts } = installFakeDom({
+      scrollWidth: 1400,
+      clientWidth: 360,
+      reducedMotion: true,
+    });
+    bindRoleControls(cards, proofCounts);
+    chips[0].click();
+    expect(projectsSection.scrollIntoView).toHaveBeenLastCalledWith({
+      behavior: 'auto',
+      block: 'start',
+    });
+    expect(list.scrollTo).toHaveBeenLastCalledWith(expect.objectContaining({ behavior: 'auto' }));
 
-    expect(mainCss).toContain(
+    chips[0].click();
+    expect(list.scrollTo).toHaveBeenLastCalledWith({ left: 0, behavior: 'auto' });
+
+    window.matchMedia = () => ({ matches: false });
+    chips[0].click();
+    expect(projectsSection.scrollIntoView).toHaveBeenLastCalledWith({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  });
+
+  test('reordering animates each moved card from its old position and cancels the previous run', () => {
+    const { cards, list, chips, proofCounts } = installFakeDom();
+    cards.forEach((card) => {
+      card.getBoundingClientRect = () => {
+        const index = list.children.indexOf(card);
+        return { left: index * 120, top: 0, width: 100, height: 100 };
+      };
+    });
+    bindRoleControls(cards, proofCounts);
+
+    chips[0].click();
+    const moved = cards.filter((card) => card.animations.length > 0);
+    expect(moved.length).toBeGreaterThan(0);
+    for (const card of moved) {
+      const [{ keyframes }] = card.animations;
+      expect(keyframes[1]).toEqual({ transform: 'none' });
+      expect(keyframes[0].transform).toMatch(/^translate\(-?\d+(\.\d+)?px, 0px\)$/);
+    }
+
+    chips[0].click();
+    expect(moved.some((card) => card.animations[0].cancelled)).toBe(true);
+  });
+
+  test('reordering is instant under reduced motion', () => {
+    const { cards, chips, proofCounts } = installFakeDom({ reducedMotion: true });
+    bindRoleControls(cards, proofCounts);
+    chips[0].click();
+    cards.forEach((card) => expect(card.animations).toHaveLength(0));
+  });
+});
+
+describe('role-filter stylesheets', () => {
+  const css = (name) => fs.readFileSync(path.join(STYLES_DIR, name), 'utf8');
+
+  test('matched cards use a neutral edge and a selected wash, with the dimmed state intact', () => {
+    const roleFilterCss = css('project-role-filter.css');
+    expect(css('main.css')).toContain(
       "@import './project-more.css';\n@import './project-role-filter.css';"
     );
     expect(roleFilterCss).toMatch(
-      /\.project-item--collapsed\.is-role-match\s*\{[^}]*display:\s*grid/
+      /\.project-item\.is-role-match\s*\{[^}]*border-color:\s*var\(--border-control\)/
     );
     expect(roleFilterCss).toMatch(
-      /\.project-item\.is-role-match\s*\{[^}]*border-color:\s*var\(--color-accent\)/
+      /\.project-item\.is-role-match\s*\{[^}]*background-image:\s*linear-gradient\(var\(--accent-wash-2\)/
     );
+    expect(roleFilterCss).not.toMatch(/\.is-role-match\s*\{[^}]*(--color-accent[;)]|box-shadow)/);
+    expect(roleFilterCss).toMatch(/\.project-role-badge\s*\{/);
     expect(roleFilterCss).toMatch(
       /\.project-item\.is-role-dimmed:not\(:hover\):not\(:focus-within\)\s*\{[^}]*border-color:\s*var\(--border-primary\)[\s\S]*?filter:\s*saturate\(0\.25\)/
     );
     expect(roleFilterCss).not.toMatch(/\.is-role-dimmed:(?:hover|focus-within)/);
-    expect(roleFilterCss).toMatch(
-      /@media\s*\(prefers-reduced-motion:\s*no-preference\)\s*\{[\s\S]*?transition:[\s\S]*?border-color\s+var\(--transition-base\)[\s\S]*?filter\s+var\(--transition-base\)/
-    );
     expect(roleFilterCss).not.toMatch(/opacity/);
+  });
+
+  test('collapsed projects hide only behind the script-enabled flag, and matched ones stay visible', () => {
+    const moreCss = css('project-more.css');
+    expect(moreCss).toMatch(
+      /html\.js \.project-list:not\(\.is-expanded\) \.project-item--collapsed:not\(\.is-role-match\)\s*\{\s*display:\s*none/
+    );
+    expect(moreCss).not.toMatch(/^\.project-item--collapsed\s*\{/m);
   });
 });

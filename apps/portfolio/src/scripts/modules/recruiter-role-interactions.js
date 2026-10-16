@@ -1,5 +1,7 @@
 import { getRoleProfiles } from './recruiter-enhancements-data.js';
 import { roleProofCountText } from './recruiter-role-proofs.js';
+import { flipReorder, scrollBehavior } from './recruiter-role-motion.js';
+import { syncMatchBadges } from './recruiter-match-badge.js';
 
 /**
  * @param {Element[]} cards
@@ -121,7 +123,7 @@ function clearRoleHistoryState() {
 function scrollCarouselToStart(cards) {
   const list = cards[0]?.parentElement;
   if (!list || list.scrollWidth <= list.clientWidth) return;
-  list.scrollTo?.({ left: 0, behavior: 'smooth' });
+  list.scrollTo?.({ left: 0, behavior: scrollBehavior() });
 }
 
 /**
@@ -135,11 +137,11 @@ function scrollCarouselToFirstMatch(cards) {
     (card) => card.classList.contains('is-role-match') && card.getClientRects().length > 0
   );
   if (!match) {
-    list.scrollTo?.({ left: 0, behavior: 'smooth' });
+    list.scrollTo?.({ left: 0, behavior: scrollBehavior() });
     return;
   }
   const offset = match.getBoundingClientRect().left - list.getBoundingClientRect().left;
-  list.scrollTo({ left: list.scrollLeft + offset, behavior: 'smooth' });
+  list.scrollTo({ left: list.scrollLeft + offset, behavior: scrollBehavior() });
 }
 
 /**
@@ -160,10 +162,16 @@ export function bindRoleControls(cards, proofCounts) {
         const role = button.getAttribute('data-role-filter') || '';
         const roleProfile = roleProfiles.find((candidate) => candidate.id === role);
         if (!roleProfile) return;
+        const list = cards[0]?.parentElement;
         if (button.getAttribute('aria-pressed') === 'true') {
           buttons.forEach((candidate) => candidate.setAttribute('aria-pressed', 'false'));
-          clearRoleFocus(cards);
-          reorderCardsForRole(cards);
+          const restore = () => {
+            clearRoleFocus(cards);
+            syncMatchBadges(cards, () => false);
+            reorderCardsForRole(cards);
+          };
+          if (list) flipReorder(list, cards, restore);
+          else restore();
           if (status) status.textContent = '';
           clearRoleHistoryState();
           scrollCarouselToStart(cards);
@@ -172,11 +180,19 @@ export function bindRoleControls(cards, proofCounts) {
         buttons.forEach((candidate) =>
           candidate.setAttribute('aria-pressed', String(candidate === button))
         );
-        clearRoleFocus(cards);
-        cards.forEach((card) => {
-          card.classList.add(cardMatchesRole(card, role) ? 'is-role-match' : 'is-role-dimmed');
-        });
-        const orderedCards = reorderCardsForRole(cards, role);
+        /** @type {Element[]} */
+        let orderedCards = cards;
+        const select = () => {
+          clearRoleFocus(cards);
+          cards.forEach((card) => {
+            card.classList.add(cardMatchesRole(card, role) ? 'is-role-match' : 'is-role-dimmed');
+          });
+          syncMatchBadges(cards, (card) => cardMatchesRole(card, role));
+          orderedCards = reorderCardsForRole(cards, role);
+          scrollCarouselToFirstMatch(orderedCards);
+        };
+        if (list) flipReorder(list, cards, select);
+        else select();
         const visibleLabel =
           button.querySelector('.role-chip__label')?.textContent?.trim() || roleProfile.label;
         const selectedRole = { ...roleProfile, label: visibleLabel };
@@ -187,8 +203,9 @@ export function bindRoleControls(cards, proofCounts) {
           );
         }
         setRoleHistoryState(selectedRole);
-        document.querySelector('#projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        scrollCarouselToFirstMatch(orderedCards);
+        document
+          .querySelector('#projects')
+          ?.scrollIntoView({ behavior: scrollBehavior(), block: 'start' });
       });
     }
     button.disabled = false;

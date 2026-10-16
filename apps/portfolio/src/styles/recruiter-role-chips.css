@@ -14,8 +14,26 @@
   min-width: 0;
   min-height: 44px;
   padding: var(--space-3) var(--space-4);
+  border-color: var(--border-control);
   color: var(--text-secondary);
   text-align: left;
+}
+
+@media (hover: hover) {
+  .role-chip:not(:disabled):hover {
+    border-color: var(--state-hover-border);
+    background-color: var(--state-hover-bg);
+  }
+}
+
+.role-chip:not(:disabled):active {
+  background-color: var(--state-pressed-bg);
+  transition-duration: 0s;
+}
+
+.role-chip[aria-pressed='true'] {
+  border-color: var(--border-control);
+  background-color: var(--accent-wash-3);
 }
 
 .role-chip:disabled {
@@ -51,6 +69,7 @@
 
 .role-chip__count {
   min-width: 0;
+  min-height: 1lh;
   margin-left: auto;
   color: var(--text-muted);
   font-family: var(--font-label);
@@ -58,6 +77,18 @@
   line-height: var(--leading-snug);
   text-align: right;
   white-space: nowrap;
+}
+
+.role-chip__count::before {
+  content: '\200b';
+}
+
+.role-chip__count::after {
+  content: attr(data-sizer);
+  display: block;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
 }
 
 .role-chip__separator {
