@@ -5,7 +5,6 @@ export function initUI() {
   initNavScrollEffect();
   initScrollReveal();
   initSectionAnalytics();
-  initScrollProgress();
   initBackToTop();
   initMobileNav();
   initContactCopy();
@@ -144,13 +143,11 @@ export function initScrollReveal(options = {}) {
   // content visible on first paint never waits for a scroll event (fixes the
   // "blank/잘림" impression on fast scroll or full-page capture).
   const vh = window.innerHeight || 0;
-  revealElements.forEach((el) => {
-    const r = el.getBoundingClientRect();
-    // top above the fold bottom => in view OR already scrolled past: reveal now.
-    // Only elements still below the fold wait for the observer (normal fade).
-    if (r.top < vh) reveal(el);
-    else observer.observe(el);
-  });
+  // Read every position before adding any class, so the loop never forces a reflow.
+  // top above the fold bottom => in view OR already scrolled past: reveal now.
+  // Only elements still below the fold wait for the observer (normal fade).
+  const startsInView = revealElements.map((el) => el.getBoundingClientRect().top < vh);
+  revealElements.forEach((el, i) => (startsInView[i] ? reveal(el) : observer.observe(el)));
 
   // FAIL-SAFE 2: bounded safety timeout. If the IO callback never fires for a
   // pending element (throttled main thread, headless capture, fast scroll),
@@ -160,24 +157,6 @@ export function initScrollReveal(options = {}) {
       if (!el.classList.contains('revealed')) reveal(el);
     });
   }, 3000);
-}
-
-function initScrollProgress() {
-  const progressBar = document.createElement('div');
-  progressBar.className = 'scroll-progress';
-  progressBar.setAttribute('aria-hidden', 'true');
-  document.body.prepend(progressBar);
-
-  function updateProgress() {
-    const scrollTop = window.scrollY;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-    // Set CSS custom property on root for CSP compliance
-    document.documentElement.style.setProperty('--scroll-progress', `${progress}%`);
-  }
-
-  window.addEventListener('scroll', updateProgress, { passive: true });
-  updateProgress();
 }
 
 function initBackToTop() {

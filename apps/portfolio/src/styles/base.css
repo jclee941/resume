@@ -78,10 +78,6 @@ button {
   display: none !important;
 }
 
-.scroll-progress {
-  width: var(--scroll-progress, 0%);
-}
-
 ::selection {
   background: var(--accent-wash-3);
   color: var(--text-primary);

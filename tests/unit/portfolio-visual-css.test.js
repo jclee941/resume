@@ -176,7 +176,7 @@ describe('portfolio visual CSS contract', () => {
   test('S14 every referenced custom property is defined', () => {
     // Undefined tokens fail silently: the declaration is dropped and the
     // surface renders without its background or border.
-    const runtimeProperties = new Set(['--scroll-progress', '--level-color']);
+    const runtimeProperties = new Set(['--level-color']);
     const allCss = styleFiles.map(readStyle).join('\n');
     const defined = new Set([...allCss.matchAll(/(--[\w-]+)\s*:/g)].map((match) => match[1]));
     const referenced = new Set(
