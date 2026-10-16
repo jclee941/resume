@@ -6,6 +6,7 @@
   align-items: flex-start;
   justify-content: center;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--space-4);
   background: var(--overlay-bg);
   -webkit-backdrop-filter: blur(6px);
@@ -20,6 +21,9 @@
 .deep-dive-overlay.active {
   opacity: 1;
   visibility: visible;
+  transition:
+    opacity var(--transition-slow),
+    visibility 0s;
 }
 
 .deep-dive-panel {
@@ -27,7 +31,7 @@
   width: 100%;
   max-width: 800px;
   margin: var(--space-8) 0;
-  overflow: hidden;
+  overflow: clip;
   border: 1px solid var(--accent-line-soft);
   border-radius: var(--radius-lg);
   background: var(--bg-secondary);
@@ -88,6 +92,10 @@
   font-size: var(--text-sm);
 }
 
+.deep-dive-header__period-word {
+  font-family: var(--font-label);
+}
+
 .deep-dive-header__tags {
   display: flex;
   flex-wrap: wrap;
@@ -95,17 +103,18 @@
 }
 
 .deep-dive-close {
-  position: absolute;
-  top: var(--space-4);
-  right: var(--space-4);
+  position: sticky;
+  top: max(var(--space-2), env(safe-area-inset-top));
   z-index: 1;
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
-  border: 1px solid var(--border-secondary);
+  width: var(--control-min);
+  height: var(--control-min);
+  margin: var(--space-4) max(var(--space-4), env(safe-area-inset-right))
+    calc(-1 * (var(--control-min) + var(--space-4))) auto;
+  border: 1px solid var(--border-control);
   border-radius: var(--radius-md);
-  background: var(--bg-secondary);
+  background-color: var(--bg-secondary);
   color: var(--text-secondary);
   transition:
     color var(--transition-base),
@@ -117,10 +126,22 @@
   height: 18px;
 }
 
-.deep-dive-close:hover,
 .deep-dive-close:focus-visible {
-  background: var(--accent-wash-2);
   color: var(--color-accent-strong);
+}
+
+@media (hover: hover) {
+  .deep-dive-close:hover {
+    border-color: var(--state-hover-border);
+    background-image: var(--state-hover-fill);
+    color: var(--color-accent-strong);
+  }
+}
+
+.deep-dive-close:active {
+  border-color: var(--state-hover-border);
+  background-image: var(--state-pressed-fill);
+  transition-duration: 0s;
 }
 
 @media (max-width: 768px) {
