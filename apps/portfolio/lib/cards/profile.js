@@ -160,12 +160,16 @@ function generateProfileBento(data, locale = 'ko') {
     const translations = LANGUAGE_LABELS[locale] || {};
     /** @param {string} value */
     const localize = (value) => (Object.hasOwn(translations, value) ? translations[value] : value);
+    // One language per line; a trailing parenthetical never breaks inside itself.
     const langs = data.languages
-      .map(
-        (l) =>
-          `${escapeHtml(localize(String(l.name)))} <span class="profile-card__muted">${escapeHtml(localize(String(l.level || '')))}</span>`
-      )
-      .join(' · ');
+      .map((l) => {
+        const level = escapeHtml(localize(String(l.level || ''))).replace(
+          /(\s*)([(\uff08][^)\uff09]*[)\uff09])$/,
+          '$1<span class="profile-card__status">$2</span>'
+        );
+        return `${escapeHtml(localize(String(l.name)))} <span class="profile-card__muted">${level}</span>`;
+      })
+      .join('<br>');
     cards.push(`<div class="profile-card">
         <span class="profile-card__label">${labels.languages}</span>
         <p class="profile-card__value">${langs}</p>
