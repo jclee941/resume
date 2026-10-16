@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { PHONE_SVG_MAX_WIDTH, renderDiagramLayers } = require('./project-diagram-layers');
+const { PHONE_SVG_MAX_WIDTH, renderDiagramLayers, textClass } = require('./project-diagram-layers');
 
 /**
  * @typedef {{ id: string, label: string, sub?: string, kind: string }} DiagramNode
@@ -202,8 +202,8 @@ function renderEdge(from, to, isWide, markerId, label) {
     const mx = (x1 + x2) / 2;
     const my = (y1 + y2) / 2;
     svg += isWide
-      ? `<text x="${mx}" y="${my - 4}" class="edge__label" text-anchor="middle">${escapeHtml(label)}</text>`
-      : `<text x="${mx + 10}" y="${my + 4}" class="edge__label" text-anchor="start">${escapeHtml(label)}</text>`;
+      ? `<text x="${mx}" y="${my - 4}" class="${textClass('edge__label', label)}" text-anchor="middle">${escapeHtml(label)}</text>`
+      : `<text x="${mx + 10}" y="${my + 4}" class="${textClass('edge__label', label)}" text-anchor="start">${escapeHtml(label)}</text>`;
   }
   return svg;
 }
@@ -211,8 +211,8 @@ function renderEdge(from, to, isWide, markerId, label) {
 /** @param {PlacedNode} n */
 function renderNode(n) {
   const text = n.sub
-    ? `<text y="-2" class="node__label" text-anchor="middle">${escapeHtml(n.label)}</text><text y="14" class="node__sub" text-anchor="middle">${escapeHtml(n.sub)}</text>`
-    : `<text y="4" class="node__label" text-anchor="middle">${escapeHtml(n.label)}</text>`;
+    ? `<text y="-2" class="${textClass('node__label', n.label)}" text-anchor="middle">${escapeHtml(n.label)}</text><text y="14" class="${textClass('node__sub', n.sub)}" text-anchor="middle">${escapeHtml(n.sub)}</text>`
+    : `<text y="4" class="${textClass('node__label', n.label)}" text-anchor="middle">${escapeHtml(n.label)}</text>`;
   return `<g class="node node--${n.kind}" transform="translate(${n.x}, ${n.y})"><rect x="${-n.w / 2}" y="${-n.h / 2}" width="${n.w}" height="${n.h}" rx="6" class="node__bg" />${text}</g>`;
 }
 

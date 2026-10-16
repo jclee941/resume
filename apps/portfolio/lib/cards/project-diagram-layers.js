@@ -53,4 +53,4 @@ function renderDiagramLayers(nodes, edges, title, escapeHtml) {
   return `<ol class="project-diagram__layers" aria-label="${escapeHtml(title)}">${items.join('')}</ol>`;
 }
 
-module.exports = { PHONE_SVG_MAX_WIDTH, renderDiagramLayers };
+module.exports = { PHONE_SVG_MAX_WIDTH, renderDiagramLayers, textClass };
