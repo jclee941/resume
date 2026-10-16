@@ -146,7 +146,15 @@ function generateProfileBento(data, locale = 'ko') {
           a.year && !String(a.name).includes(String(a.year))
             ? ` (${escapeHtml(String(a.year))})`
             : '';
-        return `<li>${escapeHtml(String(a.name))}${org}${year}</li>`;
+        // A leading year stays with the next word; Japanese names may break where kanji
+        // meet katakana instead of inside a word.
+        const name = escapeHtml(String(a.name))
+          .replace(/^(\d{4}) /, '$1\u00a0')
+          .replace(
+            /(?<=[\u4e00-\u9fff])(?=[\u30a0-\u30ff])|(?<=[\u30a0-\u30ff])(?=[\u4e00-\u9fff])/g,
+            '<wbr>'
+          );
+        return `<li>${name}${org}${year}</li>`;
       })
       .join('');
     cards.push(`<div class="profile-card">

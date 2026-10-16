@@ -129,6 +129,16 @@ describe('cards/profile generateProfileBento', () => {
     expect(html).not.toContain('profile-card--photo');
   });
 
+  it('lets Japanese award names break only where kanji meet katakana', () => {
+    const html = generateProfileBento(
+      {
+        awards: [{ name: '2026 全国ロボットコンテスト優秀賞', organization: '例示大学' }],
+      },
+      'ja'
+    );
+    expect(html).toContain('2026\u00a0全国<wbr>ロボットコンテスト<wbr>優秀賞');
+  });
+
   it('omits the award year when the official award name already carries it', () => {
     const html = generateProfileBento({
       awards: [
@@ -141,7 +151,7 @@ describe('cards/profile generateProfileBento', () => {
       ],
     });
     expect(html).toContain(
-      '2026 예시 공모전 장려상 <span class="profile-card__muted">예시대학교</span></li>'
+      '2026\u00a0예시 공모전 장려상 <span class="profile-card__muted">예시대학교</span></li>'
     );
     expect(html).toContain(
       '공로상 <span class="profile-card__muted">테스트기관</span> (2025)</li>'
