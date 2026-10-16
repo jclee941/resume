@@ -250,16 +250,21 @@ tests depend on them.
 
 - **Placement**: `section.role-quick-paths` sits at the top of the projects section, above
   `#project-list`, and filters that list.
-- **Structure**: `button.role-chip > label + separator + proof` (+ JS count); the separator is
+- **Structure**: `button.role-chip > label + separator + proof` plus a count slot the server
+  reserves and the client fills, so filling it never reflows; the separator is
   hidden visually. The label and count share the first line; when both do not fit, the count
   wraps under the label so the label never breaks mid-word.
 - **Variants**: four columns from 1024px, two below.
-- **States**: disabled (SSR, `cursor: wait`, 72% opacity), hover/focus, pressed
-  (`aria-pressed="true"`: `--accent-wash-3` fill and a check glyph before the label).
+- **States**: disabled (SSR, `cursor: wait`, `--state-disabled-opacity`), hover (pointer
+  devices) and focus, pressed (`aria-pressed="true"`: `--accent-wash-3` fill and a check glyph
+  before the label).
 - **Filtering**: selecting a chip moves the matching projects to the top of the list, each
   group in its original order. A match that sits behind the more button appears without
-  expanding the list. Matches take the accent border and the hover shadow. Every other project
-  is desaturated (`saturate(0.25)`) on the darker `--bg-primary` surface with a plain border;
+  expanding the list. Matches keep a neutral `--border-control` edge, take an `--accent-wash-2`
+  wash and show a `.project-role-badge` (check glyph plus a localized label: KO 역할 일치, EN Role
+  match, JA ロール一致) above the title. Roles match whole-token keywords, and the reorder animates
+  card positions (FLIP; instant under reduced motion). Every other project
+  is desaturated (`--filter-dimmed`) on the darker `--bg-primary` surface with a plain border;
   its text keeps its colour and full opacity, so contrast stays at WCAG AA, and hover or focus
   restores the normal card. Pressing the selected chip again restores the original order,
   clears the status text and removes both treatments; on phones the carousel returns to its
@@ -307,9 +312,10 @@ tests depend on them.
   prompt is mono while the closing sentence is sans. The decorative quote glyph sits in the
   headline's top padding, clear of the headline text at every width. The chrome path truncates
   with an ellipsis when the strip is too narrow.
-- **Fold**: the server renders every paragraph; in the browser all but the first fold
-  behind `.cover-letter__toggle`, whose label names how many paragraphs it reveals (an
-  unlabeled fold once read as missing text). Print shows every paragraph. From 1024px the
+- **Fold**: the server renders every paragraph and `.cover-letter__toggle`; all but the first
+  fold only under `html.js` (set by an early inline script with a bounded fail-safe), so the
+  letter stays readable without JavaScript. The toggle's label names how many paragraphs it
+  reveals (an unlabeled fold once read as missing text). Print shows every paragraph. From 1024px the
   card is a grid: the headline sits in a left column beside the paragraphs and the toggle.
   There the English headline steps down to `--text-2xl`; its longer words otherwise take four
   lines.
@@ -317,6 +323,10 @@ tests depend on them.
 ### Career timeline
 
 - **Structure**: `ul.incident-timeline > li.timeline-node > marker + content(header + card)`.
+  The settled timeline is server-rendered from the page data; the client binds to it and
+  never replaces it, so a slow or failed script leaves every role in place. Roles are not tab
+  stops: each opens through a native `button.timeline-expand-btn` (`aria-expanded`,
+  `aria-controls`).
 - **Layout**: a single left rail at every width. The rail sits in a fixed marker column
   (`--timeline-rail-x`), the dot is centered on it, and the card fills the remaining width.
 - **Card**: company, role and team on the left; up to three achievements visible as
@@ -327,7 +337,7 @@ tests depend on them.
   cards expand via `.timeline-node.is-expanded .timeline-details`.
 - **Earlier roles**: the four most recent roles stay visible; older ones carry
   `.timeline-node--older` and appear when `.timeline-more-btn`, labelled with their count,
-  is pressed. Print shows every role. The resume actions row (PDF, contact) is centered under
+  is pressed; they collapse only under `html.js`. Print shows every role. The resume actions row (PDF, contact) is centered under
   that button.
 
 ### Certifications
@@ -365,7 +375,8 @@ tests depend on them.
   the width so the next one peeks in, and the role filter scrolls the carousel to its first
   match.
 - **Disclosure controls**: the project, earlier-role and cover-letter buttons share one pill
-  (`project-more.css`) and always state what they reveal.
+  (`project-more.css`), are server-rendered, and always state what they reveal; the content
+  behind them collapses only under `html.js`, so nothing is hidden without JavaScript.
 - **Measure**: descriptions and case-note sentences cap at `--measure-prose`, so wide
   non-featured cards keep a readable line length.
 
@@ -393,8 +404,9 @@ tests depend on them.
 
 ### Case-study grid and deep dive
 
-- **Structure**: JS-rendered `.case-study-deep-dives` grid of `.project-card` buttons that
-  open `.deep-dive-overlay`.
+- **Structure**: JS-rendered `.case-study-deep-dives` grid of `.project-card` list items, each
+  holding a native `button.project-card__launcher[aria-haspopup="dialog"]` that opens
+  `.deep-dive-overlay`; the button is the card's only focus stop.
 - **Disclosure**: the section stays `hidden` until the project list's more button expands
   it; that button's label mentions the case studies when they exist.
 - **Overlay body**: the component tiles sit under a localized heading (KO 핵심 구성, EN Key
@@ -417,7 +429,8 @@ tests depend on them.
 ### Skill domain cards
 
 - **Structure**: static `article.skill-domain-card` (icon, `h3`, count) with every skill as a
-  visible `li.skill-item` pill in a `ul.skill-list` labelled by the heading.
+  visible `li.skill-item` pill in a `ul.skill-list` labelled by the heading. The cards are
+  server-rendered per locale; the client only labels the scroller and manages its tab stop.
 - **Rules**: no accordion, no search box, no tier label; cards are static surfaces. Cards
   flow in CSS columns (up to three, each at least 16rem) so short cards fill the gaps a row
   grid leaves; reading order runs down each column. On phones the cards form a two-row
@@ -479,7 +492,10 @@ tests depend on them.
 
 ### Rules
 
-- Animate `transform`, `opacity`, and color only.
+- Animate `transform`, `opacity`, and color; disclosures and role reordering also animate
+  their real geometry with the Web Animations API (`--duration-base`, `--ease-out`, the same
+  timing in and out). An interrupted animation continues from the current height, and under
+  `prefers-reduced-motion: reduce` the layout changes instantly.
 - Only interactive elements react to hover; there is no global link or button lift.
 - In-page anchors share one delegated handler: it scrolls with the header offset, uses
   `behavior: auto` under `prefers-reduced-motion: reduce` (evaluated at call time), updates the
