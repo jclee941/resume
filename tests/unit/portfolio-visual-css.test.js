@@ -18,8 +18,9 @@ describe('portfolio visual CSS contract', () => {
     const heroCss = readStyle('hero.css');
 
     expect(variablesCss).toContain('--gradient-page-atmosphere');
-    expect(variablesCss).toContain(
-      'linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 44%, var(--bg-primary) 100%);'
+    // The mid band stays a light tint over --bg-primary so cards keep their tonal step mid-viewport.
+    expect(variablesCss).toMatch(
+      /linear-gradient\(\s*180deg,\s*transparent 0%,\s*rgb\(var\(--bg-secondary-rgb\) \/ 0\.35\) 44%,\s*transparent 100%\s*\);/
     );
     expect(baseCss).toContain('background: var(--gradient-page-atmosphere);');
     expect(heroCss).toContain('.section-hero::before');
