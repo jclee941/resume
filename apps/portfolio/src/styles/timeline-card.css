@@ -121,6 +121,7 @@ a.company-link {
   .timeline-highlights,
   .timeline-summary {
     grid-area: highlights;
+    max-width: var(--measure-timeline);
     margin-top: 0;
   }
 
