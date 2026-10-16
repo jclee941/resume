@@ -1,13 +1,13 @@
 .contact-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-3);
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-2);
 }
 
 @media (min-width: 768px) {
   .contact-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-3);
   }
 }
@@ -19,9 +19,11 @@
 }
 
 .contact-item {
-  display: inline-flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
-  gap: var(--space-3);
+  column-gap: var(--space-3);
+  row-gap: var(--space-1);
   min-height: 48px;
   padding: var(--space-3) var(--space-4);
   font-family: var(--font-mono);
@@ -30,6 +32,7 @@
 
 .contact-item::before {
   content: '>';
+  grid-row: 1 / 3;
   color: var(--color-success);
   transition: transform var(--transition-base);
 }
@@ -42,21 +45,11 @@
   transform: translateX(var(--space-1));
 }
 
-.contact-item--email {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  row-gap: var(--space-1);
-}
-
-.contact-item--email::before {
-  grid-row: 1 / 3;
-}
-
 .contact-item__label {
   font-family: var(--font-label);
 }
 
-.contact-item--email .contact-item__value {
+.contact-item__value {
   grid-column: 2;
   color: var(--text-muted);
   font-size: var(--text-sm);

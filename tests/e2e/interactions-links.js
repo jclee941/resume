@@ -81,9 +81,10 @@ test.describe('Contact Links Interaction', () => {
   });
 
   test('external links should open in new tab', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.goto('/en/', { waitUntil: 'domcontentloaded' });
 
-    const githubLink = page.getByRole('link', { name: /^GitHub \(opens in new tab\)$/ });
+    // The contact link is named by its label, its profile handle and the new-tab hint.
+    const githubLink = page.getByRole('link', { name: /^GitHub \S+ \(opens in new tab\)$/ });
     await expect(githubLink).toHaveAttribute('target', '_blank');
     await expect(githubLink).toHaveAttribute('rel', /noopener/);
   });
