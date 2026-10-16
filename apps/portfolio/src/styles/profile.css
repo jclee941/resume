@@ -37,14 +37,14 @@
 .profile-card__list li {
   margin: 0;
   color: var(--text-primary);
-  font-size: var(--text-sm);
+  font-size: var(--text-support);
   line-height: var(--leading-relaxed);
   overflow-wrap: anywhere;
 }
 
 .profile-card__muted {
   color: var(--text-secondary);
-  font-size: var(--text-sm);
+  font-size: var(--text-support);
 }
 
 .profile-card__status {
@@ -73,7 +73,7 @@
 }
 
 .profile-card__list li:has(> a)::before {
-  line-height: 44px;
+  line-height: var(--control-min);
 }
 
 .profile-card__list a {
@@ -84,7 +84,7 @@
   font-family: var(--font-mono);
   text-decoration: underline;
   text-decoration-color: var(--accent-line);
-  text-underline-offset: 3px;
+  text-underline-offset: var(--underline-offset);
   transition: color var(--transition-base);
 }
 

@@ -1,19 +1,20 @@
 @media print {
+  /* @page has no access to :root custom properties, so its margin stays literal */
   @page {
     margin: 1.5cm;
   }
 
   html,
   body {
-    background: #fff !important;
-    color: #000 !important;
-    font-size: 11pt;
-    line-height: 1.5;
+    background: var(--print-paper) !important;
+    color: var(--print-ink) !important;
+    font-size: var(--print-text);
+    line-height: var(--leading-normal);
   }
 
   * {
     background: transparent !important;
-    color: #000 !important;
+    color: var(--print-ink) !important;
     box-shadow: none !important;
     text-shadow: none !important;
     animation: none !important;
@@ -61,9 +62,9 @@
   }
 
   main > section + section {
-    margin-top: 0.8cm;
-    padding-top: 0.5cm;
-    border-top: 1px solid #999;
+    margin-top: var(--print-space-lg);
+    padding-top: var(--print-space-md);
+    border-top: 1px solid var(--print-rule);
   }
 
   #hero,
@@ -88,7 +89,7 @@
     .cover-letter-card,
     .skill-domain-card
   ) {
-    border: 1px solid #bbb !important;
+    border: 1px solid var(--print-rule-soft) !important;
   }
 
   .project-item,
@@ -112,7 +113,7 @@
 
   .cover-letter__headline {
     max-width: none !important;
-    padding: 0 0 0.4cm !important;
+    padding: 0 0 var(--print-space-sm) !important;
   }
 
   .cover-letter__headline::before,
@@ -125,19 +126,19 @@
   .cover-letter__paragraphs,
   .cover-letter__para {
     display: block !important;
-    padding: 0 0 0.3cm !important;
+    padding: 0 0 var(--print-space-xs) !important;
   }
 
   .cover-letter__closing {
     display: block !important;
-    padding: 0.3cm 0 0 !important;
-    border-top: 1px solid #000 !important;
+    padding: var(--print-space-xs) 0 0 !important;
+    border-top: 1px solid var(--print-ink) !important;
   }
 
   a[href^='http']::after,
   a[href^='mailto']::after {
     content: ' (' attr(href) ')';
-    font-size: 0.85em;
+    font-size: var(--print-small);
     word-break: break-all;
   }
 

@@ -12,16 +12,16 @@ Scope reason: score 7; distinct browser-source domain.
 
 ## WHERE TO LOOK
 
-| Task                  | Location                                     | Notes                                                  |
-| --------------------- | -------------------------------------------- | ------------------------------------------------------ |
-| CSS composition       | `styles/main.css`                            | Ordered import graph                                   |
-| Design tokens         | `styles/variables.css`                       | Color, spacing, and typography source                  |
-| Browser bootstrap     | `scripts/main.js`                            | Feature initialization and service-worker registration |
-| ESM loading           | `scripts/package.json`                       | Module marker used by Node and Jest                    |
-| Shared DOM formatting | `scripts/modules/project-card-formatting.js` | Escaping, icons, technology classes                    |
-| Recruiter features    | `scripts/modules/recruiter-*.js`             | Role proofs, interactions, mobile actions              |
-| Timeline              | `scripts/modules/timeline*.js`               | View model, interactions, rendering                    |
-| Theme contract        | `scripts/modules/theme.js`                   | Dark-only compatibility behavior                       |
+| Task                  | Location                                                  | Notes                                                    |
+| --------------------- | --------------------------------------------------------- | -------------------------------------------------------- |
+| CSS composition       | `styles/main.css`                                         | Ordered import graph                                     |
+| Design tokens         | `styles/variables.css`, `styles/variables-components.css` | Foundations; component recipes and technology tag colors |
+| Browser bootstrap     | `scripts/main.js`                                         | Feature initialization and service-worker registration   |
+| ESM loading           | `scripts/package.json`                                    | Module marker used by Node and Jest                      |
+| Shared DOM formatting | `scripts/modules/project-card-formatting.js`              | Escaping, icons, technology classes                      |
+| Recruiter features    | `scripts/modules/recruiter-*.js`                          | Role proofs, interactions, mobile actions                |
+| Timeline              | `scripts/modules/timeline*.js`                            | View model, interactions, rendering                      |
+| Theme contract        | `scripts/modules/theme.js`                                | Dark-only compatibility behavior                         |
 
 ## CONVENTIONS
 

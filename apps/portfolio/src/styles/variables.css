@@ -69,19 +69,6 @@
     );
   --grid-line: rgb(var(--color-accent-rgb) / 0.07);
 
-  /* Technology brand colors: only inside project technology tags */
-  --tag-splunk: #ff6b35;
-  --tag-webhook: #ea4b71;
-  --tag-fortimanager: #00a8e0;
-  --tag-python: #3776ab;
-  --tag-docker: #2496ed;
-  --tag-ansible: #ee0000;
-  --tag-vmware: #607078;
-  --tag-postgresql: #4169e1;
-  --tag-aws: #ff9900;
-  --tag-nsx: #77bc43;
-  --tag-wazuh: #339966;
-
   --font-latin: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI';
   --font-cjk: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic';
   --font-sans: var(--font-latin), var(--font-cjk), system-ui, sans-serif;

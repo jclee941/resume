@@ -1,4 +1,5 @@
 @import './variables.css';
+@import './variables-components.css';
 @import './base.css';
 @import './accessibility.css';
 @import './layout.css';

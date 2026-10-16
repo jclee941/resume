@@ -17,7 +17,7 @@
 :where(.role-chip, .project-cards-grid .project-card, .contact-item) {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  background: rgb(var(--bg-card-rgb) / 0.72);
+  background: var(--surface-interactive);
   box-shadow: var(--shadow-card);
   color: var(--text-primary);
   text-decoration: none;

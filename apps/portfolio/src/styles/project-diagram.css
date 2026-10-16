@@ -117,7 +117,7 @@
 .project-diagram text {
   font-family: var(--font-mono), var(--font-sans);
   fill: var(--text-primary);
-  font-size: 14px;
+  font-size: var(--diagram-text);
 }
 
 .node__bg {
@@ -147,13 +147,13 @@
 
 .node__sub {
   fill: var(--text-secondary);
-  font-size: 12px;
+  font-size: var(--diagram-text-sm);
 }
 
 .edge__path {
   fill: none;
   stroke: var(--color-accent);
-  stroke-width: 2px;
+  stroke-width: var(--diagram-stroke);
 }
 
 .edge__arrow {
@@ -161,11 +161,11 @@
 }
 
 .edge__label {
-  font-size: 12px;
+  font-size: var(--diagram-text-sm);
   fill: var(--text-secondary);
   paint-order: stroke;
   stroke: var(--bg-card);
-  stroke-width: 4px;
+  stroke-width: var(--diagram-halo);
   stroke-linecap: round;
   stroke-linejoin: round;
 }

@@ -29,7 +29,7 @@
   min-height: var(--space-12);
   padding: var(--space-3) var(--space-8);
   border-bottom: 1px solid var(--border-primary);
-  background: rgb(var(--bg-primary-rgb) / 0.45);
+  background: var(--surface-chrome);
   color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
@@ -48,7 +48,7 @@
   content: 'cat';
   display: inline-block;
   margin-right: var(--space-2);
-  padding: 2px var(--space-2);
+  padding: var(--space-0-5) var(--space-2);
   border: 1px solid var(--accent-line-soft);
   border-radius: var(--radius-sm);
   background: var(--accent-wash-1);
@@ -57,12 +57,12 @@
 
 .cover-letter__hint {
   flex: 0 0 auto;
-  padding: 2px var(--space-2);
+  padding: var(--space-0-5) var(--space-2);
   border: 1px solid var(--accent-line-soft);
   border-radius: var(--radius-full);
   background: var(--accent-wash-1);
   color: var(--color-accent-strong);
   font-size: var(--text-xs);
-  letter-spacing: 0.06em;
+  letter-spacing: var(--tracking-chrome);
   text-transform: uppercase;
 }
