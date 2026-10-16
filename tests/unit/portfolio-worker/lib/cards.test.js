@@ -199,7 +199,7 @@ describe('Cards Module', () => {
 
       expect(html).toContain('https://github.com/example-user/example-bot');
       expect(html).toContain('GitHub Bot');
-      expect(html).toContain('aria-label="GitHub Bot (새 탭에서 열림)"');
+      expect(html).toContain('aria-label="GitHub Bot example-bot (새 탭에서 열림)"');
     });
 
     test.each([
@@ -221,8 +221,16 @@ describe('Cards Module', () => {
           locale
         );
 
-        for (const name of ['GitHub', 'GitHub Bot', 'LinkedIn', 'Velog']) {
-          expect(html).toContain(`aria-label="${name}${newTab}"`);
+        for (const [name, handle] of [
+          ['GitHub', 'example-user'],
+          ['GitHub Bot', 'example-bot'],
+          ['LinkedIn', 'example-user'],
+          ['Velog', '@example-user'],
+        ]) {
+          expect(html).toContain(`aria-label="${name} ${handle}${newTab}"`);
+          expect(html).toContain(
+            `<span class="contact-item__label">${name}</span><span class="contact-item__value">${handle}</span>`
+          );
         }
         expect(html).toContain(`<span class="contact-item__label">${emailLabel}</span>`);
         expect(html).toContain('<span class="contact-item__value">applicant@example.com</span>');
@@ -886,7 +894,7 @@ describe('Cards Module', () => {
       };
       const html = generateContactGrid(contactData, 'en');
       // target="_blank" links need an aria-label indicating a new tab opens.
-      expect(html).toContain('GitHub (opens in new tab)');
+      expect(html).toContain('GitHub test (opens in new tab)');
       // The email is named by its visible label and selectable address.
       expect(html).toContain('<span class="contact-item__label">Email</span>');
       expect(html).toContain('<span class="contact-item__value">test@example.com</span>');
