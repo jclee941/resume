@@ -5,7 +5,7 @@ const { escapeHtml } = require('../template-sanitizer');
 
 const TITLE_ROLE = 'Security & Infrastructure Engineer';
 
-const LANGUAGE_LINK_RE = /<a\b([^>]*\bhreflang="(ko|en|ja)"[^>]*)>\s*(KO|EN|JA)\s*<\/a\s*>/g;
+const LANGUAGE_LINK_RE = /<a\b([^>]*\bhreflang="(ko|en|ja)"[^>]*)>\s*([^<]*?)\s*<\/a\s*>/g;
 
 /**
  * Escape a value for use inside a JSON string literal embedded in an HTML script block.
