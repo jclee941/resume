@@ -467,9 +467,9 @@ override layers; a fix lands in the file that owns the component.
   (`lib/japanese-template/`), so JA-only layout needs land as CSS `:lang(ja)` rules.
 - Inline `<style>` blocks in the content-pack HTML shells (font faces, theme transitions)
   stay outside this stylesheet because their CSP hashes are computed at build time.
-- On phones a narrow diagram with a three-node layer (Terraform Homelab IaC, 392px wide)
-  still scales to about 0.63 at 390px and 0.47 at 320px; a fan-out layout that stacks wide
-  layers would keep it at intrinsic size.
+- On phones a narrow diagram with a three-node layer (392px wide, the widest featured
+  diagram) still scales to about 0.63 at 390px and 0.47 at 320px; a fan-out layout that
+  stacks wide layers would keep it at intrinsic size.
 
 ## 11. Template Size Exception
 
