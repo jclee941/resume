@@ -37,12 +37,18 @@
   transition: transform var(--transition-base);
 }
 
-.contact-item:hover {
-  color: var(--color-accent-strong);
+@media (hover: hover) {
+  .contact-item:hover {
+    color: var(--color-accent-strong);
+  }
+
+  .contact-item:hover::before {
+    transform: translateX(var(--space-1));
+  }
 }
 
-.contact-item:hover::before {
-  transform: translateX(var(--space-1));
+.contact-item:focus-visible {
+  color: var(--color-accent-strong);
 }
 
 .contact-item__label {

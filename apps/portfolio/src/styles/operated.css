@@ -26,7 +26,7 @@
 .operated-card__desc {
   margin: 0;
   color: var(--text-secondary);
-  font-size: var(--text-sm);
+  font-size: var(--text-support);
   line-height: var(--leading-relaxed);
 }
 

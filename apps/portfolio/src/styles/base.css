@@ -19,7 +19,7 @@ html {
 
 body {
   font-family: var(--font-sans);
-  font-size: var(--text-base);
+  font-size: var(--text-prose);
   line-height: var(--leading-relaxed);
   color: var(--text-primary);
   background: var(--gradient-page-atmosphere);
@@ -27,12 +27,6 @@ body {
   background-attachment: fixed;
   overflow-x: hidden;
   min-height: 100dvh;
-}
-
-@media (max-width: 768px) {
-  body {
-    font-size: 1rem;
-  }
 }
 
 h1,

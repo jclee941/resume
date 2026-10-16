@@ -40,7 +40,7 @@
   --border-control: #6b7282;
 
   --state-hover-bg: var(--accent-wash-2);
-  --state-hover-border: var(--accent-line);
+  --state-hover-border: var(--border-control);
   --state-pressed-bg: var(--accent-wash-3);
 
   --shadow-sm: 0 1px 2px rgb(4 6 10 / 0.45);
