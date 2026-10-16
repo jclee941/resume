@@ -87,6 +87,16 @@ main > .section-hero + section {
   color: var(--color-accent-strong);
 }
 
+@media (max-width: 480px) {
+  .footer-build {
+    column-gap: var(--space-4);
+  }
+
+  .footer-build .footer-build__sep {
+    display: none;
+  }
+}
+
 .footer-build__sep {
   color: var(--border-secondary);
 }
