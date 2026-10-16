@@ -36,6 +36,12 @@
   --border-primary: #262a33;
   --border-secondary: #333845;
   --border-subtle: rgb(170 177 189 / 0.1);
+  /* Edges that identify a control or its state keep at least 3:1 on every surface */
+  --border-control: #6b7282;
+
+  --state-hover-bg: var(--accent-wash-2);
+  --state-hover-border: var(--accent-line);
+  --state-pressed-bg: var(--accent-wash-3);
 
   --shadow-sm: 0 1px 2px rgb(4 6 10 / 0.45);
   --shadow-md: 0 12px 28px -10px rgb(4 6 10 / 0.6);
@@ -95,6 +101,11 @@
   --text-6xl: clamp(2.75rem, 2rem + 3.75vw, 3.75rem);
   --text-7xl: clamp(2.75rem, 1.5rem + 5.5vw, 4.75rem);
 
+  /* Reading roles; phones raise them to 17px body / 15px support (media query below) */
+  --text-prose: var(--text-base);
+  --text-prose-compact: var(--text-sm);
+  --text-support: var(--text-sm);
+
   --font-normal: 400;
   --font-medium: 500;
   --font-semibold: 600;
@@ -130,6 +141,8 @@
   --featured-diagram-width: 26.75rem;
   --gutter: clamp(1rem, 4vw, 2rem);
   --section-gap: clamp(2rem, 1.25rem + 2.5vw, 2.5rem);
+  --measure-prose: 70ch;
+  --control-min: 44px;
 
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -171,10 +184,19 @@
     --border-primary: #4a5160;
     --border-secondary: #5c6475;
     --border-subtle: rgb(213 217 224 / 0.38);
+    --border-control: var(--text-muted);
     --glass-bg: var(--bg-card);
     --glass-border: rgb(213 217 224 / 0.38);
     --accent-line-soft: var(--color-accent);
     --accent-line: var(--color-accent-strong);
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --text-prose: 1.0625rem;
+    --text-prose-compact: 1.0625rem;
+    --text-support: 0.9375rem;
   }
 }
 
