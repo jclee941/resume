@@ -292,6 +292,8 @@ tests depend on them.
   behind `.cover-letter__toggle`, whose label names how many paragraphs it reveals (an
   unlabeled fold once read as missing text). Print shows every paragraph. From 1024px the
   card is a grid: the headline sits in a left column beside the paragraphs and the toggle.
+  There the English headline steps down to `--text-2xl`; its longer words otherwise take four
+  lines.
 
 ### Career timeline
 

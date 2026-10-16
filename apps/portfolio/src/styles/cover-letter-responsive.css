@@ -81,6 +81,11 @@
     grid-area: headline;
   }
 
+  /* Longer English words: one heading step down keeps the display sentence within three lines */
+  .cover-letter__headline:lang(en) {
+    font-size: var(--text-2xl);
+  }
+
   .cover-letter__paragraphs {
     grid-area: paragraphs;
   }
