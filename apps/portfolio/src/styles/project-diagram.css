@@ -5,8 +5,7 @@
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   background:
-    radial-gradient(circle at 50% 0%, var(--accent-wash-1), transparent 70%),
-    rgb(var(--bg-primary-rgb) / 0.6);
+    radial-gradient(circle at 50% 0%, var(--accent-wash-1), transparent 70%), var(--surface-diagram);
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -110,7 +109,10 @@
 }
 
 .project-diagram__node--cjk,
-.project-diagram__via--cjk {
+.project-diagram__via--cjk,
+.project-diagram .edge__label--cjk,
+.project-diagram .node__label--cjk,
+.project-diagram .node__sub--cjk {
   font-family: var(--font-sans);
 }
 

@@ -363,7 +363,9 @@ tests depend on them.
   `.project-diagram--layered`. At 640px and below that figure hides the narrow SVG and shows
   the list instead: one row of wrapping node chips per layer, a decorative down arrow between
   rows, and the labels of the edges entering a row above it. Chips reuse the node-kind washes
-  and edges; Latin labels use the mono face, Korean or Japanese labels the sans face.
+  and edges; Latin labels use the mono face, Korean or Japanese labels the sans face. SVG
+  node and edge labels that contain Korean or Japanese carry a `--cjk` class for the same
+  switch.
 
 ### Case-study grid and deep dive
 
