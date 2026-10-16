@@ -27,6 +27,9 @@ const CONNECTIVE_MEDIALS = new Set([0, 1, 4, 6, 9, 14]);
 const HYPHENATED_TOKEN = /(?<![\w-])[A-Za-z][A-Za-z0-9]*(?:-[A-Za-z0-9]+){1,2}(?![\w-])/g;
 const KANJI_KANA_SEAM =
   /(?<=[\u4e00-\u9fff])(?=[\u30a0-\u30ff])|(?<=[\u30a0-\u30ff])(?=[\u4e00-\u9fff])/g;
+// Kanji and katakana words of two or more characters each, and ように before its verb.
+const JAPANESE_WORD_SEAM =
+  /(?<=[\u4e00-\u9fff]{2})(?=[\u30a1-\u30fa\u30fc]{2})|(?<=[\u30a1-\u30fa\u30fc]{2})(?=[\u4e00-\u9fff]{2})|(?<=ように)(?=[しなす])/g;
 
 /** @param {string} word */
 function lastSyllable(word) {
@@ -93,4 +96,19 @@ function formatAwardName(name) {
     .replace(KANJI_KANA_SEAM, '<wbr>');
 }
 
-module.exports = { formatAwardName, glueKoreanPhrases, keepHyphenatedTokens };
+/**
+ * Lets a Japanese phrase too long for a narrow line wrap between words instead of before its
+ * last kana. Expects escaped text without markup; other scripts pass through.
+ * @param {string} text
+ * @returns {string} HTML
+ */
+function breakJapanesePhrases(text) {
+  return text.replace(JAPANESE_WORD_SEAM, '<wbr>');
+}
+
+module.exports = {
+  breakJapanesePhrases,
+  formatAwardName,
+  glueKoreanPhrases,
+  keepHyphenatedTokens,
+};

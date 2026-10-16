@@ -1,4 +1,5 @@
 const { escapeHtml } = require('../template-sanitizer');
+const { breakJapanesePhrases } = require('./text-breaks');
 
 const KATAKANA_RUN = /(?:\(株\))?[\p{Script=Katakana}ー]{2,}/gu;
 
@@ -12,7 +13,10 @@ const KATAKANA_RUN = /(?:\(株\))?[\p{Script=Katakana}ー]{2,}/gu;
 function renderProse(value, locale) {
   const escaped = escapeHtml(value);
   if (locale !== 'ja') return escaped;
-  return escaped.replace(KATAKANA_RUN, '<span class="atomic-phrase">$&</span>');
+  return breakJapanesePhrases(escaped).replace(
+    KATAKANA_RUN,
+    '<span class="atomic-phrase">$&</span>'
+  );
 }
 
 module.exports = { renderProse };

@@ -22,10 +22,11 @@ describe('generateCoverLetterSection', () => {
   test('S1 (happy): KO entry renders escaped headline, every paragraph, and closing', () => {
     const ko = coverLetter.ko;
     const rendered = generateCoverLetterSection(ko);
-    // Line-break helpers add atomic spans and no-break spaces; the visible text stays verbatim.
+    // Line-break helpers add atomic spans, no-break spaces and break opportunities; the visible text stays verbatim.
     const html = rendered
       .replace(/<span class="cover-letter__atomic-phrase">([^<]*)<\/span>/g, '$1')
-      .replace(/\u00a0/g, ' ');
+      .replace(/\u00a0/g, ' ')
+      .replace(/<wbr>/g, '');
 
     expect(typeof rendered).toBe('string');
     expect(html).toContain(esc(ko.headline));
