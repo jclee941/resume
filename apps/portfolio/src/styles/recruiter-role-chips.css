@@ -12,7 +12,7 @@
   gap: var(--space-1) var(--space-3);
   width: 100%;
   min-width: 0;
-  min-height: 44px;
+  min-height: var(--control-min);
   padding: var(--space-3) var(--space-4);
   border-color: var(--border-control);
   color: var(--text-secondary);
@@ -38,7 +38,7 @@
 
 .role-chip:disabled {
   cursor: wait;
-  opacity: 0.72;
+  opacity: var(--state-disabled-opacity);
 }
 
 .role-chip__label {
@@ -62,8 +62,8 @@
   width: 0.35em;
   height: 0.65em;
   margin-right: var(--space-2);
-  border-right: 2px solid currentColor;
-  border-bottom: 2px solid currentColor;
+  border-right: var(--glyph-stroke) solid currentColor;
+  border-bottom: var(--glyph-stroke) solid currentColor;
   transform: translateY(-0.1em) rotate(40deg);
 }
 

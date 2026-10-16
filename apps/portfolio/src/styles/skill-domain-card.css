@@ -14,8 +14,8 @@
   display: grid;
   flex-shrink: 0;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: var(--icon-box-md);
+  height: var(--icon-box-md);
   border: 1px solid var(--accent-line-soft);
   border-radius: var(--radius-md);
   background: var(--accent-wash-2);
@@ -23,8 +23,8 @@
 }
 
 .skill-domain-card__icon svg {
-  width: 18px;
-  height: 18px;
+  width: var(--icon-md);
+  height: var(--icon-md);
 }
 
 .skill-domain-card__title {
@@ -60,7 +60,7 @@
   padding: var(--space-1) var(--space-3);
   border: 1px solid var(--border-secondary);
   border-radius: var(--radius-full);
-  background: rgb(var(--bg-secondary-rgb) / 0.7);
+  background: var(--surface-pill);
   color: var(--text-secondary);
   font-family: var(--font-mono);
   font-size: var(--text-xs);

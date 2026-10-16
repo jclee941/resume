@@ -3,14 +3,14 @@
 }
 
 .skill-radar__grid {
-  columns: 3 16rem;
+  columns: 3 var(--skill-column-width);
   column-gap: var(--space-4);
 }
 
 .skill-radar__grid:focus-visible {
   border-radius: var(--radius-md);
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+  outline: var(--focus-ring-width) solid var(--color-accent);
+  outline-offset: var(--focus-ring-offset);
 }
 
 .skill-radar__grid > .skill-domain-card {
@@ -43,10 +43,10 @@
 
 @media screen and (max-width: 360px) {
   .skill-radar__grid > .skill-domain-card .skill-domain-card__title {
-    flex-basis: calc(100% - 36px - var(--space-3));
+    flex-basis: calc(100% - var(--icon-box-md) - var(--space-3));
   }
 
   .skill-radar__grid > .skill-domain-card .skill-domain-card__count {
-    margin-left: calc(36px + var(--space-3));
+    margin-left: calc(var(--icon-box-md) + var(--space-3));
   }
 }

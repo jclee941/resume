@@ -27,7 +27,7 @@ html.js .timeline-more {
   padding: var(--space-2) var(--space-6);
   border: 1px solid var(--border-control);
   border-radius: var(--radius-full);
-  background: rgb(var(--bg-secondary-rgb) / 0.8);
+  background: var(--surface-ghost);
   color: var(--color-accent-strong);
   font-family: var(--font-label);
   font-size: var(--text-sm);

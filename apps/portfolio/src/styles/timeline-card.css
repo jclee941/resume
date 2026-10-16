@@ -37,7 +37,7 @@ a.company-link {
   a.company-link:hover {
     color: var(--color-accent-strong);
     text-decoration: underline;
-    text-underline-offset: 3px;
+    text-underline-offset: var(--underline-offset);
   }
 }
 
@@ -84,8 +84,8 @@ a.company-link {
   position: absolute;
   top: 0.7em;
   left: var(--space-1);
-  width: 5px;
-  height: 5px;
+  width: var(--marker-pip);
+  height: var(--marker-pip);
   border-radius: var(--radius-full);
   background: var(--color-accent);
 }
@@ -147,7 +147,7 @@ a.company-link {
     display: inline-flex;
     align-items: center;
     min-width: 0;
-    min-height: 44px;
+    min-height: var(--control-min);
     padding-block: 0;
     margin-block: 0;
   }

@@ -37,6 +37,7 @@
   --tag-mix-wash: 12%;
   --tag-mix-ink: 58%;
   --overlay-blur: blur(6px);
+  --filter-dimmed: saturate(0.25);
 
   --ring-marker: 0 0 0 3px var(--accent-wash-3);
   --ring-marker-success: 0 0 0 3px var(--success-ring);
@@ -49,11 +50,14 @@
   --marker-node: 14px;
   --marker-node-compact: 12px;
   --marker-node-edge: 3px;
+  --marker-align: 3px;
+  --rail-opacity: 0.7;
   --check-glyph-width: 6px;
   --check-glyph-height: 10px;
   --glyph-stroke: 2px;
   --rule-thick: 2px;
 
+  --icon-inline: 1.2em;
   --icon-xs: 13px;
   --icon-sm: 16px;
   --icon-md: 18px;

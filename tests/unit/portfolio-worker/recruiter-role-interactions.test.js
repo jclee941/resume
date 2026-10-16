@@ -329,8 +329,9 @@ describe('role-filter stylesheets', () => {
     expect(roleFilterCss).not.toMatch(/\.is-role-match\s*\{[^}]*(--color-accent[;)]|box-shadow)/);
     expect(roleFilterCss).toMatch(/\.project-role-badge\s*\{/);
     expect(roleFilterCss).toMatch(
-      /\.project-item\.is-role-dimmed:not\(:hover\):not\(:focus-within\)\s*\{[^}]*border-color:\s*var\(--border-primary\)[\s\S]*?filter:\s*saturate\(0\.25\)/
+      /\.project-item\.is-role-dimmed:not\(:hover\):not\(:focus-within\)\s*\{[^}]*border-color:\s*var\(--border-primary\)[\s\S]*?filter:\s*var\(--filter-dimmed\)/
     );
+    expect(css('variables-components.css')).toMatch(/--filter-dimmed:\s*saturate\(0\.25\);/);
     expect(roleFilterCss).not.toMatch(/\.is-role-dimmed:(?:hover|focus-within)/);
     expect(roleFilterCss).not.toMatch(/opacity/);
   });

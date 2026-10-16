@@ -8,25 +8,23 @@
 .timeline-marker {
   display: flex;
   justify-content: center;
-  padding-top: 3px;
+  padding-top: var(--marker-align);
 }
 
 .timeline-dot {
   position: relative;
   z-index: 1;
-  width: 14px;
-  height: 14px;
-  border: 3px solid var(--bg-primary);
+  width: var(--marker-node);
+  height: var(--marker-node);
+  border: var(--marker-node-edge) solid var(--bg-primary);
   border-radius: var(--radius-full);
   background: var(--color-accent-strong);
-  box-shadow: 0 0 0 2px var(--accent-line);
+  box-shadow: var(--ring-node);
 }
 
 .timeline-dot.status--active {
   background: var(--color-success);
-  box-shadow:
-    0 0 0 2px rgb(var(--color-success-rgb) / 0.5),
-    0 0 0 6px rgb(var(--color-success-rgb) / 0.12);
+  box-shadow: var(--ring-node-current);
 }
 
 .timeline-content {

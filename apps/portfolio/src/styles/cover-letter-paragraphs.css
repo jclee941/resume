@@ -9,7 +9,7 @@
 .cover-letter__para {
   position: relative;
   display: grid;
-  grid-template-columns: var(--space-8) minmax(0, 66ch);
+  grid-template-columns: var(--space-8) minmax(0, var(--measure-letter));
   align-items: start;
   gap: var(--space-5);
   padding: var(--space-4) 0;
@@ -21,7 +21,7 @@
   top: 0;
   bottom: 0;
   left: calc(var(--space-4) - 1px);
-  width: 2px;
+  width: var(--rule-thick);
   background: linear-gradient(
     180deg,
     var(--accent-wash-2),
@@ -58,7 +58,7 @@
 }
 
 .cover-letter__text {
-  max-width: 66ch;
+  max-width: var(--measure-letter);
   margin: 0;
   color: var(--text-secondary);
   font-family: var(--font-sans);
