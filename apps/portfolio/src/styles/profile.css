@@ -79,7 +79,8 @@
 .profile-card__list a {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: var(--control-min);
+  border-radius: var(--radius-sm);
   color: var(--color-accent-light);
   font-family: var(--font-mono);
   text-decoration: underline;
@@ -88,8 +89,15 @@
   transition: color var(--transition-base);
 }
 
-.profile-card__list a:hover {
-  color: var(--color-accent-strong);
+@media (hover: hover) {
+  .profile-card__list a:hover {
+    color: var(--color-accent-strong);
+  }
+}
+
+.profile-card__list a:active {
+  background: var(--state-pressed-bg);
+  transition-duration: 0s;
 }
 
 @media (max-width: 1023px) {

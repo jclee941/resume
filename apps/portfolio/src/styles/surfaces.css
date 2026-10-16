@@ -28,13 +28,23 @@
     color var(--transition-base);
 }
 
-:where(.role-chip:not(:disabled), .project-cards-grid .project-card, .contact-item):is(
-  :hover,
-  :focus-visible
-) {
-  border-color: var(--border-secondary);
-  background-color: var(--accent-wash-2);
+@media (hover: hover) {
+  :where(.role-chip:not(:disabled), .project-cards-grid .project-card, .contact-item):hover {
+    border-color: var(--state-hover-border);
+    background-color: var(--state-hover-bg);
+    box-shadow: var(--shadow-card-hover);
+  }
+}
+
+:where(.role-chip:not(:disabled), .project-cards-grid .project-card, .contact-item):focus-visible {
+  border-color: var(--state-hover-border);
+  background-color: var(--state-hover-bg);
   box-shadow: var(--shadow-card-hover);
+}
+
+:where(.role-chip:not(:disabled), .project-cards-grid .project-card, .contact-item):active {
+  background-color: var(--state-pressed-bg);
+  transition-duration: 0s;
 }
 
 .role-chip[aria-pressed='true'] {

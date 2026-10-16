@@ -61,25 +61,34 @@ One ink at stepped alphas encodes interaction state. No second accent hue exists
 - Status colors stay muted, always pair with a text label, and never compete with accent.
 - Raw technology brand colors (`--tag-*`) are allowed only inside project technology tags.
 - State is never a colored border on a rounded surface. Hover and selection use the wash
-  ramp with a neutral `--border-secondary` edge, and selection adds a glyph. The
+  ramp with the neutral `--border-control` edge, and selection adds a glyph. The
   focus-visible ring is the only colored edge.
+- Control edges: `--border-control` keeps every edge that identifies a control or its state at
+  3:1 or more against the surfaces it sits on; decorative card hairlines stay `--border-subtle`.
+- State recipe: `--state-hover-bg` and `--state-hover-border` on hover, which only pointer
+  devices get (`@media (hover: hover)`), the same pair on keyboard focus beside the focus ring,
+  and `--state-pressed-bg` on `:active` with no transition so a press shows in the same frame.
 
 ## 3. Typography
 
 ### Scale
 
-| Level   | Size          | Weight            | Line Height         | Tracking             | Usage                    |
-| ------- | ------------- | ----------------- | ------------------- | -------------------- | ------------------------ |
-| Display | `--text-7xl`  | `--font-bold`     | `--leading-none`    | `--tracking-display` | Hero name                |
-| H1      | `--text-5xl`  | `--font-semibold` | `--leading-tight`   | `--tracking-tight`   | Reserved                 |
-| H2      | `--text-3xl`  | `--font-semibold` | `--leading-tight`   | `--tracking-tight`   | Section titles           |
-| H3      | `--text-xl`   | `--font-semibold` | `--leading-snug`    | `--tracking-normal`  | Card and dialog headings |
-| Body/lg | `--text-2xl`  | `--font-medium`   | `--leading-snug`    | `--tracking-normal`  | Hero value sentence      |
-| Body    | `--text-base` | `--font-normal`   | `--leading-relaxed` | `--tracking-normal`  | Main copy                |
-| Body/sm | `--text-sm`   | `--font-normal`   | `--leading-relaxed` | `--tracking-normal`  | Cards and descriptions   |
-| Label   | `--text-xs`   | `--font-medium`   | `--leading-snug`    | `--tracking-label`   | Eyebrows, metadata       |
+| Level   | Size                   | Weight            | Line Height         | Tracking             | Usage                    |
+| ------- | ---------------------- | ----------------- | ------------------- | -------------------- | ------------------------ |
+| Display | `--text-7xl`           | `--font-bold`     | `--leading-none`    | `--tracking-display` | Hero name                |
+| H1      | `--text-5xl`           | `--font-semibold` | `--leading-tight`   | `--tracking-tight`   | Reserved                 |
+| H2      | `--text-3xl`           | `--font-semibold` | `--leading-tight`   | `--tracking-tight`   | Section titles           |
+| H3      | `--text-xl`            | `--font-semibold` | `--leading-snug`    | `--tracking-normal`  | Card and dialog headings |
+| Body/lg | `--text-2xl`           | `--font-medium`   | `--leading-snug`    | `--tracking-normal`  | Hero value sentence      |
+| Body    | `--text-prose`         | `--font-normal`   | `--leading-relaxed` | `--tracking-normal`  | Main copy                |
+| Body/sm | `--text-prose-compact` | `--font-normal`   | `--leading-relaxed` | `--tracking-normal`  | Card and dialog prose    |
+| Support | `--text-support`       | `--font-normal`   | `--leading-relaxed` | `--tracking-normal`  | Secondary lines          |
+| Label   | `--text-xs`            | `--font-medium`   | `--leading-snug`    | `--tracking-label`   | Eyebrows, metadata       |
 
-`--text-xs` never renders below 12px and body text never goes below `--text-sm`.
+`--text-xs` never renders below 12px and body text never goes below `--text-sm`. The reading
+roles follow the desktop scale (`--text-base`, `--text-sm`, `--text-sm`) and rise to 17px, 17px
+and 15px at 640px and below, so phone prose meets the 17/15 reading floor while labels and
+metadata keep `--text-xs`/`--text-sm`.
 
 ### Font stacks
 
@@ -154,9 +163,10 @@ var(--container-max))`, `margin-inline: auto`. `--gutter` is `clamp(1rem, 4vw, 2
 - **Structure**: link or button cards (`hero-public-proof a`, `hero-review-path a`,
   `role-chip`, `project-review-rail__link`, `project-evidence-card`, case-study
   `project-card`, `skill-domain-card`, `contact-item`).
-- **Recipe**: surface card at `--radius-md`. Hover/focus: `--accent-wash-2` fill and
-  `--border-secondary` edge. Pressed/selected: `--accent-wash-3` fill plus a glyph (check
-  on role chips, rotated chevron on skill cards).
+- **Recipe**: surface card at `--radius-md`. Hover (pointer devices) and focus:
+  `--state-hover-bg` fill and `--state-hover-border` edge. Pressed: `--state-pressed-bg`
+  without transition. Selected: `--accent-wash-3` fill plus a glyph (check on role chips,
+  rotated chevron on skill cards).
 - **Motion**: color only; no lift. Keyboard focus adds the 2px accent ring.
 
 #### Button (`.link-subtle`)
@@ -332,7 +342,8 @@ tests depend on them.
   activity badge), localized: KO 공개 중 / 운영 중, JA 公開中 / 運用中, EN LIVE / ACTIVE. No
   language or REPO badge. A demo URL equal to the repository URL (ignoring one trailing
   slash) is ignored, so a repository-only project keeps its activity badge and shows no Demo
-  link. Links are labelled pills with a `↗` glyph,
+  link. Links are labelled pills with a `↗` glyph (`project-links.css`: `--font-label`,
+  `--border-control` edge, the shared state recipe),
   never bracketed text, and only links that belong to the project. Pill text follows the
   locale where a word is translated (demo link: KO 데모, EN Demo, JA デモ; GitHub and dashboard
   names stay as written), and every link's accessible name contains its visible text.
@@ -346,6 +357,8 @@ tests depend on them.
   match.
 - **Disclosure controls**: the project, earlier-role and cover-letter buttons share one pill
   (`project-more.css`) and always state what they reveal.
+- **Measure**: descriptions and case-note sentences cap at `--measure-prose`, so wide
+  non-featured cards keep a readable line length.
 
 ### Architecture diagram
 
@@ -411,8 +424,9 @@ tests depend on them.
   points back to the site itself. Every item stacks its label over a muted, selectable value:
   the profile handle (the URL's last path segment) for links, whose accessible name includes
   it, and the address for Email.
-- `.site-footer`: muted build line; links underlined. At 480px and below the build line drops
-  its middle-dot separators and spaces its items, so a wrapped line never ends in a dot.
+- `.site-footer`: muted build line; links underlined and at least 44×44px. At 480px and below
+  the build line drops its middle-dot separators and spaces its items, so a wrapped line never
+  ends in a dot.
 
 ### Mobile action bar and back-to-top
 
@@ -441,7 +455,8 @@ tests depend on them.
 - No permanent loops: status dots and level indicators are static.
 - `prefers-reduced-motion: reduce` removes transitions and animations and never leaves
   content in a hidden entrance state.
-- Every interactive element needs hover and focus-visible treatment.
+- Every interactive element shows hover (pointer devices), pressed, focus-visible and, where
+  it can be disabled, disabled states (section 2, state recipe).
 
 ## 7. Depth & Surface
 

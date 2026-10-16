@@ -86,11 +86,11 @@
 .hero-availability::before {
   content: '';
   flex: none;
-  width: 7px;
-  height: 7px;
+  width: var(--marker-dot-hero);
+  height: var(--marker-dot-hero);
   border-radius: var(--radius-full);
   background: var(--color-success);
-  box-shadow: 0 0 0 3px rgb(var(--color-success-rgb) / 0.2);
+  box-shadow: var(--ring-marker-success);
 }
 
 @media (max-width: 1023px) {

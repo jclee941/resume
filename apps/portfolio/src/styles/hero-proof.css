@@ -22,9 +22,9 @@
   position: absolute;
   top: 0.66em;
   left: var(--space-1);
-  width: 6px;
-  height: 6px;
+  width: var(--marker-dot);
+  height: var(--marker-dot);
   border-radius: var(--radius-full);
   background: var(--color-accent);
-  box-shadow: 0 0 0 3px var(--accent-wash-3);
+  box-shadow: var(--ring-marker);
 }
