@@ -14,7 +14,8 @@
   min-width: 0;
   min-height: var(--control-min);
   padding: var(--space-3) var(--space-4);
-  border-color: var(--border-control);
+  border: 1px solid var(--border-control);
+  background-color: var(--surface-interactive);
   color: var(--text-secondary);
   text-align: left;
 }
