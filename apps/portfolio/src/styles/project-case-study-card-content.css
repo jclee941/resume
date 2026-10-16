@@ -8,8 +8,8 @@
   display: grid;
   flex-shrink: 0;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: var(--icon-box-lg);
+  height: var(--icon-box-lg);
   border: 1px solid var(--accent-line-soft);
   border-radius: var(--radius-md);
   background: var(--accent-wash-2);
@@ -18,8 +18,8 @@
 
 .portfolio-icon {
   display: block;
-  width: 22px;
-  height: 22px;
+  width: var(--icon-lg);
+  height: var(--icon-lg);
 }
 
 .project-card__title-group {
@@ -61,13 +61,13 @@
 .metric-preview__icon {
   display: inline-flex;
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
+  width: var(--icon-sm);
+  height: var(--icon-sm);
 }
 
 .metric-preview__icon .portfolio-icon {
-  width: 16px;
-  height: 16px;
+  width: var(--icon-sm);
+  height: var(--icon-sm);
 }
 
 .metric-preview__value {

@@ -51,7 +51,7 @@ describe('portfolio visual CSS contract', () => {
       /\.contact-item\s*\)\s*{[^}]*border: 1px solid var\(--border-subtle\);/
     );
     expect(contactCss).toMatch(
-      /\.contact-item:hover::before\s*{\s*transform: translateX\(var\(--space-1\)\);/
+      /\.contact-item:hover::before\s*{\s*transform: translateX\(var\(--motion-nudge\)\);/
     );
   });
 
@@ -66,8 +66,9 @@ describe('portfolio visual CSS contract', () => {
 
   // Component styles reference tokens; resolve them against variables.css before checking values.
   const tokenSource = readStyle('variables.css') + readStyle('variables-components.css');
-  const resolveTokens = (css) =>
+  const resolveTokens = (css, names) =>
     css.replace(/var\((--[\w-]+)\)/g, (match, name) => {
+      if (names && !names.includes(name)) return match;
       const value = tokenSource.match(new RegExp(`${name}:\\s*([^;]+);`));
       return value ? value[1].trim() : match;
     });
@@ -244,7 +245,7 @@ describe('portfolio visual CSS contract', () => {
     const skillCardCss = readStyle('skill-domain-card.css');
     const mobile = mediaBlock(skillRadarCss, 'screen and (max-width: 640px)');
 
-    expect(skillRadarCss).toMatch(
+    expect(resolveTokens(skillRadarCss, ['--focus-ring-width', '--focus-ring-offset'])).toMatch(
       /\.skill-radar__grid:focus-visible\s*{[^}]*outline:\s*2px solid var\(--color-accent\);[^}]*outline-offset:\s*2px;/
     );
     expect(mobile).toMatch(
@@ -275,10 +276,10 @@ describe('portfolio visual CSS contract', () => {
     expect(skillCardCss).toMatch(
       /\.skill-domain-card__title\s*{[^}]*flex:\s*1 1 auto;[^}]*word-break:\s*keep-all;[^}]*overflow-wrap:\s*normal;/
     );
-    expect(narrowCarousel).toMatch(
+    expect(resolveTokens(narrowCarousel, ['--icon-box-md'])).toMatch(
       /\.skill-radar__grid\s*>\s*\.skill-domain-card\s+\.skill-domain-card__title\s*{[^}]*flex-basis:\s*calc\(100%\s*-\s*36px\s*-\s*var\(--space-3\)\);/
     );
-    expect(narrowCarousel).toMatch(
+    expect(resolveTokens(narrowCarousel, ['--icon-box-md'])).toMatch(
       /\.skill-radar__grid\s*>\s*\.skill-domain-card\s+\.skill-domain-card__count\s*{[^}]*margin-left:\s*calc\(36px\s*\+\s*var\(--space-3\)\);/
     );
   });
@@ -292,7 +293,7 @@ describe('portfolio visual CSS contract', () => {
     expect(roleFilterCss).not.toMatch(
       /\.project-item\.is-role-match\s*{[^}]*(--color-accent|box-shadow)/
     );
-    expect(roleFilterCss).toMatch(
+    expect(resolveTokens(roleFilterCss, ['--filter-dimmed'])).toMatch(
       /\.project-item\.is-role-dimmed:not\(:hover\):not\(:focus-within\)\s*{[^}]*border-color:\s*var\(--border-primary\);[^}]*filter:\s*saturate\(0\.25\);/
     );
     // Hover and focus restore the untouched base/featured card styles: no restore rule exists.

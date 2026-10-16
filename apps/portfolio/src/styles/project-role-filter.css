@@ -20,15 +20,15 @@
 
 .project-role-badge__icon {
   flex-shrink: 0;
-  width: 1.2em;
-  height: 1.2em;
+  width: var(--icon-inline);
+  height: var(--icon-inline);
 }
 
 .project-item.is-role-dimmed:not(:hover):not(:focus-within) {
   border-color: var(--border-primary);
   background: var(--bg-primary);
   box-shadow: none;
-  filter: saturate(0.25);
+  filter: var(--filter-dimmed);
 }
 
 @media (prefers-reduced-motion: no-preference) {

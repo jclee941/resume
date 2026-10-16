@@ -16,7 +16,7 @@
   top: var(--space-4);
   bottom: var(--space-4);
   left: calc(var(--timeline-rail-x) - 1px);
-  width: 2px;
+  width: var(--rule-thick);
   border-radius: var(--radius-full);
   background: linear-gradient(
     180deg,
@@ -24,6 +24,6 @@
     var(--color-accent-dark) 72%,
     transparent 100%
   );
-  opacity: 0.7;
+  opacity: var(--rail-opacity);
   pointer-events: none;
 }

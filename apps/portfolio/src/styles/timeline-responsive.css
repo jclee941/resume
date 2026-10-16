@@ -10,8 +10,8 @@
   }
 
   .timeline-dot {
-    width: 12px;
-    height: 12px;
+    width: var(--marker-node-compact);
+    height: var(--marker-node-compact);
   }
 
   :lang(ja) .timeline-highlights,

@@ -38,11 +38,11 @@
   content: '';
   position: absolute;
   top: 0.4em;
-  left: 2px;
-  width: 6px;
-  height: 10px;
-  border-right: 2px solid var(--color-success);
-  border-bottom: 2px solid var(--color-success);
+  left: var(--space-0-5);
+  width: var(--check-glyph-width);
+  height: var(--check-glyph-height);
+  border-right: var(--glyph-stroke) solid var(--color-success);
+  border-bottom: var(--glyph-stroke) solid var(--color-success);
   transform: rotate(40deg);
 }
 
@@ -56,7 +56,7 @@
   padding: var(--space-2) var(--space-4);
   border: 1px solid var(--border-control);
   border-radius: var(--radius-full);
-  background: rgb(var(--bg-secondary-rgb) / 0.8);
+  background: var(--surface-ghost);
   color: var(--text-primary);
   font-family: var(--font-label);
   font-size: var(--text-xs);
@@ -72,8 +72,8 @@ html.js .timeline-expand-btn {
 }
 
 .expand-icon {
-  width: 16px;
-  height: 16px;
+  width: var(--icon-sm);
+  height: var(--icon-sm);
   transition: transform var(--transition-base);
 }
 

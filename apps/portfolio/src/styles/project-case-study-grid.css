@@ -64,15 +64,15 @@
   }
 
   .project-cards-grid .project-card:has(.project-card__launcher:focus-visible) {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
+    outline: var(--focus-ring-width) solid var(--color-accent);
+    outline-offset: var(--focus-ring-offset);
   }
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .project-cards-grid .project-card {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(var(--motion-enter));
   }
 
   .project-cards-grid .project-card.animate-in {
