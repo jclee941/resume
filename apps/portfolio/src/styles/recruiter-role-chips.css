@@ -60,12 +60,12 @@
 .role-chip[aria-pressed='true'] .role-chip__label::before {
   content: '';
   display: inline-block;
-  width: 0.35em;
-  height: 0.65em;
+  width: var(--check-inline-width);
+  height: var(--check-inline-height);
   margin-right: var(--space-2);
   border-right: var(--glyph-stroke) solid currentColor;
   border-bottom: var(--glyph-stroke) solid currentColor;
-  transform: translateY(-0.1em) rotate(40deg);
+  transform: translateY(var(--check-inline-lift)) rotate(var(--check-inline-turn));
 }
 
 .role-chip__count {

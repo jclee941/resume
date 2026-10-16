@@ -48,7 +48,7 @@
 
 .nav-links {
   display: flex;
-  gap: var(--space-1);
+  gap: var(--space-2);
 }
 
 .nav-links a {
@@ -117,6 +117,17 @@
   color: var(--text-primary);
   border-color: var(--border-control);
   background-color: var(--bg-secondary);
+}
+
+.lang-link--active::before {
+  content: '';
+  display: inline-block;
+  width: var(--check-inline-width);
+  height: var(--check-inline-height);
+  margin-right: var(--space-1);
+  border-right: var(--glyph-stroke) solid currentColor;
+  border-bottom: var(--glyph-stroke) solid currentColor;
+  transform: translateY(var(--check-inline-lift)) rotate(var(--check-inline-turn));
 }
 
 @media (hover: hover) {

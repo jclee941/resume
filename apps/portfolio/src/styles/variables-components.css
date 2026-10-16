@@ -88,6 +88,11 @@
   --measure-headline: 26ch;
   --measure-letter: 66ch;
   --measure-closing: 62ch;
+  --measure-timeline: 34em;
+  --check-inline-width: 0.35em;
+  --check-inline-height: 0.65em;
+  --check-inline-lift: -0.1em;
+  --check-inline-turn: 40deg;
 
   --diagram-text: 14px;
   --diagram-text-sm: 12px;
