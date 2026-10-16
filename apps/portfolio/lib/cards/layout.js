@@ -80,7 +80,7 @@ function generateInfrastructureCards(infraData) {
 }
 
 /**
- * Visible handle of a profile URL: its last path segment ("jclee941", "@qws941").
+ * Visible handle of a profile URL: its last path segment ("octocat", "@name").
  * @param {string | undefined} url
  * @returns {string}
  */
