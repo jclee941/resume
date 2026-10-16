@@ -109,14 +109,14 @@ function generateContactGrid(contactData, locale = 'ko') {
     const handle = escapeHtml(contactHandle(href));
     const value = handle ? `<span class="contact-item__value">${handle}</span>` : '';
     const accessibleName = handle ? `${name} ${handle}` : name;
-    return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="${accessibleName}${labels.newTab}"><span class="contact-item__label">${name}</span>${value}</a>`;
+    return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" class="contact-item" aria-label="${accessibleName}${labels.newTab}"><span class="contact-item__label">${name}</span> ${value}</a>`;
   };
   return `
         ${link(contactData.github, 'GitHub')}
         ${contactData.githubBot ? link(contactData.githubBot, 'GitHub Bot') : ''}
         ${link(contactData.linkedin, 'LinkedIn')}
         ${link(velog, 'Velog')}
-        <a class="contact-item contact-item--email" href="mailto:${escapeHtml(email)}" data-contact-email="${escapeHtml(email)}"><span class="contact-item__label">${labels.email}</span><span class="contact-item__value">${escapeHtml(email)}</span></a>
+        <a class="contact-item contact-item--email" href="mailto:${escapeHtml(email)}" data-contact-email="${escapeHtml(email)}"><span class="contact-item__label">${labels.email}</span> <span class="contact-item__value">${escapeHtml(email)}</span></a>
         <span class="contact-copy-status" role="status" aria-live="polite" aria-atomic="true"></span>
   `;
 }

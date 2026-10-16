@@ -229,7 +229,7 @@ describe('Cards Module', () => {
         ]) {
           expect(html).toContain(`aria-label="${name} ${handle}${newTab}"`);
           expect(html).toContain(
-            `<span class="contact-item__label">${name}</span><span class="contact-item__value">${handle}</span>`
+            `<span class="contact-item__label">${name}</span> <span class="contact-item__value">${handle}</span>`
           );
         }
         expect(html).toContain(`<span class="contact-item__label">${emailLabel}</span>`);
