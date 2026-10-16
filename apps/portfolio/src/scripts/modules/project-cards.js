@@ -60,8 +60,10 @@ function resolveMount() {
 
   const lang = currentLanguage();
   const projectList = document.querySelector('#project-list');
-  if (lang.startsWith('ko') && projectList) return { mode: 'after', target: projectList };
-  return null;
+  if (!lang.startsWith('ko') || !projectList) return null;
+  const more = projectList.nextElementSibling;
+  const afterMore = more?.classList.contains('project-more') ? more : projectList;
+  return { mode: 'after', target: afterMore };
 }
 
 export function initProjectCards() {
@@ -105,6 +107,26 @@ export function initProjectCards() {
   });
 }
 
+const LOCALIZED_WORD = /[\p{Script=Hangul}\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]+/gu;
+
+/**
+ * Numerals and separators keep the period's mono face; localized words such as the open-ended
+ * "current" marker get their own span so they render in the label face.
+ * @param {string} period
+ * @returns {HTMLDivElement}
+ */
+export function createPeriod(period) {
+  const element = createElement('div', 'project-card__period');
+  let last = 0;
+  for (const match of period.matchAll(LOCALIZED_WORD)) {
+    if (match.index > last) element.append(period.slice(last, match.index));
+    element.appendChild(createElement('span', 'project-card__period-word', match[0]));
+    last = match.index + match[0].length;
+  }
+  if (last < period.length) element.append(period.slice(last));
+  return element;
+}
+
 /**
  * @typedef {import('./project-deep-dive-overlay.js').DeepDiveProject & { id: string, metrics: Array<import('./project-deep-dive-overlay.js').DeepDiveMetric & { icon: string }> }} ProjectCardItem
  */
@@ -116,11 +138,10 @@ export function initProjectCards() {
  * @param {CaseStudyCopy} copy
  * @returns {HTMLDivElement}
  */
-function createProjectCard(project, index, openDeepDive, copy) {
+export function createProjectCard(project, index, openDeepDive, copy) {
   const card = document.createElement('div');
   card.className = 'project-card';
   card.setAttribute('role', 'listitem');
-  card.setAttribute('tabindex', '0');
   card.setAttribute('data-project-id', project.id);
   card.style.animationDelay = `${index * 0.1}s`;
 
@@ -130,7 +151,7 @@ function createProjectCard(project, index, openDeepDive, copy) {
   const titleGroup = createElement('div', 'project-card__title-group');
   titleGroup.append(
     createElement('h3', 'project-card__title', project.title),
-    createElement('div', 'project-card__period', project.period)
+    createPeriod(project.period)
   );
   header.append(icon, titleGroup);
 
@@ -151,19 +172,16 @@ function createProjectCard(project, index, openDeepDive, copy) {
     metrics.appendChild(preview);
   });
 
+  const launcher = createElement('button', 'project-card__launcher');
+  launcher.type = 'button';
+  launcher.setAttribute('aria-haspopup', 'dialog');
+  launcher.setAttribute('aria-label', `${copy.cta}: ${project.title}`);
+  const ctaIcon = createElement('span', 'project-card__cta-icon', '→');
+  ctaIcon.setAttribute('aria-hidden', 'true');
+  launcher.append(createElement('span', '', copy.cta), ctaIcon);
+  launcher.addEventListener('click', () => openDeepDive(project));
   const cta = createElement('div', 'project-card__cta');
-  cta.append(
-    createElement('span', '', copy.cta),
-    createElement('span', 'project-card__cta-icon', '→')
-  );
+  cta.appendChild(launcher);
   card.append(header, stack, metrics, cta);
-
-  card.addEventListener('click', () => openDeepDive(project));
-  card.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      openDeepDive(project);
-    }
-  });
   return card;
 }
