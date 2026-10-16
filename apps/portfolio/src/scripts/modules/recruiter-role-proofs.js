@@ -1,13 +1,28 @@
 import { ROLE_PROFILES, getProofCountLabel } from './recruiter-enhancements-data.js';
 
+const SHORT_LATIN_KEYWORD = /^[A-Za-z0-9]{1,4}$/;
+
+/**
+ * Short Latin keywords (such as AI) match whole tokens only, so they never hide inside longer
+ * words; every other keyword is a substring match.
+ * @param {string} text
+ * @param {string} keyword
+ * @returns {boolean}
+ */
+function keywordMatches(text, keyword) {
+  if (!SHORT_LATIN_KEYWORD.test(keyword)) return text.includes(keyword);
+  return new RegExp(`(?<![A-Za-z0-9])${keyword}(?![A-Za-z0-9])`).test(text);
+}
+
 /**
  * @param {string} text
- * @returns {string[]}
+ * @param {Array<{ id: string, keywords: string[] }>} profiles
+ * @returns {string[]} ids of every role whose keywords occur in the text
  */
-function roleIdsForText(text) {
-  return ROLE_PROFILES.filter((role) =>
-    role.keywords.some((keyword) => text.includes(keyword))
-  ).map((role) => role.id);
+export function matchRoleIds(text, profiles) {
+  return profiles
+    .filter((role) => role.keywords.some((keyword) => keywordMatches(text, keyword)))
+    .map((role) => role.id);
 }
 
 /**
@@ -17,7 +32,7 @@ export function tagProjectCards() {
   const cards = Array.from(document.querySelectorAll('#projects li.project-item'));
   cards.forEach((card) => {
     const text = card.textContent || '';
-    const roles = roleIdsForText(text);
+    const roles = matchRoleIds(text, ROLE_PROFILES);
     if (roles.length > 0) card.setAttribute('data-role', roles.join(' '));
   });
   return cards;
@@ -57,6 +72,7 @@ export function applyRoleProofCounts(proofCounts) {
     const existingCount = button.querySelector('.role-chip__count');
     if (existingCount) {
       existingCount.textContent = countText;
+      existingCount.removeAttribute('aria-hidden');
       return;
     }
     const count = document.createElement('span');

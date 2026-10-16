@@ -283,11 +283,14 @@ describe('portfolio visual CSS contract', () => {
     );
   });
 
-  test('S20 role filter marks matches with accent border and desaturates non-matches without lowering opacity', () => {
+  test('S20 role filter marks matches with a neutral edge and wash, and desaturates non-matches without lowering opacity', () => {
     const roleFilterCss = readStyle('project-role-filter.css');
 
     expect(roleFilterCss).toMatch(
-      /\.project-item\.is-role-match\s*{[^}]*border-color:\s*var\(--color-accent\);/
+      /\.project-item\.is-role-match\s*{[^}]*border-color:\s*var\(--border-control\);[^}]*background-image:\s*linear-gradient\(var\(--accent-wash-2\)/
+    );
+    expect(roleFilterCss).not.toMatch(
+      /\.project-item\.is-role-match\s*{[^}]*(--color-accent|box-shadow)/
     );
     expect(roleFilterCss).toMatch(
       /\.project-item\.is-role-dimmed:not\(:hover\):not\(:focus-within\)\s*{[^}]*border-color:\s*var\(--border-primary\);[^}]*filter:\s*saturate\(0\.25\);/
