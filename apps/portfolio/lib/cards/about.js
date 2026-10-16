@@ -3,6 +3,7 @@ const { TEMPLATE_CACHE } =
     require('../config')
   );
 const { escapeHtml } = require('../template-sanitizer');
+const { glueKoreanPhrases } = require('./text-breaks');
 const logger = require('../../logger');
 
 const ABOUT_LABELS = {
@@ -43,7 +44,10 @@ function generateAboutContent(aboutData, dataHash, locale = 'ko') {
     .filter((block) => Array.isArray(block.items) && block.items.length > 0)
     .map((block) => {
       const items = block.items
-        .map((item) => `<li>${escapeHtml(String(item)).replace(/·/g, '·<wbr>')}</li>`)
+        .map(
+          (item) =>
+            `<li>${glueKoreanPhrases(escapeHtml(String(item))).replace(/·/g, '·<wbr>')}</li>`
+        )
         .join('\n          ');
       return `<div class="about-block">
         <span class="about-label">${block.label}</span>
