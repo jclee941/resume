@@ -65,6 +65,8 @@ One ink at stepped alphas encodes interaction state. No second accent hue exists
   focus-visible ring is the only colored edge.
 - Control edges: `--border-control` keeps every edge that identifies a control or its state at
   3:1 or more against the surfaces it sits on; decorative card hairlines stay `--border-subtle`.
+- Fill tokens: `--state-hover-fill` and `--state-pressed-fill` layer those washes over a
+  control's own surface as a background image, so glass and opaque controls stay opaque.
 - State recipe: `--state-hover-bg` and `--state-hover-border` on hover, which only pointer
   devices get (`@media (hover: hover)`), the same pair on keyboard focus beside the focus ring,
   and `--state-pressed-bg` on `:active` with no transition so a press shows in the same frame.
@@ -171,13 +173,16 @@ var(--container-max))`, `margin-inline: auto`. `--gutter` is `clamp(1rem, 4vw, 2
 
 #### Button (`.link-subtle`)
 
-- **Variants**: ghost (`--bg-secondary`, `--border-secondary` edge) and primary
+- **Variants**: ghost (`--surface-ghost`, `--border-control` edge) and primary
   (`.link-subtle--primary`, `--color-accent` fill under the `--sheen-accent` top light
   with a `--highlight-accent` inner edge, `--text-inverse` text).
 - **Spacing**: 44px minimum height, `--space-2` × `--space-4` padding, `--radius-full`.
 - **Type**: `--font-label`, `--text-sm`, `--font-medium`.
-- **States**: hover (ghost: wash and accent text; primary: `--color-accent-light` fill), active
-  (`translateY(1px)`), focus-visible ring.
+- **States**: hover on pointer devices (ghost: `--state-hover-fill` layered over its surface,
+  `--state-hover-border` edge and accent text; primary: `--color-accent-light` fill); pressed
+  without transition (ghost: `--state-pressed-fill`; primary: flat `--color-accent` without
+  sheen or highlight) plus a `--motion-press` nudge that reduced motion drops; focus-visible
+  ring; disabled at `--state-disabled-opacity`, still legible.
 
 #### Badge and tag
 
@@ -205,14 +210,18 @@ tests depend on them.
 
 ### Site header
 
-- **Structure**: `.site-header > nav.minimal-nav` with logo, toggle, links, language list.
+- **Structure**: `.site-header > nav.minimal-nav` with logo, phone language list, toggle,
+  links and desktop language list. The language switcher renders twice
+  (`lang-switcher--phone` before the toggle, `lang-switcher--desktop` after the links), each
+  `display: none` outside its breakpoint (768px), so exactly one is exposed and DOM order
+  equals visual order at every width without positive `tabindex`.
 - **Links**: localized labels in section order (KO 경력/프로젝트/기술/소개/연락처, EN
   Experience/Projects/Skills/About/Contact, JA 経歴/プロジェクト/スキル/概要/連絡先); never
   English abbreviations on a KO or JA page.
-- **Surface**: full-bleed band of `rgb(var(--bg-primary-rgb) / 0.82)` with `--glass-blur`
-  and a 1px bottom divider; inner content aligns to the page container.
-- **Accessibility**: 44px targets, localized toggle names, current language marked with
-  `aria-current` and the strong border.
+- **Surface**: full-bleed band of `--surface-header` with `--glass-blur` and a 1px bottom
+  divider; inner content aligns to the page container.
+- **Accessibility**: 44px targets at least `--space-2` apart, localized toggle names, current
+  language marked with `aria-current` and the `--border-control` edge.
 
 ### Hero
 
@@ -398,6 +407,12 @@ tests depend on them.
   Only a diagram that yields fewer than two steps falls back to preformatted text.
 - **Motion**: cards fade in only under `prefers-reduced-motion: no-preference`; without
   motion they render visible immediately.
+- **Dialog**: the overlay is the single scroll owner and the panel clips. The close control is
+  a sticky in-flow 44px button (safe-area aware), visible at every scroll position. Opening
+  moves focus to it exactly once; an open-instance token cancels pending entry work on close,
+  the closed dialog is `inert`, and focus returns to the launcher once. In the period,
+  numerals and separators stay mono and a localized word (현재, 現在) is its own span in
+  `--font-label`.
 
 ### Skill domain cards
 
@@ -434,9 +449,23 @@ tests depend on them.
   `--font-label`. It stays hidden while the hero actions or the cover letter are in view
   and sets `body.has-action-bar` while visible. Its three links size to their labels (at
   least 44px wide) and never wrap, so localized labels such as PDF（韓国語） stay on one
-  line at 320px; the dismiss button stays a 44px square.
+  line at 320px; the dismiss button stays a 44px square. Neighbouring controls keep
+  `--space-2` between them; at 360px and below the bar reflows (the primary link on the first
+  row, the other links and the dismiss button on the second) instead of shrinking targets.
 - `.back-to-top`: 44px glass square, shown after 400px of scroll; on ≤768px it hides while
-  the action bar is visible so two floating controls never cover the text.
+  the action bar is visible so two floating controls never cover the text. It also hides while
+  its box would overlap cover-letter text (measured from the real boxes with 8px clearance),
+  and stays visible where it sits in the gutter on wide viewports.
+
+### Icon-only control tooltips
+
+- The nav toggle, dialog close, action-bar dismiss and back-to-top opt in with `data-tooltip`
+  (opens below) or `data-tooltip="above"`. `tooltip.css` renders the control's `aria-label`
+  through `::after`, so the tooltip is localized, follows state changes such as the toggle's
+  open/close label, and never changes the accessible name.
+- It shows on pointer hover (hover-capable devices only) and on `:focus-visible`, aligns to the
+  control's right edge so it opens leftward and stays inside the viewport from 320 to 1920px
+  (`--tooltip-max-width`), and uses system colours in forced-colors mode.
 
 ## 6. Motion & Interaction
 
@@ -452,6 +481,11 @@ tests depend on them.
 
 - Animate `transform`, `opacity`, and color only.
 - Only interactive elements react to hover; there is no global link or button lift.
+- In-page anchors share one delegated handler: it scrolls with the header offset, uses
+  `behavior: auto` under `prefers-reduced-motion: reduce` (evaluated at call time), updates the
+  hash and moves focus to the destination (`tabindex="-1"` and `data-anchor-target` on
+  non-interactive targets, whose focus outline is suppressed), so the skip link and menu links
+  land focus where they point.
 - No permanent loops: status dots and level indicators are static.
 - `prefers-reduced-motion: reduce` removes transitions and animations and never leaves
   content in a hidden entrance state.
