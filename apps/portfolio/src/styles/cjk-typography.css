@@ -1,10 +1,10 @@
-html:lang(ko) body :where(.page-shell, .page-shell *) {
+html:lang(ko) body :where(.page-shell, .page-shell *, .deep-dive-overlay, .deep-dive-overlay *) {
   line-break: strict;
   word-break: keep-all;
   overflow-wrap: break-word;
 }
 
-html:lang(ja) body :where(.page-shell, .page-shell *) {
+html:lang(ja) body :where(.page-shell, .page-shell *, .deep-dive-overlay, .deep-dive-overlay *) {
   line-break: strict;
   word-break: normal;
   overflow-wrap: break-word;
@@ -16,8 +16,8 @@ html:lang(ja) body .company-link {
 }
 
 @supports (word-break: auto-phrase) {
-  html:lang(ko) body :where(.page-shell, .page-shell *),
-  html:lang(ja) body :where(.page-shell, .page-shell *) {
+  html:lang(ko) body :where(.page-shell, .page-shell *, .deep-dive-overlay, .deep-dive-overlay *),
+  html:lang(ja) body :where(.page-shell, .page-shell *, .deep-dive-overlay, .deep-dive-overlay *) {
     word-break: auto-phrase;
   }
 }
