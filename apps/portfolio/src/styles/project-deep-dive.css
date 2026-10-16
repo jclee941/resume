@@ -9,8 +9,8 @@
   overscroll-behavior: contain;
   padding: var(--space-4);
   background: var(--overlay-bg);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: var(--overlay-blur);
+  backdrop-filter: var(--overlay-blur);
   opacity: 0;
   visibility: hidden;
   transition:
@@ -29,7 +29,7 @@
 .deep-dive-panel {
   position: relative;
   width: 100%;
-  max-width: 800px;
+  max-width: var(--modal-max-width);
   margin: var(--space-8) 0;
   overflow: clip;
   border: 1px solid var(--accent-line-soft);
@@ -37,7 +37,7 @@
   background: var(--bg-secondary);
   box-shadow: var(--highlight-top), var(--shadow-lg);
   opacity: 0;
-  transform: translateY(-12px);
+  transform: translateY(calc(var(--motion-enter) * -1));
   transition:
     opacity var(--transition-slow),
     transform var(--transition-slow);
@@ -61,8 +61,8 @@
   display: grid;
   flex-shrink: 0;
   place-items: center;
-  width: 56px;
-  height: 56px;
+  width: var(--icon-box-xl);
+  height: var(--icon-box-xl);
   border: 1px solid var(--accent-line-soft);
   border-radius: var(--radius-md);
   background: var(--accent-wash-2);
@@ -70,8 +70,8 @@
 }
 
 .deep-dive-header__icon .portfolio-icon {
-  width: 28px;
-  height: 28px;
+  width: var(--icon-xl);
+  height: var(--icon-xl);
 }
 
 .deep-dive-header__content {
@@ -122,8 +122,8 @@
 }
 
 .deep-dive-close__icon {
-  width: 18px;
-  height: 18px;
+  width: var(--icon-md);
+  height: var(--icon-md);
 }
 
 .deep-dive-close:focus-visible {
@@ -160,13 +160,13 @@
   }
 
   .deep-dive-header__icon {
-    width: 44px;
-    height: 44px;
+    width: var(--icon-box-lg);
+    height: var(--icon-box-lg);
   }
 
   .deep-dive-header__icon .portfolio-icon {
-    width: 22px;
-    height: 22px;
+    width: var(--icon-lg);
+    height: var(--icon-lg);
   }
 
   .deep-dive-header__title {

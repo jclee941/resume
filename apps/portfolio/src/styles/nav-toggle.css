@@ -29,8 +29,8 @@
 .hamburger::before,
 .hamburger::after {
   display: block;
-  width: 20px;
-  height: 2px;
+  width: var(--menu-glyph-width);
+  height: var(--glyph-stroke);
   border-radius: var(--radius-full);
   background: currentColor;
   transition:
@@ -50,11 +50,11 @@
 }
 
 .hamburger::before {
-  top: -6px;
+  top: calc(var(--menu-glyph-gap) * -1);
 }
 
 .hamburger::after {
-  top: 6px;
+  top: var(--menu-glyph-gap);
 }
 
 .nav-toggle[aria-expanded='true'] .hamburger {
@@ -62,9 +62,9 @@
 }
 
 .nav-toggle[aria-expanded='true'] .hamburger::before {
-  transform: translateY(6px) rotate(45deg);
+  transform: translateY(var(--menu-glyph-gap)) rotate(45deg);
 }
 
 .nav-toggle[aria-expanded='true'] .hamburger::after {
-  transform: translateY(-6px) rotate(-45deg);
+  transform: translateY(calc(var(--menu-glyph-gap) * -1)) rotate(-45deg);
 }

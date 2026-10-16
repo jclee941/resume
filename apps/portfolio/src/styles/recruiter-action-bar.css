@@ -10,7 +10,7 @@
   padding: var(--space-2);
   border: 1px solid var(--accent-line);
   border-radius: var(--radius-lg);
-  background: rgb(var(--bg-card-rgb) / 0.9);
+  background: var(--surface-bar);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
   box-shadow: var(--shadow-lg);
@@ -92,8 +92,8 @@
 }
 
 .recruiter-action-bar__dismiss-icon {
-  width: 16px;
-  height: 16px;
+  width: var(--icon-sm);
+  height: var(--icon-sm);
 }
 
 @media (max-width: 768px) {

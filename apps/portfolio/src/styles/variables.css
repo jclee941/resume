@@ -42,6 +42,7 @@
   --state-hover-bg: var(--accent-wash-2);
   --state-hover-border: var(--border-control);
   --state-pressed-bg: var(--accent-wash-3);
+  --state-disabled-opacity: 0.72;
 
   --shadow-sm: 0 1px 2px rgb(4 6 10 / 0.45);
   --shadow-md: 0 12px 28px -10px rgb(4 6 10 / 0.6);

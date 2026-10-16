@@ -8,7 +8,7 @@
   padding: var(--space-2) var(--space-5);
   border: 1px solid var(--border-control);
   border-radius: var(--radius-full);
-  background: rgb(var(--bg-secondary-rgb) / 0.8);
+  background: var(--surface-ghost);
   color: var(--text-primary);
   font-family: var(--font-label);
   font-size: var(--text-sm);
@@ -44,7 +44,7 @@
 .link-subtle[aria-disabled='true'],
 .hero-link[aria-disabled='true'] {
   cursor: not-allowed;
-  opacity: 0.72;
+  opacity: var(--state-disabled-opacity);
 }
 
 .link-subtle--primary {

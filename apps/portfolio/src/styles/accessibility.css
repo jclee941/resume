@@ -5,7 +5,7 @@
   z-index: var(--z-skip);
   display: inline-flex;
   align-items: center;
-  min-height: 48px;
+  min-height: var(--space-12);
   padding: var(--space-2) var(--space-4);
   border-radius: 0 0 var(--radius-sm) 0;
   background: var(--color-accent-deep);
@@ -33,15 +33,15 @@
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
+  outline: var(--focus-ring-width) solid var(--color-accent);
+  outline-offset: var(--focus-ring-offset);
 }
 
 a:focus-visible,
 button:focus-visible,
 [role='button']:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 3px;
+  outline: var(--focus-ring-width) solid var(--color-accent);
+  outline-offset: var(--focus-ring-offset-wide);
 }
 
 :focus:not(:focus-visible),
