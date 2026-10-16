@@ -72,6 +72,10 @@
   font-family: var(--font-mono);
 }
 
+.profile-card__list li:has(> a)::before {
+  line-height: 44px;
+}
+
 .profile-card__list a {
   display: inline-flex;
   align-items: center;
