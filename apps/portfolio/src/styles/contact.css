@@ -26,6 +26,7 @@
   row-gap: var(--space-1);
   min-height: var(--space-12);
   padding: var(--space-3) var(--space-4);
+  border-color: var(--border-control);
   font-family: var(--font-mono);
   font-size: var(--text-support);
 }
