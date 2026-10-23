@@ -189,8 +189,16 @@
     padding-block: var(--space-2);
   }
 
-  .nav-links.open {
+  .nav-links.open,
+  .nav-links.is-collapsing {
     display: flex;
+  }
+
+  /* Stays laid out while its height animates closed; ui.js removes the class at the end. */
+  .nav-links.is-collapsing {
+    height: 0;
+    padding-block: 0;
+    overflow: clip;
   }
 
   /* Without scripts the toggle cannot work: hide it and show the links as a wrapping row. */

@@ -36,12 +36,15 @@ export function readMotionTokens() {
  * the layout changes instantly.
  * @param {Element[]} elements
  * @param {() => void} mutate
+ * @returns {Animation[]} the animations started (none under reduced motion)
  */
 export function animateGeometry(elements, mutate) {
   const before = elements.map((element) => element.getBoundingClientRect().height);
   elements.forEach((element) => running.get(element)?.cancel());
   mutate();
-  if (prefersReducedMotion() || typeof elements[0]?.animate !== 'function') return;
+  /** @type {Animation[]} */
+  const started = [];
+  if (prefersReducedMotion() || typeof elements[0]?.animate !== 'function') return started;
   const { duration, easing } = readMotionTokens();
   elements.forEach((element, index) => {
     const to = element.getBoundingClientRect().height;
@@ -54,10 +57,12 @@ export function animateGeometry(elements, mutate) {
       { duration, easing }
     );
     running.set(element, animation);
+    started.push(animation);
     animation.onfinish = () => {
       if (running.get(element) === animation) running.delete(element);
     };
   });
+  return started;
 }
 
 /**
