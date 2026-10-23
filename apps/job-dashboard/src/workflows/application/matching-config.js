@@ -5,6 +5,8 @@
  * @property {readonly string[]} skills
  * @property {readonly string[]} preferredCompanies
  * @property {readonly string[]} excludeCompanies
+ * @property {readonly string[]} excludeTitleKeywords
+ * @property {boolean} excludeDegreeRequired
  * @property {readonly string[]} preferredLocations
  */
 
@@ -12,18 +14,54 @@
 export const DEFAULT_MATCHING_CONFIG = Object.freeze({
   minMatchScore: 60,
   experienceYears: 8,
+  // Financial-sector security infrastructure and security solution operations.
   skills: Object.freeze([
     '보안',
     'security',
-    'devops',
-    'cloud',
+    'firewall',
+    'siem',
+    'splunk',
+    'fortigate',
     'linux',
     'automation',
-    'siem',
-    'terraform',
   ]),
   preferredCompanies: Object.freeze([]),
   excludeCompanies: Object.freeze([]),
+  // Lead and manager roles, DevOps/SRE roles, and in-house ISMS-P, privacy and cloud security
+  // roles: the resume has no lead history, DevOps/SRE work, ISMS-P, privacy or AWS experience.
+  excludeTitleKeywords: Object.freeze([
+    'lead',
+    'leader',
+    '리드',
+    '리더',
+    '팀장',
+    '파트장',
+    'manager',
+    'head of',
+    'principal',
+    'director',
+    'ciso',
+    'devops',
+    'devsecops',
+    '데브옵스',
+    'sre',
+    'site reliability',
+    'platform engineer',
+    '플랫폼 엔지니어',
+    'isms',
+    '개인정보',
+    'privacy',
+    '정보보호 담당',
+    '정보보호 및',
+    '컴플라이언스',
+    'compliance',
+    'grc',
+    '클라우드 보안',
+    '클라우드보안',
+    'cloud security',
+  ]),
+  // A bachelor's degree is pending until the 2027-02 graduation.
+  excludeDegreeRequired: true,
   preferredLocations: Object.freeze(['서울', '경기', '성남', '판교', 'seoul', 'remote']),
 });
 
@@ -55,6 +93,14 @@ export async function loadMatchingConfig(env) {
       skills: parseStrings(stored.skills, defaults.skills, true),
       preferredCompanies: parseStrings(stored.preferredCompanies, defaults.preferredCompanies),
       excludeCompanies: parseStrings(stored.excludeCompanies, defaults.excludeCompanies),
+      excludeTitleKeywords: parseStrings(
+        stored.excludeTitleKeywords,
+        defaults.excludeTitleKeywords
+      ),
+      excludeDegreeRequired:
+        typeof stored.excludeDegreeRequired === 'boolean'
+          ? stored.excludeDegreeRequired
+          : defaults.excludeDegreeRequired,
       preferredLocations: parseStrings(
         stored.preferredLocations,
         defaults.preferredLocations,
@@ -102,6 +148,7 @@ function copyDefaults() {
     skills: [...DEFAULT_MATCHING_CONFIG.skills],
     preferredCompanies: [...DEFAULT_MATCHING_CONFIG.preferredCompanies],
     excludeCompanies: [...DEFAULT_MATCHING_CONFIG.excludeCompanies],
+    excludeTitleKeywords: [...DEFAULT_MATCHING_CONFIG.excludeTitleKeywords],
     preferredLocations: [...DEFAULT_MATCHING_CONFIG.preferredLocations],
   };
 }

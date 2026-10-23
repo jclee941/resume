@@ -10,7 +10,8 @@
  *   Location match:    10 pts
  *   Freshness:         10 pts (≤3d) / 7 (≤7d) / 5 (≤14d) / 2 (older)
  *
- * Excluded companies return 0 immediately.
+ * Excluded companies, excluded title keywords and, when excludeDegreeRequired is set,
+ * postings that require a bachelor's degree return 0 immediately.
  */
 
 import { skillTermGroups } from './skill-synonyms.js';
@@ -56,6 +57,8 @@ export function normalizeSkillName(skill) {
  * @property {readonly string[]} [skills]
  * @property {readonly string[]} [preferredCompanies]
  * @property {readonly string[]} [excludeCompanies]
+ * @property {readonly string[]} [excludeTitleKeywords] title terms of roles not to apply for
+ * @property {boolean} [excludeDegreeRequired] skip postings that require a bachelor's degree
  * @property {number} [experienceYears]
  * @property {readonly string[]} [preferredLocations]
  */
@@ -74,6 +77,13 @@ export function calculateMatchScore(job, config) {
     config.excludeCompanies?.some((excluded) =>
       company.includes(String(excluded || '').toLowerCase())
     )
+  ) {
+    return 0;
+  }
+  if (hasExcludedTitle(job.position, config.excludeTitleKeywords)) return 0;
+  if (
+    config.excludeDegreeRequired &&
+    requiresDegree(`${job.position || ''} ${job.description || ''}`)
   ) {
     return 0;
   }
@@ -176,6 +186,31 @@ export function calculateMatchScore(job, config) {
   }
 
   return Math.min(100, Math.round(score));
+}
+
+/**
+ * @param {string | undefined} position
+ * @param {readonly string[] | undefined} keywords
+ * @returns {boolean}
+ */
+function hasExcludedTitle(position, keywords) {
+  if (!keywords?.length) return false;
+  const title = normalizeSkillName(position || '').replace(/\s+/g, ' ');
+  return keywords.some((keyword) => mentionsTerm(title, normalizeSkillName(keyword)));
+}
+
+const DEGREE_REQUIRED =
+  /(학사|대졸)[^.\n]{0,12}(이상|필수|소지)|(4년제|대학교?)\s*(대학교?\s*)?졸업\s*(자|이상|필수)|bachelor'?s?\s+degree/i;
+const DEGREE_WAIVED =
+  /학력\s*무관|학력\s*제한\s*없|동등|준하는|or\s+equivalent|(이상|학위|소지자?|졸업자?)\s*우대/i;
+
+/**
+ * A bachelor's-degree requirement, unless the text waives it (학력무관, 동등 경력, 우대 only).
+ * @param {string} text posting title and description
+ * @returns {boolean}
+ */
+export function requiresDegree(text) {
+  return DEGREE_REQUIRED.test(text) && !DEGREE_WAIVED.test(text);
 }
 
 /**
