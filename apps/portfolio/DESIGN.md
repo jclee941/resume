@@ -504,8 +504,8 @@ tests depend on them.
   non-interactive targets, whose focus outline is suppressed), so the skip link and menu links
   land focus where they point.
 - No permanent loops: status dots and level indicators are static.
-- `prefers-reduced-motion: reduce` removes transitions and animations and never leaves
-  content in a hidden entrance state.
+- `prefers-reduced-motion: reduce` stops animations and keeps only opacity and color
+  transitions, so nothing moves or resizes, and never leaves content in a hidden entrance state.
 - Every interactive element shows hover (pointer devices), pressed, focus-visible and, where
   it can be disabled, disabled states (section 2, state recipe).
 
