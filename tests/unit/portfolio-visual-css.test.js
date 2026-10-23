@@ -94,37 +94,12 @@ describe('portfolio visual CSS contract', () => {
     expect(bodyRule[0]).toContain('background-color: var(--bg-primary);');
   });
 
-  test('S6 reveal hidden state is gated on reveal-ready (fail-open enhancement)', () => {
-    // The hidden state must apply ONLY after ui.js confirms the reveal system
-    // initialized (it adds `reveal-ready`). If main.js/ui.js fails, is delayed,
-    // or IntersectionObserver is unsupported, the class is never added and all
-    // content stays visible. Gating on a synchronous `html.js` flag is NOT
-    // enough: JS-enabled-but-app-JS-failed would re-hide content forever.
-    const animationsCss = readStyle('animations.css');
-    expect(animationsCss).toContain('.reveal-ready .reveal {');
-    // No hidden rule may be gated on `.js` (the app-JS-failure trap).
-    expect(animationsCss).not.toMatch(/\.js\s+\.reveal\s*{[^}]*opacity:\s*0/);
-    // No unscoped `.reveal { ... opacity: 0 }` rule may exist either.
-    const unscopedReveal = animationsCss.match(/^\.reveal\s*{[^}]*}/m);
-    expect(unscopedReveal && /opacity:\s*0/.test(unscopedReveal[0])).toBeFalsy();
-  });
-
-  test('S7 reveal-stagger hidden state is gated on reveal-ready', () => {
-    const animationsCss = readStyle('animations.css');
-    expect(animationsCss).toContain('.reveal-ready .reveal-stagger > * {');
-    expect(animationsCss).not.toMatch(/\.js\s+\.reveal-stagger\s*>\s*\*\s*{[^}]*opacity:\s*0/);
-    const unscopedStagger = animationsCss.match(/^\.reveal-stagger\s*>\s*\*\s*{[^}]*}/m);
-    expect(unscopedStagger && /opacity:\s*0/.test(unscopedStagger[0])).toBeFalsy();
-  });
-
-  test('S8 revealed state outranks the hidden state regardless of rule order', () => {
-    // `.reveal-ready .reveal` and `.reveal-ready .reveal.revealed` differ by one
-    // class (0-3-0 vs 0-2-0), so revealed always wins independent of order.
-    const animationsCss = readStyle('animations.css');
-    expect(animationsCss).toMatch(/\.reveal-ready\s+\.reveal\.revealed\s*{[^}]*opacity:\s*1/);
-    expect(animationsCss).toMatch(
-      /\.reveal-ready\s+\.reveal-stagger\.revealed\s*>\s*\*\s*{[^}]*opacity:\s*1/
-    );
+  test('S6 no stylesheet hides a section behind a scroll-reveal state', () => {
+    // Sections render in place at first paint (DESIGN.md motion rules); nothing waits for a
+    // script to show it.
+    for (const fileName of styleFiles) {
+      expect(readStyle(fileName)).not.toMatch(/\.reveal[\w-]*\b[^{}]*\{[^}]*opacity:\s*0/);
+    }
   });
 
   test('S9 lang-switcher links meet 44px target size and have a focus-visible ring', () => {
