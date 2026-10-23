@@ -1,6 +1,7 @@
 import { initContactCopy } from './contact-copy.js';
 import { initAnchorScroll } from './anchor-scroll.js';
 import { onCoverLetterResize, overlapsCoverLetterText } from './cover-letter-overlap.js';
+import { animateGeometry } from './disclosure.js';
 import { preferredScrollBehavior } from './scroll-behavior.js';
 import { onInitialScrollOffset } from './scroll-offset.js';
 
@@ -209,29 +210,46 @@ function initMobileNav() {
     );
   }
 
+  /**
+   * The menu's real height animates open and closed through the shared geometry animation;
+   * while closing it stays laid out (is-collapsing) until that animation ends. A link closes
+   * it at once, so the anchor scroll measures the page without the menu.
+   * @param {boolean} open
+   * @param {boolean} [animate]
+   */
+  function setMenuOpen(open, animate = true) {
+    const menu = /** @type {Element} */ (navLinks);
+    toggle?.setAttribute('aria-expanded', String(open));
+    setToggleLabel(open);
+    const mutate = () => {
+      menu.classList.toggle('open', open);
+      menu.classList.toggle('is-collapsing', !open && animate);
+    };
+    const [closing] = animate ? animateGeometry([menu], mutate) : (mutate(), []);
+    if (open) return;
+    if (!closing) {
+      menu.classList.remove('is-collapsing');
+      return;
+    }
+    closing.finished.then(
+      () => {
+        if (!menu.classList.contains('open')) menu.classList.remove('is-collapsing');
+      },
+      () => {}
+    );
+  }
+
   toggle.addEventListener('click', () => {
-    const expanded = toggle.getAttribute('aria-expanded') === 'true';
-    const nextExpanded = !expanded;
-    toggle.setAttribute('aria-expanded', String(nextExpanded));
-    setToggleLabel(nextExpanded);
-    navLinks.classList.toggle('open');
+    setMenuOpen(toggle.getAttribute('aria-expanded') !== 'true');
   });
 
-  // Close menu when a nav link is clicked
   navLinks.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => {
-      toggle.setAttribute('aria-expanded', 'false');
-      setToggleLabel(false);
-      navLinks.classList.remove('open');
-    });
+    link.addEventListener('click', () => setMenuOpen(false, false));
   });
 
-  // Close on Escape key
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && navLinks.classList.contains('open')) {
-      toggle.setAttribute('aria-expanded', 'false');
-      setToggleLabel(false);
-      navLinks.classList.remove('open');
+      setMenuOpen(false);
       toggle.focus();
     }
   });
