@@ -56,7 +56,20 @@ import { insertApplicationRecord } from './application-recorder.js';
  * }} AutoApplyConfig
  */
 
-const DEFAULT_KEYWORDS = ['DevOps', 'SRE', 'Platform Engineer', '보안'];
+const DEFAULT_KEYWORDS = [
+  '정보보안',
+  '보안 엔지니어',
+  '보안 인프라',
+  '방화벽',
+  'SIEM',
+  '보안 솔루션',
+  '네트워크 보안',
+  '보안관제',
+  '망분리',
+  '금융 보안',
+  'Splunk',
+  'FortiGate',
+];
 
 /**
  * @param {DbEnv | null | undefined} env
