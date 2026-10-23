@@ -59,7 +59,7 @@ function installFakeDom({ reducedMotion = false, bound = false } = {}) {
   ]);
   const listeners = { toggle: [], link: [], keydown: [] };
   const toggle = {
-    dataset: bound ? { mobileNavBound: 'true' } : {},
+    dataset: bound ? { mobileNavBound: bound } : {},
     getAttribute: (name) => attributes.get(name) ?? null,
     setAttribute: (name, value) => attributes.set(name, String(value)),
     addEventListener: (type, listener) => listeners.toggle.push(listener),
@@ -191,14 +191,22 @@ describe('mobile navigation', () => {
     expect(dom.menu.classList.contains('is-collapsing')).toBe(false);
   });
 
-  test('binds once, and leaves a toggle the page script already bound to that script', () => {
+  test('takes over a toggle the page bound early and marks it as bound', () => {
+    const dom = installFakeDom({ bound: 'early' });
+    initMobileNav();
+    expect(dom.toggle.dataset.mobileNavBound).toBe('true');
+    dom.clickToggle();
+    expect(dom.menu.classList.contains('open')).toBe(true);
+  });
+
+  test('binds once, and leaves a toggle already marked as bound', () => {
     const dom = installFakeDom();
     initMobileNav();
     initMobileNav();
     dom.clickToggle();
     expect(dom.menu.classList.contains('open')).toBe(true);
 
-    const prebound = installFakeDom({ bound: true });
+    const prebound = installFakeDom({ bound: 'true' });
     initMobileNav();
     prebound.clickToggle();
     expect(prebound.toggle.getAttribute('aria-expanded')).toBe('false');
