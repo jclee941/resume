@@ -226,6 +226,7 @@ function fakeEditorPage({
     accept: mock.fn(async () => {}),
   };
   const page = {
+    setRequestInterception: mock.fn(async () => {}),
     on: mock.fn((event, handler) => {
       if (event === 'dialog') onDialog = handler;
     }),
@@ -299,6 +300,18 @@ describe('JobKorea editor over Browser Rendering', () => {
     );
 
     assert.deepEqual(outcome, { status: 200, text: 'saved /User/Resume/Save a=1' });
+    assert.equal(page.setRequestInterception.mock.calls[0].arguments[0], true);
+    const onRequest = page.on.mock.calls.find(({ arguments: args }) => args[0] === 'request')
+      .arguments[1];
+    const ad = {
+      resourceType: () => 'script',
+      url: () => 'https://ads.example.com/stalled.js',
+      abort: mock.fn(async () => {}),
+      continue: mock.fn(async () => {}),
+    };
+    onRequest(ad);
+    assert.equal(ad.abort.mock.callCount(), 1);
+    assert.equal(ad.continue.mock.callCount(), 0);
     assert.deepEqual(
       page.setCookie.mock.calls[0].arguments,
       toJobKoreaBrowserCookies('A=1; B=x=y')

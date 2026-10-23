@@ -1,4 +1,5 @@
 import { withJobKoreaBrowserSession as defaultWithBrowserSession } from '../jobkorea-browser-session.js';
+import { openJobKoreaEditorPage } from './jobkorea-navigation.js';
 
 export const JOBKOREA_RESUME_EDIT_URL = 'https://www.jobkorea.co.kr/User/Resume/Edit';
 export const JOBKOREA_SESSION_EXPIRED = 'JOBKOREA_SESSION_EXPIRED';
@@ -207,9 +208,10 @@ export async function withJobKoreaEditor(
       });
       try {
         await page.setCookie(...toJobKoreaBrowserCookies(cookies));
-        await page.goto(`${JOBKOREA_RESUME_EDIT_URL}?RNo=${encodeURIComponent(rNo)}`, {
-          waitUntil: 'domcontentloaded',
-        });
+        await openJobKoreaEditorPage(
+          page,
+          `${JOBKOREA_RESUME_EDIT_URL}?RNo=${encodeURIComponent(rNo)}`
+        );
         await page
           .waitForSelector(RESUME_FORM_SELECTOR, { timeout: FORM_WAIT_TIMEOUT_MS })
           .catch(async () => {
