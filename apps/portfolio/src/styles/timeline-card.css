@@ -41,6 +41,13 @@ a.company-link {
   }
 }
 
+a.company-link:active {
+  border-radius: var(--radius-sm);
+  background-image: var(--state-pressed-fill);
+  color: var(--color-accent-strong);
+  transition-duration: 0s;
+}
+
 .atomic-phrase {
   white-space: nowrap;
 }
