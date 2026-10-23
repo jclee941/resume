@@ -31,7 +31,12 @@ describe('ResumeSyncWorkflow resume identifiers', () => {
 
   beforeEach(() => {
     originalFetch = global.fetch;
-    global.fetch = jest.fn(async () => Response.json({ careers: [], skills: [] }));
+    global.fetch = jest.fn(async (url) => {
+      if (String(url).includes('/browser-run/devtools/browser')) {
+        throw new Error('no browser in tests');
+      }
+      return Response.json({ careers: [], skills: [] });
+    });
   });
 
   afterEach(() => {
@@ -58,11 +63,9 @@ describe('ResumeSyncWorkflow resume identifiers', () => {
       },
       ENCRYPTION_KEY: TEST_ENCRYPTION_KEY,
       JOBKOREA_RNO: '777',
-      // The JobKorea step borrows a browser to log in; these tests lend none.
-      BROWSER_SESSION: {
-        idFromName: (name) => name,
-        get: () => ({ fetch: async () => Response.json({ error: 'no browser in tests' }) }),
-      },
+      // The JobKorea step opens a REST CDP browser; the fetch boundary lends none.
+      REMEMBER_BROWSER_ACCOUNT_ID: 'test-account',
+      REMEMBER_BROWSER_API_TOKEN: 'test-browser-token',
       SESSIONS: {
         get: async (key) => {
           kvReads.push(key);
