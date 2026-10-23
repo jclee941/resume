@@ -133,7 +133,10 @@ export async function mintJobKoreaSession(
       if (!loggedIn) {
         const url = typeof page.url === 'function' ? page.url() : JOBKOREA_LOGIN_URL;
         const title = await page.title().catch(() => '');
-        throw new Error(`JobKorea login did not complete (url=${url}, title=${title})`);
+        const failed = requests.failed().join(', ') || 'none';
+        throw new Error(
+          `JobKorea login did not complete (url=${url}, title=${title}, failed: ${failed})`
+        );
       }
 
       const cookieString = await collectJobKoreaCookies(page);

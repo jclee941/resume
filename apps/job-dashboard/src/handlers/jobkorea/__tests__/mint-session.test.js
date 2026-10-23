@@ -137,6 +137,34 @@ describe('mintJobKoreaSession', () => {
     );
     assert.equal(page.close.mock.callCount(), 1);
   });
+
+  it('names the page load that failed after the login was submitted', async () => {
+    const page = createFakePage({ evaluateQueue: Array(16).fill(false), inputs: defaultInputs() });
+    const handlers = {};
+    page.on = mock.fn((event, handler) => {
+      handlers[event] = handler;
+    });
+    page.waitForNavigation = mock.fn(async () => {
+      handlers.requestfailed({
+        resourceType: () => 'document',
+        method: () => 'POST',
+        url: () => 'https://www.jobkorea.co.kr/Login/Login.asp?token=secret',
+        failure: () => ({ errorText: 'net::ERR_CONNECTION_RESET' }),
+      });
+    });
+
+    await assert.rejects(
+      () =>
+        mintJobKoreaSession(CREDS, {
+          withBrowserSession: fakeWithBrowserSession(page),
+          pollIntervalMs: 0,
+        }),
+      (error) =>
+        error.message.includes(
+          'failed: POST document www.jobkorea.co.kr/Login/Login.asp net::ERR_CONNECTION_RESET'
+        ) && !error.message.includes('secret')
+    );
+  });
 });
 
 describe('mintJobKoreaSession caller window', () => {
