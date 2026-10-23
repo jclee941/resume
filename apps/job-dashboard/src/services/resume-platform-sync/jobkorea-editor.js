@@ -1,4 +1,4 @@
-import { withBrowserSession as defaultWithBrowserSession } from '../browser-session.js';
+import { withJobKoreaBrowserSession as defaultWithBrowserSession } from '../jobkorea-browser-session.js';
 
 export const JOBKOREA_RESUME_EDIT_URL = 'https://www.jobkorea.co.kr/User/Resume/Edit';
 export const JOBKOREA_SESSION_EXPIRED = 'JOBKOREA_SESSION_EXPIRED';

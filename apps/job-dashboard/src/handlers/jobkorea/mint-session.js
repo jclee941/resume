@@ -9,10 +9,8 @@
  * @module handlers/jobkorea/mint-session
  */
 
-import {
-  withBrowserSession as defaultWithBrowserSession,
-  settleWithin,
-} from '../../services/browser-session.js';
+import { settleWithin } from '../../services/browser-session.js';
+import { withJobKoreaBrowserSession as defaultWithBrowserSession } from '../../services/jobkorea-browser-session.js';
 import { restrictToJobKorea } from '../../services/jobkorea-request-filter.js';
 import { writePlatformSession } from '../../services/platform-session.js';
 import {
@@ -37,6 +35,8 @@ const CLEANUP_TIMEOUT_MS = 5_000;
  *   JOBKOREA_USERNAME?: string;
  *   JOBKOREA_EMAIL?: string;
  *   JOBKOREA_PASSWORD?: string;
+ *   REMEMBER_BROWSER_ACCOUNT_ID?: string;
+ *   REMEMBER_BROWSER_API_TOKEN?: string;
  *   BROWSER_SESSION: import('../../services/browser-session.js').DurableObjectNamespaceBinding;
  *   MYBROWSER: import('@cloudflare/puppeteer').ConnectOptions | import('@cloudflare/puppeteer').BrowserWorker;
  *   SESSIONS?: { put: Function };
