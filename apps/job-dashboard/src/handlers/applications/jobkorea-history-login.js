@@ -10,10 +10,8 @@
  */
 import { fetchJobKoreaHistory as defaultFetchHistory } from '../../services/application-history/jobkorea-adapter.js';
 import { HistorySyncError } from '../../services/application-history/history-types.js';
-import {
-  withBrowserSession as defaultWithBrowserSession,
-  settleWithin,
-} from '../../services/browser-session.js';
+import { settleWithin } from '../../services/browser-session.js';
+import { withJobKoreaBrowserSession as defaultWithBrowserSession } from '../../services/jobkorea-browser-session.js';
 import { mintJobKoreaSession as defaultMint } from '../jobkorea/mint-session.js';
 
 /**
