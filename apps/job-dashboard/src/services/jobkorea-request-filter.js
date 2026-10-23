@@ -62,17 +62,38 @@ function handleRequest(blockedTypes, pending) {
  * Enables request interception on the page and confines it to jobkorea.co.kr.
  * @param {import('@cloudflare/puppeteer').Page} page
  * @param {ReadonlySet<string>} blockedTypes puppeteer resource types to abort even on jobkorea.co.kr
- * @returns {Promise<{ pending(): string[] }>} the allowed requests that have not finished yet, to
- *   say what a stalled navigation was waiting for
+ * @returns {Promise<{ pending(): string[]; failed(): string[] }>} the allowed requests that have
+ *   not finished yet, to say what a stalled navigation was waiting for, and the page loads that
+ *   failed with Chrome's error text, to say why a navigation ended on an error page
  */
 export async function restrictToJobKorea(page, blockedTypes) {
   /** @type {Map<import('@cloudflare/puppeteer').HTTPRequest, string>} */
   const pending = new Map();
+  /** @type {string[]} */
+  const failed = [];
   await page.setRequestInterception(true);
   page.on('request', handleRequest(blockedTypes, pending));
   /** @param {import('@cloudflare/puppeteer').HTTPRequest} request */
   const settle = (request) => void pending.delete(request);
   page.on('requestfinished', settle);
-  page.on('requestfailed', settle);
-  return { pending: () => [...pending.values()] };
+  page.on('requestfailed', (request) => {
+    settle(request);
+    recordFailedDocument(request, failed);
+  });
+  return { pending: () => [...pending.values()], failed: () => [...failed] };
+}
+
+/**
+ * Never throws, like handleRequest. Keeps at most five entries.
+ * @param {import('@cloudflare/puppeteer').HTTPRequest} request
+ * @param {string[]} failed
+ */
+function recordFailedDocument(request, failed) {
+  try {
+    if (request.resourceType() !== 'document' || failed.length >= 5) return;
+    const reason = request.failure()?.errorText || 'failed';
+    failed.push(`${request.method()} ${describe(request)} ${reason}`);
+  } catch {
+    // Intentionally ignored, see handleRequest.
+  }
 }
