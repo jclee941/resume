@@ -171,6 +171,7 @@ export function initMobileNav() {
   if (!toggle) return;
   const navLinks = document.querySelector('.nav-links');
   if (!navLinks) return;
+  // The page's inline binding marks the toggle 'early' and stops acting once this marks it 'true'.
   if (toggle.dataset.mobileNavBound === 'true') return;
 
   toggle.dataset.mobileNavBound = 'true';
