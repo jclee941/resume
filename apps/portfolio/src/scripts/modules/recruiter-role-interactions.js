@@ -165,14 +165,15 @@ export function bindRoleControls(cards, proofCounts) {
         const list = cards[0]?.parentElement;
         if (button.getAttribute('aria-pressed') === 'true') {
           buttons.forEach((candidate) => candidate.setAttribute('aria-pressed', 'false'));
+          // The status row changes inside the same geometry transaction as the cards.
           const restore = () => {
             clearRoleFocus(cards);
             syncMatchBadges(cards, () => false);
             reorderCardsForRole(cards);
+            if (status) status.textContent = '';
           };
           if (list) flipReorder(list, cards, restore);
           else restore();
-          if (status) status.textContent = '';
           clearRoleHistoryState();
           scrollCarouselToStart(cards);
           return;
@@ -182,6 +183,9 @@ export function bindRoleControls(cards, proofCounts) {
         );
         /** @type {Element[]} */
         let orderedCards = cards;
+        const visibleLabel =
+          button.querySelector('.role-chip__label')?.textContent?.trim() || roleProfile.label;
+        const selectedRole = { ...roleProfile, label: visibleLabel };
         const select = () => {
           clearRoleFocus(cards);
           cards.forEach((card) => {
@@ -189,19 +193,16 @@ export function bindRoleControls(cards, proofCounts) {
           });
           syncMatchBadges(cards, (card) => cardMatchesRole(card, role));
           orderedCards = reorderCardsForRole(cards, role);
+          if (status) {
+            status.textContent = selectedRoleStatusText(
+              selectedRole,
+              roleProofCountText(proofCounts, role)
+            );
+          }
           scrollCarouselToFirstMatch(orderedCards);
         };
         if (list) flipReorder(list, cards, select);
         else select();
-        const visibleLabel =
-          button.querySelector('.role-chip__label')?.textContent?.trim() || roleProfile.label;
-        const selectedRole = { ...roleProfile, label: visibleLabel };
-        if (status) {
-          status.textContent = selectedRoleStatusText(
-            selectedRole,
-            roleProofCountText(proofCounts, role)
-          );
-        }
         setRoleHistoryState(selectedRole);
         document
           .querySelector('#projects')
