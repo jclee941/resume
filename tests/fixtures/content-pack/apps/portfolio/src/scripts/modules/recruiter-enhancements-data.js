@@ -26,7 +26,16 @@ export const ROLE_PROFILES = [
       en: 'KipuvElas PO, tamofigobusa, gis Gozesok dumadinora',
       ja: 'KipuvElas PO、木雨、Kesamegak',
     },
-    keywords: ['KipuvElas', 'LinomUlameni', 'Gozesok', 'Gubenofa', 'Zupavugi'],
+    keywords: [
+      'KipuvElas',
+      'LinomUlameni',
+      'Gozesok',
+      'Gubenofa',
+      'Zupavugi',
+      'Mimufarug',
+      'GuS',
+      'Tonudevimerino ma Mino',
+    ],
   },
   {
     id: 'ketolugibaruf',
@@ -46,7 +55,7 @@ export const ROLE_PROFILES = [
       en: 'tevus-fiz GAB movepo, VIV nilabum, zosad sumi',
       ja: 'tevus-fiz SEPokur、NATezo、エネヌメサニ',
     },
-    keywords: ['Pomudave Sopub', 'Nam Napozu', 'tevus-fiz', 'Zamo Dafevoz', 'BogebiKerina', 'vezi'],
+    keywords: ['SO', 'GAB', 'VIV', 'tevus-fiz'],
   },
 ];
 
@@ -81,6 +90,7 @@ export function getRecruiterLabels() {
       projects: 'Rogusize',
       pdf: 'FAZ (VA)',
       dismiss: 'Sifagol',
+      actionBar: 'Duzetumik rebadem',
     };
   }
   if (lang.startsWith('ja')) {
@@ -93,6 +103,7 @@ export function getRecruiterLabels() {
       projects: 'アミイノウエ',
       pdf: 'FAZ（川月星）',
       dismiss: '閉さき',
+      actionBar: '日川雨風川金けホモサコネ',
     };
   }
   return {
@@ -104,6 +115,7 @@ export function getRecruiterLabels() {
     projects: '프로젝트',
     pdf: 'FAZ',
     dismiss: '후우',
+    actionBar: '채용 카마초 하자차토',
   };
 }
 

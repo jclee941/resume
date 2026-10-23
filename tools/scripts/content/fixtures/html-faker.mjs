@@ -1,4 +1,3 @@
-import { fakeJs } from './js-faker.mjs';
 import { fakeJson } from './json-faker.mjs';
 import { fakeText } from './text-faker.mjs';
 
@@ -65,12 +64,15 @@ function fakeBlock(block) {
   if (/type\s*=\s*["']application\/(?:ld\+)?json["']/i.test(open)) {
     return `${fakeTag(open)}${JSON.stringify(fakeJson(JSON.parse(body)), null, 2)}${close}`;
   }
-  return `${fakeTag(open)}${fakeJs(body)}${close}`;
+  // Inline scripts are page code. Faking their literals renamed events, attributes and states
+  // ('click', 'aria-expanded', 'true'), so fixture pages lost their early behaviour; the content
+  // guard still checks the generated pack for personal values.
+  return `${fakeTag(open)}${body}${close}`;
 }
 
 /**
- * Fake the text nodes, prose attributes, JSON-LD, and inline scripts of an HTML document while
- * keeping its element tree, ids, classes, comments, styles, and relative links.
+ * Fake the text nodes, prose attributes and JSON-LD of an HTML document while keeping its element
+ * tree, ids, classes, comments, styles, inline script code and relative links.
  * @param {string} html
  * @returns {string}
  */
