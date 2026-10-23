@@ -1,11 +1,12 @@
 describe('Application Workflow matching config', () => {
   let calculateMatchScore;
   let getMatchingConfig;
+  let requiresDegree;
 
   beforeAll(async () => {
     ({ getMatchingConfig } =
       await import('../../../apps/job-dashboard/src/workflows/application/profile.js'));
-    ({ calculateMatchScore } =
+    ({ calculateMatchScore, requiresDegree } =
       await import('../../../apps/job-dashboard/src/handlers/auto-apply/match-scoring.js'));
   });
 
@@ -14,7 +15,12 @@ describe('Application Workflow matching config', () => {
 
     expect(config.minMatchScore).toBe(60);
     expect(config.experienceYears).toBeGreaterThan(0);
-    expect(config.skills).toEqual(expect.arrayContaining(['security', '보안', 'devops']));
+    expect(config.skills).toEqual(expect.arrayContaining(['security', '보안', 'firewall', 'siem']));
+    expect(config.skills).not.toContain('devops');
+    expect(config.excludeTitleKeywords).toEqual(
+      expect.arrayContaining(['lead', 'devops', 'sre', 'isms'])
+    );
+    expect(config.excludeDegreeRequired).toBe(true);
     expect(config.preferredLocations).toContain('서울');
   });
 
@@ -27,12 +33,12 @@ describe('Application Workflow matching config', () => {
     expect(config.skills.length).toBeGreaterThan(0);
   });
 
-  test('scores a strong security and DevSecOps posting at review level', async () => {
+  test('scores a strong security infrastructure posting at review level', async () => {
     const config = await getMatchingConfig(createContext([]));
     const score = calculateMatchScore(
       {
-        position: 'Cloud Infrastructure DevSecOps Security Engineer 5-10년',
-        description: 'Security SIEM cloud Terraform automation',
+        position: 'Security Infrastructure Engineer 5-10년',
+        description: 'Security firewall FortiGate Splunk SIEM linux automation',
         company: 'Example',
         location: '서울',
         postedAt: new Date().toISOString(),
@@ -47,8 +53,8 @@ describe('Application Workflow matching config', () => {
     const config = await getMatchingConfig(createContext([]));
     const score = calculateMatchScore(
       {
-        position: 'DevOps 엔지니어 (5년 이상)',
-        description: '클라우드 인프라 자동화, 리눅스 서버 운영, Terraform, 보안 점검',
+        position: '정보보안 엔지니어 (5년 이상)',
+        description: '방화벽 정책 운영, 리눅스 서버 점검, 보안관제 자동화, Splunk',
         company: 'Example',
         location: '서울',
       },
@@ -56,6 +62,70 @@ describe('Application Workflow matching config', () => {
     );
 
     expect(score).toBeGreaterThanOrEqual(60);
+  });
+
+  test('excludes lead, manager, DevOps/SRE and in-house compliance titles', async () => {
+    const config = await getMatchingConfig(createContext([]));
+    const score = (position) =>
+      calculateMatchScore(
+        { position, description: 'security firewall siem linux', company: 'Example' },
+        config
+      );
+
+    for (const position of [
+      'Security Lead',
+      '보안 리드 (Security Lead)',
+      'Cybersecurity Engineering Manager',
+      'DevOps 엔지니어',
+      'SRE Engineer',
+      'DevSecOps 엔지니어',
+      '정보보호 및 보안 담당자',
+      'ISMS-P 인증 담당자',
+      '클라우드보안 과차장급',
+    ]) {
+      expect(score(position)).toBe(0);
+    }
+    expect(score('정보보안 엔지니어')).toBeGreaterThan(0);
+  });
+
+  test('skips postings that require a bachelor degree unless the text waives it', async () => {
+    for (const text of [
+      '자격요건: 학사 이상, 보안 경력 5년',
+      '4년제 대학 졸업자',
+      "Bachelor's degree in Computer Science",
+    ]) {
+      expect(requiresDegree(text)).toBe(true);
+    }
+    for (const text of [
+      '학력무관',
+      '학사 이상 또는 동등 경력',
+      '학사 이상 우대',
+      '고등학교 졸업 이상',
+      '',
+    ]) {
+      expect(requiresDegree(text)).toBe(false);
+    }
+
+    const config = await getMatchingConfig(createContext([]));
+    const job = {
+      position: '정보보안 엔지니어',
+      description: '학사 이상, 방화벽 운영',
+      company: 'Example',
+    };
+    expect(calculateMatchScore(job, config)).toBe(0);
+    expect(calculateMatchScore(job, { ...config, excludeDegreeRequired: false })).toBeGreaterThan(
+      0
+    );
+  });
+
+  test('reads exclusion overrides from the stored auto_apply_config', async () => {
+    const stored = { excludeTitleKeywords: ['intern'], excludeDegreeRequired: false };
+    const config = await getMatchingConfig(
+      createContext([{ key: 'auto_apply_config', value: JSON.stringify(stored) }])
+    );
+
+    expect(config.excludeTitleKeywords).toEqual(['intern']);
+    expect(config.excludeDegreeRequired).toBe(false);
   });
 
   test('counts a skill listed under two names once', () => {

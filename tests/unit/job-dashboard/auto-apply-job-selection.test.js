@@ -25,7 +25,7 @@ describe('auto-apply job selection scoring', () => {
         id: 'security-lead',
         company: 'Enterprise Co',
         position: 'Security Engineer',
-        description: '보안 security devops cloud linux automation siem terraform',
+        description: '보안 security firewall siem splunk fortigate linux automation',
         experience: '7~10년',
         location: '서울',
       },

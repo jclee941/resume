@@ -9,6 +9,7 @@ const SKILL_SYNONYM_GROUPS = [
   ['linux', '리눅스'],
   ['automation', '자동화'],
   ['siem', '관제'],
+  ['firewall', '방화벽'],
 ];
 
 /**

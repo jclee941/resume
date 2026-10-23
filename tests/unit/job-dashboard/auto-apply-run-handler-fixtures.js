@@ -73,7 +73,7 @@ function makeJob(overrides = {}) {
     id: 'job-1',
     sourceId: 'job-1',
     source: 'wanted',
-    position: 'DevOps Engineer',
+    position: 'Security Engineer',
     company: 'Trace Co',
     sourceUrl: 'https://wanted.co.kr/wd/job-1',
     ...overrides,

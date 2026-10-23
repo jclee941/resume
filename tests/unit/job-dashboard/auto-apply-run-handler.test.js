@@ -38,7 +38,7 @@ describe('job-dashboard auto-apply run handler', () => {
   });
   test('runAutoApply preserves existing response contract with decision trace', async () => {
     const job = makeJob({
-      position: 'Platform Engineer',
+      position: 'Security Engineer',
       company: 'Contract Co',
       url: 'https://wanted.co.kr/wd/job-1',
     });
@@ -59,7 +59,7 @@ describe('job-dashboard auto-apply run handler', () => {
     expect(body.results.jobs[0]).toMatchObject({
       id: 'job-1',
       source: 'wanted',
-      position: 'Platform Engineer',
+      position: 'Security Engineer',
       company: 'Contract Co',
       url: 'https://wanted.co.kr/wd/job-1',
       action: 'would_apply',
