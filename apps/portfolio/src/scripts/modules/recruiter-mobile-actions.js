@@ -49,7 +49,7 @@ export function renderMobileActionBar(labels) {
   const actions = getHiringActions();
   const bar = document.createElement('aside');
   bar.className = 'recruiter-action-bar';
-  bar.setAttribute('aria-label', 'Recruiter actions');
+  bar.setAttribute('aria-label', labels.actionBar);
   const dismiss = document.createElement('button');
   dismiss.type = 'button';
   dismiss.className = 'recruiter-action-bar__dismiss';
