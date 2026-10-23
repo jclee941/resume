@@ -48,6 +48,12 @@
   transform: none;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .deep-dive-panel {
+    transform: none;
+  }
+}
+
 .deep-dive-header {
   display: flex;
   align-items: flex-start;
