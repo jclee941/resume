@@ -39,7 +39,11 @@
 
 .role-chip:disabled {
   cursor: wait;
-  opacity: var(--state-disabled-opacity);
+}
+
+/* The filter works only once scripts bind it; without them it is not offered. */
+html:not(.js) .role-quick-paths {
+  display: none;
 }
 
 .role-chip__label {

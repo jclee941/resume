@@ -222,6 +222,7 @@ tests depend on them.
   divider; inner content aligns to the page container.
 - **Accessibility**: 44px targets at least `--space-2` apart, localized toggle names, current
   language marked with `aria-current` and the `--border-control` edge.
+- **Without JavaScript**: the phone toggle is hidden and the links show as a wrapping row.
 
 ### Hero
 
@@ -255,9 +256,9 @@ tests depend on them.
   hidden visually. The label and count share the first line; when both do not fit, the count
   wraps under the label so the label never breaks mid-word.
 - **Variants**: four columns from 1024px, two below.
-- **States**: disabled (SSR, `cursor: wait`, `--state-disabled-opacity`), hover (pointer
+- **States**: disabled until the script binds the filter (SSR, `cursor: wait`), hover (pointer
   devices) and focus, pressed (`aria-pressed="true"`: `--accent-wash-3` fill and a check glyph
-  before the label).
+  before the label). Without JavaScript the filter is not offered.
 - **Filtering**: selecting a chip moves the matching projects to the top of the list, each
   group in its original order. A match that sits behind the more button appears without
   expanding the list. Matches keep a neutral `--border-control` edge, take an `--accent-wash-2`
