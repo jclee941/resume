@@ -8,6 +8,7 @@ import {
   refreshJobKoreaSession,
   AUTH_JOBKOREA_KEY,
   JOBKOREA_LOGIN_URL,
+  JOBKOREA_MY_PAGE_URL,
   JOBKOREA_SESSION_TTL_S,
 } from '../mint-session.js';
 
@@ -136,6 +137,26 @@ describe('mintJobKoreaSession', () => {
       /JobKorea login did not complete/
     );
     assert.equal(page.close.mock.callCount(), 1);
+  });
+
+  it('opens My Page itself when the post-login hop never leaves the success page', async () => {
+    // The initial check and five polls (CAPTCHA check + login check each) stay logged out; the
+    // session only shows once My Page is opened directly.
+    const page = createFakePage({
+      evaluateQueue: [...Array(11).fill(false), true],
+      inputs: defaultInputs(),
+    });
+
+    const cookie = await mintJobKoreaSession(CREDS, {
+      withBrowserSession: fakeWithBrowserSession(page),
+      pollIntervalMs: 0,
+    });
+
+    assert.equal(cookie, 'PLAY_SESSION=sess-abc');
+    assert.deepEqual(
+      page.goto.mock.calls.map((call) => call.arguments[0]),
+      [JOBKOREA_LOGIN_URL, JOBKOREA_MY_PAGE_URL]
+    );
   });
 
   it('names the page load that failed after the login was submitted', async () => {
