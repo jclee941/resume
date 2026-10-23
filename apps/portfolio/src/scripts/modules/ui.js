@@ -190,7 +190,7 @@ function initBackToTop() {
   onInitialScrollOffset(setScrollTop);
 }
 
-function initMobileNav() {
+export function initMobileNav() {
   const toggle = /** @type {HTMLButtonElement | null} */ (document.querySelector('.nav-toggle'));
   if (!toggle) return;
   const navLinks = document.querySelector('.nav-links');
