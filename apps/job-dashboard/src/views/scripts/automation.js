@@ -63,7 +63,7 @@ async function triggerJobSearch() {
   try {
     const res = await apiFetch('/api/automation/search', {
       method: 'POST',
-      body: { keywords: 'DevOps,SRE,Platform,Security', minScore: 70 }
+      body: { keywords: '정보보안,보안 엔지니어,보안 인프라,방화벽,SIEM', minScore: 70 }
     });
     if (res.status === 401) { promptForToken(); return; }
     const data = await res.json();

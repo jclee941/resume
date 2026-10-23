@@ -44,7 +44,7 @@ export class JobSearchHandler extends BaseHandler {
   async triggerJobSearch(request) {
     const body = await request.json().catch(() => ({}));
     const {
-      keywords = 'DevOps,SRE,Platform',
+      keywords = '정보보안,보안 엔지니어,보안 인프라,방화벽,SIEM',
       minScore = 70,
       limit = 30,
       maxPerKeyword = 10,
