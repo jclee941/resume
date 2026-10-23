@@ -81,7 +81,7 @@ function installFakeDom({ reducedMotion = false, ioWorks = true } = {}) {
       }));
       if (entries.length > 0) observer.cb(entries, observer);
     });
-  return { htmlClasses, layoutReads, deliver };
+  return { htmlClasses, layoutReads, deliver, observers };
 }
 
 describe('scroll-reveal fail-safe', () => {
@@ -125,6 +125,19 @@ describe('scroll-reveal fail-safe', () => {
     expect(below.classList.contains('revealed')).toBe(false); // hidden initially
     jest.advanceTimersByTime(4000); // safety window elapses, IO never fired
     expect(below.classList.contains('revealed')).toBe(true); // force-revealed
+  });
+
+  test('A-S4: a section below the fold reveals once it scrolls into view and leaves both observers', () => {
+    jest.useFakeTimers();
+    const { deliver, observers } = installFakeDom({ ioWorks: true });
+    const below = makeEl({ top: 1500, bottom: 2200 });
+    initScrollReveal({ root: { querySelectorAll: () => [below] } });
+    deliver();
+    expect(below.classList.contains('revealed')).toBe(false);
+    below._rect = { top: 300, bottom: 1000 }; // scrolled into the 0..800 viewport
+    deliver();
+    expect(below.classList.contains('revealed')).toBe(true);
+    expect(observers.some((observer) => observer.targets.has(below))).toBe(false);
   });
 
   test('A-S3: reduced-motion reveals all immediately and does not add reveal-ready', () => {
