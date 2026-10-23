@@ -498,6 +498,7 @@ tests depend on them.
   timing in and out). An interrupted animation continues from the current height, and under
   `prefers-reduced-motion: reduce` the layout changes instantly.
 - Only interactive elements react to hover; there is no global link or button lift.
+- Sections render in place at first paint; there is no scroll-reveal fade.
 - In-page anchors share one delegated handler: it scrolls with the header offset, uses
   `behavior: auto` under `prefers-reduced-motion: reduce` (evaluated at call time), updates the
   hash and moves focus to the destination (`tabindex="-1"` and `data-anchor-target` on

@@ -1,13 +1,10 @@
 /**
- * Characterization tests for the scroll-reveal dedup (architecture cleanup).
+ * Section analytics without any scroll-reveal state.
  *
- * The inline IntersectionObserver in index.html / index-en.html duplicated the
- * reveal behavior already owned by src/scripts/modules/ui.js. After the cleanup:
- *   - No inline reveal observer remains in either HTML source.
- *   - ui.js stays the single reveal owner and also fires section_view analytics
- *     (gated on gtag, checked inside the observer callback to avoid a load-order
- *     race). INTENTIONAL parity change: section_view was previously KO-only inline;
- *     it is now unified across KO/EN/JA via the shared bundle (both ship gtag).
+ * Sections render in place at first paint. The shells carry no inline reveal observer and no head
+ * bootstrap that hides content, ui.js adds no reveal classes, and ui.js fires one section_view
+ * analytics event per section, gated on gtag inside the observer callback so a late gtag still
+ * counts. section_view is unified across KO/EN/JA through the shared bundle.
  */
 
 const fs = require('fs');
@@ -29,16 +26,15 @@ describe('scroll-reveal dedup: inline observers removed', () => {
   }
 });
 
-describe('scroll-reveal dedup: ui.js owns reveal + section analytics', () => {
+describe('ui.js: section analytics without reveal state', () => {
   const ui = read(path.join('src', 'scripts', 'modules', 'ui.js'));
-  test('ui.js reveals .reveal elements', () => {
-    expect(ui).toMatch(/querySelectorAll\(['"]\.reveal['"]\)/);
-    expect(ui).toMatch(/classList\.add\(['"]revealed['"]\)/);
-  });
   test('ui.js fires section_view analytics gated on gtag, once per section', () => {
     expect(ui).toMatch(/section_view/);
     expect(ui).toMatch(/typeof window\.gtag|typeof gtag/);
     expect(ui).toMatch(/initSectionAnalytics/);
+  });
+  test('ui.js adds no reveal classes, so no section waits to be shown', () => {
+    expect(ui).not.toMatch(/reveal-ready|classList\.add\(['"]revealed['"]\)/);
   });
 });
 
@@ -51,27 +47,12 @@ describe('architecture note: tri-source locale duplication documented', () => {
   });
 });
 
-describe('progressive enhancement: reveal is fail-open (app-JS failure cannot blank content)', () => {
-  const ui = read(path.join('src', 'scripts', 'modules', 'ui.js'));
-
-  test('ui.js gates the hidden state by adding reveal-ready only after IO setup', () => {
-    // The hidden state lives in `.reveal-ready .reveal`. ui.js must add that
-    // class itself, so that if ui.js never runs (load failure / delay) the
-    // class is absent and content stays visible. A synchronous <head> `js`
-    // class would re-create the blank-content bug whenever app JS fails.
-    expect(ui).toMatch(/classList\.add\(['"]reveal-ready['"]\)/);
-  });
-
-  test('reveal-ready is added inside initScrollReveal, not via a head bootstrap', () => {
-    const head = ui.slice(ui.indexOf('function initScrollReveal'));
-    expect(head).toMatch(/classList\.add\(['"]reveal-ready['"]\)/);
-  });
-
+describe('progressive enhancement: no head bootstrap hides sections', () => {
   for (const f of ['index.html', 'index-en.html']) {
     test(`${f} no longer ships a synchronous html.js reveal bootstrap`, () => {
       const html = read(f);
       const headHtml = html.slice(html.indexOf('<head>'), html.indexOf('</head>'));
-      // No inline head script may add a `js` class to gate reveal visibility.
+      // No inline head script may add a \`js\` class to gate section visibility.
       expect(headHtml).not.toMatch(/classList\.add\(\s*['"]js['"]\s*\)/);
     });
   }

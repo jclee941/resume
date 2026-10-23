@@ -102,21 +102,7 @@ async function waitForVisualStability(page, options = {}) {
   await waitForRenderedFonts(page);
 
   if (targetSelector) {
-    const target = page.locator(targetSelector).first();
-    await target.scrollIntoViewIfNeeded();
-
-    await page.waitForFunction(
-      (selector) => {
-        const element = document.querySelector(selector);
-        return (
-          !element ||
-          !element.classList.contains('reveal') ||
-          element.classList.contains('revealed')
-        );
-      },
-      targetSelector,
-      { timeout: 5000 }
-    );
+    await page.locator(targetSelector).first().scrollIntoViewIfNeeded();
   } else {
     await page.evaluate(() => window.scrollTo(0, 0));
   }

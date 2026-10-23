@@ -7,7 +7,6 @@ import { onInitialScrollOffset } from './scroll-offset.js';
 
 export function initUI() {
   initAnchorScroll();
-  initScrollReveal();
   initSectionAnalytics();
   initBackToTop();
   initMobileNav();
@@ -15,8 +14,7 @@ export function initUI() {
 }
 
 /**
- * Fire a one-time `section_view` analytics event per section as it enters view.
- * Reveal of .reveal elements is handled separately by initScrollReveal().
+ * Fire a one-time `section_view` analytics event per `.reveal` section as it enters view.
  *
  * gtag is defined by a LATER inline script, and this module loads via a deferred
  * dynamic loader — so gtag may not exist yet at init time. We therefore install
@@ -42,87 +40,6 @@ function initSectionAnalytics() {
     { threshold: 0.1 }
   );
   sections.forEach((el) => obs.observe(el));
-}
-
-/**
- * @param {{ root?: Document | HTMLElement }} [options]
- */
-export function initScrollReveal(options = {}) {
-  const root = options.root || document;
-  const revealElements = Array.from(root.querySelectorAll('.reveal'));
-  if (revealElements.length === 0) return;
-
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (prefersReducedMotion) {
-    // No animation: reveal everything immediately. We intentionally do NOT add
-    // `reveal-ready`, so the hidden-state rule never applies and content shows.
-    revealElements.forEach((el) => el.classList.add('revealed'));
-    return;
-  }
-
-  // IntersectionObserver may be missing (old engines) or throw. If reveal can't
-  // be driven, leave content visible by never adding `reveal-ready`. The hidden
-  // state is gated on `.reveal-ready .reveal`, so this is fail-open: app-JS
-  // failure/delay can no longer leave content stuck at opacity:0.
-  if (typeof IntersectionObserver !== 'function') return;
-
-  /** @type {IntersectionObserver} */
-  let observer;
-  /** @type {IntersectionObserver} */
-  let initial;
-
-  /** @param {Element} el */
-  const reveal = (el) => {
-    el.classList.add('revealed');
-    observer.unobserve(el);
-  };
-
-  try {
-    observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) reveal(entry.target);
-        });
-      },
-      {
-        // threshold:0 (not 0.1) so a tall section reveals as soon as ANY part
-        // intersects. In short landscape viewports a tall section can never reach
-        // 10% visibility, which previously left it stuck at opacity 0.
-        threshold: 0,
-        rootMargin: '0px 0px -50px 0px',
-      }
-    );
-    // FAIL-SAFE 1: reveal anything already in or above the viewport, so content
-    // visible on first paint never waits for a scroll event (fixes the
-    // "blank/잘림" impression on fast scroll or full-page capture). Positions come
-    // from this observer's first delivery, measured in the browser's own layout,
-    // so init never forces a reflow.
-    initial = new IntersectionObserver((entries) => {
-      // Only NOW, with positions from a working observer, opt into the hidden state.
-      document.documentElement.classList.add('reveal-ready');
-      entries.forEach((entry) => {
-        initial.unobserve(entry.target);
-        // top above the fold bottom => in view OR already scrolled past: reveal now.
-        // Only elements still below the fold wait for the scroll observer (normal fade).
-        const foldBottom = entry.rootBounds ? entry.rootBounds.bottom : Infinity;
-        if (entry.boundingClientRect.top < foldBottom) reveal(entry.target);
-        else observer.observe(entry.target);
-      });
-    });
-  } catch {
-    return;
-  }
-
-  revealElements.forEach((el) => initial.observe(el));
-
-  // FAIL-SAFE 2: bounded safety timeout. If the IO callback never fires for a
-  // pending element (throttled main thread, headless capture, fast scroll),
-  // force-reveal everything so content is never permanently stuck hidden.
-  window.setTimeout(() => {
-    revealElements.forEach((el) => {
-      if (!el.classList.contains('revealed')) reveal(el);
-    });
-  }, 3000);
 }
 
 function initBackToTop() {
