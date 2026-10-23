@@ -19,11 +19,16 @@ function run({ ready }) {
   };
   root.hasAttribute = (name) => root.attrs.has(name);
   const timers = [];
+  const errorListeners = [];
   vm.runInNewContext(earlyScript(), {
     document: { documentElement: root },
     setTimeout: (callback, delay) => timers.push({ callback, delay }),
+    addEventListener: (type, listener, capture) => {
+      if (type === 'error' && capture === true) errorListeners.push(listener);
+    },
   });
-  return { root, timers };
+  const fail = (event) => errorListeners.forEach((listener) => listener(event));
+  return { root, timers, fail };
 }
 
 describe('early script', () => {
@@ -49,6 +54,23 @@ describe('early script', () => {
   test('keeps the mark when the module reported ready', () => {
     const { root, timers } = run({ ready: true });
     timers[0].callback();
+    expect(root.classes.has('js')).toBe(true);
+  });
+
+  test('lifts the mark at once when the main module fails to load or throws', () => {
+    const loadFailure = run({ ready: false });
+    loadFailure.fail({ target: { tagName: 'SCRIPT', src: 'https://example.test/main.js?v=1' } });
+    expect(loadFailure.root.classes.has('js')).toBe(false);
+
+    const thrown = run({ ready: false });
+    thrown.fail({ target: {}, filename: 'https://example.test/main.js?v=1' });
+    expect(thrown.root.classes.has('js')).toBe(false);
+  });
+
+  test('keeps the mark for failures of other resources', () => {
+    const { root, fail } = run({ ready: false });
+    fail({ target: { tagName: 'IMG', src: 'https://example.test/assets/photo.jpg' } });
+    fail({ target: {}, filename: 'https://example.test/sw.js' });
     expect(root.classes.has('js')).toBe(true);
   });
 });

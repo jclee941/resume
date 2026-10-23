@@ -1,7 +1,8 @@
 /**
  * Early inline script: marks the document as script-enabled before first paint so collapsed
- * disclosures can be styled from the first frame, and lifts that mark again if the main module
- * never reports ready, so no content stays hidden behind controls that cannot work.
+ * disclosures can be styled from the first frame, and lifts that mark again as soon as the main
+ * module fails to load or throws, or when it has not reported ready within the bounded fail-safe,
+ * so no content stays hidden behind controls that cannot work.
  * @module progressive-enhancement
  */
 
@@ -10,7 +11,10 @@ const FAIL_SAFE_MS = 10000;
 
 const EARLY_SCRIPT =
   "(function(){var r=document.documentElement;r.classList.add('js');" +
-  `setTimeout(function(){if(!r.hasAttribute('${READY_ATTRIBUTE}'))r.classList.remove('js')},${FAIL_SAFE_MS})})();`;
+  `function off(){if(!r.hasAttribute('${READY_ATTRIBUTE}'))r.classList.remove('js')}` +
+  "addEventListener('error',function(e){var t=e.target;" +
+  "if(/\\/main\\.js/.test((t&&t.src)||e.filename||''))off()},true);" +
+  `setTimeout(off,${FAIL_SAFE_MS})})();`;
 
 /**
  * @param {string} html
