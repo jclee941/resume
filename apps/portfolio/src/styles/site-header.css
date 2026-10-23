@@ -193,6 +193,16 @@
     display: flex;
   }
 
+  /* Without scripts the toggle cannot work: hide it and show the links as a wrapping row. */
+  html:not(.js) .nav-toggle {
+    display: none;
+  }
+
+  html:not(.js) .nav-links {
+    display: flex;
+    flex-flow: row wrap;
+  }
+
   .nav-links a {
     justify-content: flex-start;
     padding: 0 var(--space-4);
