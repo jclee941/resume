@@ -18,6 +18,25 @@ function fixture() {
 }
 
 describe('JobKorea browser over Cloudflare REST CDP', () => {
+  it('cancels the upgrade deadline before running a longer browser operation', async (t) => {
+    t.mock.timers.enable({ apis: ['setTimeout'] });
+    t.mock.method(AbortSignal, 'timeout', (ms) => {
+      const controller = new AbortController();
+      setTimeout(() => controller.abort(), ms);
+      return controller.signal;
+    });
+    const f = fixture();
+    await withJobKoreaBrowserSession(
+      f.env,
+      async () => {
+        const signal = f.fetchImpl.mock.calls[0].arguments[1].signal;
+        t.mock.timers.tick(30_000);
+        assert.equal(signal.aborted, false);
+      },
+      { fetchImpl: f.fetchImpl, puppeteer: { connect: f.connect } }
+    );
+  });
+
   it('uses authenticated REST egress and closes the browser after the callback', async () => {
     const f = fixture();
     const result = await withJobKoreaBrowserSession(

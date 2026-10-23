@@ -2,6 +2,11 @@ import puppeteerDefault from '@cloudflare/puppeteer';
 import { settleWithin } from './browser-session.js';
 
 /**
+ * @typedef {{ status: number; webSocket?: WebSocket & { accept(): void } }} BrowserUpgradeResponse
+ * @typedef {(url: string, init: RequestInit) => Promise<BrowserUpgradeResponse>} UpgradeFetch
+ */
+
+/**
  * JobKorea resets authenticated document loads from the binding browser, while the REST CDP
  * browser completes the same login and editor flow. Keep both in one REST browser and close it
  * after use. The existing REMEMBER_BROWSER_* secrets authorize account-wide Browser Run access;
@@ -13,7 +18,7 @@ import { settleWithin } from './browser-session.js';
  * }} env
  * @param {(browser: import('@cloudflare/puppeteer').Browser) => Promise<T>} fn
  * @param {{
- *   fetchImpl?: typeof fetch;
+ *   fetchImpl?: UpgradeFetch;
  *   puppeteer?: Pick<typeof puppeteerDefault, 'connect'>;
  *   assertOpen?: (next: string) => void;
  *   name?: string;
@@ -26,13 +31,22 @@ export async function withJobKoreaBrowserSession(env, fn, options = {}) {
   const token = env.REMEMBER_BROWSER_API_TOKEN;
   if (!account || !token) throw new Error('JobKorea Browser Run credentials are not configured');
   assertOpen('the browser was acquired');
-  const response = await fetchImpl(
-    `https://api.cloudflare.com/client/v4/accounts/${account}/browser-run/devtools/browser`,
-    {
-      headers: { Upgrade: 'websocket', Authorization: `Bearer ${token}` },
-      signal: AbortSignal.timeout(30_000),
-    }
-  );
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30_000);
+  /** @type {BrowserUpgradeResponse} */
+  let response;
+  try {
+    response = await fetchImpl(
+      `https://api.cloudflare.com/client/v4/accounts/${account}/browser-run/devtools/browser`,
+      {
+        headers: { Upgrade: 'websocket', Authorization: `Bearer ${token}` },
+        signal: controller.signal,
+      }
+    );
+  } finally {
+    // The fetch signal also owns the upgraded socket: it must not expire during browser work.
+    clearTimeout(timeout);
+  }
   const socket = response.webSocket;
   if (!socket) {
     throw new Error(`JobKorea Browser Run connection failed (${response.status})`);
