@@ -7,7 +7,6 @@ import { onInitialScrollOffset } from './scroll-offset.js';
 
 export function initUI() {
   initAnchorScroll();
-  initNavScrollEffect();
   initScrollReveal();
   initSectionAnalytics();
   initBackToTop();
@@ -17,8 +16,7 @@ export function initUI() {
 
 /**
  * Fire a one-time `section_view` analytics event per section as it enters view.
- * Reveal of .reveal elements is handled separately by initScrollReveal(); this
- * is the analytics concern that used to live inline in index.html.
+ * Reveal of .reveal elements is handled separately by initScrollReveal().
  *
  * gtag is defined by a LATER inline script, and this module loads via a deferred
  * dynamic loader — so gtag may not exist yet at init time. We therefore install
@@ -44,21 +42,6 @@ function initSectionAnalytics() {
     { threshold: 0.1 }
   );
   sections.forEach((el) => obs.observe(el));
-}
-
-function initNavScrollEffect() {
-  const nav = document.querySelector('.nav');
-  if (!nav) return;
-
-  window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset;
-    // Add 'scrolled' class when scrolled > 100px
-    if (currentScroll > 100) {
-      nav.classList.add('scrolled');
-    } else {
-      nav.classList.remove('scrolled');
-    }
-  });
 }
 
 /**
@@ -91,21 +74,14 @@ export function initScrollReveal(options = {}) {
   /** @param {Element} el */
   const reveal = (el) => {
     el.classList.add('revealed');
-    try {
-      observer.unobserve(el);
-    } catch {
-      /* unobserve is best-effort */
-    }
+    observer.unobserve(el);
   };
 
   try {
     observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('revealed');
-            observer.unobserve(entry.target);
-          }
+          if (entry.isIntersecting) reveal(entry.target);
         });
       },
       {
@@ -202,13 +178,10 @@ export function initMobileNav() {
   const closeLabel = toggle.getAttribute('data-nav-label-close');
 
   /** @param {boolean} expanded */
-  function setToggleLabel(expanded) {
+  const setToggleLabel = (expanded) => {
     if (!openLabel || !closeLabel) return;
-    /** @type {NonNullable<typeof toggle>} */ (toggle).setAttribute(
-      'aria-label',
-      expanded ? closeLabel : openLabel
-    );
-  }
+    toggle.setAttribute('aria-label', expanded ? closeLabel : openLabel);
+  };
 
   /**
    * The menu's real height animates open and closed through the shared geometry animation;
@@ -217,27 +190,27 @@ export function initMobileNav() {
    * @param {boolean} open
    * @param {boolean} [animate]
    */
-  function setMenuOpen(open, animate = true) {
-    const menu = /** @type {Element} */ (navLinks);
-    toggle?.setAttribute('aria-expanded', String(open));
+  const setMenuOpen = (open, animate = true) => {
+    toggle.setAttribute('aria-expanded', String(open));
     setToggleLabel(open);
     const mutate = () => {
-      menu.classList.toggle('open', open);
-      menu.classList.toggle('is-collapsing', !open && animate);
+      navLinks.classList.toggle('open', open);
+      navLinks.classList.toggle('is-collapsing', !open && animate);
     };
-    const [closing] = animate ? animateGeometry([menu], mutate) : (mutate(), []);
-    if (open) return;
-    if (!closing) {
-      menu.classList.remove('is-collapsing');
+    if (!animate) {
+      mutate();
       return;
     }
-    closing.finished.then(
-      () => {
-        if (!menu.classList.contains('open')) menu.classList.remove('is-collapsing');
-      },
-      () => {}
-    );
-  }
+    const [closing] = animateGeometry([navLinks], mutate);
+    if (open) return;
+    if (!closing) {
+      navLinks.classList.remove('is-collapsing');
+      return;
+    }
+    closing.addEventListener('finish', () => {
+      if (!navLinks.classList.contains('open')) navLinks.classList.remove('is-collapsing');
+    });
+  };
 
   toggle.addEventListener('click', () => {
     setMenuOpen(toggle.getAttribute('aria-expanded') !== 'true');

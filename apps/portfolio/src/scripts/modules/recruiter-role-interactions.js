@@ -181,8 +181,6 @@ export function bindRoleControls(cards, proofCounts) {
         buttons.forEach((candidate) =>
           candidate.setAttribute('aria-pressed', String(candidate === button))
         );
-        /** @type {Element[]} */
-        let orderedCards = cards;
         const visibleLabel =
           button.querySelector('.role-chip__label')?.textContent?.trim() || roleProfile.label;
         const selectedRole = { ...roleProfile, label: visibleLabel };
@@ -192,7 +190,7 @@ export function bindRoleControls(cards, proofCounts) {
             card.classList.add(cardMatchesRole(card, role) ? 'is-role-match' : 'is-role-dimmed');
           });
           syncMatchBadges(cards, (card) => cardMatchesRole(card, role));
-          orderedCards = reorderCardsForRole(cards, role);
+          const orderedCards = reorderCardsForRole(cards, role);
           if (status) {
             status.textContent = selectedRoleStatusText(
               selectedRole,

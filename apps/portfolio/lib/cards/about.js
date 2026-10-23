@@ -18,8 +18,8 @@ const ABOUT_LABELS = {
  */
 
 /**
- * Generate about section content HTML from SSoT aboutSection data.
- * Clean layout: localized reader-facing heading + bullet list per block.
+ * Generate the About section HTML from SSoT aboutSection data: a localized heading over the
+ * career highlights list.
  * @param {AboutData|null} aboutData - aboutSection from data.json
  * @param {string} dataHash - Hash for cache validation
  * @param {'ko'|'en'|'ja'} [locale='ko'] - Locale for the block heading
@@ -35,31 +35,26 @@ function generateAboutContent(aboutData, dataHash, locale = 'ko') {
   // career_highlights data is the single About narrative block. tech_philosophy
   // and current_focus restated the same career story (also covered by
   // achievements and the career timeline), so they are intentionally not
-  // rendered here. The visible heading is localized reader-facing copy.
-  const blocks = [
-    { label: ABOUT_LABELS[locale] || ABOUT_LABELS.ko, items: aboutData.careerHighlights || [] },
-  ];
-
-  const blocksHtml = blocks
-    .filter((block) => Array.isArray(block.items) && block.items.length > 0)
-    .map((block) => {
-      const items = block.items
-        .map(
-          (item) =>
-            `<li>${breakJapanesePhrases(glueKoreanPhrases(escapeHtml(String(item)))).replace(/·/g, '·<wbr>')}</li>`
-        )
-        .join('\n          ');
-      return `<div class="about-block">
-        <span class="about-label">${block.label}</span>
+  // rendered here.
+  const highlights = Array.isArray(aboutData.careerHighlights) ? aboutData.careerHighlights : [];
+  const items = highlights
+    .map(
+      (item) =>
+        `<li>${breakJapanesePhrases(glueKoreanPhrases(escapeHtml(String(item)))).replace(/·/g, '·<wbr>')}</li>`
+    )
+    .join('\n          ');
+  const blockHtml =
+    highlights.length > 0
+      ? `<div class="about-block">
+        <span class="about-label">${ABOUT_LABELS[locale] || ABOUT_LABELS.ko}</span>
         <ul class="about-list">
           ${items}
         </ul>
-      </div>`;
-    })
-    .join('\n      ');
+      </div>`
+      : '';
 
   const wrapped = `<div class="about-content">
-      ${blocksHtml}
+      ${blockHtml}
     </div>`;
 
   TEMPLATE_CACHE.aboutContentHtml = wrapped;
