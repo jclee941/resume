@@ -25,7 +25,7 @@ const WEB_DIR = path.join(__dirname, '../../../apps/portfolio');
  * @returns {Promise<void>}
  */
 async function optimizeImage(inputPath, outputPath, options = {}) {
-  const {width = null, height = null, quality = 80, effort = 6} = options;
+  const { width = null, height = null, quality = 80, effort = 6 } = options;
 
   console.log(`Optimizing ${path.basename(inputPath)}...`);
 
@@ -34,17 +34,17 @@ async function optimizeImage(inputPath, outputPath, options = {}) {
   let pipeline = sharp(inputPath);
 
   if (width || height) {
-    pipeline = pipeline.resize(width, height, {fit: 'cover'});
+    pipeline = pipeline.resize(width, height, { fit: 'cover' });
   }
 
   // Determine format from extension
   const ext = path.extname(inputPath).toLowerCase();
   if (ext === '.webp') {
-    pipeline = pipeline.webp({quality, effort});
+    pipeline = pipeline.webp({ quality, effort });
   } else if (ext === '.png') {
-    pipeline = pipeline.png({quality, compressionLevel: 9});
+    pipeline = pipeline.png({ quality, compressionLevel: 9 });
   } else if (ext === '.jpg' || ext === '.jpeg') {
-    pipeline = pipeline.jpeg({quality, mozjpeg: true});
+    pipeline = pipeline.jpeg({ quality, mozjpeg: true });
   }
 
   await pipeline.toFile(outputPath);
@@ -63,11 +63,12 @@ async function main() {
   // Optimize OG image
   const ogImagePath = path.join(WEB_DIR, 'og-image.webp');
   if (fs.existsSync(ogImagePath)) {
-    await optimizeImage(
-      ogImagePath,
-      path.join(WEB_DIR, 'og-image-optimized.webp'),
-      {width: 1200, height: 630, quality: 80, effort: 6}
-    );
+    await optimizeImage(ogImagePath, path.join(WEB_DIR, 'og-image-optimized.webp'), {
+      width: 1200,
+      height: 630,
+      quality: 80,
+      effort: 6,
+    });
   }
 
   // Optimize icons
@@ -81,7 +82,7 @@ async function main() {
           WEB_DIR,
           `${path.basename(icon, path.extname(icon))}-optimized${path.extname(icon)}`
         ),
-        {quality: 85}
+        { quality: 85 }
       );
     }
   }
@@ -89,7 +90,7 @@ async function main() {
   console.log('✅ Image optimization complete!');
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error('❌ Optimization failed:', err.message);
   process.exit(1);
 });

@@ -8,7 +8,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-const {CONFIG} = require('./resume-variant-config');
+const { CONFIG } = require('./resume-variant-config');
 
 /**
  * Archive old company-specific resumes
@@ -19,13 +19,13 @@ async function archiveOldResumes() {
 
   try {
     // Ensure archive directory exists
-    await fs.mkdir(CONFIG.archiveDir, {recursive: true});
+    await fs.mkdir(CONFIG.archiveDir, { recursive: true });
 
     // Find old resume files
     const companiesDir = path.join(__dirname, '../../resumes/companies');
 
     try {
-      const entries = await fs.readdir(companiesDir, {withFileTypes: true});
+      const entries = await fs.readdir(companiesDir, { withFileTypes: true });
 
       let archived = 0;
 
@@ -45,7 +45,7 @@ async function archiveOldResumes() {
           }
 
           // Copy directory (recursively)
-          await fs.cp(sourcePath, destPath, {recursive: true});
+          await fs.cp(sourcePath, destPath, { recursive: true });
           console.log(`   ✅ Archived: ${entry.name}/`);
           archived++;
         }
@@ -53,12 +53,7 @@ async function archiveOldResumes() {
 
       console.log(`\n   📦 Total archived: ${archived} directories`);
     } catch (error) {
-      if (
-        error &&
-        typeof error === 'object' &&
-        'code' in error &&
-        error.code === 'ENOENT'
-      ) {
+      if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') {
         console.log('   ℹ️  No companies directory found (nothing to archive)');
       } else {
         throw error;
@@ -71,4 +66,4 @@ async function archiveOldResumes() {
   }
 }
 
-module.exports = {archiveOldResumes};
+module.exports = { archiveOldResumes };

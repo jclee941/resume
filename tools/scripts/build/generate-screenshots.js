@@ -10,7 +10,7 @@
  *   node scripts/build/generate-screenshots.js demo/screenshots
  */
 
-const {chromium} = require('@playwright/test');
+const { chromium } = require('@playwright/test');
 const path = require('path');
 const fs = require('fs');
 
@@ -22,35 +22,35 @@ const SCREENSHOTS = [
   // Desktop screenshots
   {
     name: 'desktop-homepage-light',
-    viewport: {width: 1920, height: 1080},
+    viewport: { width: 1920, height: 1080 },
     colorScheme: 'light',
     fullPage: true,
     description: 'Desktop homepage (light mode)',
   },
   {
     name: 'desktop-homepage-dark',
-    viewport: {width: 1920, height: 1080},
+    viewport: { width: 1920, height: 1080 },
     colorScheme: 'dark',
     fullPage: true,
     description: 'Desktop homepage (dark mode)',
   },
   {
     name: 'desktop-hero-section',
-    viewport: {width: 1920, height: 1080},
+    viewport: { width: 1920, height: 1080 },
     colorScheme: 'light',
     selector: '.hero',
     description: 'Hero section with download buttons',
   },
   {
     name: 'desktop-projects-section',
-    viewport: {width: 1920, height: 1080},
+    viewport: { width: 1920, height: 1080 },
     colorScheme: 'light',
     selector: '#projects',
     description: 'Projects showcase section',
   },
   {
     name: 'desktop-resume-section',
-    viewport: {width: 1920, height: 1080},
+    viewport: { width: 1920, height: 1080 },
     colorScheme: 'light',
     selector: '#resume',
     description: 'Resume cards section',
@@ -59,21 +59,21 @@ const SCREENSHOTS = [
   // Mobile screenshots
   {
     name: 'mobile-homepage-light',
-    viewport: {width: 375, height: 667},
+    viewport: { width: 375, height: 667 },
     colorScheme: 'light',
     fullPage: true,
     description: 'Mobile homepage (iPhone SE)',
   },
   {
     name: 'mobile-homepage-dark',
-    viewport: {width: 375, height: 667},
+    viewport: { width: 375, height: 667 },
     colorScheme: 'dark',
     fullPage: true,
     description: 'Mobile homepage dark mode',
   },
   {
     name: 'mobile-project-card',
-    viewport: {width: 375, height: 667},
+    viewport: { width: 375, height: 667 },
     colorScheme: 'light',
     selector: '.project-card',
     description: 'Mobile project card',
@@ -82,7 +82,7 @@ const SCREENSHOTS = [
   // Tablet screenshots
   {
     name: 'tablet-homepage',
-    viewport: {width: 768, height: 1024},
+    viewport: { width: 768, height: 1024 },
     colorScheme: 'light',
     fullPage: true,
     description: 'Tablet homepage (iPad)',
@@ -91,21 +91,21 @@ const SCREENSHOTS = [
   // Component screenshots
   {
     name: 'component-download-buttons',
-    viewport: {width: 1920, height: 1080},
+    viewport: { width: 1920, height: 1080 },
     colorScheme: 'light',
     selector: '.hero-download',
     description: 'Download buttons component',
   },
   {
     name: 'component-project-card',
-    viewport: {width: 1920, height: 1080},
+    viewport: { width: 1920, height: 1080 },
     colorScheme: 'light',
     selector: '.project-card',
     description: 'Project card component',
   },
   {
     name: 'component-footer',
-    viewport: {width: 1920, height: 1080},
+    viewport: { width: 1920, height: 1080 },
     colorScheme: 'light',
     selector: 'footer',
     description: 'Footer component',
@@ -117,7 +117,7 @@ async function generateScreenshots() {
 
   // Ensure output directory exists
   if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, {recursive: true});
+    fs.mkdirSync(outputDir, { recursive: true });
   }
 
   console.log('📸 Starting screenshot generation...');
@@ -138,9 +138,7 @@ async function generateScreenshots() {
 
       const context = await browser.newContext({
         viewport: config.viewport,
-        colorScheme: /** @type {'light' | 'dark'} */ (
-          config.colorScheme || 'light'
-        ),
+        colorScheme: /** @type {'light' | 'dark'} */ (config.colorScheme || 'light'),
       });
 
       const page = await context.newPage();
@@ -154,19 +152,17 @@ async function generateScreenshots() {
         // Screenshot specific element
         const element = page.locator(config.selector).first();
         await element.scrollIntoViewIfNeeded();
-        await element.screenshot({path: outputPath});
+        await element.screenshot({ path: outputPath });
       } else if (config.fullPage) {
         // Full page screenshot
-        await page.screenshot({path: outputPath, fullPage: true});
+        await page.screenshot({ path: outputPath, fullPage: true });
       } else {
         // Viewport screenshot
-        await page.screenshot({path: outputPath});
+        await page.screenshot({ path: outputPath });
       }
 
       const stats = fs.statSync(outputPath);
-      console.log(
-        `   ✅ Saved: ${config.name}.png (${(stats.size / 1024).toFixed(1)} KB)`
-      );
+      console.log(`   ✅ Saved: ${config.name}.png (${(stats.size / 1024).toFixed(1)} KB)`);
       console.log(`   📝 ${config.description}\n`);
 
       await context.close();
@@ -184,7 +180,7 @@ async function generateScreenshots() {
   generateIndexFile(outputDir);
 
   // Summary
-  console.log(`\n${  '='.repeat(60)}`);
+  console.log(`\n${'='.repeat(60)}`);
   console.log('📊 Screenshot Generation Summary');
   console.log('='.repeat(60));
   console.log(`✅ Success: ${successCount}`);
@@ -192,14 +188,14 @@ async function generateScreenshots() {
   console.log(`📁 Output: ${outputDir}`);
 
   // Calculate total size
-  const files = fs.readdirSync(outputDir).filter(f => f.endsWith('.png'));
+  const files = fs.readdirSync(outputDir).filter((f) => f.endsWith('.png'));
   let totalSize = 0;
-  files.forEach(file => {
+  files.forEach((file) => {
     const stats = fs.statSync(path.join(outputDir, file));
     totalSize += stats.size;
   });
   console.log(`💾 Total size: ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
-  console.log(`${'='.repeat(60)  }\n`);
+  console.log(`${'='.repeat(60)}\n`);
 }
 
 /**
@@ -216,10 +212,10 @@ function generateIndexFile(outputDir) {
 
   // Group by category
   const categories = {
-    Desktop: SCREENSHOTS.filter(s => s.name.startsWith('desktop-')),
-    Mobile: SCREENSHOTS.filter(s => s.name.startsWith('mobile-')),
-    Tablet: SCREENSHOTS.filter(s => s.name.startsWith('tablet-')),
-    Components: SCREENSHOTS.filter(s => s.name.startsWith('component-')),
+    Desktop: SCREENSHOTS.filter((s) => s.name.startsWith('desktop-')),
+    Mobile: SCREENSHOTS.filter((s) => s.name.startsWith('mobile-')),
+    Tablet: SCREENSHOTS.filter((s) => s.name.startsWith('tablet-')),
+    Components: SCREENSHOTS.filter((s) => s.name.startsWith('component-')),
   };
 
   for (const [category, screenshots] of Object.entries(categories)) {
@@ -252,8 +248,7 @@ function generateIndexFile(outputDir) {
     '| ![Desktop](demo/screenshots/desktop-homepage-light.png) | ![Mobile](demo/screenshots/mobile-homepage-light.png) |\n';
   content += '```\n\n';
   content += '### In Presentations\n\n';
-  content +=
-    'Use high-resolution PNG files directly in PowerPoint, Keynote, or Google Slides.\n\n';
+  content += 'Use high-resolution PNG files directly in PowerPoint, Keynote, or Google Slides.\n\n';
 
   fs.writeFileSync(indexPath, content);
   console.log(`📄 Generated index: ${indexPath}`);
