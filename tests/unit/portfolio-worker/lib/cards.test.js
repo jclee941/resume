@@ -12,7 +12,7 @@ const {
 } = require('../../../../apps/portfolio/lib/cards');
 const { generateContactGrid } = require('../../../../apps/portfolio/lib/cards/layout');
 const { TEMPLATE_CACHE } = require('../../../../apps/portfolio/lib/config');
-const { loadPortfolioData, ownerIdentity } = require('../../../helpers/owner-data');
+const { ownerIdentity } = require('../../../helpers/owner-data');
 
 describe('Cards Module', () => {
   // Reset cache before each test
@@ -940,7 +940,7 @@ describe('Cards Module', () => {
     });
 
     test('should include velog link with consistent plain text styling', () => {
-      const velog = loadPortfolioData('ko').contact.velog;
+      const velog = 'https://velog.io/@example-user';
       const contactData = { github: 'https://github.com/test', velog };
       const html = generateContactGrid(contactData);
 
