@@ -12,7 +12,7 @@
  * Variants:
  *   - all: Generate all variants (default)
  *   - general: General purpose resume
- *   - short: Short form (1-page)
+ *   - short: Career-focused resume
  *   - technical: Technical focus
  *   - security: Security focus
  *
@@ -25,12 +25,12 @@ const fs = require('fs').promises;
  * @typedef {import('./resume-variant-content').VariantConfig & { filename: string, description: string }} VariantItemConfig
  */
 
-const {CONFIG} =
+const { CONFIG } =
   /** @type {{ CONFIG: { masterFile: string, outputDir: string, archiveDir: string, variants: Record<string, VariantItemConfig> } }} */ (
     require('./resume-variant-config')
   );
-const {parseMasterResume, generateVariant} = require('./resume-variant-generator');
-const {archiveOldResumes} = require('./resume-variant-archive');
+const { parseMasterResume, generateVariant } = require('./resume-variant-generator');
+const { archiveOldResumes } = require('./resume-variant-archive');
 
 /**
  * Main execution
@@ -43,7 +43,7 @@ async function main() {
 
   try {
     // Ensure output directory exists
-    await fs.mkdir(CONFIG.outputDir, {recursive: true});
+    await fs.mkdir(CONFIG.outputDir, { recursive: true });
     console.log(`✅ Output directory ready: ${CONFIG.outputDir}`);
 
     // Archive old resumes
@@ -79,7 +79,7 @@ async function main() {
     }
 
     // Summary
-    console.log(`\n${  '='.repeat(60)}`);
+    console.log(`\n${'='.repeat(60)}`);
     console.log('✅ Generation complete!');
     console.log('='.repeat(60));
     console.log(`\n📊 Generated ${results.length} variant(s):\n`);
@@ -103,4 +103,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = {parseMasterResume, generateVariant, CONFIG};
+module.exports = { parseMasterResume, generateVariant, CONFIG };

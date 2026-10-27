@@ -22,47 +22,59 @@ const CONFIG = {
     },
     short: {
       filename: 'resume_short.md',
-      description: 'Short form resume (1-2 pages)',
-      sections: ['contact', 'education', 'summary', 'experience-recent', 'skills'],
+      description: 'Career-focused resume',
+      sections: [
+        'header',
+        'contact',
+        'education',
+        'summary',
+        'experience-recent',
+        'skills',
+        'certifications',
+        '수상',
+      ],
       maxLength: 2000, // Approximate words
     },
     technical: {
       filename: 'resume_technical.md',
       description: 'Technical infrastructure focus',
       sections: [
+        'header',
         'contact',
         'education',
         'summary',
         'experience',
         'skills-technical',
         'projects',
+        'certifications',
+        '수상',
       ],
-      emphasis: ['automation', 'infrastructure', 'devops', 'monitoring'],
     },
     security: {
       filename: 'resume_security.md',
       description: 'Security and compliance focus',
       sections: [
+        'header',
         'contact',
         'education',
         'summary',
         'experience',
         'skills-security',
         'certifications',
+        '수상',
       ],
-      emphasis: ['security', 'compliance', 'incident', 'soc', 'audit'],
     },
   },
 };
 
 const SECTION_NAME_MAP = {
-  '연락처': 'contact',
-  '학력': 'education',
-  '경력_요약': 'summary',
-  '경력사항': 'experience',
-  '주요_프로젝트': 'projects',
-  '기술_스택': 'skills',
-  '자격증': 'certifications',
+  연락처: 'contact',
+  학력: 'education',
+  경력_요약: 'summary',
+  경력사항: 'experience',
+  주요_프로젝트: 'projects',
+  기술_스택: 'skills',
+  자격증: 'certifications',
 };
 
-module.exports = {CONFIG, SECTION_NAME_MAP};
+module.exports = { CONFIG, SECTION_NAME_MAP };
