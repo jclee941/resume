@@ -127,7 +127,7 @@ function truncateContent(content, maxLength) {
     return truncated.substring(0, lastSection);
   }
 
-  return `${truncated  }\n\n---\n\n*(Resume truncated for brevity)*`;
+  return `${truncated}\n\n---\n\n*(Resume truncated for brevity)*`;
 }
 
-module.exports = {filterSections, emphasizeContent, truncateContent, joinSections};
+module.exports = { filterSections, emphasizeContent, truncateContent, joinSections };

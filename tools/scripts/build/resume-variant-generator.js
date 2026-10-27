@@ -8,7 +8,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-const {CONFIG, SECTION_NAME_MAP} = require('./resume-variant-config');
+const { CONFIG, SECTION_NAME_MAP } = require('./resume-variant-config');
 const {
   filterSections,
   emphasizeContent,
@@ -41,14 +41,9 @@ async function parseMasterResume() {
         }
 
         // Start new section
-        const rawName = line
-          .substring(3)
-          .trim()
-          .toLowerCase()
-          .replace(/\s+/g, '_');
+        const rawName = line.substring(3).trim().toLowerCase().replace(/\s+/g, '_');
         currentSection =
-          /** @type {Record<string, string>} */ (SECTION_NAME_MAP)[rawName] ||
-          rawName;
+          /** @type {Record<string, string>} */ (SECTION_NAME_MAP)[rawName] || rawName;
         currentContent = [line];
       } else {
         currentContent.push(line);
@@ -121,7 +116,7 @@ async function generateVariant(name, config, sections) {
     console.log(`   📊 Size: ${sizeKB} KB`);
     console.log(`   📍 Path: ${outputPath}`);
 
-    return {name, filename: config.filename, size: stats.size};
+    return { name, filename: config.filename, size: stats.size };
   } catch (error) {
     console.error(
       `   ❌ Error generating ${name}:`,
@@ -131,4 +126,4 @@ async function generateVariant(name, config, sections) {
   }
 }
 
-module.exports = {parseMasterResume, generateVariant};
+module.exports = { parseMasterResume, generateVariant };

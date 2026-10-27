@@ -13,13 +13,13 @@ const sharp = require('sharp');
  */
 async function convertIcon(svgPath, pngPath, size) {
   try {
-    await sharp(svgPath)
-      .resize(size, size)
-      .png()
-      .toFile(pngPath);
+    await sharp(svgPath).resize(size, size).png().toFile(pngPath);
     console.log(`✅ Created ${pngPath}`);
   } catch (error) {
-    console.error(`❌ Error creating ${pngPath}:`, error instanceof Error ? error.message : String(error));
+    console.error(
+      `❌ Error creating ${pngPath}:`,
+      error instanceof Error ? error.message : String(error)
+    );
     throw error;
   }
 }
@@ -33,7 +33,7 @@ async function main() {
   console.log('✅ All icons converted successfully');
 }
 
-main().catch(error => {
+main().catch((error) => {
   console.error('Failed to convert icons:', error);
   process.exit(1);
 });

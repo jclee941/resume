@@ -5,6 +5,9 @@ node_modules/
 # Build outputs
 dist/
 build/
+!tools/scripts/build/
+tools/scripts/build/*
+!tools/scripts/build/*.js
 coverage/
 
 # Wrangler
