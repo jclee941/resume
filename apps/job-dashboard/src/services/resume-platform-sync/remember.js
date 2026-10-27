@@ -1,9 +1,10 @@
 import { mapToRememberProfile } from '@resume/shared/platform-sync/remember';
 import { REMEMBER_PROFILE_API_URL, rememberRequest } from '../remember/remember-api.js';
 import { withRememberToken } from '../remember/remember-session.js';
+import { syncRememberPhoto } from './remember-photo.js';
 
 /**
- * @typedef {import('../remember/remember-session.js').RememberEnv} RememberSyncEnv
+ * @typedef {import('../remember/remember-session.js').RememberEnv & import('./remember-photo.js').RememberPhotoEnv} RememberSyncEnv
  * @typedef {Parameters<typeof mapToRememberProfile>[0]} RememberSsot
  * @typedef {{ dryRun: boolean; targetResumeId?: string | null; fetchImpl?: typeof fetch }} RememberSyncOptions
  */
@@ -34,18 +35,24 @@ export async function syncRememberFromSsot(env, ssot, { dryRun, fetchImpl }) {
       }
       const openProfile = mapToRememberProfile(ssot, current);
       const changes = summarize(openProfile);
-      if (dryRun || Object.keys(openProfile).length === 0) {
-        return { platform: 'remember', success: true, dryRun, changes };
+      if (!dryRun && Object.keys(openProfile).length > 0) {
+        const url = `${REMEMBER_PROFILE_API_URL}/v2/open_profiles/${current.id}?version=2`;
+        for (const body of updateRequests(openProfile)) {
+          await rememberRequest(token, url, {
+            method: 'PUT',
+            body: { open_profile: body },
+            fetchImpl: relayFetch,
+          });
+        }
       }
-      const url = `${REMEMBER_PROFILE_API_URL}/v2/open_profiles/${current.id}?version=2`;
-      for (const body of updateRequests(openProfile)) {
-        await rememberRequest(token, url, {
-          method: 'PUT',
-          body: { open_profile: body },
-          fetchImpl: relayFetch,
-        });
-      }
-      return { platform: 'remember', success: true, dryRun: false, changes };
+      const photo = await syncRememberPhoto(env, {
+        current,
+        token,
+        dryRun,
+        fetchImpl: relayFetch,
+      });
+      if (photo.status !== 'unchanged') changes.profile_image = 1;
+      return { platform: 'remember', success: true, dryRun, changes, photo };
     },
     { fetchImpl }
   );
