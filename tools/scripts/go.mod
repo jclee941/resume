@@ -2,7 +2,7 @@ module github.com/jclee941/resume/tools/scripts
 
 go 1.25.0
 
-require github.com/1password/onepassword-sdk-go v0.4.0
+require github.com/1password/onepassword-sdk-go v0.4.1
 
 require (
 	github.com/dylibso/observe-sdk/go v0.0.0-20240828172851-9145d8ad07e1 // indirect
