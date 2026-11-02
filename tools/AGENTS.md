@@ -1,14 +1,14 @@
 # TOOLS KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Developer and operator tooling split between standalone CI checks and module-scoped automation programs.
 
-Boundary: score 1; retained tooling hub coordinating execution roots and specialized child guides.
+Boundary: measured score 6; retained tooling hub coordinating execution roots and specialized child guides.
 
 ## WHERE TO LOOK
 

@@ -1,14 +1,14 @@
 # ROUTES KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Dashboard route registration over the request-scoped handler context, with bounded health probes.
 
-Scope reason: score 6; retained route-registration boundary.
+Scope reason: score 4; retained route-registration boundary.
 
 ## WHERE TO LOOK
 

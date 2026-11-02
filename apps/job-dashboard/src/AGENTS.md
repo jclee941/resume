@@ -1,14 +1,14 @@
 # JOB DASHBOARD SOURCE KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Composition and request policy for the dashboard HTTP, queue, and scheduled surfaces.
 
-Scope reason: score 8; required runtime composition boundary.
+Scope reason: score 9; retained runtime composition boundary.
 
 ## STRUCTURE
 
@@ -40,12 +40,13 @@ src/
 
 - HTTP order: preflight, rate limit, auth/signature, CSRF, then route dispatch.
 - The public MCP endpoint is `/job/mcp`; normalized internal path is `/mcp`.
-- MCP skips CORS and uses Host/Origin checks plus admin Bearer authentication, never cookies.
-- MCP tools default workflow starts to dry runs and retain the REST real-submit gate.
-- MCP content-file reads query D1 directly; operation tools reuse the registered REST routes.
+- MCP enters after rate limiting and route-context construction; protocol policy lives in `mcp/AGENTS.md`.
 - Instantiate shared route context once per request; registrars consume it.
 - Attach request/response logging with `ctx.waitUntil()` using the request-scoped logger.
 - Delegate queue batches to `QueueConsumer` and cron events to `handlers/scheduled/cron-router.js`.
+- Keep the six Workflow classes and `BrowserSessionDO` exported for the portfolio composition.
+- `services/browser-session.js` acquires and releases `BROWSER_SESSION` sessions; the object's old "ZERO callers" comment is stale.
+- The object owns persisted locks and alarms; its broker owns dependency-injected session selection.
 
 ## ANTI-PATTERNS
 

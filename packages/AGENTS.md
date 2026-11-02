@@ -1,14 +1,14 @@
 # WORKSPACE PACKAGES KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Reusable package boundaries and public import surfaces shared by the application runtimes.
 
-Scope reason: score 2 outside child domains; retained workspace-boundary guide.
+Scope reason: score 7; retained workspace-boundary guide.
 
 ## STRUCTURE
 

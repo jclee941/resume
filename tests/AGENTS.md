@@ -1,14 +1,14 @@
 # TESTS KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Repository test hub for module contracts, integration boundaries, browser flows, and fake content fixtures.
 
-Boundary: score 0; required domain guide coordinating runners and shared fixture ownership.
+Boundary: measured score 5; retained runner and shared-fixture ownership hub.
 
 ## WHERE TO LOOK
 

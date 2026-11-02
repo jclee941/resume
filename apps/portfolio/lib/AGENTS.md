@@ -1,14 +1,14 @@
 # PORTFOLIO LIB KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Build-time transforms, emitted Worker source, and directly imported edge helpers.
 
-Scope reason: score 9; required compiler/runtime boundary.
+Scope reason: score 7; retained compiler/runtime boundary.
 
 ## STRUCTURE
 

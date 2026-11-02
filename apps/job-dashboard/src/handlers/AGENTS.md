@@ -1,14 +1,14 @@
 # HANDLERS KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Request adapters and focused operation modules for dashboard APIs and scheduled automation.
 
-Scope reason: score 9; dense request-adapter domain.
+Scope reason: score 7; retained request-adapter domain.
 
 ## STRUCTURE
 
@@ -32,7 +32,8 @@ handlers/
 | Common response helpers | `base-handler.js`                        | Optional base class, not universal inheritance |
 | Application facade      | `applications/index.js`                  | Delegates to operation/query modules           |
 | Explicit candidates     | `auto-apply/explicit-candidates.js`      | Normalization and supported-platform checks    |
-| Native dispatch         | `auto-apply/native-dispatch.js`          | Workflow creation and configuration gate       |
+| Native dispatch         | `auto-apply/native-dispatch.js`          | Workflow or queue dispatch and payload shaping |
+| Automation gate         | `auto-apply/run-handler.js`              | Configuration and real-submit checks           |
 | Company deduplication   | `auto-apply/duplicate-company.js`        | Normalized historical company comparison       |
 | Cron execution          | `scheduled/cron-router.js`               | Session refresh and scheduled work budgets     |
 | JobKorea history login  | `applications/jobkorea-history-login.js` | Login and read share one borrowed browser      |
@@ -42,7 +43,7 @@ handlers/
 - Use `BaseHandler` where shared parsing/response helpers fit; standalone handlers are established.
 - Keep persistence in focused repository/helper modules rather than HTTP facade methods.
 - Normalize `source`, `platform`, and `loginPlatform` through the platform catalog.
-- Non-dry-run native dispatch checks `auto_apply_enabled` before creating workflows.
+- `run-handler.js` rejects disabled non-dry runs before calling native dispatch.
 - `auto-apply/constants.js` distinguishes supported and disabled platforms; Saramin is disabled.
 - Use typed client-facing errors for unsupported explicit candidates.
 - Daily cron refreshes only Wanted before history sync and Workflow starts.

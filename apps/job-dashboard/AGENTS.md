@@ -1,14 +1,14 @@
 # JOB DASHBOARD WORKER KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Dashboard API, database lineage, and automation package mounted by the portfolio entry.
 
-Scope reason: score 4; required application and migration boundary.
+Scope reason: score 8; retained application and migration boundary.
 
 ## WHERE TO LOOK
 
@@ -25,7 +25,7 @@ Scope reason: score 4; required application and migration boundary.
 
 ## CONVENTIONS
 
-- Preserve six Workflow exports plus `BrowserSessionDO` for the portfolio entry.
+- Runtime composition and binding exports are owned by `src/AGENTS.md`.
 - Wrangler's D1 migration directory is this package's `migrations/`.
 - Use sequential `NNNN_snake_case.sql` migrations; retain the baseline for replay.
 - Mirror schema-changing migrations in `schema.sql`; data-only corrections need no DDL change.

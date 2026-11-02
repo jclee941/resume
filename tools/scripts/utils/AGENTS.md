@@ -1,14 +1,14 @@
 # SCRIPTS UTILS KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Locale-data synchronization, validation, path handling, version utilities, and the standalone job-search CLI.
 
-Boundary: score 9; retained reusable data-generation domain with explicit source and output boundaries.
+Boundary: measured score 5; retained reusable data-generation domain with explicit source and output boundaries.
 
 ## WHERE TO LOOK
 

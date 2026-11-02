@@ -1,14 +1,14 @@
 # CI SCRIPTS KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Standalone Go checks for Cloudflare topology, environment contracts, migrations, and affected targets.
 
-Boundary: score 4; retained validation domain outside the operational Go module.
+Boundary: measured score 2; retained validation domain outside the operational Go module.
 
 ## WHERE TO LOOK
 
