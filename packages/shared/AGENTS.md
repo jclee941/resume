@@ -1,14 +1,14 @@
 # SHARED PACKAGE KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Worker-compatible utility domains, platform clients, and reusable resume mappings behind explicit subpath exports.
 
-Scope reason: score 8; shared runtime and export boundary.
+Scope reason: score 6; retained shared-runtime and export boundary.
 
 ## WHERE TO LOOK
 

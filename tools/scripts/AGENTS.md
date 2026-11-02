@@ -1,14 +1,14 @@
 # AUTOMATION SCRIPTS KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Operational module containing asset generation, content transport, release, deployment, and data workflows.
 
-Boundary: score 3; retained script-domain hub; specialized guides own their local contracts.
+Boundary: measured score 8; distinct script-domain hub; specialized guides own their local contracts.
 
 ## STRUCTURE
 

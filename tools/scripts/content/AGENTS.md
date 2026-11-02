@@ -1,14 +1,14 @@
 # CONTENT PACK TOOLING KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Dependency-free Node CLI transports private content, enforces pack boundaries, and creates fake fixtures.
 
-Boundary: score 10; distinct build-bootstrap domain with its own manifest and exported policy helpers.
+Boundary: measured score 6; retained build-bootstrap domain with its own manifest and exported policy helpers.
 
 ## WHERE TO LOOK
 

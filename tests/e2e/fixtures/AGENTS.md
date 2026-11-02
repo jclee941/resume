@@ -1,14 +1,14 @@
 # E2E FIXTURES KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Browser-test support modules provide mock services, owner-derived copy, and public-copy ledger extraction.
 
-Boundary: score 12; distinct reusable mock-server and capture-contract domain.
+Boundary: measured score 5; retained reusable mock-server and capture-contract domain.
 
 ## WHERE TO LOOK
 

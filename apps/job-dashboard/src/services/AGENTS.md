@@ -1,14 +1,14 @@
 # SERVICES KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Dashboard integrations for authentication, platform sessions, resume/history sync, and notifications.
 
-Scope reason: score 12; integration and persistence domain.
+Scope reason: score 7; retained integration and persistence domain.
 
 ## STRUCTURE
 
@@ -17,7 +17,7 @@ services/
   application-history/    Adapters, timestamps, repository, sync orchestration
   notification/           Singular compatibility export barrel
   notifications/          Delivery, formatting, history, Telegram actions
-  public-jobs/            잡알리오, 클린아이, 나라일터 posting collection into job_search_results
+  public-jobs/            Public-sector posting collection into job_search_results
   remember/               Login, search, apply, Browser Rendering REST
   resume-platform-sync/   Platform-specific resume editors and dispatch
   skcareers/              Login and resume editor/save helpers
@@ -31,7 +31,7 @@ services/
 | ---------------------- | ----------------------------------------- | ------------------------------------------------------ |
 | Auth and replay policy | `auth.js`, `auth-webhook-signature.js`    | Session tokens, HMAC, nonces                           |
 | Config                 | `config.js`                               | Persistent dashboard configuration                     |
-| Browser lifecycle      | `browser-session.js`                      | Borrow/release sessions via broker                     |
+| Browser lifecycle      | `browser-session.js`                      | Acquire/release through `BROWSER_SESSION` Durable Object |
 | Session storage        | `platform-session.js`                     | Encrypted KV values under platform keys                |
 | Request filtering      | `jobkorea-request-filter.js`              | Avoid slow third-party browser traffic                 |
 | Notification facade    | `notifications.js`                        | Handler and queue imports target this facade           |
@@ -49,7 +49,7 @@ services/
 - Remember precedence: withdrawn, rejected, offer, in_progress, viewed, then applied.
 - History insert conflicts retry as guarded updates; concurrent status changes must survive.
 - Keep session encryption and expiry in `platform-session.js`, not individual clients.
-- `notification/index.js` is a compatibility re-export; no tracked source imports it.
+- `notification/index.js` is a compatibility re-export; consumers should use `notifications.js`.
 - `withJobKoreaEditor` accepts `login` and invokes it inside the borrowed editor browser.
 - Use the injected `jobkoreaLogin` from callers; stored `auth:jobkorea` cookies are not portable.
 

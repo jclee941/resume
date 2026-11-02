@@ -1,14 +1,14 @@
 # E2E TESTS KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Playwright suites exercise portfolio, dashboard, accessibility, security, and deployment surfaces.
 
-Boundary: score 12; retained browser-runtime domain with server, locale, device, and capture contracts.
+Boundary: measured score 5; retained browser-runtime domain with server, locale, device, and capture contracts.
 
 ## WHERE TO LOOK
 
@@ -26,7 +26,7 @@ Boundary: score 12; retained browser-runtime domain with server, locale, device,
 
 ## CONVENTIONS
 
-- Root configuration discovers 73 tracked specs at this snapshot; thin barrels require split helper modules.
+- Root configuration discovers `*.spec.js` suites under this directory; thin barrels require split helper modules.
 - Chromium runs all specs; four Chromium-backed mobile projects match only `mobile.spec.js`.
 - Default local base URL is `http://localhost:8787`; root Wrangler configuration serves the deployed entrypoint.
 - `SKIP_WEBSERVER=1` targets the configured remote URL without starting Wrangler.

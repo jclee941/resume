@@ -1,14 +1,14 @@
 # MONITORING KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Grafana dashboard exports and the logging, SLO, tracing, and uptime contracts around them.
 
-Boundary: score 1; retained distinct observability semantics and dashboard-reference domain.
+Boundary: score 0; retained observability semantics and dashboard-reference domain.
 
 ## WHERE TO LOOK
 

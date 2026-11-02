@@ -1,14 +1,14 @@
 # PORTFOLIO SOURCE KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Browser CSS and feature modules composed into the generated portfolio Worker.
 
-Scope reason: score 7; distinct browser-source domain.
+Scope reason: score 5; retained browser-source domain.
 
 ## WHERE TO LOOK
 
@@ -29,6 +29,7 @@ Scope reason: score 7; distinct browser-source domain.
 - Preserve CSS import order; cascade order is part of feature behavior.
 - Keep component changes aligned with CJK, print, forced-color, and reduced-motion styles.
 - Compose feature `init*` functions in the bootstrap rather than adding competing entry points.
+- Bootstrap isolates initializer failures and marks `data-js-ready` only when every initializer succeeds.
 - Dynamic text must be escaped before DOM insertion.
 - Preserve keyboard operation, focus restoration/trapping, and ARIA state for overlays.
 - Locale data and labels must remain aligned across KO, EN, and JA modules.

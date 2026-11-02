@@ -1,14 +1,14 @@
 # INFRASTRUCTURE KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Infrastructure declarations, observability configuration, monitoring snapshots, and Cloudflare binding mocks.
 
-Boundary: score 0; required domain guide separating infrastructure state from application and test code.
+Boundary: score 3; retained infrastructure-state and binding-mock domain.
 
 ## WHERE TO LOOK
 
@@ -31,7 +31,7 @@ Boundary: score 0; required domain guide separating infrastructure state from ap
 - Treat monitoring exports as reference snapshots; deployed Grafana state can differ.
 - The monitoring tools under `tools/scripts/monitoring/` and `tools/scripts/deployment/` consume these assets.
 - Compose declares Jaeger for traces; the standalone Tempo configuration does not establish a running Tempo service.
-- Mocks are not used by tracked application/test consumers; their D1 adapter imports undeclared `better-sqlite3`.
+- The reference D1 mock imports `better-sqlite3`, which is not declared in the root manifest.
 - Treat those mocks as reference implementations, not a ready test environment.
 
 ## ANTI-PATTERNS

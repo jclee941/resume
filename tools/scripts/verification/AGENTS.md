@@ -1,14 +1,14 @@
 # VERIFICATION SCRIPTS KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Offline repository validators and bounded remote probes verify structural contracts and deployment state.
 
-Boundary: score 6; retained policy-verification domain with distinct offline and network execution contracts.
+Boundary: measured score 5; retained policy-verification domain with distinct offline and network execution contracts.
 
 ## WHERE TO LOOK
 

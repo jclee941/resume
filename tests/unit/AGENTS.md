@@ -1,14 +1,14 @@
 # UNIT TESTS KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 Module regressions for portfolio generation/runtime, dashboard automation, shared helpers, and locale data.
 
-Boundary: score 4; retained module-test domain with mixed legacy test imports and shared fixture conventions.
+Boundary: measured score 5; retained module-test domain with mixed legacy test imports and shared fixture conventions.
 
 ## WHERE TO LOOK
 

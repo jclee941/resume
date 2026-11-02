@@ -1,14 +1,14 @@
 # MIDDLEWARE KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-02
+**Commit:** `f2142ccf`
 **Branch:** `master`
 
 ## OVERVIEW
 
 CORS response helpers and CSRF cookie/header validation for dashboard requests.
 
-Scope reason: score 3; retained request-security boundary with widely used response helpers.
+Scope reason: score 0; retained request-security and response-helper boundary.
 
 ## WHERE TO LOOK
 
@@ -23,7 +23,7 @@ Scope reason: score 3; retained request-security boundary with widely used respo
 
 ## CONVENTIONS
 
-- Keep `jsonResponse` status and header behavior stable across its many callers.
+- `jsonResponse(data, status)` sets JSON content type; CORS is a separate response adaptation.
 - Apply origin policy from the request and environment, not a mutable module singleton.
 - CSRF exemption decisions belong to the entry composition, not these helpers.
 - HMAC-authenticated webhook paths and Bearer-only MCP are the documented exemptions.
