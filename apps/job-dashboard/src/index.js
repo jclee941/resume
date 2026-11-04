@@ -40,7 +40,7 @@ import {
   CleanupWorkflow,
 } from './workflows/index.js';
 import { BrowserSessionDO } from './durable-objects/browser-session-do.js';
-import { QueueConsumer } from './queues/queue-consumer.js';
+import { routeQueueBatch } from './queues/queue-consumer.js';
 import { handleMcpRequest } from './mcp/handler.js';
 
 export {
@@ -188,8 +188,7 @@ export default /** @satisfies {import('./worker-env.js').DashboardWorker} */ ({
 
   async queue(batch, env, ctx) {
     const logger = Logger.create(env, { service: 'job-worker' });
-    const consumer = new QueueConsumer(env, logger);
-    await consumer.processBatch(batch, ctx);
+    await routeQueueBatch(batch, env, ctx, logger);
   },
 
   async scheduled(controller, env, ctx) {

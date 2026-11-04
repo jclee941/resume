@@ -2,6 +2,11 @@ import { QueueMessageProcessor } from './queue-message-processor.js';
 import { QueueMetricsRecorder } from './queue-metrics-recorder.js';
 import { sortMessagesByPriority } from './queue-message-sorter.js';
 import { QueueWorkflowDispatcher } from './queue-workflow-dispatcher.js';
+import notificationConsumer from './notification-consumer.js';
+import { QUEUE_NAME } from './queue-request.js';
+
+/** Queue names bound as consumers in wrangler.jsonc. */
+export const NOTIFICATIONS_QUEUE_NAME = 'notifications';
 
 /** @typedef {import('@resume/types').QueueStats} QueueStats */
 
@@ -21,6 +26,57 @@ import { QueueWorkflowDispatcher } from './queue-workflow-dispatcher.js';
  *   waitUntil(promise: Promise<unknown>): void;
  * }} QueueExecutionContext
  */
+
+/**
+ * @typedef {import('./queue-message-processor.js').QueueMessageItem
+ *   & import('./notification-consumer.js').QueueMessage} NotificationQueueMessage
+ */
+
+/**
+ * Structural check that a message carries the notification job shape.
+ *
+ * @param {import('./queue-message-processor.js').QueueMessageItem} msg
+ * @returns {msg is NotificationQueueMessage}
+ */
+function isNotificationMessage(msg) {
+  const body = msg.body;
+  return (
+    typeof body?.type === 'string' &&
+    typeof body.priority === 'string' &&
+    typeof body.payload === 'object' &&
+    body.payload !== null
+  );
+}
+
+/**
+ * Route a batch to the consumer owning its queue; unknown queues fail visibly.
+ * Malformed notification messages are retried, never acknowledged.
+ *
+ * @param {QueueBatch} batch
+ * @param {ConstructorParameters<typeof QueueConsumer>[0]
+ *   & import('../services/notifications.js').NotificationEnv} env
+ * @param {QueueExecutionContext} ctx
+ * @param {QueueLogger} logger
+ */
+export async function routeQueueBatch(batch, env, ctx, logger) {
+  if (batch.queue === NOTIFICATIONS_QUEUE_NAME) {
+    const valid = batch.messages.filter(isNotificationMessage);
+    for (const msg of batch.messages) {
+      if (!isNotificationMessage(msg)) {
+        logger.warn('Malformed notification message, retrying', { messageId: msg.id });
+        msg.retry();
+      }
+    }
+    await notificationConsumer.queue({ queue: batch.queue, messages: valid }, env, ctx);
+    return;
+  }
+  if (batch.queue === QUEUE_NAME) {
+    await new QueueConsumer(env, logger).processBatch(batch, ctx);
+    return;
+  }
+  logger.error('Unexpected queue', new Error(`Unexpected queue: ${batch.queue}`));
+  throw new Error(`Unexpected queue: ${batch.queue}`);
+}
 
 /**
  * Cloudflare Queue consumer for job automation tasks.

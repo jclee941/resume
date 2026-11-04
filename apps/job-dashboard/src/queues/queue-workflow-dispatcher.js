@@ -73,8 +73,8 @@ export class QueueWorkflowDispatcher {
       case MESSAGE_TYPES.CLEANUP:
         return this.handleCleanup(payload);
       default:
-        this.logger.warn('Unknown message type, acknowledging to prevent DLQ', { type });
-        return undefined;
+        this.logger.warn('Unknown message type, retrying so it reaches the DLQ', { type });
+        throw new Error(`Unknown message type: ${type}`);
     }
   }
 
