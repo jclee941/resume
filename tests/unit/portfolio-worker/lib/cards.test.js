@@ -868,6 +868,19 @@ describe('Cards Module', () => {
       expect(html).toContain('target="_blank"');
     });
 
+    test.each([undefined, '', 'not a URL', 'http://[invalid'])(
+      'should omit LinkedIn link when its URL is absent or invalid (%s)',
+      (linkedin) => {
+        const html = generateContactGrid({
+          github: 'https://github.com/example-user',
+          linkedin,
+        });
+
+        expect(html).not.toContain('href=""');
+        expect(html).not.toContain('LinkedIn');
+      }
+    );
+
     test('should generate email link with mailto', () => {
       const contactData = { email: 'test@example.com' };
       const html = generateContactGrid(contactData);
