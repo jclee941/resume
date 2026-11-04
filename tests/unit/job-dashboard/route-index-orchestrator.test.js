@@ -54,9 +54,14 @@ describe('job-dashboard route index orchestrator', () => {
     expect(indexSrc).toContain('validateCsrf');
   });
 
-  test('preserves queue consumer handler', () => {
-    expect(indexSrc).toMatch(/async\s+queue\s*\(/);
-    expect(indexSrc).toContain('QueueConsumer');
+  test('exports a callable queue consumer handler', async () => {
+    jest.unstable_mockModule(
+      'cloudflare:workers',
+      () => ({ DurableObject: class {}, WorkflowEntrypoint: class {} }),
+      { virtual: true }
+    );
+    const { default: worker } = await import('../../../apps/job-dashboard/src/index.js');
+    expect(typeof worker.queue).toBe('function');
   });
 
   test('preserves workflow and DO named exports', () => {
