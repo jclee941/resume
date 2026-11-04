@@ -27,17 +27,17 @@ services/
 
 ## WHERE TO LOOK
 
-| Task                   | Location                                  | Notes                                                  |
-| ---------------------- | ----------------------------------------- | ------------------------------------------------------ |
-| Auth and replay policy | `auth.js`, `auth-webhook-signature.js`    | Session tokens, HMAC, nonces                           |
-| Config                 | `config.js`                               | Persistent dashboard configuration                     |
+| Task                   | Location                                  | Notes                                                    |
+| ---------------------- | ----------------------------------------- | -------------------------------------------------------- |
+| Auth and replay policy | `auth.js`, `auth-webhook-signature.js`    | Session tokens, HMAC, nonces                             |
+| Config                 | `config.js`                               | Persistent dashboard configuration                       |
 | Browser lifecycle      | `browser-session.js`                      | Acquire/release through `BROWSER_SESSION` Durable Object |
-| Session storage        | `platform-session.js`                     | Encrypted KV values under platform keys                |
-| Request filtering      | `jobkorea-request-filter.js`              | Avoid slow third-party browser traffic                 |
-| Notification facade    | `notifications.js`                        | Handler and queue imports target this facade           |
-| Platform dispatch      | `resume-platform-sync/index.js`           | Supported sync list and structured outcomes            |
-| Remember history       | `application-history/remember-adapter.js` | Timestamp-based application progress mapping           |
-| JobKorea editor        | `resume-platform-sync/jobkorea-editor.js` | Browser-local login, form sections, photo preservation |
+| Session storage        | `platform-session.js`                     | Encrypted KV values under platform keys                  |
+| Request filtering      | `jobkorea-request-filter.js`              | Avoid slow third-party browser traffic                   |
+| Notification facade    | `notifications.js`                        | Handler and queue imports target this facade             |
+| Platform dispatch      | `resume-platform-sync/index.js`           | Supported sync list and structured outcomes              |
+| Remember history       | `application-history/remember-adapter.js` | Timestamp-based application progress mapping             |
+| JobKorea editor        | `resume-platform-sync/jobkorea-editor.js` | Browser-local login, form sections, photo preservation   |
 
 ## CONVENTIONS
 

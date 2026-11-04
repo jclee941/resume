@@ -12,13 +12,13 @@ Boundary: score 1; retained distinct domain for repository automation and review
 
 ## WHERE TO LOOK
 
-| Task               | Location                   | Notes                                          |
-| ------------------ | -------------------------- | ---------------------------------------------- |
-| CI gates           | `workflows/ci.yml`         | Single `validate` job                          |
-| Dependency updates | GitHub repository settings | External settings are not declared here        |
-| Review routing     | `CODEOWNERS`               | Path ownership                                 |
-| Change description | `PULL_REQUEST_TEMPLATE.md` | Contributor checklist                          |
-| Issue intake       | `ISSUE_TEMPLATE/`          | Bug, feature, security forms and chooser       |
+| Task               | Location                   | Notes                                    |
+| ------------------ | -------------------------- | ---------------------------------------- |
+| CI gates           | `workflows/ci.yml`         | Single `validate` job                    |
+| Dependency updates | GitHub repository settings | External settings are not declared here  |
+| Review routing     | `CODEOWNERS`               | Path ownership                           |
+| Change description | `PULL_REQUEST_TEMPLATE.md` | Contributor checklist                    |
+| Issue intake       | `ISSUE_TEMPLATE/`          | Bug, feature, security forms and chooser |
 
 ## CONVENTIONS
 
