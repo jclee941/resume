@@ -100,9 +100,6 @@ bin/
 
 # Logs directory
 logs/
-# Root directory cleanup - compiled binaries (build artifacts)
-/merge-ulw-to-master
-
 # Wrangler generated types
 /worker-configuration.d.ts
 

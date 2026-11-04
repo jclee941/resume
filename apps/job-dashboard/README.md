@@ -33,7 +33,7 @@ bindings (all registered on the merged `resume` worker)
 npm install
 
 # Start dev server for the merged worker (serves portfolio + /job/*)
-npm run dev          # Miniflare via tools/scripts/dev/miniflare.config.js
+npm run dev          # Wrangler using root wrangler.jsonc
 # or
 npm run dev:wrangler # Wrangler-native dev mode
 ```

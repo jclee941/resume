@@ -36,7 +36,6 @@
     "packages/schemas/src/auth.js",
     "packages/schemas/src/resume.js",
     "packages/schemas/src/application-dashboard.js",
-    "tools/scripts/dev/miniflare.config.js",
     "tools/scripts/utils/bump-version.js",
     "tools/scripts/utils/record-demo-video.js",
     "tools/scripts/utils/resume-data-paths.js",

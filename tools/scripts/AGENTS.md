@@ -18,7 +18,7 @@ scripts/
 ├── content/        # private content transport and fixture generation
 ├── deploy/         # standalone rollout and rollback helpers
 ├── deployment/     # preflight and deployment orchestration
-├── dev/            # legacy Miniflare support
+├── dev/            # Wrangler local development guide
 ├── enrichment/     # separate Go module producing proposals
 ├── local-dev-up/   # local development process orchestration
 ├── monitoring/     # observability setup and deployment helpers
@@ -47,11 +47,11 @@ scripts/
 
 ## CONVENTIONS
 
-- Root-level `healthcheck.go`, `merge-ulw-to-master.go`, and `add-gitlab-variables.go` are manual standalone programs.
+- Root-level `healthcheck.go` and `add-gitlab-variables.go` are manual standalone programs.
 - `sync/` applies approved proposals through `npm run sync:proposals`; generation and approval are separate steps.
 - Existing Node data generators and deterministic validators stay with their JS-domain consumers.
 - The content CLI runs on Workers Builds with Node only; its dependency-free bootstrap is a specific exception.
-- The Miniflare support file under `dev/` is not the root `npm run dev` configuration.
+- Root `npm run dev` uses `wrangler.jsonc`; `dev/README.md` documents local setup.
 - Standalone rollout tools in `deploy/` are distinct from the orchestration tools in `deployment/`.
 - `deploy/`, `deployment/`, and `monitoring/` are manual helpers, absent from root Go test targets.
 - `local-dev-up --all` enables only the portfolio service; it does not restore a local job-server.
