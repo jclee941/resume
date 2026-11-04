@@ -9,11 +9,12 @@ import {
   searchWorkflowJobs,
 } from './job-search-and-scoring.js';
 import { createWorkflowRecord, completeWorkflow } from './workflow-records.js';
+import { createNotificationService, notifyCompletion } from './workflow-notifications.js';
 import {
-  createNotificationService,
-  notifyCompletion,
-  notifyNoJobs,
-} from './workflow-notifications.js';
+  completeAtDailyLimit,
+  completeWithoutJobs,
+  persistFailedWorkflow,
+} from './workflow-terminal.js';
 
 /**
  * @param {import('../application.js').ApplicationWorkflow} ctx
@@ -52,57 +53,76 @@ export async function runApplicationWorkflow(ctx, event, step) {
   const notificationService = createNotificationService(ctx);
 
   await initializeWorkflow(ctx, step, workflow, triggerType, platforms);
-  const dailyCheck = await checkDailyLimits(ctx, step, workflow, maxDailyApplications);
-  const jobsFound = explicitCandidates.length
-    ? await loadExplicitCandidates(ctx, step, workflow, explicitCandidates, platforms)
-    : await searchWorkflowJobs(ctx, step, workflow, platforms, criteria);
+  try {
+    const dailyCheck = await checkDailyLimits(ctx, step, workflow, maxDailyApplications);
+    if (dailyCheck.remaining === 0) return await completeAtDailyLimit(ctx, step, workflow);
+    const jobsFound = explicitCandidates.length
+      ? await loadExplicitCandidates(ctx, step, workflow, explicitCandidates, platforms)
+      : await searchWorkflowJobs(ctx, step, workflow, platforms, criteria);
 
-  if (jobsFound.length === 0) {
-    return completeWithoutJobs(ctx, step, workflow, notificationService, triggerType, platforms);
-  }
-
-  const scoredJobs = await scoreWorkflowJobs(ctx, step, workflow, jobsFound, minMatchScore);
-  const { approvedJobs } = await processApprovalGates(
-    ctx,
-    step,
-    workflow,
-    scoredJobs,
-    autoApprove,
-    autoApproveThreshold,
-    dailyCheck.remaining
-  );
-  const applicationResults = await submitApprovedApplications(
-    ctx,
-    step,
-    workflow,
-    approvedJobs,
-    resumeId,
-    dryRun,
-    { explicitSubmit, submitOptIn }
-  );
-
-  completeWorkflow(workflow);
-  await ctx.saveWorkflowState(workflow);
-
-  await step.do(
-    'notify-completion',
-    {
-      retries: { limit: 2, delay: '10 seconds' },
-      timeout: '30 seconds',
-    },
-    async () => {
-      await notifyCompletion(notificationService, workflow, triggerType, dryRun, approvedJobs);
+    if (jobsFound.length === 0) {
+      return await completeWithoutJobs(
+        ctx,
+        step,
+        workflow,
+        notificationService,
+        triggerType,
+        platforms
+      );
     }
-  );
 
-  workflow.steps.push({ step: 'notify', status: 'completed' });
+    const scoredJobs = await scoreWorkflowJobs(ctx, step, workflow, jobsFound, minMatchScore);
+    const { approvedJobs } = await processApprovalGates(
+      ctx,
+      step,
+      workflow,
+      scoredJobs,
+      autoApprove,
+      autoApproveThreshold,
+      dailyCheck.remaining
+    );
+    const applicationResults = await submitApprovedApplications(
+      ctx,
+      step,
+      workflow,
+      approvedJobs,
+      resumeId,
+      dryRun,
+      { explicitSubmit, submitOptIn }
+    );
 
-  return {
-    success: workflow.status === 'completed',
-    workflow,
-    applications: applicationResults,
-    dryRun,
-  };
+    completeWorkflow(workflow);
+    await step.do(
+      'notify-completion',
+      {
+        retries: { limit: 2, delay: '10 seconds' },
+        timeout: '30 seconds',
+      },
+      async () => {
+        await notifyCompletion(notificationService, workflow, triggerType, dryRun, approvedJobs);
+      }
+    );
+
+    workflow.steps.push({ step: 'notify', status: 'completed' });
+    await step.do(
+      'persist-completed-workflow',
+      { retries: { limit: 3, delay: '5 seconds' }, timeout: '30 seconds' },
+      async () => {
+        await ctx.saveWorkflowState(workflow);
+        return { saved: true };
+      }
+    );
+
+    return {
+      success: workflow.status === 'completed',
+      workflow,
+      applications: applicationResults,
+      dryRun,
+    };
+  } catch (error) {
+    await persistFailedWorkflow(ctx, step, workflow, error);
+    throw error;
+  }
 }
 
 /**
@@ -160,45 +180,4 @@ function normalizeWorkflowCandidates(candidates) {
         sourceUrl: candidate.sourceUrl || candidate.url || candidate.applyUrl || '',
       };
     });
-}
-
-/**
- * @param {import('../application.js').ApplicationWorkflow} ctx
- * @param {import('cloudflare:workers').WorkflowStep} step
- * @param {import('./workflow-records.js').WorkflowRecord} workflow
- * @param {import('../../services/notifications.js').NotificationService} notificationService
- * @param {string} triggerType
- * @param {string[]} platforms
- * @returns {Promise<Record<string, unknown>>}
- */
-async function completeWithoutJobs(
-  ctx,
-  step,
-  workflow,
-  notificationService,
-  triggerType,
-  platforms
-) {
-  workflow.status = 'completed';
-  workflow.completedAt = new Date().toISOString();
-  workflow.steps.push({ step: 'complete', status: 'no-jobs-found' });
-  await ctx.saveWorkflowState(workflow);
-
-  await step.do(
-    'notify-no-jobs',
-    {
-      retries: { limit: 2, delay: '10 seconds' },
-      timeout: '30 seconds',
-    },
-    async () => {
-      await notifyNoJobs(notificationService, triggerType, platforms);
-      return { notified: true };
-    }
-  );
-
-  return {
-    success: true,
-    workflow,
-    message: 'No jobs found',
-  };
 }

@@ -82,10 +82,6 @@ export async function checkDailyLimits(ctx, step, workflow, maxDailyApplications
       const count = await ctx.getDailyApplicationCount(today);
       const remaining = Math.max(0, maxDailyApplications - count);
 
-      if (remaining === 0) {
-        throw new Error(`Daily application limit (${maxDailyApplications}) reached for ${today}`);
-      }
-
       return { remaining, alreadyApplied: count };
     }
   );
@@ -110,6 +106,7 @@ export async function checkDailyLimits(ctx, step, workflow, maxDailyApplications
 export async function searchWorkflowJobs(ctx, step, workflow, platforms, searchCriteria) {
   /** @type {JobSearchRecord[]} */
   const jobsFound = [];
+  let failedPlatforms = 0;
 
   for (const platform of platforms) {
     const outcome = await step.do(
@@ -135,6 +132,7 @@ export async function searchWorkflowJobs(ctx, step, workflow, platforms, searchC
     );
 
     if (outcome.error !== null) {
+      failedPlatforms++;
       workflow.errors.push({ platform, error: outcome.error });
       console.error(`Failed to search ${platform}:`, outcome.error);
     }
@@ -146,8 +144,13 @@ export async function searchWorkflowJobs(ctx, step, workflow, platforms, searchC
   }
 
   workflow.stats.jobsFound = jobsFound.length;
-  workflow.steps.push({ step: 'search-jobs', status: 'completed', count: jobsFound.length });
-  await ctx.logWorkflowStep(workflow.id, 'search-jobs', 'completed', { count: jobsFound.length });
+  workflow.searchFailed = platforms.length > 0 && failedPlatforms === platforms.length;
+  const status = workflow.searchFailed ? 'failed' : 'completed';
+  workflow.steps.push({ step: 'search-jobs', status, count: jobsFound.length, failedPlatforms });
+  await ctx.logWorkflowStep(workflow.id, 'search-jobs', status, {
+    count: jobsFound.length,
+    failedPlatforms,
+  });
 
   return jobsFound;
 }
