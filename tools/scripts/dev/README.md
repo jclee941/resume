@@ -5,8 +5,8 @@ Miniflare for local execution.
 
 ## Files
 
-- `miniflare.config.js`: legacy local runtime config retained for reference.
-- `.dev.vars.example`: template for local worker environment variables.
+- Root `wrangler.jsonc`: runtime entry, bindings, and local development configuration.
+- Root `.dev.vars.example`: template for local worker environment variables.
 
 ## Quick Start
 
@@ -32,9 +32,10 @@ The local endpoint listens on `http://localhost:8787`.
 
 ## Local Bindings
 
+Root `wrangler.jsonc` owns the bindings used by the local Worker, including:
+
 - `JOB_DB` -> local D1 simulation
-- `SESSIONS`, `CACHE` -> local KV namespaces
-- `RESUME_ASSETS_BUCKET` -> local R2 bucket
+- `SESSIONS`, `RATE_LIMIT_KV`, `NONCE_KV` -> local KV namespaces
 
 ## Notes
 
