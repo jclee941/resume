@@ -19,7 +19,8 @@ import { loginSkCareers, readResumeEditor, saveResume } from '../skcareers/skcar
  * @param {SkCareersSyncEnv} env
  * @param {SkCareersSsot} ssot
  * @param {SkCareersSyncOptions} options
- * @returns {Promise<{ platform: 'skcareers'; success: boolean; dryRun: boolean; error?: string; changes?: Record<string, number> }>}
+ * `overflow` counts SSoT items beyond the mapper's limits, which the sync leaves out.
+ * @returns {Promise<{ platform: 'skcareers'; success: boolean; dryRun: boolean; error?: string; changes?: Record<string, number>; overflow?: Record<string, number> }>}
  */
 export async function syncSkCareersFromSsot(env, ssot, { dryRun, fetchImpl }) {
   const cookie = await loginSkCareers(env, { fetchImpl });
@@ -32,10 +33,12 @@ export async function syncSkCareersFromSsot(env, ssot, { dryRun, fetchImpl }) {
       error: 'SK Careers resume editor has no resume form',
     };
   }
-  const { form, changes } = mergeSkCareersResume(saved, mapToSkCareersResume(ssot));
+  const mapped = mapToSkCareersResume(ssot);
+  const { form, changes } = mergeSkCareersResume(saved, mapped);
+  const overflow = Object.keys(mapped.overflow).length > 0 ? { overflow: mapped.overflow } : {};
   if (dryRun || Object.keys(changes).length === 0) {
-    return { platform: 'skcareers', success: true, dryRun, changes };
+    return { platform: 'skcareers', success: true, dryRun, changes, ...overflow };
   }
   await saveResume(cookie, encodeFormParam(form), { fetchImpl });
-  return { platform: 'skcareers', success: true, dryRun: false, changes };
+  return { platform: 'skcareers', success: true, dryRun: false, changes, ...overflow };
 }

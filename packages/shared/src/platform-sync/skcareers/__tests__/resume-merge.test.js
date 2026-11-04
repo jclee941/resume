@@ -104,3 +104,107 @@ describe('mergeSkCareersResume', () => {
     assert.deepEqual(changes, { joinedValues: 1 });
   });
 });
+
+describe('mergeSkCareersResume saved-only fields', () => {
+  const careerSsot = (names) => ({
+    careers: names.map((company, i) => ({
+      company,
+      period: `202${i}.03 ~ 202${i}.12`,
+      role: 'SRE',
+      description: 'd',
+    })),
+  });
+  const savedWith = (extra) => ({ ...emptyEditor, ...extra });
+
+  it('keeps saved department, rank, salary for a reordered career matched by identity', () => {
+    const mapped = mapToSkCareersResume(careerSsot(['A', 'B']));
+    const saved = savedWith({
+      carSeq: ['5', '6'],
+      carCorpName: ['B', 'A'],
+      carFromDate: ['2021-03', '2020-03'],
+      carToDate: ['2021-12', '2020-12'],
+      carJobRole: ['SRE', 'SRE'],
+      carDeptName: ['DeptB', 'DeptA'],
+      carPosition: ['PosB', 'PosA'],
+      carSalary: ['2', '1'],
+      carRetireDesc: ['rb', 'ra'],
+      carDescription: ['d', 'd'],
+      carWorkingYN: ['0', '0'],
+    });
+
+    const { form } = mergeSkCareersResume(saved, mapped);
+
+    assert.deepEqual(form.carCorpName, ['A', 'B']);
+    assert.deepEqual(form.carDeptName, ['DeptA', 'DeptB']);
+    assert.deepEqual(form.carPosition, ['PosA', 'PosB']);
+    assert.deepEqual(form.carSalary, ['1', '2']);
+  });
+
+  it('pairs duplicate company names one-to-one and still erases SSoT-blanked mapped fields', () => {
+    const mapped = mapToSkCareersResume({
+      careers: [
+        { company: 'A', period: '2020.03 ~ 2020.12', role: 'X', description: '' },
+        { company: 'A', period: '2020.03 ~ 2020.12', role: 'X', description: '' },
+      ],
+    });
+    const saved = savedWith({
+      carCorpName: ['A', 'A'],
+      carFromDate: ['2020-03', '2020-03'],
+      carDeptName: ['first', 'second'],
+      carDescription: ['old1', 'old2'],
+    });
+
+    const { form } = mergeSkCareersResume(saved, mapped);
+
+    assert.deepEqual(form.carDeptName, ['first', 'second']);
+    assert.deepEqual(form.carDescription, ['', '']);
+  });
+
+  it('drops saved extras of removed careers and of unmatched new ones', () => {
+    const mapped = mapToSkCareersResume(careerSsot(['New']));
+    const saved = savedWith({ carCorpName: 'Gone', carFromDate: '2020-03', carDeptName: 'Dept' });
+
+    const { form } = mergeSkCareersResume(saved, mapped);
+
+    assert.equal(form.carCorpName, 'New');
+    assert.equal(form.carDeptName, '');
+  });
+
+  it('keeps saved certificate number and file metadata, and is idempotent', () => {
+    const mapped = mapToSkCareersResume(ssot, { newId: () => 'new-id' });
+    const saved = savedWith({
+      cerSeq: '9',
+      cerCertName: 'CKA',
+      cerCertSource: 'CNCF',
+      cerCertDate: '2024-05',
+      cerCertNumber: 'N-1',
+      cerCertFilePath: '/f/p',
+      cerCertFileText: 'txt',
+      cerCertFileName: 'cka.pdf',
+    });
+
+    const first = mergeSkCareersResume(saved, mapped);
+    const again = mergeSkCareersResume(first.form, mapped);
+
+    assert.equal(first.form.cerCertNumber, 'N-1');
+    assert.equal(first.form.cerCertFileName, 'cka.pdf');
+    assert.equal(first.form.cerCertFilePath, '/f/p');
+    assert.equal(again.changes.certificates, undefined);
+    assert.deepEqual(again.form.cerCertNumber, 'N-1');
+  });
+
+  it('keeps saved education region and daytime flag when the SSoT has none', () => {
+    const saved = savedWith({
+      eduSeq: '3',
+      eduUnivRandom: 'r',
+      eduEducationName: 'U',
+      eduEducationRegion: '서울',
+      eduDaytimeYN: '1',
+    });
+
+    const { form } = mergeSkCareersResume(saved, sections);
+
+    assert.equal(form.eduEducationRegion, '서울');
+    assert.equal(form.eduDaytimeYN, '1');
+  });
+});

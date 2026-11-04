@@ -104,5 +104,13 @@ REST page, entirely Cloudflare-native (no outside host).
   option.
 - SK Careers keeps one resume per account with personal, education, career,
   certificate and attachment sections only. The sync fills military service,
-  education, the five most recent careers and the five most recent active
-  certificates (the site's limits), and keeps the account's name, email and phone.
+  education, the first five careers (master order) and the five most recent active
+  certificates, and keeps the account's name, email and phone. Authenticated
+  read-only inspection on 2026-11-04 confirmed both five-item editor limits:
+  `btnAddCareer` and `btnAddCert` have `data-max="5"`, and their add and final
+  validation handlers enforce that value. Items beyond those limits are reported
+  in the result's `overflow` instead of being dropped silently. Careers and
+  certificates are matched to saved rows by name and date, so the fields the SSoT
+  never provides (department, rank, salary, certificate number and file, education
+  region) stay as saved; fields the SSoT does provide, and rows it removed, follow
+  the SSoT.

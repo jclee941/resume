@@ -101,3 +101,17 @@ describe('mapToSkCareersResume', () => {
     assert.deepEqual(single.personal, {});
   });
 });
+
+describe('mapToSkCareersResume overflow', () => {
+  it('reports items beyond the site limit instead of dropping them silently', () => {
+    const careers = Array.from({ length: SK_CAREER_LIMIT + 2 }, (_, i) => ({
+      company: `C${i}`,
+      period: '2020.03 ~ 2020.12',
+    }));
+
+    const mapped = mapToSkCareersResume({ careers });
+
+    assert.deepEqual(mapped.overflow, { careers: 2 });
+    assert.deepEqual(mapToSkCareersResume({ careers: careers.slice(0, 2) }).overflow, {});
+  });
+});
