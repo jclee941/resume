@@ -66,7 +66,7 @@ export async function submitApprovedApplications(ctx, step, workflow, approvedJo
         continue;
       }
 
-      const result = await step.do(
+      const { record, ...result } = await step.do(
         `apply-job-${job.id}`,
         {
           retries: { limit: 3, delay: '30 seconds', backoff: 'exponential' },
@@ -75,6 +75,31 @@ export async function submitApprovedApplications(ctx, step, workflow, approvedJo
         async () => submitApprovedApplication(ctx, workflow, job, resumeId)
       );
 
+      // Rebuild counters from durable results, including when the callback is skipped on replay.
+      if (record && record.appliedNow !== false) workflow.stats.jobsApplied++;
+      if (!result.success) {
+        workflow.stats.jobsFailed++;
+        workflow.errors.push({ step: 'apply-job', jobId: job.id, error: result.error });
+      }
+      if (record) {
+        try {
+          await step.do(
+            `record-application-${job.id}`,
+            { retries: { limit: 3, delay: '5 seconds' }, timeout: '30 seconds' },
+            async () => {
+              await ctx.recordApplication(record);
+              return { recorded: true };
+            }
+          );
+        } catch (error) {
+          workflow.errors.push({
+            step: 'record-application',
+            jobId: job.id,
+            error: error instanceof Error ? error.message : String(error),
+          });
+          throw error;
+        }
+      }
       applicationResults.push(result);
 
       if (hasLaterSubmitCandidate(jobs, jobs.indexOf(job), submitOptIn)) {
@@ -105,7 +130,7 @@ export async function submitApprovedApplications(ctx, step, workflow, approvedJo
  * @param {import('./workflow-records.js').WorkflowRecord} workflow
  * @param {import('./application-submission-gates.js').GateJob} job
  * @param {string} resumeId
- * @returns {Promise<unknown>}
+ * @returns {Promise<{ success: boolean; record?: Record<string, unknown>; [key: string]: unknown }>}
  */
 async function submitApprovedApplication(ctx, workflow, job, resumeId) {
   try {
@@ -135,9 +160,9 @@ async function submitApprovedApplication(ctx, workflow, job, resumeId) {
     };
 
     if (submitResult.alreadyApplied || submitResult.status === 'already_applied') {
-      await ctx.recordApplication({ ...record, appliedNow: false });
       return {
         success: true,
+        record: { ...record, appliedNow: false },
         networkWrite: false,
         action: 'already_applied',
         status: 'already_applied',
@@ -149,11 +174,7 @@ async function submitApprovedApplication(ctx, workflow, job, resumeId) {
     }
 
     if (submitResult.success) {
-      workflow.stats.jobsApplied++;
-
-      await ctx.recordApplication(record);
-
-      return { success: true, jobId: job.id, company: job.company, position: job.position };
+      return { success: true, jobId: job.id, company: job.company, position: job.position, record };
     }
 
     if (requiresDeferredBrowserAction(submitResult)) {
@@ -176,10 +197,8 @@ async function submitApprovedApplication(ctx, workflow, job, resumeId) {
       };
     }
 
-    workflow.stats.jobsFailed++;
     return createSubmitFailure(job.id, submitResult.error);
   } catch (error) {
-    workflow.stats.jobsFailed++;
     return createSubmitFailure(job.id, error instanceof Error ? error.message : String(error));
   }
 }

@@ -32,6 +32,23 @@ export async function notifyNoJobs(notificationService, triggerType, platforms) 
 
 /**
  * @param {NotificationService} notificationService
+ * @param {string} triggerType
+ * @param {string[]} platforms
+ * @param {string} reason
+ * @returns {Promise<void>}
+ */
+export async function notifyFailure(notificationService, triggerType, platforms, reason) {
+  await notificationService.sendTelegramNotification({
+    text:
+      '<b>Application Workflow Failed</b>\n\n' +
+      `<b>Trigger</b>: ${escapeHtml(triggerType)}\n` +
+      `<b>Platforms</b>: ${escapeHtml(platforms.join(', '))}\n` +
+      `<b>Result</b>: ${escapeHtml(reason)}`,
+  });
+}
+
+/**
+ * @param {NotificationService} notificationService
  * @param {{ stats: { jobsFound: number; jobsApproved: number; jobsApplied: number; jobsFailed: number } }} workflow
  * @param {string} triggerType
  * @param {boolean} dryRun

@@ -25,6 +25,7 @@
  * @property {unknown[]} steps
  * @property {WorkflowStats} stats
  * @property {unknown[]} errors
+ * @property {boolean} [searchFailed]
  */
 
 /**
