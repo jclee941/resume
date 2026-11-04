@@ -14,6 +14,7 @@
  * postings that require a bachelor's degree return 0 immediately.
  */
 
+import { extractRequiredYears } from './experience-years.js';
 import { skillTermGroups } from './skill-synonyms.js';
 
 /**
@@ -116,33 +117,10 @@ export function calculateMatchScore(job, config) {
 
   // --- Experience fit (up to 15 pts) ---
   if (typeof config.experienceYears === 'number' && Number.isFinite(config.experienceYears)) {
-    const experienceText = `${job.position || ''} ${job.description || ''} ${job.experience || ''}`;
-    const rangeMatch = experienceText.match(
-      /(\d+)\s*(?:\+?\s*)?(?:-|~|–|to)\s*(\d+)\s*(?:years?|yrs?|yr|년)/i
-    );
-    const plusMatch =
-      experienceText.match(/(\d+)\s*\+\s*(?:years?|yrs?|yr|년)/i) ||
-      experienceText.match(/(\d+)\s*(?:years?|yrs?|yr|년)\s*(?:\+|and up|이상)/i);
-    const exactMatch = experienceText.match(/(\d+)\s*(?:years?|yrs?|yr|년)/i);
+    const required = extractRequiredYears(job);
 
-    let minYears = null;
-    let maxYears = null;
-
-    if (rangeMatch) {
-      const first = Number(rangeMatch[1]);
-      const second = Number(rangeMatch[2]);
-      minYears = Math.min(first, second);
-      maxYears = Math.max(first, second);
-    } else if (plusMatch) {
-      minYears = Number(plusMatch[1]);
-      maxYears = Number.POSITIVE_INFINITY;
-    } else if (exactMatch) {
-      const exact = Number(exactMatch[1]);
-      minYears = exact;
-      maxYears = exact;
-    }
-
-    if (minYears !== null && maxYears !== null) {
+    if (required) {
+      const { min: minYears, max: maxYears } = required;
       const years = config.experienceYears;
       const exactFit = years >= minYears && years <= maxYears;
       const nearFit = years >= minYears - 2 && years <= maxYears + 2;
@@ -200,17 +178,32 @@ function hasExcludedTitle(position, keywords) {
 }
 
 const DEGREE_REQUIRED =
-  /(학사|대졸)[^.\n]{0,12}(이상|필수|소지)|(4년제|대학교?)\s*(대학교?\s*)?졸업\s*(자|이상|필수)|bachelor'?s?\s+degree/i;
-const DEGREE_WAIVED =
-  /학력\s*무관|학력\s*제한\s*없|동등|준하는|or\s+equivalent|(이상|학위|소지자?|졸업자?)\s*우대/i;
+  /(학사|대졸)[^.\n]{0,12}?(이상|필수|소지)|(4년제|대학교?)\s*(대학교?\s*)?졸업\s*(자|이상|필수)|bachelor'?s?\s+degree/gi;
+const DEGREE_NOT_REQUIRED = /학력\s*무관|학력\s*제한\s*없/i;
+// Equivalent-experience wording only waives the degree clause it appears in; a parenthetical
+// stays inside its clause, and 동등 must name experience or education (not 동등한 처우).
+const CLAUSE_WAIVED =
+  /동등\s*(?:한|이상의?)?\s*(?:경력|경험|학력|자격|실무)|준하는|or\s+equivalent|equivalent\s+(?:experience|education|work)/i;
+const PREFERRED_AFTER = /^\s*(?:(?:졸업|소지)자?|학위)?\s*우대/;
 
 /**
- * A bachelor's-degree requirement, unless the text waives it (학력무관, 동등 경력, 우대 only).
+ * A bachelor's-degree requirement. It is waived by 학력무관, or by 동등/or equivalent in the
+ * same clause. A degree followed directly by 우대 is only a preference, and a preference for
+ * another degree (석사 이상 우대) never waives a mandatory clause (학사 이상 필수).
  * @param {string} text posting title and description
  * @returns {boolean}
  */
 export function requiresDegree(text) {
-  return DEGREE_REQUIRED.test(text) && !DEGREE_WAIVED.test(text);
+  if (DEGREE_NOT_REQUIRED.test(text)) return false;
+  return text
+    .split(/[,;/|•·.\n]|\s(?:및|그리고|and)\s/)
+    .some(
+      (clause) =>
+        !CLAUSE_WAIVED.test(clause) &&
+        [...clause.matchAll(DEGREE_REQUIRED)].some(
+          (hit) => !PREFERRED_AFTER.test(clause.slice(hit.index + hit[0].length))
+        )
+    );
 }
 
 /**
