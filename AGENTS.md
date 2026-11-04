@@ -47,19 +47,19 @@ D1 `content_files` owns content under ADR 0011; local personal content is materi
 Definitions were source-checked by the subtree writers. References are unmeasured unless
 labeled below; the workspace LSP count excludes declarations and does not count runtime callers.
 
-| Symbol                       | Type           | Location                                                | Refs   | Role                                                                       |
-| ---------------------------- | -------------- | ------------------------------------------------------- | ------ | -------------------------------------------------------------------------- |
-| `jsonResponse`               | function       | `apps/job-dashboard/src/middleware/cors.js:70`          | unmeasured | HTTP responses |
-| `validateEnv`                | function       | `packages/env/src/parse.js:40`                          | unmeasured | Environment parsing |
-| `AppError`                   | class          | `packages/shared/src/errors/index.js:44`                | unmeasured | Typed errors |
-| `withBrowserSession`         | async function | `apps/job-dashboard/src/services/browser-session.js:40` | unmeasured | Browser session acquisition and release |
-| `runWorkerBuild`             | async function | `apps/portfolio/lib/build-orchestrator.js:131`          | unmeasured | Worker generation |
-| `ApplicationWorkflow`        | class          | `apps/job-dashboard/src/workflows/application.js:79`    | 10 / workspace LSP | Application orchestration |
-| `loadPack`                   | async function | `tools/scripts/content/pack.mjs:40`                     | unmeasured | Pack definition |
-| `runSync`                    | function       | `tools/scripts/utils/resume-sync-runner.js:124`         | unmeasured | Locale generation |
-| `generateWebData`            | function       | `tools/scripts/utils/resume-web-data-generator.js:99`   | unmeasured | Public projections |
-| `ownerIdentity`              | function       | `tests/helpers/owner-data.js:50`                        | unmeasured | Materialized expectations |
-| `createDashboardEnvironment` | async function | `tests/e2e/fixtures/dashboard-environment.cjs:41`        | unmeasured | Browser environment selection |
+| Symbol                       | Type           | Location                                                | Refs               | Role                                    |
+| ---------------------------- | -------------- | ------------------------------------------------------- | ------------------ | --------------------------------------- |
+| `jsonResponse`               | function       | `apps/job-dashboard/src/middleware/cors.js:70`          | unmeasured         | HTTP responses                          |
+| `validateEnv`                | function       | `packages/env/src/parse.js:40`                          | unmeasured         | Environment parsing                     |
+| `AppError`                   | class          | `packages/shared/src/errors/index.js:44`                | unmeasured         | Typed errors                            |
+| `withBrowserSession`         | async function | `apps/job-dashboard/src/services/browser-session.js:40` | unmeasured         | Browser session acquisition and release |
+| `runWorkerBuild`             | async function | `apps/portfolio/lib/build-orchestrator.js:131`          | unmeasured         | Worker generation                       |
+| `ApplicationWorkflow`        | class          | `apps/job-dashboard/src/workflows/application.js:79`    | 10 / workspace LSP | Application orchestration               |
+| `loadPack`                   | async function | `tools/scripts/content/pack.mjs:40`                     | unmeasured         | Pack definition                         |
+| `runSync`                    | function       | `tools/scripts/utils/resume-sync-runner.js:124`         | unmeasured         | Locale generation                       |
+| `generateWebData`            | function       | `tools/scripts/utils/resume-web-data-generator.js:99`   | unmeasured         | Public projections                      |
+| `ownerIdentity`              | function       | `tests/helpers/owner-data.js:50`                        | unmeasured         | Materialized expectations               |
+| `createDashboardEnvironment` | async function | `tests/e2e/fixtures/dashboard-environment.cjs:41`       | unmeasured         | Browser environment selection           |
 
 ## CONVENTIONS
 
