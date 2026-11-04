@@ -114,7 +114,11 @@ function generateContactGrid(contactData, locale = 'ko') {
   return `
         ${link(contactData.github, 'GitHub')}
         ${contactData.githubBot ? link(contactData.githubBot, 'GitHub Bot') : ''}
-        ${link(contactData.linkedin, 'LinkedIn')}
+        ${
+          contactData.linkedin && URL.canParse(contactData.linkedin)
+            ? link(contactData.linkedin, 'LinkedIn')
+            : ''
+        }
         ${link(velog, 'Velog')}
         <a class="contact-item contact-item--email" href="mailto:${escapeHtml(email)}" data-contact-email="${escapeHtml(email)}"><span class="contact-item__label">${labels.email}</span> <span class="contact-item__value">${escapeHtml(email)}</span></a>
         <span class="contact-copy-status" role="status" aria-live="polite" aria-atomic="true"></span>
