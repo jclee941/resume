@@ -1,6 +1,9 @@
+import { KEEP_EDUCATION_FIELDS, mergeListSection } from './keep-saved.js';
+
 /**
  * @typedef {import('./form-codec.js').FormObject} FormObject
- * @typedef {ReturnType<typeof import('./resume-mapper.js').mapToSkCareersResume>} SkCareersSections
+ * @typedef {ReturnType<typeof import('./resume-mapper.js').mapToSkCareersResume>} SkCareersMapped
+ * @typedef {Pick<SkCareersMapped, 'personal' | 'education' | 'careers' | 'certificates'>} SkCareersSections
  */
 
 /** Repeated sections the SSoT owns outright, with the prefix of their field names. */
@@ -40,9 +43,18 @@ export function mergeSkCareersResume(saved, sections) {
   for (const key of ITEM_KEY_FIELDS) {
     if (key in fields && saved[key]) fields[key] = saved[key];
   }
+  for (const key of KEEP_EDUCATION_FIELDS) {
+    if (fields[key] === '' && saved[key]) fields[key] = saved[key];
+  }
+  const merged = {
+    personal: sections.personal,
+    education: sections.education,
+    careers: mergeListSection(saved, 'careers', sections.careers),
+    certificates: mergeListSection(saved, 'certificates', sections.certificates),
+  };
   return {
-    form: buildForm(saved, fields, sections),
-    changes: countChanges(saved, fields, sections),
+    form: buildForm(saved, fields, merged),
+    changes: countChanges(saved, fields, merged),
   };
 }
 

@@ -145,4 +145,20 @@ describe('syncSkCareersFromSsot', () => {
       /SKCAREERS_EMAIL and SKCAREERS_PASSWORD are required/
     );
   });
+
+  it('reports careers beyond the site limit in the result', async () => {
+    const many = {
+      careers: Array.from({ length: 7 }, (_, n) => ({
+        company: `C${n}`,
+        period: '2020.03 ~ 2020.12',
+      })),
+    };
+
+    const result = await syncSkCareersFromSsot(env, many, {
+      dryRun: true,
+      fetchImpl: createSiteFetch(),
+    });
+
+    assert.deepEqual(result.overflow, { careers: 2 });
+  });
 });

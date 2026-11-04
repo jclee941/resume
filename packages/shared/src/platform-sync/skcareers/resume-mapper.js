@@ -32,7 +32,8 @@ const MILITARY_TYPES = [
  * New items carry Seq "0", which the site treats as a row to create.
  * @param {SkCareersSsot} ssot
  * @param {{ newId?: () => string }} [options] id for the education items' random keys
- * @returns {{ personal: FormObject; education: FormObject; careers: FormObject; certificates: FormObject }}
+ * @returns {{ personal: FormObject; education: FormObject; careers: FormObject; certificates: FormObject; overflow: { careers?: number; certificates?: number } }}
+ *   `overflow` counts the SSoT items left out because of the limits; it is not form data.
  */
 export function mapToSkCareersResume(ssot, { newId = () => crypto.randomUUID() } = {}) {
   return {
@@ -43,7 +44,30 @@ export function mapToSkCareersResume(ssot, { newId = () => crypto.randomUUID() }
     },
     careers: careerFields(ssot.careers ?? []),
     certificates: certificateFields(ssot.certifications ?? []),
+    overflow: overflowOf(ssot),
   };
+}
+
+/**
+ * @param {SkCareersSsot} ssot
+ * @returns {{ careers?: number; certificates?: number }}
+ */
+function overflowOf(ssot) {
+  const careers = (ssot.careers ?? []).filter((career) => career.company).length;
+  const certificates = activeCertificates(ssot.certifications ?? []).length;
+  return {
+    ...(careers > SK_CAREER_LIMIT && { careers: careers - SK_CAREER_LIMIT }),
+    ...(certificates > SK_CERT_LIMIT && { certificates: certificates - SK_CERT_LIMIT }),
+  };
+}
+
+/**
+ * @param {NonNullable<SkCareersSsot['certifications']>} certifications
+ */
+function activeCertificates(certifications) {
+  return certifications
+    .filter((cert) => cert.name && cert.status === 'active')
+    .sort((a, b) => String(b.date ?? '').localeCompare(String(a.date ?? '')));
 }
 
 /**
@@ -73,10 +97,7 @@ function careerFields(careers) {
  * @returns {FormObject}
  */
 function certificateFields(certifications) {
-  const items = certifications
-    .filter((cert) => cert.name && cert.status === 'active')
-    .sort((a, b) => String(b.date ?? '').localeCompare(String(a.date ?? '')))
-    .slice(0, SK_CERT_LIMIT);
+  const items = activeCertificates(certifications).slice(0, SK_CERT_LIMIT);
   return columns(items.length, {
     cerSeq: () => '0',
     cerCertName: (i) => String(items[i].name),
