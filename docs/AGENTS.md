@@ -1,7 +1,7 @@
 # DOCUMENTATION HUB KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-05
+**Commit:** `2dfb061d`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -36,6 +36,7 @@ docs/
 | Secret classification      | `security/wrangler-vars-vs-secrets.md`                                | Guard policy reference                      |
 | Engineering policy         | `conventions/architecture-rules.md`                                   | Normative rule owner                        |
 | API specification          | `api/README.md`                                                       | Defers to `packages/contracts/openapi.yaml` |
+| Repository NEVER rules     | `guides/ANTI_PATTERNS.md`                                             | Generated artifacts, CSP hashing, secrets   |
 
 ## CONVENTIONS
 
@@ -48,6 +49,8 @@ docs/
 - The guarded current-state set is declared in `tools/scripts/verification/architecture-docs-current-state.mjs`.
 - Older deployment and rotation guides can reference absent workflows; verify those references before use.
 - Current-state validation rejects selected stale strings; it does not prove every topology claim is current.
+- `guides/` and `architecture/` have no index file; many guides exceed 500 lines and mix procedure with dated reports.
+- `guides/CLOUDFLARE_TOKEN_SETUP.md` documents the deprecated Global API Key method; treat it as history.
 
 ## ANTI-PATTERNS
 

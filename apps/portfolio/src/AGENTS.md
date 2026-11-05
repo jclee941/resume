@@ -35,7 +35,7 @@ Scope reason: score 5; retained browser-source domain.
 - Locale data and labels must remain aligned across KO, EN, and JA modules.
 - Imported `*-data.js` modules are materialized content inputs; they are not a new code-source location.
 - `__SKILL_DATA__` is injected by the build and declared in `scripts/client-globals.d.ts`.
-- Skills, the career timeline and every disclosure control are server-rendered; modules bind to them and never replace them. Content collapses only under `html.js`, so it stays reachable without JavaScript.
+- Skills, the career timeline and every disclosure control are server-rendered; modules bind to them and never replace them. Content collapses only under the `html.js` CSS selector (for example `styles/timeline-card.css`), so it stays reachable without JavaScript.
 
 ## ANTI-PATTERNS
 

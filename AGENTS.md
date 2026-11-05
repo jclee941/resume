@@ -1,7 +1,7 @@
 # PROJECT KNOWLEDGE BASE
 
-**Generated:** 2026-11-02
-**Commit:** `f2142ccf`
+**Generated:** 2026-11-05
+**Commit:** `2dfb061d`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -33,6 +33,8 @@ D1 `content_files` owns content under ADR 0011; local personal content is materi
 | -------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------- |
 | Edge and dashboard runtime | `apps/portfolio/AGENTS.md`, `apps/job-dashboard/AGENTS.md`                    | Entry composition and runtime domains         |
 | MCP protocol               | `apps/job-dashboard/src/mcp/AGENTS.md`                                        | In-process transport and REST gates           |
+| Queue consumers            | `apps/job-dashboard/src/queues/AGENTS.md`                                     | Batch routing, processing, DLQ                |
+| Workflow orchestration     | `apps/job-dashboard/src/workflows/AGENTS.md`                                  | Workflow gates and terminal outcomes          |
 | Content ownership          | `packages/data/AGENTS.md`, `applications/AGENTS.md`                           | Materialized inputs, role variants, packets   |
 | Content transport          | `tools/scripts/content/AGENTS.md`                                             | Manifest, D1 materialization, fixtures        |
 | Package boundaries         | `packages/AGENTS.md`                                                          | Types, schemas, contracts, shared exports     |
@@ -44,22 +46,24 @@ D1 `content_files` owns content under ADR 0011; local personal content is materi
 
 ## CODE MAP
 
-Definitions were source-checked by the subtree writers. References are unmeasured unless
-labeled below; the workspace LSP count excludes declarations and does not count runtime callers.
+Definitions were source-checked at HEAD by the subtree writers. Reference centrality is
+unmeasured; no counts are claimed.
 
-| Symbol                       | Type           | Location                                                | Refs               | Role                                    |
-| ---------------------------- | -------------- | ------------------------------------------------------- | ------------------ | --------------------------------------- |
-| `jsonResponse`               | function       | `apps/job-dashboard/src/middleware/cors.js:70`          | unmeasured         | HTTP responses                          |
-| `validateEnv`                | function       | `packages/env/src/parse.js:40`                          | unmeasured         | Environment parsing                     |
-| `AppError`                   | class          | `packages/shared/src/errors/index.js:44`                | unmeasured         | Typed errors                            |
-| `withBrowserSession`         | async function | `apps/job-dashboard/src/services/browser-session.js:40` | unmeasured         | Browser session acquisition and release |
-| `runWorkerBuild`             | async function | `apps/portfolio/lib/build-orchestrator.js:131`          | unmeasured         | Worker generation                       |
-| `ApplicationWorkflow`        | class          | `apps/job-dashboard/src/workflows/application.js:79`    | 10 / workspace LSP | Application orchestration               |
-| `loadPack`                   | async function | `tools/scripts/content/pack.mjs:40`                     | unmeasured         | Pack definition                         |
-| `runSync`                    | function       | `tools/scripts/utils/resume-sync-runner.js:124`         | unmeasured         | Locale generation                       |
-| `generateWebData`            | function       | `tools/scripts/utils/resume-web-data-generator.js:99`   | unmeasured         | Public projections                      |
-| `ownerIdentity`              | function       | `tests/helpers/owner-data.js:50`                        | unmeasured         | Materialized expectations               |
-| `createDashboardEnvironment` | async function | `tests/e2e/fixtures/dashboard-environment.cjs:41`       | unmeasured         | Browser environment selection           |
+| Symbol                       | Type           | Location                                                | Refs       | Role                                    |
+| ---------------------------- | -------------- | ------------------------------------------------------- | ---------- | --------------------------------------- |
+| `jsonResponse`               | function       | `apps/job-dashboard/src/middleware/cors.js:70`          | unmeasured | HTTP responses                          |
+| `validateEnv`                | function       | `packages/env/src/parse.js:40`                          | unmeasured | Environment parsing                     |
+| `AppError`                   | class          | `packages/shared/src/errors/index.js:44`                | unmeasured | Typed errors                            |
+| `withBrowserSession`         | async function | `apps/job-dashboard/src/services/browser-session.js:40` | unmeasured | Browser session acquisition and release |
+| `runWorkerBuild`             | async function | `apps/portfolio/lib/build-orchestrator.js:131`          | unmeasured | Worker generation                       |
+| `ApplicationWorkflow`        | class          | `apps/job-dashboard/src/workflows/application.js:79`    | unmeasured | Application orchestration               |
+| `routeQueueBatch`            | function       | `apps/job-dashboard/src/queues/queue-consumer.js:61`    | unmeasured | Queue batch dispatch; unknown throws    |
+| `handleMcpRequest`           | function       | `apps/job-dashboard/src/mcp/handler.js:20`              | unmeasured | Stateless MCP entry                     |
+| `loadPack`                   | async function | `tools/scripts/content/pack.mjs:40`                     | unmeasured | Pack definition                         |
+| `runSync`                    | function       | `tools/scripts/utils/resume-sync-runner.js:124`         | unmeasured | Locale generation                       |
+| `generateWebData`            | function       | `tools/scripts/utils/resume-web-data-generator.js:99`   | unmeasured | Public projections                      |
+| `ownerIdentity`              | function       | `tests/helpers/owner-data.js:50`                        | unmeasured | Materialized expectations               |
+| `createDashboardEnvironment` | async function | `tests/e2e/fixtures/dashboard-environment.cjs:41`       | unmeasured | Browser environment selection           |
 
 ## CONVENTIONS
 
@@ -117,7 +121,8 @@ npm run foreign-apply:dry-run -- --ats-stub
 - Preview has neither routes nor crons; root runtime configuration owns scheduled events.
 - Terraform D1/KV declarations are data sources; the legacy Worker declaration is not runtime binding authority.
 - Workers Logs is default; Loki is opt-in; Elasticsearch is absent. Compose uses Jaeger; Tempo is a reference configuration.
-- Historical documentation may retain stale topology/CI claims; current configuration takes precedence. The current-state documentation guard covers five documents, not the whole archive.
+- Historical documentation may retain stale topology/CI claims; current configuration takes precedence. `verify:architecture-governance` checks ADRs plus the set declared in `tools/scripts/verification/architecture-docs-current-state.mjs`, not the whole archive.
 - `lint:agents` may print defects without failing; inspect diagnostics. The Wrangler secrets classifier echoes matched source lines.
 - Repository templates specify Conventional Commit PR titles and prefixed branches; external branch protection and required checks remain unverified.
+- `test:jest` discovers `tests/unit` and `tests/integration` `*.test.js`; `*.spec.js` is Playwright only. `test:go` does not cover deployment/deploy, monitoring or verify-deployment helpers.
 - Source inspection is not production verification; live Cloudflare behavior remains unverified.

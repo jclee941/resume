@@ -1,7 +1,7 @@
 # QUEUES KNOWLEDGE BASE
 
-**Generated:** 2026-11-02
-**Commit:** `f2142ccf`
+**Generated:** 2026-11-05
+**Commit:** `2dfb061d`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -14,7 +14,8 @@ Scope reason: score 2; retained asynchronous-ingestion boundary.
 
 | Task                 | Location                                                  | Notes                                           |
 | -------------------- | --------------------------------------------------------- | ----------------------------------------------- |
-| Batch handling       | `queue-consumer.js`                                       | Consumer orchestration                          |
+| Queue routing        | `queue-consumer.js` `routeQueueBatch`                     | Worker `queue()` entry; selects consumer        |
+| Batch handling       | `queue-consumer.js` `QueueConsumer`                       | Job-queue consumer orchestration                |
 | Enqueue capability   | `queue-request.js`                                        | `QUEUE_NAME`, capability check, request parsing |
 | Producer helper      | `queue-enqueuer.js`                                       | Queue send boundary                             |
 | Message contract     | `queue-message-constants.js`                              | Types, priorities, retry delays                 |
@@ -25,13 +26,15 @@ Scope reason: score 2; retained asynchronous-ingestion boundary.
 
 ## CONVENTIONS
 
+- `routeQueueBatch` dispatches by `batch.queue`: notifications queue to `notification-consumer.js`, `QUEUE_NAME` to `QueueConsumer`; any other queue throws.
+- Malformed notification messages are retried, never acknowledged.
 - Sort batch messages by priority before dispatch.
 - Add message types in the constants module, processor, dispatcher, and associated tests together.
 - Preserve APPLY fields `candidates`, `platforms`, `searchCriteria`, and `triggerType` when forwarding to the application Workflow.
 - Record handled failures in metrics as well as retry results.
 - Dead-letter KV entries need expiry and diagnostic context without secrets.
 - Notification consumers export Worker-style default objects; queue infrastructure uses named classes/helpers.
-- Queue integration coverage is in `tests/unit/job-dashboard/`; this directory has no colocated tests.
+- Queue integration coverage is in `tests/unit/job-dashboard/` (routing: `queue-routing.test.js`); this directory has no colocated tests.
 
 ## ANTI-PATTERNS
 
