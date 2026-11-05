@@ -1,7 +1,7 @@
 # JOB DASHBOARD SOURCE KNOWLEDGE BASE
 
-**Generated:** 2026-11-02
-**Commit:** `f2142ccf`
+**Generated:** 2026-11-05
+**Commit:** `2dfb061d`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -43,7 +43,7 @@ src/
 - MCP enters after rate limiting and route-context construction; protocol policy lives in `mcp/AGENTS.md`.
 - Instantiate shared route context once per request; registrars consume it.
 - Attach request/response logging with `ctx.waitUntil()` using the request-scoped logger.
-- Delegate queue batches to `QueueConsumer` and cron events to `handlers/scheduled/cron-router.js`.
+- Delegate queue batches to `queues/queue-consumer.js` `routeQueueBatch` and cron events to `handlers/scheduled/cron-router.js`.
 - Keep the six Workflow classes and `BrowserSessionDO` exported for the portfolio composition.
 - `services/browser-session.js` acquires and releases `BROWSER_SESSION` sessions; the object's old "ZERO callers" comment is stale.
 - The object owns persisted locks and alarms; its broker owns dependency-injected session selection.

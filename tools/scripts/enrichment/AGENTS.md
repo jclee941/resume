@@ -1,7 +1,7 @@
 # ENRICHMENT KNOWLEDGE BASE
 
-**Generated:** 2026-10-14
-**Commit:** `493d44f6`
+**Generated:** 2026-11-05
+**Commit:** `2dfb061d`
 **Branch:** `master`
 
 ## OVERVIEW
