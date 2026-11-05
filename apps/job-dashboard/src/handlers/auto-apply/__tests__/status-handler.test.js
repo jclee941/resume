@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'node:test';
+import { describe, it, test } from 'node:test';
 
 import { encrypt } from '@resume/shared/crypto';
 
@@ -48,4 +48,75 @@ describe('getAutoApplyStatus', () => {
     }
     assert.equal(body.platforms.wanted.mode, 'direct');
   });
+});
+
+function database(failure) {
+  return {
+    prepare(sql) {
+      return {
+        bind() {
+          return {
+            async all() {
+              if (failure === 'config') throw new Error('D1 unavailable');
+              return {
+                results: [
+                  { key: 'auto_apply_enabled', value: 'true' },
+                  { key: 'max_daily_applications', value: '30' },
+                  { key: 'min_match_score', value: '60' },
+                ],
+              };
+            },
+            async first() {
+              if (
+                failure === 'counts' ||
+                (failure === 'platform-count' && sql.includes('source =')) ||
+                (failure === 'approvals' &&
+                  (sql.includes('approval_requests') || sql.includes('status IN')))
+              ) {
+                throw new Error('D1 unavailable');
+              }
+              if (failure === 'legacy-approvals' && sql.includes('approval_requests')) {
+                throw new Error('no such table: approval_requests');
+              }
+              return { count: sql.includes('status IN') ? 2 : 7 };
+            },
+          };
+        },
+      };
+    },
+  };
+}
+
+test('status reports stored configuration and application counts', async () => {
+  const response = await getAutoApplyStatus({ JOB_DB: database() });
+  const body = await response.json();
+  assert.equal(response.status, 200);
+  assert.equal(body.enabled, true);
+  assert.equal(body.todayApplications, 7);
+  assert.equal(body.remaining, 23);
+  assert.equal(body.minMatchScore, 60);
+  assert.equal(body.pendingApprovals, 2);
+});
+
+for (const failure of ['config', 'counts', 'platform-count', 'approvals']) {
+  test(`status reports unavailable storage when ${failure} reads fail`, async () => {
+    const response = await getAutoApplyStatus({ JOB_DB: database(failure) });
+    const body = await response.json();
+    assert.equal(response.status, 503);
+    assert.equal(body.code, 'AUTOMATION_STATUS_UNAVAILABLE');
+    assert.equal('enabled' in body, false);
+    assert.equal(JSON.stringify(body).includes('D1 unavailable'), false);
+  });
+}
+
+test('status keeps disabled defaults when the database binding is absent', async () => {
+  const response = await getAutoApplyStatus({});
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).enabled, false);
+});
+
+test('status preserves legacy pending-approval counting', async () => {
+  const response = await getAutoApplyStatus({ JOB_DB: database('legacy-approvals') });
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).pendingApprovals, 2);
 });
