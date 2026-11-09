@@ -1,5 +1,12 @@
 # Security Audit Report
 
+> **Historical audit snapshot — 2026-03-31.** Findings and tool results below
+> describe the files and state reviewed on that date; they are not current
+> security assurance or evidence of today's production configuration. For
+> current automation boundaries, see
+> [Foreign Application Automation](./FOREIGN_APPLICATION_AUTOMATION.md) and
+> [the secret boundary policy](./wrangler-vars-vs-secrets.md).
+
 **Project:** 입사지원자동화 (Job Application Automation)  
 **Audit Date:** 2026-03-31  
 **Auditor:** AI Security Audit  

@@ -4,9 +4,19 @@
 
 > **2026-09-29:** `apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)). Its paths below no longer exist, and the items that target them are closed.
 
+> The inventory and proposed migration below describe the 2026-05-05 snapshot. They do not establish current work or a successor owner for the retired orchestrator. The current request-level Worker limiter is [`kv-sliding-window.js`](../../packages/shared/src/rate-limit/kv-sliding-window.js), called from the dashboard entry; see the [component inventory](./component-inventory.md) for current system ownership.
+
 This document maps every rate-limiting strategy in the monorepo, identifies
 the genuinely-different deployment contexts vs the duplicated token-bucket
 logic, and prescribes the canonical primitives.
+
+## Contents
+
+- [Inventory](#inventory)
+- [Identical / divergent decisions](#identical--divergent-decisions)
+- [Migration plan](#migration-plan)
+- [Verification](#verification-this-pr)
+- [See also](#see-also)
 
 ---
 
@@ -130,6 +140,6 @@ implements.
 - [`docs/architecture/SSOT_IMPROVEMENT_PLAN.md`](./SSOT_IMPROVEMENT_PLAN.md)
   § SSOT-035 — original consolidation entry.
 - Issue #15 [P1-4] — Cloudflare native rate-limit binding (operator-blocked).
-- `apps/job-server/src/shared/services/orchestrator/rate-limiter.js` (since
-  removed) — most-mature implementation; the canonical algorithms will mirror its
-  shape minus the platform-specific budgets.
+- `apps/job-server/src/shared/services/orchestrator/rate-limiter.js` (removed
+  with the job-server) — historical implementation reference only. No current
+  successor for its in-process rate limiter is identified here.

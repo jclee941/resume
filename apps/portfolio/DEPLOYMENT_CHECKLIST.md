@@ -1,5 +1,13 @@
 # SEO Implementation - Deployment Checklist
 
+> **Historical record — 2026-01-15.** The READY, APPROVED, validation, and
+> deployment entries below describe the state recorded on that date; they do
+> not describe current readiness or completed deployment. Do not use the
+> historical staging, commit, deploy, or verification steps as a current
+> procedure. Follow the [current deployment guide](../../docs/deployment-guide.md),
+> which identifies the root `wrangler.jsonc` and Cloudflare Workers Builds as
+> production deployment authority.
+
 **Date**: 2026-01-15  
 **Status**: READY FOR DEPLOYMENT ✅
 

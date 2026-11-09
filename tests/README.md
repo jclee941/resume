@@ -2,13 +2,6 @@
 
 This directory holds the automated test suites for the resume project.
 
-## Current status
-
-- 782 node tests pass
-- 27 E2E tests pass, with 4 skipped
-- Jest suite total: 1165 tests
-- Visual regression is partially implemented, not fully rolled out
-
 ## Commands
 
 ```bash
@@ -16,18 +9,23 @@ npm test
 npm run test:e2e:smoke
 ```
 
-## What changed recently
-
-- `deploy-verification` now skips job health checks when the job endpoint
-  returns 500
+`npm test` runs the repository test chain. E2E runs separately; see the
+[browser test guide](e2e/AGENTS.md) for project and environment details.
 
 ## Test layout
 
-- `unit/` for Jest unit coverage
-- `e2e/` for Playwright browser flows
-- `integration/` for cross-module coverage
+- [Unit test ownership](unit/AGENTS.md) covers module regressions and runner
+  selection.
+- [Integration test ownership](integration/AGENTS.md) covers cross-module
+  contracts.
+- [E2E test ownership](e2e/AGENTS.md) covers Playwright browser flows.
+- Root [`jest.config.cjs`](../jest.config.cjs) and
+  [`playwright.config.js`](../playwright.config.js) define discovery and browser
+  projects.
 
 ## Notes
 
 - Keep E2E waits explicit, especially on portfolio pages.
 - Use the smallest test command that proves the change.
+- Historical test counts are not current verification results; use the command
+  output from the run being reviewed.

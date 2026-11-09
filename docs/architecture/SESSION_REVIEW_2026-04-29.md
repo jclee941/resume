@@ -1,10 +1,29 @@
 # Session Review & Report — 2026-04-29
 
-**Repository**: `resume` (<https://github.com/jclee941/resume>)  
-**Production**: <https://resume.jclee.me> v1.14.18 healthy  
-**Session HEAD**: `0b6775a` (in sync with origin/master)  
-**Review type**: Senior holistic retrospective (Oracle assessment)  
-**Oracle final grade**: **A−** (deliverables) / **B+** (process)
+> Historical session report dated 2026-04-29. Production, CI, test totals,
+> follow-ups, and relative time horizons below are the report's snapshot, not
+> current status.
+
+- **Repository:** `resume` (<https://github.com/jclee941/resume>)
+- **Production:** <https://resume.jclee.me> v1.14.18 healthy
+- **Session HEAD:** `0b6775a` (reported in sync with origin/master)
+- **Review type:** Senior holistic retrospective (Oracle assessment)
+- **Oracle final grade:** **A−** (deliverables) / **B+** (process)
+
+## Contents
+
+- [Executive summary](#0-executive-summary)
+- [Round timeline](#1-round-by-round-timeline)
+- [Cumulative deliverables](#2-cumulative-deliverables)
+- [Findings disposition](#3-findings-disposition-46-total)
+- [Verification evidence](#4-verification-evidence)
+- [Oracle review](#5-oracle-holistic-review-verbatim-grades)
+- [Architect critique](#6-senior-architect-critique-oracles-strongest)
+- [Re-verification items](#7-items-requiring-re-verification-oracle-flagged)
+- [Process patterns](#8-process-patterns-that-wouldnt-scale)
+- [Recommendations](#9-recommendations-going-forward)
+- [Final summary](#10-final-summary)
+- [References](#references)
 
 ---
 
@@ -25,6 +44,10 @@ runbooks ready.
 | Tracked files      | 1,462 (down from 2,022 at session start)         |
 | Dependabot PRs     | **10 active** (config working)                   |
 | Open runbooks      | 2 (operator action required)                     |
+
+The 2,061 test total is the session's reported sum: 1,200 Jest, 826 job-server,
+and 35 other tests. The 35 comprises 13 schema, 18 tools, and 4 CLI tests listed
+in the verification section.
 
 ---
 
@@ -76,6 +99,10 @@ valid.**
 ---
 
 ## 3. Findings Disposition (46 total)
+
+The disposition groups below preserve the report's original 46-item tally.
+Later sections revisit selected items, so their repeated status descriptions
+are updates to findings rather than additional findings.
 
 ### ✅ RESOLVED in-session (32)
 
@@ -315,6 +342,9 @@ norm":
 - 🔄 10 dependabot PRs awaiting triage decision
 - 🔄 7 re-verification items per Oracle round-5 review
 
+The relative horizons in section 9 refer to the 2026-04-29 session. This report
+does not establish current ownership or completion of those follow-ups.
+
 **Production state at end of session**: **v1.14.18 healthy ✅**
 
 ---
@@ -323,7 +353,7 @@ norm":
 
 - Session start: `521a8ba` (v1.14.8) — pre-tech-debt audit
 - Session HEAD: `0b6775a` (v1.14.18) — post-tech-debt audit
-- Oracle final review session: `ses_228bcbadfffe6EZy4tDrbDElIp`
+- Oracle final review session identifier omitted
 - Audit docs: 4 files in `docs/architecture/`
 - Runbooks: 2 files in `docs/runbooks/`
 - 22 commits, 10 production deploys, 5 audit/runbook documents

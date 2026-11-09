@@ -34,16 +34,17 @@ scripts/
 
 | Task                      | Location                                        | Notes                                          |
 | ------------------------- | ----------------------------------------------- | ---------------------------------------------- |
-| Asset pipeline            | `build/AGENTS.md`                               | Go PDF, Python PPTX, JS images and variants    |
-| Content pack CLI          | `content/AGENTS.md`                             | Build-time Node exception and D1 transport     |
-| Deploy preflight          | `deployment/AGENTS.md`                          | Operator helper safety                         |
-| Proposal generation       | `enrichment/AGENTS.md`                          | Separate module; generation is not application |
+| Asset pipeline            | [`build/AGENTS.md`](build/AGENTS.md)            | Go PDF, Python PPTX, JS images and variants    |
+| Content pack CLI          | [`content/AGENTS.md`](content/AGENTS.md)        | Build-time Node exception and D1 transport     |
+| Deploy preflight          | [`deployment/AGENTS.md`](deployment/AGENTS.md)  | Operator helper safety                         |
+| Local development         | [`dev/README.md`](dev/README.md)                | Root Wrangler local setup                      |
+| Proposal generation       | [`enrichment/AGENTS.md`](enrichment/AGENTS.md)  | Separate module; generation is not application |
 | Approved changes          | `sync/apply-proposals.go`, `sync/proposal-*.go` | Explicit transactional application             |
-| Secret references         | `onepassword/AGENTS.md`                         | CLI/SDK execution wrappers                     |
-| Release publication       | `release/AGENTS.md`                             | Immutable input and ownership checks           |
-| Config classification     | `security/AGENTS.md`                            | Vars-versus-secrets guard                      |
-| Locale sync               | `utils/AGENTS.md`                               | Path helpers and generation                    |
-| Repository/runtime checks | `verification/AGENTS.md`                        | Offline policies and remote probes             |
+| Secret references         | [1Password guide](onepassword/AGENTS.md)        | CLI/SDK execution wrappers                     |
+| Release publication       | [Release guide](release/AGENTS.md)              | Immutable input and ownership checks           |
+| Config classification     | [Security guide](security/AGENTS.md)            | Vars-versus-secrets guard                      |
+| Locale sync               | [Utilities guide](utils/AGENTS.md)              | Path helpers and generation                    |
+| Repository/runtime checks | [Verification guide](verification/AGENTS.md)    | Offline policies and remote probes             |
 
 ## CONVENTIONS
 

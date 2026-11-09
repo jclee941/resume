@@ -1,5 +1,13 @@
 # Portfolio Worker 요구사항 정의서
 
+> **Historical requirements snapshot:** 작성일 2026-02-05, 개정일 2026-02-11.
+> 이 문서의 체크 표시, 목표치, 완료율은 당시 요구사항 기록이며 현재 배포
+> 상태나 측정 결과를 입증하지 않습니다. 최신 구조와 배포 경계는
+> [문서 허브](./README.md)와 [배포 파이프라인](./architecture/DEPLOYMENT_PIPELINE.md)을
+> 확인하세요. [콘텐츠 소유권 지침](../packages/data/AGENTS.md)도 함께
+> 확인하세요. 수치나 성과를 포트폴리오 문구로 옮기기 전에는 별도 근거를
+> 확인해야 합니다.
+
 ## 프로젝트 개요
 
 | 항목         | 내용                                         |
@@ -307,8 +315,8 @@ npm run build
 # 로컬 개발
 npm run dev
 
-# Production 배포 (root-safe)
-npx wrangler deploy --config wrangler.jsonc --env production
+# Production 배포는 master에 연결된 Workers Builds가 root wrangler.jsonc로 관리합니다.
+# 수동 deploy 스크립트는 의도적으로 비활성화되어 있습니다.
 
 # 헬스체크 확인
 curl -s https://resume.jclee.me/health | jq

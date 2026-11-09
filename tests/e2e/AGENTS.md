@@ -12,17 +12,17 @@ Boundary: measured score 5; retained browser-runtime domain with server, locale,
 
 ## WHERE TO LOOK
 
-| Task                     | Location                                               | Notes                                             |
-| ------------------------ | ------------------------------------------------------ | ------------------------------------------------- |
-| Portfolio interaction    | `portfolio.spec.js`, `portfolio-ui.spec.js`            | Barrel plus focused behavior                      |
-| Dashboard coverage       | `dashboard*.spec.js`, `job-dashboard.spec.js`          | UI and API contracts                              |
-| Security and auth        | `security.spec.js`, `auth-login.spec.js`               | Policy and login behavior                         |
-| Accessibility            | `accessibility*.spec.js`                               | Semantic, keyboard, axe, visual checks            |
-| Device behavior          | `mobile.spec.js`, `mobile-*.spec.js`                   | Mobile-project matching differs                   |
-| Deployment smoke         | `worker-health.spec.js`, `deploy-verification.spec.js` | Root smoke commands                               |
-| Copy ledger              | `portfolio-public-copy-ledger*.js`                     | Capture and source-audit contracts                |
-| Mock and capture helpers | `fixtures/AGENTS.md`                                   | Dashboard environment, mock sites, ledger helpers |
-| Visual assertions        | `visual.spec.js`, `visual-helpers.js`                  | Local ignored baselines                           |
+| Task                     | Location                                                                         | Notes                                             |
+| ------------------------ | -------------------------------------------------------------------------------- | ------------------------------------------------- |
+| Portfolio interaction    | [Portfolio suite](portfolio.spec.js), [Portfolio UI suite](portfolio-ui.spec.js) | Barrel plus focused behavior                      |
+| Dashboard coverage       | `dashboard*.spec.js`, [Dashboard suite](job-dashboard.spec.js)                   | UI and API contracts                              |
+| Security and auth        | `security.spec.js`, `auth-login.spec.js`                                         | Policy and login behavior                         |
+| Accessibility            | `accessibility*.spec.js`                                                         | Semantic, keyboard, axe, visual checks            |
+| Device behavior          | `mobile.spec.js`, `mobile-*.spec.js`                                             | Mobile-project matching differs                   |
+| Deployment smoke         | `worker-health.spec.js`, `deploy-verification.spec.js`                           | Root smoke commands                               |
+| Copy ledger              | `portfolio-public-copy-ledger*.js`                                               | Capture and source-audit contracts                |
+| Mock and capture helpers | [Fixtures guide](fixtures/AGENTS.md)                                             | Dashboard environment, mock sites, ledger helpers |
+| Visual assertions        | `visual.spec.js`, `visual-helpers.js`                                            | Local ignored baselines                           |
 
 ## CONVENTIONS
 

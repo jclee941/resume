@@ -2,15 +2,27 @@
 
 작성일: 2026-07-02
 
+> 소유자 전용 작업 초안이며 2026-07-02 기준의 전략 스냅샷입니다. 아래
+> 시장 해석과 포지셔닝은 검증된 채용 성과나 확정된 경력 주장이 아니라
+> 검토할 가설입니다. 외부 공유 전에는 경력 근거와 시장 자료를 다시
+> 확인하세요.
+
 ## 목표
 
 공개 포트폴리오, 플랫폼 프로필, 지원 운영 패킷을 하나의 흐름으로 맞춘다. 채용 담당자가 `resume.jclee.me`에서 역할 적합성을 빠르게 확인하고, 지원 전에는 `applications/job-search-2026-07/` 패킷으로 맞지 않는 공고를 걸러낸다.
 
 ## 시장 판단
 
-2026년 채용 시장은 보안 인력의 단순 충원보다 검증 가능한 운영 역량을 더 강하게 본다. SANS/GIAC는 AI, 규제, 스킬 갭이 사이버보안 역할을 재정의한다고 설명하고, ISC2는 AI, 클라우드, 리스크, 앱 보안, GRC 역량 수요를 강조한다. Robert Half와 CIO도 Cybersecurity Engineer, DevOps Engineer, Network/Cloud Engineer를 계속 수요가 높은 역할로 분류한다.
+이 시점에 참고한 자료는 사이버보안 역할과 기술 수요의 변화를 다룬다:
+[SANS/GIAC](https://www.sans.org/white-papers/2026-cybersecurity-workforce-research-report),
+[ISC2](https://www.isc2.org/Insights/2026/04/aligning-skills-people-and-hiring-in-cybersecurity),
+[Robert Half](https://www.roberthalf.com/us/en/insights/research/data-reveals-which-technology-roles-are-in-highest-demand),
+and [CIO](https://www.cio.com/article/230935/hiring-the-most-in-demand-tech-jobs-for-2021.html).
+These sources are planning context, not evidence that any role is currently in
+demand for a particular employer.
 
-따라서 포지셔닝은 넓은 개발자가 아니라 다음 문장으로 고정한다.
+포지셔닝 가설은 아래 문장으로 검토한다. 경력 SSoT로 근거를 확인하기
+전에는 확정 프로필 문구로 사용하지 않는다.
 
 > 금융권 보안 인프라와 SIEM 운영을 실제 운영 절차, 증적, 관측성으로 연결하는 보안/SRE 엔지니어.
 

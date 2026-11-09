@@ -4,9 +4,26 @@
 
 **Last Updated**: 2026-02-11
 **Version**: 1.2.0
-**Environment**: Production
+**Status**: Historical mixed infrastructure snapshot; current runtime authority is linked below.
 
-## 🏗️ Infrastructure Overview
+> This page combines a dated architecture snapshot with machine-specific operator
+> notes and unverified performance observations. For current runtime and deploy
+> ownership, use [the system overview](../architecture/system-overview.md),
+> [the deployment pipeline](../architecture/DEPLOYMENT_PIPELINE.md), and the
+> root [`wrangler.jsonc`](../../wrangler.jsonc). Machine-specific details below
+> remain historical reference, not current production instructions.
+
+## Contents
+
+- [Infrastructure overview](#infrastructure-overview)
+- [Component details](#component-details)
+- [Scheduled automation](#5-scheduled-automation-cloudflare-cron-triggers--workflows)
+- [Performance metrics](#performance-metrics)
+- [Maintenance](#maintenance)
+- [References](#references)
+- [Change log](#change-log)
+
+## Infrastructure Overview
 
 ### Deployment Architecture
 
@@ -72,7 +89,7 @@
 2. **Loki 로그 조회**: Grafana → Explore → Loki 데이터소스 선택
 3. **내부망 직접 접근**: VPN 또는 로컬 네트워크에서 내부 IP 사용
 
-## 📊 Component Details
+## Component Details
 
 ### 1. Cloudflare Workers (Edge Computing)
 
@@ -261,8 +278,12 @@ failed workflow start fails the cron run. D1 Time Travel is the D1 backup. Uptim
 
 #### Auto-apply
 
-`ApplicationWorkflow` (`apps/job-dashboard/src/workflows/application/`) searches Wanted and Remember,
-scores every posting, and submits each one at or above the threshold without human approval.
+`ApplicationWorkflow` (`apps/job-dashboard/src/workflows/application/`) is started by the
+configured scheduled path with `autoApprove: true`. This is existing enabled policy, not
+a blanket bypass of eligibility or platform controls: D1 configuration and the cron
+kill switch determine whether the live run starts, and its existing score threshold
+(60), daily cap (30), company/job deduplication, prior-rejection, platform-enabled,
+and real-submit gates remain in force.
 
 - D1 `config` drives it: `auto_apply_enabled` (kill switch), `min_match_score`,
   `max_daily_applications` and `auto_apply_keywords` (JSON array, up to 12 keywords). Wanted is read in
@@ -273,14 +294,17 @@ scores every posting, and submits each one at or above the threshold without hum
 - A posting is skipped when its job or its company already has an application in D1. Companies are
   compared by `companyKey` (`handlers/auto-apply/duplicate-company.js`), which ignores parenthesized
   parts, legal-form words and punctuation, because Wanted and Remember write one company differently.
-  A saved posting does not block its company, and the daily cap counts only the jobs a run approves.
+  A saved posting does not block its company. The daily cap limits the run to 30 applications.
 - A submission that finds the job already applied is recorded as applied too. Remember submissions
   snapshot the open profile for the posting before applying, and reach Remember through Browser
   Rendering REST.
 - The dashboard's auto-apply button calls `POST /job/api/auto-apply/start` (admin): `{"dryRun": true}`
   starts a preview run at any time; a live start answers 409 while auto-apply is disabled.
 
-## 📈 Performance Metrics
+## Performance Metrics
+
+The dated measurements and limits in this section are historical observations and
+have not been independently verified as current.
 
 ### Current Performance (2025-11-20)
 
@@ -321,21 +345,17 @@ scores every posting, and submits each one at or above the threshold without hum
 - CPU time: 50ms (current: ~5ms)
 - Memory: 128MB (current: ~10MB)
 
-## 🔧 Maintenance
+## Maintenance
 
 ### Update Procedures
 
 **Worker Deployment**:
 
 ```bash
-# Standard deployment: git push to master, Cloudflare Workers Builds deploys
-# (manual `npm run deploy` is intentionally disabled)
+# Production deployment ownership is documented in the current deployment pipeline.
 
 # Build only
 npm run build
-
-# Deploy with Wrangler (root-safe)
-npm run deploy:wrangler:root
 ```
 
 **Version Management**:
@@ -391,14 +411,14 @@ sudo systemctl restart prometheus
 5. Verify health endpoint
 6. Monitor Grafana dashboard
 
-## 📚 References
+## References
 
 - [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
 - [Prometheus Best Practices](https://prometheus.io/docs/practices/)
 - [Grafana Dashboard Guide](https://grafana.com/docs/grafana/latest/dashboards/)
 - [automation Workflow Documentation](https://docs.automation.io/)
 
-## 📝 Change Log
+## Change Log
 
 ### 2025-11-20
 
@@ -421,7 +441,7 @@ sudo systemctl restart prometheus
 - ✅ Basic health check endpoint
 - ✅ automation monitoring workflow
 
-## 🔒 Internal Service Access
+## Internal Service Access
 
 > **Note**: Prometheus and Loki do not have public DNS. Access via internal
 > network or Grafana proxy.
@@ -440,7 +460,7 @@ sudo systemctl restart prometheus
 3. **SSH Tunnel**: `ssh -L 9090:192.168.50.100:9090 user@gateway` for remote
    access
 
-## 🔗 Quick Links
+## Quick Links
 
 - **Live Site**: <https://resume.jclee.me>
 - **Grafana**: <https://grafana.jclee.me> (✅ Public)

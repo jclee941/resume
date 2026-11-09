@@ -1,6 +1,27 @@
 # Figma Import Guide
 
-This guide shows you how to recreate the Neu-brutalism design system in Figma.
+> **Reference snapshot (2026-11-09).** This describes an earlier Figma design
+> direction; it has not been checked against the current site design. The token
+> file is [`docs/figma-tokens.json`](../figma-tokens.json), and the current visual
+> direction is described in [the portfolio visual masterplan](../architecture/portfolio-visual-masterplan.md).
+
+## Contents
+
+1. [Quick start](#quick-start-5-minutes)
+2. [Color styles](#1-color-styles)
+3. [Text styles](#2-text-styles)
+4. [Effect styles](#3-effect-styles-shadows)
+5. [Component library](#4-component-library)
+6. [Layout grid](#5-layout-grid)
+7. [Pages setup](#6-pages-setup)
+8. [Component organization](#7-component-organization)
+9. [Prototyping](#8-prototyping)
+10. [Export settings](#9-export-settings)
+11. [Plugins](#10-figma-plugins-to-install)
+12. [Keyboard shortcuts](#11-keyboard-shortcuts)
+13. [Resources](#12-resources--next-steps)
+14. [Visual component gallery](#13-visual-component-gallery)
+15. [Final checklist](#14-checklist)
 
 ---
 
@@ -16,7 +37,7 @@ This guide shows you how to recreate the Neu-brutalism design system in Figma.
 
 2. **Import Tokens**:
    - In Tokens Studio, click "Import" → "From File"
-   - Select `docs/figma-tokens.json` from this repository
+   - Select [`docs/figma-tokens.json`](../figma-tokens.json) from this repository
    - Click "Import" → All design tokens will be added
 
 3. **Apply to Components**:

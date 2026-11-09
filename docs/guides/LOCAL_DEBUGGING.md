@@ -1,510 +1,68 @@
-# 🔧 Local CI/CD Debugging Guide
+# Local Debugging Guide
 
-> Comprehensive guide to the local debugging infrastructure for the resume
-> monorepo.
+This guide covers supported local development and test entry points. The current
+[GitHub Actions workflow](../../.github/workflows/ci.yml) has one read-only
+`validate` job; it does not use a local CI simulator, run E2E tests, or deploy.
+Production deployment is owned by [Cloudflare Workers Builds](../architecture/DEPLOYMENT_PIPELINE.md).
 
-## 📋 Overview
+## Contents
 
-This project includes a suite of local debugging tools that let you simulate the
-full CI pipeline, run development services, and mock external dependencies — all
-without pushing to GitHub or depending on remote infrastructure.
+- [Start local development](#start-local-development)
+- [Run tests](#run-tests)
+- [Debug browser tests](#debug-browser-tests)
+- [Use test mocks](#use-test-mocks)
+- [Find current owners](#find-current-owners)
 
-**Why local debugging?**
+## Start local development
 
-- **Faster feedback loops** — catch CI failures in seconds, not minutes
-- **Offline development** — no dependency on GitHub Actions, automation, or Cloudflare
-- **Deterministic testing** — mock external services with predictable behavior
-- **Debugging isolation** — reproduce and fix issues without polluting CI
-  history
-
-### Tool inventory
-
-| Tool                  | Location                | Purpose                           |
-| --------------------- | ----------------------- | --------------------------------- |
-| `run-ci-local.go`     | `tools/scripts/`        | Simulate CI pipeline locally      |
-| `local-dev-up/`       | `tools/scripts/`        | Orchestrate local dev environment |
-| `cf-bindings-mock.js` | `infrastructure/mocks/` | Mock Cloudflare Worker bindings   |
-
----
-
-## 🚀 Quick Start
+From the repository root:
 
 ```bash
-# See all CI simulation options
-go run tools/scripts/run-ci-local.go --help
-
-# Start the local dev environment (portfolio Worker)
-go -C tools/scripts run ./local-dev-up --all
+npm run dev
 ```
 
----
+This starts the configured local development environment. Check the startup output
+for the local address and any required local content setup.
 
-## 📖 Tools Reference
+## Run tests
 
-### `run-ci-local.go` — CI Pipeline Simulator
-
-Simulates the full GitHub Actions CI pipeline locally by parsing
-`.github/workflows/ci.yml`, mapping workflow jobs to local commands, and
-executing them in the correct stage order.
-
-#### Usage
+Run the repository test suite with:
 
 ```bash
-# Run full pipeline (all 8 stages)
-go run tools/scripts/run-ci-local.go
-
-# Run specific stage(s)
-go run tools/scripts/run-ci-local.go --stage lint
-go run tools/scripts/run-ci-local.go --stage lint,typecheck,test
-
-# Dry run — see what would execute without running
-go run tools/scripts/run-ci-local.go --dry-run
-
-# Mock mode — inject mock service environment variables
-go run tools/scripts/run-ci-local.go --mock
-
-# Combine flags
-go run tools/scripts/run-ci-local.go --stage test,build --mock --dry-run
+npm test
 ```
 
-#### Flags
-
-| Flag        | Default | Description                                                                                                               |
-| ----------- | ------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `--stage`   | _(all)_ | Comma-separated stage names to run: `analyze`, `validate`, `lint`, `typecheck`, `data-drift`, `test`, `security`, `build` |
-| `--dry-run` | `false` | Print commands without executing                                                                                          |
-| `--mock`    | `false` | Set mock environment variables (`CI_LOCAL_MOCK=1`, `MOCK_SERVICES=1`, `USE_MOCK_SERVICES=true`)                           |
-
-#### Stage execution order
-
-Stages execute in this fixed order (matching CI dependency graph):
-
-1. `analyze` → `validate` → `lint` → `typecheck` → `data-drift` → `test` →
-   `security` → `build`
-
-#### Environment variables injected
-
-All commands run with:
-
-- `CI=true` — signals CI mode to test frameworks
-- `LOCAL_CI_SIMULATION=1` — distinguishes from real CI
-
-With `--mock`:
-
-- `CI_LOCAL_MOCK=1`
-- `MOCK_SERVICES=1`
-- `USE_MOCK_SERVICES=true`
-
-#### Exit codes
-
-| Code | Meaning                   |
-| ---- | ------------------------- |
-| `0`  | All stages passed         |
-| `1`  | One or more stages failed |
-
-#### Report output
-
-Each run generates a timestamped report at
-`.ci-local/ci-report-YYYYMMDD-HHMMSS.txt` containing:
-
-- Timestamp, repository path, workflow file
-- Per-stage results with command-level pass/fail and durations
-- Summary: passed/failed/skipped counts and total duration
-
----
-
-### `local-dev-up/` — Local Dev Environment Orchestrator
-
-Starts, health-checks, and manages multiple local development services with
-aggregated log output and graceful shutdown.
-
-#### Usage
+The separate Playwright suite is available locally with:
 
 ```bash
-# Start all services (portfolio Worker)
-go -C tools/scripts run ./local-dev-up --all
-
-# Show local-dev options
-go -C tools/scripts run ./local-dev-up
-
-# Start portfolio dev server
-go -C tools/scripts run ./local-dev-up --portfolio
+npm run test:e2e
 ```
 
-#### Service flags
+E2E tests are not part of the current GitHub validation workflow. For the current
+command list, see the root [`package.json`](../../package.json).
 
-| Flag          | Default | Description                                                   |
-| ------------- | ------- | ------------------------------------------------------------- |
-| `--portfolio` | `false` | Start portfolio dev server (`npm start` in `apps/portfolio/`) |
-| `--all`       | `false` | Enable all services                                           |
+## Debug browser tests
 
-#### Service details
-
-| Service   | URL                     | Health Endpoint | Health Timeout | Command                            |
-| --------- | ----------------------- | --------------- | -------------- | ---------------------------------- |
-| portfolio | `http://localhost:8787` | `/`             | 40s            | `npm start` (in `apps/portfolio/`) |
-
-#### Features
-
-- **Parallel startup** — all services start concurrently with spinner indicators
-- **Health check polling** — each service is polled until healthy or timeout
-- **Aggregated logs** — color-coded, prefixed log streams from all services
-- **Graceful shutdown** — `Ctrl+C` sends `SIGINT` to process groups, then
-  `SIGKILL` after 10s timeout
-- **Unexpected exit handling** — detects early service exits and reports errors
-
-#### Prerequisites
-
-- **portfolio**: Node.js installed, `npm ci` run
-
----
-
-### `cf-bindings-mock.js` — Cloudflare Worker Binding Mocks
-
-Full-fidelity mock implementations of Cloudflare Worker bindings (D1, KV, R2,
-Queue) backed by local SQLite, JSON files, and filesystem storage.
-
-#### Classes
-
-| Class             | Cloudflare Equivalent | Local Backend                    | Persistence Path            |
-| ----------------- | --------------------- | -------------------------------- | --------------------------- |
-| `MockD1Database`  | `D1Database`          | SQLite via `better-sqlite3`      | `d1.sqlite` (under dataDir) |
-| `MockKVNamespace` | `KVNamespace`         | In-memory + JSON file            | `kv-*.json` (under dataDir) |
-| `MockR2Bucket`    | `R2Bucket`            | Local filesystem                 | `r2/` (under dataDir)       |
-| `MockQueue`       | `Queue`               | In-memory with worker simulation | _(not persisted)_           |
-
-#### Quick usage
-
-```javascript
-import { createMockEnv, resetMockData } from './infrastructure/mocks/cf-bindings-mock.js';
-
-// Create mock environment with all default bindings
-const env = createMockEnv();
-
-// Use D1
-await env.JOB_DB.exec('CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT)');
-const stmt = env.JOB_DB.prepare('INSERT INTO users VALUES (?1, ?2)').bind('1', 'Alice');
-await stmt.run();
-const user = await env.JOB_DB.prepare('SELECT * FROM users WHERE id = ?1').bind('1').first();
-
-// Use KV
-await env.SESSIONS.put('session-abc', JSON.stringify({ userId: '1' }), { expirationTtl: 3600 });
-const session = await env.SESSIONS.get('session-abc', 'json');
-
-// Use R2
-await env.R2.put('reports/2026-03.pdf', Buffer.from('pdf content'));
-const obj = await env.R2.get('reports/2026-03.pdf');
-const text = await obj.text();
-
-// Use Queue
-const queue = env.CRAWL_TASKS;
-await queue.send({ url: 'https://example.com', depth: 1 });
-
-// Clean up persisted data
-resetMockData();
-```
-
-#### `createMockEnv()` options
-
-```javascript
-createMockEnv({
-  // Custom data directory (default: infrastructure/mocks/data/)
-  dataDir: '/tmp/mock-data',
-
-  // Queue worker function for processing messages
-  queueWorker: async (batch) => {
-    for (const msg of batch.messages) {
-      console.log('Processing:', msg.body);
-      msg.ack();
-    }
-  },
-
-  // Additional KV binding names
-  kvBindings: ['MY_CUSTOM_KV', 'CACHE_KV'],
-
-  // Include default aliases like BUCKET (default: true)
-  includeDefaultAliases: true,
-});
-```
-
-#### Default bindings
-
-| Binding Name    | Type  | Description      |
-| --------------- | ----- | ---------------- |
-| `JOB_DB`        | D1    | Primary database |
-| `SESSIONS`      | KV    | Session storage  |
-| `RATE_LIMIT_KV` | KV    | Rate limiting    |
-| `NONCE_KV`      | KV    | Nonce tracking   |
-| `R2`            | R2    | Object storage   |
-| `CRAWL_TASKS`   | Queue | Task queue       |
-| `BUCKET`        | R2    | Alias for `R2`   |
-
-#### Data persistence paths
-
-All mock data persists under `data/` within `infrastructure/mocks/` by default:
-
-```text
-infrastructure/mocks/data/
-├── d1.sqlite              # D1 database (SQLite, WAL mode)
-├── kv-sessions.json       # SESSIONS KV store
-├── kv-rate-limit.json     # RATE_LIMIT_KV store
-├── kv-nonce.json          # NONCE_KV store
-└── r2/                    # R2 bucket (filesystem mirror)
-    └── *.meta.json        # R2 object metadata sidecars
-```
-
----
-
-## 🗺️ CI Stage Mapping
-
-How local stages map to the real CI pipeline in `.github/workflows/ci.yml`:
-
-| Local Stage  | CI Job(s)                | Local Commands                                                                                          | CI Conditions                                      |
-| ------------ | ------------------------ | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `analyze`    | `analyze`                | `GO111MODULE=off go run ./tools/ci/affected`                                                            | Always runs                                        |
-| `validate`   | `validate-cloudflare`    | `go run ./tools/ci/validate-cloudflare-native.go`                                                       | portfolio affected (ADR 0009)                      |
-|              |                          | `npx wrangler types /tmp/portfolio-worker-types.d.ts --config wrangler.jsonc --env production`          |                                                    |
-| `lint`       | `lint`                   | `npm run lint`                                                                                          | Always runs                                        |
-| `typecheck`  | `typecheck`              | `npm run typecheck`                                                                                     | Always runs                                        |
-| `data-drift` | `data-drift`             | `npm run sync:data`                                                                                     | data or portfolio affected                         |
-|              |                          | `git diff --exit-code apps/portfolio/data.json apps/portfolio/data_en.json apps/portfolio/data_ja.json` |                                                    |
-| `test`       | `test-unit` + `test-e2e` | `npm test`                                                                                              | Always (unit); portfolio affected (e2e)            |
-|              |                          | `npm run test:coverage`                                                                                 |                                                    |
-|              |                          | `npm run sync:data`                                                                                     |                                                    |
-|              |                          | `npm --prefix apps/portfolio run build`                                                                 |                                                    |
-|              |                          | `npm run test:e2e:smoke`                                                                                |                                                    |
-| `security`   | `security-scan`          | `gitleaks detect --source . --config .gitleaks.toml --verbose --no-git`                                 | Always runs                                        |
-|              |                          | `npm audit --audit-level=high`                                                                          |                                                    |
-| `build`      | `build`                  | `npm run sync:data`                                                                                     | portfolio affected; after lint+typecheck+test pass |
-|              |                          | `npm --prefix apps/portfolio run build`                                                                 |                                                    |
-
-### CI dependency graph
-
-```text
-analyze ──→ validate-cloudflare ──┐
-       ──→ lint ──────────────────┤
-       ──→ typecheck ─────────────┤──→ build ──→ elk-ingest
-       ──→ data-drift ────────────┤
-       ──→ test-unit ─────────────┤
-       ──→ test-e2e ──────────────┤
-       ──→ security-scan ─────────┘
-```
-
----
-
-## 🐛 Common Debugging Scenarios
-
-### Test CI pipeline locally before pushing
+Use Playwright's supported CLI options with the E2E suite:
 
 ```bash
-# Full pipeline check
-go run tools/scripts/run-ci-local.go
-
-# Quick validation (lint + typecheck only)
-go run tools/scripts/run-ci-local.go --stage lint,typecheck
-
-# Check what CI would run without executing
-go run tools/scripts/run-ci-local.go --dry-run
-
-# Review the report
-cat .ci-local/ci-report-*.txt | tail -20
+npx playwright test --debug
 ```
 
-### Debug failing E2E tests
+The command runs tests locally and may require the browser dependencies and
+fixtures documented in [`tests/AGENTS.md`](../../tests/AGENTS.md).
 
-```bash
-# Start the local dev server
-go -C tools/scripts run ./local-dev-up --portfolio
+## Use test mocks
 
-# In another terminal, run E2E tests with debug output
-DEBUG=pw:api npm run test:e2e:smoke
+Cloudflare binding mock ownership and migration notes are documented in
+[`integration-test-mock-migration.md`](../architecture/integration-test-mock-migration.md).
+Follow the test-specific fixture instructions there rather than assuming a mock
+directory or persistent data path.
 
-# Or run specific test file
-npx playwright test tests/e2e/specific-test.spec.ts --headed --debug
+## Find current owners
 
-# Check Playwright report
-npx playwright show-report
-```
-
-### Mock Cloudflare bindings for unit tests
-
-```javascript
-// In your test file
-import { createMockEnv, resetMockData } from '../../infrastructure/mocks/cf-bindings-mock.js';
-
-describe('Worker handler', () => {
-  let env;
-
-  beforeEach(() => {
-    resetMockData();
-    env = createMockEnv();
-  });
-
-  afterAll(() => {
-    env.JOB_DB.close();
-    resetMockData();
-  });
-
-  it('should store and retrieve data', async () => {
-    await env.JOB_DB.exec('CREATE TABLE items (id TEXT, value TEXT)');
-    await env.JOB_DB.prepare('INSERT INTO items VALUES (?1, ?2)').bind('key1', 'value1').run();
-
-    const result = await env.JOB_DB.prepare('SELECT * FROM items WHERE id = ?1')
-      .bind('key1')
-      .first();
-
-    expect(result.value).toBe('value1');
-  });
-});
-```
-
-### Run full local stack
-
-```bash
-# Terminal 1: Start all services
-go -C tools/scripts run ./local-dev-up --all
-
-# Terminal 2: Run CI validation against local stack
-go run tools/scripts/run-ci-local.go --mock
-
-# Terminal 3: Test specific webhook integration
-curl -X POST http://localhost:15678/webhook/resume-deploy \
-  -d '{"trigger":"manual"}' -H "Content-Type: application/json"
-```
-
----
-
-## 🔄 Integration with `act`
-
-[`act`](https://github.com/nektos/act) runs GitHub Actions workflows locally
-using Docker. It complements `run-ci-local.go` for testing the actual workflow
-YAML.
-
-### Installation
-
-```bash
-# macOS
-brew install act
-
-# Linux
-curl -s https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
-```
-
-### Usage with this repo
-
-```bash
-# List available jobs
-act -l
-
-# Run full CI pipeline
-act push
-
-# Run specific job
-act -j lint
-act -j typecheck
-act -j test-unit
-
-# Run with secrets
-act push --secret-file .env.act
-
-# Dry run
-act push -n
-```
-
-### `.env.act` file (create if needed)
-
-```env
-# Minimal secrets for local act runs
-CI=true
-NODE_VERSION=22
-```
-
-### Differences from `run-ci-local.go`
-
-| Aspect       | `run-ci-local.go`       | `act`                        |
-| ------------ | ----------------------- | ---------------------------- |
-| Speed        | Fast (native execution) | Slower (Docker containers)   |
-| Fidelity     | Command-level mapping   | Full workflow YAML execution |
-| Dependencies | Local toolchain         | Docker                       |
-| Environment  | Approximates CI env     | Reproduces CI env            |
-| Use case     | Quick pre-push check    | Debug workflow YAML issues   |
-
-**Recommendation**: Use `run-ci-local.go` for fast pre-push validation. Use
-`act` when debugging workflow-level issues (job dependencies, conditional
-expressions, artifact passing).
-
----
-
-## 🔍 Troubleshooting
-
-### `run-ci-local.go` fails to find repository root
-
-**Symptom**: `ERROR repository root not found (missing
-.github/workflows/ci.yml)`
-
-**Fix**: Run from within the repository, or ensure `.github/workflows/ci.yml`
-exists.
-
-```bash
-cd /path/to/resume
-go run tools/scripts/run-ci-local.go
-```
-
-### `gitleaks` not found during security stage
-
-**Symptom**: `exec: "gitleaks": executable file not found in $PATH`
-
-**Fix**: Install gitleaks or skip the security stage.
-
-```bash
-# Install
-brew install gitleaks  # macOS
-# or
-go install github.com/gitleaks/gitleaks/v8@latest
-
-# Or skip the stage
-go run tools/scripts/run-ci-local.go --stage lint,typecheck,test,build
-```
-
-### Portfolio dev server won't start
-
-**Symptom**: Health check timeout for portfolio service.
-
-**Fix**: Ensure dependencies are installed and data is synced.
-
-```bash
-npm ci
-npm run sync:data
-npm --prefix apps/portfolio run build
-# Then retry
-go -C tools/scripts run ./local-dev-up --portfolio
-```
-
-### `cf-bindings-mock.js` import fails
-
-**Symptom**: `Cannot find module 'better-sqlite3'`
-
-**Fix**: Install the dependency.
-
-```bash
-npm ci
-# or specifically
-npm install better-sqlite3
-```
-
-### Stale mock data causing test failures
-
-**Symptom**: Tests fail with unexpected data from previous runs.
-
-**Fix**: Reset mock data.
-
-```javascript
-import { resetMockData } from './infrastructure/mocks/cf-bindings-mock.js';
-resetMockData();
-```
-
-Or delete manually:
-
-```bash
-rm -rf infrastructure/mocks/data/
-```
+- [CI workflow](../../.github/workflows/ci.yml): read-only validation.
+- [Deployment pipeline](../architecture/DEPLOYMENT_PIPELINE.md): production build
+  and deploy authority.
+- [Package scripts](../../package.json): supported local commands.
+- [Test guidance](../../tests/AGENTS.md): test suites and fixture selection.

@@ -1,12 +1,14 @@
 # Type-Safe Env Validation Plan — Issues #34, #35 / SSOT-029, SSOT-031
 
-**Status**: Active plan · **Owner**: Platform · **Last Updated**: 2026-05-05
+**Status**: Historical plan snapshot · **Owner**: Platform · **Snapshot date**: 2026-05-05
 
-> **2026-09-29:** `apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)). Its paths below no longer exist, and the items that target them are closed.
+> **2026-09-29:** `apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)). Its paths below no longer exist, and the items that target them are closed. The dated plan is retained as a proposal snapshot; this notice does not establish the status of its other phases.
 
-This document plans the introduction of type-safe environment variable
-validation across the monorepo (#34) and the CI gate that ensures declared
-env vars exist in the secrets store (#35).
+> **Historical scope:** The `job-server` schema and bootstrap proposals are closed with that application. Treat the remaining phases and acceptance criteria as the original plan until their current status is checked against source; unchecked boxes are not a current work queue.
+
+The original plan proposed type-safe environment validation across the
+monorepo (#34) and a CI gate to check declared environment variables against
+the secrets store (#35).
 
 These two issues are tightly coupled — #35 cannot start until #34 has
 established the canonical schema source. They are planned together here.
@@ -115,10 +117,10 @@ The script never logs secret values; it only enumerates names.
 - [ ] Add `*.test.js` covering: required-present, required-missing,
       optional-default, type-coercion (`"true"` → `true`).
 
-### Phase 3 (follow-up PR — extend to job-dashboard + job-server)
+### Phase 3 (follow-up PR — extend to job-dashboard + job-server; historical scope)
 
-- [ ] Add `job-dashboard.js` and `job-server.js` schemas.
-- [ ] Wire each app's bootstrap to call `validateEnv`.
+- [ ] Add `job-dashboard.js` and `job-server.js` schemas. The `job-server` target is retired; the `job-dashboard` proposal's current status is not established here.
+- [ ] Wire each app's bootstrap to call `validateEnv`. The `job-server` target is retired.
 
 ### Phase 4 (follow-up PR — CI drift check, #35)
 
@@ -141,8 +143,7 @@ The script never logs secret values; it only enumerates names.
 
 ## Verification (this PR)
 
-This PR adds the plan only — no code changes. Phase 2 implements the
-package; Phase 3 extends to all apps; Phase 4 lands the CI gate.
+The original note says this document added a plan without code changes. Its phase descriptions and acceptance criteria are historical proposals, not implementation or completion evidence.
 
 ---
 

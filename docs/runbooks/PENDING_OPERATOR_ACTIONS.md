@@ -1,7 +1,11 @@
 # Pending Operator Actions
 
 **Status**: Active checklist · **Owner**: Repository operator (qws941) ·
-**Last Updated**: 2026-05-05
+**Last Updated**: 2026-11-09
+
+> External account state is not verified by this repository checklist. A
+> configuration declaration alone does not prove that a resource was
+> provisioned or is operating.
 
 This document is the single source of truth for operator-only tasks that
 no automation / no agent can perform. Each entry was previously tracked as
@@ -22,9 +26,10 @@ operator action **fails** in a way that requires code changes.
 **Was issue**: #13 · **Priority**: P0 · **Estimated time**: ~15 min ·
 **Runbook**: [`CLOUDFLARE_KEY_ROTATION.md`](./CLOUDFLARE_KEY_ROTATION.md)
 
-The repo currently uses a Cloudflare global API key (full account
-permissions). Rotate to a scoped token with only:
-`Workers Scripts:Edit` + `Workers KV Storage:Edit` + `Account Settings:Read`.
+The current external credential type and rotation state have not been verified
+here. Consult the [rotation runbook](./CLOUDFLARE_KEY_ROTATION.md) and
+[secret boundary policy](../security/wrangler-vars-vs-secrets.md); do not infer
+account state from repository configuration.
 
 - [ ] Old global key revoked
 - [ ] New scoped token created
@@ -54,23 +59,20 @@ binding provides atomic semantics.
 
 ---
 
-### OPS-001 — Trigger `provision-queues.yml` to activate Cloudflare Queues
+### OPS-001 — Verify Cloudflare Queue provisioning and operation
 
 **Was issue**: #40 · **Priority**: P2 · **Estimated time**: ~10 min
 
-ADR 0008 Migration Plan item 11. Producer functions are defined in code
-but Cloudflare queues (`crawl-tasks`, `notifications`) are not yet
-provisioned. The queue bindings in the root `wrangler.jsonc` are
-intentionally INACTIVE comments until the operator dispatches the
-provisioning workflow.
+As of 2026-11-09, the [root Wrangler configuration](../../wrangler.jsonc)
+declares producer and consumer bindings for the two queues and their
+dead-letter queues. That declaration does not establish whether the remote
+queues exist, whether the deployed Worker has active bindings, or whether
+messages are processed. Those external states remain unresolved.
 
-- [ ] Trigger `Provision Cloudflare Queues` via GitHub Actions UI
-      (workflow_dispatch, confirm input `PROVISION`)
+- [ ] Verify the four queues exist in the Cloudflare account
 - [ ] Verify the 4 queues (`crawl-tasks`, `crawl-tasks-dlq`, `notifications`,
       `notifications-dlq`) appear in the Cloudflare dashboard
-- [ ] Replace the INACTIVE comment block in the root `wrangler.jsonc`
-      with the active producer/consumer config (template in ADR 0008)
-- [ ] Push to master to redeploy with active bindings
+- [ ] Verify the intended deployment uses the declared producer/consumer bindings
 - [ ] Verify queue handlers process test messages
 
 **Note**: Cloudflare Queues are a paid resource (Workers Paid plan).

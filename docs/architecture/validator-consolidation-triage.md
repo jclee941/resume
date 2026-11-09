@@ -4,10 +4,21 @@
 
 > **2026-09-29:** `apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)). Its paths below no longer exist, and the items that target them are closed.
 
+> The inventory and proposed migration below describe the 2026-05-05 snapshot. The job-server validator path is historical; its successor ownership is not established by this triage. Current schema authority is [`packages/schemas`](../../packages/schemas/), with the resume JSON Schema at [`resume_schema.json`](../../packages/data/resumes/master/resume_schema.json).
+
 This document maps the four validation modules in the monorepo (~937 LOC of
 overlapping logic) and prescribes the consolidation path into
 `packages/shared/validation/`. It also delineates the boundary between this
 ticket and SSOT-036 / #45 (Validation primitives).
+
+## Contents
+
+- [Inventory](#inventory)
+- [Overlap and domain distinction](#overlap-vs-domain-distinction)
+- [Decision](#decision)
+- [Migration plan](#migration-plan)
+- [Verification](#verification-this-pr)
+- [See also](#see-also)
 
 ---
 

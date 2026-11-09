@@ -1,5 +1,11 @@
 # Lint Warning Ratchet Strategy
 
+> **Historical proposal (as of February 2026):** The phases below describe a
+> proposed ratchet, not current CI policy. Check the current repository rules in
+> [`docs/README.md`](./README.md) and the active workflow in
+> [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) before using these
+> commands or treating the plan as implemented.
+
 ## Concept
 
 A **lint ratchet** prevents warning count from increasing while allowing gradual

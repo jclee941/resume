@@ -1,135 +1,27 @@
-# 통합 지원 대시보드 & 검증 엔드포인트
+# 대시보드 및 관측 경로
 
-## 🎯 API 엔드포인트
+> **경로 안내 (2026-11-09).** 예전 포트폴리오 생성기 기준의 상세 목록과
+> 보안 상태 주장은 현재 상태를 보증하지 않습니다. 아래 링크는 현재 경로
+> 소유자를 찾기 위한 안내이며, 실제 공개 상태는 배포 환경에서 별도로
+> 확인해야 합니다.
 
-### 1. Health & Monitoring Endpoints
+## 포트폴리오 Worker
 
-#### `/health` - 헬스 체크
+| 경로                                                           | 현재 소유자                                                                    |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `/health`, `/api/status`                                       | [Health 경로 생성기](../../apps/portfolio/lib/worker-routes/health-route.js)   |
+| `/metrics`                                                     | [Metrics 경로 생성기](../../apps/portfolio/lib/worker-routes/metrics-route.js) |
+| `/api/vitals`, `/api/analytics`, `/api/track`, `/api/cf/stats` | [관측 경로](../../apps/portfolio/lib/routes/observability.js)                  |
+| `/api/metrics`                                                 | [Metrics API 경로](../../apps/portfolio/lib/routes/metrics.js)                 |
 
-- **위치**: `apps/portfolio/generate-worker.js:261`
-- **메서드**: GET
-- **응답**: JSON 상태 정보
-- **용도**: 서비스 가용성 확인
+## 작업 대시보드
 
-#### `/metrics` - 메트릭 수집
+대시보드는 포트폴리오 Worker에 프로세스 내부로 연결됩니다. 공개 경로의
+`/job` 접두사는 내부 라우팅 전에 제거됩니다.
 
-- **위치**: `apps/portfolio/generate-worker.js:284`
-- **메서드**: GET
-- **응답**: 시스템 메트릭 데이터
-- **용도**: Prometheus 스크래핑
+- `/job/` 대시보드 UI와 HTTP 라우팅: [dashboard Worker entry](../../apps/job-dashboard/src/index.js)
+- `/job/mcp` MCP transport: [MCP handler](../../apps/job-dashboard/src/mcp/handler.js)
+- HTTP route registrations: [route owners](../../apps/job-dashboard/src/routes/index.js)
 
-#### `/api/vitals` - Core Web Vitals
-
-- **위치**: `apps/portfolio/generate-worker.js:293`
-- **메서드**: POST
-- **용도**: FCP, LCP, CLS, FID 실시간 수집
-- **클라이언트**: `apps/portfolio/src/scripts/modules/web-vitals.js`
-
-#### `/api/analytics` - A/B 테스팅 분석
-
-- **위치**: `apps/portfolio/lib/ab-testing.js:176`
-- **메서드**: POST
-- **용도**: 실험 결과 분석
-
-### 2. 로깅 엔드포인트
-
-#### Loki Push API
-
-- **URL**: `https://grafana.jclee.me/api/datasources/proxy/uid/cfakfiakcs0zka/loki/api/v1/push`
-- **위치**: `packages/shared/src/logger/transports/loki.js`
-- **용도**: 구조화된 로그 전송
-- **보안**: `LOKI_API_KEY` 환경변수 사용 (Grafana Service Account)
-
----
-
-## 📊 대시보드
-
-### 1. Resume Portfolio Dashboard (Grafana)
-
-- **SSoT**: `infrastructure/monitoring/grafana-dashboard-resume-portfolio.json`
-- **Symlink**: `infrastructure/configs/grafana/resume-portfolio-dashboard.json`
-- **URL**: `https://grafana.jclee.me`
-- **기능**:
-  - System metrics
-  - Docker containers
-  - Application logs
-  - 5개 커스텀 대시보드
-
-### 2. Wanted MCP Dashboard (구인 자동화)
-
-- **위치**: `apps/job-dashboard/src/views/dashboard.js`
-- **URL**: `https://resume.jclee.me/job`
-- **기능**:
-  - 구인 공고 관리
-  - 지원 현황 추적
-  - 통계 대시보드
-
----
-
-## 🛠️ 설치 & 배포 스크립트
-
-### Monitoring Setup
-
-```bash
-# 모니터링 인프라 설치
-go -C tools/scripts run ./monitoring/setup-monitoring
-
-# Grafana 대시보드 배포
-go -C tools/scripts run ./deployment/deploy-grafana-configs
-
-# 모니터링 포함 배포
-go run ./tools/scripts/deployment/deploy-with-monitoring.go
-```
-
----
-
-## 🔧 현재 상태
-
-✅ **구현 완료**
-
-- `/health`, `/metrics`, `/api/vitals` 엔드포인트
-- Grafana 대시보드 설정 파일
-- Loki 로깅 통합
-- Core Web Vitals 실시간 수집
-
-⚠️ **보안 이슈**
-
-- Loki endpoint 인증 없음 (HIGH 우선순위)
-- `/api/*` 엔드포인트 rate limiting 없음 (MEDIUM)
-
-🚧 **개선 필요**
-
-- `/api/vitals` rate limiting 추가
-- Loki push 인증 구현
-- Dashboard 접근 제어
-
----
-
-## 📝 사용 예시
-
-### Health Check
-
-```bash
-curl https://resume.jclee.me/health
-```
-
-### Metrics
-
-```bash
-curl https://resume.jclee.me/metrics
-```
-
-### Core Web Vitals (클라이언트)
-
-```javascript
-// apps/portfolio/src/scripts/modules/web-vitals.js
-fetch('/api/vitals', {
-  method: 'POST',
-  body: JSON.stringify({ lcp, fid, cls, fcp }),
-});
-```
-
----
-
-**생성일**: 2025-12-29
-**마지막 업데이트**: YOLO Mode Session
+세부 API 계약은 [대시보드 API 참고 문서](../../apps/job-dashboard/API_REFERENCE.md)를
+확인하고, 동작과 접근 정책은 연결된 현재 구현에서 검증하세요.

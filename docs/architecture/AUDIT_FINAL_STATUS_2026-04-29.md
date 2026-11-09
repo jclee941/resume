@@ -1,11 +1,13 @@
 # Audit Final Status — 2026-04-29
 
-**Session-end signal**: agent-actionable complete; global completion pending
-operator action.
+- **Session-end signal:** agent-actionable complete; global completion pending
+  operator action.
+- **HEAD:** `3ddcfb0` → auto-release `c3920d1` (v1.14.16)
+- **Production:** <https://resume.jclee.me/health> → status healthy
+- **Verified by:** Oracle round-4 review (session ses_228d50bb7ffed44mTEa0XB962f)
 
-**HEAD**: `3ddcfb0` → auto-release `c3920d1` (v1.14.16)
-**Production**: <https://resume.jclee.me/health> → status healthy
-**Verified by**: Oracle round-4 review (session ses_228d50bb7ffed44mTEa0XB962f)
+> Historical status snapshot from 2026-04-29. Counts and production observations
+> below describe that review; they are not a current operational status report.
 
 ---
 
@@ -36,6 +38,11 @@ operator action.
 ## §2 — In-repo audit closure (final tally)
 
 Cumulative across 5 rounds of fixes (b51c0f4 → cb37858 → 3ddcfb0):
+
+Status labels in this snapshot: `RESOLVED` means reported closed in-repository;
+`PARTIAL` records scoped containment with follow-up remaining; `DEFERRED` means
+work was left for later; `OPERATOR-OWNED` and `EXTERNAL` require an outside action;
+`INTENTIONAL` and `NO-OP` describe recorded dispositions.
 
 ### P0 (5 items)
 
@@ -100,7 +107,7 @@ Cumulative across 5 rounds of fixes (b51c0f4 → cb37858 → 3ddcfb0):
 
 ---
 
-## §3 — Items requiring operator action (4 runbooks + 1 design)
+## §3 — Five remaining items (2 runbooks, 2 external actions, 1 refactor)
 
 | Item                                    | Action document                                             | Why agent can't do it                                       |
 | --------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------- |
@@ -110,9 +117,15 @@ Cumulative across 5 rounds of fixes (b51c0f4 → cb37858 → 3ddcfb0):
 | JK live DOM probe (skills + getProfile) | docblocks in `jobkorea-sections.js` + `jobkorea-crawler.js` | Requires authenticated browser session                      |
 | Full DI for 7 P0-5 services             | per-service follow-up PRs                                   | Multi-week refactor (each service has own consumer surface) |
 
+Only the first two rows point to runbooks. The next two are external actions
+documented inline; the final row is a deferred design/refactor follow-up.
+
 ---
 
 ## §4 — Test coverage (final)
+
+`All pass` means the snapshot recorded a passing suite; it did not record a
+pass/total count for the portfolio-worker row.
 
 | Suite                                                  | Pass/Total                       | Type                                         |
 | ------------------------------------------------------ | -------------------------------- | -------------------------------------------- |
@@ -164,8 +177,8 @@ Use this verbatim when reporting to user:
 > **Caveats** (not globally zero-work):
 >
 > 1. Cloudflare API key rotation, job-dashboard deployment, atomic rate-limit
->    binding, and authenticated JK/Wanted live probes still require operator action
->    — runbooks ready in `docs/runbooks/`.
+>    binding, and authenticated JK/Wanted live probes still require operator action.
+>    The first two have runbooks; the other two are documented inline.
 > 2. Full per-service DI for 7 P0-5 services is a multi-PR refactor; current
 >    state is honest containment, not elimination.
 > 3. P2-8 validator consolidation is deferred as a large architectural cleanup

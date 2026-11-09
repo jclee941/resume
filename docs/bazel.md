@@ -6,6 +6,11 @@ orchestrator.
 
 This document is retained for historical context only.
 
+> The commands, target names, and comparisons below describe the retired Bazel
+> facade. Do not use them as current build or deployment instructions. Use the
+> [root npm scripts](../package.json) and current
+> [architecture guide](ARCHITECTURE.md).
+
 This project uses Bazel as a build coordination layer with npm as the underlying
 execution engine.
 
@@ -45,13 +50,13 @@ bazel run //:deploy
 
 ### Why This Approach?
 
-| Aspect                | Full Hermetic | Thin Wrapper (Current) |
-| --------------------- | ------------- | ---------------------- |
-| Setup complexity      | High          | Low                    |
-| Build reproducibility | Perfect       | npm-dependent          |
-| Query support         | Yes           | Yes                    |
-| Affected analysis     | Yes           | Yes                    |
-| Migration effort      | Weeks         | Hours                  |
+| Aspect                | Full Hermetic | Thin Wrapper (Historical snapshot) |
+| --------------------- | ------------- | ---------------------------------- |
+| Setup complexity      | High          | Low                                |
+| Build reproducibility | Perfect       | npm-dependent                      |
+| Query support         | Yes           | Yes                                |
+| Affected analysis     | Yes           | Yes                                |
+| Migration effort      | Weeks         | Hours                              |
 
 ## Target Structure
 

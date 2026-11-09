@@ -1,6 +1,21 @@
 # Design State
 
-## Inferred Review Brief — 2026-07-01
+> **Historical review archive.** Findings below describe reviews performed on
+> the dates shown; they are not assertions about the current site. For current
+> repository guidance, see [AGENTS.md](./AGENTS.md) and the
+> [portfolio entry](apps/portfolio/entry.js).
+
+## Contents
+
+- [Inferred review brief: 2026-07-01](#inferred-review-brief-2026-07-01)
+- [Design review findings: 2026-07-01](#design-review-findings-2026-07-01)
+- [Heuristic evaluation: 2026-07-01](#heuristic-evaluation-2026-07-01)
+- [Inferred review brief: 2026-07-02](#inferred-review-brief-2026-07-02)
+- [Architecture review: 2026-07-07](#architecture-review-2026-07-07)
+- [Copy improvement pass: 2026-07-07](#copy-improvement-pass-2026-07-07)
+- [Design debt register](#design-debt-register)
+
+## Inferred Review Brief: 2026-07-01
 
 Reviewed artefact: `https://resume.jclee.me` live portfolio.
 
@@ -12,7 +27,7 @@ Quality bar: job-search production surface. The page should feel credible, opera
 
 Coverage note: reviewed live page screenshots, DOM structure, focus traversal, and automated accessibility signals. Screen-reader comprehension is inferred from accessible names/landmarks rather than tested with a real screen reader.
 
-## Design Review Findings — 2026-07-01
+## Design Review Findings: 2026-07-01
 
 Evidence:
 
@@ -41,7 +56,7 @@ Minor findings:
 Recommendation:
 Prioritize the mobile recruiter path before broad visual changes: move or duplicate `채용 문의` and `이력서 PDF` into the first mobile viewport, align focus order with that visual priority, then fix touch targets and reader-facing headings. The desktop direction is already credible enough; the highest-impact work is mobile task completion.
 
-## Heuristic Evaluation - 2026-07-01
+## Heuristic Evaluation: 2026-07-01
 
 Evaluated against: Nielsen's 10 usability heuristics plus cognitive walkthrough.
 
@@ -141,7 +156,7 @@ Open questions:
 - Should mobile use an always-visible recruiter action bar, or should the hero layout simply move `채용 문의` and `이력서 PDF` above the review-path links?
 - Should role-chip selection update the URL hash/history, or is a persistent selected-role banner with reset enough?
 
-## Inferred Review Brief - 2026-07-02
+## Inferred Review Brief: 2026-07-02
 
 Reviewed artefact: `https://resume.jclee.me` live portfolio after the recruiter-path refactor.
 
@@ -164,7 +179,7 @@ Implemented fixes:
 - Compressed mobile review-path cards from one-column repetition to a two-column layout with the contact path spanning the row.
 - Removed the mobile hiring-packet summary from the visual flow because the card list already carries the same facts.
 
-## Architecture Review - 2026-07-07
+## Architecture Review: 2026-07-07
 
 Scope: full-repo architecture/site review (Lighthouse mobile, live headers, duplication scan, a11y audit).
 
@@ -178,11 +193,11 @@ Fixed in this pass:
 Known issues (documented, not fixed here):
 
 - Zone-level header override: the live site serves `X-Frame-Options: SAMEORIGIN` and `Referrer-Policy: same-origin`, overriding the worker's `DENY` / `strict-origin-when-cross-origin` (grafana.jclee.me shows the same values; not managed in `infrastructure/cloudflare` Terraform). CSP `frame-ancestors 'none'` still wins in modern browsers, so impact is minimal. Fix requires Cloudflare dashboard action (managed transform/zone rule), out of repo scope.
-- Migration mirror drift risk: `apps/job-dashboard/migrations/0003_add_auto_apply_application_metadata.sql` is byte-identical to `infrastructure/database/migrations/0008_add_auto_apply_application_metadata.sql`. Possibly an intentional mirror; do not delete either copy without checking D1 migration state.
+- Migration mirror drift risk recorded at the time: `apps/job-dashboard/migrations/0003_add_auto_apply_application_metadata.sql` was reported byte-identical to `infrastructure/database/migrations/0008_add_auto_apply_application_metadata.sql`. The infrastructure path was not found on 2026-11-09; the old observation is retained here without inferring why. Do not delete either migration without checking D1 migration state.
 - Performance debt (Lighthouse mobile, 2026-07-07: perf 74): TBT 930ms, main-thread Style & Layout 2.0s, forced reflow ~27ms in `main.js`. Deferred — needs a dedicated profiling pass (likely batching DOM reads/writes in the recruiter/timeline modules).
 - Lighthouse best-practices 77 is dominated by Cloudflare's injected challenge-platform script deprecation warnings (third-party, unfixable in repo).
 
-## Copy Improvement Pass - 2026-07-07
+## Copy Improvement Pass: 2026-07-07
 
 Scope: site-wide wording pass (전체 문구 개선) across ko/en/ja, focused on reader-facing labels, untranslated UI strings, and terminal-chrome copy. Hero copy and resume SSoT prose were intentionally left untouched (recently tuned; 40+ exact-string test pins).
 

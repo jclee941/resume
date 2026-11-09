@@ -1,8 +1,12 @@
 # Anti-Patterns and Gotchas Reference
 
-**Last Updated**: 2026-01-26  
-**Commit**: ac7fa266  
-**Branch**: master
+**Last reviewed**: 2026-11-09
+
+This guide mixes current repository rules with retired procedures. Follow the
+[repository instructions](../../AGENTS.md), the
+[content-pack guide](CONTENT_PACK.md), and the
+[1Password secret guide](ONEPASSWORD_RESUME_SECRETS.md) when they cover the
+same operation. Historical examples below are not deployment instructions.
 
 ## Purpose
 
@@ -14,52 +18,25 @@ prevent breaking changes and security issues.
 
 ## 🔴 CRITICAL (Will Break Production)
 
-### 1. NEVER Edit Generated Artifacts
+### 1. Never edit generated artifacts
 
-**Affected Files**:
-
-- `apps/portfolio/worker.js` (deployable Cloudflare Worker)
-
-**Rule**: This file is **auto-generated** from `index.html` by
-`generate-worker.js`. Manual edits are **lost on next build**.
+**Rule**: Edit the owning source and regenerate its outputs. The Worker entry
+is assembled from the root configuration and portfolio sources; the generated
+bundle is not an editing target.
 
 **Why It Breaks**:
 
-```bash
-# ❌ WRONG WORKFLOW
-vim apps/portfolio/worker.js  # Manual edit
-git push origin master                      # Deploys manual changes
-# ... later ...
-npm run build                               # OVERWRITES manual changes!
-```
-
-**Correct Workflow**:
-
-```bash
-# ✅ CORRECT
-vim apps/portfolio/index.html  # Edit source HTML
-npm run build                               # Regenerate worker.js
-git push origin master                      # Deploy generated artifact
-                                             # (Cloudflare Workers Builds;
-                                             # manual `npm run deploy` is disabled)
-```
-
-**References**:
-
-- `apps/portfolio/AGENTS.md:19`
-- `docs/guides/QUICK_START.md:29`
+For content, use the [content-pack workflow](CONTENT_PACK.md). The
+[portfolio instructions](../../apps/portfolio/AGENTS.md) identify generated
+outputs and their owners. Production deployment is described in the
+[deployment pipeline](../architecture/DEPLOYMENT_PIPELINE.md).
 
 ---
 
-### 2. NEVER Trim Before CSP Hash Calculation
+### 2. Preserve exact bytes for CSP hashes
 
-**Affected Files**:
-
-- `apps/portfolio/lib/templates.js:41,54`
-- `apps/portfolio/generate-worker.js:109`
-
-**Rule**: Do NOT use `.trim()` on extracted inline scripts/styles before
-calculating SHA-256 hashes for Content Security Policy (CSP).
+**Rule**: Do not trim or otherwise change inline script/style content before
+calculating its CSP hash. Hash the exact bytes that the browser evaluates.
 
 **Why It Breaks**:
 
@@ -97,47 +74,25 @@ If you trim, your hash is from:
 SHA256("console.log('hello');"); // Different hash!
 ```
 
-**References**:
-
-- `docs/guides/ARCHITECTURE.md:76`
-- `apps/portfolio/lib/templates.js:41,54`
+See the current [portfolio source ownership guide](../../apps/portfolio/AGENTS.md).
 
 ---
 
-### 3. NEVER Hardcode API Keys in `.env`
+### 3. Keep credentials out of files and output
 
-**Affected Files**:
-
-- `.env` (tracked in git)
-- `.env.local` (gitignored)
-
-**Rule**: Cloudflare API tokens and other secrets go in `.env.local`, NEVER in
-`.env`.
-
-**Why It Breaks**:
-
-`.env` is committed to git → secrets leaked to repository:
-
-```bash
-# ❌ WRONG - Tracked in git
-echo "CLOUDFLARE_API_TOKEN=abc123..." >> .env
-git add .env
-git commit -m "Add API token"  # 🚨 SECRET LEAKED!
-
-# ✅ CORRECT - Gitignored
-echo "CLOUDFLARE_API_TOKEN=abc123..." >> .env.local
-# .env.local is in .gitignore → safe
-```
-
-**References**:
-
-- `SECURITY_WARNING.md:27`
+Do not paste credentials into tracked or local plaintext files, shell history,
+logs, or command output. Use the repository's secret-safe
+[1Password runner](ONEPASSWORD_RESUME_SECRETS.md); tracked environment
+templates contain references, not resolved values. Some existing integrations
+still accept the legacy Cloudflare API key and email pair, while new deployment
+work should prefer a scoped API token. Do not infer that legacy support is
+absent or print a credential to inspect it.
 
 ---
 
 ## 🟡 WARNING (Will Cause Issues)
 
-### 4. NEVER Hardcode Paths in Build Scripts
+### 4. Avoid machine-specific paths in shared scripts
 
 **Affected Files**:
 
@@ -169,79 +124,30 @@ npm run build
 
 ---
 
-### 5. NEVER Skip Data Sync After Resume Changes
+### 5. Use the owned content materialization workflow
 
 **Affected Files**:
 
 - `packages/data/resumes/master/resume_data.json`
 
-**Rule**: After editing `resume_data.json`, always run `npm run sync:data`
-before building applications.
+**Rule**: Follow the content manifest and its owning commands. Local materialized
+files are not necessarily tracked source; do not hand-edit generated files.
 
 **Why It Breaks**:
 
-Applications use **copied** resume data. Skipping sync means stale data in
-production:
-
-```bash
-# ❌ WRONG - Stale data deployed
-vim packages/data/resumes/master/resume_data.json
-npm run build:all  # Uses OLD data!
-git push origin master
-
-# ✅ CORRECT - Fresh data deployed
-vim packages/data/resumes/master/resume_data.json
-npm run sync:data  # Copies to all apps
-npm run build:all
-git push origin master
-```
-
-**What `sync:data` Does**:
-
-```bash
-# Copies master resume to all consumers
-cp packages/data/resumes/master/resume_data.json \
-   apps/portfolio/data/resume.json
-
-cp packages/data/resumes/master/resume_data.json \
-   packages/cli/data/resume.json
-```
-
-**References**:
-
-- `packages/data/AGENTS.md:19`
+Use the [content-pack guide](CONTENT_PACK.md) and
+[data ownership instructions](../../packages/data/AGENTS.md) to select the
+current source and materialization step.
 
 ---
 
 ## 🟢 BEST PRACTICES
 
-### 6. ALWAYS Use Bazel for Affected Target Analysis
+### 6. Do not follow retired build procedures
 
-**Status**: ARCHIVED — Bazel facade dropped per ADR-0008. Use `GO111MODULE=off go run ./tools/ci/affected origin/master` instead.
-
-**References**:
-
-- `tools/ci/affected/`
-
-**Affected Files**:
-
-- `BUILD.bazel` (all packages)
-
-**Rule**: Before testing/deploying, use Bazel to find affected targets:
-
-```bash
-# Find all affected targets from changes
-git diff --name-only origin/master...HEAD | \
-  xargs bazel query "rdeps(//..., set($changed_files))"
-
-# Or use CI script
-GO111MODULE=off go run ./tools/ci/affected origin/master
-```
-
-**Why**:
-
-- Saves time by running only affected tests
-- Prevents missing downstream impacts
+The Bazel examples formerly in this section are archived and are not a current
+test-selection procedure. Use the repository's documented
+[validation commands](../../AGENTS.md#commands) and the owning package guide.
 
 **References**:
 
@@ -250,7 +156,7 @@ GO111MODULE=off go run ./tools/ci/affected origin/master
 
 ---
 
-### 7. ALWAYS Get OWNERS Approval Before Merging
+### 7. Follow review ownership before merging
 
 **Affected Files**:
 
@@ -287,42 +193,34 @@ done
 
 ---
 
-## 🔍 VERIFICATION CHECKLIST
+## Verification checklist
 
 Before deploying changes, verify:
 
-- [ ] No manual edits to `apps/portfolio/worker.js`
+- [ ] Generated outputs are changed through their owning source
 - [ ] Resume data changes synced with `npm run sync:data`
 - [ ] No `.trim()` calls before CSP hash calculations
-- [ ] Secrets in `.env.local`, not `.env`
+- [ ] Secrets are resolved through the approved secret workflow
 - [ ] Build scripts use relative paths
-- [ ] Affected Bazel targets tested
+- [ ] Current owning tests and checks have been run
 - [ ] OWNERS approval obtained
 
 ---
 
-## 📚 RELATED DOCUMENTATION
+## Related documentation
 
-- **Architecture**: `docs/guides/ARCHITECTURE.md`
-- **Quick Start**: `docs/guides/QUICK_START.md`
-- **Security**: `SECURITY_WARNING.md`
-- **Project Structure**: `AGENTS.md` (root and package-level)
+- [Content pack](CONTENT_PACK.md)
+- [1Password secret handling](ONEPASSWORD_RESUME_SECRETS.md)
+- [Current deployment pipeline](../architecture/DEPLOYMENT_PIPELINE.md)
+- [Repository instructions](../../AGENTS.md)
 
 ---
 
-## 🐛 KNOWN ISSUES
+## Historical note
 
-### Issue: SessionStorage Admin Token (Security Risk)
-
-**Status**: Open  
-**Location**: `apps/portfolio/worker.js` (inferred from session notes)
-
-**Problem**: Admin tokens stored in sessionStorage are vulnerable to XSS
-attacks.
-
-**Fix Required**: Migrate to HttpOnly cookies.
-
-**Tracking**: TODO - Create separate issue document
+The former session-storage finding and proposed fix were based on an
+unverified historical note. They are not a current vulnerability assessment;
+consult current security policy and implementation before making a claim.
 
 ---
 
@@ -338,5 +236,4 @@ Found a new anti-pattern? Add it to this document:
 
 ---
 
-**Maintainer**: JC Lee  
-**Last Review**: 2026-01-26
+**Last review**: 2026-11-09

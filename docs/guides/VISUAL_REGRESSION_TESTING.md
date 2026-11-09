@@ -1,392 +1,65 @@
 # Visual Regression Testing Guide
 
-**Last Updated**: 2025-12-23  
-**Status**: ✅ Implemented
+This guide describes the visual assertions and local snapshot behavior defined
+by the current Playwright test and configuration.
 
----
+## Contents
 
-## Overview
+- [Run visual tests](#run-visual-tests)
+- [What the suite captures](#what-the-suite-captures)
+- [Snapshot ownership](#snapshot-ownership)
+- [Review a visual difference](#review-a-visual-difference)
+- [Related files](#related-files)
 
-Visual regression testing ensures UI consistency across deployments by comparing
-screenshots of the application before and after changes.
+## Run visual tests
 
-## Implementation
-
-### Test Suite: `tests/e2e/visual.spec.js`
-
-**Coverage**: 14 visual regression tests
-
-- Desktop screenshots (5 tests)
-- Mobile screenshots (3 tests)
-- Tablet screenshots (1 test)
-- Dark mode screenshots (1 test)
-- Component screenshots (4 tests)
-
-### Snapshots Location
-
-```text
-tests/e2e/visual.spec.js-snapshots/
-├── dark-mode-homepage-chromium-linux.png (1.1 MB)
-├── desktop-hero-chromium-linux.png (98 KB)
-├── desktop-homepage-chromium-linux.png (1.1 MB)
-├── desktop-projects-chromium-linux.png (698 KB)
-├── desktop-resume-chromium-linux.png (209 KB)
-├── download-buttons-chromium-linux.png (4.6 KB)
-├── footer-chromium-linux.png (5.5 KB)
-├── mobile-hero-chromium-linux.png (75 KB)
-├── mobile-homepage-chromium-linux.png (971 KB)
-├── mobile-project-card-chromium-linux.png (77 KB)
-├── project-card-chromium-linux.png (86 KB)
-└── tablet-homepage-chromium-linux.png (1.3 MB)
-```
-
-**Total Size**: ~5.7 MB
-
-**Baselines are local, not committed.** The screenshots capture whatever content is
-materialized for the build, so `tests/e2e/visual.spec.js-snapshots/` is gitignored and
-`playwright.config.js` sets `updateSnapshots: 'missing'`. The first run writes each missing
-baseline (those tests report "A snapshot doesn't exist ... writing actual" and fail once); the
-next run compares against it and fails on real differences, because existing baselines are never
-overwritten. After an intentional UI or content change, delete the directory or run with
-`--update-snapshots`.
-
----
-
-## Running Tests
-
-### Basic Commands
+Run the visual suite with the repository's Playwright script:
 
 ```bash
-# Run all visual regression tests
-npm run test:e2e:visual
-
-# Run with UI mode (interactive)
-playwright test tests/e2e/visual.spec.js --ui
-
-# Run in headed mode (see browser)
-playwright test tests/e2e/visual.spec.js --headed
-
-# Update snapshots (after intentional UI changes)
-playwright test tests/e2e/visual.spec.js --update-snapshots
+npm run test:e2e -- \
+  tests/e2e/visual.spec.js \
+  --project=chromium
 ```
 
-### CI/CD Integration
+The root Playwright configuration starts local Wrangler by default. Visual
+assertions use fixed desktop, mobile, tablet, dark-mode, and component
+viewports; the suite and `visual-helpers.js` define their exact sizes and
+stability steps.
 
-Visual regression tests run automatically in CI/CD pipeline:
+## What the suite captures
 
-```yaml
-# .github/workflows/ci.yml
-test:e2e:
-  script:
-    - npm run test:e2e
-    - npm run test:e2e:visual
-  artifacts:
-    when: on_failure
-    paths:
-      - test-results/
-      - playwright-report/
-```
+`tests/e2e/visual.spec.js` covers page and component screenshots, including
+desktop and mobile views. The configured screenshot comparison allows the
+suite's specified pixel difference tolerance. See the test file for the
+individual assertions rather than relying on historical test totals.
 
----
+## Snapshot ownership
 
-## Test Configuration
+The baseline directory
+`tests/e2e/visual.spec.js-snapshots/` is ignored and contains local,
+materialized captures of the current content. The Playwright configuration
+uses `updateSnapshots: 'missing'`: absent baselines are created, while existing
+baselines are left in place for comparison. Baselines are not reviewed,
+versioned project artifacts and should not be staged or committed.
 
-### Viewport Sizes
+## Review a visual difference
 
-| Device  | Width | Height | Tests |
-| ------- | ----- | ------ | ----- |
-| Desktop | 1280  | 720    | 5     |
-| Mobile  | 375   | 667    | 3     |
-| Tablet  | 768   | 1024   | 1     |
-
-### Tolerance Settings
-
-```javascript
-maxDiffPixelRatio: 0.05; // 5% pixel difference allowed
-```
-
-This allows for minor rendering differences across environments while catching
-significant visual changes.
-
----
-
-## Test Scenarios
-
-### 1. Desktop Screenshots
-
-```javascript
-test('homepage full page screenshot', async ({ page }) => {
-  await page.goto('/');
-  await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(500);
-
-  await expect(page).toHaveScreenshot('desktop-homepage.png', {
-    fullPage: true,
-    maxDiffPixelRatio: 0.05,
-  });
-});
-```
-
-**Covers**:
-
-- Full homepage
-- Hero section
-- Projects section
-- Resume section
-
-### 2. Mobile Screenshots
-
-```javascript
-test('mobile homepage screenshot', async ({ page }) => {
-  await page.setViewportSize({ width: 375, height: 667 });
-  await page.goto('/');
-  await page.waitForLoadState('networkidle');
-
-  await expect(page).toHaveScreenshot('mobile-homepage.png', {
-    fullPage: true,
-    maxDiffPixelRatio: 0.05,
-  });
-});
-```
-
-**Covers**:
-
-- Mobile homepage
-- Mobile hero section
-- Mobile project card
-
-### 3. Dark Mode Screenshots
-
-```javascript
-test('dark mode preference screenshot', async ({ page }) => {
-  await page.emulateMedia({ colorScheme: 'dark' });
-  await page.goto('/');
-  await page.waitForLoadState('networkidle');
-
-  await expect(page).toHaveScreenshot('dark-mode-homepage.png', {
-    fullPage: true,
-    maxDiffPixelRatio: 0.05,
-  });
-});
-```
-
-### 4. Component Screenshots
-
-```javascript
-test('single project card screenshot', async ({ page }) => {
-  await page.goto('/');
-  await page.waitForLoadState('networkidle');
-
-  const projectCard = page.locator('.project-card').first();
-  await expect(projectCard).toHaveScreenshot('project-card.png', {
-    maxDiffPixelRatio: 0.05,
-  });
-});
-```
-
-**Covers**:
-
-- Footer
-- Download buttons
-- Project card
-- Stat card (skipped - removed in redesign)
-
----
-
-## Updating Snapshots
-
-### When to Update
-
-Update snapshots when:
-
-- ✅ Intentional UI changes (new design, layout updates)
-- ✅ CSS modifications
-- ✅ Component refactoring
-- ❌ Unintentional visual regressions
-
-### Update Process
+When an existing baseline differs, inspect the actual and expected screenshots
+and confirm whether the change is intentional. To regenerate the local
+baseline after that review, run:
 
 ```bash
-# 1. Review current failures
-npm run test:e2e:visual
-
-# 2. Verify changes are intentional
-playwright test tests/e2e/visual.spec.js --ui
-
-# 3. Update snapshots
-playwright test tests/e2e/visual.spec.js --update-snapshots
-
-# 4. Commit new snapshots
-git add tests/e2e/visual.spec.js-snapshots/
-git commit -m "chore: update visual regression snapshots"
+npm run test:e2e -- \
+  tests/e2e/visual.spec.js \
+  --project=chromium \
+  --update-snapshots
 ```
 
----
+This updates local ignored captures; it does not publish or commit them.
 
-## Troubleshooting
+## Related files
 
-### Issue: Snapshots differ across environments
-
-**Cause**: Font rendering, OS differences, browser versions
-
-**Solution**:
-
-```javascript
-// Use consistent viewport and wait for fonts
-await page.setViewportSize({ width: 1280, height: 720 });
-await page.waitForLoadState('networkidle');
-await page.waitForTimeout(500); // Wait for fonts to load
-```
-
-### Issue: Flaky tests due to animations
-
-**Cause**: CSS animations, transitions
-
-**Solution**:
-
-```javascript
-// Disable animations in test
-await page.addStyleTag({
-  content: '* { animation: none !important; transition: none !important; }',
-});
-```
-
-### Issue: Large snapshot file sizes
-
-**Current**: ~5.7 MB total
-
-**Optimization**:
-
-- Use component-level snapshots instead of full-page
-- Compress PNG files with `pngquant`
-- Consider WebP format for smaller sizes
-
----
-
-## Best Practices
-
-### 1. Wait for Stability
-
-```javascript
-await page.waitForLoadState('networkidle');
-await page.waitForTimeout(500); // Extra buffer
-```
-
-### 2. Use Descriptive Names
-
-```javascript
-// Good
-'desktop-homepage.png';
-'mobile-project-card.png';
-
-// Bad
-'test1.png';
-'screenshot.png';
-```
-
-### 3. Test Critical UI Components
-
-Focus on:
-
-- Homepage (first impression)
-- Project cards (main content)
-- Resume section (key information)
-- Dark mode (user preference)
-
-### 4. Keep Snapshots in Git
-
-- ✅ Commit snapshots to version control
-- ✅ Review snapshot changes in PRs
-- ✅ Document intentional UI changes
-
----
-
-## Integration with Other Tests
-
-### Combined Testing Strategy
-
-```bash
-# 1. Unit tests (fast, isolated)
-npm test
-
-# 2. E2E tests (functionality)
-npm run test:e2e
-
-# 3. Visual regression (UI consistency)
-npm run test:e2e:visual
-
-# 4. Performance tests (Lighthouse)
-npm run lighthouse:ci
-```
-
-### CI/CD Pipeline
-
-```yaml
-stages:
-  - test:unit
-  - test:e2e
-  - test:visual
-  - test:performance
-```
-
----
-
-## Metrics
-
-| Metric         | Value                              |
-| -------------- | ---------------------------------- |
-| Total Tests    | 14                                 |
-| Snapshot Size  | 5.7 MB                             |
-| Test Duration  | ~30 seconds                        |
-| Coverage       | Desktop, Mobile, Tablet, Dark Mode |
-| Max Diff Ratio | 5%                                 |
-
----
-
-## Future Enhancements
-
-### Planned Improvements
-
-1. **Percy Integration** (Cloud-based visual testing)
-
-   ```bash
-   npm install --save-dev @percy/playwright
-   ```
-
-2. **Chromatic Integration** (Storybook visual testing)
-
-   ```bash
-   npm install --save-dev chromatic
-   ```
-
-3. **Automated Snapshot Updates** (on approved PRs)
-
-   ```yaml
-   # .github/workflows/update-snapshots.yml
-   update-snapshots:
-     only:
-       - merge_requests
-     when: manual
-   ```
-
-4. **Cross-browser Testing** (Firefox, Safari)
-
-   ```javascript
-   projects: [{ name: 'chromium' }, { name: 'firefox' }, { name: 'webkit' }];
-   ```
-
----
-
-## References
-
-- [Playwright Visual Comparisons](https://playwright.dev/docs/test-snapshots)
-- [Percy Documentation](https://docs.percy.io/)
-- [Chromatic Documentation](https://www.chromatic.com/docs/)
-- [Visual Regression Testing Best
-  Practices](https://www.browserstack.com/guide/visual-regression-testing)
-
----
-
-**Maintained by**: Resume Portfolio Team  
-**Last Review**: 2025-12-23  
-**Next Review**: 2026-01-23
+- [Visual test suite](../../tests/e2e/visual.spec.js)
+- [Visual helpers](../../tests/e2e/visual-helpers.js)
+- [Playwright configuration](../../playwright.config.js)
+- [E2E test ownership](../../tests/e2e/AGENTS.md)

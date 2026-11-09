@@ -1,5 +1,12 @@
 # Architecture Guide
 
+> **Historical overview (2025–2026).** This page describes an earlier
+> portfolio-only Worker and deployment model. Its topology, paths, metrics,
+> test claims, and deployment steps are not current operational guidance.
+> Start with the [current architecture](../architecture/system-overview.md),
+> [deployment pipeline](../architecture/DEPLOYMENT_PIPELINE.md), and the
+> [root Worker configuration](../../wrangler.jsonc).
+
 ## System Overview
 
 ### Why Source-to-Worker Pipeline?

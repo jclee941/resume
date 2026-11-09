@@ -15,9 +15,9 @@ across language-specific domains.
 Adopt a Google3-style monorepo structure with layer-based directories (`apps/`,
 `packages/`) and repository governance (`OWNERS`, `CODEOWNERS`). Originally also
 included Bazel metadata (`BUILD.bazel`, `MODULE.bazel`) as a build orchestration
-facade; that part has since been **superseded by ADR-0008** — npm workspaces is
-the actual build orchestrator and BUILD.bazel files were removed in commit
-`b51c0f4`.
+facade; that part has since been **superseded by
+[ADR-0008](0008-drop-bazel-facade.md)** — npm workspaces is the actual build
+orchestrator and BUILD.bazel files were removed in commit `b51c0f4`.
 
 ## Consequences
 

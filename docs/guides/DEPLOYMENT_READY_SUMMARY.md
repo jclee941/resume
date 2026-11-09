@@ -1,5 +1,12 @@
 # 🚀 Deployment Ready Summary
 
+> **Historical report (2025-12-23).** “Ready” status, test totals, feature
+> inventory, deployment recommendations, and external setup claims below are
+> statements from that dated snapshot, not current verification or approval.
+> Current authority: [GitHub validation workflow](../../.github/workflows/ci.yml),
+> [Cloudflare deployment pipeline](../architecture/DEPLOYMENT_PIPELINE.md),
+> and [root Wrangler configuration](../../wrangler.jsonc).
+
 **Date**: 2025-12-23  
 **Status**: ✅ **READY FOR DEPLOYMENT**
 

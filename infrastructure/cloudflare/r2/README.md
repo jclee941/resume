@@ -1,7 +1,11 @@
-# Cloudflare R2 - resume-assets
+# Cloudflare R2 examples
 
-This directory defines baseline configuration for an R2 bucket named
-`resume-assets` used by the resume platform.
+This directory contains example R2 bucket configuration and lifecycle files.
+
+> **Example only; not applied or bound.** The root Worker configuration has no
+> R2 binding, and this repository does not establish that an R2 bucket exists.
+> See the [Cloudflare infrastructure guide](../README.md) for ownership
+> boundaries.
 
 ## Purpose
 
@@ -14,34 +18,29 @@ This directory defines baseline configuration for an R2 bucket named
 - `r2-config.json`: bucket and CORS configuration.
 - `lifecycle-rules.json`: automatic cleanup for temporary files.
 
-## Setup
+## Example commands
 
-1. Create bucket:
-
-```bash
-wrangler r2 bucket create resume-assets
-```
-
-1. Apply lifecycle policy (temp cleanup after 90 days):
+The following commands illustrate the Wrangler syntax only. Replace the bucket
+placeholder with a separately verified value; these examples do not provision
+or bind a bucket.
 
 ```bash
-wrangler r2 bucket lifecycle set resume-assets --file infrastructure/cloudflare/r2/lifecycle-rules.json
+wrangler r2 bucket create <bucket-name>
 ```
 
-1. Bind the bucket in worker config (`wrangler.jsonc`) with an `r2_buckets`
-   binding.
+Apply a lifecycle policy only after the bucket and policy are independently
+reviewed:
 
-## Presigned URL Generation
-
-Use signed URLs from server-side worker logic only.
-
-```js
-const object = env.RESUME_ASSETS_BUCKET.get(key);
-const signedUrl = await object.createSignedUrl({
-  expiresIn: 300,
-  method: 'GET',
-});
+```bash
+wrangler r2 bucket lifecycle set <bucket-name> --file infrastructure/cloudflare/r2/lifecycle-rules.json
 ```
+
+## Presigned URLs
+
+The Workers R2 binding cannot generate presigned URLs. Cloudflare documents
+presigned URLs through the S3-compatible API; see the
+[official R2 presigned URL guide](https://developers.cloudflare.com/r2/api/s3/presigned-urls/).
+This repository does not implement that flow.
 
 ## CDN Integration
 

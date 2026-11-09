@@ -1,5 +1,11 @@
 # CI/CD 자동화 구현 완료 보고서
 
+> **Historical report (2025-12-23).** The completion status, workflow
+> inventory, test totals, thresholds, and deployment claims below describe a
+> dated report and are not current verification. The current GitHub workflow is
+> [validation-only](../../.github/workflows/ci.yml); production deployment is
+> owned by [Cloudflare Workers Builds](../architecture/DEPLOYMENT_PIPELINE.md).
+
 **날짜**: 2025-12-23  
 **상태**: ✅ 완료
 

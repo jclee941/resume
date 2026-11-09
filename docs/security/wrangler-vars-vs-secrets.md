@@ -16,21 +16,21 @@ secret-shaped strings appear in any committed `wrangler.jsonc` or
 
 ## Quick Decision Table
 
-| Value type                                                | `vars` | Secrets | Reason                                       |
-| --------------------------------------------------------- | ------ | ------- | -------------------------------------------- |
-| Public URL (e.g. `https://api.example.com`)               | yes    | no      | Not sensitive                                |
-| Feature flag (e.g. `ENABLE_X = "true"`)                   | yes    | no      | Behavior toggle                              |
-| Cron schedule (e.g. `CRON = "0 */6 * * *"`)               | yes    | no      | Operational metadata                         |
-| Index / queue name (e.g. `CRAWL_QUEUE_NAME`)              | yes    | no      | Resource identifier, not credential          |
-| Public key fingerprint                                    | yes    | no      | Verifier, not signer                         |
-| Numeric tuning constant (rate limits, timeouts)           | yes    | no      | Operational parameter                        |
-| API key / token (any provider: Cloudflare, Wanted, etc.)  | no     | yes     | Authentication credential                    |
-| OAuth client secret                                       | no     | yes     | Authentication credential                    |
-| JWT signing key                                           | no     | yes     | Confidentiality of issued tokens             |
-| Symmetric encryption key                                  | no     | yes     | Cryptographic primitive                      |
-| Webhook signing secret                                    | no     | yes     | Integrity check                              |
-| Database password / connection string with embedded creds | no     | yes     | Authentication credential                    |
-| Personal email / phone of a user                          | no     | yes     | PII — treat as Secrets even when not a creds |
+| Value type                                                | Rule                                                  |
+| --------------------------------------------------------- | ----------------------------------------------------- |
+| Public URL (e.g. `https://api.example.com`)               | `vars` — Not sensitive                                |
+| Feature flag (e.g. `ENABLE_X = "true"`)                   | `vars` — Behavior toggle                              |
+| Cron schedule (e.g. `CRON = "0 */6 * * *"`)               | `vars` — Operational metadata                         |
+| Index / queue name (e.g. `CRAWL_QUEUE_NAME`)              | `vars` — Resource identifier, not credential          |
+| Public key fingerprint                                    | `vars` — Verifier, not signer                         |
+| Numeric tuning constant (rate limits, timeouts)           | `vars` — Operational parameter                        |
+| API key / token (any provider: Cloudflare, Wanted, etc.)  | Secret — Authentication credential                    |
+| OAuth client secret                                       | Secret — Authentication credential                    |
+| JWT signing key                                           | Secret — Confidentiality of issued tokens             |
+| Symmetric encryption key                                  | Secret — Cryptographic primitive                      |
+| Webhook signing secret                                    | Secret — Integrity check                              |
+| Database password / connection string with embedded creds | Secret — Authentication credential                    |
+| Personal email / phone of a user                          | Secret — PII — treat as Secrets even when not a creds |
 
 **Rule of thumb**: if leaking the value would let an attacker impersonate the
 service, decrypt user data, sign messages on behalf of the project, or
@@ -66,9 +66,12 @@ wrangler secret put GOOGLE_OAUTH_CLIENT_SECRET
 wrangler secret put SESSION_SIGNING_KEY
 ```
 
-For CI deploys, `release.yml` reads from GitHub Actions repository/environment
-secrets and passes them into `cloudflare/wrangler-action@v3` as `secrets:` —
-**never** as command-line arguments (which would log them).
+Production deployment is controlled by Workers Builds using the repository-root
+`wrangler.jsonc`; this policy does not establish which credentials are currently
+configured in Cloudflare or the build integration. Legacy API-key and email
+authentication is still supported by some repository tooling, so do not infer
+that it has been removed everywhere. Keep credentials out of command-line
+arguments and logs.
 
 GitHub Secrets used by CI:
 
@@ -91,11 +94,17 @@ When in doubt, rotate. Each secret should be rotated:
   - A team member with access leaves the project.
   - A dependency that consumed the secret is compromised.
 
-Rotation runbooks live in [`docs/runbooks/`](../runbooks/). The pattern:
+For open operator work, see the
+[pending actions checklist](../runbooks/PENDING_OPERATOR_ACTIONS.md) and the
+[historical key-rotation runbook](../runbooks/CLOUDFLARE_KEY_ROTATION.md). The
+general pattern:
 
 1. Generate the new secret in the provider's console.
 2. `wrangler secret put NAME` and update the GitHub Secret in parallel.
-3. Re-deploy the worker (any push to master triggers `release.yml`).
+3. Follow the current deployment process documented in
+   [`docs/architecture/DEPLOYMENT_PIPELINE.md`](../architecture/DEPLOYMENT_PIPELINE.md);
+   a repository push alone does not prove the credential was used or the
+   deployment completed.
 4. **Only then** revoke the old secret.
 
 This ordering avoids a window where production runs with no valid credential.
@@ -120,9 +129,10 @@ This ordering avoids a window where production runs with no valid credential.
 | `[a-fA-F0-9]{32,}` outside hash / resource-id keys              | Long hex blob (likely key/password)     |
 | Long key-name + literal value (e.g. `"api_key": "..."`)         | Heuristic credential catch-all          |
 
-The script exits non-zero on first match and is wired into `ci.yml`'s
-`secret-scan` job alongside the gitleaks repository-wide scan. The wrangler
-guard is faster and runs on every PR; the gitleaks scan covers history.
+The script exits non-zero on the first match. The current read-only CI
+validation job runs it alongside the gitleaks repository-wide scan. The
+Wrangler guard checks configuration files; gitleaks also scans repository
+history.
 
 To run locally:
 
@@ -147,7 +157,7 @@ public identifiers issued by Cloudflare, not credentials.
 ## See Also
 
 - [`docs/runbooks/CLOUDFLARE_KEY_ROTATION.md`](../runbooks/CLOUDFLARE_KEY_ROTATION.md)
-  — operator runbook for rotating the global Cloudflare key (#13).
+  — historical rotation procedure; confirm current operator status before use.
 - [`docs/security/SECRET_ROTATION_PLAYBOOK.md`](./SECRET_ROTATION_PLAYBOOK.md)
   — full rotation playbook covering all provider categories.
 - [`docs/architecture/SSOT_IMPROVEMENT_PLAN.md`](../architecture/SSOT_IMPROVEMENT_PLAN.md)

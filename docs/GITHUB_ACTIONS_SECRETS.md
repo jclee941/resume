@@ -1,5 +1,10 @@
 # GitHub Actions Secrets Configuration Guide
 
+> Historical guide for the deployment workflow model documented in 2025.
+> Its secret matrix and setup steps are not current deployment instructions.
+> Use the current [secret handling policy](security/wrangler-vars-vs-secrets.md)
+> and [key rotation checklist](runbooks/CLOUDFLARE_KEY_ROTATION.md).
+
 ## Overview
 
 This guide helps you configure all required secrets for GitHub Actions

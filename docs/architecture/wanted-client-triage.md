@@ -4,9 +4,21 @@
 
 > **2026-09-29:** B was promoted to `packages/shared/src/clients/wanted/` and A (`packages/shared/src/wanted-client.js`) was deleted. The job-server copy went with `apps/job-server` ([ADR 0010](../adr/0010-retire-local-job-server.md)).
 
+> “Resolved” refers to retirement of the older shared client in Phase 3. The Phase 2 proposal to extract the job-server client was not recorded as complete; that source was retired with `apps/job-server`, and this document does not establish a successor extraction.
+
 This document maps the two Wanted-platform API clients in the monorepo,
 identifies their overlap and divergence, and prescribes the consolidation
 direction (promote the job-server-local client to the canonical location).
+
+## Contents
+
+- [Inventory](#inventory)
+- [Overlap audit](#overlap-audit)
+- [Decision](#decision)
+- [Canonical home structure](#canonical-home-structure-proposed-for-phase-2)
+- [Migration plan](#migration-plan)
+- [Verification](#verification-this-pr)
+- [See also](#see-also)
 
 ---
 
@@ -139,6 +151,7 @@ This PR adds the triage doc only — no code changes. It satisfies the
 
 - [`docs/architecture/SSOT_IMPROVEMENT_PLAN.md`](./SSOT_IMPROVEMENT_PLAN.md)
   § SSOT-037 — original consolidation entry.
-- [`apps/job-server/AGENTS.md`](../../apps/job-server/AGENTS.md) — `WantedAPI`
-  conventions (40+ methods, Skills v1 only, Links API broken).
+- `apps/job-server/AGENTS.md` — historical `WantedAPI` conventions (40+
+  methods, Skills v1 only, Links API broken); the retired path has no
+  confirmed successor guide.
 - `packages/shared/src/wanted-client.js` — older client, retired in Phase 3.

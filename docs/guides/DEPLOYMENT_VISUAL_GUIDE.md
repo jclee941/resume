@@ -3,9 +3,35 @@
 **Created**: 2025-11-12
 **Purpose**: 시각적으로 이해하기 쉬운 배포 절차 및 인증 방법 설명
 
+> **Historical reference (2025-11-12).** The diagrams and procedures below describe
+> an earlier deployment setup. For current production authority, use
+> [the deployment guide](../deployment-guide.md) and
+> [the deployment pipeline](../architecture/DEPLOYMENT_PIPELINE.md). GitHub Actions
+> validates changes; Cloudflare Workers Builds owns production deployment.
+
+## Contents
+
+- [Current deployment route](#current-deployment-route)
+- [Historical system architecture](#historical-system-architecture-system-architecture)
+- [Authentication methods](#-인증-방법-비교-authentication-methods)
+- [Historical deployment process](#-배포-프로세스-deployment-process)
+- [Verification checklist](#-검증-체크리스트-verification-checklist)
+- [Reference documents](#-참고-문서-reference-docs)
+
 ---
 
-## 📊 시스템 아키텍처 (System Architecture)
+## Current deployment route
+
+| Responsibility                  | Current owner                                                       |
+| ------------------------------- | ------------------------------------------------------------------- |
+| Read-only validation            | [GitHub Actions workflow](../../.github/workflows/ci.yml)           |
+| Production build and deployment | [Cloudflare Workers Builds](../architecture/DEPLOYMENT_PIPELINE.md) |
+| Runtime configuration           | [`wrangler.jsonc`](../../wrangler.jsonc)                            |
+
+The diagram and procedures that follow are a dated historical snapshot. Do not use
+them to deploy or configure credentials.
+
+## Historical system architecture (System Architecture)
 
 ```text
 ┌─────────────────────────────────────────────────────────────────┐
@@ -30,8 +56,8 @@
 │                  └────────┬────────┘                             │
 └──────────────────────────┼──────────────────────────────────────┘
                            │
-                           │ wrangler deploy --config ... --env production
-                           │ (tools/scripts/deployment/quick-deploy.go)
+                           │ Historical procedure; not a current deploy command
+                           │
                            ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │              Cloudflare Workers (Production)                     │
@@ -74,14 +100,14 @@
 │  └────────────────────────────────────────────────────────┘  │
 └────────────────────────────────────────────────────────────┬──┘
                                                              │
-                 Token: aBcD1234efGh5678ijKl9012mnOp3456... │
-                 (40+ characters)                           │
+                 Token: [redacted]                          │
+                 (value omitted from this historical example)│
                                                              │
                                                              ▼
 ┌──────────────────────────────────────────────────────────────┐
 │  ~/.env                                                       │
 │  ┌────────────────────────────────────────────────────────┐  │
-│  │  CLOUDFLARE_API_TOKEN=aBcD1234efGh5678ijKl9012...     │  │
+│  │  CLOUDFLARE_API_TOKEN=[redacted]                     │  │
 │  └────────────────────────────────────────────────────────┘  │
 └──────────────────────────────────────────────────────────────┘
                            │
@@ -122,14 +148,14 @@
 │  └────────────────────────────────────────────────────────┘  │
 └────────────────────────────────────────────────────────────┬──┘
                                                              │
-                 Key: REVOKED_CF_API_KEY_REPLACE_ME │
-                 (37 characters hex)                        │
+                 Key: [redacted]                            │
+                 (value omitted from this historical example)│
                                                              │
                                                              ▼
 ┌──────────────────────────────────────────────────────────────┐
 │  ~/.env                                                       │
 │  ┌────────────────────────────────────────────────────────┐  │
-│  │  CLOUDFLARE_API_KEY=REVOKED_CF_API_KEY_REPLACE_ME...   │  │
+│  │  CLOUDFLARE_API_KEY=[redacted]                        │  │
 │  │  CLOUDFLARE_EMAIL=<owner-email>                       │  │
 │  └────────────────────────────────────────────────────────┘  │
 └──────────────────────────────────────────────────────────────┘
@@ -384,7 +410,7 @@
 ┌──────────────────────────────────────────────────────────────┐
 │  ~/.env (현재 상태)                                           │
 │  ┌────────────────────────────────────────────────────────┐  │
-│  │  CLOUDFLARE_API_TOKEN=REVOKED_CF_API_KEY_REPLACE_ME... │  │
+│  │  CLOUDFLARE_API_TOKEN=[redacted]                     │  │
 │  │                                                        │  │
 │  │  ❌ 문제점:                                            │  │
 │  │  • 길이: 37자 (API Token은 40자 이상)                 │  │
@@ -414,10 +440,10 @@
 │  │  $ vim ~/.env                                          │  │
 │  │                                                        │  │
 │  │  # 변경 전 (삭제):                                     │  │
-│  │  # CLOUDFLARE_API_TOKEN=REVOKED_CF_API_KEY_REPLACE_ME...  │  │
+│  │  # CLOUDFLARE_API_TOKEN=[redacted]                         │  │
 │  │                                                        │  │
 │  │  # 변경 후 (추가 - 2개 변수 필요):                     │  │
-│  │  CLOUDFLARE_API_KEY=REVOKED_CF_API_KEY_REPLACE_ME...  │  │
+│  │  CLOUDFLARE_API_KEY=[redacted]                       │  │
 │  │  CLOUDFLARE_EMAIL=<owner-email>                       │  │
 │  └────────────────────────────────────────────────────────┘  │
 └────────────────┬─────────────────────────────────────────────┘
@@ -505,66 +531,19 @@ LOCAL DEVELOPMENT                 PRODUCTION
 
 ## 📚 참고 문서 (Reference Docs)
 
-```text
-/home/jclee/dev/resume/docs/
-│
-├── CLOUDFLARE_AUTH_METHODS.md      ⭐ 인증 방법 상세 비교
-│   • API Token vs Global API Key
-│   • 보안 권장사항
-│   • 단계별 설정 가이드
-│
-├── GET_CLOUDFLARE_API_TOKEN.md     ⭐ API Token 생성 가이드
-│   • 3분 빠른 시작
-│   • Dashboard 스크린샷 경로
-│   • 문제 해결
-│
-├── DEPLOYMENT_READY.md              ⭐ 배포 준비 상태
-│   • 완료된 기능 목록
-│   • 3가지 배포 옵션
-│   • 검증 체크리스트
-│
-├── MANUAL_DEPLOYMENT_GUIDE.md       ⭐ 종합 배포 가이드
-│   • 3가지 인증 방법 상세
-│   • 6가지 문제 해결 시나리오
-│   • 7단계 검증 절차
-│
-└── DEPLOYMENT_VISUAL_GUIDE.md      ⭐ 이 문서 (시각적 가이드)
-    • 다이어그램과 플로우차트
-    • 단계별 시각화
-    • 쉬운 이해
-```
+- [Current deployment guide](../deployment-guide.md)
+- [Current deployment pipeline](../architecture/DEPLOYMENT_PIPELINE.md)
+- [Current credential policy](../security/wrangler-vars-vs-secrets.md)
+- [Historical token setup](GET_CLOUDFLARE_API_TOKEN.md)
+- [Historical authentication comparison](CLOUDFLARE_AUTH_METHODS.md)
 
 ---
 
-## 🎯 빠른 실행 (Quick Actions)
+## 🎯 Current quick route
 
-### 지금 바로 배포하기 (3단계)
-
-```bash
-# 1️⃣ .env 파일 수정
-vim ~/.env
-# 다음 2줄 추가:
-# CLOUDFLARE_API_KEY=REVOKED_CF_API_KEY_REPLACE_ME
-# CLOUDFLARE_EMAIL=<owner-email>
-
-# 2️⃣ 환경 변수 로드
-source ~/.env
-
-# 3️⃣ 배포 실행
-cd /home/jclee/dev/resume && go run ./tools/scripts/deployment/quick-deploy.go
-```
-
-### 인증 확인하기
-
-```bash
-source ~/.env && cd apps/portfolio && npx wrangler whoami
-```
-
-### 배포 검증하기
-
-```bash
-GO111MODULE=off go run ./tools/scripts/verification/verify-deployment
-```
+Do not use the historical local credential or direct-deploy steps in this
+document. Follow [the current deployment guide](../deployment-guide.md) and
+[secret policy](../security/wrangler-vars-vs-secrets.md).
 
 ---
 

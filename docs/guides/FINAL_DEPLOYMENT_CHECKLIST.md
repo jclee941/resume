@@ -2,7 +2,16 @@
 
 **Date**: 2025-12-23  
 **Version**: 1.0.36  
-**Status**: ✅ Ready for Deployment
+**Historical status**: This checklist records an approval snapshot from 2025-12-23; it is not current deployment approval.
+
+> For current build and deployment ownership, use
+> [the deployment guide](../deployment-guide.md),
+> [the deployment pipeline](../architecture/DEPLOYMENT_PIPELINE.md), and the
+> [read-only GitHub validation workflow](../../.github/workflows/ci.yml). The
+> workflow has one `validate` job and does not run E2E tests or deploy.
+
+The commands, test totals, performance values, and approval statements below are
+historical observations. Do not use them as current checks or deployment authorization.
 
 ---
 
@@ -81,24 +90,16 @@ npm run build
 ### Step 2: Pre-deployment Tests
 
 ```bash
-# Test worker.js locally
-node apps/portfolio/worker.js
-
-# Run E2E tests
-npm run test:e2e
-
-# Check lighthouse scores
-npm run lighthouse
+# Historical local checks; the current GitHub workflow is linked above and does not run E2E tests.
+npm test
+npm run lint
+npm run typecheck
 ```
 
 ### Step 3: Deploy
 
 ```bash
-# Deploy to Cloudflare Workers
-npm run deploy:wrangler:root
-
-# Or use wrangler directly
-npx wrangler deploy --config wrangler.jsonc --env production
+# Historical direct-deploy commands removed. Cloudflare Workers Builds owns production deploys.
 ```
 
 ### Step 4: Post-deployment Verification
@@ -106,9 +107,6 @@ npx wrangler deploy --config wrangler.jsonc --env production
 ```bash
 # Check deployment status
 curl https://resume.jclee.me/health
-
-# Verify performance
-npm run lighthouse -- https://resume.jclee.me
 
 ```
 

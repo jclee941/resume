@@ -1,6 +1,9 @@
 # API Reference
 
-> **Note:** The authoritative OpenAPI spec is at `packages/contracts/openapi.yaml`.
+> **Authority:** The
+> [OpenAPI specification](../../packages/contracts/openapi.yaml) is canonical.
+> The route tables below are a navigation summary and may lag behind the
+> specification.
 
 This document summarizes public and internal API surfaces for the portfolio
 worker, job dashboard worker, and CLI commands.

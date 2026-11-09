@@ -12,16 +12,16 @@ Boundary: measured score 5; retained runner and shared-fixture ownership hub.
 
 ## WHERE TO LOOK
 
-| Task                     | Location                    | Notes                                           |
-| ------------------------ | --------------------------- | ----------------------------------------------- |
-| Module behavior          | `unit/AGENTS.md`            | App and shared-library regression suites        |
-| Cross-module contracts   | `integration/AGENTS.md`     | Schema, sync, network, rendered HTML            |
-| Browser and API flows    | `e2e/AGENTS.md`             | Playwright projects and local/mock environments |
-| Owner-derived assertions | `helpers/owner-data.js`     | Reads the materialized locale data              |
-| Fake DOM harness         | `helpers/fake-dom.js`       | `createFakeElement`, `createFakeDocument`       |
-| Fake content pack        | `fixtures/content-pack/`    | Mirrors selected pack paths for CI              |
-| Jest configuration       | Root `jest.config.cjs`      | Unit and integration discovery                  |
-| Browser configuration    | Root `playwright.config.js` | Projects, servers, screenshots, reporters       |
+| Task                     | Location                                     | Notes                                           |
+| ------------------------ | -------------------------------------------- | ----------------------------------------------- |
+| Module behavior          | [Unit guide](unit/AGENTS.md)                 | App and shared-library regression suites        |
+| Cross-module contracts   | [Integration guide](integration/AGENTS.md)   | Schema, sync, network, rendered HTML            |
+| Browser and API flows    | [E2E guide](e2e/AGENTS.md)                   | Playwright projects and local/mock environments |
+| Owner-derived assertions | `helpers/owner-data.js`                      | Reads the materialized locale data              |
+| Fake DOM harness         | `helpers/fake-dom.js`                        | `createFakeElement`, `createFakeDocument`       |
+| Fake content pack        | `fixtures/content-pack/`                     | Mirrors selected pack paths for CI              |
+| Jest configuration       | [Jest config](../jest.config.cjs)            | Unit and integration discovery                  |
+| Browser configuration    | [Playwright config](../playwright.config.js) | Projects, servers, screenshots, reporters       |
 
 ## CONVENTIONS
 

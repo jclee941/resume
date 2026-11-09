@@ -57,5 +57,5 @@ runs `npm run build` on every deploy.
   reads pages of about 20 rows to stay inside D1 request limits.
 - The CLI is JavaScript, an exception to the Go-first rule for operational scripts
   (see `tools/scripts/AGENTS.md`).
-- Untracking the existing content files and wiring `content:pull` into `npm run build`
-  are separate follow-up changes; this ADR delivers the schema, the CLI, and the guard.
+- `npm run build` currently runs `content ensure`, `sync:data`, then
+  `build:worker`, ensuring content before data sync and worker generation.

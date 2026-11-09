@@ -1,6 +1,8 @@
 # Applications N+1 Query Fix Plan — Issue #33 / P2-15
 
-**Status**: Active plan · **Owner**: Platform · **Last Updated**: 2026-05-05
+- **Status:** Plan snapshot; implementation status not independently verified
+- **Owner:** Platform
+- **Plan last updated:** 2026-05-05
 
 This document maps the N+1 query patterns in
 `apps/job-dashboard/src/handlers/applications/*.js` (post-Epic-6 split),
@@ -9,7 +11,7 @@ must land alongside the fix.
 
 ---
 
-## Current State (post-#28 split)
+## State recorded after #28 split (snapshot)
 
 The applications handler was split in Epic 6 / #28 into:
 
@@ -36,8 +38,11 @@ in two specific code paths now hosted by:
    is fetched in a separate query
    (`SELECT COUNT(*) FROM applications WHERE job_id = ?` per related job).
 
-Both run inside a request handler. With page size N, each request does
-2N + 1 queries instead of 2.
+The list and detail paths are separate request flows. In the list path, the
+recorded pattern is one application-list query plus one timeline query per
+application (`N + 1`); batching targets two prepare calls for a non-empty page.
+In the detail path, the recorded test fixture expects three prepare calls:
+application lookup, related-job lookup, and one batched count call.
 
 ---
 
@@ -82,6 +87,10 @@ for (const a of apps) {
 }
 ```
 
+When the application list is empty, skip the timeline batch and return an empty
+list. When there are no related jobs, skip the count query and assign each
+returned job a count of zero; do not issue an `IN ()` statement.
+
 Constraints:
 
 - D1 has a parameter limit (≈100 per query). For page sizes > 100, chunk
@@ -89,6 +98,8 @@ Constraints:
   (default 25, max 100), so a single batch is sufficient.
 - Use `IN (...)` rather than `JOIN` to keep the API response shape stable
   (per acceptance criterion: "Preserve API response shape").
+- The expected values below count calls to `db.prepare(...)`; they do not assert
+  the number of database statements executed.
 
 ### detail-query.js COUNT batching
 
@@ -125,8 +136,8 @@ for (const job of relatedJobs) {
 
 ## Regression Coverage
 
-Acceptance criterion: "Add regression coverage / query-count assertions for
-affected timeline/COUNT paths."
+Acceptance criterion: "Add regression coverage / prepare-call-count assertions
+for the affected timeline and COUNT paths."
 
 Strategy:
 
@@ -147,14 +158,14 @@ Strategy:
 
 ## Migration Plan
 
-### Phase 1 (this PR) — **complete**
+### Phase 1 (plan definition; recorded complete)
 
 - [x] Map the N+1 sites to the post-Epic-6-split file layout.
 - [x] Decide on `IN (...)` batching with D1's parameter-limit consideration.
 - [x] Decide on prepare-call-count assertion for regression coverage.
 - [x] Confirm response-shape preservation.
 
-### Phase 2 (follow-up PR — implementation)
+### Phase 2 (implementation plan; completion not verified)
 
 - [ ] Add `apps/job-dashboard/src/test-helpers/d1-mock.js` with prepare-call
       counting.
@@ -162,7 +173,7 @@ Strategy:
 - [ ] Add `*.test.js` for both with prepare-count assertions.
 - [ ] Run dashboard E2E smoke tests; verify response shape unchanged.
 
-### Phase 3 (production verification)
+### Phase 3 (production verification plan; completion not verified)
 
 - [ ] Capture before/after timing for a representative request via
       Cloudflare Workers Logs / D1 query timing.
@@ -171,20 +182,21 @@ Strategy:
 
 ---
 
-## Acceptance Criteria
+## Acceptance Criteria (per request path)
 
-- [ ] Both code paths perform ≤2 D1 queries regardless of page size.
+- [ ] The list path uses two prepare calls for a non-empty page, independent of page size.
+- [ ] The detail path uses three prepare calls for the recorded fixture, independent of related-job count.
 - [ ] API response shape unchanged (verified by E2E snapshot).
-- [ ] Prepare-count regression tests in CI.
+- [ ] Prepare-call-count regression tests in CI.
 - [ ] Manual verification with representative datasets (25, 50, 100 apps).
 
 ---
 
-## Verification (this PR)
+## Verification recorded for the plan
 
-This PR adds the plan only — no code changes. Phase 2 implements the
-batching; Phase 3 verifies in production. The issue stays open until
-Phase 2 lands.
+The original change added the plan only, with no code changes. Phase 2 describes
+the implementation and Phase 3 the production checks; their current completion
+status is not established by this document.
 
 ---
 

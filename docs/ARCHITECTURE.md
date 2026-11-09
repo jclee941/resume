@@ -4,6 +4,19 @@ Personal resume management system with multi-format output. Layer-based npm
 workspaces monorepo hosting deployable services and shared packages. Serves a
 cyberpunk terminal portfolio and automates Korean job platform workflows.
 
+## Contents
+
+- [Overview](#overview)
+- [Tech Stack](#tech-stack)
+- [System Architecture](#system-architecture)
+- [Directory Structure](#directory-structure)
+- [Data Flow](#data-flow)
+- [Deployment](#deployment)
+- [Storage Bindings](#storage-bindings)
+- [Workspaces](#workspaces)
+- [Key Design Decisions](#key-design-decisions)
+- [Related Documentation](#related-documentation)
+
 ## Overview
 
 The resume monorepo is a personal portfolio and job automation system built on
@@ -43,9 +56,9 @@ git push (master)
         │
         ├─────────────────────────────────┐
         ▼                                 ▼
-Cloudflare Workers Builds          GitHub Actions ci.yml
-(npm run build, deploy)            (validate: lint, typecheck,
-        │                           tests, contracts, bundle)
+Cloudflare Workers Builds          GitHub Actions ci.yml (validate)
+(npm run build, deploy)            one read-only validation job
+        │                           (no E2E or deployment)
         ▼
 resume Worker (apps/portfolio/entry.js)
   ├── portfolio routes (resume.jclee.me)
@@ -161,16 +174,16 @@ Cloudflare Workers Builds          GitHub Actions ci.yml (validate)
 
 Cloudflare Workers Builds is the only deploy path: it runs `npm run build` and
 deploys the merged `resume` Worker on every push to `master`. GitHub Actions
-runs one `validate` job (`.github/workflows/ci.yml`) on pushes and pull
-requests and never deploys.
+runs one read-only `validate` job (`.github/workflows/ci.yml`) on pushes and
+pull requests. It does not run E2E tests or deploy.
 
 ## Deployment
 
-| App              | Domain                  | Platform           | Deploy Method                |
-| ---------------- | ----------------------- | ------------------ | ---------------------------- |
-| Portfolio Worker | `resume.jclee.me`       | Cloudflare Workers | CF Workers Builds (git push) |
-| Job Dashboard    | `resume.jclee.me/job/*` | Cloudflare Workers | CF Workers Builds (git push) |
-| Job Server       | Local / Docker          | Node.js + Fastify  | Docker / manual              |
+| App                | Domain                  | Platform           | Deploy Method                |
+| ------------------ | ----------------------- | ------------------ | ---------------------------- |
+| Portfolio Worker   | `resume.jclee.me`       | Cloudflare Workers | CF Workers Builds (git push) |
+| Job Dashboard      | `resume.jclee.me/job/*` | Cloudflare Workers | CF Workers Builds (git push) |
+| Retired Job Server | Historical (ADR 0010)   | Node.js + Fastify  | Retired; see ADR 0010        |
 
 **Deploy authority**: Cloudflare Workers Builds deploys the merged `resume`
 worker on push to `master`. GitHub Actions is CI only and never deploys. The

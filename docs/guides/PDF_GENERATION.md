@@ -22,6 +22,18 @@ Automated PDF generation system supporting multiple resume variants and
 technical documentation, invoked from the repo root via `npm run sync:pdf` or
 directly via `go -C tools/scripts run ./build/pdf-generator <variant>`.
 
+## Contents
+
+- [Quick Start](#quick-start)
+- [Prerequisites](#prerequisites)
+- [Architecture](#architecture)
+- [Configuration](#configuration)
+- [Storage](#storage)
+- [CI/CD Integration](#cicd-integration)
+- [Testing](#testing)
+- [Maintenance](#maintenance)
+- [Related Documentation](#related-documentation)
+
 ### Key Features
 
 - **Automated Generation**: Single Go program handles all PDF variants
@@ -32,7 +44,7 @@ directly via `go -C tools/scripts run ./build/pdf-generator <variant>`.
 - **CI/CD**: Not currently run in `.github/workflows/ci.yml` — this is a
   manual/local step (or run via `npm run sync:all` / `npm run automate:ssot`)
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Generate the PDFs used by the portfolio
 
@@ -72,7 +84,7 @@ go -C tools/scripts run ./build/pdf-generator nextrade_soc
 Running an unknown variant name prints the full list of available resume and
 doc variants and exits non-zero.
 
-## 📋 Prerequisites
+## Prerequisites
 
 ### Option 1: Native Pandoc (Recommended)
 
@@ -108,7 +120,7 @@ newgrp docker
 If neither `pandoc` nor `docker` is found on `PATH`, the generator prints an
 error and exits.
 
-## 🏗️ Architecture
+## Architecture
 
 ### PDF Generation Pipeline
 
@@ -191,7 +203,7 @@ CJK KR"), set via `catalog.go`.
 (`#5AA9B8`). Technical-doc variants additionally get `--toc --toc-depth=3
 --number-sections`; resume variants do not.
 
-## 🔧 Configuration
+## Configuration
 
 ### Adding a New Resume Variant
 
@@ -220,23 +232,14 @@ flag for these — edit the Go source and re-run.
 fc-list :lang=ko | grep -i "nanum\|noto"
 ```
 
-## 📊 Storage
+## Storage
 
-PDFs are committed as regular Git objects — **Git LFS is not configured**
-for this repository (`.gitattributes` has no `filter=lfs` entry for `*.pdf`
-or `*.docx`).
+Generated resume PDFs are materialized outputs. Keep personal and
+per-application PDFs local; do not stage or commit them. The content pack
+defines which source and generated files are materialized; see the
+[Content Pack Guide](CONTENT_PACK.md).
 
-```bash
-# Generate PDFs
-go -C tools/scripts run ./build/pdf-generator all
-
-# Stage and commit as normal files
-git add packages/data/resumes/master/*.pdf
-git commit -m "chore(data): regenerate resume PDFs"
-git push origin master
-```
-
-## 🔄 CI/CD Integration
+## CI/CD Integration
 
 ### Current: Manual / Local Step
 
@@ -251,17 +254,13 @@ vim packages/data/resumes/master/resume_master.md
 # 2. Regenerate the PDFs the portfolio links to
 npm run sync:pdf
 
-# 3. Commit and push
-git add packages/data/resumes/master/*.pdf
-git commit -m "chore(data): regenerate resume PDFs"
-git push origin master
 ```
 
 There is no proposed/planned GitHub Actions job for this in the current
 workflows; if one is added later, update this section rather than describing
 a hypothetical pipeline.
 
-## 🧪 Testing
+## Testing
 
 `tools/scripts/build/pdf-generator/pdf_generator_test.go` covers the variant
 catalog shape and the PDF `/ID` normalization determinism:
@@ -286,7 +285,7 @@ go -C tools/scripts run ./build/pdf-generator master   # should use Docker
 sudo mv /usr/bin/pandoc.bak /usr/bin/pandoc
 ```
 
-## 📝 Maintenance
+## Maintenance
 
 ### Troubleshooting
 
@@ -315,7 +314,7 @@ newgrp docker
 `✗ Neither Pandoc nor Docker found` before attempting to render anything.
 Install one of the two options above.
 
-## 🔗 Related Documentation
+## Related Documentation
 
 - **SSoT**: `packages/data/resumes/master/resume_data.json` and the
   markdown/PDF exports derived from it (see

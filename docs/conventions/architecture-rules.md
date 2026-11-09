@@ -5,19 +5,39 @@ Modular Code Architecture & Workflow — Zero Tolerance Policy
 
 This rule is NON-NEGOTIABLE. Violations BLOCK all further work until resolved.
 
-[COMMUNICATION DIRECTIVE]
+## Contents
+
+- [Communication Directive](#communication-directive)
+- [Execution Posture](#execution-posture)
+- [Architecture & Workflow Rules](#architecture--workflow-rules)
+  - [Rule 1: Entry Points are Corridors, Not Dumping Grounds](#rule-1-entry-points-are-corridors-not-dumping-grounds)
+  - [Rule 2: No Catch-All Files](#rule-2-no-catch-all-files)
+  - [Rule 3: Single Responsibility Principle](#rule-3-single-responsibility-principle)
+  - [Rule 4: 200 LOC Hard Limit](#rule-4-200-loc-hard-limit)
+  - [Rule 5: Scheduled Automation](#rule-5-scheduled-automation)
+- [Naming Conventions](#naming-conventions)
+- [Dependency Direction](#dependency-direction)
+- [Verification Checklist](#verification-checklist)
+- [How to Apply](#how-to-apply)
+- [Anti-Patterns](#anti-patterns)
+- [Blocked-Step Policy](#blocked-step-policy)
+
+## Communication Directive
+
 Language Requirement: You MUST respond to the user in Korean (한국어). All
 explanations, code reviews, answers, and dialogue must be provided in Korean,
 regardless of the language used in the user's prompt.
 
-[EXECUTION POSTURE]
+## Execution Posture
+
 Zero-Questions Policy: Never ask for confirmation, preferences, or permissions.
 Infer context from code/config, choose safest reversible interpretation, and
 proceed immediately. Report assumptions after execution with evidence.
 
-[ARCHITECTURE & WORKFLOW RULES]
+## Architecture & Workflow Rules
 
-Rule 1: Entry Points are Corridors, Not Dumping Grounds
+## Rule 1: Entry Points are Corridors, Not Dumping Grounds
+
 Entry point files (e.g., `index`, `main`, `__init__`, `app`) MUST ONLY contain:
 
 - Re-exports and imports
@@ -35,7 +55,8 @@ Entry points MUST NEVER contain:
 If you find mixed logic in an entry point: Extract each responsibility into its
 own dedicated file BEFORE making any other changes. This is not optional.
 
-Rule 2: No Catch-All Files — `utils` / `common` are CODE SMELLS
+## Rule 2: No Catch-All Files
+
 A single `utils`, `helpers`, `common`, or `services` file is a gravity well —
 every unrelated function gets tossed in, and it grows into an untestable,
 unreviewable blob.
@@ -50,7 +71,8 @@ These file names are BANNED as top-level catch-alls. Instead:
 Design for reusability from the start. Each module should be independently
 importable, self-contained, and nameable by its exact purpose.
 
-Rule 3: Single Responsibility Principle — ABSOLUTE
+## Rule 3: Single Responsibility Principle
+
 Every source code file MUST have exactly ONE clear, nameable responsibility.
 Self-test: If you cannot describe the file's purpose in ONE short phrase (e.g.,
 "parses YAML frontmatter", "handles user authentication"), the file does too
@@ -62,7 +84,8 @@ much. Split it.
 - Signal: You need to scroll extensively to understand the file -> Action: SPLIT
   NOW
 
-Rule 4: 200 LOC Hard Limit — CODE SMELL DETECTOR
+## Rule 4: 200 LOC Hard Limit
+
 Any source code file exceeding 200 lines of code (excluding long string prompts,
 SQL queries, or markdown content) is an immediate code smell.
 
@@ -78,19 +101,14 @@ Quick method: Read the file -> subtract blank lines, comment-only lines, and
 long static string content -> remaining count = LOC. When in doubt, round up —
 err on the side of splitting.
 
-Enforced by `npm run lint:loc` (`tools/scripts/verification/check-source-loc.mjs`)
-for non-test source under `apps/`, `packages/`, and `tools/`; CI runs it.
+`npm run lint:loc` (`tools/scripts/verification/check-source-loc.mjs`) enforces
+the 200-code-line limit for non-test JavaScript and Go source under `apps/`,
+`packages/`, and `tools/`; it fails above 200 lines and CI runs it. Its count
+skips blank and comment-only lines and the bodies of multiline template literals
+and Go raw strings. This check does not scan every source file in the repository.
 
-Thresholds Reference:
+## Rule 5: Scheduled Automation
 
->
-
-- > 500 LOC: Must split before merging new functionality (HARD)
-- > 300 LOC: Must split if adding new logic (HARD)
-- > 200 LOC: Assess if natural split points exist (SOFT - this project uses as
-  > HARD)
-
-Rule 5: Scheduled Automation MUST be Cloudflare-Native
 Do NOT add host schedulers (systemd timers, crontab entries), standalone cron
 scripts, or long-running daemon loops for scheduled tasks, webhooks, or API
 orchestration.
@@ -104,7 +122,7 @@ orchestration.
 - Keep schedule wiring out of business logic: handlers and services expose
   focused functions that the cron router and Workflow steps compose.
 
-[NAMING CONVENTIONS]
+## Naming Conventions
 
 Directory Names (kebab-case): `^[a-z0-9][a-z0-9-]*$`
 
@@ -122,12 +140,13 @@ hooks/linters.
 - Good: `deploy.go`, `sync-resume.go`
 - Bad: `deploy.sh`, `sync-resume.js`
 
-[DEPENDENCY DIRECTION]
+## Dependency Direction
+
 Handlers → Services → Repositories → Clients (downward only).
 Types and Utils may be imported by any layer (sideways/upward).
 Never reverse the direction.
 
-[VERIFICATION CHECKLIST]
+## Verification Checklist
 
 When splitting files, verify:
 
@@ -139,7 +158,7 @@ When splitting files, verify:
 6. All external imports updated
 7. File names follow naming convention
 
-[HOW TO APPLY]
+## How to Apply
 
 When reading, writing, or editing ANY codebase:
 
@@ -152,7 +171,7 @@ When reading, writing, or editing ANY codebase:
 5. If renaming/moving files — update all direct references in
    docs/config/scripts.
 
-[ANTI-PATTERNS]
+## Anti-Patterns
 
 - Premature splitting: Splitting <200 LOC files or during prototyping.
 - Shotgun splitting: Every function in its own file regardless of cohesion.
@@ -161,7 +180,7 @@ When reading, writing, or editing ANY codebase:
   split.
 - Catch-all names: `helpers.ts`, `utils.ts`, `misc.ts` as dumps.
 
-[BLOCKED-STEP POLICY]
+## Blocked-Step Policy
 
 For destructive or irreversible operations (delete data, force push,
 billing/security posture change):

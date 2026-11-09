@@ -1,5 +1,11 @@
 # GitHub Actions Migration - Deployment Readiness Report
 
+> Historical report dated 2025-02-01. Its readiness status, workflow inventory,
+> and secret checklist describe the earlier deployment plan and are not current
+> operational guidance. For current deployment authority, see the
+> [deployment pipeline](architecture/DEPLOYMENT_PIPELINE.md) and
+> [documentation index](README.md).
+
 **Date**: February 1, 2025  
 **Project**: Resume Management System  
 **Status**: 🟢 **READY FOR PRODUCTION DEPLOYMENT**  

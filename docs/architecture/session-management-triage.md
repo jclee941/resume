@@ -4,11 +4,22 @@
 
 > **2026-09-29:** `apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)). Its paths below no longer exist, and the items that target them are closed.
 
+> The inventory and migration proposals below describe the 2026-05-05 snapshot. The retired Wanted session modules have no successor ownership established here. Current dashboard authentication and transient browser-session owners are [`auth.js`](../../apps/job-dashboard/src/services/auth.js) and [`browser-session-do.js`](../../apps/job-dashboard/src/durable-objects/browser-session-do.js).
+
 This document maps every session-handling implementation in the monorepo,
 distinguishes the orthogonal concerns currently muddled together, and
 prescribes the layered consolidation. **#43 is the highest-risk item in
 Epic 4** per the original SSoT plan; this triage exists so the migration
 PRs can land in safe slices.
+
+## Contents
+
+- [Inventory](#inventory)
+- [Concerns](#concerns-currently-muddled)
+- [Decisions](#decisions)
+- [Migration plan](#migration-plan)
+- [Verification](#verification-this-pr)
+- [See also](#see-also)
 
 ---
 
@@ -27,7 +38,7 @@ In-process Wanted session manager. Owns:
 
 #### A-2. `apps/job-server/src/session-broker/services/` (six files, 546 LOC)
 
-Out-of-process Wanted session broker (Docker, port 3456). Five files:
+Out-of-process Wanted session broker (Docker, port 3456). Six files:
 
 | File                           | LOC | Role                          |
 | ------------------------------ | --: | ----------------------------- |
@@ -143,7 +154,8 @@ with explicit safety boundaries to land each phase as an independent PR.
   (HMAC primitives + crypto layout this work depends on).
 - [`docs/architecture/SSOT_IMPROVEMENT_PLAN.md`](./SSOT_IMPROVEMENT_PLAN.md)
   § SSOT-034 — original consolidation entry.
-- [`apps/job-server/AGENTS.md`](../../apps/job-server/AGENTS.md) — Wanted
-  session conventions (`~/.OpenCode/data/wanted-session.json`).
+- `apps/job-server/AGENTS.md` — retired job-server Wanted session conventions
+  (`~/.OpenCode/data/wanted-session.json`), retained here as a historical path;
+  no successor guide is confirmed.
 - [`docs/security/SECRET_ROTATION_PLAYBOOK.md`](../security/SECRET_ROTATION_PLAYBOOK.md)
   § Session signing keys — rotation cadence.

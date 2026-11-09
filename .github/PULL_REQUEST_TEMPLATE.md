@@ -44,5 +44,3 @@ Branch / 브랜치: feat/* | fix/* | hotfix/* | docs/* | refactor/* | chore/* | 
 - [ ] Branch uses standard prefix / 브랜치 이름이 표준 prefix 사용
 - [ ] Documentation updated (README/AGENTS.md/docs/) / 관련 문서 업데이트
 - [ ] Tests added/updated / 테스트 추가/갱신 (해당 시)
-
-> 이 PR은 `jclee-bot`이 자동 리뷰합니다 (cli_proxy + Kimi-k2.6, 한국어 응답).

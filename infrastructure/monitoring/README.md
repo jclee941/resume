@@ -1,7 +1,28 @@
 # Resume Portfolio - Monitoring Configuration
 
 **Last Updated**: 2025-11-26
-**Status**: ✅ Production-ready
+**Status**: Historical dashboard snapshot; remote service state is unverified
+
+---
+
+> **As of 2025-11-26:** this page records a repository dashboard snapshot. It
+> is not a current production-status report. See the
+> [Grafana configuration guide](../configs/grafana/README.md) and
+> [infrastructure guide](../../docs/guides/INFRASTRUCTURE.md) for repository
+> ownership and operator documentation.
+
+## Contents
+
+- [Overview](#overview)
+- [Directory Structure](#directory-structure)
+- [Dashboard Details](#dashboard-details)
+- [Metrics Reference](#metrics-reference)
+- [Alert Rules](#alert-rules)
+- [Deployment](#deployment)
+- [Monitoring Best Practices](#monitoring-best-practices)
+- [Troubleshooting](#troubleshooting)
+- [Related Files](#related-files)
+- [Changelog](#changelog)
 
 ---
 
@@ -82,7 +103,7 @@ infrastructure/monitoring/
 - Unit: reqps (requests per second)
 - Legend: Table with mean, last, max
 
-1. **Response Time History** (id:7)
+7. **Response Time History** (id:7)
    - Query: `http_response_time_seconds{job="resume"}`
    - Visualization: Timeseries
    - Unit: seconds (3 decimals)
@@ -189,10 +210,6 @@ curl -X POST https://grafana.jclee.me/api/dashboards/db \
   -H "Content-Type: application/json" \
   -d @infrastructure/monitoring/grafana-dashboard-resume-portfolio.json
 
-# Method 2: Using deploy-generic.sh (if available)
-~/.OpenCode/scripts/deploy-generic.sh grafana deploy \
-  --config infrastructure/monitoring/grafana-dashboard-resume-portfolio.json
-
 # Method 3: Import via Grafana UI
 # 1. Open https://grafana.jclee.me
 # 2. Go to Dashboards → Import
@@ -260,7 +277,8 @@ curl -s https://resume.jclee.me/health | jq
 ## Related Files
 
 - **Alert Rules**: `infrastructure/configs/grafana/alert-rules.yaml`
-- **Project Documentation**: `OpenCode.md`, `README.md`
+- **Project Documentation**: [repository README](../../README.md) and
+  [monitoring ownership guide](AGENTS.md)
 
 ---
 

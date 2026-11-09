@@ -5,20 +5,20 @@ Miniflare for local execution.
 
 ## Files
 
-- Root `wrangler.jsonc`: runtime entry, bindings, and local development configuration.
-- Root `.dev.vars.example`: template for local worker environment variables.
+- [Root `wrangler.jsonc`](../../../wrangler.jsonc): runtime entry, bindings, and local development configuration.
+- [Root `.dev.vars.example`](../../../.dev.vars.example): template for local worker environment variables.
 
 ## Quick Start
 
-1. Copy env template:
+1. Copy the environment template:
 
 ```bash
 cp .dev.vars.example .dev.vars
 ```
 
-1. Fill values in `.dev.vars` for local-only usage.
+2. Fill values in `.dev.vars` for local-only usage.
 
-2. Start local worker:
+3. Start the local Worker:
 
 ```bash
 npm run dev

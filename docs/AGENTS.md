@@ -49,7 +49,7 @@ docs/
 - The guarded current-state set is declared in `tools/scripts/verification/architecture-docs-current-state.mjs`.
 - Older deployment and rotation guides can reference absent workflows; verify those references before use.
 - Current-state validation rejects selected stale strings; it does not prove every topology claim is current.
-- `guides/` and `architecture/` have no index file; many guides exceed 500 lines and mix procedure with dated reports.
+- `guides/README.md` and `architecture/README.md` index current references, procedures, and historical/planning records; many guides exceed 500 lines and mix procedure with dated reports.
 - `guides/CLOUDFLARE_TOKEN_SETUP.md` documents the deprecated Global API Key method; treat it as history.
 
 ## ANTI-PATTERNS

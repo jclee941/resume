@@ -4,15 +4,17 @@
 
 > **2026-09-29:** every inventoried service lived in `apps/job-server`, which was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)). Nothing in this triage remains to migrate.
 
-This document inventories the seven job-server services that currently use
-the **closure-bound holder pattern** as a containment for module-level
-mutable state, prescribes the per-service constructor-injection migration,
-and ranks them by Worker-isolate safety risk.
+> **Archive note:** This is a historical triage and proposal. The inventory and migration sequence below describe the retired job-server design; they are not a current service inventory or an approved migration queue.
 
-The closure-bound holder pattern was applied in Round 3+5 audit as
-_containment_, not elimination — it removes top-level mutable bindings but
-still leaves shared state inside the module instance. This document plans
-the elimination phase.
+This document records seven job-server services that the original triage
+described as using the **closure-bound holder pattern** to contain
+module-level mutable state. Its constructor-injection proposal and
+Worker-isolate risk rankings apply to that historical design.
+
+The original triage described the closure-bound holder pattern as
+_containment_, not elimination: it removed top-level mutable bindings but
+left shared state inside the module instance. The proposed elimination phase
+is historical.
 
 ---
 
@@ -30,7 +32,7 @@ the elimination phase.
 
 ---
 
-## Migration Pattern
+## Historical migration pattern
 
 Each service migrates from:
 
@@ -78,7 +80,7 @@ via module import.
 
 ---
 
-## Per-Service Slice Plan
+## Historical per-service slice plan
 
 Sliced in **lowest-risk-first** order so each PR is independently
 mergeable and reversible.
@@ -110,7 +112,7 @@ mergeable and reversible.
 
 ---
 
-## Acceptance Criteria (per service)
+## Historical acceptance criteria (per service)
 
 - [ ] Constructor accepts dependencies via parameters.
 - [ ] No module-level mutable bindings (no closure-bound holder remains).
@@ -123,13 +125,12 @@ mergeable and reversible.
 
 ---
 
-## Verification (this PR)
+## Original document verification note
 
-This PR adds the triage doc only — no code changes. It satisfies the
-**slicing prerequisite** of #16 by ranking services by isolate risk and
-ordering the migration so each slice is independently reviewable. Each
-slice will be a separate PR; the issue stays open until all three slices
-land and the worker-isolate smoke test passes.
+The original note says the triage doc was added without code changes and
+satisfied the **slicing prerequisite** of #16 by ranking services by isolate
+risk. It proposed separate PRs for each slice and said the issue would stay
+open until all three slices and the worker-isolate smoke test were complete.
 
 ---
 
@@ -140,5 +141,5 @@ land and the worker-isolate smoke test passes.
 - [`docs/architecture/MONOREPO_REVIEW_2026-04-29.md`](./MONOREPO_REVIEW_2026-04-29.md)
   § P0-5 — review entry that produced this issue.
 - [`docs/architecture/rate-limiting-triage.md`](./rate-limiting-triage.md)
-  — Slice C #1 (Wanted retry rate limiting) consumes the canonical token-bucket from
-  this track once it lands.
+  — related historical discussion of Slice C #1 (Wanted retry rate limiting).
+  The current owner and migration status are not established by this document.

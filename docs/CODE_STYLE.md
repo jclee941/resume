@@ -5,13 +5,14 @@ monorepo.
 
 ## Overview
 
-JavaScript primary with TypeScript for type annotations only. ESM in all apps
-and packages, CJS for root config files. Node >= 22 required.
+JavaScript with JSDoc is primary; TypeScript is used for types and selected
+checked files. ESM is standard in apps and packages, with CJS where required by
+root configuration. Node >= 22 is required.
 
 ## Language and Runtime
 
-- JavaScript primary (.js files), TypeScript for type annotations only (.ts
-  files)
+- JavaScript and JSDoc are primary; TypeScript files hold types and the strict
+  typecheck allowlist
 - Node >= 22 required (enforced by `.nvmrc`)
 - ESM (`"type": "module"`) in all apps and packages
 - CJS only for root config files (eslint.config.cjs, jest.config.cjs,
@@ -67,11 +68,11 @@ Ignored patterns: node_modules, build outputs (worker.js, dist), coverage, logs,
 
 ## Testing Conventions
 
-| Test Type   | Location             | Framework  | Notes                |
-| ----------- | -------------------- | ---------- | -------------------- |
-| Unit        | `tests/unit/`        | Jest       | 33 suites, 712 tests |
-| Integration | `tests/integration/` | Jest       | Jest integration     |
-| E2E         | `tests/e2e/`         | Playwright | 24 files             |
+| Test Type   | Location             | Framework  | Notes                 |
+| ----------- | -------------------- | ---------- | --------------------- |
+| Unit        | `tests/unit/`        | Jest       | `*.test.js`           |
+| Integration | `tests/integration/` | Jest       | `*.test.js`           |
+| E2E         | `tests/e2e/`         | Playwright | Separate test command |
 
 Coverage (via Jest): global threshold 90% (see jest.config.cjs).
 
@@ -122,16 +123,8 @@ Run `npm run format` or `npm run format:check`.
 
 ## CI Pipeline
 
-Eight-job validation pipeline:
-
-1. analyze — dependency review
-2. validate-cf — Wrangler config validation
-3. lint — ESLint
-4. typecheck — tsc --noEmit
-5. test-unit — Jest
-6. test-e2e — Playwright
-7. security-scan — npm audit
-8. build → elk-ingest — worker.js build + ELK logging
-
-Deploy authority: Cloudflare Workers Builds (git push to master). GitHub Actions
-is CI only.
+GitHub Actions runs one read-only `Validate` job. It runs the configured
+validation checks, including tests and a Wrangler dry-run; it does not run the
+Playwright E2E suite or deploy. Run `npm run test:e2e` separately when E2E
+coverage is needed. Cloudflare Workers Builds owns production deployment from
+the root Wrangler configuration.

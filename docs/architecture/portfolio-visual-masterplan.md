@@ -7,6 +7,18 @@ It does not replace the design system in
 [`apps/portfolio/DESIGN.md`](../../apps/portfolio/DESIGN.md); it explains how
 the current upgrade uses that system.
 
+## Contents
+
+- [Intent](#intent)
+- [Source boundaries](#source-boundaries)
+- [Visual system](#visual-system)
+- [Recruiter proof path](#recruiter-proof-path)
+- [Timeline modularization](#timeline-modularization)
+- [SEO and locale alignment](#seo-and-locale-alignment)
+- [QA gates](#qa-gates)
+- [Release path](#release-path)
+- [Done definition](#done-definition)
+
 ## Intent
 
 The visual direction is a dark operational glass portfolio for recruiters and
@@ -31,13 +43,13 @@ The upgrade has four user-facing outcomes:
 Use the existing portfolio source boundaries. Do not hand-edit
 `apps/portfolio/worker.js`; it is generated.
 
-| Area                                      | Current owner                                                                                                                                                                                                                                                                                                                                          | Rule                                                                                                                               |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| Visual tokens and component contracts     | [`apps/portfolio/DESIGN.md`](../../apps/portfolio/DESIGN.md)                                                                                                                                                                                                                                                                                           | New UI must use existing tokens and component roles before adding any new pattern.                                                 |
-| Hero proof copy and review path data      | [`apps/portfolio/lib/hero-content-data.js`](../../apps/portfolio/lib/hero-content-data.js) and [`apps/portfolio/lib/hero-content.js`](../../apps/portfolio/lib/hero-content.js)                                                                                                                                                                        | Keep localized recruiter copy in data, with rendering in the generator.                                                            |
-| Recruiter quick paths and evidence matrix | [`apps/portfolio/src/scripts/modules/recruiter-enhancements.js`](../../apps/portfolio/src/scripts/modules/recruiter-enhancements.js), [`recruiter-enhancements-data.js`](../../apps/portfolio/src/scripts/modules/recruiter-enhancements-data.js), and [`recruiter-role-proofs.js`](../../apps/portfolio/src/scripts/modules/recruiter-role-proofs.js) | Keep role definitions, proof counting, rendering, and binding separated enough to test reinitialization and localization.          |
-| Timeline behavior                         | [`timeline.js`](../../apps/portfolio/src/scripts/modules/timeline.js), [`timeline-rendering.js`](../../apps/portfolio/src/scripts/modules/timeline-rendering.js), and [`timeline-career-meta.js`](../../apps/portfolio/src/scripts/modules/timeline-career-meta.js)                                                                                    | `timeline.js` owns orchestration and events; rendering labels/HTML and career UI metadata stay modular.                            |
-| SEO locale routing                        | [`entry.js`](../../apps/portfolio/entry.js), [`constants.js`](../../apps/portfolio/lib/entry-router-utils/constants.js), [`html-localization.js`](../../apps/portfolio/lib/entry-router-utils/html-localization.js), templates, and [`sitemap.xml`](../../apps/portfolio/sitemap.xml)                                                                  | Root `/` remains stable Korean content; `/ko/`, `/en/`, and `/ja/` must advertise route-specific canonicals and shared alternates. |
+| Area                                      | Current owner                                                                                                                                                                                                                                                                                                                                              | Rule                                                                                                                               |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Visual tokens and component contracts     | [`apps/portfolio/DESIGN.md`](../../apps/portfolio/DESIGN.md)                                                                                                                                                                                                                                                                                               | New UI must use existing tokens and component roles before adding any new pattern.                                                 |
+| Hero proof copy and review path data      | [`apps/portfolio/lib/hero-content-data.js`](../../apps/portfolio/lib/hero-content-data.js)<br>and [`apps/portfolio/lib/hero-content.js`](../../apps/portfolio/lib/hero-content.js)                                                                                                                                                                         | Keep localized recruiter copy in data, with rendering in the generator.                                                            |
+| Recruiter quick paths and evidence matrix | [`apps/portfolio/src/scripts/modules/recruiter-enhancements.js`](../../apps/portfolio/src/scripts/modules/recruiter-enhancements.js)<br>[`recruiter-enhancements-data.js`](../../apps/portfolio/src/scripts/modules/recruiter-enhancements-data.js)<br>and [`recruiter-role-proofs.js`](../../apps/portfolio/src/scripts/modules/recruiter-role-proofs.js) | Keep role definitions, proof counting, rendering, and binding separated enough to test reinitialization and localization.          |
+| Timeline behavior                         | [`timeline.js`](../../apps/portfolio/src/scripts/modules/timeline.js)<br>Proposed owners `timeline-rendering.js`<br>`timeline-career-meta.js` are unresolved because those paths are absent.                                                                                                                                                               | Keep current timeline ownership in `timeline.js`; do not assume the proposed module split exists.                                  |
+| SEO locale routing                        | [`entry.js`](../../apps/portfolio/entry.js)<br>[`constants.js`](../../apps/portfolio/lib/entry-router-utils/constants.js), [`html-localization.js`](../../apps/portfolio/lib/entry-router-utils/html-localization.js)<br>templates, and [`sitemap.xml`](../../apps/portfolio/sitemap.xml)                                                                  | Root `/` remains stable Korean content; `/ko/`, `/en/`, and `/ja/` must advertise route-specific canonicals and shared alternates. |
 
 ## Visual System
 
@@ -109,7 +121,12 @@ Before commit, run focused checks that match the changed surface:
 
 ```bash
 npm run build
-npx playwright test tests/e2e/portfolio-enhancements.spec.js tests/e2e/accessibility.spec.js tests/e2e/seo.spec.js tests/e2e/seo-hreflang.spec.js --project=chromium
+npx playwright test \
+  tests/e2e/portfolio-enhancements.spec.js \
+  tests/e2e/accessibility.spec.js \
+  tests/e2e/seo.spec.js \
+  tests/e2e/seo-hreflang.spec.js \
+  --project=chromium
 ```
 
 Capture local browser screenshots for `/`, `/en/`, and `/ja/` at:
@@ -131,9 +148,10 @@ The visual QA pass must inspect CJK text, not only English:
 
 Use normal git and Cloudflare Workers Builds flow:
 
-1. Keep the implementation commits small enough to review by surface: hero proof
-   path, recruiter proof chips, timeline modularization, SEO/hreflang, and QA
-   fixes.
+1. Keep implementation changes small enough to review by surface:
+   - Hero proof path and recruiter proof chips.
+   - Timeline modularization and SEO/hreflang.
+   - QA fixes.
 2. Run the focused build/E2E gate and attach the screenshot evidence to the
    review notes or PR.
 3. Push to the production branch only after the local gate is green.

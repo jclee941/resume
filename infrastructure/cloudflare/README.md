@@ -2,26 +2,28 @@
 
 Terraform configuration for Cloudflare Workers, DNS, KV, and D1.
 
-## Quick Start
+> **Reference only; not applied.** This directory contains Terraform
+> declarations and data-source references. There is no active Terraform
+> plan/apply workflow in this repository. Do not use this page as an apply
+> procedure or infer remote infrastructure state from these files. See the
+> [infrastructure ownership guide](../AGENTS.md) and root
+> [`wrangler.jsonc`](../../wrangler.jsonc) for the deployed Worker
+> configuration.
+
+## Review the declarations
+
+Review the `.tf` declarations and their ownership before proposing a change.
+This documentation does not authorize or describe `terraform apply`.
+
+## Import references
+
+The following shows the variable shape for an import command. Resolve and
+verify resource ownership and IDs from an authorized source before any
+operator action; the example contains no account or zone identifiers.
 
 ```bash
-cd infrastructure/cloudflare
-
-cp terraform.tfvars.example terraform.tfvars
-# Edit terraform.tfvars with your credentials
-
-terraform init
-terraform plan
-terraform apply
-```
-
-## Import Existing Resources
-
-Workers and routes must be imported before `terraform apply`:
-
-```bash
-export ACCOUNT_ID=a8d9c67f586acdd15eebcc65ca3aa5bb
-export ZONE_ID=ed060daac18345f6900fc5a661dc94f9
+export ACCOUNT_ID=<account-id>
+export ZONE_ID=<zone-id>
 
 terraform import cloudflare_workers_script.portfolio $ACCOUNT_ID/resume-portfolio
 terraform import cloudflare_workers_script.job_dashboard $ACCOUNT_ID/job-dashboard
@@ -31,75 +33,41 @@ terraform import cloudflare_workers_route.job_dashboard $ZONE_ID/<route-id>
 
 ## Files
 
-| File         | Purpose                   |
-| ------------ | ------------------------- |
-| versions.tf  | Provider requirements     |
-| variables.tf | Input variables           |
-| backend.tf   | Local state backend       |
-| workers.tf   | Worker scripts and routes |
-| dns.tf       | DNS records               |
-| kv.tf        | KV namespace data sources |
-| d1.tf        | D1 database data sources  |
-| outputs.tf   | Output values             |
+| File         | Purpose                      |
+| ------------ | ---------------------------- |
+| versions.tf  | Provider requirements        |
+| variables.tf | Input variables              |
+| backend.tf   | S3-compatible remote backend |
+| workers.tf   | Worker scripts and routes    |
+| dns.tf       | DNS records                  |
+| kv.tf        | KV namespace data sources    |
+| d1.tf        | D1 database data sources     |
+| outputs.tf   | Output values                |
 
-## CI/CD Integration
+## Workflow ownership
 
-Pipeline jobs defined in `.github/workflows/release.yml`:
-
-- **terraform:plan** - Runs on MRs, shows diff
-- **terraform:apply** - Runs on master, auto-applies
-- **terraform:drift** - Scheduled weekly, detects drift
-
-## State Management
-
-State stored locally:
-
-```hcl
-terraform {
-  backend "local" {}
-}
-```
-
-For team environments, consider Terraform Cloud or S3 backend.
-
-## Workflow
-
-```text
-┌─────────────────────────────────────────────────────────────────┐
-│                        GitOps Flow                              │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  1. Developer edits *.tf files                                  │
-│           ↓                                                     │
-│  2. Push to feature branch → Create PR                           │
-│           ↓                                                     │
-│  3. terraform:plan runs → Plan visible in PR                     │
-│           ↓                                                     │
-│  4. Review plan → Approve PR → Merge to master                   │
-│           ↓                                                     │
-│  5. terraform:apply runs → Infrastructure updated               │
-│           ↓                                                     │
-│  6. Weekly: terraform:drift detects config drift                │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
+No `.github/workflows/release.yml` or active Terraform automation is present.
+GitHub Actions validates the repository; Cloudflare Workers Builds owns
+production Worker deployment. The configured Terraform backend is
+S3-compatible, but this README does not establish who currently owns its
+remote state.
 
 ## Division of Responsibility
 
-| Layer                 | Managed By                    | Changes Via                                             |
-| --------------------- | ----------------------------- | ------------------------------------------------------- |
-| DNS records           | Terraform                     | \*.tf files → GitHub PR                                 |
-| KV namespaces         | Read-only                     | Wrangler (create only)                                  |
-| D1 databases          | Read-only                     | Wrangler (create only)                                  |
-| Worker routes         | Terraform                     | workers.tf → GitHub PR                                  |
-| Worker code           | Workers Builds                | `git push origin master` (`npm run deploy` is disabled) |
-| Zone response headers | Dashboard/API (not Terraform) | Transform Rule below                                    |
+| Area                  | Repository declaration                   | Current ownership boundary                            |
+| --------------------- | ---------------------------------------- | ----------------------------------------------------- |
+| DNS and Worker routes | Terraform files                          | No active Terraform apply workflow is configured      |
+| KV namespaces and D1  | Read-only Terraform data sources         | Compare with root Worker bindings; schema is separate |
+| Worker code           | Root `wrangler.jsonc` and Worker sources | Cloudflare Workers Builds                             |
+| Zone response headers | Historical note below                    | Remote state is not verified                          |
 
-## Zone Response Headers
+## Historical zone response-header note
+
+> Remote state has not been verified.
 
 The zone-wide "Add security headers" Managed Transform is disabled so the
-`resume.jclee.me` Worker's own headers (`X-Frame-Options: DENY`,
+Worker's own headers (`X-Frame-Options: DENY`,
 `X-XSS-Protection: 0`, `Referrer-Policy: strict-origin-when-cross-origin`) reach
 browsers. A response-header Transform Rule re-applies the former managed values
 (`nosniff`, `SAMEORIGIN`, `same-origin`, `1; mode=block`, `Expect-CT`) to every
-other host with `(http.host ne "resume.jclee.me")`, so they are unchanged.
+other host, so they are unchanged.

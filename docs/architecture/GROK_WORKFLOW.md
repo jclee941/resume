@@ -1,5 +1,9 @@
 # Grok AI Workflow Guide
 
+> Historical workflow snapshot, last recorded 2025-11-23. Configuration and
+> availability statements below were not rechecked; treat examples as guidance,
+> not current service or deployment instructions.
+
 ## Overview
 
 This document describes the Grok AI workflow integration for the resume
@@ -11,24 +15,19 @@ content analysis.
 **Token-efficient pipeline**: Minimize token usage while maximizing reasoning
 quality
 
-```text
-┌─────────────┐      ┌────────────────────┐      ┌─────────────┐
-│  1. TASK    │ ───→ │  2. REASON         │ ───→ │  3. WRITE   │
-│  (OpenCode)   │      │  (Grok)            │      │  (OpenCode)   │
-└─────────────┘      └────────────────────┘      └─────────────┘
- Understanding        Deep Analysis              Execution
- File reading         Architecture               Code writing
- Context gathering    Trade-offs                 Testing
- Simple operations    Design decisions           Deployment
-```
+1. **OpenCode gathers context:** read files, inspect structure, and handle
+   straightforward edits.
+2. **Grok analyzes:** compare options, assess trade-offs, and propose decisions.
+3. **OpenCode implements and verifies:** make the approved change and run the
+   relevant checks.
 
 ### Stage 1: Task Understanding (OpenCode)
 
 **Token Cost**: ~5k | **Duration**: 1-3 tool calls
 
-OpenCode reads files, gathers context, performs simple operations:
+The following is illustrative editor-tool pseudocode, not a shell script:
 
-```bash
+```text
 # Example: Resume content review request
 Read master/resume_master.md
 Grep for specific skills or achievements
@@ -39,9 +38,9 @@ Check existing content structure
 
 **Token Cost**: ~3k | **Duration**: 1 API call
 
-Grok analyzes architecture, evaluates trade-offs, makes decisions:
+This MCP call illustrates the request shape; it is not a shell command:
 
-```bash
+```text
 # Using Grok MCP tool
 mcp__grok__chat_completion({
   "messages": [
@@ -79,7 +78,7 @@ mcp__grok__chat_completion({
 
 **Token Cost**: ~5k | **Duration**: 3-10 tool calls
 
-OpenCode implements Grok's recommendations, writes code, runs tests:
+The following commands are historical examples, not instructions to deploy:
 
 ```bash
 # Based on Grok's analysis
@@ -97,7 +96,8 @@ git push origin master         # Deploy if approved (Cloudflare Workers Builds;
 
 ## 🔧 Grok MCP Configuration
 
-**Status**: ✅ Enabled and configured
+**Historical status**: recorded as enabled and configured; current availability
+is unverified.
 
 **Configuration** (`.OpenCode.json`):
 
@@ -106,7 +106,7 @@ git push origin master         # Deploy if approved (Cloudflare Workers Builds;
   "grok": {
     "description": "xAI Grok - chat completion, vision, function calling",
     "type": "stdio",
-    "command": "/home/jclee/.OpenCode/governance/mcp/providers/grok/grok-mcp.sh",
+    "command": "$HOME/.OpenCode/governance/mcp/providers/grok/grok-mcp.sh",
     "env": {
       "XAI_API_KEY": "${GROK_API_KEY}"
     },
@@ -139,7 +139,7 @@ const analysis = await mcp__grok__chat_completion({
       content: `Analyze this resume for:
     1. Factual accuracy (no exaggerations)
     2. Conservative language (avoid marketing terms)
-    3. Specific achievements (with metrics when appropriate)
+    3. Specific, verifiable achievements (with sourced metrics only when appropriate)
     4. Technical depth (appropriate detail level)
 
     Resume content:
@@ -226,9 +226,9 @@ const recommendation = await mcp__grok__chat_completion({
 "Is my resume good?"
 
 // Good: Specific with context
-"Analyze this resume for a DevSecOps role at Hyundai AutoEver:
-- Focus: Infrastructure automation, security operations
-- Industry: Automotive, OT security
+ "Analyze this resume for a technical role:
+- Focus: infrastructure automation and security operations
+- Industry and requirements: specify only when relevant and verified
 - Requirements: Conservative language, fact-based claims
 [resume content]"
 ```
@@ -281,8 +281,8 @@ grep "$(date +%Y-%m-%d)" /tmp/grok-mcp-instrumented.log | wc -l
 **Environment**:
 
 ```bash
-# Verify API key is set
-echo $GROK_API_KEY | cut -c1-20  # First 20 chars only
+# Check presence only; never print the credential
+if [ -n "${GROK_API_KEY:-}" ]; then echo "GROK_API_KEY is set"; else echo "GROK_API_KEY is unset"; fi
 
 # Test Grok connectivity
 npx -y @modelcontextprotocol/server-grok
@@ -295,14 +295,14 @@ npx -y @modelcontextprotocol/server-grok
 ```bash
 # Stage 1: OpenCode gathers context
 1. Read master/resume_master.md
-2. Read company-specific/*_HyundaiAutoEver_*.md
+2. Read the relevant role-specific resume materials
 3. Identify sections needing review (experience, achievements)
 
 # Stage 2: Grok analyzes content
 4. Call Grok with resume content and evaluation criteria
 5. Get specific feedback on:
    - Exaggerated claims → Conservative alternatives
-   - Vague statements → Specific, measurable achievements
+   - Vague statements → Specific, verifiable achievements
    - Marketing language → Technical, fact-based descriptions
 
 # Stage 3: OpenCode implements changes
@@ -338,7 +338,7 @@ npx -y @modelcontextprotocol/server-grok
 - xAI Grok API: <https://docs.x.ai/api>
 - MCP Grok Server:
   <https://github.com/modelcontextprotocol/servers/tree/main/src/grok>
-- Parent OpenCode.md: ~/.OpenCode/OpenCode.md (Section: "Optimal Workflow
+- Parent OpenCode.md: `$HOME/.OpenCode/OpenCode.md` (section: "Optimal Workflow
   Pattern")
 
 ## 🚀 Quick Start
@@ -374,6 +374,6 @@ await mcp__grok__chat_completion({
 
 ---
 
-**Last Updated**: 2025-11-23
-**Status**: Active and configured
-**Integration**: MCP Server via `.OpenCode.json`
+- **Snapshot date:** 2025-11-23
+- **Status:** Historical workflow; current integration status is unverified
+- **Integration:** MCP Server via `.OpenCode.json`

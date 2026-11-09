@@ -1,6 +1,12 @@
 # /api/auth/login E2E Test Plan — Issue #32 / P2-14
 
-**Status**: Active plan · **Owner**: Platform · **Last Updated**: 2026-05-05
+- **Status:** Historical test plan; implementation status not independently verified
+- **Owner:** Platform
+- **Plan last updated:** 2026-05-05
+
+> Current CI has one read-only `validate` job and no E2E step
+> ([workflow](../../.github/workflows/ci.yml)). This document records a proposed
+> test plan; it does not describe current CI wiring.
 
 This document prescribes the Playwright E2E test for `/api/auth/login` in
 job-dashboard, the Google OAuth mock fixture shape, the cookie / CSRF /
@@ -20,21 +26,25 @@ credentials.
    with `HttpOnly; Secure; SameSite=Strict`, returns a CSRF token.
 4. On failure: server returns 401 with no session cookie.
 
-The existing test gap is that we have no end-to-end exercise of any of
-those branches in CI.
+At the time this plan was written, it recorded no end-to-end exercise of these
+branches in CI.
 
 ---
 
 ## Test Cases
 
-|   # | Name                                  | Input                                          | Expected                                                                                                                   |
-| --: | ------------------------------------- | ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-|   1 | login success — happy path            | valid mocked Google ID token in body           | 200; `Set-Cookie: session=...` with `HttpOnly`, `Secure`, `SameSite=Strict`; CSRF token in body; session row written to D1 |
-|   2 | login failure — invalid token         | malformed / expired Google ID token            | 401; no `Set-Cookie`; no D1 write                                                                                          |
-|   3 | login failure — non-allowlisted email | valid Google ID token but email ≠ allowed list | 403; no `Set-Cookie`                                                                                                       |
-|   4 | login replay — same idToken twice     | valid Google ID token used twice               | 200 the first time, 401 the second time (`jti` already redeemed)                                                           |
-|   5 | CSRF token issuance                   | after success                                  | response body contains a CSRF token; subsequent state-changing endpoints reject without it                                 |
-|   6 | cookie attributes audit               | after success                                  | cookie has `HttpOnly`, `Secure`, `SameSite=Strict`, `Path=/`, expiry within session-TTL window                             |
+1. **Valid mocked ID token:** expect 200, a session cookie with `HttpOnly`,
+   `Secure`, and `SameSite=Strict`, a CSRF token in the response, and a session
+   row written to D1.
+2. **Malformed or expired ID token:** expect 401, no session cookie, and no D1
+   write.
+3. **Valid token with an email outside the allowlist:** expect 403 and no
+   session cookie.
+4. **Replay the same ID token:** expect 200 on the first request and 401 on
+   replay because the `jti` was redeemed.
+5. **State-changing request without the issued CSRF token:** expect rejection.
+6. **Successful session-cookie audit:** require `HttpOnly`, `Secure`,
+   `SameSite=Strict`, `Path=/`, and expiry within the session-TTL window.
 
 ---
 
@@ -53,11 +63,14 @@ worker to be reachable via `wrangler dev` or miniflare in the test runner.
 If the test runner cannot intercept inside the Worker, mock at the
 client side: post a known-payload `idToken` to a test-only worker
 endpoint `/api/auth/login?_test_mock=1` that bypasses the Google call
-and uses an in-test allowlist. **This bypass MUST be gated by an env
-var (`ENABLE_TEST_AUTH_MOCK=1`) and refuse to run in production.**
+and uses an in-test allowlist.
 
 Decision: **start with Layer A**; fall back to Layer B only if the
 miniflare/route-interception path proves unreliable.
+
+> **Layer B guard:** Implement this fallback only if Layer A proves unreliable.
+> If implemented, the bypass must require `ENABLE_TEST_AUTH_MOCK=1` and refuse
+> production requests. This plan does not add the bypass.
 
 ---
 
@@ -77,11 +90,12 @@ These fixtures are **deterministic**; they do not call Google.
 
 ## CI Environment Contract
 
-| Env var                      |          Required          | Purpose                                                                                                       |
-| ---------------------------- | :------------------------: | ------------------------------------------------------------------------------------------------------------- |
-| `JOB_DASHBOARD_URL`          |            yes             | Where `/api/auth/login` is reachable. In CI this points at miniflare; locally it can point at `wrangler dev`. |
-| `ENABLE_TEST_AUTH_MOCK`      | no (only Layer-B fallback) | Activates the `?_test_mock=1` bypass endpoint inside the worker. CI defaults to **unset**.                    |
-| `TEST_GOOGLE_ALLOWED_EMAILS` |            yes             | Comma-separated allowlist used by Layer B's bypass.                                                           |
+- `JOB_DASHBOARD_URL` (required when tests run): dashboard URL; CI was intended
+  to use miniflare and local runs may use `wrangler dev`.
+- `ENABLE_TEST_AUTH_MOCK` (Layer B only): enables the test-only
+  `?_test_mock=1` fallback; leave unset otherwise.
+- `TEST_GOOGLE_ALLOWED_EMAILS` (Layer B only): comma-separated fallback
+  allowlist.
 
 The test must `test.skip(!process.env.JOB_DASHBOARD_URL, '...')` so it
 runs only when the dashboard is reachable.
@@ -90,14 +104,14 @@ runs only when the dashboard is reachable.
 
 ## Migration Plan
 
-### Phase 1 (this PR) — **complete**
+### Phase 1 (plan definition; recorded complete)
 
 - [x] Define the 6 test cases.
 - [x] Decide on Layer A (network route mock) as the preferred mock path,
       Layer B as fallback.
 - [x] Specify the fixture API and CI environment contract.
 
-### Phase 2 (follow-up PR — implementation)
+### Phase 2 (implementation plan; completion not verified)
 
 - [ ] Add `tests/e2e/auth-login.spec.js` with the 6 test cases.
 - [ ] Add `tests/e2e/fixtures/auth-login.js` with the deterministic
@@ -109,17 +123,17 @@ runs only when the dashboard is reachable.
 - [ ] Document required env vars in `tests/e2e/AGENTS.md` and the
       AGENTS skipped-tests audit (#24).
 
-### Phase 3 (CI wiring)
+### Phase 3 (CI wiring plan; completion not verified)
 
 - [ ] Confirm `JOB_DASHBOARD_URL` is set in the CI auth-login job.
 - [ ] Run on every PR; respect `test.skip(...)` runtime guards.
 
 ---
 
-## Verification (this PR)
+## Verification recorded for the plan
 
-This PR adds the plan only — no code changes. Phase 2 implements the
-spec; Phase 3 wires CI.
+The original change added the plan only, with no code changes. Current
+implementation and CI wiring status are not established by this document.
 
 ---
 

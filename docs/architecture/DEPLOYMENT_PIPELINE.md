@@ -1,27 +1,31 @@
 # Deployment Pipeline Documentation
 
-**Last Updated**: 2026-02-21
-**Deployment Source of Truth**: Cloudflare Workers Builds
-**Validation Source of Truth**: `.github/workflows/ci.yml`
+- **Last updated:** 2026-11-09
+- **Deployment source of truth:** Cloudflare Workers Builds
+- **Validation source of truth:** [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)
+
+> Production uses the root [`wrangler.jsonc`](../../wrangler.jsonc) configuration.
+> `preview` is the only named Wrangler environment. This reference reflects the
+> repository configuration inspected on 2026-11-09.
 
 ## Overview
 
-This repo now uses a split model:
+This repository uses separate deployment and validation owners:
 
-- Cloudflare Workers Builds: build + deploy on Git push
-- GitHub Actions CI: validation-only quality gates
+- Cloudflare Workers Builds builds and deploys on Git push.
+- GitHub Actions runs repository validation only.
 
 ## Deployment Path (Cloudflare Builds)
 
 1. Connect Worker to Git repository in Cloudflare Dashboard.
-2. Configure root dir `/` and build command `npm run build`.
-3. Ensure deploy command uses explicit config:
+2. Configure the repository root (`/`) and build command `npm run build`.
+3. Set the deploy command to use the root Wrangler configuration:
 
 ```bash
-npx wrangler deploy --config wrangler.jsonc --env production
+npx wrangler deploy --config wrangler.jsonc
 ```
 
-1. Push to `master` to trigger build/deploy via Cloudflare.
+4. Push to `master` to trigger the Cloudflare build and deployment.
 
 Important requirement:
 
@@ -30,18 +34,11 @@ Important requirement:
 
 ## CI Path (GitHub Actions)
 
-`.github/workflows/ci.yml` runs repository validation only:
+`.github/workflows/ci.yml` defines one read-only `validate` job. Its steps run in
+the order listed in that workflow; they do not deploy or run Playwright E2E:
 
-1. `analyze`
-2. `validate-cloudflare` (includes `wrangler types` checks)
-3. `lint`
-4. `typecheck`
-5. `test-unit`
-6. `test-e2e`
-7. `security-scan`
-8. `build` artifact generation
-
-Deploy/rollback/preview deploy jobs are disabled to avoid dual-deployer drift.
+Playwright E2E is a separate on-demand command, not a CI step. Cloudflare Workers
+Builds remains the deployment authority.
 
 ## Optional Build-Only Mode
 
@@ -49,7 +46,7 @@ To let Cloudflare Builds create versions without promoting active deployment,
 set deploy command to:
 
 ```bash
-npx wrangler versions upload --config wrangler.jsonc --env production
+npx wrangler versions upload --config wrangler.jsonc
 ```
 
 ## Required Secrets
@@ -59,10 +56,17 @@ npx wrangler versions upload --config wrangler.jsonc --env production
 
 ## Quick Verification
 
+Run these local checks independently:
+
 ```bash
 go run ./tools/ci/validate-cloudflare-native.go
 npm run typecheck
 npm run build
+```
+
+Check the live health endpoints separately when production verification is needed:
+
+```bash
 curl -i https://resume.jclee.me/health
 curl -i https://resume.jclee.me/job/health
 ```

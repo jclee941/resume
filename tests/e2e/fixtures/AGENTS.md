@@ -12,16 +12,16 @@ Boundary: measured score 5; retained reusable mock-server and capture-contract d
 
 ## WHERE TO LOOK
 
-| Task                  | Location                                                               | Notes                                            |
-| --------------------- | ---------------------------------------------------------------------- | ------------------------------------------------ |
-| Dashboard environment | `dashboard-environment.cjs`                                            | Mock versus external selection                   |
-| Dashboard mock server | `mock-dashboard-server.cjs`, `mock-data.js`                            | API/UI behavior for local tests                  |
-| Job application mock  | `mock-job-site.js`, `mock-job-site-*.js`                               | State, markup, runtime split                     |
-| Owner-dependent copy  | `owner-copy.js`                                                        | Uses central owner-data helper                   |
-| Login stubs           | `auth-login.js`                                                        | Valid/expired token payloads and token-info mock |
-| Ledger capture        | `public-copy-ledger-extractor*.js`                                     | DOM, accessible, non-DOM, state extraction       |
-| Ledger format         | `public-copy-ledger-serializer.js`, `public-copy-ledger-validation.js` | Serialization and validation                     |
-| Source audit          | `public-copy-source-audit*.js`, `public-copy-source-map.json`          | Pointer and schema validation                    |
+| Task                  | Location                                                                                      | Notes                                            |
+| --------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Dashboard environment | [Environment helper](dashboard-environment.cjs)                                               | Mock versus external selection                   |
+| Dashboard mock server | `mock-dashboard-server.cjs`, `mock-data.js`                                                   | API/UI behavior for local tests                  |
+| Job application mock  | `mock-job-site.js`, `mock-job-site-*.js`                                                      | State, markup, runtime split                     |
+| Owner-dependent copy  | [Owner-copy helper](owner-copy.js)                                                            | Uses central owner-data helper                   |
+| Login stubs           | `auth-login.js`                                                                               | Valid/expired token payloads and token-info mock |
+| Ledger capture        | [Ledger extractor](public-copy-ledger-extractor.js)                                           | DOM, accessible, non-DOM, state extraction       |
+| Ledger format         | [Serializer](public-copy-ledger-serializer.js), [validator](public-copy-ledger-validation.js) | Serialization and validation                     |
+| Source audit          | `public-copy-source-audit*.js`, `public-copy-source-map.json`                                 | Pointer and schema validation                    |
 
 ## CONVENTIONS
 

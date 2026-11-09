@@ -1,15 +1,17 @@
 # Cloudflare Git Auto-Deploy (resume.git)
 
-This runbook makes deployment automatic after `resume.git` push events.
+This overview describes the repository's Cloudflare Workers Builds deployment
+boundary.
 
 ## Current Repo Behavior (Already Enabled)
 
 - Deployment is handled by Cloudflare Workers Builds Git integration.
-- GitHub Actions `.github/workflows/ci.yml` is validation-only
-  (lint/test/build/security checks).
+- GitHub Actions [`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)
+  runs one read-only validation job; it does not deploy.
 - Worker deploy/promotion is managed in Cloudflare Dashboard Builds settings.
+- The root [`wrangler.jsonc`](../../wrangler.jsonc) is the runtime configuration.
 
-## Option A: GitHub Actions Auto-Deploy (Legacy)
+## Legacy GitHub Actions deployment
 
 1. Confirm repository remote points to `resume.git`.
 2. Ensure GitHub Actions secrets are set:
@@ -19,7 +21,7 @@ This runbook makes deployment automatic after `resume.git` push events.
 4. Use only for temporary fallback.
 5. Keep disabled in normal operation.
 
-## Option B: Cloudflare Workers Builds Git Integration (Primary)
+## Cloudflare Workers Builds Git integration
 
 Official docs:
 
@@ -36,24 +38,24 @@ Dashboard setup:
    - Root directory: `/`
    - Build command: `npm run build`
 
-- Deploy command: `npx wrangler deploy --config wrangler.jsonc
---env production`
+```bash
+npx wrangler deploy --config wrangler.jsonc
+```
 
 1. Save and trigger with a new commit push.
 
-Recommended deploy command for Builds:
+Build-only version upload, if configured in the existing Builds settings:
 
-- Active deploy: `npx wrangler deploy --config wrangler.jsonc
---env production`
-- Build-only (version upload): `npx wrangler versions upload --config
-wrangler.jsonc --env production`
+```bash
+npx wrangler versions upload --config wrangler.jsonc
+```
 
 ## Monorepo Notes
 
 - Always keep deploy commands explicit with `--config` to avoid root discovery
   issues.
-- PR preview deploy uses `--env preview` to keep preview config isolated from
-  production env.
+- `preview` is the only named Wrangler environment; production uses the root
+  configuration without `--env production`.
 - Use build watch paths if multiple Workers are connected to the same repo.
 - Keep worker `name` in Wrangler config aligned with dashboard Worker name.
 
@@ -61,7 +63,4 @@ wrangler.jsonc --env production`
 
 ```bash
 curl -i https://resume.jclee.me/health
-curl -i https://resume.jclee.me/job/health
 ```
-
-Both endpoints should return `200`.

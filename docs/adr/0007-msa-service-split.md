@@ -5,6 +5,10 @@
 - Date: 2026-03-22
 - Supersedes: [ADR 0006](0006-single-worker-architecture.md)
 
+> **Historical record:** This superseded decision describes the earlier
+> multi-worker design. [ADR 0009](0009-single-worker-consolidation.md) records
+> the consolidation decision; see the [ADR index](../README.md) for status.
+
 ## Context
 
 ADR 0006 established a single-worker architecture where portfolio and

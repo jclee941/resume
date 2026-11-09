@@ -1,5 +1,11 @@
 # GitHub Actions Deployment Guide
 
+> Historical procedure dated 2025-02-01. The workflow inventory and trigger
+> instructions below describe an obsolete deployment plan; do not use them to
+> deploy or verify current services. GitHub Actions is validation-only.
+> See the current [deployment pipeline](architecture/DEPLOYMENT_PIPELINE.md)
+> and [CI workflow](../.github/workflows/ci.yml).
+
 **Status**: Workflows committed to master branch ✅
 **Last Updated**: 2025-02-01
 **Next Step**: Configure GitHub Secrets and Trigger First Deployment
@@ -419,7 +425,7 @@ After triggering first deployment, verify:
 For more details, see:
 
 - `docs/GITHUB_ACTIONS_SECRETS.md` - Detailed secrets configuration
-- `.github/workflows/release.yml` - Release and deployment workflow
+- [Current deployment authority](architecture/DEPLOYMENT_PIPELINE.md)
 - `.github/workflows/` - All workflow definitions
 
 ---

@@ -2,14 +2,25 @@
 
 **Status**: Resolved · **Owner**: Platform/Security · **Last Updated**: 2026-09-29
 
-> **2026-09-29:** `apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)), and the Node implementation `packages/shared/src/crypto/node.js` (with `SESSION_ENCRYPTION_KEY`) was removed with it. `@resume/shared/crypto` now exports only the WebCrypto AES-GCM helpers the Worker uses. Nothing in this triage remains open.
+> **2026-09-29:** `apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)), and the Node implementation `packages/shared/src/crypto/node.js` (with `SESSION_ENCRYPTION_KEY`) was removed with it.
+>
+> **Historical proposal:** The inventory, algorithm decisions, migration phases, and verification notes below preserve the original triage. Unchecked boxes describe that proposal; they do not identify current open work or confirm that a follow-up was implemented.
 
-This document maps every cryptographic implementation in the monorepo, decides
-which are runtime-justified divergences (Web Crypto vs Node `crypto`) versus
-true duplication, and prescribes the canonical home structure (per-runtime
-subpath exports under `packages/shared/src/crypto/`).
+The original triage mapped cryptographic implementations, distinguished
+runtime-specific differences from duplication, and proposed per-runtime
+subpath exports under `packages/shared/src/crypto/`.
 
 ---
+
+## Contents
+
+- [Inventory](#inventory)
+- [Identical and divergent decisions](#identical-and-divergent-decisions)
+- [Algorithm choice audit snapshot](#algorithm-choice-audit-snapshot)
+- [Canonical home structure](#canonical-home-structure-proposed-for-phase-2)
+- [Migration plan](#migration-plan)
+- [Original verification note](#original-verification-note)
+- [See also](#see-also)
 
 ## Inventory
 
@@ -61,7 +72,7 @@ encryption of stored blobs). It is mis-categorized in the issue body as
 
 ---
 
-## Identical / Divergent Decisions
+## Identical and divergent decisions
 
 | Pair                  | Status                                                                                                     | Decision                                                                      |
 | --------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
@@ -71,14 +82,14 @@ encryption of stored blobs). It is mis-categorized in the issue body as
 
 ---
 
-## Algorithm Choice Audit
+## Algorithm choice audit snapshot
 
 | Concern                          | Current state                                                       | Canonical                                                                                                              |
 | -------------------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | Symmetric encryption algorithm   | A: AES-GCM (256-bit) · B: AES-256-GCM                               | **AES-256-GCM** ✅ aligned                                                                                             |
 | IV length                        | A: 12 bytes (Web Crypto convention) · B: 16 bytes (Node convention) | Standardize on **12 bytes** (NIST SP 800-38D recommends 12 for GCM) — B to update                                      |
 | Auth tag length                  | A: 128-bit (Web Crypto default) · B: 16 bytes (128-bit)             | aligned ✅                                                                                                             |
-| Key encoding                     | A: base64 · B: hex                                                  | **base64** in canonical (works in both env and code)                                                                   |
+| Key encoding                     | A: base64 · B: hex                                                  | **base64** in the proposal (described as working in both runtime environments and code)                                |
 | Key derivation                   | A: raw env var · B: raw env var                                     | Add **HKDF** layer in canonical (defense against key reuse)                                                            |
 | HMAC signing (C)                 | HMAC-SHA256                                                         | aligned ✅; canonical for cookie integrity                                                                             |
 | Google ID-token verification (C) | direct `tokeninfo` endpoint                                         | **switch to JWKS-based local verification** in a follow-up (avoids per-request round-trip to Google) — separate ticket |
@@ -145,8 +156,8 @@ encrypted on the Node side decrypts on the Worker side and vice versa.
 - [ ] Migrate `apps/job-dashboard/src/utils/crypto.js` → re-export from
       `@resume/shared/crypto/webcrypto`.
 - [ ] Migrate `apps/job-server/src/session-broker/services/encryption-service.js`
-      → wrap `@resume/shared/crypto/node` and keep the `EncryptionService` class
-  - `wrap`/`unwrap` TTL semantics (those are domain-specific, not crypto).
+      → wrap `@resume/shared/crypto/node` and keep the `EncryptionService` class. - Keep `wrap`/`unwrap` TTL semantics in the domain layer; they are not
+      cryptographic primitives.
 - [ ] Schedule the IV-length change (B 16→12) as a key-rotation event:
       bump `SESSION_ENCRYPTION_KEY_VERSION`, decrypt-on-read with both lengths
       during the rollover window.
@@ -158,9 +169,9 @@ encrypted on the Node side decrypts on the Worker side and vice versa.
 
 ---
 
-## Verification (this PR)
+## Original verification note
 
-This PR adds the triage doc only — no code changes. It satisfies the
+The original note says the triage doc was added without code changes. It says the document satisfied the
 **first three** acceptance bullets of #42:
 
 > - Document distinguishes which runtime requires which API.
@@ -168,9 +179,10 @@ This PR adds the triage doc only — no code changes. It satisfies the
 >   exports for `node` and `webcrypto` (subpath exports).
 > - Consistent algorithm choices and key derivation.
 
-The structural decisions (subpath layout, AES-256-GCM / 12-byte IV / base64 /
-HKDF defaults) are now binding for Phase 2. The migration code itself remains
-on issue #42 until that PR lands.
+The original note described the structural decisions (subpath layout,
+AES-256-GCM / 12-byte IV / base64 / HKDF defaults) as binding for Phase 2 and
+said the migration code remained on issue #42. Current implementation and
+issue status are not established by this historical note.
 
 ---
 

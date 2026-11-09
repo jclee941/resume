@@ -1,6 +1,11 @@
 # Architecture Deep Dive
 
-Complete technical architecture documentation for the Resume Portfolio System.
+> **Historical snapshot (2025–2026).** The single-Worker diagrams, route
+> inventory, measurements, tests, and CI descriptions below record an earlier
+> system state. For current ownership and topology, see the
+> [system overview](../architecture/system-overview.md),
+> [deployment pipeline](../architecture/DEPLOYMENT_PIPELINE.md), and
+> [portfolio source guide](../../apps/portfolio/AGENTS.md).
 
 ## Table of Contents
 
@@ -10,7 +15,7 @@ Complete technical architecture documentation for the Resume Portfolio System.
 4. [Data Flow](#data-flow)
 5. [Caching Strategy](#caching-strategy)
 6. [Security Architecture](#security-architecture)
-7. [Monitoring & Observability](#monitoring--observability)
+7. [Monitoring and Observability](#monitoring-and-observability)
 8. [Testing Architecture](#testing-architecture)
 
 ---
@@ -346,7 +351,7 @@ function extractCSPHashes(html) {
 
 ---
 
-## Monitoring & Observability
+## Monitoring and Observability
 
 ### Metrics Endpoint (`/metrics`)
 
@@ -540,5 +545,5 @@ resume_error_rate{job="resume"} 0.002
 
 - [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
 - [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
-- [Web Vitals](https://apps/portfolio.dev/vitals/)
+- Web Vitals endpoint: see the current portfolio route owners linked above.
 - [Prometheus Exposition Format](https://prometheus.io/docs/instrumenting/exposition_formats/)

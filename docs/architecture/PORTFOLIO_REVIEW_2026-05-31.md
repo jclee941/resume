@@ -1,11 +1,14 @@
 # Portfolio Review & Improvement — 2026-05-31
 
-**Scope:** `resume.jclee.me` review + refactor + improvement pass.
-**Branch:** `master`
-**Baseline health:** typecheck clean, ESLint 0 errors, Jest 1252 passing, 0 `.sh`
-operational scripts, 0 `as any`/`@ts-ignore` in source. Known large-file debt
-remains (e.g. `mission-control.js` 601 LOC — deferred F6; dashboard handlers);
-no new >500 LOC files were introduced in this pass.
+> Historical review snapshot from 2026-05-31. Test results and follow-up status
+> below are the values recorded for that pass, not a current health report.
+
+- **Scope:** `resume.jclee.me` review + refactor + improvement pass.
+- **Branch:** `master`
+- **Pre-change checks:** typecheck clean, ESLint 0 errors, Jest 1,252 passing,
+  0 `.sh` operational scripts, 0 `as any`/`@ts-ignore` in source. Known
+  large-file debt remains (e.g. `mission-control.js` 601 LOC — deferred F6;
+  dashboard handlers); no new >500 LOC files were introduced in this pass.
 
 The codebase was already in good shape, so this pass targeted verified,
 high-ROI correctness/quality issues rather than broad rewrites. Lower-priority
@@ -20,7 +23,7 @@ findings are tracked as deferred follow-ups below.
 `apps/portfolio/src/scripts/modules/timeline.js` read
 `window.RESUME_DATA?.resume?.careers`, which the build pipeline **never injects**.
 It therefore always fell back to an 86-line hardcoded career array that had
-**already drifted** from the SSoT
+**already drifted** from the single source of truth (SSoT)
 (`packages/data/resumes/master/resume_data.json`):
 
 | Field                       | SSoT (correct)                          | Stale hardcoded fallback            |
@@ -77,8 +80,8 @@ selectors). Verified failing on baseline and passing after the fix.
 ### Verification
 
 - `npm run typecheck`: PASS · `npm run lint`: 0 errors · `npm run test:jest`:
-  1259 passing (68 suites) · `npm run test:tools`: 25 passing · `npm run build`:
-  OK.
+  1,259 passing (68 suites) after the changes · `npm run test:tools`: 25
+  passing · `npm run build`: OK.
 - Decoded built `worker.js` `__RESUME_CHAT_DATA__.careers`: 6 entries, each with
   3 SSoT achievements, `[0].role = 보안운영 엔지니어 (SOC/Security)`,
   `[3].companyUrl = https://www.jointree.co.kr/`.
@@ -100,6 +103,9 @@ change focused and reviewable. Priority order:
 | **F3** | `index.html` inline scripts (~800 LOC) | Terminal CLI engine, konami code, tech filter, status checker are inline `<script>` blocks. Extract to `src/scripts/modules/`. CSP SHA-256 hashes are recomputed by the build, but moving ~800 lines carries DOM-ordering/regression risk; warrants its own PR with browser smoke coverage.                                                                                                                                                                                                                                           |
 | **F5** | `apps/job-dashboard/src` raw errors    | 36 raw `throw new Error(...)` sites; `@resume/shared/errors` (`normalizeError`, typed `AppError`/`ExternalServiceError`) is used in some files but under-used at throw sites. Convert opportunistically when touching those files.                                                                                                                                                                                                                                                                                                    |
 | **F6** | `mission-control.js` (601 LOC)         | Five responsibilities (status widgets, command palette, UTC clock, keyboard nav, lifecycle). Split into focused modules. Not failing any policy gate; defer until touched.                                                                                                                                                                                                                                                                                                                                                            |
+
+The follow-up IDs are retained as recorded (F2, F3, F5, and F6); this snapshot
+does not list an F4 item.
 
 ### Known-failing e2e (pre-existing, tied to F2)
 

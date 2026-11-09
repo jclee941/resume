@@ -1,5 +1,7 @@
 # 놀유니버스 Security Operation Manager - 보안 아키텍처
 
+> **Source and draft boundary:** The posting is source material. The fit analysis below is generated and subjective; any answer text is a draft that must be verified against actual experience before reuse.
+
 **출처:** <https://careers.nol-universe.com/ko/o/158475>  
 **작성일:** 2025-10-03
 
@@ -107,6 +109,8 @@
 ---
 
 ## 💡 포지션 적합성 분석
+
+> **Generated analysis:** Ratings are subjective assessments, not employer evaluation or hiring-outcome evidence. Verify every factual claim in any draft response before reuse.
 
 ### 강점 매칭도
 

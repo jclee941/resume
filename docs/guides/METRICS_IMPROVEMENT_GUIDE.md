@@ -1,5 +1,10 @@
 # Resume 메트릭 개선 가이드
 
+> Use evidence-backed facts only. The examples in this guide are blank templates;
+> do not copy unverified metrics or employer-specific claims into personal
+> materials. Update personal work history only through its content owner,
+> [the content pack guide](CONTENT_PACK.md).
+
 ## 목적
 
 이력서의 성과 메트릭을 구체화하여 신뢰성과 설득력을 높이기 위한 가이드입니다.
@@ -30,8 +35,8 @@
 
 예시:
 
-- 평균 복구 시간(MTTR) 단축: 45분 → 12분 (73% 개선, 2024.03-2025.02, Grafana 메트릭 기반)
-- 정책 배포 시간: 수동 2시간 → 자동화 5분 (95% 단축, Python 스크립트 실행 로그)
+- [지표명]: [기준값] → [결과값] ([기간], [측정 근거])
+- [성과명]: [기존 절차] → [변경 절차] ([검증된 결과], [측정 근거])
 ```
 
 ### 2. **빈도/건수 형식**
@@ -41,8 +46,8 @@
 
 예시:
 
-- 월간 시스템 장애: 평균 8건 → 1.2건 (85% 감소, 2022.08-2024.03, JIRA 티켓)
-- 보안 인시던트 대응: 평균 90분 → 15분 (83% 단축, 2025.03-현재, SOC 로그)
+- [항목명]: [기준 빈도] → [결과 빈도] ([기간], [측정 근거])
+- [처리 항목]: [기준 시간] → [결과 시간] ([기간], [측정 근거])
 ```
 
 ### 3. **비율/효율 형식**
@@ -52,8 +57,8 @@
 
 예시:
 
-- CPU 사용률 최적화: 평균 78% → 32% (EPP/DLP 정책 튜닝, 100대 단말 측정)
-- 취약점 처리 SLA 준수율: 62% → 98% (분기별 스캔 결과, 2024.03-2025.02)
+- [지표명]: [기준값] → [결과값] ([측정 범위], [기간])
+- [준수 지표]: [기준값] → [결과값] ([측정 근거])
 ```
 
 ### 4. **규모/처리량 형식**
@@ -63,64 +68,19 @@
 
 예시:
 
-- 방화벽 중앙 관리: 80개 FortiGate 장비 (일 평균 100만 건 이벤트 수집·분석)
-- 보안 이벤트 처리: 일 평균 15,000건 → 자동화로 수동 검토 300건으로 축소 (98% 자동화)
+- [운영 범위]: [확인된 장비·시스템 수] ([기간과 근거])
+- [처리량]: [기준량] → [결과량] ([기간], [측정 근거])
 ```
 
 ---
 
-## 📋 현재 resume_master.md 개선 대상
-
-### ㈜아이티센 CTS (라인 68-78)
-
-**현재:**
+## Generic example template
 
 ```markdown
-- Splunk-FortiNet 통합: 방화벽 중앙 관리, 정책 배포 시간 단축
-- Grafana 모니터링 대시보드 구축, 평균 복구 시간 단축
-- OpenCode AI 위협 정보 자동화: 수동 분석 작업 자동화, 처리 속도 개선
-- 보안 오탐 감소
-```
+### [역할 또는 프로젝트 범위]
 
-**개선안:** (실제 수치는 본인이 기입)
-
-```markdown
-- Splunk-FortiNet 통합: 80개 FortiGate 중앙 관리, 정책 배포 시간 [X시간 → Y분] ([Z]% 단축)
-- Grafana 모니터링: 평균 복구 시간(MTTR) [Before분 → After분] ([%] 개선, [기간])
-- OpenCode AI 위협 분석: 수동 분석 [Before시간/건 → After분/건], 일 [N]건 자동 처리
-- 보안 오탐 감소: [Before%] → [After%] ([기간], Splunk 알림 로그 기준)
-```
-
-### ㈜가온누리정보시스템 (라인 98-106)
-
-**현재:**
-
-```markdown
-- EPP/DLP 최적화로 단말 CPU 사용률 개선
-- NAC 정책 배포 시간 단축
-```
-
-**개선안:**
-
-```markdown
-- EPP/DLP 최적화: 단말 CPU 사용률 [Before%] → [After%] ([대수]대 측정, [기간])
-- NAC 정책 배포: 수동 [Before시간] → 자동화 [After분] (Python 스크립트)
-```
-
-### ㈜콴텍투자일임 (라인 119-123)
-
-**현재:**
-
-```markdown
-- Python 자동화로 월간 시스템 장애 감소
-- DB 접근제어 쿼리 튜닝으로 CPU 사용률 개선
-```
-
-**개선안:**
-
-```markdown
-- Python 자동화: 월간 장애 [Before건] → [After건] ([%] 감소, [기간], Zabbix 알림 기준)
-- DB 접근제어 튜닝: CPU 사용률 [Before%] → [After%] ([DB 서버 대수]대 평균)
+- [업무]: [구체적 조치와 범위]
+- [성과]: [기준값] → [결과값] ([기간], [측정 방법])
 ```
 
 ---
@@ -129,11 +89,11 @@
 
 ### DO ✅
 
-1. **구체적 수치 사용**: "50% 감소" (O) vs "감소" (X)
-2. **기준선 명시**: "10건 → 2건" (O) vs "2건으로 개선" (X)
-3. **기간 표시**: "(2024.03-2025.02)" (O) vs "프로젝트 기간 중" (X)
-4. **측정 방법**: "(Grafana 메트릭)" (O) vs "모니터링 결과" (X)
-5. **업계 비교** (선택): "업계 평균 40% 대비 80% 개선" (상위 5개 성과만)
+1. Use a value only when it has a traceable source.
+2. State the baseline and result with the same measurement method.
+3. Include the period and scope of the measurement.
+4. Distinguish measured results from estimates.
+5. Omit industry comparisons unless their source and context are verified.
 
 ### DON'T ❌
 
@@ -147,27 +107,11 @@
 ## 📝 작성 예시 (Full)
 
 ```markdown
-### ㈜아이티센 CTS | 정보보안 운영 엔지니어
+### [역할 또는 프로젝트 범위]
 
-2025.03 ~ 현재 (9개월)
-
-주요 성과
-
-- **방화벽 통합 관리**: Splunk-FortiGate 연동으로 80개 장비 중앙 관제
-  - 정책 배포 시간: 수동 2시간 → 자동화 5분 (95% 단축)
-  - 일 평균 100만 건 보안 이벤트 자동 수집·분류
-- **모니터링 체계 구축**: Grafana 대시보드 45개 구축
-  - 평균 복구 시간(MTTR): 45분 → 12분 (73% 단축, 2025.03-현재)
-  - 실시간 알림으로 장애 감지 시간 95% 단축
-- **AI 위협 분석 자동화**: OpenCode AI 기반 보안 이벤트 분석
-  - 수동 분석 시간: 30분/건 → 2분/건 (93% 단축)
-  - 일 평균 1,500건 자동 분석 (수동 검토 필요 건수 50건으로 축소)
-- **보안 오탐 감소**: 알림 정확도 개선
-  - 오탐률: 45% → 8% (82% 개선, 2025.03-현재, Splunk 알림 로그)
-  - 실제 위협 대응 시간 2배 증가 (불필요한 알림 검토 시간 감소)
-- **취약점 관리**: SLA 기반 패치 프로세스 운영
-  - SLA 준수율: 68% → 98% (2025.03-현재, 분기별 스캔 결과)
-  - 고위험 취약점 평균 처리 시간: 7일 → 2일
+- **[업무 영역]**: [조치, tool or system, and verified scope]
+  - [측정 지표]: [기준값] → [결과값] ([기간], [evidence source])
+  - [Additional outcome]: [measured result and source]
 ```
 
 ---
@@ -185,33 +129,20 @@
 
 ---
 
-## 🎓 참고: 업계 벤치마크
+## Benchmarks
 
-### 보안 운영 (SOC)
-
-- MTTR 평균: 45-90분 (Gartner 2024)
-- 오탐률 평균: 30-50% (SANS 2023)
-- 인시던트 대응 시간: 60-120분
-
-### 인프라 자동화
-
-- 정책 배포 자동화: 수동 대비 80-95% 시간 단축
-- 시스템 장애율: 월 5-10건 (중소 규모)
-
-### DevOps
-
-- MTTR 목표: < 15분 (우수)
-- 배포 빈도: 주 1회 이상 (우수)
-- 자동화율: > 80% (우수)
+This guide does not provide industry benchmarks. Use a dated, attributable source
+and explain differences in scope before making a comparison.
 
 ---
 
 ## 📌 다음 단계
 
-1. **실제 수치 수집**: Grafana, Splunk, JIRA 등에서 메트릭 추출
-2. **resume_master.md 업데이트**: 위 템플릿 적용
-3. **검증**: 동료/상사에게 확인 요청
-4. **data.json 업데이트** (선택): 웹 포트폴리오에 반영
+1. Verify each outcome against an attributable source and measurement scope.
+2. Route personal resume changes through the owner and procedure in
+   [the content pack guide](CONTENT_PACK.md).
+3. Do not hand-edit generated portfolio data; follow the content pack's
+   materialization procedure.
 
 ---
 

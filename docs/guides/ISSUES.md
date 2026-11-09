@@ -4,9 +4,30 @@
 **Based on**: COMPREHENSIVE_IMPROVEMENT_ANALYSIS_2025_11_13.md,
 IMPROVEMENT_IMPLEMENTATION_CHECKLIST.md
 
+> **Archived backlog snapshot (2025-12-17).** The completion marks, priorities,
+> effort estimates, and proposed commands below describe that dated plan; they are
+> not a current status report. Use the current
+> [deployment guide](../deployment-guide.md),
+> [portfolio design reference](../../apps/portfolio/DESIGN.md),
+> [content ownership guide](../../packages/data/AGENTS.md), and
+> [root package scripts](../../package.json) for current owners and commands.
+
+## Contents
+
+- [Critical items](#critical-items-historical)
+- [High priority](#high-priority-historical)
+- [Medium priority](#medium-priority-historical)
+- [Low priority](#low-priority-historical)
+- [Quick wins](#quick-wins-historical)
+- [Implementation order](#implementation-order-historical)
+- [Known tool issues](#known-tool-issues-historical)
+- [Verification checklist](#verification-checklist-historical)
+- [Progress tracking](#progress-tracking-historical)
+- [Historical project status](#historical-project-status)
+
 ---
 
-## 🔴 CRITICAL (Do First - 4 hours total)
+## Critical items (historical)
 
 ### C1: Remove Console Logging from Build (30 min) ⚡ QUICK WIN
 
@@ -120,7 +141,7 @@ ls resumes/generated/  # nextrade.md, general.md, short.md
 
 ---
 
-## 🟡 HIGH Priority (9 hours total)
+## High priority (historical)
 
 ### H1: Mobile E2E Tests (1.5 hours)
 
@@ -259,7 +280,7 @@ Add "경력 경로 분석" section documenting 3 career phases:
 
 ---
 
-## 🟠 MEDIUM Priority (5.5 hours)
+## Medium priority (historical)
 
 ### M1: Design System Tokens (1 hour) ⚡ QUICK WIN
 
@@ -300,7 +321,7 @@ Add business impact to each technology
 
 ---
 
-## 🟢 LOW Priority (6 hours - Documentation)
+## Low priority (historical)
 
 - L1: GET_STARTED.md (1h)
 - L2: ARCHITECTURE_DEEP_DIVE.md (2h)
@@ -310,7 +331,7 @@ Add business impact to each technology
 
 ---
 
-## ⚡ Quick Wins (Can Do Today - < 1 hour each)
+## Quick Wins (historical)
 
 1. **C1: Remove console logging** (30m) → Use existing
    `apps/portfolio/logger.js`
@@ -319,7 +340,7 @@ Add business impact to each technology
 
 ---
 
-## 📊 Recommended Implementation Order
+## Implementation Order (historical)
 
 ### Week 1: Critical Issues (6 hours)
 
@@ -357,7 +378,7 @@ Day 3: L4 (1h)
 
 ---
 
-## 🚨 Known Tool Issues (From AGENTS.md)
+## Known Tool Issues (historical)
 
 ### ⚠️ CRITICAL: Bash Tool is Broken
 
@@ -387,7 +408,7 @@ Testing:
 
 ---
 
-## ✅ Verification Checklist
+## Verification Checklist (historical)
 
 After each fix, verify:
 
@@ -428,7 +449,7 @@ npm run test:e2e:headed
 
 ---
 
-## 📈 Progress Tracking
+## Progress Tracking (historical)
 
 | Category  | Tasks  | Completed | %        |
 | --------- | ------ | --------- | -------- |
@@ -513,7 +534,7 @@ npm run test:e2e:headed
 
 ---
 
-## 🎉 Project Status: COMPLETE
+## Historical Project Status
 
 All 20 improvement tasks have been completed successfully.
 

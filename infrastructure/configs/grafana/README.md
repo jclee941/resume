@@ -3,6 +3,25 @@
 This directory contains Grafana dashboard and alert configurations for
 monitoring the resume portfolio application deployed on Cloudflare Workers.
 
+> **Repository reference:** dashboard exports and provisioning files describe
+> intended configuration; they do not verify the state of a remote Grafana
+> service. For operator ownership, see the [deployment guide](DEPLOYMENT.md)
+> and [monitoring overview](../../monitoring/README.md).
+
+## Contents
+
+- [Files](#files)
+- [Dashboard Overview](#dashboard-overview)
+- [Public Dashboard Access](#public-dashboard-access)
+- [Alert Rules](#alert-rules)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Verification](#verification)
+- [Troubleshooting](#troubleshooting)
+- [Customization](#customization)
+- [Maintenance](#maintenance)
+- [References](#references)
+
 ## Files
 
 - **resume-portfolio-dashboard.json** (Symlink)
@@ -43,7 +62,7 @@ monitoring with:
      - Success: `sum(rate(http_requests_success{job="resume"}[1m]))`
      - Error: `sum(rate(http_requests_error{job="resume"}[1m]))`
 
-6. **Request Latency Percentiles** (Time Series)
+6. **Average Response Time History** (Time Series)
    - Average response time over time
    - Query: `http_response_time_seconds{job="resume"}`
 
@@ -115,9 +134,12 @@ allow_embedding = true
 
 Only dashboards explicitly marked for public sharing are reachable without authentication.
 
-### Docker Compose Deployment
+### Docker Compose Reference
 
-The monitoring stack, including Grafana with public-dashboard support, is deployed through [`docker-compose.monitoring.yml`](../../docker/docker-compose.monitoring.yml).
+The local Compose file is a repository reference, not evidence of a running
+deployment. For current operator steps, use [`DEPLOYMENT.md`](DEPLOYMENT.md).
+The following local commands are historical setup notes; they do not verify
+remote service state.
 
 **Start the stack**:
 
@@ -153,9 +175,9 @@ The public dashboard is linked from the portfolio site. Visitors can click throu
 **For**: 5 minutes
 **Severity**: Critical
 
-### 2. High p99 Latency (WARNING)
+### 2. High Average Response Time (WARNING)
 
-**Condition**: Average response time >500ms for 10 minutes
+**Condition**: The average response-time gauge is >500ms for 10 minutes
 
 **Query**:
 
@@ -369,9 +391,6 @@ grep -A 5 'http_requests_total' /home/jclee/dev/resume/apps/portfolio/worker.js
 #   -H 'Content-Type: application/json' \
 #   -d '{"chat_id": "$TELEGRAM_CHAT_ID", "text": "Test alert from Grafana"}'
 
-  -H 'Content-Type: application/json' \
-  -d '{"text":"Test alert from Grafana"}'
-
 # 2. Check alert rule state in Grafana UI
 # Navigate to: Alerting → Alert rules
 # Verify rules are not paused
@@ -496,5 +515,5 @@ When updating the dashboard:
 For issues or questions:
 
 - Maintainer: <https://github.com/jclee941>
-- GitHub Issues: <https://github.com/qws941/resume/issues>
+- GitHub Issues: <https://github.com/jclee941/resume/issues>
 - Grafana Dashboard: <https://grafana.jclee.me/d/resume-portfolio>

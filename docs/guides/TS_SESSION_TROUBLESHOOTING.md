@@ -1,5 +1,9 @@
 # TS Session Troubleshooting Guide
 
+> **Scope (reviewed 2026-11-09):** This is a machine-specific operator note.
+> The host paths and commands below describe one environment and are not
+> portable repository setup instructions.
+
 ## 문제: 세션 생성 후 접속 안 됨
 
 ### 증상

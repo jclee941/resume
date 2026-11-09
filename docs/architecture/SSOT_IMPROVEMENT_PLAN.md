@@ -1,13 +1,38 @@
 # SSOT Improvement Plan — `resume` Monorepo
 
-**Generated:** 2026-04-27
-**Repo:** `/home/jclee/dev/resume`
-**Version:** package.json `1.8.0`
-**Original Status:** Documentation only — each task intended as a separate PR.
+- **Generated:** 2026-04-27
+- **Repo:** `resume` monorepo
+- **Version:** package.json `1.8.0`
+- **Original status:** Documentation only — each task intended as a separate PR.
+
+> Historical plan with dated updates. The original task checkboxes, counts,
+> decisions, risks, and migration sequence remain as recorded snapshots; later
+> updates do not establish the current status of every task. See the
+> [component inventory](component-inventory.md) and
+> [system overview](system-overview.md) for current architecture references.
+
+## Contents
+
+- [2026-09-29 retirement update](#2026-09-29-update)
+- [2026-04-27 execution update](#2026-04-27-execution-update)
+- [Original executive summary](#executive-summary)
+- [Owner decisions in the original plan](#decisions-needed-from-owner-top-of-stack)
+- [Cross-cutting risks](#cross-cutting-risks-read-before-opening-epics)
+- [Epic 0: security](#epic-0--critical-security-p0)
+- [Epic 1: build and configuration](#epic-1--build--config-ssot-p1p2)
+- [Epic 2: types, schemas, and contracts](#epic-2--types--schema-ssot-p2)
+- [Epic 3: environment and secrets](#epic-3--env--secrets-ssot-p0p2)
+- [Epic 4: domain model](#epic-4--domain-model--cross-cutting-code-ssot-p1)
+- [Epic 5: documentation](#epic-5--documentation--agentsmd-ssot-p3)
+- [Epic 6: file size and architecture](#epic-6--file-size--architecture-hygiene-p2)
+- [Dependency graph](#dependency-graph)
+- [Original migration sequence](#migration-sequencing-recommendation)
+- [Notes and out of scope](#notes--out-of-scope)
+- [Original verification record](#verification)
 
 ## 2026-09-29 Update
 
-`apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)) and the Elasticsearch logging path was removed. Items below that target `apps/job-server` paths or the ES logger are closed; the rest apply only to the packages and Workers that remain.
+As recorded on 2026-09-29, `apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)) and the Elasticsearch logging path was removed. Items below that target `apps/job-server` paths or the ES logger were marked closed in that update; the rest were described as applying to the packages and Workers that remained.
 
 ## 2026-04-27 Execution Update
 
@@ -15,15 +40,28 @@ The owner asked to execute the plan in one session. The following Epics
 were completed automatically; the remainder are explicitly out of scope
 for the current execution and remain task-tracked here.
 
-| Epic                               | Status                   | Commits              | Notes                                                                                                                                                                                                                                                                                                                                               |
-| ---------------------------------- | ------------------------ | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Epic 0** Security                | ✅ Working tree complete | `e0ee539`, `c8b85d8` | History rewrite + force push are owner-driven (see `docs/security/SECRET_ROTATION_PLAYBOOK.md`). Backup tag `backup/pre-secret-rewrite-20260427-133607`.                                                                                                                                                                                            |
-| **Epic 1** Build/Config            | ✅ Complete              | `dfcf9ef`            | Bazel dropped (D-1: Option A → ADR 0008). `jsconfig.json` → `tsconfig.base.json`. ESLint sub-configs inlined into root. `workspace:*` protocol.                                                                                                                                                                                                     |
-| **Epic 2** Types/Schemas/Contracts | ✅ Foundation complete   | `a14f7c5`            | 3 new packages created: `@resume/types` (8 modules), `@resume/schemas` (5 Zod modules), `@resume/contracts` (env + openapi). Each with own AGENTS.md. **Migration of existing call-sites is per-domain follow-up PRs.**                                                                                                                             |
-| **Epic 3** Env/Secrets             | ⚠️ Partial               | (Epic 0)             | CI gitleaks gate + pre-commit hook landed in Epic 0. Full secrets manager (Doppler/Keyflare) deferred. t3-env / `packages/env` not yet created.                                                                                                                                                                                                     |
-| **Epic 4** Domain SSOT             | ✅ Foundation complete   | `bc2aff0`            | New canonical modules in `@resume/shared`: `retry/` (http + circuit-breaker), `crypto/` (webcrypto + node), `rate-limit/` (token-bucket + sliding-window), `auth/` (cookie + hmac). Smoke test passes. **Migration of app-local consumers (errors, logger, retry, crypto, rate-limit, auth, validation, wanted-client) is per-PR follow-up.**       |
-| **Epic 5** Documentation           | ✅ Complete              | `230823b`, `a1880c1` | `.gitlab-legacy/` deleted (10 YAMLs + 5 Go scripts + 3 docs). `rules/` → `docs/conventions/architecture-rules.md`. Root binaries (deploy-auto-apply, deploy-workflow, automation-browser-auth, setup-api-key) deleted (~24MB; rebuild from `infrastructure/automation/*.go`). Root AGENTS.md refreshed for current state. CI pipeline test updated. |
-| **Epic 6** File splits             | ✅ Complete              | `9c70c11`            | applications.js → applications/. auto-apply.js → auto-apply/. job-server oversized files reduced below 500L. All tests pass.                                                                                                                                                                                                                        |
+The following statuses and commit references are the execution update's record:
+
+- **Epic 0 — Security: working tree complete.** Commits `e0ee539` and
+  `c8b85d8`. The update states that history rewrite and force push were
+  owner-driven and lists backup tag `backup/pre-secret-rewrite-20260427-133607`.
+- **Epic 1 — Build/config: complete.** Commit `dfcf9ef`; Bazel was dropped
+  under ADR 0008, `jsconfig.json` moved to `tsconfig.base.json`, ESLint
+  sub-configs were inlined, and `workspace:*` was adopted.
+- **Epic 2 — Types/schemas/contracts: foundation complete.** Commit `a14f7c5`;
+  the update lists three packages and leaves existing call-site migration to
+  per-domain follow-up PRs.
+- **Epic 3 — Environment/secrets: partial.** The update records the CI
+  gitleaks gate and pre-commit hook; a full secrets manager was deferred and
+  `packages/env` was not yet created at that time.
+- **Epic 4 — Domain SSOT: foundation complete.** Commit `bc2aff0`; canonical
+  modules were added under `@resume/shared`, with app-local consumer migration
+  left as per-PR follow-up.
+- **Epic 5 — Documentation: complete.** Commits `230823b` and `a1880c1`;
+  the update records legacy cleanup, the conventions move, binary removal,
+  refreshed root guidance, and a CI pipeline test update.
+- **Epic 6 — File splits: complete.** Commit `9c70c11`; the update records
+  module splits and test success.
 
 ### Verification (post-execution)
 
@@ -36,7 +74,7 @@ $ gitleaks detect --source . --no-git
   tracked file leaks.
 ```
 
-### Remaining work (task IDs reference original plan below)
+### Remaining work recorded on 2026-04-27 (task IDs reference original plan)
 
 1. **Owner-driven (manual):** Epic 0 SECRET_ROTATION_PLAYBOOK.md steps 1–9
    (credential rotation, 1Password upload, wrangler secret put,
@@ -54,8 +92,6 @@ $ gitleaks detect --source . --no-git
 backup/pre-secret-rewrite-20260427-133607   # before Epic 0 (working tree + bundle)
 backup/pre-epic-1-6-20260427-135829         # before Epics 1-6 batch
 ```
-
----
 
 ---
 
@@ -89,7 +125,8 @@ Total: **52 atomic tasks** organized into **7 epics**.
 
 ## Decisions Needed from Owner (Top of Stack)
 
-These tasks block downstream Epic planning. Resolve first.
+These were listed as blockers to downstream Epic planning in the original
+2026-04-27 plan; the unchecked boxes are not a verified current decision list.
 
 - [ ] **D-1 — Bazel: keep, drop, or commit?** Bazel is currently facade-only
       (`tools/BUILD.bazel:17` says "Bazel facade removed"). Three options:
@@ -814,6 +851,9 @@ npm scripts directly`. Bazel symlinks at root confuse tooling.
 
 ## Dependency Graph
 
+This is the dependency inventory as drafted in the original plan; it is not a
+current package or migration status report.
+
 #### Diagram summary 1
 
 - Type: flowchart
@@ -887,6 +927,8 @@ npm scripts directly`. Bazel symlinks at root confuse tooling.
 ---
 
 ## Migration Sequencing Recommendation
+
+The sprint order below is the original proposal, not a current delivery schedule.
 
 **Order rationale:** stop-the-bleed → unblock decisions → foundations → SSOT
 extractions → cleanups.

@@ -1,19 +1,21 @@
 # Third-Party Dependencies
 
-Google3-style vendored dependencies directory.
+Reserved directory for dependency-license coordination and historical
+vendoring proposals.
 
-## Current Strategy
+> **Historical proposal:** the Bazel and `rules_js` material below was not
+> adopted. The repository currently uses npm workspaces; see the
+> [package ownership guide](../packages/AGENTS.md).
 
-This project uses **npm** for dependency management with Bazel as a build
-coordination layer.
+## Superseded strategy
 
 ### Why not full vendoring?
 
-| Approach      | Pros                 | Cons             |
-| ------------- | -------------------- | ---------------- |
-| npm (current) | Familiar, fast setup | Non-hermetic     |
-| Full vendor   | Hermetic, auditable  | High maintenance |
-| rules_js      | Best of both         | Complex setup    |
+| Approach    | Historical proposal                          |
+| ----------- | -------------------------------------------- |
+| npm         | Familiar setup; dependency graph is external |
+| Full vendor | Hermetic inputs; high maintenance            |
+| rules_js    | Hermetic integration; added complexity       |
 
 ## Structure
 
@@ -21,7 +23,6 @@ coordination layer.
 third_party/
 ├── README.md           # This file
 ├── OWNERS              # Dependency maintainers
-├── BUILD.bazel         # Build definitions
 └── licenses/           # License files for auditing
 ```
 
@@ -31,7 +32,7 @@ third_party/
 2. Run `npm install`
 3. For critical deps, add license to `licenses/`
 
-## Future: rules_js Migration
+## Unadopted `rules_js` proposal
 
 When migrating to hermetic builds:
 

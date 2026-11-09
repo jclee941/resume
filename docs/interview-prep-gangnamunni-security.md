@@ -1,5 +1,28 @@
 # 강남언니 보안 엔지니어 면접 준비 자료
 
+> **Draft and study material.** Verify company-specific details before use. Sample answers are not evidence of professional experience; do not claim professional AWS security, ISMS-P, or privacy experience. Describe unsupported topics as knowledge gaps or hypothetical approaches.
+
+## Contents
+
+- [Company information](#1-회사-정보)
+- [Hiring process](#2-채용-프로세스)
+- [Resume match](#3-jd-이력서-매칭-분석)
+- [Interview questions](#4-예상-질문--모범-답변-20개)
+- [Code review preparation](#5-코드-리뷰-테스트-대비)
+- [Questions for the interviewer](#6-역질문-5개)
+- [STAR examples](#7-star-프레임워크-3개)
+- [Final review notes](#8-면접-직전-압축-메모)
+- [Technical reading notes](#9-강남언니-기술-블로그-핵심-정리-면접에서-언급하면-가산점)
+- [Values and collaboration](#10-회사-핵심-가치-협업-인터뷰-대비)
+- [Appendix](#부록-jd-기반-실전-예상질문--사례)
+- [Appendix A](#a-취약점-진단-시나리오)
+- [Appendix B](#b-devsecops-파이프라인-설계-시나리오)
+- [Appendix C](#c-실제-보안-사고-대응-시나리오)
+- [Appendix D](#d-강남언니-도메인-특화-시나리오)
+- [Appendix E](#e-보안-코드-리뷰-실전-예제)
+- [Appendix F](#f-한국-테크기업-실제-면접-기출-출처별)
+- [Appendix G](#g-참고-리소스)
+
 ## 1. 회사 정보
 
 - 힐링페이퍼(강남언니), 미용의료 플랫폼
@@ -23,9 +46,9 @@
 
 ### 강점
 
-1. 보안 이벤트/위협 탐지 로직 설계 및 대응 프로세스 운영 — Splunk ES 32개 탐지 룰
+1. 보안 이벤트/위협 탐지 로직 설계 및 대응 프로세스 운영 — Splunk ES 탐지 룰
 2. AI와 자동화 — 알림 워크플로 + FortiManager API, Ansible, Python
-3. AWS 클라우드 보안 — Terraform IaC, CloudTrail+GuardDuty
+3. AWS 보안은 학습 주제이며 전문 경력으로 주장하지 않음
 4. DevSecOps 확장 기반 — IaC/자동화/관측성
 5. 보안 아키텍처 설계 — FortiGate HA → 금융위 본인가
 
@@ -206,8 +229,8 @@ Q20. 어떤 Security Partner가 될 수 있다고 보나요?
 
 - S: 이벤트 많지만 노이즈 섞임
 - T: 실제 대응 가능한 탐지 체계 구축
-- A: 32개 룰 설계, 오탐/정탐 튜닝
-- R: 대응 피로도 감소, 탐지 품질 향상
+- A: 탐지 룰을 운영하고 알림 흐름을 검토
+- R: 탐지 결과를 알림과 대응 흐름에 연결
 
 ### STAR 3: 알림 워크플로 + FortiManager API 자동화
 
@@ -226,8 +249,7 @@ Q20. 어떤 Security Partner가 될 수 있다고 보나요?
 
 ### 약점 질문 핵심 문장
 
-"제 경험이 네트워크/클라우드/탐지 중심으로 더 두껍긴 합니다. 다만 보안 원칙을 설계와 운영에 녹여온 경험이 많아서, 제품보안과 Secure
-SDLC 쪽으로 확장하는 속도는 빠르다고 생각합니다."
+"확인 가능한 실무 경험은 네트워크 운영과 탐지 영역입니다. AWS 보안이나 제품보안은 전문 실무 경험으로 주장하지 않고, 이해한 원칙과 검증 절차를 설명하겠습니다."
 
 ### 피해야 할 답변 톤
 
@@ -260,20 +282,6 @@ SDLC 쪽으로 확장하는 속도는 빠르다고 생각합니다."
 - 소신있게 반대하고 헌신: 의견 차이에도 전력
 
 ---
-
-Write this ENTIRE document to
-/home/jclee/dev/resume/docs/interview-prep-gangnamunni-security.md
-
-IMPORTANT:
-
-- Write ALL content above, not a summary
-- All answers in Korean, conversational tone (구어체)
-- Do NOT shorten or truncate any section
-- Include every single Q&A (all 20)
-- Include every checklist item
-- The file should be 800+ lines
-
-<!-- OMO_INTERNAL_INITIATOR -->
 
 ---
 

@@ -1,7 +1,13 @@
 # Multi-Region Architecture
 
 This directory contains baseline configuration for Cloudflare-based multi-region
-routing and failover for the resume platform.
+routing and failover.
+
+> **Illustrative examples only; not an active deployment.** These files are not
+> wired into the root Worker configuration or a deployment workflow. They do
+> not establish that regional routing, caches, or failover are provisioned.
+> See the [Cloudflare infrastructure guide](../README.md) for ownership
+> boundaries.
 
 ## Files
 
@@ -11,12 +17,9 @@ routing and failover for the resume platform.
 
 ## Architecture
 
-- **Traffic steering**: clients are routed to APAC, EU, or US region using geo
-  rules.
-- **Edge cache**: each region applies independent TTL strategy for HTML and
-  static assets.
-- **Failover**: if a higher-priority region is unhealthy, requests are served
-  from next healthy region.
+- **Traffic steering**: the example describes geographic routing rules.
+- **Edge cache**: the example describes regional cache TTL settings.
+- **Failover**: the example describes a health-check fallback policy.
 
 ## Operational Flow
 
@@ -30,6 +33,6 @@ routing and failover for the resume platform.
 
 - Keep `/health`, `/job/health`, and `/metrics` uncached for accurate
   monitoring.
-- Align health check thresholds with
-  `infrastructure/monitoring/uptime/healthchecks.json`.
-- Validate routing rules in staging before production rollout.
+- Align proposed health-check thresholds with the
+  [uptime reference](../../monitoring/uptime/healthchecks.json) before any
+  separately authorized design review.

@@ -12,15 +12,15 @@ Boundary: measured score 6; retained tooling hub coordinating execution roots an
 
 ## WHERE TO LOOK
 
-| Task                        | Location                    | Notes                                          |
-| --------------------------- | --------------------------- | ---------------------------------------------- |
-| Repository checks           | `ci/AGENTS.md`              | Standalone Go policy and change-impact tools   |
-| Operational programs        | `scripts/AGENTS.md`         | Build, content, deploy, release, sync, secrets |
-| Asset generation            | `scripts/build/AGENTS.md`   | PDF/PPTX, image processing, resume variants    |
-| Browser performance budgets | `lighthouserc.json`         | Inputs to `npm run lighthouse:ci`              |
-| Go module ownership         | `scripts/go.mod`            | Main operational module                        |
-| Evidence enrichment module  | `scripts/enrichment/go.mod` | Independent nested Go module                   |
-| Human operator index        | `scripts/README.md`         | Check command references against current files |
+| Task                        | Location                               | Notes                                          |
+| --------------------------- | -------------------------------------- | ---------------------------------------------- |
+| Repository checks           | [CI guide](ci/AGENTS.md)               | Standalone Go policy and change-impact tools   |
+| Operational programs        | [Scripts guide](scripts/AGENTS.md)     | Build, content, deploy, release, sync, secrets |
+| Asset generation            | [Build guide](scripts/build/AGENTS.md) | PDF/PPTX, image processing, resume variants    |
+| Browser performance budgets | `lighthouserc.json`                    | Inputs to `npm run lighthouse:ci`              |
+| Go module ownership         | `scripts/go.mod`                       | Main operational module                        |
+| Evidence enrichment module  | `scripts/enrichment/go.mod`            | Independent nested Go module                   |
+| Human operator index        | [Scripts index](scripts/README.md)     | Check command references against current files |
 
 ## CONVENTIONS
 

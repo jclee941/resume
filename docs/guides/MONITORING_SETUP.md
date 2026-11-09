@@ -6,6 +6,24 @@ Complete guide for setting up monitoring infrastructure for Resume Portfolio
 **Services**: Prometheus, Grafana, Loki
 **Last Updated**: 2025-11-20
 
+> **Historical operator notes (as of 2025-11-20):** The host paths and service
+> details below describe that environment and are not the current deployment
+> authority. For current observability ownership, see the
+> [monitoring overview](../../infrastructure/monitoring/README.md) and
+> [Grafana configuration](../../infrastructure/configs/grafana/README.md).
+
+## Contents
+
+- [Prometheus Setup](#1-prometheus-setup)
+- [Grafana Setup](#2-grafana-setup)
+- [Loki Setup](#3-loki-setup)
+- [Reverse Proxy](#4-reverse-proxy-nginx)
+- [Verification](#5-verification)
+- [Maintenance](#6-maintenance)
+- [Troubleshooting](#7-troubleshooting)
+- [References](#references)
+- [Next Steps](#next-steps)
+
 ## 📋 Prerequisites
 
 - Synology NAS with Docker support
@@ -696,11 +714,7 @@ curl -s https://resume.jclee.me/metrics
 # Check Grafana logs
 docker logs grafana | tail -50
 
-# Verify data source
-curl -u admin:password http://localhost:3000/api/datasources
-
-# Test Prometheus query from Grafana
-curl -u admin:password "http://localhost:3000/api/datasources/proxy/1/api/v1/query?query=up"
+# In the Grafana UI, test the Prometheus data source and run a query in Explore.
 ```
 
 ### Loki Not Receiving Logs
@@ -723,14 +737,14 @@ curl -G "http://localhost:3100/loki/api/v1/query_range" \
   --data-urlencode 'limit=10' | jq '.'
 ```
 
-## 📚 References
+## References
 
 - [Prometheus Configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/)
 - [Grafana Provisioning](https://grafana.com/docs/grafana/latest/administration/provisioning/)
 - [Loki Configuration](https://grafana.com/docs/loki/latest/configuration/)
 - [Nginx Reverse Proxy Guide](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/)
 
-## 📝 Next Steps
+## Next Steps
 
 1. Set up Alertmanager for advanced alerting
 2. Configure Slack/email notifications

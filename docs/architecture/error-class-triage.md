@@ -1,17 +1,18 @@
 # Error Class Hierarchy Triage — SSOT-032 / Issue #41
 
-**Status**: Active triage · **Owner**: Platform · **Last Updated**: 2026-05-05
+**Status**: Historical triage snapshot · **Owner**: Platform · **Snapshot date**: 2026-05-05
 
 > **2026-09-29:** `apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)). Its paths below no longer exist, and the items that target them are closed.
 
-This document enumerates every error class in the monorepo, identifies which
-are functionally identical, which are intentionally divergent, and prescribes
-the consolidation path. It is the prerequisite "triage doc" called out in the
-acceptance criteria of [#41](https://github.com/jclee941/resume/issues/41).
+> The inventory and migration plan below record the 2026-05-05 triage. Job-server-specific entries are historical; this document does not establish the current status of dashboard error handling.
+
+This document records the error classes identified by the 2026-05-05 triage,
+distinguishes the then-observed similarities and differences, and preserves
+the proposed consolidation path for [#41](https://github.com/jclee941/resume/issues/41).
 
 ---
 
-## Inventory
+## Historical inventory
 
 ### A. `packages/shared/src/errors/index.js` (267 LOC)
 
@@ -77,8 +78,8 @@ the apply pipeline. **Not yet consolidated with A.**
 | `isRetryableApplyError(error)`    | function       | Predicate used by retry logic                                           |
 
 **Justification for divergence**: the apply pipeline has domain-specific
-retry semantics (circuit breaker per platform, captcha-vs-network distinction,
-retry-after with FortiManager-style backoff) that the generic A hierarchy does
+retry behavior (circuit breaker per platform, captcha-vs-network distinction,
+and retry-after handling) that the generic A hierarchy does
 not express. **Keep apply-errors local**.
 
 #### B-4. `error-codes.js` (31 LOC)
@@ -121,11 +122,12 @@ than typed errors. Not a class hierarchy — a missing layer.
 
 ---
 
-## Migration Plan
+## Historical migration plan
 
-The full consolidation is **medium-large effort** (touches every job-server
-service + every job-dashboard handler that throws). To keep this issue
-unblocked while the migration runs, this triage is landed on its own.
+The original triage estimated that consolidation as **medium-large effort**
+(touching every job-server service and each listed dashboard handler). It
+recorded this document as a standalone prerequisite; current issue status is
+not established here.
 
 ### Phase 1 (this issue, doc-only) — **complete**
 
@@ -157,17 +159,18 @@ unblocked while the migration runs, this triage is landed on its own.
 
 ---
 
-## Verification (this PR)
+## Original document verification note
 
-This PR adds the triage doc only — no code changes. It satisfies the
+The original note says the triage doc was added without code changes. It says the document satisfied the
 **first** acceptance bullet of #41:
 
 > Triage doc enumerating each error's purpose, distinguishing identical ones
 > from intentionally divergent ones.
 
-The remaining bullets (canonical hierarchy migration, `ErrorCodes` centralization,
-inline-object replacement in job-dashboard) are explicitly tracked as
-Phase 2 / Phase 3 above and remain on #41 until that work lands.
+The original note tracked the remaining bullets (canonical hierarchy
+migration, `ErrorCodes` centralization, and inline-object replacement) under
+Phases 2 and 3 and said they remained on #41. Their current status is not
+established here.
 
 ---
 
@@ -177,5 +180,4 @@ Phase 2 / Phase 3 above and remain on #41 until that work lands.
   § SSOT-032 — original consolidation entry.
 - [`packages/shared/src/errors/index.js`](../../packages/shared/src/errors/index.js)
   — canonical hierarchy (system A).
-- [`apps/job-server/src/shared/errors/`](../../apps/job-server/src/shared/errors/)
-  — job-server-local hierarchy (systems B-1 through B-6).
+- Historical retired path: `apps/job-server/src/shared/errors/` — job-server-local hierarchy (systems B-1 through B-6). No successor path is asserted.

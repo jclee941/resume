@@ -1,8 +1,14 @@
-# SECURITY ACTION PLAN
+# Historical Security Action Plan
 
 **Date:** 2026-01-25
 **Updated:** 2026-03-28
-**Status:** 🟢 SECURE (GitHub Actions integration)
+**Recorded status:** “SECURE” in the 2026-03-28 update; this historical report
+does not establish current security assurance.
+
+> Use the [pending operator actions](runbooks/PENDING_OPERATOR_ACTIONS.md) and
+> [current secret policy](security/wrangler-vars-vs-secrets.md) for current
+> guidance. The unresolved actions below remain historical observations until
+> separately verified.
 
 ## 0. Secret Scanning (Active)
 

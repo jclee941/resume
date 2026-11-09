@@ -1,12 +1,14 @@
 # KV Cache Test Coverage Plan — Issue #31 / P2-13
 
-**Status**: Active plan · **Owner**: Platform · **Last Updated**: 2026-05-05
+**Status**: Historical plan snapshot · **Owner**: Platform · **Snapshot date**: 2026-05-05
 
-> **2026-09-29:** `apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)), so the three-tier cache this plan meant to promote no longer exists. Step 1 is void; step 2 (tests for the direct KV calls in `apps/job-dashboard`) still applies to the files that remain. `workflows/backup.js` was removed with BackupWorkflow (D1 Time Travel covers backups).
+> **2026-09-29:** `apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)), so the three-tier cache this plan meant to promote no longer exists. The shared-cache promotion is void. The proposed tests for direct KV calls require a fresh inventory before use. `workflows/backup.js` was removed with BackupWorkflow (D1 Time Travel covers backups).
+>
+> The inventory and phases below preserve the 2026-05-05 proposal; they are not a current coverage report or implementation queue.
 
-This document inventories the KV-cache code paths in the monorepo and
-prescribes the unit tests that are still missing for deterministic CI
-coverage of read/write/TTL/expiry/failure semantics.
+The original proposal inventoried KV-cache code paths and proposed unit tests
+for read/write/TTL/expiry/failure semantics. Its inventory and missing-test
+claims require current verification.
 
 ---
 
@@ -21,25 +23,25 @@ grep -rln 'env\.\(SESSIONS\|RATE_LIMIT_KV\|NONCE_KV\)\|cache\.\(put\|get\|delete
 
 returns:
 
-| File                                                                     | KV usage                            | Existing test coverage                        |
-| ------------------------------------------------------------------------ | ----------------------------------- | --------------------------------------------- |
-| `apps/job-dashboard/src/middleware/rate-limit.js`                        | KV sliding-window                   | covered indirectly via integration tests      |
-| `apps/job-dashboard/src/routes/workflows.js`                             | KV idempotency keys                 | none                                          |
-| `apps/job-dashboard/src/routes/health.js`                                | KV ping                             | none                                          |
-| `apps/job-dashboard/src/queues/notification-dlq-handler.js`              | KV dedup                            | none                                          |
-| `apps/job-dashboard/src/workflows/backup.js`                             | KV backup metadata                  | none                                          |
-| `apps/job-dashboard/src/workflows/resume-sync-platforms.js`              | KV per-platform state               | none                                          |
-| `apps/job-dashboard/src/workflows/application/profile.js`                | KV profile cache                    | none                                          |
-| `apps/job-dashboard/src/workflows/application/platforms.js`              | KV per-platform state               | none                                          |
-| `apps/job-dashboard/src/workflows/job-crawling/platform-crawlers.js`     | KV crawler cursors                  | none                                          |
-| `apps/job-dashboard/src/workflows/job-crawling/job-crawling-workflow.js` | KV workflow state                   | none                                          |
-| `apps/job-server/src/shared/services/cache/`                             | three-tier cache (memory + KV + D1) | **100% coverage** (verified locally)          |
-| `apps/job-server/src/shared/services/cache.js`                           | LRUCache (in-memory only, not KV)   | tests in `__tests__/performance.test.js` only |
+| File                                                                     | KV usage                                    | Existing test coverage                                    |
+| ------------------------------------------------------------------------ | ------------------------------------------- | --------------------------------------------------------- |
+| `apps/job-dashboard/src/middleware/rate-limit.js`                        | KV sliding-window                           | covered indirectly via integration tests                  |
+| `apps/job-dashboard/src/routes/workflows.js`                             | KV idempotency keys                         | none                                                      |
+| `apps/job-dashboard/src/routes/health.js`                                | KV ping                                     | none                                                      |
+| `apps/job-dashboard/src/queues/notification-dlq-handler.js`              | KV dedup                                    | none                                                      |
+| `apps/job-dashboard/src/workflows/backup.js`                             | KV backup metadata                          | none                                                      |
+| `apps/job-dashboard/src/workflows/resume-sync-platforms.js`              | KV per-platform state                       | none                                                      |
+| `apps/job-dashboard/src/workflows/application/profile.js`                | KV profile cache                            | none                                                      |
+| `apps/job-dashboard/src/workflows/application/platforms.js`              | KV per-platform state                       | none                                                      |
+| `apps/job-dashboard/src/workflows/job-crawling/platform-crawlers.js`     | KV crawler cursors                          | none                                                      |
+| `apps/job-dashboard/src/workflows/job-crawling/job-crawling-workflow.js` | KV workflow state                           | none                                                      |
+| `apps/job-server/src/shared/services/cache/`                             | retired three-tier cache (memory + KV + D1) | **100% coverage** (claim recorded in 2026-05-05 proposal) |
+| `apps/job-server/src/shared/services/cache.js`                           | LRUCache (in-memory only, not KV)           | tests in `__tests__/performance.test.js` only             |
 
-The mature pattern lives in `apps/job-server/src/shared/services/cache/` —
-already 100% statement / branch / line / function coverage with 20 tests.
-The gap is: **the 9 files in `apps/job-dashboard/` that touch KV directly,
-without going through a shared cache layer**.
+The proposal described `apps/job-server/src/shared/services/cache/` as its
+mature reference. That path was retired with job-server. The claimed coverage
+and the list of nine dashboard files are historical and need a fresh check
+before they are used as current evidence.
 
 ---
 
@@ -72,7 +74,7 @@ into the shared layer (per-file domain-specific coordination).
 - [x] Decide elevation path: promote to `packages/shared/src/cache/` with
       Phase 2 deduplication in job-dashboard.
 
-### Phase 2 (follow-up PR — promote shared cache)
+### Phase 2 (historical follow-up proposal — promote shared cache)
 
 - [ ] Move `apps/job-server/src/shared/services/cache/` →
       `packages/shared/src/cache/` with subpath export
@@ -80,16 +82,17 @@ into the shared layer (per-file domain-specific coordination).
 - [ ] Re-run the 20 tests in their new home; verify 100% coverage holds.
 - [ ] Update job-server import paths to `@resume/shared/cache`.
 
-### Phase 3 (follow-up PR — adopt in job-dashboard)
+### Phase 3 (historical follow-up proposal — adopt in job-dashboard)
 
-- [ ] Migrate the 4 lowest-risk consumers
-      (`workflows/backup.js`, `workflows/resume-sync-platforms.js`,
+- [ ] Migrate the 4 originally listed consumers
+      (`workflows/backup.js` was removed with BackupWorkflow;
+      `workflows/resume-sync-platforms.js`,
       `workflows/job-crawling/job-crawling-workflow.js`,
       `routes/health.js`) to consume `@resume/shared/cache`.
 - [ ] Add per-consumer test files asserting cache hit / miss / TTL /
       failure semantics with `KVNamespaceMock`.
 
-### Phase 4 (follow-up PR — adopt in middleware + remaining workflows)
+### Phase 4 (historical follow-up proposal — adopt in middleware + remaining workflows)
 
 - [ ] Migrate `middleware/rate-limit.js` (highest-risk, production HTTP
       path) once Phase 3 has burned in.
@@ -112,16 +115,15 @@ into the shared layer (per-file domain-specific coordination).
 
 ## Verification (this PR)
 
-This PR adds the plan only — no code changes. The implementation work is
-sliced into Phase 2/3/4 PRs above.
+The original note says this document added a plan without code changes. Its
+implementation phases and acceptance criteria are retained as historical
+proposals, not current work status.
 
 ---
 
 ## See Also
 
-- [`apps/job-server/src/shared/services/cache/`](../../apps/job-server/src/shared/services/cache/)
-  — mature three-tier cache (memory + KV + D1); 100% coverage.
-- [`apps/job-server/src/test-helpers/mocks.js`](../../apps/job-server/src/test-helpers/mocks.js)
-  — `KVNamespaceMock` pattern to be reused in Phase 3/4 tests.
+- Historical retired path: `apps/job-server/src/shared/services/cache/` — the proposal's three-tier cache reference; its coverage claim is not current verification.
+- Historical retired path: `apps/job-server/src/test-helpers/mocks.js` — the proposal's `KVNamespaceMock` reference; no successor path is asserted.
 - [`docs/architecture/TECH_DEBT_AUDIT_2026-04-29.md`](./TECH_DEBT_AUDIT_2026-04-29.md)
   § KV cache — original audit finding.

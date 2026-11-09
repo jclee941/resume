@@ -1,5 +1,19 @@
 # Portfolio Design System
 
+## Table of Contents
+
+- [Atmosphere & Identity](#1-atmosphere--identity)
+- [Color](#2-color)
+- [Typography](#3-typography)
+- [Spacing & Layout](#4-spacing--layout)
+- [Components](#5-components)
+- [Motion & Interaction](#6-motion--interaction)
+- [Depth & Surface](#7-depth--surface)
+- [Accessibility Constraints](#8-accessibility-constraints)
+- [CSS Architecture](#9-css-architecture)
+- [Accepted Debt](#10-accepted-debt)
+- [Template Size Exception](#11-template-size-exception)
+
 ## 1. Atmosphere & Identity
 
 A quiet security command center: dark, precise, and evidence-first. The signature is

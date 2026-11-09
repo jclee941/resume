@@ -94,7 +94,7 @@ routes) via `ast-grep`.
   longer the deployed config. The `job` worker can be deleted from Cloudflare
   after the merged worker proves stable.
 
-### Migration Plan
+### Migration Record (2026-04-30)
 
 1. ✅ Rename `env.DB` → `env.JOB_DB` across `apps/job-dashboard/src/` (55
    references).
@@ -121,10 +121,11 @@ routes) via `ast-grep`.
     auto-rollback). The actual deletion was a no-op because the `job` worker had
     been deleted earlier; the workflow's idempotent skip path correctly detected
     this and exited successfully without further action.
-11. **Pending operator action (optional):** Trigger `provision-queues.yml`
-    workflow when ready to activate `crawl-tasks` and `notifications` queues.
-    Producer functions are defined but no current workflow handler invokes them;
-    queue activation is OPT-IN until task enqueueing is implemented in workflow
+11. **Pending when this decision was recorded (2026-04-30; optional; current
+    status unverified):** Trigger `provision-queues.yml` workflow when ready to
+    activate `crawl-tasks` and `notifications` queues. Producer functions were
+    defined, but no workflow handler invoked them at that time; queue
+    activation was OPT-IN until task enqueueing was implemented in workflow
     code.
 
 ### Reversibility

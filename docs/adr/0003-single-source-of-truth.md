@@ -15,6 +15,12 @@ Establish `packages/data/resumes/master/resume_data.json` as the canonical
 source of truth. All downstream representations must be generated or
 synchronized from this file.
 
+## Current Content Ownership
+
+For personal content, D1 `content_files` is now the source of truth under
+[ADR 0011](0011-content-pack-in-d1.md). The named resume JSON is its local
+materialized representation, not an independently canonical copy.
+
 ## Consequences
 
 - Positive: Consistent data semantics across portfolio, MCP, and automation

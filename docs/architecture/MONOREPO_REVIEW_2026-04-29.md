@@ -1,13 +1,29 @@
 # 전체 모노레포 리뷰 — 2026-04-29
 
-**Scope**: resume.jclee.me (portfolio + job-server + job-dashboard + 6 packages
+- **Scope:** `resume.jclee.me` (portfolio, job-server, job-dashboard, 6 packages,
+  60 Go scripts, and 28 automation workflows)
+- **Method:** 5 parallel explorers (code quality, architecture, CI/security,
+  documentation drift, tests/observability), Oracle review, and direct checks
+- **Repository snapshot:** `master` at `e02e53d`, v1.14.7; 2,022 tracked files,
+  1,054 JS/TS files, 162 tests, and 47 `AGENTS.md` files
 
-- 60 Go scripts + 28 automation)
-  **Method**: 5 parallel explorer agents (code quality, architecture, CI/security,
-  docs drift, test+observability) + Oracle senior security review + 직접 sanity
-  verification
-  **Repository state**: master @ `e02e53d` v1.14.7 production, 2,022 tracked
-  files, 1,054 JS/TS, 162 tests, 47 AGENTS.md
+> Historical audit snapshot from 2026-04-29. Initial findings and estimates are
+> retained as recorded; sections 9-10 contain later status updates for selected
+> items. See the [documentation index](../README.md) for current references.
+
+## Contents
+
+- [Summary](#0-tldr--점검-카테고리별-점수)
+- [P0 findings](#1-p0--critical-즉시-조치)
+- [P1 findings](#2-p1--high)
+- [P2 findings](#3-p2--medium-tech-debt)
+- [P3 findings](#4-p3--minor)
+- [Compliance highlights](#5--compliance-highlights-positive-findings)
+- [Effort estimates](#6-effort-estimate)
+- [Methodology](#7-methodology)
+- [References](#8-references)
+- [Same-day resolution log](#9-resolution-log-2026-04-29-same-day)
+- [Oracle re-verification](#10-oracle-re-verification-cycle-2026-04-29-follow-up)
 
 ---
 
@@ -35,7 +51,8 @@ threshold 정상화**".
 **Source**: Oracle (verified: `release.yml:201`)
 
 - `CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}` 변수명이 *Token*이 아닌 _Key_
-  — Cloudflare global key 의심
+  — a global key was suspected from the variable name; the name alone did not verify
+  the credential type
 - 글로벌 키는 계정 전체 권한 (blast radius)
 - **조치**: Cloudflare API Token으로 교체 (`Workers Scripts:Edit` 스코프),
   `CLOUDFLARE_API_TOKEN` secret 추가, 글로벌 키 폐기
@@ -314,7 +331,7 @@ tracked 안 됨. 디스크에는 평문이지만 git history에는 없음. P0 �
 | P1-11 gitlab-legacy             | RESOLVED     | b51c0f4             | (prior commit)                                                                                                                                                        |
 | P1-12 variant validator tests   | RESOLVED     | 964901a             | 18 tests 추가, npm test 에 wired                                                                                                                                      |
 
-### 남은 있는 이슈 (external action 필요)
+### Remaining issues (external action required)
 
 | ID                             | 조치 필요                                                                                                                                          |
 | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |

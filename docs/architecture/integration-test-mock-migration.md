@@ -1,27 +1,29 @@
 # Integration Test Mock Migration Plan — Issue #25 / P1-7
 
-**Status**: Active plan · **Owner**: Platform · **Last Updated**: 2026-05-05
+**Status**: Historical plan snapshot; implementation status unverified · **Owner**: Platform · **Snapshot date**: 2026-05-05
 
-This document maps the integration tests under `tests/integration/` that
-currently hit live URLs, identifies the mock fixtures needed, and prescribes
-the migration so CI runs deterministically.
+> **Status boundary:** This is a proposal snapshot dated 2026-05-05. Its implementation status and current CI requirements have not been established here. Checked Phase 1 items and “this PR” wording below record the original plan, not fresh verification.
+
+This document records a proposal about tests under `tests/integration/` that
+the 2026-05-05 audit described as using live URLs. Their current names,
+dependencies, and implementation status have not been verified here.
 
 ---
 
 ## Inventory
 
-`tests/integration/` currently contains 3 test files
-(per `tests/AGENTS.md`):
+The following is an illustrative placeholder inventory, not a verified list of
+current test files. The original plan cited `tests/AGENTS.md`; verify the
+current test names and live dependencies before treating these rows as an
+inventory:
 
-| File     | Live URL today                     | Mock target                                      |
-| -------- | ---------------------------------- | ------------------------------------------------ |
-| (file 1) | resume.jclee.me / health endpoints | `tests/integration/__fixtures__/health.json`     |
-| (file 2) | grafana.jclee.me / Loki push       | `tests/integration/__fixtures__/loki-push.json`  |
-| (file 3) | wanted.kr / job listing            | `tests/integration/__fixtures__/wanted-job.json` |
+| Placeholder | Example URL in proposal            | Proposed mock target                             |
+| ----------- | ---------------------------------- | ------------------------------------------------ |
+| (file 1)    | resume.jclee.me / health endpoints | `tests/integration/__fixtures__/health.json`     |
+| (file 2)    | grafana.jclee.me / Loki push       | `tests/integration/__fixtures__/loki-push.json`  |
+| (file 3)    | wanted.kr / job listing            | `tests/integration/__fixtures__/wanted-job.json` |
 
-(The exact files are listed by:
-`ls tests/integration/*.test.js`. Replace the table above with the live
-filenames during Phase 1 of the migration PR.)
+The `(file 1)` through `(file 3)` labels are placeholders, not filenames.
 
 ---
 
@@ -43,9 +45,10 @@ Live-URL tests fail when:
 
 ---
 
-## Migration Pattern
+## Illustrative migration pattern
 
-For each currently-live test, apply this transform:
+For a test verified to use a live URL, the original proposal suggested this
+transform:
 
 ```js
 // Before:
@@ -116,9 +119,9 @@ above for ergonomics.
 
 ## Verification (this PR)
 
-This PR adds the migration plan only — no code changes. Phase 2 captures
-fixtures, Phase 3 migrates tests, Phase 4 promotes the suite to required
-in CI.
+The original note says this document added a plan without code changes. The
+phase descriptions below are proposals; they do not establish implementation
+or current CI status.
 
 ---
 

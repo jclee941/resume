@@ -1,9 +1,28 @@
-# Wanted / JobKorea Resume Sync — 정합성 Audit (2026-04-29)
+# Resume Sync Consistency Audit — 2026-04-29 / 이력서 동기화 정합성 감사
 
-**Scope**: Wanted 원티드 + JobKorea 잡코리아 이력서 자동화 파이프라인 + SSoT 정합성
+> Historical audit and same-day follow-up recorded on 2026-04-29. Counts and
+> statuses below describe those checks; use the [documentation index](../README.md)
+> to find current architecture references.
 
-**Method**: 4 parallel explorer agents (wanted code map, jobkorea code map, SSoT
-integrity, skills/projects dedup) + 직접 검증.
+## Contents
+
+- [Summary](#tldr)
+- [Issues fixed in the initial audit](#1-fixed-consistency-issues)
+- [Issues left open at the initial audit](#2-open-issues-at-the-initial-audit)
+  - [Issue A: JobKorea skills mapping](#issue-a-jobkorea-skills-mapping)
+  - [Issue B: Schema coverage](#issue-b-schema-coverage)
+  - [Issue C: Independent application variants](#issue-c-independent-application-variants)
+  - [Issue D: Profile read-back](#issue-d-profile-read-back)
+- [Known limitations](#3-known-limitations)
+- [Canonical source location](#4-canonical-source-location)
+- [Initial verification](#5-initial-verification)
+- [Files changed](#6-files-changed)
+- [Same-day follow-up](#7-same-day-follow-up-2026-04-29)
+
+- **Scope:** Wanted and JobKorea resume automation pipeline and single-source
+  consistency.
+- **Method:** 4 parallel explorers (Wanted and JobKorea code maps, source
+  integrity, skills/projects deduplication) plus direct verification.
 
 ---
 
@@ -19,9 +38,13 @@ integrity, skills/projects dedup) + 직접 검증.
 | 미해결 (별도 작업 필요)                      | 4 (아래 §3)                                               |
 | Test 회귀                                    | 0 — 809/809 pass                                          |
 
+Here, SSoT means single source of truth. The initial audit's test total is 809.
+The same-day follow-up below records
+818 after nine additional tests; the figures refer to different checkpoints.
+
 ---
 
-## 1. 자동 수정된 정합성 이슈
+## 1. Fixed consistency issues
 
 ### Fix 1 — P1: Splunk 중복 + OpenTelemetry/Go locale drift
 
@@ -57,9 +80,9 @@ integrity, skills/projects dedup) + 직접 검증.
 
 ---
 
-## 2. 발견된 미수정 이슈 (별도 작업 필요)
+## 2. Open issues at the initial audit
 
-### Issue A — P1: JobKorea profile sync에 skills 매핑 부재
+### Issue A: JobKorea skills mapping
 
 - **현상**: `buildJobKoreaFormData()`가
   careers/school/licenses/military/awards/hopeJob/portfolio 7개 섹션은 매핑하나 **skills
@@ -70,7 +93,7 @@ integrity, skills/projects dedup) + 직접 검증.
 - **차단 요인**: JobKorea form의 skills field name/code (예: `Skl_*`) 식별 필요 → 별도 probe
   작업.
 
-### Issue B — P1: Zod 스키마 (packages/schemas) 가 SSoT 22 키 중 ~6개만 검증
+### Issue B: Schema coverage
 
 - **현상**: `packages/schemas/src/resume.js` 는
   `profile/careers/projects/skills/certifications/educations`만 검증. 실제 SSoT 키 22개
@@ -79,7 +102,7 @@ ossContributions, awards, achievements, infrastructure, contact, hope,
 military, languages, summary, current, sectionDescriptions` 등 16개는 미검증.
 - **권고**: 필드 추가 검증 — 또는 의도적 미검증 필드를 명시적으로 문서화.
 
-### Issue C — P1: Shinhan / Application 변형이 parallel SSoT
+### Issue C: Independent application variants
 
 - **현상**: `packages/data/resumes/applications/shinhan/shinhan_resume_data*.json`
   3개와 다수의 application별 .md 파일이 master SSoT에서 파생되지 않은 독립 소스로 존재.
@@ -88,7 +111,7 @@ military, languages, summary, current, sectionDescriptions` 등 16개는 미검�
 - **권고**: (i) overlay 패턴으로 마스터에서 생성 또는 (ii) "intentionally independent
   per-application" 명시 + drift CI 가드 추가.
 
-### Issue D — P2: JobKorea profile read-back 부재
+### Issue D: Profile read-back
 
 - **현상**: `JobKoreaCrawler.getProfile()` 이 빈 placeholder 반환
   (`platforms/jobkorea/jobkorea-crawler.js:192-202`). 따라서 sync 후 idempotency /
@@ -97,7 +120,7 @@ military, languages, summary, current, sectionDescriptions` 등 16개는 미검�
 
 ---
 
-## 3. 알려진 한계 (이전 세션에서 이미 문서화)
+## 3. Known limitations
 
 | ID                          | File                       | 한계                                                      |
 | --------------------------- | -------------------------- | --------------------------------------------------------- |
@@ -111,7 +134,7 @@ military, languages, summary, current, sectionDescriptions` 등 16개는 미검�
 
 ---
 
-## 4. SSoT 캐노니컬 위치 — 문서 정정
+## 4. Canonical source location
 
 `AGENTS.md` (root) 와 일부 README 가 `packages/data/resume_data.json` 을 SSoT로 명시하나
 실제 캐노니컬 파일은:
@@ -126,7 +149,7 @@ packages/data/resumes/master/resume_data_ja.json
 
 ---
 
-## 5. Verification — 이번 세션
+## 5. Initial verification
 
 | Check                              | Result                             |
 | ---------------------------------- | ---------------------------------- |
@@ -140,7 +163,10 @@ packages/data/resumes/master/resume_data_ja.json
 
 ---
 
-## 6. 변경 파일 (이 audit 1개 커밋)
+## 6. Files changed
+
+The `+N/-N` values below are diff counts recorded at the time of this audit;
+they are not current file lengths.
 
 ```text
 packages/data/resumes/master/resume_data.json       (-5 lines: Splunk dedup)
@@ -154,11 +180,11 @@ docs/architecture/RESUME_SYNC_AUDIT_2026-04-29.md   (+this file)
 
 ---
 
-## 7. 후속 조치 완료 (2026-04-29 same-day follow-up)
+## 7. Same-day follow-up (2026-04-29)
 
 Oracle architectural review (cliproxyapi/gpt-5.5) 권고에 따라 아래 4개 이슈 해소.
 
-### Issue A (P1) — JobKorea skills mapping: **Documented & deferred**
+### Issue A — JobKorea skills mapping: **Documented and deferred**
 
 - `apps/job-server/scripts/profile-sync/jobkorea-sections.js` 상단에 27-line 도큐멘트
   블록 추가.
@@ -168,7 +194,7 @@ Oracle architectural review (cliproxyapi/gpt-5.5) 권고에 따라 아래 4개 �
   동작** 임을 명시.
 - Implementation 5-step recipe 도큐멘트에 포함.
 
-### Issue B (P1) — Zod schema 6/22: **Resolved via canonical-validator wiring**
+### Issue B — Zod schema: **Resolved via canonical-validator wiring**
 
 Oracle 권고: Zod 22개 키 확장은 duplicate validator 만드는 일. 대신 canonical = JSON Schema.
 
@@ -183,7 +209,7 @@ Oracle 권고: Zod 22개 키 확장은 duplicate validator 만드는 일. 대신
 - **신규 13 단위 테스트**: `packages/schemas/src/__tests__/resume.test.js`. SSoT 실제
   데이터로 parse 검증.
 
-### Issue C (P1) — Shinhan parallel SSoT: **Declared intentionally independent + CI guard**
+### Issue C — Independent application variants: **Declared independent with CI guard**
 
 Oracle 권고: overlay는 schema mismatch (9 vs 22 keys) 때문에 비현실적. minimal contract
 validator로 충분.
@@ -195,7 +221,7 @@ validator로 충분.
   skills object 검증.
 - **CI wire-in**: 같은 `validate-data` job에 추가. 3/3 shinhan variants pass.
 
-### Issue D (P2) — JobKorea profile read-back stub: **Structured NOT_IMPLEMENTED**
+### Issue D — JobKorea profile read-back: **Structured NOT_IMPLEMENTED**
 
 - `apps/job-server/platforms/jobkorea/jobkorea-crawler.js` `getProfile()` 교체:
   empty placeholder → `{ success: false, status: 'AUTH_REQUIRED' |

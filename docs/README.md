@@ -27,16 +27,17 @@ context. ADR files stay in place so their decision history remains intact.
 
 ## Current Architecture
 
+- [Architecture Directory Index](architecture/README.md)
 - [Architecture](ARCHITECTURE.md) — canonical current-state overview.
 - [System Overview](architecture/system-overview.md)
 - [Component Inventory](architecture/component-inventory.md)
 - [Deployment Pipeline](architecture/DEPLOYMENT_PIPELINE.md)
 - [KV Ownership](architecture/kv-ownership.md)
-- [Job Platform Implementation](architecture/JOB_JCLEE_ME_IMPLEMENTATION.md)
 - [Project Context](architecture/project-context.md)
 
 ## Guides/Runbooks
 
+- [Guides Directory Index](guides/README.md)
 - [Quick Start](guides/QUICK_START.md)
 - [Content Pack](guides/CONTENT_PACK.md)
 - [Local Debugging](guides/LOCAL_DEBUGGING.md)
@@ -59,6 +60,9 @@ context. ADR files stay in place so their decision history remains intact.
 - [API Reference](api/README.md)
 
 ## Historical/Planning
+
+- [Job Dashboard Route Integration Report](architecture/JOB_JCLEE_ME_IMPLEMENTATION.md) —
+  archived and superseded.
 
 Time-bound audits, session reviews, implementation plans, and retired guidance
 remain in their existing paths where tracked. Treat them as context rather than

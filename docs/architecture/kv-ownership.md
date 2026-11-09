@@ -1,7 +1,7 @@
 # Cloudflare KV Namespace Ownership Contract
 
-**Status:** Authoritative — required reading before changing any KV-related code
-in `apps/portfolio` or `apps/job-dashboard`.
+**Status:** Authoritative; required reading before changing KV-related code in
+`apps/portfolio` or `apps/job-dashboard`.
 **Last updated:** 2026-09-26
 **Related task:** SSOT-005 (`docs/architecture/SSOT_IMPROVEMENT_PLAN.md`)
 
@@ -29,8 +29,11 @@ Portfolio page and asset rate limiting is in-memory per isolate
 ## Key inventory
 
 Keys start with a namespace segment. A change that adds, renames, or removes a
-key pattern updates this inventory in the same commit, and every `put()` sets
+key pattern updates this inventory in the same commit. Every KV `put()` sets
 `expirationTtl`.
+
+The `auth:<platform>` TTL is writer-specific; use the value set by the writer
+when assessing its expiry.
 
 ### `SESSIONS`
 

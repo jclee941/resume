@@ -6,6 +6,17 @@
 
 > **2026-09-29:** `apps/job-server` was retired ([ADR 0010](../adr/0010-retire-local-job-server.md)). Its paths below no longer exist, and the items that target them are closed.
 
+> **Historical snapshot:** Findings and timestamps below describe the audit dated 2026-05-10. The retirement notice records the later closure of job-server-specific work; it does not establish the status of other proposals. See [ADR 0010](../adr/0010-retire-local-job-server.md) for that decision. The dated measurements are not current measurements.
+
+## Contents
+
+- [Baseline results](#baseline-results)
+- [Confirmed gaps](#confirmed-gaps-require-action)
+- [Stale assumptions](#stale-assumptions-no-action-needed)
+- [Recommendations](#recommendations-for-next-steps)
+- [Historical reproduction command](#historical-reproduction-command)
+- [Verification script claims](#appendix-verification-script-claims)
+
 ---
 
 ## Baseline Results
@@ -128,6 +139,8 @@
 
 ## Recommendations for Next Steps
 
+These are recommendations from the 2026-05-10 audit, not a current work queue. Items 1–2 relate to [Gap 1](#gap-1-resumetypes-resumeschemas-resumecontracts-adoption), item 3 to [Gap 2](#gap-2-bidirectional-profile-sync), item 4 to [Gap 3](#gap-3-portfolio-focused-external-enrichment), item 5 to [Assumption 2](#assumption-2-build-pipeline-stale), and item 6 to [Assumption 1](#assumption-1-epic-6-file-size-hygiene).
+
 1. **Migrate `apps/portfolio/lib/validators.js` to use `@resume/schemas`** instead of hand-rolled validation.
 2. **Evaluate `@resume/types`, `@resume/schemas`, `@resume/contracts`** — either adopt them in app code or deprecate them to reduce maintenance overhead.
 3. **Add a bidirectional sync mechanism**: crawlers → SSoT enrichment pipeline for profile data (e.g., scrape job history from platforms and update `resume_data.json`).
@@ -137,9 +150,9 @@
 
 ---
 
-## How to Reproduce
+## Historical reproduction command
 
-Run the verification script:
+The audit recorded this command on 2026-05-10. `verify:profile-sync` is not defined in the current root `package.json`, so the command and its described exit semantics below are historical, not runnable current verification:
 
 ```bash
 npm run verify:profile-sync
@@ -151,6 +164,8 @@ The script exits with code `1` when confirmed gaps or partial truths exist, and 
 
 ## Appendix: Verification Script Claims
 
+The following are the original script's proposed checks, not evidence that the script currently exists or runs:
+
 **Claim A: Epic 6 file-size hygiene is pending**
 
 - Check actual line counts of `applications.js` and `auto-apply.js`
@@ -161,7 +176,7 @@ The script exits with code `1` when confirmed gaps or partial truths exist, and 
 
 - Search for imports of `@resume/types`, `@resume/schemas`, `@resume/shared`, `@resume/contracts` across apps
 - Check `apps/portfolio/lib/validators.js` — does it use `@resume/schemas` or hand-roll?
-- FAIL if zero imports found across all apps
+- Report each shared package's non-test import count separately; flag a package when its own count is zero.
 
 **Claim C: Profile sync is one-way**
 

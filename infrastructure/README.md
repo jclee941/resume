@@ -4,7 +4,28 @@
 **Project**: Resume Portfolio (<https://resume.jclee.me>)
 **Repository**: <https://github.com/jclee941/resume>
 
+> **Reference snapshot (reviewed 2026-11-09):** This page combines current
+> repository ownership with historical infrastructure notes. It does not verify
+> the state or availability of remote services. The root
+> [`wrangler.jsonc`](../wrangler.jsonc) is the Worker configuration authority;
+> see the [monitoring overview](monitoring/README.md), [Grafana guide](configs/grafana/README.md),
+> and [infrastructure guide](../docs/guides/INFRASTRUCTURE.md) for current
+> repository guidance.
+
 ---
+
+## Contents
+
+- [Overview](#overview)
+- [Directory Structure](#directory-structure)
+- [Quick Reference](#quick-reference)
+- [Components](#components)
+- [Deployment Guide](#deployment-guide)
+- [Internal Service Access](#internal-service-access)
+- [Monitoring Best Practices](#monitoring-best-practices)
+- [Troubleshooting](#troubleshooting)
+- [File Changelog](#file-changelog)
+- [Related Documentation](#related-documentation)
 
 ## Overview
 
@@ -13,31 +34,9 @@ dashboards, and alert rules for the Resume Portfolio application. Scheduled
 automation is Cloudflare-native (Cron Triggers and Workflows in the root
 `wrangler.jsonc`); no host schedulers live here.
 
-**Infrastructure Topology**
-
-#### Diagram summary 1
-
-- Type: flowchart
-- User/Browser (User) -> Cloudflare Edge (CF)
-- Cloudflare Edge (CF) -> Portfolio Worker (Portfolio)
-- Portfolio Worker (Portfolio) -> job-dashboard module (JobDash)
-- Component: Proxmox VE (Proxmox)
-- Proxmox VE (Proxmox) -> Grafana + Loki (Grafana)
-- Proxmox VE (Proxmox) -> Elasticsearch (ES)
-- Proxmox VE (Proxmox) -> Docker Host (Docker)
-- Cron Triggers (Cron) -> Portfolio Worker (Portfolio) -> Cloudflare Workflows (Workflows)
-- Portfolio Worker (Portfolio) -> D1 Database (D1)
-- Portfolio Worker (Portfolio) -> KV Namespaces (KV)
-- Portfolio Worker (Portfolio) -> Wanted API (Wanted)
-- Portfolio Worker (Portfolio) -> JobKorea (JK)
-
-**Infrastructure Stack**
-
-- **Application**: Cloudflare Workers (serverless, global CDN)
-- **Monitoring**: Grafana + Prometheus + Loki (hosted on Proxmox pve3
-  (192.168.50.100))
-- **Automation**: Cloudflare Cron Triggers + Workflows (auto-apply, resume sync)
-- **CI/CD**: GitHub Actions (validation) → Cloudflare Workers Builds (deploy)
+For the current Worker composition and bindings, consult the root
+configuration. Monitoring files here are configuration and dashboard
+references; they do not establish that an external monitoring service is live.
 
 ---
 
@@ -97,20 +96,12 @@ curl -s https://resume.jclee.me/health | jq
 
 # Check metrics
 curl -s https://resume.jclee.me/metrics | head -20
-
-# Deploy dashboard (API method)
-curl -X POST https://grafana.jclee.me/api/dashboards/db \
-  -H "Authorization: Bearer $GRAFANA_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d @infrastructure/monitoring/grafana-dashboard-resume-portfolio.json
-
-# Run tests
-cd /home/jclee/dev/resume
-npm run build && npm test && npm run test:e2e
-
-# Deploy application (Cloudflare Workers Builds; npm run deploy is disabled)
-git push origin master
 ```
+
+These read-only endpoint examples do not verify current remote availability.
+For repository checks, use the commands in the root [`AGENTS.md`](../AGENTS.md).
+GitHub Actions runs validation; Cloudflare Workers Builds owns production
+deployment.
 
 ---
 
@@ -171,7 +162,10 @@ directory:
 | ------------ | ----- | ------------------------------------------------------------------- |
 | `0 21 * * *` | 06:00 | Wanted session refresh, then `ResumeSyncWorkflow` (dry-run default) |
 
-The `0 21 * * *` run also starts a dry-run Wanted `ApplicationWorkflow` discovery run unless auto-apply is disabled.
+The `0 21 * * *` run also starts the scheduled `ApplicationWorkflow` when
+auto-apply is enabled. Its live-submit setting and safeguards are defined by
+the current application configuration and workflow; this table does not imply
+that a run is a dry run.
 
 Health check, backup, cleanup, and daily report jobs are Cloudflare Workflows
 in `apps/job-dashboard/src/workflows/`. The former host systemd timers and
@@ -359,10 +353,12 @@ curl https://resume.jclee.me/metrics | grep error
 
 ## File Changelog
 
-### 2026-01-24 (Current)
+### 2026-01-24 (Historical snapshot)
 
 **Changes**
 
+- Historical entry: these notes record the state described on 2026-01-24; they
+  are not a current remote-service status report.
 - ✅ Unified dashboard files (monitoring/ is primary, configs/grafana/ is
   symlink)
 - ✅ Added Health Check Status panel to dashboard
@@ -424,4 +420,4 @@ For issues or questions:
 **Last Updated**: 2026-01-24
 **Infrastructure Version**: 2.1.0
 **Monitoring Stack**: Grafana 10.0.0 + Prometheus + Loki
-**Status**: ✅ Production-ready
+**Status**: Historical snapshot; remote services unverified

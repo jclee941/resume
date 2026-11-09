@@ -1,9 +1,17 @@
 # Deployment Monitoring Guide
 
+> **Historical local procedure (2026-11-09).** The tmux scripts below describe
+> legacy local deployment monitoring and do not establish the current production
+> process. Production deployment belongs to
+> [Cloudflare Workers Builds](../architecture/DEPLOYMENT_PIPELINE.md); current
+> observability ownership is documented in [the system overview](../architecture/system-overview.md).
+
 ## Overview
 
-The resume portfolio includes tmux-based deployment monitoring for real-time
-visibility into the deployment process.
+This archived guide covers a legacy tmux-based local deployment monitor. It does
+not describe the current production pipeline. For current ownership, see
+[the deployment pipeline](../architecture/DEPLOYMENT_PIPELINE.md) and
+[the system overview](../architecture/system-overview.md).
 
 ## Quick Start
 
@@ -146,8 +154,8 @@ The monitoring script tracks these steps:
   └─ Checks for "Tests:.*passed"
 
 [3/4] Deploying to Cloudflare
-  ├─ npx wrangler deploy --config wrangler.jsonc --env production
-  └─ Checks for "Published|Deployed|Success"
+  ├─ Historical deploy step; do not use as a current command
+  └─ See the deployment pipeline linked above
 
 [4/4] Verifying deployment
   ├─ curl -I https://resume.jclee.me

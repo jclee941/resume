@@ -12,8 +12,25 @@ dispatches `/job/*` requests via `jobWorker.fetch(request, env, ctx)`
 — no Service Binding round-trip. See
 [ADR 0009 — Single-Worker Consolidation](../../docs/adr/0009-single-worker-consolidation.md).
 
-**Status**: ✅ Production-ready | 7 workflows | 48 API endpoints | D1 + KV + R2
-bindings (all registered on the merged `resume` worker)
+- **Runtime**: In-process module of the portfolio Worker
+- **Workflow classes**: 6
+- **API contract**: [Canonical OpenAPI specification](../../packages/contracts/openapi.yaml)
+
+## Table of Contents
+
+- [Quick Start](#quick-start)
+  - [Prerequisites](#prerequisites)
+  - [Local Development](#local-development)
+  - [Deploy to Cloudflare](#deploy-to-cloudflare)
+- [Configuration](#configuration)
+- [Architecture](#architecture)
+- [API Endpoints](#api-endpoints)
+- [Platform Support and Limitations](#platform-support--limitations)
+- [Database and Storage](#database--storage)
+- [Cloudflare Workflows](#cloudflare-workflows)
+- [Secrets Management](#secrets-management)
+- [Troubleshooting](#troubleshooting)
+- [Related Documentation](#related-documentation)
 
 ---
 
@@ -52,7 +69,7 @@ production deploys are intentionally disabled.
 
 ```bash
 # View live logs for the merged worker
-npx wrangler tail --config wrangler.jsonc --env production
+npx wrangler tail --config wrangler.jsonc
 
 # View deployment history
 npx wrangler deployments list
@@ -150,7 +167,7 @@ Browser/API Client
     ↓
 resume.jclee.me/job/* (Cloudflare route)
     ↓
-Portfolio Worker (resume) → Service Binding → Job Dashboard Worker (job)
+Portfolio Worker (resume) → in-process dashboard module
     ↓ (strip /job prefix)
 Router.handle()
     ↓
@@ -230,7 +247,7 @@ job-dashboard/
 │   │   └── styles/                 # Styles directory
 │   ├── durable-objects/            # Durable Objects (persistent state)
 │   │   └── browser-session-do.js   # Browser session persistence
-│   └── workflows/                  # Cloudflare Workflows (7 workflow classes)
+│   └── workflows/                  # Cloudflare Workflow classes (6)
 │       ├── index.js                # Barrel exports
 │       ├── job-crawling.js         # Job search pipeline
 │       ├── application.js          # Auto-apply submission
@@ -247,160 +264,41 @@ job-dashboard/
 
 ## API Endpoints
 
-### Health & Status (3 endpoints)
+The [OpenAPI specification](../../packages/contracts/openapi.yaml) is the
+authoritative route list and defines each method, request schema, response, and
+security requirement. This README does not maintain a duplicate endpoint count.
+
+### Health
 
 ```bash
-# Service health check
 curl https://resume.jclee.me/job/health
-# Returns: { "status": "healthy", "uptime": 3600, ... }
-
-# Readiness check (dependencies)
-curl https://resume.jclee.me/job/readiness
-
-# Service status with metrics
-curl https://resume.jclee.me/job/status
 ```
 
-### Statistics (4 endpoints)
+### Statistics
 
-```bash
-# Get overall stats
-curl https://resume.jclee.me/job/api/stats
-# Returns: { "total": 45, "applied": 30, "in_progress": 10, "rejected": 5 }
+Use the operations and query parameters in the canonical OpenAPI contract.
 
-# Weekly stats
-curl https://resume.jclee.me/job/api/stats/weekly
+### Authentication
 
-# Daily breakdown
-curl https://resume.jclee.me/job/api/stats/daily
+The current session flow and per-route security requirements are summarized in
+the [API reference](./API_REFERENCE.md) and specified in OpenAPI.
 
-# Generate report
-curl https://resume.jclee.me/job/api/report
-```
+### Applications
 
-### Authentication (7 endpoints)
-
-```bash
-# Set session (cookies/token)
-curl -X POST https://resume.jclee.me/job/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"cookies": "...", "token": "..."}'
-
-# Check auth status
-curl https://resume.jclee.me/job/api/auth/status \
-  -H "Authorization: Bearer <token>"
-
-# Clear session
-curl -X POST https://resume.jclee.me/job/api/auth/logout \
-  -H "Authorization: Bearer <token>"
-
-# Validate token
-curl -X POST https://resume.jclee.me/job/api/auth/validate \
-  -H "Authorization: Bearer <token>"
-
-# Refresh expired token
-curl -X POST https://resume.jclee.me/job/api/auth/refresh \
-  -H "Authorization: Bearer <token>"
-
-# Get user profile
-curl https://resume.jclee.me/job/api/auth/profile \
-  -H "Authorization: Bearer <token>"
-```
-
-### Applications CRUD (6 endpoints)
-
-```bash
-# List applications with filters
-curl "https://resume.jclee.me/job/api/applications?status=applied&limit=20" \
-  -H "Authorization: Bearer <token>"
-
-# Add new application
-curl -X POST https://resume.jclee.me/job/api/applications \
-  -H "Authorization: Bearer <token>" \
-  -H "Content-Type: application/json" \
-  -d '{"job_id": "123", "company": "TechCorp", "platform": "wanted"}'
-
-# Get application detail
-curl https://resume.jclee.me/job/api/applications/abc123 \
-  -H "Authorization: Bearer <token>"
-
-# Update application
-curl -X PUT https://resume.jclee.me/job/api/applications/abc123 \
-  -H "Authorization: Bearer <token>" \
-  -H "Content-Type: application/json" \
-  -d '{"status": "in_progress"}'
-
-# Update status only
-curl -X PATCH https://resume.jclee.me/job/api/applications/abc123/status \
-  -H "Authorization: Bearer <token>" \
-  -d '{"status": "rejected"}'
-
-# Delete application
-curl -X DELETE https://resume.jclee.me/job/api/applications/abc123 \
-  -H "Authorization: Bearer <token>"
-```
+Use the OpenAPI request and response schemas for application operations.
 
 ### Application history sync
 
-```bash
-# Pull Wanted, JobKorea and Remember application history into D1 (idempotent; state-changing, needs CSRF)
-curl -X POST https://resume.jclee.me/job/api/applications/sync \
-  -H "Authorization: Bearer <token>" -H "X-CSRF-Token: <csrf>" -H "Cookie: csrf_token=<csrf>" \
-  -H "Content-Type: application/json" -d '{"platforms": ["wanted", "jobkorea", "remember"]}'
-```
+The contract documents `POST /api/applications/sync` and its supported request
+shape. The implementation is under
+[`src/services/application-history/`](./src/services/application-history/).
 
-The service lives in `src/services/application-history/`. It maps the owner's real applications
-onto `applications` rows keyed by (source, job_id) so the auto-apply approval gate
-(`SELECT id FROM applications WHERE job_id = ? AND source = ?`) sees them:
-`wanted-<jobId>` (source `wanted`), `jobkorea-<posting number>` (source `jobkorea`) and
-`remember-<posting id>` (source `remember`).
+### Workflows
 
-- **Wanted**: `GET /api/v4/applications?status={complete|pass|hire|reject}&limit=50&offset=N` with the
-  KV session cookie, paged by `links.next`. The `status` filter is mandatory (422 without it).
-- **JobKorea**: Browser Rendering opens `/User/ApplyMng` (입사지원 현황) and the rendered HTML is
-  parsed. The page is only read; nothing is clicked. A JobKorea session stalls its pages in any
-  browser other than the one that logged in, so this route, MCP `sync_application_history` and
-  the daily cron log in first, in the browser that reads, and read with that login.
-- **Remember**: `GET /open_profiles/me/job_postings/application_histories?page=N&per=50` on the
-  career API with the account token, through Browser Rendering REST. `application.status` stays
-  `applied`, so the stage comes from the times beside it: `canceled_at` -> `withdrawn`,
-  `rejected_at` -> `rejected`, `final_accepted_at` -> `offer`, `resume_accepted_at` ->
-  `in_progress`, `first_read_at` or `reviewed_at` -> `viewed`; `applied_at` is the application
-  time. Remember can also drop a cancelled application from the list; rows are never deleted, so
-  that row keeps its last stored status.
-- Existing rows matching (source, job_id) only have their status advanced; new rows are inserted
-  as `history-<job_id>`; rows are never deleted. Each run adds a `sync_logs` row of type
-  `application-history`.
-- A missing or expired session reports `SESSION_MISSING` / `SESSION_EXPIRED` for that platform
-  only. HTTP 502 means every requested platform failed.
-- Runs in the `0 21 * * *` cron after the Wanted session refresh and before the auto-apply discovery
-  start (120 s budget, failures never block the other starts), and as the MCP tool
-  `sync_application_history`.
-
-### Workflows (7 endpoints)
-
-```bash
-# Trigger job crawling
-curl -X POST https://resume.jclee.me/job/api/workflows/job-crawling/run \
-  -H "Authorization: Bearer <token>"
-
-# Trigger auto-apply
-curl -X POST https://resume.jclee.me/job/api/workflows/application/run \
-  -H "Authorization: Bearer <token>"
-
-# Trigger resume sync
-curl -X POST https://resume.jclee.me/job/api/workflows/resume-sync/run \
-  -H "Authorization: Bearer <token>"
-
-# Trigger daily report
-curl -X POST https://resume.jclee.me/job/api/workflows/daily-report/run \
-  -H "Authorization: Bearer <token>"
-
-# Check workflow status
-curl https://resume.jclee.me/job/api/workflows/abc123/status \
-  -H "Authorization: Bearer <token>"
-# Returns: { "id": "abc123", "status": "running", "progress": 60, ... }
-```
+Workflow trigger and status routes are listed in the canonical OpenAPI
+specification. Trigger operations use `POST /api/workflows/{workflowType}`;
+status uses `GET /api/workflows/{workflowType}/{instanceId}`. See
+[Cloudflare Workflows](#cloudflare-workflows) for the six registered classes.
 
 ---
 
@@ -429,52 +327,8 @@ auto-apply.
 **Job details**: `ApplicationWorkflow` reads Wanted posting details from the Wanted API, and
 Remember search results already carry the posting text, so neither needs an earlier crawl.
 
-### Webhooks (9 endpoints)
-
-```bash
-# Notification webhook (requires X-Webhook-Signature header)
-curl -X POST https://resume.jclee.me/job/webhooks/notify \
-  -H "X-Webhook-Signature: <hmac-sha256>" \
-  -d '{"message": "Job found", "company": "TechCorp"}'
-
-# Auto-apply trigger
-curl -X POST https://resume.jclee.me/job/webhooks/auto-apply \
-  -H "X-Webhook-Signature: <hmac-sha256>"
-
-# Sync start notification
-curl -X POST https://resume.jclee.me/job/webhooks/sync-start \
-  -H "X-Webhook-Signature: <hmac-sha256>"
-
-# Sync complete notification
-curl -X POST https://resume.jclee.me/job/webhooks/sync-complete \
-  -H "X-Webhook-Signature: <hmac-sha256>" \
-  -d '{"status": "success", "updated": 5}'
-
-# New job found alert
-curl -X POST https://resume.jclee.me/job/webhooks/job-found \
-  -H "X-Webhook-Signature: <hmac-sha256>" \
-  -d '{"job_id": "123", "title": "Engineer", "score": 85}'
-
-# Application status change
-curl -X POST https://resume.jclee.me/job/webhooks/application-status \
-  -H "X-Webhook-Signature: <hmac-sha256>" \
-  -d '{"application_id": "abc123", "old_status": "applied", "new_status": "in_progress"}'
-
-# Error logging webhook
-curl -X POST https://resume.jclee.me/job/webhooks/error \
-  -H "X-Webhook-Signature: <hmac-sha256>" \
-  -d '{"error": "Database connection failed", "timestamp": "2026-02-11T..."}'
-
-# Crawl completion notification
-curl -X POST https://resume.jclee.me/job/webhooks/crawl-complete \
-  -H "X-Webhook-Signature: <hmac-sha256>" \
-  -d '{"found": 15, "failed": 2}'
-
-# Daily report delivery
-curl -X POST https://resume.jclee.me/job/webhooks/daily-report \
-  -H "X-Webhook-Signature: <hmac-sha256>" \
-  -d '{"report_url": "https://...", "date": "2026-02-11"}'
-```
+Webhook route examples from earlier versions are omitted. Check the canonical
+OpenAPI contract before treating a webhook path as a supported API.
 
 ---
 
@@ -562,51 +416,22 @@ const image = await env.R2.get(`screenshots/2026-02-11/123.png`);
 
 ## Cloudflare Workflows
 
-**Status**: workflows are event-triggered + on-demand
+Six Workflow classes are exported by the dashboard and registered by the root
+Worker configuration:
 
-### Active Workflows
-
-| Workflow              | Schedule      | Purpose                      |
-| --------------------- | ------------- | ---------------------------- |
-| `JobCrawlingWorkflow` | On-demand     | Search jobs on all platforms |
-| `ApplicationWorkflow` | On-demand     | Auto-submit job applications |
-| `ResumeSyncWorkflow`  | Event trigger | Resume sync to platforms     |
-| `DailyReportWorkflow` | Event trigger | Stats report via Telegram    |
-| `HealthCheckWorkflow` | Event trigger | Health monitoring            |
-| `CleanupWorkflow`     | Event trigger | Stale data cleanup           |
+| Workflow class        | Source                          |
+| --------------------- | ------------------------------- |
+| `JobCrawlingWorkflow` | `src/workflows/job-crawling.js` |
+| `ApplicationWorkflow` | `src/workflows/application.js`  |
+| `ResumeSyncWorkflow`  | `src/workflows/resume-sync.js`  |
+| `DailyReportWorkflow` | `src/workflows/daily-report.js` |
+| `HealthCheckWorkflow` | `src/workflows/health-check.js` |
+| `CleanupWorkflow`     | `src/workflows/cleanup.js`      |
 
 D1 Time Travel (native point-in-time restore) is the D1 backup; there is no backup workflow.
 
-### Example: Trigger Resume Sync
-
-```bash
-curl -X POST https://resume.jclee.me/job/api/workflows/resume-sync/run \
-  -H "Authorization: Bearer <token>"
-
-# Response:
-{
-  "workflowId": "resume-sync-workflow",
-  "instanceId": "abc123def456",
-  "status": "queued",
-  "createdAt": "2026-02-11T06:00:00Z"
-}
-```
-
-### Monitor Workflow Status
-
-```bash
-curl https://resume.jclee.me/job/api/workflows/abc123def456/status \
-  -H "Authorization: Bearer <token>"
-
-# Response:
-{
-  "instanceId": "abc123def456",
-  "workflowId": "resume-sync-workflow",
-  "status": "completed",
-  "result": { "synced": 5, "failed": 0 },
-  "completedAt": "2026-02-11T06:05:30Z"
-}
-```
+Trigger and status paths, request schemas, and security requirements are
+maintained in the [canonical OpenAPI specification](../../packages/contracts/openapi.yaml).
 
 ---
 
@@ -754,8 +579,8 @@ All errors logged in ECS format, alerts via Telegram:
 # Check if worker is deployed
 npx wrangler deployments list
 
-# View live logs
-npx wrangler tail --env production
+# Run from repository root; use the root Worker configuration
+npx wrangler tail --config wrangler.jsonc
 
 # Test health endpoint
 curl https://resume.jclee.me/job/health
@@ -767,11 +592,11 @@ curl https://www.cloudflarestatus.com/
 ### Database Connection Errors
 
 ```bash
-# Verify D1 binding
-npx wrangler env list
+# Verify the root Worker configuration and its bindings
+npm run verify:worker-config
 
-# Test database connection
-npx wrangler d1 execute job-dashboard-db --command="SELECT 1"
+# Run from repository root; explicitly query the remote D1 database via root config
+npx wrangler d1 execute job-dashboard-db --config wrangler.jsonc --remote --command="SELECT 1"
 
 # Check database quota
 npx wrangler d1 info job-dashboard-db
@@ -835,7 +660,7 @@ const ALLOWED_ORIGINS = [
 
 For issues or questions:
 
-1. Check logs: `npx wrangler tail --env production`
+1. Run from repository root: `npx wrangler tail --config wrangler.jsonc`
 2. Review [AGENTS.md](./AGENTS.md) for architecture details
 3. Check [Cloudflare Workers docs](https://developers.cloudflare.com/workers/)
 4. Review error codes in [Error Handling](#error-handling) section
@@ -844,4 +669,4 @@ For issues or questions:
 
 **Last Updated**: 2026-03-11
 **Version**: 1.0.0
-**Status**: ✅ Production-ready
+**Status**: Historical document metadata; not a statement of current deployment status.

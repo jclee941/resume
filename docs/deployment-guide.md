@@ -1,10 +1,26 @@
 # Resume Monorepo Deployment Guide (v2.0)
 
-Welcome to the **Resume Monorepo** project. This guide provides comprehensive
-instructions for setting up your environment, understanding the architecture,
-and deploying the applications to production. It is designed for new developers
-joining the team to ensure a smooth onboarding and consistent deployment
-process.
+> **Current deployment:** Cloudflare Workers Builds owns production deployment
+> from the root `wrangler.jsonc`. GitHub Actions runs validation only; it does
+> not deploy or run E2E tests. See the current
+> [deployment pipeline](architecture/DEPLOYMENT_PIPELINE.md),
+> [repository commands](../package.json), and
+> [architecture](ARCHITECTURE.md).
+>
+> The numbered guide below is a historical snapshot. Its topology, commands,
+> and deployment steps have not been maintained as current instructions.
+
+## Contents
+
+- [Historical setup and architecture](#historical-setup-and-architecture)
+- [Staging and preview deployment](#5-staging-and-preview-deployment)
+- [Production deployment](#6-production-deployment)
+- [Troubleshooting](#7-troubleshooting)
+- [Useful commands](#8-useful-commands-reference)
+- [Security notes](#9-security-best-practices)
+- [Advanced troubleshooting](#10-advanced-troubleshooting)
+
+## Historical setup and architecture
 
 ---
 
