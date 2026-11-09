@@ -2,12 +2,15 @@ describe('Application Workflow matching config', () => {
   let calculateMatchScore;
   let getMatchingConfig;
   let requiresDegree;
+  let scoreWorkflowJobs;
 
   beforeAll(async () => {
     ({ getMatchingConfig } =
       await import('../../../apps/job-dashboard/src/workflows/application/profile.js'));
     ({ calculateMatchScore, requiresDegree } =
       await import('../../../apps/job-dashboard/src/handlers/auto-apply/match-scoring.js'));
+    ({ scoreWorkflowJobs } =
+      await import('../../../apps/job-dashboard/src/workflows/application/job-search-and-scoring.js'));
   });
 
   test('uses a complete scoring profile and review threshold when D1 has no config', async () => {
@@ -200,6 +203,39 @@ describe('Application Workflow matching config', () => {
     expect(calculateMatchScore(job, { skills: ['보안', 'security'] })).toBe(
       calculateMatchScore(job, { skills: ['보안'] })
     );
+  });
+
+  test.each(
+    ['matchScore', 'matchPercentage'].flatMap((field) =>
+      [
+        ['degree', { description: 'Bachelor degree required' }],
+        ['title', { position: 'Security Lead' }],
+        ['company', { company: 'Blocked Co' }],
+      ].map(([rule, excluded]) => [field, rule, excluded])
+    )
+  )('enforces the %s %s exclusion before workflow ranking', async (field, _rule, excluded) => {
+    const config = await getMatchingConfig(
+      createContext([
+        { key: 'auto_apply_config', value: JSON.stringify({ excludeCompanies: ['blocked co'] }) },
+      ])
+    );
+    const workflow = { id: 'wf-eligibility', stats: {}, steps: [], errors: [] };
+    const ctx = { getMatchingConfig: async () => config, logWorkflowStep: async () => {} };
+    const step = { do: async (_name, _options, callback) => callback() };
+    const jobs = [
+      { id: 'lower', [field]: 72 },
+      { id: 'excluded', [field]: 95, ...excluded },
+      { id: 'higher', [field]: 91 },
+      { id: 'below-threshold', [field]: 59 },
+    ];
+
+    const scored = await scoreWorkflowJobs(ctx, step, workflow, jobs, 60);
+
+    expect(scored.map(({ id, matchScore }) => [id, matchScore])).toEqual([
+      ['higher', 91],
+      ['lower', 72],
+    ]);
+    expect(workflow.stats.jobsScored).toBe(2);
   });
 });
 

@@ -282,7 +282,7 @@ export async function getDailyApplicationCount(ctx, date) {
   const result = await ctx.env.JOB_DB.prepare(
     `
       SELECT COUNT(*) as count FROM applications
-      WHERE date(applied_at) = ? AND status = 'applied'
+      WHERE date(applied_at) = ?
       `
   )
     .bind(date)

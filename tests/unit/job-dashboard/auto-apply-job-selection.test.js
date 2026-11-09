@@ -13,9 +13,14 @@ describe('auto-apply job selection scoring', () => {
       await import('../../../apps/job-dashboard/src/workflows/application/matching-config.js'));
   });
 
-  function select(allJobs) {
+  function select(allJobs, matchingProfile = profile) {
     const searchResults = createSearchResults();
-    const matched = selectMatchedJobs({ allJobs, profile, minScore: 60, searchResults });
+    const matched = selectMatchedJobs({
+      allJobs,
+      profile: matchingProfile,
+      minScore: 60,
+      searchResults,
+    });
     return { matched, searchResults };
   }
 
@@ -42,4 +47,29 @@ describe('auto-apply job selection scoring', () => {
 
     expect(matched.map((job) => job.matchScore)).toEqual([90]);
   });
+
+  test.each([
+    ['degree', { description: 'Bachelor degree required' }],
+    ['title', { position: 'Security Lead' }],
+    ['company', { company: 'Blocked Co' }],
+  ])(
+    'enforces the %s exclusion before a supplied score while preserving eligible ranking',
+    (_rule, excluded) => {
+      const { matched, searchResults } = select(
+        [
+          { id: 'lower', matchScore: 72 },
+          { id: 'excluded', matchScore: 95, ...excluded },
+          { id: 'higher', matchScore: 91 },
+          { id: 'below-threshold', matchScore: 59 },
+        ],
+        { ...profile, excludeCompanies: ['blocked co'] }
+      );
+
+      expect(matched.map(({ id, matchScore }) => [id, matchScore])).toEqual([
+        ['higher', 91],
+        ['lower', 72],
+      ]);
+      expect(searchResults).toMatchObject({ searched: 4, matched: 2 });
+    }
+  );
 });

@@ -445,3 +445,73 @@ test('searchWorkflowJobs pauses between platforms outside the search steps', asy
   assert.equal(step.calls.filter((call) => call.api === 'sleep').length, 2);
   assert.equal(workflow.stats.jobsFound, 2);
 });
+
+test('searchWorkflowJobs retries a rejected search callback and keeps its recovered jobs', async () => {
+  const step = createStepMock();
+  const workflow = { id: 'wf-recovered', stats: {}, steps: [], errors: [] };
+  let attempts = 0;
+  const ctx = {
+    async searchJobs() {
+      if (++attempts === 1) throw new Error('transient 503');
+      return [{ id: 'recovered' }];
+    },
+    async logWorkflowStep() {},
+  };
+
+  const jobs = await searchWorkflowJobs(ctx, step, workflow, ['wanted']);
+
+  assert.deepEqual(jobs, [{ id: 'recovered', source: 'wanted' }]);
+  assert.equal(attempts, 2);
+  assert.deepEqual(workflow.errors, []);
+  assert.equal(workflow.searchFailed, false);
+});
+
+for (const platforms of [
+  ['broken', 'wanted'],
+  ['broken', 'also-broken'],
+]) {
+  test(`searchWorkflowJobs exhausts retries and aggregates ${platforms.includes('wanted') ? 'partial' : 'all'} platform failures`, async (t) => {
+    t.mock.method(console, 'error', () => {});
+    const step = createStepMock();
+    const workflow = { id: 'wf-exhausted', stats: {}, steps: [], errors: [] };
+    const attempts = {};
+    const logs = [];
+    const ctx = {
+      async searchJobs(platform) {
+        attempts[platform] = (attempts[platform] || 0) + 1;
+        if (platform !== 'wanted') throw new Error('persistent 503');
+        return [{ id: 'available' }];
+      },
+      async logWorkflowStep(_id, _step, status, data) {
+        logs.push({ status, ...data });
+      },
+    };
+    const partial = platforms.includes('wanted');
+
+    const jobs = await searchWorkflowJobs(ctx, step, workflow, platforms);
+
+    assert.deepEqual(jobs, partial ? [{ id: 'available', source: 'wanted' }] : []);
+    assert.deepEqual(
+      attempts,
+      partial ? { broken: 3, wanted: 1 } : { broken: 3, 'also-broken': 3 }
+    );
+    assert.deepEqual(
+      workflow.errors,
+      platforms
+        .filter((platform) => platform !== 'wanted')
+        .map((platform) => ({
+          platform,
+          error: 'persistent 503',
+        }))
+    );
+    assert.equal(workflow.searchFailed, !partial);
+    assert.deepEqual(logs, [
+      {
+        status: partial ? 'completed' : 'failed',
+        count: partial ? 1 : 0,
+        failedPlatforms: partial ? 1 : 2,
+      },
+    ]);
+    assert.equal(step.calls.filter((call) => call.api === 'sleep').length, 1);
+  });
+}

@@ -72,6 +72,23 @@ describe('job-dashboard Cloudflare native application workflow', () => {
 
     expect(savedWorkflowIds).toContain('cf-score-contract-test');
   });
+
+  test('Application Workflow excludes a degree-required explicit percentage before approval', async () => {
+    const { calls, ctx, step } = createWorkflowHarness();
+    ctx.getMatchingConfig = async () => ({ excludeDegreeRequired: true });
+
+    const result = await runNativeWorkflow(
+      runApplicationWorkflow,
+      ctx,
+      step,
+      makeNativeCandidate({ description: 'Bachelor degree required', matchPercentage: 95 }),
+      { autoApprove: true, minMatchScore: 60 }
+    );
+
+    expect(result.workflow.stats.jobsScored).toBe(0);
+    expect(result.applications).toEqual([]);
+    expect(calls).toEqual({ search: 0, submit: 0, record: 0 });
+  });
 });
 
 function runNativeWorkflow(runApplicationWorkflow, ctx, step, candidate, payload = {}) {

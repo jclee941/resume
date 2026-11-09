@@ -88,7 +88,7 @@ export async function runAutoApply({ request, env, clients }) {
 
   if (shouldDispatchCloudflareNative({ body, env, explicitCandidates, dryRun })) {
     if (realSubmitRejection) return realSubmitRejection;
-    return dispatchCloudflareNativeAutoApply({ body, env, explicitCandidates });
+    return dispatchCloudflareNativeAutoApply({ body, env, explicitCandidates, config });
   }
   if (realSubmitRejection) return realSubmitRejection;
 

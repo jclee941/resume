@@ -65,30 +65,36 @@ export function normalizeSkillName(skill) {
  */
 
 /**
+ * Apply mandatory exclusions independently of a listing's supplied or calculated score.
+ * @param {ScorableJob} job
+ * @param {MatchScoringConfig} config
+ * @returns {boolean}
+ */
+export function isJobEligible(job, config) {
+  const company = (job.company || '').toLowerCase();
+
+  if (
+    config.excludeCompanies?.some((excluded) =>
+      company.includes(String(excluded || '').toLowerCase())
+    )
+  ) {
+    return false;
+  }
+  if (hasExcludedTitle(job.position, config.excludeTitleKeywords)) return false;
+  return !(
+    config.excludeDegreeRequired && requiresDegree(`${job.position || ''} ${job.description || ''}`)
+  );
+}
+
+/**
  * Calculate a weighted match score for a job listing.
  * @param {ScorableJob} job - Job listing with position, company, description, etc.
  * @param {MatchScoringConfig} config - Scoring configuration
  * @returns {number} Score 0-100
  */
 export function calculateMatchScore(job, config) {
+  if (!isJobEligible(job, config)) return 0;
   const company = (job.company || '').toLowerCase();
-
-  // Excluded companies get zero immediately
-  if (
-    config.excludeCompanies?.some((excluded) =>
-      company.includes(String(excluded || '').toLowerCase())
-    )
-  ) {
-    return 0;
-  }
-  if (hasExcludedTitle(job.position, config.excludeTitleKeywords)) return 0;
-  if (
-    config.excludeDegreeRequired &&
-    requiresDegree(`${job.position || ''} ${job.description || ''}`)
-  ) {
-    return 0;
-  }
-
   let score = 5;
 
   // --- Skills match (up to 40 pts) ---

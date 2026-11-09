@@ -69,6 +69,8 @@ test('record recovery followed by distinct notification failures preserves the c
 
 for (const searchFailed of [false, true]) {
   test(`empty search notification recovers with the current persisted outcome (search failed: ${searchFailed})`, async (t) => {
+    const expectedFirstSearches = Array(searchFailed ? 1 + 2 : 1).fill('wanted');
+    const expectedReplaySearches = searchFailed ? expectedFirstSearches : [];
     const original = new Error('Synthetic search notification unavailable');
     let notificationAvailable = false;
     t.mock.method(NotificationService.prototype, 'sendTelegramNotification', async () => {
@@ -85,6 +87,7 @@ for (const searchFailed of [false, true]) {
     const event = lifecycleEvent();
 
     await assert.rejects(runApplicationWorkflow(ctx, event, step), (error) => error === original);
+    assert.deepEqual(observed.searches, expectedFirstSearches);
     assert.equal(observed.states.at(-1).status, 'failed');
     assert.ok(observed.states.at(-1).errors.some((entry) => entry.error === original.message));
     const savedBeforeNotification = step.attempts['persist-search-outcome'];
@@ -99,7 +102,8 @@ for (const searchFailed of [false, true]) {
     assert.equal(result.workflow.errors.length, searchFailed ? 1 : 0);
     assert.ok(result.workflow.completedAt);
     assert.equal(observed.submissions, 0);
-    assert.deepEqual(observed.searches, ['wanted']);
+    assert.deepEqual(observed.records, []);
+    assert.deepEqual(observed.searches, [...expectedFirstSearches, ...expectedReplaySearches]);
     assert.equal(step.attempts['persist-search-outcome'], 1);
   });
 }

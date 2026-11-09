@@ -144,10 +144,10 @@ export async function getTodayApplicationCount(env, platform = null) {
   let params;
 
   if (platform) {
-    query = 'SELECT COUNT(*) as count FROM applications WHERE DATE(created_at) = ? AND source = ?';
+    query = 'SELECT COUNT(*) as count FROM applications WHERE DATE(applied_at) = ? AND source = ?';
     params = [today, platform];
   } else {
-    query = 'SELECT COUNT(*) as count FROM applications WHERE DATE(created_at) = ?';
+    query = 'SELECT COUNT(*) as count FROM applications WHERE DATE(applied_at) = ?';
     params = [today];
   }
 

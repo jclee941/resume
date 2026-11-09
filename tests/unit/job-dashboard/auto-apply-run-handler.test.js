@@ -16,6 +16,56 @@ describe('job-dashboard auto-apply run handler', () => {
   });
   const run = (body, { db = createMockDb(), clients = createClients(makeJob()) } = {}) =>
     runAutoApply({ request: createRequest(body), env: { JOB_DB: db }, clients });
+  describe.each(['workflow', 'queue'])('%s native dispatch settings', (mode) => {
+    test.each([
+      ['stored daily cap', {}, { maxDailyApplications: 5 }],
+      ['stored minimum score', {}, { minMatchScore: 1 }],
+      ['stored keywords', {}, { searchCriteria: { keywords: ['DevOps'], keyword: 'DevOps' } }],
+      ['explicit keyword', { keyword: 'request' }, { searchCriteria: { keyword: 'request' } }],
+      ['explicit empty keywords', { keywords: [] }, { searchCriteria: { keywords: [] } }],
+      [
+        'explicit aliases',
+        { maxDailyApplications: 2, minScore: 81 },
+        { maxDailyApplications: 2, minMatchScore: 81 },
+      ],
+      [
+        'explicit search criteria',
+        { searchCriteria: { keyword: 'request', location: 'remote' } },
+        { searchCriteria: { keyword: 'request', location: 'remote' } },
+      ],
+    ])('preserves %s', async (_label, input, expected) => {
+      const dispatched = [];
+      const response = await runAutoApply({
+        request: createRequest({ mode, dryRun: true, platforms: ['wanted'], ...input }),
+        env: {
+          JOB_DB: createMockDb(),
+          APPLICATION_WORKFLOW: {
+            create: async ({ params }) => {
+              dispatched.push(params);
+              return { id: 'wf-config' };
+            },
+          },
+          CRAWL_TASKS: {
+            send: async (message) => {
+              dispatched.push(message.payload);
+            },
+          },
+        },
+        clients: {},
+      });
+      expect(response.status).toBe(202);
+      expect(dispatched).toEqual([
+        expect.objectContaining({
+          ...expected,
+          dryRun: true,
+          autoApprove: false,
+          explicitSubmit: false,
+          submitOptIn: false,
+        }),
+      ]);
+      expect((await parseJson(response)).dispatch).toBe(mode);
+    });
+  });
   test('runAutoApply returns decision trace for dry-run matches', async () => {
     const db = createMockDb();
     const clients = createClients(makeJob());

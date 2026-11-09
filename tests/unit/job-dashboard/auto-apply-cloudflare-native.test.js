@@ -32,6 +32,10 @@ describe('job-dashboard Cloudflare native auto-apply', () => {
         approvalId: 'approval-jobkorea-49043911',
         candidates: [makeNativeCandidate()],
         maxApplications: 1,
+        maxDailyApplications: 2,
+        minMatchScore: 83,
+        minScore: 84,
+        keywords: ['request-keyword'],
       }),
       env: createNativeEnv({ create }),
       clients: {},
@@ -50,11 +54,34 @@ describe('job-dashboard Cloudflare native auto-apply', () => {
         triggerType: 'cf-native-auto-apply',
         dryRun: false,
         maxDailyApplications: 1,
+        minMatchScore: 83,
+        searchCriteria: { keywords: ['request-keyword'], keyword: 'request-keyword' },
         platforms: ['jobkorea'],
         candidates: [expect.objectContaining({ source: 'jobkorea' })],
         source: 'cf-native',
       }),
     });
+  });
+
+  test('runAutoApply inherits stored cap 30 and score 60 when omitted', async () => {
+    const dispatched = [];
+    const response = await runAutoApply({
+      request: createRequest({ mode: 'workflow', dryRun: true, platforms: ['wanted'] }),
+      env: {
+        JOB_DB: createConfigDb(true, { maxDailyApplications: 30, minMatchScore: 60 }),
+        APPLICATION_WORKFLOW: {
+          create: async ({ params }) => {
+            dispatched.push(params);
+            return { id: 'wf-stored-config' };
+          },
+        },
+      },
+      clients: {},
+    });
+    expect(response.status).toBe(202);
+    expect(dispatched).toEqual([
+      expect.objectContaining({ maxDailyApplications: 30, minMatchScore: 60, dryRun: true }),
+    ]);
   });
 
   test('runAutoApply automatically dispatches approved JobKorea real submits to Cloudflare native', async () => {
@@ -187,8 +214,7 @@ function createNativeEnv({ create, autoApplyEnabled = true }) {
   };
 }
 
-function createConfigDb(autoApplyEnabled) {
-  if (autoApplyEnabled) return createMockDb();
+function createConfigDb(autoApplyEnabled, { maxDailyApplications = 5, minMatchScore = 1 } = {}) {
   const enabledDb = createMockDb();
   return {
     recorded: enabledDb.recorded,
@@ -199,9 +225,9 @@ function createConfigDb(autoApplyEnabled) {
             return {
               all: async () => ({
                 results: [
-                  { key: 'auto_apply_enabled', value: 'false' },
-                  { key: 'max_daily_applications', value: '5' },
-                  { key: 'min_match_score', value: '1' },
+                  { key: 'auto_apply_enabled', value: String(autoApplyEnabled) },
+                  { key: 'max_daily_applications', value: String(maxDailyApplications) },
+                  { key: 'min_match_score', value: String(minMatchScore) },
                   { key: 'auto_apply_keywords', value: JSON.stringify(['DevOps']) },
                 ],
               }),

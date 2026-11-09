@@ -11,6 +11,16 @@ import {
 
 for (const mode of ['all-failed', 'empty', 'partial']) {
   test(`search ${mode} has an accurate terminal outcome on execution and replay`, async (t) => {
+    const platforms = ['wanted', 'remember'];
+    const failedPlatforms =
+      mode === 'all-failed' ? platforms : mode === 'partial' ? ['remember'] : [];
+    const failedSearchAttempts = 1 + 2; // Initial attempt plus the configured search retries.
+    const expectedFirstSearches = platforms.flatMap((platform) =>
+      Array(failedPlatforms.includes(platform) ? failedSearchAttempts : 1).fill(platform)
+    );
+    const expectedReplaySearches = failedPlatforms.flatMap((platform) =>
+      Array(failedSearchAttempts).fill(platform)
+    );
     const notifications = [];
     t.mock.method(NotificationService.prototype, 'sendTelegramNotification', async (message) => {
       notifications.push(message.text);
@@ -19,14 +29,15 @@ for (const mode of ['all-failed', 'empty', 'partial']) {
     const { ctx, observed } = lifecycleContext({
       async searchJobs(platform) {
         observed.searches.push(platform);
-        if (mode === 'all-failed' || (mode === 'partial' && platform === 'remember')) {
+        if (failedPlatforms.includes(platform)) {
           throw new Error(`${platform} unavailable`);
         }
         return mode === 'partial' ? [lifecycleJob] : [];
       },
     });
-    const event = lifecycleEvent({ platforms: ['wanted', 'remember'], dryRun: true });
+    const event = lifecycleEvent({ platforms, dryRun: true });
     const first = await runApplicationWorkflow(ctx, event, step);
+    assert.deepEqual(observed.searches, expectedFirstSearches);
     const replayed = await runApplicationWorkflow(ctx, event, step);
 
     for (const result of [first, replayed]) {
@@ -39,7 +50,9 @@ for (const mode of ['all-failed', 'empty', 'partial']) {
       assert.ok(result.workflow.completedAt);
     }
     assert.equal(observed.submissions, 0);
-    assert.deepEqual(observed.searches, ['wanted', 'remember']);
+    assert.deepEqual(observed.records, []);
+    assert.deepEqual(observed.searches, [...expectedFirstSearches, ...expectedReplaySearches]);
+    assert.equal(notifications.length, 1);
     if (mode === 'all-failed') {
       assert.match(first.message, /search failed/i);
       assert.match(notifications[0], /failed/i);

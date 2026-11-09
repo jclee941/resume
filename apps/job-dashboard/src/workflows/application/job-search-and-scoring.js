@@ -1,4 +1,4 @@
-import { calculateMatchScore } from '../../handlers/auto-apply/match-scoring.js';
+import { calculateMatchScore, isJobEligible } from '../../handlers/auto-apply/match-scoring.js';
 import { isAtsDryRunPlatform } from './platforms.js';
 import { averageScore } from './workflow-records.js';
 
@@ -109,14 +109,14 @@ export async function searchWorkflowJobs(ctx, step, workflow, platforms, searchC
   let failedPlatforms = 0;
 
   for (const platform of platforms) {
-    const outcome = await step.do(
-      `search-jobs-${platform}`,
-      {
-        retries: { limit: 2, delay: '10 seconds', backoff: 'exponential' },
-        timeout: '5 minutes',
-      },
-      async () => {
-        try {
+    const outcome = await step
+      .do(
+        `search-jobs-${platform}`,
+        {
+          retries: { limit: 2, delay: '10 seconds', backoff: 'exponential' },
+          timeout: '5 minutes',
+        },
+        async () => {
           const platformJobs = await ctx.searchJobs(platform, searchCriteria);
           return {
             jobs: withinStepResultLimit(
@@ -125,11 +125,12 @@ export async function searchWorkflowJobs(ctx, step, workflow, platforms, searchC
             ),
             error: null,
           };
-        } catch (error) {
-          return { jobs: [], error: error instanceof Error ? error.message : String(error) };
         }
-      }
-    );
+      )
+      .catch((error) => ({
+        jobs: [],
+        error: error instanceof Error ? error.message : String(error),
+      }));
 
     if (outcome.error !== null) {
       failedPlatforms++;
@@ -176,6 +177,7 @@ export async function scoreWorkflowJobs(ctx, step, workflow, jobsFound, minMatch
       const config = await ctx.getMatchingConfig();
 
       return jobsFound
+        .filter((job) => isJobEligible(job, config))
         .map((job) => scoreJob(job, config))
         .filter((job) => job.matchScore >= minMatchScore)
         .sort((a, b) => b.matchScore - a.matchScore);

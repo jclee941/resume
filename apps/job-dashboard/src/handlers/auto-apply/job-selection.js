@@ -1,4 +1,4 @@
-import { calculateMatchScore } from './match-scoring.js';
+import { calculateMatchScore, isJobEligible } from './match-scoring.js';
 import { appendDecisionTrace } from './decision-trace.js';
 
 /**
@@ -68,23 +68,25 @@ export function createSearchResults() {
  * @returns {(T & { matchScore: number; decisionTrace: unknown[] })[]}
  */
 export function selectMatchedJobs({ allJobs, profile, minScore, searchResults }) {
-  const scoredJobs = allJobs.map((job) => {
-    const providedScore = Number.isFinite(job.matchScore) ? job.matchScore : null;
-    const matchScore = providedScore ?? calculateMatchScore(job, profile);
-    return appendDecisionTrace(
-      {
-        ...job,
-        matchScore,
-      },
-      {
-        stage: 'scored',
-        outcome: matchScore >= minScore ? 'matched' : 'filtered',
-        reason: matchScore >= minScore ? 'score_meets_threshold' : 'score_below_threshold',
-        score: matchScore,
-        threshold: minScore,
-      }
-    );
-  });
+  const scoredJobs = allJobs
+    .filter((job) => isJobEligible(job, profile))
+    .map((job) => {
+      const providedScore = Number.isFinite(job.matchScore) ? job.matchScore : null;
+      const matchScore = providedScore ?? calculateMatchScore(job, profile);
+      return appendDecisionTrace(
+        {
+          ...job,
+          matchScore,
+        },
+        {
+          stage: 'scored',
+          outcome: matchScore >= minScore ? 'matched' : 'filtered',
+          reason: matchScore >= minScore ? 'score_meets_threshold' : 'score_below_threshold',
+          score: matchScore,
+          threshold: minScore,
+        }
+      );
+    });
 
   const matchedJobs = scoredJobs
     .filter((job) => job.matchScore >= minScore)

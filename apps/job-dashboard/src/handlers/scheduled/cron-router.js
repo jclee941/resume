@@ -231,9 +231,10 @@ function describeReason(reason) {
  * - RESUME_SYNC_CRON   -> ResumeSyncWorkflow (dryRun unless RESUME_SYNC_CRON_DRY_RUN=false,
  *   after a best-effort Wanted session refresh (bounded by SESSION_REFRESH_BUDGET_MS)
  *   and application-history sync (JobKorea logs in inside the browser that reads), which
- *   runs before the discovery start so the approval gate dedupes against it) plus CleanupWorkflow, plus a dry-run
- *   ApplicationWorkflow discovery run for Wanted unless auto-apply is disabled in D1 config
- *   or AUTO_APPLY_CRON_ENABLED=false.
+ *   runs before the auto-apply start so its existing deduplication gate sees it) plus
+ *   CleanupWorkflow, plus a live ApplicationWorkflow start for Wanted and Remember when
+ *   AUTO_APPLY_CRON_ENABLED is not false and D1 auto_apply_enabled is true. The workflow uses
+ *   the configured score and retains its duplicate-job/company and prior-rejection gates.
  * - HEALTH_CHECK_CRON  -> HealthCheckWorkflow, plus DailyReportWorkflow with type 'weekly'
  *   when the scheduled time is Monday 00:00 UTC, plus a best-effort public-sector posting
  *   collection into D1 at PUBLIC_JOBS_HOURS_UTC.

@@ -79,12 +79,13 @@ export function shouldDispatchCloudflareNative({ body, env, explicitCandidates, 
 /**
  * @param {{
  *   body: NativeDispatchBody;
+ *   config: import('./db-helpers.js').AutoApplyConfig;
  *   env?: NativeDispatchEnv | null;
  *   explicitCandidates?: NativeExplicitCandidates | null;
  * }} options
  * @returns {Promise<Response>}
  */
-export async function dispatchCloudflareNativeAutoApply({ body, env, explicitCandidates }) {
+export async function dispatchCloudflareNativeAutoApply({ body, env, explicitCandidates, config }) {
   const unsupportedPlatform = findUnsupportedExplicitNativePlatform(explicitCandidates);
   if (unsupportedPlatform) {
     return jsonResponse(
@@ -97,7 +98,7 @@ export async function dispatchCloudflareNativeAutoApply({ body, env, explicitCan
     );
   }
 
-  const payload = buildApplicationWorkflowPayload(body, explicitCandidates);
+  const payload = buildApplicationWorkflowPayload(body, explicitCandidates, config);
   const queue = env?.CRAWL_TASKS;
   const workflow = env?.APPLICATION_WORKFLOW;
 
@@ -160,9 +161,10 @@ function shouldUseQueue(body, queue, workflow) {
 /**
  * @param {NativeDispatchBody} body
  * @param {NativeExplicitCandidates | null | undefined} explicitCandidates
+ * @param {import('./db-helpers.js').AutoApplyConfig} config
  * @returns {Record<string, unknown> & { runId?: string }}
  */
-function buildApplicationWorkflowPayload(body, explicitCandidates) {
+function buildApplicationWorkflowPayload(body, explicitCandidates, config) {
   const rawCandidates = explicitCandidates?.hasExplicitCandidates
     ? explicitCandidates.jobs
     : readCandidateInput(body);
@@ -170,20 +172,22 @@ function buildApplicationWorkflowPayload(body, explicitCandidates) {
   const candidatePlatforms = candidates
     .map((candidate) => candidate?.source || candidate?.platform || candidate?.loginPlatform)
     .filter(Boolean);
+  const keywords = body.keywords ?? (body.keyword === undefined ? config.keywords : undefined);
   return {
     triggerType: body.triggerType || 'cf-native-auto-apply',
     platforms: normalizeWorkflowPlatforms(body.platforms || candidatePlatforms),
     searchCriteria: body.searchCriteria || {
-      keywords: body.keywords,
-      keyword: Array.isArray(body.keywords) ? body.keywords[0] : body.keyword,
+      keywords,
+      keyword: Array.isArray(keywords) ? keywords[0] : body.keyword,
       location: body.location,
     },
     candidates,
     resumeId: body.resumeId || 'default',
     autoApprove: body.autoApprove === true,
     autoApproveThreshold: body.autoApproveThreshold ?? 75,
-    minMatchScore: body.minMatchScore ?? body.minScore ?? 60,
-    maxDailyApplications: body.maxApplications ?? body.maxDailyApplications ?? 10,
+    minMatchScore: body.minMatchScore ?? body.minScore ?? config.minMatchScore,
+    maxDailyApplications:
+      body.maxApplications ?? body.maxDailyApplications ?? config.maxDailyApplications,
     dryRun: body.dryRun !== false,
     atsStub: body.atsStub === true,
     explicitSubmit: body.explicitSubmit === true,
