@@ -9,6 +9,7 @@
 import { collectAlio } from './alio.js';
 import { collectCleaneye } from './cleaneye.js';
 import { collectGojobs } from './gojobs.js';
+import { enqueuePublicJobNotifications } from './notifications.js';
 import { upsertPublicPostings } from './repository.js';
 import { kstDate } from './text.js';
 
@@ -24,8 +25,9 @@ const COLLECTORS = { alio: collectAlio, cleaneye: collectCleaneye, gojobs: colle
  *   status: 'success' | 'partial' | 'failed';
  *   collectedAt: string;
  *   sources: Partial<Record<PublicJobSource, SourceOutcome>>;
+ *   notifications?: import('./notifications.js').PublicJobNotificationSummary;
  * }} CollectSummary
- * @typedef {{ JOB_DB: import('./repository.js').D1Like }} CollectEnv
+ * @typedef {{ JOB_DB: import('./repository.js').D1Like } & import('./notifications.js').PublicJobNotificationEnv} CollectEnv
  * @typedef {{
  *   fetcher?: import('./text.js').Fetcher;
  *   clock?: () => Date;
@@ -50,17 +52,33 @@ export async function collectPublicJobs(env, options = {}) {
   const today = kstDate(now);
   /** @type {CollectSummary['sources']} */
   const outcomes = {};
+  /** @type {import('./repository.js').PublicPosting[]} */
+  const postings = [];
   for (const source of sources) {
     try {
       const harvest = await COLLECTORS[source](fetcher, { today, budget: detailBudget });
       const saved = await upsertPublicPostings(env.JOB_DB, harvest.postings, now);
+      postings.push(...harvest.postings);
       const { listed, candidates, failed } = harvest;
       outcomes[source] = { listed, candidates, failed, saved };
     } catch (error) {
       outcomes[source] = { error: error instanceof Error ? error.message : String(error) };
     }
   }
+  const notifications = env.NOTIFICATION_QUEUE
+    ? await enqueuePublicJobNotifications(env, postings, now)
+    : undefined;
   const errors = Object.values(outcomes).filter((outcome) => 'error' in outcome).length;
-  const status = errors === 0 ? 'success' : errors === sources.length ? 'failed' : 'partial';
-  return { status, collectedAt: now.toISOString(), sources: outcomes };
+  const status =
+    errors === 0 && !notifications?.failed
+      ? 'success'
+      : errors === sources.length
+        ? 'failed'
+        : 'partial';
+  return {
+    status,
+    collectedAt: now.toISOString(),
+    sources: outcomes,
+    ...(notifications ? { notifications } : {}),
+  };
 }

@@ -200,8 +200,12 @@ function isPublicJobsRun(cron, scheduledTime) {
 async function collectPublicJobsBestEffort(env, collect) {
   if (!env.JOB_DB) return;
   try {
-    const summary = await collect({ JOB_DB: env.JOB_DB });
-    console.info('[cron] public jobs collection', summary.status, JSON.stringify(summary.sources));
+    const summary = await collect(env);
+    console.info(
+      '[cron] public jobs collection',
+      summary.status,
+      JSON.stringify({ sources: summary.sources, notifications: summary.notifications })
+    );
   } catch (error) {
     console.warn('[cron] public jobs collection failed:', describeReason(error));
   }

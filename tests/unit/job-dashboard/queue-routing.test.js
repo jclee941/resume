@@ -33,6 +33,7 @@ describe('job-dashboard exported queue entry routing', () => {
   function workflowEnv() {
     const binding = () => ({ create: jest.fn(async () => ({ id: 'wf-1' })) });
     return {
+      SESSIONS: { get: jest.fn(async () => null), put: jest.fn(async () => {}) },
       JOB_CRAWLING_WORKFLOW: binding(),
       APPLICATION_WORKFLOW: binding(),
       RESUME_SYNC_WORKFLOW: binding(),

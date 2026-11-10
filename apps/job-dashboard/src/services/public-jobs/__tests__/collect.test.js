@@ -28,6 +28,93 @@ function siteFetcher({ alioStatus = 200 } = {}) {
 const clock = () => new Date('2026-10-15T01:00:00Z');
 
 describe('collectPublicJobs', () => {
+  it('queues a Telegram card for a collected posting', async () => {
+    const db = createSqliteD1();
+    const messages = [];
+    const summary = await collectPublicJobs(
+      {
+        JOB_DB: db,
+        NOTIFICATION_QUEUE: { send: async (message) => void messages.push(message) },
+      },
+      { fetcher: siteFetcher(), clock, sources: ['alio'] }
+    );
+    assert.deepEqual(summary.notifications, { queued: 1, failed: 0 });
+    assert.equal(messages.length, 1);
+    assert.equal(messages[0].id, 'public-job:alio-305702');
+    assert.equal(messages[0].type, 'telegram');
+    assert.equal(messages[0].payload.postingId, 'alio-305702');
+    assert.match(messages[0].payload.text, /한국수출입은행/);
+    assert.match(
+      messages[0].payload.text,
+      /https:\/\/job\.alio\.go\.kr\/recruitview\.do\?idx=305702/
+    );
+  });
+
+  it('keeps delivered, ineligible and already closed postings out of the notification queue', async () => {
+    for (const state of ['delivered', 'ineligible', 'closed']) {
+      const db = createSqliteD1();
+      db.sqlite
+        .prepare(
+          `INSERT INTO job_search_results (
+            id, source, position, company, status, crawled_at, created_at, updated_at, expires_at
+          ) VALUES (?, 'alio', 'IT 채용', '기관', ?, 'now', 'now', 'now', ?)`
+        )
+        .run(
+          'alio-305702',
+          state === 'ineligible' ? 'ineligible' : 'recommended',
+          state === 'closed' ? '2026-10-19T09:00:00Z' : '2026-10-19T14:59:59Z'
+        );
+      if (state === 'delivered') {
+        db.sqlite
+          .prepare(
+            `INSERT INTO notification_history (id, event_type, data, channels, timestamp, status)
+             VALUES ('public-job:alio-305702', 'public_job', '{}', '["telegram"]', 'now', 'success')`
+          )
+          .run();
+      }
+      const messages = [];
+      const summary = await collectPublicJobs(
+        {
+          JOB_DB: db,
+          NOTIFICATION_QUEUE: { send: async (message) => void messages.push(message) },
+        },
+        {
+          fetcher: siteFetcher(),
+          clock: () => new Date('2026-10-19T12:00:00Z'),
+          sources: ['alio'],
+        }
+      );
+      assert.deepEqual(summary.notifications, { queued: 0, failed: 0 }, state);
+      assert.equal(messages.length, 0, state);
+    }
+  });
+
+  it('reports a queue failure while preserving the collected posting', async () => {
+    const db = createSqliteD1();
+    const summary = await collectPublicJobs(
+      {
+        JOB_DB: db,
+        NOTIFICATION_QUEUE: {
+          send: async () => {
+            throw new Error('notification queue unavailable');
+          },
+        },
+      },
+      { fetcher: siteFetcher(), clock, sources: ['alio'] }
+    );
+    assert.equal(summary.status, 'partial');
+    assert.equal(summary.sources.alio.saved, 1);
+    assert.deepEqual(summary.notifications, {
+      queued: 0,
+      failed: 1,
+      error: 'notification queue unavailable',
+    });
+    assert.equal(
+      db.sqlite.prepare('SELECT COUNT(*) AS count FROM job_search_results').get().count,
+      1
+    );
+  });
+
   it('saves each source and reports per-source counts', async () => {
     const db = createSqliteD1();
     const summary = await collectPublicJobs({ JOB_DB: db }, { fetcher: siteFetcher(), clock });

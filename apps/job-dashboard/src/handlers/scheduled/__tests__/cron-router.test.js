@@ -448,10 +448,11 @@ describe('cron-router', () => {
   it('the hourly cron collects public jobs at the collection hours only', async () => {
     const runs = [];
     const collectPublicJobs = async (env) => {
-      runs.push(env.JOB_DB);
+      runs.push(env);
       return { status: 'success', collectedAt: 'now', sources: {} };
     };
     const db = { name: 'job-db' };
+    const queue = { send: async () => {} };
     for (const [hour, expected] of [
       [22, 1],
       [4, 1],
@@ -460,10 +461,14 @@ describe('cron-router', () => {
       [14, 0],
     ]) {
       runs.length = 0;
-      const { calls, env, ctx } = createHarness({ JOB_DB: db });
+      const { calls, env, ctx } = createHarness({ JOB_DB: db, NOTIFICATION_QUEUE: queue });
       const scheduledTime = Date.UTC(2026, 9, 14, hour, 0);
       await scheduled({ cron: HEALTH_CHECK_CRON, scheduledTime }, env, ctx, { collectPublicJobs });
       assert.equal(runs.length, expected, `hour ${hour}`);
+      if (expected) {
+        assert.equal(runs[0].JOB_DB, db);
+        assert.equal(runs[0].NOTIFICATION_QUEUE, queue);
+      }
       assert.deepEqual(startedNames(calls), ['HEALTH_CHECK_WORKFLOW']);
     }
     assert.deepEqual([...cronRouter.PUBLIC_JOBS_HOURS_UTC], [22, 4, 10]);

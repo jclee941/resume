@@ -28,13 +28,19 @@ import { NotificationService } from '../services/notifications.js';
  *   body: ConsumerNotificationJob;
  *   attempts: number;
  *   ack(): void;
- *   retry(): void;
+ *   retry(options?: { delaySeconds: number }): void;
  * }} QueueMessage
  *
  * @typedef {{
  *   queue?: string;
  *   messages: QueueMessage[];
  * }} ConsumerQueueBatch
+ *
+ * @typedef {{
+ *   sent: boolean;
+ *   waitTime?: number;
+ *   results?: Record<string, { sent?: boolean; waitTime?: number }>;
+ * }} DeliveryResult
  */
 
 /** @type {Record<string, number>} */
@@ -79,7 +85,23 @@ export default {
     for (const [, messages] of Object.entries(groupedByType)) {
       for (const message of messages) {
         try {
-          await processNotification(message.body, notificationService);
+          const delivery = await processNotification(message.body, notificationService);
+          if (!delivery.sent) {
+            const waitTime = Math.max(
+              0,
+              ...[delivery, ...Object.values(delivery.results || {})]
+                .filter((result) => result.sent === false)
+                .map((result) => result.waitTime || 0)
+            );
+            if (waitTime > 0) {
+              message.retry({ delaySeconds: Math.ceil(waitTime / 1000) });
+            } else {
+              message.retry();
+            }
+            results.failed++;
+            results.retries++;
+            continue;
+          }
           message.ack();
           results.processed++;
         } catch (error) {
@@ -92,6 +114,7 @@ export default {
           // Retry logic handled by queue configuration
           // DLQ will receive after max_retries
           message.retry();
+          results.failed++;
           results.retries++;
         }
       }
@@ -112,19 +135,55 @@ export default {
  * Process a single notification
  * @param {ConsumerNotificationJob} job
  * @param {NotificationService} service
+ * @returns {Promise<DeliveryResult>}
  */
 async function processNotification(job, service) {
   switch (job.type) {
-    case 'telegram':
-      await service.sendTelegramNotification(job.payload);
-      break;
+    case 'telegram': {
+      const isPublicPosting =
+        typeof job.payload.postingId === 'string' &&
+        job.id === `public-job:${job.payload.postingId}`;
+      if (isPublicPosting) {
+        const receipt = await service.env.JOB_DB.prepare(
+          'SELECT status FROM notification_history WHERE id = ?'
+        )
+          .bind(job.id)
+          .first();
+        if (receipt?.status === 'success') return { sent: true };
+      }
+      const delivery = await service.sendTelegramNotification(job.payload);
+      if (isPublicPosting) {
+        await service.env.JOB_DB.prepare(
+          `INSERT INTO notification_history (
+            id, event_type, data, channels, timestamp, status, results
+          ) VALUES (?, ?, ?, ?, ?, ?, ?)
+          ON CONFLICT(id) DO UPDATE SET
+            timestamp = excluded.timestamp,
+            status = excluded.status,
+            results = excluded.results
+          WHERE notification_history.status != 'success'`
+        )
+          .bind(
+            job.id,
+            'public_job',
+            JSON.stringify({ postingId: job.payload.postingId }),
+            JSON.stringify(['telegram']),
+            new Date().toISOString(),
+            delivery.sent ? 'success' : 'failed',
+            JSON.stringify({ telegram: delivery })
+          )
+          .run();
+      }
+      return delivery;
+    }
     case 'approval':
-      await service.sendApprovalRequest(
-        job.payload.job,
-        job.payload.matchScore,
-        job.payload.requestId
+      return /** @type {DeliveryResult} */ (
+        await service.sendApprovalRequest(
+          job.payload.job,
+          job.payload.matchScore,
+          job.payload.requestId
+        )
       );
-      break;
     default:
       throw new Error(`Unknown notification type: ${job.type}`);
   }

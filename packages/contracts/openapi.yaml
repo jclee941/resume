@@ -234,6 +234,9 @@ paths:
         and 나라일터 (gojobs.go.kr), keeps postings whose text reads as an IT/security job, and
         upserts them into `job_search_results` as `alio-<idx>`, `cleaneye-<year>-<entity>-<seq>`
         and `gojobs-<sn>`. Rows already moved off `new` keep their status and curated fields.
+        Open new/recommended postings are queued for Telegram when the notification queue is
+        bound. Successful delivery receipts prevent repeated cards; queue failures are reported
+        separately without discarding collected postings.
         Also runs on the hourly cron at 22:00, 04:00 and 10:00 UTC.
       requestBody:
         required: false
@@ -263,6 +266,17 @@ paths:
                   collectedAt:
                     type: string
                     format: date-time
+                  notifications:
+                    type: object
+                    required: [queued, failed]
+                    description: Present when the notification queue is bound; counts describe enqueue attempts, not delivery
+                    properties:
+                      queued:
+                        type: integer
+                      failed:
+                        type: integer
+                      error:
+                        type: string
                   sources:
                     type: object
                     description: Per source either counts or an error message
