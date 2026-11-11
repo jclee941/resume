@@ -7,7 +7,7 @@ import { planAutoApplyStart } from './auto-apply-start.js';
 
 export const RESUME_SYNC_CRON = '0 21 * * *';
 export const HEALTH_CHECK_CRON = '0 * * * *';
-/** UTC hours of the hourly trigger that also collect public-sector postings: 07, 13, 19 KST. */
+/** UTC hours of the hourly trigger that also collect public-sector/big-tech jobs: 07, 13, 19 KST. */
 export const PUBLIC_JOBS_HOURS_UTC = Object.freeze([22, 4, 10]);
 const HISTORY_SYNC_TIMEOUT_MS = 120_000;
 /**
@@ -192,7 +192,7 @@ function isPublicJobsRun(cron, scheduledTime) {
 }
 
 /**
- * Collects public-sector postings into D1; a failure is logged and never fails the cron.
+ * Collects public-sector and big-tech postings into D1; a failure never fails the cron.
  * @param {CronEnv} env
  * @param {typeof collectPublicJobs} collect
  * @returns {Promise<void>}
@@ -240,7 +240,7 @@ function describeReason(reason) {
  *   AUTO_APPLY_CRON_ENABLED is not false and D1 auto_apply_enabled is true. The workflow uses
  *   the configured score and retains its duplicate-job/company and prior-rejection gates.
  * - HEALTH_CHECK_CRON  -> HealthCheckWorkflow, plus DailyReportWorkflow with type 'weekly'
- *   when the scheduled time is Monday 00:00 UTC, plus a best-effort public-sector posting
+ *   when the scheduled time is Monday 00:00 UTC, plus a best-effort public-sector/big-tech posting
  *   collection into D1 at PUBLIC_JOBS_HOURS_UTC.
  * - anything else      -> logged and ignored.
  * Every start is attempted; if any rejects (or its binding is missing) the run throws

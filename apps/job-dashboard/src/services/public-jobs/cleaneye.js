@@ -6,6 +6,7 @@
  * @module services/public-jobs/cleaneye
  */
 import { itTerms, needsDetail, relevanceScore } from './filter.js';
+import { extractSalary } from './salary.js';
 import {
   deadlineIso,
   fetchText,
@@ -99,6 +100,7 @@ export function toCleaneyePosting(item, body) {
   const terms = itTerms(`${item.entTitle ?? ''} ${body}`);
   if (terms.length === 0) return null;
   const location = CAPITAL_AREA_SIDO[item.sidoCd ?? ''] ?? null;
+  const salary = extractSalary(body);
   return {
     id: `cleaneye-${item.empyear}-${item.ypEntId}-${item.entSeq}`,
     source: 'cleaneye',
@@ -106,13 +108,19 @@ export function toCleaneyePosting(item, body) {
     title: item.entTitle ?? '',
     company: item.entName ?? '',
     location,
-    description: summarize(
-      {
-        접수기간: `${item.pubDate ?? ''} ~ ${item.pubEndDate ?? ''}`,
-        모집: body.replace('모집분야 및 인원', '').trim(),
-      },
-      600
-    ),
+    salary,
+    description: [
+      salary,
+      summarize(
+        {
+          접수기간: `${item.pubDate ?? ''} ~ ${item.pubEndDate ?? ''}`,
+          모집: body.replace('모집분야 및 인원', '').trim(),
+        },
+        600
+      ),
+    ]
+      .filter(Boolean)
+      .join(' | '),
     terms,
     career: null,
     score: relevanceScore({ terms, location, education: body }),

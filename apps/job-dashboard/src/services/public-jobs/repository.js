@@ -32,7 +32,7 @@ ON CONFLICT (id) DO UPDATE SET
 const BATCH_SIZE = 50;
 
 /**
- * @typedef {'alio' | 'cleaneye' | 'gojobs'} PublicJobSourceId
+ * @typedef {'alio' | 'cleaneye' | 'gojobs' | 'amazon' | 'line' | 'naver' | 'daangn' | 'kakao'} PublicJobSourceId
  * @typedef {{
  *   id: string;
  *   source: PublicJobSourceId;
@@ -41,6 +41,7 @@ const BATCH_SIZE = 50;
  *   company: string;
  *   location: string | null;
  *   description: string;
+ *   salary?: string | null;
  *   terms: string[];
  *   career: string | null;
  *   score: number;

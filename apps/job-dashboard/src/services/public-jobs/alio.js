@@ -6,6 +6,7 @@
  * @module services/public-jobs/alio
  */
 import { isNonItTitle, itTerms, relevanceScore } from './filter.js';
+import { extractSalary } from './salary.js';
 import {
   daysBefore,
   deadlineIso,
@@ -114,6 +115,7 @@ export function toAlioPosting(row, fields) {
   const location = fields['근무지'] || row.location;
   const career = fields['채용구분'] || null;
   const period = fields['채용기간'] || '';
+  const salary = extractSalary(summarize(fields));
   return {
     id: `alio-${row.idx}`,
     source: 'alio',
@@ -121,14 +123,20 @@ export function toAlioPosting(row, fields) {
     title: row.title,
     company: row.org,
     location,
-    description: summarize({
-      NCS: fields[NCS_FIELD],
-      학력: fields['학력정보'],
-      근무분야: fields['근무분야'],
-      채용구분: career,
-      고용형태: fields['고용형태'] || row.employment,
-      채용기간: period,
-    }),
+    salary,
+    description: [
+      salary,
+      summarize({
+        NCS: fields[NCS_FIELD],
+        학력: fields['학력정보'],
+        근무분야: fields['근무분야'],
+        채용구분: career,
+        고용형태: fields['고용형태'] || row.employment,
+        채용기간: period,
+      }),
+    ]
+      .filter(Boolean)
+      .join(' | '),
     terms,
     career,
     score: relevanceScore({ terms, weak, location, education: fields['학력정보'], career }),

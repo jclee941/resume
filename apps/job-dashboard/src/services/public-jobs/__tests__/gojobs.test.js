@@ -1,7 +1,13 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { collectGojobs, parseGojobsDetail, parseGojobsList, searchGojobs } from '../gojobs.js';
+import {
+  collectGojobs,
+  parseGojobsDetail,
+  parseGojobsList,
+  searchGojobs,
+  toGojobsPosting,
+} from '../gojobs.js';
 
 const row = (sn, title, org, posted, due) => `
 <tr ><td align="center" scope="row">1</td>
@@ -65,6 +71,22 @@ describe('나라일터 adapter', () => {
     assert.equal(parsed.grade, '전산서기 1명');
     assert.equal(parsed.area, '경상북도 안동시');
     assert.ok(!parsed.text.includes('정보보안'));
+  });
+
+  it('keeps disclosed annual pay even beyond the description excerpt', () => {
+    const [listed] = parseGojobsList(
+      list(row('1', '전산 채용', '기관', '2026-10-08', '2026-10-19'))
+    );
+    const parsed = parseGojobsDetail(
+      detail(
+        `전산 채용 ${'담당업무 안내 '.repeat(120)} 연봉: 5,000만원 이상 접수기간: 공고 확인`,
+        '전산 7급',
+        '세종'
+      )
+    );
+    const posting = toGojobsPosting(listed, parsed);
+    assert.equal(posting.salary, '연봉: 5,000만원 이상');
+    assert.ok(posting.description.includes('연봉: 5,000만원 이상'));
   });
 
   it('drops result notices and organization-name-only matches before reading details', async () => {

@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { collectCleaneye, listCleaneye, parseCleaneyeBody } from '../cleaneye.js';
+import {
+  collectCleaneye,
+  listCleaneye,
+  parseCleaneyeBody,
+  toCleaneyePosting,
+} from '../cleaneye.js';
 
 const item = (entSeq, sidoCd, entTitle) => ({
   empyear: '2026',
@@ -38,6 +43,13 @@ describe('클린아이 adapter', () => {
     const body = parseCleaneyeBody(page('모집분야 및 인원 기술(통신) 6급 네트워크 설비 관리'));
     assert.equal(body, '모집분야 및 인원 기술(통신) 6급 네트워크 설비 관리');
     assert.equal(parseCleaneyeBody('<p>공지 없음</p>'), '');
+  });
+
+  it('keeps the published monthly pay separately from the shortened description', () => {
+    const body = `모집분야 및 인원 네트워크 운영 ${'업무 안내 '.repeat(120)} 급여: 월 300만원 근무시간: 주 40시간`;
+    const posting = toCleaneyePosting(item('1', '007001', '전산 채용'), body);
+    assert.equal(posting.salary, '급여: 월 300만원');
+    assert.ok(posting.description.includes('급여: 월 300만원'));
   });
 
   it('reads only capital-area candidates and keeps those whose detail is an IT job', async () => {

@@ -27,6 +27,7 @@ function postingCard(posting) {
     `<b>${escapeHtml(posting.company.slice(0, 100))}</b>`,
     escapeHtml(posting.title.slice(0, 180)),
     `지역: ${escapeHtml(posting.location ?? '공고 확인')}`,
+    `연봉·급여: ${escapeHtml(posting.salary ?? '미공개 (공고 확인)')}`,
     `관련 분야: ${escapeHtml(posting.terms.join(', '))}`,
     `마감: ${escapeHtml(posting.deadline ? new Date(Date.parse(posting.deadline) + 9 * 3_600_000).toISOString().slice(0, 10) : '공고 확인')}`,
     `<a href="${escapeHtml(posting.url)}">공고 확인</a>`,

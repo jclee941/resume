@@ -228,15 +228,19 @@ paths:
           CsrfHeader: []
           CsrfCookie: []
       tags: [Search]
-      summary: Collect open public-sector IT/security postings into D1
+      summary: Collect open public-sector and big-tech IT/security postings into D1
       description: >
         Reads 잡알리오 (job.alio.go.kr), 클린아이 잡플러스 (job.cleaneye.go.kr, 서울·인천·경기 only)
-        and 나라일터 (gojobs.go.kr), keeps postings whose text reads as an IT/security job, and
+        and 나라일터 (gojobs.go.kr), plus official Amazon/AWS, LINE, NAVER group, Daangn and Kakao
+        career sites. Big-tech collection keeps Korea-based IT/security/network/infrastructure
+        practitioner roles. It keeps postings whose text reads as an IT/security job and
         upserts them into `job_search_results` as `alio-<idx>`, `cleaneye-<year>-<entity>-<seq>`
-        and `gojobs-<sn>`. Rows already moved off `new` keep their status and curated fields.
+        and `gojobs-<sn>`, or `<company-source>-<posting-id>` for big-tech postings.
+        Rows already moved off `new` keep their status and curated fields.
         Open new/recommended postings are queued for Telegram when the notification queue is
         bound. Successful delivery receipts prevent repeated cards; queue failures are reported
-        separately without discarding collected postings.
+        separately without discarding collected postings. Cards include disclosed pay with its
+        original period and currency; absent pay is marked undisclosed, never estimated.
         Also runs on the hourly cron at 22:00, 04:00 and 10:00 UTC.
       requestBody:
         required: false
@@ -250,7 +254,7 @@ paths:
                   minItems: 1
                   items:
                     type: string
-                    enum: [alio, cleaneye, gojobs]
+                    enum: [alio, cleaneye, gojobs, amazon, line, naver, daangn, kakao]
       responses:
         '200':
           description: Collection summary; `status` is success or partial

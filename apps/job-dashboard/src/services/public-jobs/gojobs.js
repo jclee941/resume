@@ -7,6 +7,7 @@
  * @module services/public-jobs/gojobs
  */
 import { itTerms, relevanceScore } from './filter.js';
+import { extractSalary } from './salary.js';
 import {
   deadlineIso,
   fetchText,
@@ -122,6 +123,7 @@ export function toGojobsPosting(row, detail) {
   const terms = [...new Set([...titleTerms(row), ...itTerms(detail.grade)])];
   if (terms.length === 0) return null;
   const at = detail.text.indexOf(row.title.slice(0, 12));
+  const salary = extractSalary(detail.text);
   return {
     id: `gojobs-${row.sn}`,
     source: 'gojobs',
@@ -129,15 +131,21 @@ export function toGojobsPosting(row, detail) {
     title: row.title,
     company: row.org,
     location: detail.area || null,
-    description: summarize(
-      {
-        채용직급: detail.grade,
-        근무지역: detail.area,
-        접수: `${row.posted ?? ''} ~ ${row.due ?? ''}`,
-        공고: at >= 0 ? detail.text.slice(at, at + 600) : '',
-      },
-      600
-    ),
+    salary,
+    description: [
+      salary,
+      summarize(
+        {
+          채용직급: detail.grade,
+          근무지역: detail.area,
+          접수: `${row.posted ?? ''} ~ ${row.due ?? ''}`,
+          공고: at >= 0 ? detail.text.slice(at, at + 600) : '',
+        },
+        600
+      ),
+    ]
+      .filter(Boolean)
+      .join(' | '),
     terms,
     career: null,
     score: relevanceScore({ terms, location: detail.area, education: detail.text }),

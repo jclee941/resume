@@ -31,8 +31,8 @@ async function readSources(request) {
 }
 
 /**
- * POST /api/public-jobs/collect: collects open public-sector IT/security postings from 잡알리오,
- * 클린아이 and 나라일터 into D1 `job_search_results`. Answers 502 only when every requested source
+ * POST /api/public-jobs/collect: collects open public-sector and big-tech IT/security postings
+ * into D1 `job_search_results`. Answers 502 only when every requested source
  * failed.
  * @param {Parameters<typeof collectPublicJobs>[0]} env
  * @param {Request} request

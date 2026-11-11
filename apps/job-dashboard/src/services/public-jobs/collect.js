@@ -1,22 +1,37 @@
 /**
- * @fileoverview Collects open public-sector IT/security postings from 잡알리오, 클린아이 잡플러스 and
- * 나라일터 into D1 `job_search_results`. Runs from the hourly cron at PUBLIC_JOBS_HOURS_UTC and on
+ * @fileoverview Collects open public-sector and big-tech IT/security postings into D1
+ * `job_search_results`. Runs from the hourly cron at PUBLIC_JOBS_HOURS_UTC and on
  * demand (POST /api/public-jobs/collect). Sources are independent: a failing source is reported
  * and the others still save. Detail pages are read only for candidates, at most `detailBudget`
  * per source, which keeps a run far below the Worker subrequest limit.
  * @module services/public-jobs/collect
  */
 import { collectAlio } from './alio.js';
+import { BIGTECH_COLLECTORS } from '../bigtech-jobs/index.js';
 import { collectCleaneye } from './cleaneye.js';
 import { collectGojobs } from './gojobs.js';
 import { enqueuePublicJobNotifications } from './notifications.js';
 import { upsertPublicPostings } from './repository.js';
 import { kstDate } from './text.js';
 
-export const PUBLIC_JOB_SOURCES = /** @type {const} */ (['alio', 'cleaneye', 'gojobs']);
+export const PUBLIC_JOB_SOURCES = /** @type {const} */ ([
+  'alio',
+  'cleaneye',
+  'gojobs',
+  'amazon',
+  'line',
+  'naver',
+  'daangn',
+  'kakao',
+]);
 export const DEFAULT_DETAIL_BUDGET = 80;
 
-const COLLECTORS = { alio: collectAlio, cleaneye: collectCleaneye, gojobs: collectGojobs };
+const COLLECTORS = {
+  alio: collectAlio,
+  cleaneye: collectCleaneye,
+  gojobs: collectGojobs,
+  ...BIGTECH_COLLECTORS,
+};
 
 /**
  * @typedef {typeof PUBLIC_JOB_SOURCES[number]} PublicJobSource

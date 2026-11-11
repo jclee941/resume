@@ -15,7 +15,11 @@ describe('POST /api/public-jobs/collect', () => {
     };
     const response = await handlePublicJobsCollect({ JOB_DB: {} }, request(''), collect);
     assert.equal(response.status, 200);
-    assert.deepEqual(calls, [{ sources: ['alio', 'cleaneye', 'gojobs'] }]);
+    assert.deepEqual(calls, [
+      {
+        sources: ['alio', 'cleaneye', 'gojobs', 'amazon', 'line', 'naver', 'daangn', 'kakao'],
+      },
+    ]);
   });
 
   it('collects only the requested sources, once each', async () => {
@@ -28,6 +32,18 @@ describe('POST /api/public-jobs/collect', () => {
     const response = await handlePublicJobsCollect({ JOB_DB: {} }, request(body), collect);
     assert.equal(response.status, 200);
     assert.deepEqual(calls, [{ sources: ['gojobs'] }]);
+  });
+
+  it('accepts big-tech sources together with a public-sector source', async () => {
+    const calls = [];
+    const collect = async (_env, options) => {
+      calls.push(options);
+      return { status: 'success', collectedAt: 'now', sources: {} };
+    };
+    const body = JSON.stringify({ sources: ['naver', 'amazon', 'gojobs', 'naver'] });
+    const response = await handlePublicJobsCollect({ JOB_DB: {} }, request(body), collect);
+    assert.equal(response.status, 200);
+    assert.deepEqual(calls, [{ sources: ['naver', 'amazon', 'gojobs'] }]);
   });
 
   it('rejects invalid JSON and unknown sources without collecting', async () => {
