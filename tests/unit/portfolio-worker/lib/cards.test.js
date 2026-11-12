@@ -193,7 +193,6 @@ describe('Cards Module', () => {
         github: 'https://github.com/example-user',
         githubBot: 'https://github.com/example-user/example-bot',
         linkedin: 'https://linkedin.com/in/example-user',
-        velog: 'https://velog.io/@example-user',
         website: 'https://resume.example.com',
       });
 
@@ -215,7 +214,6 @@ describe('Cards Module', () => {
             github: 'https://github.com/example-user',
             githubBot: 'https://github.com/example-user/example-bot',
             linkedin: 'https://linkedin.com/in/example-user',
-            velog: 'https://velog.io/@example-user',
             website: 'https://resume.example.com',
           },
           locale
@@ -225,7 +223,6 @@ describe('Cards Module', () => {
           ['GitHub', 'example-user'],
           ['GitHub Bot', 'example-bot'],
           ['LinkedIn', 'example-user'],
-          ['Velog', '@example-user'],
         ]) {
           expect(html).toContain(`aria-label="${name} ${handle}${newTab}"`);
           expect(html).toContain(
@@ -952,17 +949,19 @@ describe('Cards Module', () => {
       expect(html).not.toContain('href="https://example.com"');
     });
 
-    test('should include velog link with consistent plain text styling', () => {
-      const velog = 'https://velog.io/@example-user';
-      const contactData = { github: 'https://github.com/test', velog };
-      const html = generateContactGrid(contactData);
+    test('does not render a Velog link', () => {
+      const html = generateContactGrid({ github: 'https://github.com/test' });
 
-      expect(velog).toBeTruthy();
-      expect(html).toContain(velog);
-      expect(html).toContain('Velog');
-      // Velog now uses plain text like all other contact items (no special icon styling)
-      expect(html).not.toContain('contact-item--velog');
-      expect(html).not.toContain('contact-icon--velog');
+      expect(html).not.toContain('Velog');
+      expect(html).not.toContain('velog.io');
+    });
+
+    test('shows a percent-encoded LinkedIn handle as readable text', () => {
+      const linkedin = 'https://www.linkedin.com/in/%EC%9E%AC%EC%B2%A0-%EC%9D%B4-070331192/';
+      const html = generateContactGrid({ github: 'https://github.com/test', linkedin });
+
+      expect(html).toContain(`href="${linkedin}"`);
+      expect(html).toContain('<span class="contact-item__value">재철-이-070331192</span>');
     });
   });
 

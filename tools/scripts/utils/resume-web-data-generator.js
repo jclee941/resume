@@ -39,7 +39,6 @@ function loadWebDataOverrides() {
  * @property {string} [email]
  * @property {string} [github]
  * @property {string} [linkedin]
- * @property {string} [velog]
  * @property {string} [website]
  * @property {string} [monitoring]
  * @property {string} [phone]
@@ -88,8 +87,8 @@ function publicPortfolioItems(items, excludedIds) {
  * @param {ResumeContact | null | undefined} contact
  */
 function publicContact(contact) {
-  const { email, github, linkedin, velog, website, monitoring } = contact || {};
-  return { email, github, linkedin, velog, website, monitoring };
+  const { email, github, linkedin, website, monitoring } = contact || {};
+  return { email, github, linkedin, website, monitoring };
 }
 
 /**

@@ -25,7 +25,6 @@ const CONTACT_LABELS = {
 
 /**
  * @typedef {Object} ContactData
- * @property {string} [velog]
  * @property {string} [githubBot]
  * @property {string} github
  * @property {string} linkedin
@@ -86,7 +85,12 @@ function generateInfrastructureCards(infraData) {
  */
 function contactHandle(url) {
   if (!url || !URL.canParse(url)) return '';
-  return new URL(url).pathname.split('/').filter(Boolean).pop() || '';
+  const segment = new URL(url).pathname.split('/').filter(Boolean).pop() || '';
+  try {
+    return decodeURIComponent(segment);
+  } catch {
+    return segment;
+  }
 }
 
 /**
@@ -100,7 +104,6 @@ function generateContactGrid(contactData, locale = 'ko') {
   const email = String(contactData.email || '')
     .replace(/^mailto:/i, '')
     .split('?')[0];
-  const velog = contactData.velog || 'https://velog.io/@qws941';
   /**
    * @param {string} href
    * @param {string} name
@@ -119,7 +122,6 @@ function generateContactGrid(contactData, locale = 'ko') {
             ? link(contactData.linkedin, 'LinkedIn')
             : ''
         }
-        ${link(velog, 'Velog')}
         <a class="contact-item contact-item--email" href="mailto:${escapeHtml(email)}" data-contact-email="${escapeHtml(email)}"><span class="contact-item__label">${labels.email}</span> <span class="contact-item__value">${escapeHtml(email)}</span></a>
         <span class="contact-copy-status" role="status" aria-live="polite" aria-atomic="true"></span>
   `;
