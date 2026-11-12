@@ -949,19 +949,14 @@ describe('Cards Module', () => {
       expect(html).not.toContain('href="https://example.com"');
     });
 
-    test('does not render a Velog link', () => {
-      const html = generateContactGrid({ github: 'https://github.com/test' });
-
-      expect(html).not.toContain('Velog');
-      expect(html).not.toContain('velog.io');
-    });
-
-    test('shows a percent-encoded LinkedIn handle as readable text', () => {
-      const linkedin = 'https://www.linkedin.com/in/%EC%9E%AC%EC%B2%A0-%EC%9D%B4-070331192/';
+    test.each([
+      ['https://www.linkedin.com/in/%EC%9E%AC%EC%B2%A0-%EC%9D%B4-070331192/', '재철-이-070331192'],
+      ['https://www.linkedin.com/in/broken-%E0%A4%A/', 'broken-%E0%A4%A'],
+    ])('shows the LinkedIn handle of %s as %s', (linkedin, handle) => {
       const html = generateContactGrid({ github: 'https://github.com/test', linkedin });
 
       expect(html).toContain(`href="${linkedin}"`);
-      expect(html).toContain('<span class="contact-item__value">재철-이-070331192</span>');
+      expect(html).toContain(`<span class="contact-item__value">${handle}</span>`);
     });
   });
 

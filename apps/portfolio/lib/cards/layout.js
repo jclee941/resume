@@ -88,7 +88,8 @@ function contactHandle(url) {
   const segment = new URL(url).pathname.split('/').filter(Boolean).pop() || '';
   try {
     return decodeURIComponent(segment);
-  } catch {
+  } catch (error) {
+    if (!(error instanceof URIError)) throw error;
     return segment;
   }
 }
