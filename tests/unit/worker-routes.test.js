@@ -249,9 +249,10 @@ describe('Worker Routes', () => {
           (match) => [match[1], match[2]]
         )
       );
-      const { metaDescription } = HERO_CONTENT.ja;
+      const { metaDescription, role } = HERO_CONTENT.ja;
       expect(metaDescription).toBeTruthy();
-      const description = `${identity.nameJa} — Security & Infrastructure Engineer ポートフォリオ。${metaDescription}`;
+      expect(role).toBeTruthy();
+      const description = `${identity.nameJa} — ${role} ポートフォリオ。${metaDescription}`;
       expect(meta.description).toBe(description);
       expect(meta['og:description']).toBe(description);
       expect(meta['twitter:description']).toBe(description);

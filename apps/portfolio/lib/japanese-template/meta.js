@@ -3,7 +3,8 @@ const { HERO_CONTENT } = require('../hero-content-data');
 const { defaultOwnerIdentity, escapeRegExp, familyNameFirst } = require('../owner-identity');
 const { escapeHtml } = require('../template-sanitizer');
 
-const TITLE_ROLE = 'Security & Infrastructure Engineer';
+// Used when the content pack carries no hero role.
+const DEFAULT_TITLE_ROLE = 'Security & Infrastructure Engineer';
 
 const LANGUAGE_LINK_RE = /<a\b([^>]*\bhreflang="(ko|en|ja)"[^>]*)>\s*([^<]*?)\s*<\/a\s*>/g;
 
@@ -34,13 +35,16 @@ function applyJapaneseMeta(html, identity = defaultOwnerIdentity()) {
   const { nameKo, nameJa } = identity;
   const latinName = familyNameFirst(identity.nameEn);
   // The owner's career copy comes from the content pack, not tracked code.
-  const { metaDescription } = /** @type {{ metaDescription?: string }} */ (HERO_CONTENT.ja);
+  const { metaDescription, role } = /** @type {{ metaDescription?: string, role?: string }} */ (
+    HERO_CONTENT.ja
+  );
+  const titleRole = role || DEFAULT_TITLE_ROLE;
   /**
    * Compose title and description with every identity/pack-derived value escaped by `escape`.
    * @param {(value: string) => string} escape
    */
   const compose = (escape) => {
-    const title = `${escape(nameJa)} - ${TITLE_ROLE}`;
+    const title = `${escape(nameJa)} - ${titleRole}`;
     const description = metaDescription
       ? `${title.replace(' - ', ' — ')} ポートフォリオ。${escape(metaDescription)}`
       : `${title} ポートフォリオ`;
@@ -95,7 +99,7 @@ function applyJapaneseMeta(html, identity = defaultOwnerIdentity()) {
       literal(`<meta name="twitter:title" content="${title}" />`)
     )
     .replace(
-      new RegExp(escapeRegExp(`"name": "${nameKo} - Security & Infrastructure Engineer"`), 'g'),
+      new RegExp(escapeRegExp(`"name": "${nameKo} - ${titleRole}"`), 'g'),
       literal(`"name": "${jsonTitle}"`)
     )
     .replace(
@@ -110,8 +114,8 @@ function applyJapaneseMeta(html, identity = defaultOwnerIdentity()) {
       '"image": "https://resume.jclee.me/og-image-ja.png"'
     )
     .replace(
-      /"name": "Security & Infrastructure Engineer — 면접 제안 접수 중"/g,
-      '"name": "Security & Infrastructure Engineer — 面接依頼受付中"'
+      new RegExp(escapeRegExp(`"name": "${titleRole} — 면접 제안 접수 중"`), 'g'),
+      literal(`"name": "${escapeJsonString(titleRole)} — 面接依頼受付中"`)
     )
     .replace(
       /<meta\s+name="description"[\s\S]*?\/>/i,

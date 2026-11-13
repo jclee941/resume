@@ -8,7 +8,8 @@ const {
 const { HERO_CONTENT } = require('../../../apps/portfolio/lib/hero-content-data');
 
 const PORTFOLIO_DIR = path.resolve(__dirname, '../../../apps/portfolio');
-const TARGET_ROLE = 'Security & Infrastructure Engineer';
+// The role title is owner content: metadata and every locale's hero must agree with the pack.
+const TARGET_ROLE = HERO_CONTENT.ko.role;
 
 function readPortfolioFile(fileName) {
   return fs.readFileSync(path.join(PORTFOLIO_DIR, fileName), 'utf8');
