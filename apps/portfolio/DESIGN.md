@@ -386,9 +386,10 @@ tests depend on them.
   1024px every featured card uses the same diagram column (`--featured-diagram-width`, the
   widest narrow diagram plus its panel), so case notes and diagram panels line up from card
   to card.
-- **Phones**: at 640px and below the list is a horizontal snap carousel; cards take 88% of
-  the width so the next one peeks in, and the role filter scrolls the carousel to its first
-  match.
+- **Phones**: at 640px and below the list is a horizontal snap carousel; cards take 90% of
+  the width so the next one peeks in as a card edge, not as cut text, and the scroll
+  container fades out at its right edge (`--mask-carousel-edge`) until the list is scrolled
+  to its end. The role filter scrolls the carousel to its first match.
 - **Disclosure controls**: the project, earlier-role and cover-letter buttons share one pill
   (`project-more.css`), are server-rendered, and always state what they reveal; the content
   behind them collapses only under `html.js`, so nothing is hidden without JavaScript.
@@ -449,7 +450,8 @@ tests depend on them.
 - **Rules**: no accordion, no search box, no tier label; cards are static surfaces. Cards
   flow in CSS columns (up to three, each at least 16rem) so short cards fill the gaps a row
   grid leaves; reading order runs down each column. On phones the cards form a two-row
-  horizontal snap carousel of 82%-wide columns so the next column peeks in; a domain with
+  horizontal snap carousel of 88%-wide columns with the same right-edge fade as the project
+  carousel, so the next column peeks in as a card edge; a domain with
   more than ten skills (`.skill-domain-card--tall`) spans both rows, so a short card never
   leaves an empty band under the carousel.
 - **Carousel access**: the skills grid is a named group (KO 기술 스택, EN Skills, JA スキル).

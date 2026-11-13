@@ -20,19 +20,34 @@
 }
 
 .hero-portrait {
+  position: relative;
   margin: 0;
-  border: 1px solid var(--accent-line-soft);
+  padding: var(--space-2);
+  border: 1px solid var(--border-secondary);
   border-radius: var(--radius-xl);
-  background: linear-gradient(160deg, var(--accent-wash-3), var(--accent-wash-1));
+  background: var(--surface-inset);
   box-shadow: var(--highlight-top), var(--shadow-md);
+}
+
+.hero-portrait::after {
+  content: '';
+  position: absolute;
+  inset: var(--space-2);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-portrait-vignette);
+  box-shadow: var(--shadow-portrait-inset);
+  pointer-events: none;
 }
 
 .hero-portrait .profile-card__photo {
   display: block;
   width: var(--portrait-width);
   height: var(--portrait-height);
+  border: 1px solid var(--border-primary);
   border-radius: var(--radius-lg);
   object-fit: cover;
+  filter: var(--filter-portrait);
 }
 
 .hero-cta {

@@ -31,10 +31,15 @@ const TIMELINE_ID = 'career-timeline';
 function mergeCareerUiMeta(careers) {
   if (!Array.isArray(careers)) return [];
   return careers.map((career) => {
+    const periodKey = String(career.period || '').replace(/~\s*(?:Present|現在)\s*$/, '~ 현재');
     const meta =
       /** @type {Record<string, { phase: string, status: string }>} */ (CAREER_UI_META)[
         career.period
-      ] || DEFAULT_CAREER_UI_META;
+      ] ||
+      /** @type {Record<string, { phase: string, status: string }>} */ (CAREER_UI_META)[
+        periodKey
+      ] ||
+      DEFAULT_CAREER_UI_META;
     return { ...career, phase: career.phase || meta.phase, status: career.status || meta.status };
   });
 }

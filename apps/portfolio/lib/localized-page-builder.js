@@ -5,7 +5,7 @@ const {
 } = require('./html-transformer');
 const { buildHeroContent, buildProjectRolePaths } = require('./hero-content');
 const { defaultOwnerIdentity, escapeRegExp } = require('./owner-identity');
-const { generateProjectMore, withCoverLetterFold } = require('./cards/disclosures');
+const { generateProjectMore, withCoverLetterFold, withAboutFold } = require('./cards/disclosures');
 
 /**
  * @typedef {Object} PortfolioPageOptions
@@ -51,7 +51,7 @@ function contentOptions(templates, locale, identity) {
     infrastructureCardsHtml: templates[`infrastructureCards${suffix}Html`],
     skillsHtml: templates[`skills${suffix}Html`],
     certCardsHtml: templates[`certCards${suffix}Html`],
-    aboutContentHtml: templates[`aboutContent${suffix}Html`],
+    aboutContentHtml: withAboutFold(templates[`aboutContent${suffix}Html`], locale),
     profileBentoHtml: templates[`profileBento${suffix}Html`],
     contactGridHtml: templates[`contactGrid${suffix}Html`],
     achievementsHtml: templates[`achievements${suffix}Html`],

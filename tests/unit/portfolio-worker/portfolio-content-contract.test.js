@@ -86,9 +86,10 @@ describe('portfolio first-screen hiring decision contract', () => {
 
     for (const [locale, requiredTerms] of Object.entries(expectations)) {
       const html = buildHeroContent(locale);
+      const plainHtml = html.replace(/<wbr>/g, '');
 
       for (const term of requiredTerms) {
-        expect(html).toContain(escape(term));
+        expect(plainHtml).toContain(escape(term));
       }
       expect(html).toContain('href="/resume.pdf"');
       expect(html).toMatch(/href="mailto:/);

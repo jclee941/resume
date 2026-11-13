@@ -27,9 +27,9 @@ const CONNECTIVE_MEDIALS = new Set([0, 1, 4, 6, 9, 14]);
 const HYPHENATED_TOKEN = /(?<![\w-])[A-Za-z][A-Za-z0-9]*(?:-[A-Za-z0-9]+){1,2}(?![\w-])/g;
 const KANJI_KANA_SEAM =
   /(?<=[\u4e00-\u9fff])(?=[\u30a0-\u30ff])|(?<=[\u30a0-\u30ff])(?=[\u4e00-\u9fff])/g;
-// Kanji and katakana words of two or more characters each, and ように before its verb.
+// Kanji, katakana, and Latin words of two or more characters each, and ように before its verb.
 const JAPANESE_WORD_SEAM =
-  /(?<=[\u4e00-\u9fff]{2})(?=[\u30a1-\u30fa\u30fc]{2})|(?<=[\u30a1-\u30fa\u30fc]{2})(?=[\u4e00-\u9fff]{2})|(?<=ように)(?=[しなす])/g;
+  /(?<=[\u4e00-\u9fff]{2})(?=[\u30a1-\u30fa\u30fc]{2})|(?<=[\u30a1-\u30fa\u30fc]{2})(?=[\u4e00-\u9fff]{2})|(?<=[A-Za-z]{2})(?=[\u4e00-\u9fff]{2})|(?<=ように)(?=[しなす])/g;
 
 /** @param {string} word */
 function lastSyllable(word) {

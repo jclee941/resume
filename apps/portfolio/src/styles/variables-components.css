@@ -38,6 +38,21 @@
   --tag-mix-ink: 58%;
   --overlay-blur: blur(6px);
   --filter-dimmed: saturate(0.25);
+  --filter-portrait: brightness(0.88) contrast(0.95) saturate(0.92);
+  --surface-portrait-vignette: radial-gradient(
+    ellipse at 50% 42%,
+    transparent 52%,
+    rgb(var(--bg-primary-rgb) / 0.34) 100%
+  );
+  --shadow-portrait-inset:
+    inset 0 0 0 1px rgb(var(--bg-primary-rgb) / 0.28),
+    inset 0 0 var(--space-4) rgb(var(--bg-primary-rgb) / 0.36);
+  --mask-carousel-edge: linear-gradient(
+    90deg,
+    rgb(0 0 0) 0%,
+    rgb(0 0 0) calc(100% - var(--space-12)),
+    transparent 100%
+  );
 
   --ring-marker: 0 0 0 3px var(--accent-wash-3);
   --ring-marker-success: 0 0 0 3px var(--success-ring);
@@ -84,6 +99,7 @@
   --tooltip-max-width: 16rem;
 
   --measure-hero: 30em;
+  --measure-hero-ja: 22em;
   --measure-proof: 46rem;
   --measure-headline: 26ch;
   --measure-letter: 66ch;

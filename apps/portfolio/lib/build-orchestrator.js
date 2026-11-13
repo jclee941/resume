@@ -156,7 +156,7 @@ async function runWorkerBuild({ baseDir, version, gitSha = 'unknown', allowedEma
   copySocialImages(baseDir);
 
   const buildDeployedAt = process.env.DEPLOYED_AT || new Date().toISOString();
-  const buildDeployedDate = `${buildDeployedAt.slice(0, 10)} ${buildDeployedAt.slice(11, 16)}Z`;
+  const buildDeployedDate = buildDeployedAt.slice(0, 10);
   let pages = await buildPortfolioPages({
     indexHtmlRaw: inputs.indexHtmlRaw,
     indexEnHtmlRaw: inputs.indexEnHtmlRaw,

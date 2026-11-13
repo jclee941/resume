@@ -15,6 +15,10 @@ html:lang(ja) body .company-link {
   white-space: nowrap;
 }
 
+html:lang(ja) body .hero-positioning {
+  max-width: var(--measure-hero-ja);
+}
+
 @supports (word-break: auto-phrase) {
   html:lang(ko) body :where(.page-shell, .page-shell *, .deep-dive-overlay, .deep-dive-overlay *),
   html:lang(ja) body :where(.page-shell, .page-shell *, .deep-dive-overlay, .deep-dive-overlay *) {

@@ -1,4 +1,5 @@
 const CAREER_UI_META = {
+  '2026.07 ~ 현재': { phase: '개발', status: 'completed' },
   '2026.05 ~ 2026.07': { phase: '운영', status: 'completed' },
   '2025.03 ~ 2026.02': { phase: '운영', status: 'completed' },
   '2024.03 ~ 2025.02': { phase: '구축', status: 'completed' },

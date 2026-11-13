@@ -1,6 +1,7 @@
 const {
   generateProjectMore,
   withCoverLetterFold,
+  withAboutFold,
   renderDisclosureButton,
 } = require('../../../../apps/portfolio/lib/cards/disclosures');
 const { generateCoverLetterSection } = require('../../../../apps/portfolio/lib/cards/cover-letter');
@@ -64,6 +65,34 @@ describe('withCoverLetterFold()', () => {
     expect(withCoverLetterFold(letter(2), 'ko')).toBe(letter(2));
     expect(withCoverLetterFold(letter(3), 'ko')).toContain('data-fold');
     expect(withCoverLetterFold('', 'ko')).toBe('');
+  });
+});
+
+describe('withAboutFold()', () => {
+  const about = (count) =>
+    `<div class="about-content"><div class="about-block"><ul class="about-list">${Array.from(
+      { length: count },
+      (_, index) => `<li>item ${index}</li>`
+    ).join('')}</ul></div></div>`;
+
+  test.each([
+    ['ko', '하이라이트 4개 더 보기', '접기'],
+    ['en', 'Show 4 more highlights', 'Show fewer'],
+    ['ja', '他4件のハイライトを表示', '閉じる'],
+  ])(
+    '%s folds highlights beyond the first five behind a server-rendered toggle',
+    (locale, more, less) => {
+      const html = withAboutFold(about(9), locale);
+      expect(html).toContain('<ul class="about-list" id="about-highlights" data-fold>');
+      expect(html).toContain(
+        `aria-controls="about-highlights" data-label-closed="${more}" data-label-open="${less}">${more}</button>`
+      );
+    }
+  );
+
+  test('leaves short highlight lists unfolded', () => {
+    expect(withAboutFold(about(5), 'ko')).toBe(about(5));
+    expect(withAboutFold('', 'ko')).toBe('');
   });
 });
 

@@ -114,6 +114,20 @@ html:not(.js) .role-quick-paths {
   color: var(--color-accent-strong);
 }
 
+@media (min-width: 1024px) {
+  :root:lang(en) .role-chip__label,
+  :root:lang(ja) .role-chip__label {
+    flex-basis: 100%;
+  }
+
+  :root:lang(en) .role-chip__count,
+  :root:lang(ja) .role-chip__count {
+    margin-left: 0;
+    color: var(--color-accent-strong);
+    text-align: left;
+  }
+}
+
 @media (max-width: 1023px) {
   .role-quick-paths__controls {
     grid-template-columns: repeat(2, minmax(0, 1fr));

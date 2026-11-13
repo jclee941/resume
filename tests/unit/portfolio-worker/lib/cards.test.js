@@ -472,7 +472,7 @@ describe('Cards Module', () => {
       expect(generateCertificationCards([], 'hash')).toBe('');
     });
 
-    test('should generate card as ACQUIRED (no expiry shown) for active cert', () => {
+    test('should generate card without status tag (and no expiry shown) for active cert', () => {
       const certData = [
         {
           name: 'AWS Solutions Architect',
@@ -484,8 +484,8 @@ describe('Cards Module', () => {
       ];
       const html = generateCertificationCards(certData, 'cert-hash');
 
-      expect(html).toContain('cert-status--active');
-      expect(html).toContain('ACQUIRED');
+      expect(html).not.toContain('cert-status');
+      expect(html).not.toContain('ACQUIRED');
       expect(html).toContain('AWS Solutions Architect');
       expect(html).toContain('Amazon');
       expect(html).toContain('2024-01');
@@ -494,14 +494,14 @@ describe('Cards Module', () => {
       expect(html).not.toContain('exp ');
     });
 
-    test('expired cert is still shown as ACQUIRED with no expiry note', () => {
+    test('expired cert is shown as earned (no status tag and no expiry note)', () => {
       const certData = [
         { name: 'Old Cert', issuer: 'Vendor', date: '2020-01 (2023-01 만료)', status: 'expired' },
       ];
       const html = generateCertificationCards(certData, 'expired-hash');
 
-      expect(html).toContain('cert-status--active');
-      expect(html).toContain('ACQUIRED');
+      expect(html).not.toContain('cert-status');
+      expect(html).not.toContain('ACQUIRED');
       expect(html).not.toContain('EXPIRED');
       expect(html).not.toContain('만료');
       // parenthetical expiry note stripped, acquisition date kept
@@ -533,7 +533,7 @@ describe('Cards Module', () => {
       }
     });
 
-    test('status badges are localized per locale (KO 취득/준비 중, JA 取得済み/準備中)', () => {
+    test('pending status badges are localized per locale while earned certs omit the status tag', () => {
       const acquired = [
         { name: 'Example Cert', issuer: 'Example Issuer', date: '2020.08', status: 'active' },
       ];
@@ -542,26 +542,28 @@ describe('Cards Module', () => {
       ];
 
       const koActive = generateCertificationCards(acquired, 'ko-a', 'ko');
-      expect(koActive).toContain('[취득]');
-      expect(koActive).not.toContain('ACQUIRED');
+      expect(koActive).not.toContain('[취득]');
+      expect(koActive).not.toContain('cert-status');
       const koPending = generateCertificationCards(pending, 'ko-p', 'ko');
       expect(koPending).toContain('[준비 중]');
 
       const jaActive = generateCertificationCards(acquired, 'ja-a', 'ja');
-      expect(jaActive).toContain('[取得済み]');
+      expect(jaActive).not.toContain('[取得済み]');
+      expect(jaActive).not.toContain('cert-status');
       const jaPending = generateCertificationCards(pending, 'ja-p', 'ja');
       expect(jaPending).toContain('[準備中]');
 
-      // Default (EN) keeps the existing English badges.
-      expect(generateCertificationCards(acquired, 'en-a', 'en')).toContain('[ACQUIRED]');
+      // Default (EN) omits earned badge and keeps pending badge.
+      expect(generateCertificationCards(acquired, 'en-a', 'en')).not.toContain('[ACQUIRED]');
+      expect(generateCertificationCards(pending, 'en-p', 'en')).toContain('[IN PROGRESS]');
     });
 
-    test('missing status defaults to ACQUIRED', () => {
+    test('missing status defaults to earned (no status badge)', () => {
       const certData = [{ name: 'No Status Cert', issuer: 'Vendor', date: '2025-01' }];
       const html = generateCertificationCards(certData, 'unknown-hash');
 
-      expect(html).toContain('cert-status--active');
-      expect(html).toContain('ACQUIRED');
+      expect(html).not.toContain('cert-status');
+      expect(html).not.toContain('ACQUIRED');
     });
 
     test('omits date span when date missing; never shows expiration', () => {

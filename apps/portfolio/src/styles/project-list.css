@@ -104,7 +104,6 @@
 }
 
 .project-card--featured {
-  padding: var(--space-6) var(--space-8);
   background: var(--surface-featured);
 }
 
@@ -115,20 +114,17 @@
 @media (min-width: 1024px) {
   .project-card--featured {
     grid-template-columns: minmax(0, 1fr) var(--featured-diagram-width);
-    grid-template-rows: auto auto auto auto 1fr;
+    grid-template-rows: auto auto 1fr auto;
     grid-template-areas:
       'header meta'
       'notes diagram'
       'desc diagram'
-      'tech diagram'
-      'links diagram';
+      'tech links';
     column-gap: var(--space-8);
   }
 
-  .project-card--featured .project-tech,
-  .project-card--featured .project-links {
+  .project-card--featured .project-case-notes {
     align-self: start;
-    justify-content: flex-start;
   }
 
   .project-card--featured .project-diagram {

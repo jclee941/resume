@@ -21,14 +21,22 @@
 @media screen and (max-width: 640px) {
   .skill-radar__grid {
     display: grid;
-    grid-auto-columns: 82%;
+    grid-auto-columns: 88%;
     grid-auto-flow: column dense;
     grid-template-rows: auto auto;
     gap: var(--space-3);
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
+    padding-right: var(--space-8);
     padding-bottom: var(--space-3);
+    -webkit-mask-image: var(--mask-carousel-edge);
+    mask-image: var(--mask-carousel-edge);
+  }
+
+  .skill-radar__grid.is-scroll-end {
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .skill-radar__grid > .skill-domain-card {

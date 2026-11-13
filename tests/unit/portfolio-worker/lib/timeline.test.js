@@ -46,6 +46,18 @@ describe('mergeCareerUiMeta()', () => {
     expect(unknown).toMatchObject({ phase: '기초', status: 'completed' });
   });
 
+  test('maps the current development role across localized Present/現在 periods to 개발', () => {
+    const out = mergeCareerUiMeta([
+      { company: 'A', period: '2026.07 ~ 현재' },
+      { company: 'B', period: '2026.07 ~ Present' },
+      { company: 'C', period: '2026.07 ~ 現在' },
+    ]);
+    expect(out.map((item) => item.phase)).toEqual(['개발', '개발', '개발']);
+    expect(generateCareerTimeline([out[0]], 'ko')).toContain('>개발</span>');
+    expect(generateCareerTimeline([out[1]], 'en')).toContain('>Develop</span>');
+    expect(generateCareerTimeline([out[2]], 'ja')).toContain('>開発</span>');
+  });
+
   test('non-array input yields an empty array', () => {
     expect(mergeCareerUiMeta(undefined)).toEqual([]);
     expect(mergeCareerUiMeta(null)).toEqual([]);

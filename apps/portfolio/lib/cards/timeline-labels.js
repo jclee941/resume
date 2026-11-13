@@ -11,7 +11,14 @@ const TIMELINE_LABELS = {
     collapse: '접기',
     inProgress: '진행 중',
     inProgressAria: '현재 진행 중',
-    phases: { 운영: '운영', 구축: '구축', 자동화: '자동화', 안정화: '안정화', 기초: '기초' },
+    phases: {
+      개발: '개발',
+      운영: '운영',
+      구축: '구축',
+      자동화: '자동화',
+      안정화: '안정화',
+      기초: '기초',
+    },
   },
   en: {
     timeline: 'Career timeline',
@@ -22,6 +29,7 @@ const TIMELINE_LABELS = {
     inProgress: 'In progress',
     inProgressAria: 'Currently in progress',
     phases: {
+      개발: 'Develop',
       운영: 'Operate',
       구축: 'Build',
       자동화: 'Automate',
@@ -37,12 +45,20 @@ const TIMELINE_LABELS = {
     collapse: '閉じる',
     inProgress: '進行中',
     inProgressAria: '現在進行中',
-    phases: { 운영: '運用', 구축: '構築', 자동화: '自動化', 안정화: '安定化', 기초: '基礎' },
+    phases: {
+      개발: '開発',
+      운영: '運用',
+      구축: '構築',
+      자동화: '自動化',
+      안정화: '安定化',
+      기초: '基礎',
+    },
   },
 };
 
 /** @type {Record<string, string>} */
 const PHASE_ICONS = {
+  개발: 'code',
   운영: 'search',
   구축: 'layers',
   자동화: 'shield',

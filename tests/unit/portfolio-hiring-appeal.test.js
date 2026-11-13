@@ -42,9 +42,10 @@ describe('portfolio hiring appeal copy', () => {
   test.each(['ko', 'en', 'ja'])('%s hero states the value and keeps one hiring path', (locale) => {
     const content = HERO_CONTENT[locale];
     const html = buildHeroContent(locale);
+    const plainHtml = html.replace(/<wbr>/g, '');
 
-    expect(html).toContain(escape(content.availability));
-    expect(html).toContain(escape(content.positioning));
+    expect(plainHtml).toContain(escape(content.availability));
+    expect(plainHtml).toContain(escape(content.positioning));
     expect(html).toContain(
       `<ul class="hero-proof-list" aria-label="${escape(content.proofLabel)}">`
     );

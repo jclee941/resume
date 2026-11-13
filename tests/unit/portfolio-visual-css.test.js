@@ -174,18 +174,18 @@ describe('portfolio visual CSS contract', () => {
     expect(undefinedProperties).toEqual([]);
   });
 
-  test('S15 featured project cards stack tech and links under case notes while diagram spans right column on desktop', () => {
+  test('S15 featured project cards place tech and links on the bottom row while diagram spans right column on desktop', () => {
     const projectListCss = readStyle('project-list.css');
     const desktop = mediaBlock(projectListCss, '(min-width: 1024px)');
 
     expect(desktop).toMatch(
-      /\.project-card--featured\s*{[^}]*grid-template-rows:\s*auto auto auto auto 1fr;/
+      /\.project-card--featured\s*{[^}]*grid-template-rows:\s*auto auto 1fr auto;/
     );
     expect(desktop).toMatch(
-      /grid-template-areas:\s*'header meta'\s*'notes diagram'\s*'desc diagram'\s*'tech diagram'\s*'links diagram';/
+      /grid-template-areas:\s*'header meta'\s*'notes diagram'\s*'desc diagram'\s*'tech links';/
     );
     expect(desktop).toMatch(
-      /\.project-card--featured \.project-tech,\s*\.project-card--featured \.project-links\s*{[^}]*align-self:\s*start;[^}]*justify-content:\s*flex-start;/
+      /\.project-card--featured \.project-case-notes\s*{[^}]*align-self:\s*start;/
     );
   });
 

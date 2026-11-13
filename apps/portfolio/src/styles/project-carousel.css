@@ -6,12 +6,21 @@
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
+    padding-right: var(--space-8);
     padding-bottom: var(--space-3);
+    -webkit-mask-image: var(--mask-carousel-edge);
+    mask-image: var(--mask-carousel-edge);
+  }
+
+  .project-list.is-scroll-end {
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .project-list > .project-item {
-    flex: 0 0 88%;
+    flex: 0 0 90%;
     align-content: start;
     scroll-snap-align: start;
+    padding: var(--space-5);
   }
 }

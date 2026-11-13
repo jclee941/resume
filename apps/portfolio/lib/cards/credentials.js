@@ -19,7 +19,7 @@ const STATUS_LABELS = {
 /**
  * @param {string|null|undefined} status
  * @param {'ko'|'en'|'ja'} [locale='en']
- * @returns {{ statusClass: string, statusLabel: string }}
+ * @returns {{ isPending: boolean, statusClass: string, statusLabel: string }}
  */
 function getCertificationStatus(status, locale = 'en') {
   const normalized = String(status || '').toLowerCase();
@@ -38,6 +38,7 @@ function getCertificationStatus(status, locale = 'en') {
   const isPending = PENDING.has(normalized);
   const labels = STATUS_LABELS[locale] || STATUS_LABELS.en;
   return {
+    isPending,
     statusClass: isPending ? 'cert-status--pending' : 'cert-status--active',
     statusLabel: isPending ? labels.pending : labels.active,
   };
@@ -90,7 +91,10 @@ function generateCertificationCards(certData, _dataHash, locale = 'en') {
 
   return certData
     .map((c) => {
-      const { statusClass, statusLabel } = getCertificationStatus(c.status, locale);
+      const { isPending, statusClass, statusLabel } = getCertificationStatus(c.status, locale);
+      const statusHtml = isPending
+        ? `\n        <span class="cert-status ${statusClass}">[${escapeHtml(statusLabel)}]</span>`
+        : '';
       const dateText = acquisitionDate(c.date);
       const dateHtml = dateText ? `<span class="cert-date">${escapeHtml(dateText)}</span>` : '';
       const issuer = splitParenthetical(String(c.issuer || 'Unknown Issuer'));
@@ -100,8 +104,7 @@ function generateCertificationCards(certData, _dataHash, locale = 'en') {
         ? `<span class="cert-issuer-alt"${lang}>${escapeHtml(issuer.paren)}</span>`
         : '';
       const issuerHtml = ownRow ? glueKoreanPhrases(escapeHtml(issuer.main)) : inlineHtml(issuer);
-      return `<li class="cert-item${ownRow ? ' cert-item--issuer-alt' : ''}">
-        <span class="cert-status ${statusClass}">[${escapeHtml(statusLabel)}]</span>
+      return `<li class="cert-item${ownRow ? ' cert-item--issuer-alt' : ''}">${statusHtml}
         <span class="cert-name">${inlineHtml(splitParenthetical(String(c.name)))}</span>
         <span class="cert-issuer">${issuerHtml}</span>
         ${dateHtml}

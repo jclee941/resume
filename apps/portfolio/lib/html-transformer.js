@@ -93,6 +93,12 @@ function injectPlaceholders(html, options) {
         .replace(/[^0-9]/g, '')
         .slice(0, 14)}`
     )
+    .replace(
+      /<span class="footer-build__deployed"\s*>/g,
+      options.buildDeployedAt
+        ? `<span class="footer-build__deployed" title="${options.buildDeployedAt}">`
+        : '<span class="footer-build__deployed">'
+    )
     .replace(/<!-- BUILD_DEPLOYED_DATE_PLACEHOLDER -->/g, options.buildDeployedDate || '');
 }
 

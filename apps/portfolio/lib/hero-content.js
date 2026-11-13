@@ -1,5 +1,6 @@
 const { HERO_CONTENT } = require('./hero-content-data');
 const { defaultOwnerIdentity } = require('./owner-identity');
+const { breakJapanesePhrases } = require('./cards/text-breaks');
 
 const RESUME_PDF_PATH = '/resume.pdf';
 
@@ -129,12 +130,16 @@ function buildHeroContent(locale, identity = defaultOwnerIdentity(), parts = {})
   const content = heroContentFor(locale);
   const { portraitHtml = '', trustHtml = '' } = parts;
   const availability = `<p class="hero-availability">${escapeHtml(content.availability)}</p>`;
+  const positioning =
+    locale === 'ja'
+      ? breakJapanesePhrases(escapeHtml(content.positioning))
+      : escapeHtml(content.positioning);
   return [
     '<div class="hero-layout">',
     '<header class="hero-identity">',
     renderHeroTitle(content),
     `<p class="hero-role">${escapeHtml(content.role)}</p>`,
-    `<p class="hero-positioning">${escapeHtml(content.positioning)}</p>`,
+    `<p class="hero-positioning">${positioning}</p>`,
     renderActions(content, identity.email),
     renderProofList(content),
     trustHtml,

@@ -6,6 +6,14 @@ function skillGridLabel() {
 }
 
 /** @param {HTMLElement} container */
+function syncCarouselEdge(container) {
+  const atEnd =
+    container.scrollWidth > container.clientWidth &&
+    container.scrollLeft + container.clientWidth >= container.scrollWidth - 4;
+  container.classList.toggle('is-scroll-end', atEnd);
+}
+
+/** @param {HTMLElement} container */
 function syncOverflowTabIndex(container) {
   const hasFocus = container.matches(':focus-within');
   if (hasFocus || container.scrollWidth > container.clientWidth) {
@@ -13,6 +21,7 @@ function syncOverflowTabIndex(container) {
   } else {
     container.removeAttribute('tabindex');
   }
+  syncCarouselEdge(container);
 }
 
 /**
@@ -20,11 +29,17 @@ function syncOverflowTabIndex(container) {
  * keyboard-reachable only while it overflows. The cards themselves are never rebuilt.
  */
 function initSkillRadar() {
+  const projectList = document.getElementById('project-list');
+  if (projectList) {
+    syncCarouselEdge(projectList);
+    projectList.addEventListener('scroll', () => syncCarouselEdge(projectList), { passive: true });
+  }
   const container = document.getElementById('skill-radar-grid');
   if (!container) return;
   container.setAttribute('role', 'group');
   container.setAttribute('aria-label', skillGridLabel());
   syncOverflowTabIndex(container);
+  container.addEventListener('scroll', () => syncCarouselEdge(container), { passive: true });
   container.addEventListener('focusout', () => syncOverflowTabIndex(container));
   if (typeof ResizeObserver === 'function') {
     new ResizeObserver(() => syncOverflowTabIndex(container)).observe(container);

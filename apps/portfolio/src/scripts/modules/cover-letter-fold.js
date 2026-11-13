@@ -1,17 +1,16 @@
 import { bindDisclosure } from './disclosure.js';
 
 /**
- * Binds the server-rendered cover-letter toggle. Without JavaScript every paragraph renders.
+ * Binds server-rendered fold toggles (cover letter, about highlights). Without JavaScript every item renders.
  * @returns {void}
  */
 export function initCoverLetterFold() {
-  const list = document.querySelector('.cover-letter__paragraphs[data-fold]');
-  const button = list?.id
-    ? document.querySelector(`.cover-letter__toggle[aria-controls="${list.id}"]`)
-    : null;
-  if (!list || !button) return;
-  bindDisclosure(/** @type {HTMLElement} */ (button), {
-    owner: list,
-    openClass: 'is-expanded',
+  document.querySelectorAll('[data-fold]').forEach((list) => {
+    const button = list.id ? document.querySelector(`[aria-controls="${list.id}"]`) : null;
+    if (!button) return;
+    bindDisclosure(/** @type {HTMLElement} */ (button), {
+      owner: list,
+      openClass: 'is-expanded',
+    });
   });
 }

@@ -6,6 +6,8 @@ const { escapeHtml } = require('../template-sanitizer');
  */
 
 const COVER_FOLD_MIN_HIDDEN = 2;
+const ABOUT_FOLD_VISIBLE = 5;
+const ABOUT_FOLD_MIN_HIDDEN = 2;
 
 /**
  * Server-rendered disclosure button; the client binds behaviour to it and never creates it.
@@ -106,8 +108,44 @@ function withCoverLetterFold(coverLetterHtml = '', locale) {
     .replace('</ol>', `</ol>${button}`);
 }
 
+/**
+ * @param {number} count
+ * @param {Locale} locale
+ * @returns {DisclosureLabels}
+ */
+function aboutFoldLabels(count, locale) {
+  if (locale === 'en') {
+    return { more: `Show ${count} more highlights`, less: 'Show fewer' };
+  }
+  if (locale === 'ja') return { more: `他${count}件のハイライトを表示`, less: '閉じる' };
+  return { more: `하이라이트 ${count}개 더 보기`, less: '접기' };
+}
+
+/**
+ * Folds career-highlight items after the first five behind a server-rendered toggle.
+ * @param {string} aboutContentHtml
+ * @param {Locale} locale
+ * @returns {string}
+ */
+function withAboutFold(aboutContentHtml = '', locale) {
+  const hidden = (aboutContentHtml.match(/<li>/g) || []).length - ABOUT_FOLD_VISIBLE;
+  if (hidden < ABOUT_FOLD_MIN_HIDDEN || !aboutContentHtml.includes('</ul>')) {
+    return aboutContentHtml;
+  }
+  const id = 'about-highlights';
+  const button = renderDisclosureButton({
+    className: 'about-more-btn',
+    controls: id,
+    labels: aboutFoldLabels(hidden, locale),
+  });
+  return aboutContentHtml
+    .replace('<ul class="about-list">', `<ul class="about-list" id="${id}" data-fold>`)
+    .replace('</ul>', `</ul>${button}`);
+}
+
 module.exports = {
   renderDisclosureButton,
   generateProjectMore,
   withCoverLetterFold,
+  withAboutFold,
 };

@@ -97,13 +97,21 @@ test.describe('Declutter — consolidated operated section + regression', () => 
     };
     const LOCALIZED = {
       en: {
+        개발: 'Develop',
         운영: 'Operate',
         구축: 'Build',
         자동화: 'Automate',
         안정화: 'Stabilize',
         기초: 'Foundation',
       },
-      ja: { 운영: '運用', 구축: '構築', 자동화: '自動化', 안정화: '安定化', 기초: '基礎' },
+      ja: {
+        개발: '開発',
+        운영: '運用',
+        구축: '構築',
+        자동화: '自動化',
+        안정화: '安定化',
+        기초: '基礎',
+      },
     };
     const ko = await phasesFor('/');
     expect(ko.length).toBeGreaterThan(1);
