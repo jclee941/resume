@@ -82,8 +82,9 @@ assert.deepEqual(approvedJob[WORKFLOW_APPROVAL], {
   status: 'approved',
   metadata: approval.approvalMetadata,
 });
-assert.deepEqual(approvalStep.approvalMetadata, [approval.approvalMetadata]);
-assert.deepEqual(log.details.approvalMetadata, [approval.approvalMetadata]);
+const reported = [{ ...approval.approvalMetadata, status: 'approved' }];
+assert.deepEqual(approvalStep.approvalMetadata, reported);
+assert.deepEqual(log.details.approvalMetadata, reported);
 
 console.log(
   JSON.stringify({
