@@ -7,10 +7,11 @@ import {
   normalizeApplicationPlatforms,
   supportedApplicationPlatforms,
 } from './application-platform-catalog.js';
+import { searchJobKorea } from './jobkorea-search.js';
 import { searchRemember } from './remember-search.js';
 import { searchWanted } from './wanted-search.js';
 
-export { searchRemember, searchWanted };
+export { searchJobKorea, searchRemember, searchWanted };
 export {
   ATS_DRY_RUN_PLATFORMS,
   DEFAULT_APPLICATION_PLATFORMS,
@@ -73,6 +74,8 @@ export async function searchJobs(ctx, platform, criteria) {
       return searchLinkedIn(ctx, criteria);
     case 'remember':
       return searchRemember(ctx, criteria);
+    case 'jobkorea':
+      return searchJobKorea(ctx, criteria);
     default:
       if (criteria?.atsStub && isAtsDryRunPlatform(platform)) {
         return searchAtsDryRun(platform, criteria);

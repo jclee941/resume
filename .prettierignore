@@ -61,3 +61,6 @@ packages/data/resumes/generated/
 
 # Generated fake content pack (tools/scripts/content/make-fixtures.mjs); never hand-format
 tests/fixtures/content-pack/
+
+# Live-captured JobKorea search page (Next.js flight payload); reformatting breaks the embedded data
+apps/job-dashboard/src/workflows/application/__tests__/fixtures/jobkorea-search-page.html

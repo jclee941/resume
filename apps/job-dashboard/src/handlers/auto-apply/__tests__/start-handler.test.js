@@ -65,7 +65,7 @@ describe('startAutoApply', () => {
       {
         triggerType: 'dashboard-auto-apply',
         source: 'dashboard',
-        platforms: ['wanted', 'remember'],
+        platforms: ['wanted', 'remember', 'jobkorea'],
         searchCriteria: { keywords: ['DevOps', 'SRE'], keyword: 'DevOps' },
         minMatchScore: 65,
         maxDailyApplications: 7,

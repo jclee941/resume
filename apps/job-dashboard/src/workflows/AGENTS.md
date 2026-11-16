@@ -18,6 +18,7 @@ Scope reason: score 7; retryable Workflow domain.
 | Applications              | `application.js`, `application/workflow-runner.js`                                 | Class facade and orchestration            |
 | Approval and submit gates | `application/approval-gates.js`, `application/application-submission-gates.js`     | Approval metadata and real-submit checks  |
 | Transports                | `application/application-submitters.js`, `application/browser-rendering-submit.js` | Platform-specific submission              |
+| JobKorea auto-apply       | `application/jobkorea-search.js`, `application/jobkorea-submit.js`                 | Search parse and 즉시지원 browser flow    |
 | Terminal outcomes         | `application/workflow-terminal.js`                                                 | No-jobs, daily-limit, failure persistence |
 | Lifecycle tests           | `application/__tests__/workflow-lifecycle-kit.mjs`                                 | Shared harness for retry/replay suites    |
 | Crawling                  | `job-crawling/`                                                                    | `job-crawling.js` is a re-export shim     |
@@ -37,6 +38,9 @@ Scope reason: score 7; retryable Workflow domain.
 - Keep durable step boundaries visible; preserve bounded retry configuration.
 - Keep `step.*` calls outside `step.do` callbacks; the nesting regression test enforces this.
 - Existence of a platform submitter does not make that platform enabled in the catalog.
+- JobKorea search fetches the `filter=2` (즉시지원) recruit tab and parses the Next.js flight payload.
+- JobKorea submit logs in inside its Browser Run browser; non-즉시지원 or company-form postings are skipped.
+- Dry runs preview `SUBMIT_PREVIEW_PLATFORMS` jobs up to the final submit control and never click it.
 
 ## ANTI-PATTERNS
 
