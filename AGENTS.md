@@ -105,6 +105,7 @@ npm run build              # content ensure -> sync:data -> build:worker
 npm run sync:data
 npm run lint
 npm run lint:agents
+npm run pr                 # push branch, open PR, enable squash auto-merge
 npm run lint:loc
 npm run lint:naming
 npm run typecheck
@@ -123,6 +124,6 @@ npm run foreign-apply:dry-run -- --ats-stub
 - Workers Logs is default; Loki is opt-in; Elasticsearch is absent. Compose uses Jaeger; Tempo is a reference configuration.
 - Historical documentation may retain stale topology/CI claims; current configuration takes precedence. `verify:architecture-governance` checks ADRs plus the set declared in `tools/scripts/verification/architecture-docs-current-state.mjs`, not the whole archive.
 - `lint:agents` may print defects without failing; inspect diagnostics. The Wrangler secrets classifier echoes matched source lines.
-- Repository templates specify Conventional Commit PR titles and prefixed branches; external branch protection and required checks remain unverified.
+- Repository templates specify Conventional Commit PR titles and prefixed branches; master is protected by the `master: PR + Validate` ruleset (see `.github/AGENTS.md`); changes land through PRs with squash auto-merge.
 - `test:jest` discovers `tests/unit` and `tests/integration` `*.test.js`; `*.spec.js` is Playwright only. `test:go` does not cover deployment/deploy, monitoring or verify-deployment helpers.
 - Source inspection is not production verification; live Cloudflare behavior remains unverified.
