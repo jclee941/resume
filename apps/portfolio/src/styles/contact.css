@@ -12,8 +12,15 @@
 }
 
 @media (min-width: 1024px) {
+  /* Empty tracks collapse, so the channels always fill the row. */
   .contact-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(var(--contact-item-min-width), 1fr));
+  }
+
+  /* A full-row span would occupy the empty tracks and stop them from collapsing. */
+  .contact-grid .contact-copy-status {
+    grid-row: 2;
+    grid-column: 1;
   }
 }
 
