@@ -1,4 +1,5 @@
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
+import { rememberFetch } from './remember/remember-fetch.js';
 
 /**
  * @typedef {Object} RememberSearchOptions
@@ -47,7 +48,7 @@ import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
 
 export class RememberClient {
   /**
-   * @param {unknown} [env]
+   * @param {import('./remember/remember-fetch.js').RememberBrowserEnv} [env]
    */
   constructor(env) {
     this.env = env;
@@ -99,7 +100,7 @@ export class RememberClient {
         };
       }
 
-      const response = await fetch(url, fetchOptions);
+      const response = await rememberFetch(this.env)(url, fetchOptions);
 
       if (!response.ok) {
         throw new Error(`Remember API returned ${response.status}`);
