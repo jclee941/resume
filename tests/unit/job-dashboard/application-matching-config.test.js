@@ -197,6 +197,21 @@ describe('Application Workflow matching config', () => {
     expect(config.excludeDegreeRequired).toBe(false);
   });
 
+  test.each([
+    ['FortiGate', '포티게이트'],
+    ['Splunk', '스플렁크'],
+  ])('matches %s and %s as one skill', (english, korean) => {
+    const base = { position: '엔지니어', company: 'Example' };
+    const skills = [english.toLowerCase()];
+
+    expect(calculateMatchScore({ ...base, description: english }, { skills })).toBe(
+      calculateMatchScore({ ...base, description: korean }, { skills })
+    );
+    expect(calculateMatchScore({ ...base, description: korean }, { skills })).toBeGreaterThan(
+      calculateMatchScore({ ...base, description: '' }, { skills })
+    );
+  });
+
   test('counts a skill listed under two names once', () => {
     const job = { position: '보안 엔지니어', description: '', company: 'Example' };
 

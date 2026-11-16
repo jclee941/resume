@@ -44,6 +44,8 @@ const CLEANUP_TIMEOUT_MS = 5_000;
  * }} JobKoreaEnv
  */
 
+export const JOBKOREA_2FA_REQUIRED = 'JOBKOREA_2FA_REQUIRED';
+const TWO_FACTOR_PATH = '/TwoFactorAuth';
 const LOGIN_BLOCKED_RESOURCE_TYPES = new Set(['image', 'media', 'font']);
 const LOGIN_PAGE_TIMEOUT = /Navigation timeout/i;
 const LOGIN_POLL_ATTEMPTS = 5;
@@ -76,6 +78,19 @@ async function openLoginPage(page, requests) {
 }
 
 /**
+ * JobKorea redirects an account with two-factor authentication to /user/TwoFactorAuth/Index and
+ * then blocks every page behind it, so the login stops there instead of waiting for timeouts.
+ * @param {import('@cloudflare/puppeteer').Page} page
+ */
+function assertNoTwoFactor(page) {
+  if (!page.url().includes(TWO_FACTOR_PATH)) return;
+  throw Object.assign(
+    new Error(`${JOBKOREA_2FA_REQUIRED}: JobKorea login needs two-factor authentication cleared`),
+    { code: JOBKOREA_2FA_REQUIRED }
+  );
+}
+
+/**
  * POST /Login/Login.asp answers with a success page that already sets the session cookies and
  * leaves the move to My Page to a hidden Login_Log_Check.asp iframe (next to a password-campaign
  * popup). Inside Browser Rendering that hop can stall or fail, so open My Page directly and check
@@ -87,6 +102,7 @@ async function openMyPage(page) {
   await page
     .goto(JOBKOREA_MY_PAGE_URL, { waitUntil: 'domcontentloaded', timeout: 15000 })
     .catch(() => {});
+  assertNoTwoFactor(page);
   return isLoggedIn(page);
 }
 
@@ -124,6 +140,8 @@ export async function mintJobKoreaSession(
     let page;
     try {
       page = await context.newPage();
+      // A JS confirm (e.g. "개인회원 로그인 후 이용해 주세요") would otherwise block the page.
+      page.on('dialog', (dialog) => void dialog.dismiss().catch(() => {}));
       // Stylesheets stay allowed: which login tab's submit button is visible is decided by CSS.
       const requests = await restrictToJobKorea(page, LOGIN_BLOCKED_RESOURCE_TYPES);
       await openLoginPage(page, requests);
@@ -131,6 +149,7 @@ export async function mintJobKoreaSession(
       await fillLoginForm(page, { email, password });
       assertOpen('the login was submitted');
       await submitAndWait(page, SUBMIT_SELECTOR);
+      assertNoTwoFactor(page);
 
       let loggedIn = await isLoggedIn(page);
       let attempt = 0;
@@ -143,6 +162,7 @@ export async function mintJobKoreaSession(
           );
         }
         await sleep(pollIntervalMs);
+        assertNoTwoFactor(page);
         loggedIn = await isLoggedIn(page);
       }
 

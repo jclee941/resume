@@ -1,3 +1,4 @@
+import { JOBKOREA_2FA_REQUIRED } from '../../handlers/jobkorea/mint-session.js';
 import { NotificationService, escapeHtml } from '../../services/notifications.js';
 
 /**
@@ -49,7 +50,7 @@ export async function notifyFailure(notificationService, triggerType, platforms,
 
 /**
  * @param {NotificationService} notificationService
- * @param {{ stats: { jobsFound: number; jobsApproved: number; jobsApplied: number; jobsFailed: number } }} workflow
+ * @param {{ stats: { jobsFound: number; jobsApproved: number; jobsApplied: number; jobsFailed: number }; errors?: unknown[] }} workflow
  * @param {string} triggerType
  * @param {boolean} dryRun
  * @param {ApprovedJob[]} approvedJobs
@@ -65,6 +66,11 @@ export async function notifyCompletion(
   const success = workflow.stats.jobsApplied > 0;
   const icon = success ? '✅' : workflow.stats.jobsFailed > 0 ? '⚠️' : 'ℹ️';
   const status = success ? 'Success' : workflow.stats.jobsFailed > 0 ? 'Partial' : 'No Action';
+  const twoFactorNote = workflow.errors?.some(
+    (error) => /** @type {{ code?: unknown } | null} */ (error)?.code === JOBKOREA_2FA_REQUIRED
+  )
+    ? '\n\n⚠️ JobKorea login needs two-factor authentication cleared; remaining JobKorea jobs were skipped.'
+    : '';
 
   await notificationService.sendTelegramNotification({
     text:
@@ -77,7 +83,7 @@ export async function notifyCompletion(
       `  Approved: ${workflow.stats.jobsApproved}\n` +
       `  Applied: ${workflow.stats.jobsApplied}\n` +
       `  Failed: ${workflow.stats.jobsFailed}\n\n` +
-      `<b>Top Jobs</b>:\n${topApprovedJobs(approvedJobs)}`,
+      `<b>Top Jobs</b>:\n${topApprovedJobs(approvedJobs)}${twoFactorNote}`,
   });
 }
 
