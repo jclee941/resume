@@ -39,6 +39,7 @@ Scope reason: score 7; retryable Workflow domain.
 - Keep `step.*` calls outside `step.do` callbacks; the nesting regression test enforces this.
 - Existence of a platform submitter does not make that platform enabled in the catalog.
 - JobKorea search fetches the `filter=2` (즉시지원) recruit tab and parses the Next.js flight payload.
+- `jobkorea-detail.js` appends clipped posting text to the leading jobs; mind the step-result limit.
 - JobKorea submit logs in inside its Browser Run browser; non-즉시지원 or company-form postings are skipped.
 - Dry runs preview `SUBMIT_PREVIEW_PLATFORMS` jobs up to the final submit control and never click it.
 

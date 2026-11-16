@@ -6,7 +6,8 @@
  * Codes were matched against the rendered cards and posting pages on 2026-11-16:
  * receptionOptionType starts with 1 when the posting offers 즉시지원 (000010 is 홈페이지 지원),
  * careerType 1/2/3/4 is 신입/경력/신입·경력/경력무관 with careerRange the minimum years (100 when
- * none is given), and educationCode 0/3/5 is 학력무관/고졸이상/대졸이상.
+ * none is given), and educationCode 0/3/5 is 학력무관/고졸이상/대졸이상. The first character of an
+ * areaCodeList code names the province the card shows (I0xx 서울, B0xx 경기, ...).
  * @module workflows/application/jobkorea-postings
  */
 
@@ -15,6 +16,18 @@ export const JOBKOREA_POSTING_URL = 'https://www.jobkorea.co.kr/Recruit/GI_Read'
 const FLIGHT_CHUNK = /self\.__next_f\.push\(\[1,\s*("(?:[^"\\]|\\.)*")\]\)/g;
 const POSTING_START = /\{"id":"(\d+)","legacyJobNo":/g;
 const UNSPECIFIED_YEARS = 100;
+
+/** @type {Record<string, string>} */
+const AREA_PROVINCE = {
+  I: '서울',
+  B: '경기',
+  K: '인천',
+  A: '강원',
+  G: '대전',
+  H: '부산',
+  P: '충북',
+  1: '세종',
+};
 
 /** @type {Record<string, string>} */
 const EDUCATION_TEXT = {
@@ -36,6 +49,7 @@ const EDUCATION_TEXT = {
  *   careerType?: string;
  *   careerRange?: number;
  *   educationCode?: string;
+ *   areaCodeList?: string[];
  *   createdAt?: string;
  *   jobClassificationOrIndustry?: string;
  *   _internal_keywordList?: string[];
@@ -116,6 +130,16 @@ function experienceOf(posting) {
 
 /**
  * @param {JobKoreaPosting} posting
+ * @returns {string} provinces of the posting's areas, then JobKorea's district names
+ */
+function locationOf(posting) {
+  const provinces = (posting.areaCodeList ?? []).map((code) => AREA_PROVINCE[code.charAt(0)]);
+  const districts = String(posting._internal_featureLocationCode ?? '').split(',');
+  return [...new Set([...provinces, ...districts])].filter(Boolean).join(' ');
+}
+
+/**
+ * @param {JobKoreaPosting} posting
  * @returns {import('./platforms.js').PlatformJob}
  */
 export function toJobKoreaJob(posting) {
@@ -141,7 +165,7 @@ export function toJobKoreaJob(posting) {
     position: posting.title ?? '',
     url,
     sourceUrl: url,
-    location: String(posting._internal_featureLocationCode ?? '').replace(/,/g, ' '),
+    location: locationOf(posting),
     experience,
     description,
     postedAt: posting.createdAt,

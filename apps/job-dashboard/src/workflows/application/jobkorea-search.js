@@ -1,4 +1,5 @@
 import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
+import { enrichJobKoreaJobs } from './jobkorea-detail.js';
 import {
   offersImmediateApply,
   parseJobKoreaSearchPage,
@@ -67,7 +68,8 @@ async function fetchSearchPage(fetchImpl, url) {
  * Searches JobKorea once per keyword, paging until a page adds no new posting (at most
  * MAX_PAGES_PER_KEYWORD pages), and keeps the 즉시지원 postings merged by GI_No in first-seen order.
  * A keyword whose page fails is logged and skipped with the postings it already gave; the first
- * error is thrown only when every keyword fails.
+ * error is thrown only when every keyword fails. The leading jobs then get their posting text
+ * (jobkorea-detail.js), since the search tags alone undercount the skills a posting asks for.
  * @param {{ env?: Record<string, unknown> }} _ctx
  * @param {PlatformSearchCriteria} criteria
  * @param {{ fetchImpl?: typeof fetch }} [options]
@@ -101,5 +103,5 @@ export async function searchJobKorea(_ctx, criteria, { fetchImpl = fetch } = {})
     }
   }
   if (keywords.length > 0 && errors.length === keywords.length) throw errors[0];
-  return [...merged.values()];
+  return enrichJobKoreaJobs([...merged.values()], fetchImpl);
 }
