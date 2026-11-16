@@ -12,13 +12,14 @@ Boundary: score 1; retained distinct domain for repository automation and review
 
 ## WHERE TO LOOK
 
-| Task               | Location                   | Notes                                    |
-| ------------------ | -------------------------- | ---------------------------------------- |
-| CI gates           | `workflows/ci.yml`         | Single `validate` job                    |
-| Dependency updates | GitHub repository settings | External settings are not declared here  |
-| Review routing     | `CODEOWNERS`               | Path ownership                           |
-| Change description | `PULL_REQUEST_TEMPLATE.md` | Contributor checklist                    |
-| Issue intake       | `ISSUE_TEMPLATE/`          | Bug, feature, security forms and chooser |
+| Task               | Location                              | Notes                                    |
+| ------------------ | ------------------------------------- | ---------------------------------------- |
+| CI gates           | `workflows/ci.yml`                    | Single `validate` job                    |
+| Dependency updates | GitHub repository settings            | External settings are not declared here  |
+| Dependabot merge   | `workflows/dependabot-auto-merge.yml` | Patch/minor squash auto-merge            |
+| Review routing     | `CODEOWNERS`                          | Path ownership                           |
+| Change description | `PULL_REQUEST_TEMPLATE.md`            | Contributor checklist                    |
+| Issue intake       | `ISSUE_TEMPLATE/`                     | Bug, feature, security forms and chooser |
 
 ## CONVENTIONS
 
@@ -32,7 +33,8 @@ Boundary: score 1; retained distinct domain for repository automation and review
 - CI test commands are explicit; adding a root test script alone does not add a workflow step.
 - PR titles follow Conventional Commits; documentation branches use `docs/*`, as declared in the PR template.
 - `CODEOWNERS` routes the default and listed paths to the repository maintainer.
-- Branch protection, required checks, bot availability, and automatic merge settings require external verification; the workflow does not establish them.
+- Policy (repository settings, not declared in files): ruleset `master: PR + Validate` requires a PR, squash only, required check `Validate`, no bypass, no direct push; auto-merge and delete-branch-on-merge are enabled.
+- Changes land via `npm run pr` from a feature branch (push, PR, squash auto-merge); `dependabot-auto-merge.yml` auto-merges Dependabot patch/minor PRs and never checks out PR code.
 - Playwright E2E is on demand, not a step in the validation workflow.
 
 ## ANTI-PATTERNS
