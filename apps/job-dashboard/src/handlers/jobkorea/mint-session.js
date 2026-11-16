@@ -3,9 +3,10 @@
  * stores it in KV as `auth:jobkorea` — analogous to handlers/wanted/mint-session.js,
  * but driven through the CF Browser Rendering broker (Wave 3) since JobKorea has
  * no public token endpoint. Page automation lives in ./page-helpers.js; this
- * module owns login orchestration. Nothing solves CAPTCHAs automatically, so a
- * CAPTCHA challenge fails the mint with JOBKOREA_CAPTCHA_REQUIRED and the
- * session has to be renewed manually.
+ * module owns login orchestration. A two-factor challenge is cleared with the emailed code
+ * (./two-factor.js) and the resulting device trust is kept for later logins (./trusted-device.js).
+ * Nothing solves CAPTCHAs automatically, so a CAPTCHA challenge fails the mint with
+ * JOBKOREA_CAPTCHA_REQUIRED and the session has to be renewed manually.
  * @module handlers/jobkorea/mint-session
  */
 
@@ -21,6 +22,15 @@ import {
   detectCaptcha,
   collectJobKoreaCookies,
 } from './page-helpers.js';
+import {
+  JOBKOREA_2FA_REQUIRED,
+  hasTwoFactorBindings,
+  isTwoFactorPage,
+  resolveTwoFactor,
+} from './two-factor.js';
+import { injectTrustedDevice, rememberTrustedDevice } from './trusted-device.js';
+
+export { JOBKOREA_2FA_REQUIRED };
 
 export const AUTH_JOBKOREA_KEY = 'auth:jobkorea';
 // /Login redirects to the unified login form (Login_Tot.asp); /Login/Login.asp
@@ -39,13 +49,18 @@ const CLEANUP_TIMEOUT_MS = 5_000;
  *   REMEMBER_BROWSER_API_TOKEN?: string;
  *   BROWSER_SESSION: import('../../services/browser-session.js').DurableObjectNamespaceBinding;
  *   MYBROWSER: import('@cloudflare/puppeteer').ConnectOptions | import('@cloudflare/puppeteer').BrowserWorker;
- *   SESSIONS?: { put: Function };
+ *   SESSIONS?: { get: Function, put: Function };
  *   [key: string]: unknown;
  * }} JobKoreaEnv
+ * @typedef {{
+ *   email: string;
+ *   password: string;
+ *   pollIntervalMs: number;
+ *   assertOpen: (next: string) => void;
+ *   twoFactor: import('./two-factor.js').TwoFactorOptions;
+ * }} LoginPlan
  */
 
-export const JOBKOREA_2FA_REQUIRED = 'JOBKOREA_2FA_REQUIRED';
-const TWO_FACTOR_PATH = '/TwoFactorAuth';
 const LOGIN_BLOCKED_RESOURCE_TYPES = new Set(['image', 'media', 'font']);
 const LOGIN_PAGE_TIMEOUT = /Navigation timeout/i;
 const LOGIN_POLL_ATTEMPTS = 5;
@@ -78,16 +93,30 @@ async function openLoginPage(page, requests) {
 }
 
 /**
- * JobKorea redirects an account with two-factor authentication to /user/TwoFactorAuth/Index and
- * then blocks every page behind it, so the login stops there instead of waiting for timeouts.
+ * JobKorea redirects a login from a browser it does not trust to /user/TwoFactorAuth/Index and
+ * blocks every page behind it. The first challenge is cleared with the emailed code and the
+ * device trust it grants is stored; a second one in the same login stops it.
  * @param {import('@cloudflare/puppeteer').Page} page
+ * @param {JobKoreaEnv} env
+ * @param {LoginPlan} plan
+ * @returns {() => Promise<void>}
  */
-function assertNoTwoFactor(page) {
-  if (!page.url().includes(TWO_FACTOR_PATH)) return;
-  throw Object.assign(
-    new Error(`${JOBKOREA_2FA_REQUIRED}: JobKorea login needs two-factor authentication cleared`),
-    { code: JOBKOREA_2FA_REQUIRED }
-  );
+function twoFactorGate(page, env, { assertOpen, twoFactor }) {
+  let cleared = false;
+  return async () => {
+    if (!isTwoFactorPage(page)) return;
+    if (cleared || !hasTwoFactorBindings(env)) {
+      const why = cleared ? 'asked for it again' : 'cannot be cleared without KV and D1 bindings';
+      throw Object.assign(
+        new Error(`${JOBKOREA_2FA_REQUIRED}: JobKorea two-factor authentication ${why}`),
+        { code: JOBKOREA_2FA_REQUIRED }
+      );
+    }
+    cleared = true;
+    const before = await page.cookies();
+    await resolveTwoFactor(page, env, { ...twoFactor, assertOpen });
+    await rememberTrustedDevice(env, { before, after: await page.cookies() });
+  };
 }
 
 /**
@@ -96,14 +125,49 @@ function assertNoTwoFactor(page) {
  * popup). Inside Browser Rendering that hop can stall or fail, so open My Page directly and check
  * the session there; a failed login lands back on the login form.
  * @param {import('@cloudflare/puppeteer').Page} page
+ * @param {() => Promise<void>} clearTwoFactor
  * @returns {Promise<boolean>}
  */
-async function openMyPage(page) {
+async function openMyPage(page, clearTwoFactor) {
   await page
     .goto(JOBKOREA_MY_PAGE_URL, { waitUntil: 'domcontentloaded', timeout: 15000 })
     .catch(() => {});
-  assertNoTwoFactor(page);
+  await clearTwoFactor();
   return isLoggedIn(page);
+}
+
+/**
+ * Logs in on a page whose login form is open (trust cookies already set) and polls until the
+ * session shows.
+ * @param {import('@cloudflare/puppeteer').Page} page
+ * @param {JobKoreaEnv} env
+ * @param {LoginPlan} plan
+ * @returns {Promise<boolean>}
+ */
+async function submitLogin(page, env, plan) {
+  const { email, password, pollIntervalMs, assertOpen } = plan;
+  const clearTwoFactor = twoFactorGate(page, env, plan);
+  assertOpen('the login form was filled');
+  await fillLoginForm(page, { email, password });
+  assertOpen('the login was submitted');
+  await submitAndWait(page, SUBMIT_SELECTOR);
+  await clearTwoFactor();
+
+  let loggedIn = await isLoggedIn(page);
+  let attempt = 0;
+  while (!loggedIn && attempt < LOGIN_POLL_ATTEMPTS) {
+    attempt++;
+    if (await detectCaptcha(page)) {
+      throw Object.assign(
+        new Error('JobKorea presented a CAPTCHA; renew the JobKorea session manually'),
+        { code: 'JOBKOREA_CAPTCHA_REQUIRED' }
+      );
+    }
+    await sleep(pollIntervalMs);
+    await clearTwoFactor();
+    loggedIn = await isLoggedIn(page);
+  }
+  return loggedIn || openMyPage(page, clearTwoFactor);
 }
 
 /**
@@ -111,9 +175,9 @@ async function openMyPage(page) {
  * Rendering broker. Fails with code JOBKOREA_CAPTCHA_REQUIRED when JobKorea
  * presents a CAPTCHA.
  * @param {JobKoreaEnv} env
- * @param {{ withBrowserSession?: typeof defaultWithBrowserSession, pollIntervalMs?: number, cleanupMs?: number, assertOpen?: (next: string) => void }} [opts]
- *   `assertOpen(next)` throws once the caller has given up; it runs before the form is filled and
- *   before it is submitted, so no credentials go out after that
+ * @param {{ withBrowserSession?: typeof defaultWithBrowserSession, pollIntervalMs?: number, cleanupMs?: number, assertOpen?: (next: string) => void, twoFactor?: import('./two-factor.js').TwoFactorOptions }} [opts]
+ *   `assertOpen(next)` throws once the caller has given up; it runs before the form is filled,
+ *   before it is submitted and before a two-factor code is requested, so nothing goes out after that
  * @returns {Promise<string>} cookie string `name=value; name2=value2`
  */
 export async function mintJobKoreaSession(
@@ -123,6 +187,7 @@ export async function mintJobKoreaSession(
     pollIntervalMs = LOGIN_POLL_INTERVAL_MS,
     cleanupMs = CLEANUP_TIMEOUT_MS,
     assertOpen = () => {},
+    twoFactor = {},
   } = {}
 ) {
   const email = env?.JOBKOREA_USERNAME || env?.JOBKOREA_EMAIL;
@@ -144,29 +209,12 @@ export async function mintJobKoreaSession(
       page.on('dialog', (dialog) => void dialog.dismiss().catch(() => {}));
       // Stylesheets stay allowed: which login tab's submit button is visible is decided by CSS.
       const requests = await restrictToJobKorea(page, LOGIN_BLOCKED_RESOURCE_TYPES);
+      const trusted = await injectTrustedDevice(page, env);
       await openLoginPage(page, requests);
-      assertOpen('the login form was filled');
-      await fillLoginForm(page, { email, password });
-      assertOpen('the login was submitted');
-      await submitAndWait(page, SUBMIT_SELECTOR);
-      assertNoTwoFactor(page);
-
-      let loggedIn = await isLoggedIn(page);
-      let attempt = 0;
-      while (!loggedIn && attempt < LOGIN_POLL_ATTEMPTS) {
-        attempt++;
-        if (await detectCaptcha(page)) {
-          throw Object.assign(
-            new Error('JobKorea presented a CAPTCHA; renew the JobKorea session manually'),
-            { code: 'JOBKOREA_CAPTCHA_REQUIRED' }
-          );
-        }
-        await sleep(pollIntervalMs);
-        assertNoTwoFactor(page);
-        loggedIn = await isLoggedIn(page);
-      }
-
-      if (!loggedIn) loggedIn = await openMyPage(page);
+      const plan = { email, password, pollIntervalMs, assertOpen, twoFactor };
+      // Trust cookies that still carry a session open the login page already logged in.
+      const loggedIn =
+        (trusted && (await isLoggedIn(page))) || (await submitLogin(page, env, plan));
 
       if (!loggedIn) {
         const url = typeof page.url === 'function' ? page.url() : JOBKOREA_LOGIN_URL;

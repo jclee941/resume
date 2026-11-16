@@ -42,6 +42,7 @@ import {
 import { BrowserSessionDO } from './durable-objects/browser-session-do.js';
 import { routeQueueBatch } from './queues/queue-consumer.js';
 import { handleMcpRequest } from './mcp/handler.js';
+import { handleInboundEmail } from './handlers/email/inbound-mail.js';
 
 export {
   JobCrawlingWorkflow,
@@ -193,5 +194,9 @@ export default /** @satisfies {import('./worker-env.js').DashboardWorker} */ ({
 
   async scheduled(controller, env, ctx) {
     await cronRouter.scheduled(controller, env, ctx);
+  },
+
+  async email(message, env) {
+    await handleInboundEmail(message, env);
   },
 });

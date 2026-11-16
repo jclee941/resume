@@ -26,6 +26,7 @@ Boundary: score 3; retained infrastructure-state and binding-mock domain.
 ## CONVENTIONS
 
 - Terraform declarations have no active apply workflow in this repository.
+- Email Routing on zone `jclee.me` has one Worker rule, `jobkorea-2fa@jclee.me` -> Worker `resume` (`email()`), set through the Cloudflare API; other addresses and MX records are not managed here.
 - Review declared resources separately from the bindings consumed by the deployed Worker.
 - D1 schema ownership stays with `apps/job-dashboard/migrations/` and its schema snapshot.
 - Treat monitoring exports as reference snapshots; deployed Grafana state can differ.
