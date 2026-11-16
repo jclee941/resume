@@ -7,6 +7,7 @@ import {
   safePreviewText,
   WORKFLOW_APPROVAL,
 } from './application-submission-gates.js';
+import { JOBKOREA_2FA_REQUIRED } from '../../handlers/jobkorea/mint-session.js';
 import { previewSubmissions } from './submission-previews.js';
 
 export { attachWorkflowApproval, WORKFLOW_APPROVAL };
@@ -58,12 +59,17 @@ export async function submitApprovedApplications(ctx, step, workflow, approvedJo
   const applicationResults = [];
   const jobs = Array.isArray(approvedJobs) ? approvedJobs : [];
   const submitOptIn = submitOptions?.explicitSubmit === true || submitOptions?.submitOptIn === true;
+  let jobKoreaTwoFactor = false;
 
   if (!dryRun && jobs.length > 0) {
     for (const job of jobs) {
       const gate = evaluateAtsSubmitGate(job, submitOptIn);
       if (!gate.canSubmit) {
         applicationResults.push(createAtsGateResult(job, gate));
+        continue;
+      }
+      if (jobKoreaTwoFactor && job.source === 'jobkorea') {
+        applicationResults.push(createTwoFactorSkip(job));
         continue;
       }
 
@@ -80,7 +86,9 @@ export async function submitApprovedApplications(ctx, step, workflow, approvedJo
       if (record && record.appliedNow !== false) workflow.stats.jobsApplied++;
       if (!result.success) {
         workflow.stats.jobsFailed++;
-        workflow.errors.push({ step: 'apply-job', jobId: job.id, error: result.error });
+        const { code } = result;
+        workflow.errors.push({ step: 'apply-job', jobId: job.id, error: result.error, code });
+        jobKoreaTwoFactor ||= code === JOBKOREA_2FA_REQUIRED;
       }
       if (record) {
         try {
@@ -199,10 +207,29 @@ async function submitApprovedApplication(ctx, workflow, job, resumeId) {
       };
     }
 
-    return createSubmitFailure(job.id, submitResult.error);
+    return {
+      ...createSubmitFailure(job.id, submitResult.error),
+      ...(submitResult.code === JOBKOREA_2FA_REQUIRED ? { code: JOBKOREA_2FA_REQUIRED } : {}),
+    };
   } catch (error) {
     return createSubmitFailure(job.id, error instanceof Error ? error.message : String(error));
   }
+}
+
+/**
+ * JobKorea asked for two-factor authentication earlier in this run: no login is attempted, and
+ * the job is neither a failure nor an application, so it never reaches the daily cap.
+ * @param {import('./application-submission-gates.js').GateJob} job
+ * @returns {{ success: false; skipped: true; status: 'skipped'; jobId: unknown; reason: string }}
+ */
+function createTwoFactorSkip(job) {
+  return {
+    success: false,
+    skipped: true,
+    status: 'skipped',
+    jobId: job.id,
+    reason: JOBKOREA_2FA_REQUIRED,
+  };
 }
 
 /**

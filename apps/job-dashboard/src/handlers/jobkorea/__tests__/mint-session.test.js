@@ -123,6 +123,23 @@ describe('mintJobKoreaSession', () => {
     assert.equal(page.close.mock.callCount(), 1);
   });
 
+  it('fails with JOBKOREA_2FA_REQUIRED as soon as login lands on the 2FA page', async () => {
+    const page = createFakePage({ evaluateQueue: [], inputs: defaultInputs() });
+    page.url = () => 'https://www.jobkorea.co.kr/user/TwoFactorAuth/Index';
+
+    await assert.rejects(
+      () =>
+        mintJobKoreaSession(CREDS, {
+          withBrowserSession: fakeWithBrowserSession(page),
+          pollIntervalMs: 60_000,
+        }),
+      (error) => error.code === 'JOBKOREA_2FA_REQUIRED'
+    );
+    assert.equal(page.evaluate.mock.callCount(), 0);
+    assert.equal(page.goto.mock.callCount(), 1);
+    assert.equal(page.close.mock.callCount(), 1);
+  });
+
   it('throws a diagnostic error when login never completes', async () => {
     const inputs = defaultInputs();
     // Neither logged in nor a CAPTCHA is ever detected — every poll comes back false.

@@ -6,7 +6,10 @@
  * counted as applied. In preview mode the flow stops at the OnPass popup without clicking 지원하기.
  * @module workflows/application/jobkorea-submit
  */
-import { mintJobKoreaSession as defaultMint } from '../../handlers/jobkorea/mint-session.js';
+import {
+  JOBKOREA_2FA_REQUIRED,
+  mintJobKoreaSession as defaultMint,
+} from '../../handlers/jobkorea/mint-session.js';
 import { settleWithin } from '../../services/browser-session.js';
 import { withJobKoreaBrowserSession as defaultWithBrowserSession } from '../../services/jobkorea-browser-session.js';
 import { restrictToJobKorea } from '../../services/jobkorea-request-filter.js';
@@ -83,7 +86,11 @@ export async function submitJobKoreaApplication(env, jobId, options = {}) {
   );
   if (outcome === null) return failure(`JobKorea application gave up after ${budgetMs} ms`);
   if ('error' in outcome) {
-    return failure(outcome.error instanceof Error ? outcome.error.message : String(outcome.error));
+    const { error } = outcome;
+    const result = failure(error instanceof Error ? error.message : String(error));
+    return /** @type {{ code?: unknown } | null} */ (error)?.code === JOBKOREA_2FA_REQUIRED
+      ? { ...result, code: JOBKOREA_2FA_REQUIRED }
+      : result;
   }
   return outcome.result;
 }

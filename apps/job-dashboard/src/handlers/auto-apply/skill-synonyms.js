@@ -10,6 +10,8 @@ const SKILL_SYNONYM_GROUPS = [
   ['automation', '자동화'],
   ['siem', '관제'],
   ['firewall', '방화벽'],
+  ['fortigate', '포티게이트'],
+  ['splunk', '스플렁크'],
 ];
 
 /**
