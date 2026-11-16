@@ -13,6 +13,9 @@ const PAGE = await readFile(
   'utf8'
 );
 const EMPTY_PAGE = '<html><body></body></html>';
+const POSTING_TEXT =
+  '<html><body><p>회사 소개 문구</p><h3>자격요건</h3><p>Linux 서버 운영 &amp; 방화벽 정책 관리</p>' +
+  '<script>var ignored = 1;</script></body></html>';
 
 /**
  * @param {Record<string, string[]>} pagesByKeyword page HTML per keyword, Page_No 1 first
@@ -23,6 +26,11 @@ function searchFetch(pagesByKeyword) {
   /** @type {typeof fetch} */
   const fetchImpl = async (input) => {
     const url = new URL(String(input));
+    if (url.pathname === '/Recruit/GI_Read_Comt_Ifrm') {
+      return url.searchParams.get('Gno') === '50369787'
+        ? new Response(POSTING_TEXT)
+        : new Response('gone', { status: 404 });
+    }
     requests.push(url);
     const pages = pagesByKeyword[url.searchParams.get('stext') ?? ''];
     if (!pages) return new Response('blocked', { status: 403 });
@@ -51,9 +59,12 @@ test('keeps only 즉시지원 postings, mapped for scoring with their experience
   assert.equal(experienced.url, 'https://www.jobkorea.co.kr/Recruit/GI_Read/50369787');
   assert.equal(experienced.company, '대림바스㈜');
   assert.equal(experienced.experience, '5년 이상');
+  assert.equal(experienced.location, '서울');
+  assert.match(String(experienced.description), /\n자격요건 Linux 서버 운영 & 방화벽 정책 관리$/);
   assert.match(String(experienced.description), /학력: 대졸 이상/);
   assert.equal(open.experience, '0년 이상');
-  assert.match(String(open.description), /학력: 학력무관/);
+  assert.match(String(open.description), /학력: 학력무관$/);
+  assert.match(open.location, /^경기 서울 인천 /);
   assert.equal(requests[0].searchParams.get('filter'), '2');
   assert.equal(requests[0].searchParams.get('tabType'), 'recruit');
 });
