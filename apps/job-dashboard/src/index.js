@@ -195,8 +195,5 @@ export default /** @satisfies {import('./worker-env.js').DashboardWorker} */ ({
   async scheduled(controller, env, ctx) {
     await cronRouter.scheduled(controller, env, ctx);
   },
-
-  async email(message, env) {
-    await handleInboundEmail(message, env);
-  },
+  email: (message, env) => handleInboundEmail(message, env),
 });
