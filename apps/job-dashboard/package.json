@@ -10,7 +10,8 @@
     "@resume/env": "*",
     "@resume/schemas": "*",
     "@resume/shared": "*",
-    "@resume/types": "*"
+    "@resume/types": "*",
+    "postal-mime": "4.2.1"
   },
   "scripts": {
     "deploy": "node -e \"console.error('Standalone job-dashboard deploy disabled per ADR 0009 (merged into apps/portfolio). Use git push to master.'); process.exit(1)\""

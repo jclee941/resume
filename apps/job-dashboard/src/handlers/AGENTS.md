@@ -17,7 +17,8 @@ handlers/
   applications/  CRUD, approvals, history sync, query/repository helpers
   auto-apply/    Run/start/status/config, scoring, and duplicate checks
   browser/       Browser Rendering smoke check
-  jobkorea/      Session minting and page helpers
+  email/         Inbound mail for jobkorea-2fa@jclee.me (JobKorea 2FA codes)
+  jobkorea/      Session minting, page helpers, two-factor and device trust
   public-jobs/   On-demand public-sector posting collection
   scheduled/     Cron router and auto-apply start plan
   sync/          Profile-sync status
@@ -48,6 +49,8 @@ handlers/
 - Use typed client-facing errors for unsupported explicit candidates.
 - Daily cron refreshes only Wanted before history sync and Workflow starts.
 - Cron and on-demand JobKorea history use `fetchJobKoreaHistoryAfterLogin`, not KV cookie replay.
+- Email Routing sends only `jobkorea-2fa@jclee.me` to the Worker; `email/inbound-mail.js` stores a JobKorea code in KV `jobkorea:2fa:code` (300 s) and relays Kakao forwarding confirmations to Telegram.
+- The JobKorea login sends at most four email codes per UTC day and keeps device trust cookies in `auth:jobkorea-trust`.
 - `ProfileSyncHandler` passes `mintJobKoreaSession` as `jobkoreaLogin` to the sync service.
 
 ## ANTI-PATTERNS
@@ -56,6 +59,7 @@ handlers/
 - Do not bypass company history checks when candidates arrive explicitly.
 - Do not infer enabled automation from the presence of session credentials.
 - Do not collapse operation-specific failures into successful HTTP payloads.
+- Do not forward inbound mail back to Kakao (loop) or log codes and bodies.
 - Do not mint JobKorea cookies in one browser and replay them in another; pages can stall.
 
 Parent: [../AGENTS.md](../AGENTS.md)

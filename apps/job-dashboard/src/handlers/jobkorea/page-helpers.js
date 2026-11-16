@@ -128,13 +128,14 @@ export async function isLoggedIn(page) {
   return safeEvaluate(
     page,
     () => {
-      const logoutLink = document.querySelector('a[href*="/Login/Logout"], a[href*="logout" i]');
-      const userLink = document.querySelector(
-        'header a[href*="/User/"], #header a[href*="/User/"], a[href*="/User/"]'
-      );
-      // A successful login now lands on the lowercase /user/mypage, whose links the selectors miss.
-      const onMyPage = /^\/user\/mypage/i.test(location.pathname);
-      return Boolean(logoutLink || userLink || onMyPage);
+      if (document.querySelector('a[href*="/Login/Logout"], a[href*="logout" i]')) return true;
+      // A successful login lands on the lowercase /user/mypage without a logout link the selector
+      // sees, but a logged-out visit is served on that path too: a login form or the "개인회원
+      // 로그인 후 이용해 주세요" prompt there means no session.
+      if (!/^\/user\/mypage/i.test(location.pathname)) return false;
+      const loginForm = document.querySelector('input[type="password"], input[name="M_PWD"]');
+      const loginPrompt = (document.body?.innerText || '').includes('로그인 후 이용');
+      return !loginForm && !loginPrompt;
     },
     false
   );

@@ -36,6 +36,11 @@ describe('entry.js merged-worker contract', () => {
     expect(source).toMatch(/jobWorker\.queue\s*\(\s*batch\s*,\s*env\s*,\s*ctx\s*\)/);
   });
 
+  test('email handler delegates to jobWorker', () => {
+    expect(source).toMatch(/async\s+email\s*\(\s*message\s*,\s*env\s*\)/);
+    expect(source).toMatch(/jobWorker\.email\s*\(\s*message\s*,\s*env\s*\)/);
+  });
+
   test('routes /job/* requests to in-process jobWorker.fetch', () => {
     expect(source).toMatch(/url\.pathname\.startsWith\(JOB_ROUTE_PREFIX\)/);
     expect(source).toMatch(/jobWorker\.fetch\s*\(\s*request\s*,\s*env\s*,\s*ctx\s*\)/);

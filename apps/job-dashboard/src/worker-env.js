@@ -24,7 +24,8 @@
  *   & Parameters<typeof import('./routes/workflows.js').registerWorkflowRoutes>[1]['env']
  *   & Parameters<typeof import('./routes/admin.js').registerAdminRoutes>[1]['env']
  *   & ConstructorParameters<typeof import('./queues/queue-consumer.js').QueueConsumer>[0]
- *   & Parameters<typeof import('./handlers/scheduled/cron-router.js').scheduled>[1]} DashboardEnv
+ *   & Parameters<typeof import('./handlers/scheduled/cron-router.js').scheduled>[1]
+ *   & Parameters<typeof import('./handlers/email/inbound-mail.js').handleInboundEmail>[1]} DashboardEnv
  *
  * @typedef {{ waitUntil(promise: Promise<unknown>): void }} DashboardContext
  *
@@ -37,6 +38,11 @@
  *   ): Promise<void>;
  *   scheduled(
  *     controller: Parameters<typeof import('./handlers/scheduled/cron-router.js').scheduled>[0],
+ *     env: DashboardEnv,
+ *     ctx: DashboardContext
+ *   ): Promise<void>;
+ *   email(
+ *     message: import('./handlers/email/inbound-mail.js').InboundEmailMessage,
  *     env: DashboardEnv,
  *     ctx: DashboardContext
  *   ): Promise<void>;

@@ -206,4 +206,13 @@ export default {
   async scheduled(controller, env, ctx) {
     return jobWorker.scheduled(controller, env, ctx);
   },
+
+  // Email Routing delivers jobkorea-2fa@jclee.me here; the job worker stores JobKorea 2FA codes.
+  /**
+   * @param {Parameters<typeof jobWorker.email>[0]} message
+   * @param {Parameters<typeof jobWorker.email>[1]} env
+   */
+  async email(message, env) {
+    return jobWorker.email(message, env);
+  },
 };

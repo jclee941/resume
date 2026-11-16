@@ -26,7 +26,7 @@ Scope reason: score 6; required public application boundary.
 
 ## CONVENTIONS
 
-- Keep dashboard queue, scheduled, Workflow, and Durable Object forwarding compatible with its entry.
+- Keep dashboard queue, scheduled, email, Workflow, and Durable Object forwarding compatible with its entry.
 - `worker.d.ts` must match the generated bundle exports without requiring a build for typechecking.
 - Text assets are inlined at build time; large binary assets use the static binding.
 - Resume PDFs and `/assets/*` are the runtime `env.ASSETS` fetch routes.
