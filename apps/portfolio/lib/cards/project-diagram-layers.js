@@ -17,6 +17,27 @@ function textClass(base, text) {
   return CJK_PATTERN.test(text) ? `${base} ${base}--cjk` : base;
 }
 
+const LAYER_GAP = 28;
+const EDGE_PAD = 6;
+
+/**
+ * Stacks narrow layers by their tallest node, so subtitle nodes keep the same edge gap.
+ * Sets each node's narrow y and returns the SVG height.
+ * @param {{ h: number, y: number }[][]} layers
+ * @returns {number}
+ */
+function stackLayers(layers) {
+  const hs = layers.map((l) => Math.max(...l.map((n) => n.h)));
+  /** @type {number[]} */
+  const ys = [];
+  hs.forEach((h, L) =>
+    ys.push(L ? ys[L - 1] + hs[L - 1] / 2 + LAYER_GAP + h / 2 : EDGE_PAD + h / 2)
+  );
+  layers.forEach((l, L) => l.forEach((n) => (n.y = ys[L])));
+  const last = hs.length - 1;
+  return ys[last] + hs[last] / 2 + EDGE_PAD;
+}
+
 /**
  * @param {Map<string, LayerNode>} nodes - narrow layout: every node carries its layer and x
  * @param {LayerEdge[]} edges
@@ -53,4 +74,4 @@ function renderDiagramLayers(nodes, edges, title, escapeHtml) {
   return `<ol class="project-diagram__layers" aria-label="${escapeHtml(title)}">${items.join('')}</ol>`;
 }
 
-module.exports = { PHONE_SVG_MAX_WIDTH, renderDiagramLayers, textClass };
+module.exports = { PHONE_SVG_MAX_WIDTH, renderDiagramLayers, stackLayers, textClass };

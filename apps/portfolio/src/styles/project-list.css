@@ -114,16 +114,19 @@
 @media (min-width: 1024px) {
   .project-card--featured {
     grid-template-columns: minmax(0, 1fr) var(--featured-diagram-width);
-    grid-template-rows: auto auto 1fr auto;
+    /* The stack sits right under the case notes; a tall diagram no longer opens a gap above it. */
+    grid-template-rows: auto auto auto 1fr auto;
     grid-template-areas:
       'header meta'
       'notes diagram'
+      'tech diagram'
       'desc diagram'
-      'tech links';
+      '. links';
     column-gap: var(--space-8);
   }
 
-  .project-card--featured .project-case-notes {
+  .project-card--featured .project-case-notes,
+  .project-card--featured .project-tech {
     align-self: start;
   }
 

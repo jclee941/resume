@@ -463,9 +463,10 @@ tests depend on them.
 ### Operated, contact and footer
 
 - `.operated-grid`: three columns from 769px of surface cards.
-- `.contact-grid`: one column on phones, two from 768px and four equal columns from 1024px
-  of interactive surfaces with a `>` prompt, so four items never leave an orphan cell. Items
-  are GitHub, LinkedIn, Velog and Email (an optional GitHub Bot link adds one cell); none
+- `.contact-grid`: one column on phones, two from 768px and, from 1024px, one equal column
+  per item (`auto-fit` collapses empty tracks) of interactive surfaces with a `>` prompt, so
+  the row never ends in an empty cell. Items are GitHub, LinkedIn and Email (an optional GitHub
+  Bot link adds one cell); none
   points back to the site itself. Every item stacks its label over a muted, selectable value:
   the profile handle (the URL's last path segment) for links, whose accessible name includes
   it, and the address for Email.

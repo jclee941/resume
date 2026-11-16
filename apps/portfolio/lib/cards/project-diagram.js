@@ -1,5 +1,6 @@
 const crypto = require('crypto');
-const { PHONE_SVG_MAX_WIDTH, renderDiagramLayers, textClass } = require('./project-diagram-layers');
+const { PHONE_SVG_MAX_WIDTH, renderDiagramLayers } = require('./project-diagram-layers');
+const { stackLayers, textClass } = require('./project-diagram-layers');
 
 /**
  * @typedef {{ id: string, label: string, sub?: string, kind: string }} DiagramNode
@@ -13,7 +14,6 @@ const { PHONE_SVG_MAX_WIDTH, renderDiagramLayers, textClass } = require('./proje
 
 const COL_GAP = 56;
 const ROW = 96;
-const LAYER_Y = 72;
 const GAP = 16;
 const PAD = 24;
 const KINDS = new Set(['source', 'process', 'store', 'sink', 'actor']);
@@ -164,7 +164,8 @@ function layout(spec, isWide) {
   const W = Math.ceil(
     isWide ? colX[maxL] + colW[maxL] / 2 + PAD : Math.max(...layers.map(layerWidth)) + PAD * 2
   );
-  const H = isWide ? maxS * ROW + 16 : 56 + maxL * LAYER_Y;
+  const narrowH = stackLayers(layers);
+  const H = isWide ? maxS * ROW + 16 : narrowH;
   layers.forEach((layer, L) => {
     let cursor = (W - layerWidth(layer)) / 2;
     layer.forEach((n, i) => {
@@ -174,7 +175,6 @@ function layout(spec, isWide) {
       } else {
         n.x = cursor + n.w / 2;
         cursor += n.w + GAP;
-        n.y = 28 + L * LAYER_Y;
       }
     });
   });

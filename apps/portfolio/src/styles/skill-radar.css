@@ -18,6 +18,24 @@
   margin-bottom: var(--space-4);
 }
 
+/* Desktop: a 3x3 grid with the large domain spanning the first column, so every card edge aligns. */
+@media screen and (min-width: 1024px) {
+  .skill-radar__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-flow: row dense;
+    gap: var(--space-4);
+  }
+
+  .skill-radar__grid > .skill-domain-card {
+    margin-bottom: 0;
+  }
+
+  .skill-radar__grid > .skill-domain-card--tall {
+    grid-row: span 3;
+  }
+}
+
 @media screen and (max-width: 640px) {
   .skill-radar__grid {
     display: grid;
@@ -32,6 +50,11 @@
     padding-bottom: var(--space-3);
     -webkit-mask-image: var(--mask-carousel-edge);
     mask-image: var(--mask-carousel-edge);
+    scrollbar-width: none;
+  }
+
+  .skill-radar__grid::-webkit-scrollbar {
+    display: none;
   }
 
   .skill-radar__grid.is-scroll-end {
