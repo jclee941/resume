@@ -1,7 +1,7 @@
 # SERVICES KNOWLEDGE BASE
 
-**Generated:** 2026-11-02
-**Commit:** `f2142ccf`
+**Generated:** 2026-11-16
+**Commit:** `ebccda00`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -15,6 +15,7 @@ Scope reason: score 7; retained integration and persistence domain.
 ```text
 services/
   application-history/    Adapters, timestamps, repository, sync orchestration
+  bigtech-jobs/           Fetch-only collectors behind the `BIGTECH_COLLECTORS` registry
   notification/           Singular compatibility export barrel
   notifications/          Delivery, formatting, history, Telegram actions
   public-jobs/            Public-sector posting collection into job_search_results
@@ -49,6 +50,7 @@ services/
 - Remember precedence: withdrawn, rejected, offer, in_progress, viewed, then applied.
 - History insert conflicts retry as guarded updates; concurrent status changes must survive.
 - Keep session encryption and expiry in `platform-session.js`, not individual clients.
+- Big-tech collectors take `(fetcher, { today, budget })`; callers own persistence and notification.
 - `notification/index.js` is a compatibility re-export; consumers should use `notifications.js`.
 - `withJobKoreaEditor` accepts `login` and invokes it inside the borrowed editor browser.
 - Use the injected `jobkoreaLogin` from callers; stored `auth:jobkorea` cookies are not portable.

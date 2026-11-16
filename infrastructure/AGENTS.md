@@ -1,7 +1,7 @@
 # INFRASTRUCTURE KNOWLEDGE BASE
 
-**Generated:** 2026-11-02
-**Commit:** `f2142ccf`
+**Generated:** 2026-11-16
+**Commit:** `ebccda00`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -26,14 +26,16 @@ Boundary: score 3; retained infrastructure-state and binding-mock domain.
 ## CONVENTIONS
 
 - Terraform declarations have no active apply workflow in this repository.
-- Email Routing on zone `jclee.me` has one Worker rule, `jobkorea-2fa@jclee.me` -> Worker `resume` (`email()`), set through the Cloudflare API; other addresses and MX records are not managed here.
+- Email Routing has one Worker rule targeting the Worker `email()` handler, set through the Cloudflare API; addresses and MX records are not managed here.
 - Review declared resources separately from the bindings consumed by the deployed Worker.
 - D1 schema ownership stays with `apps/job-dashboard/migrations/` and its schema snapshot.
 - Treat monitoring exports as reference snapshots; deployed Grafana state can differ.
 - The monitoring tools under `tools/scripts/monitoring/` and `tools/scripts/deployment/` consume these assets.
 - Compose declares Jaeger for traces; the standalone Tempo configuration does not establish a running Tempo service.
 - The reference D1 mock imports `better-sqlite3`, which is not declared in the root manifest.
-- Treat those mocks as reference implementations, not a ready test environment.
+- Treat those mocks as reference implementations, not a ready test environment; no in-repo code imports `mocks/`.
+- Compose images use floating `:latest` tags; pin a tag before relying on reproducible local stacks.
+- `docker compose ... down -v` deletes the named monitoring volumes.
 
 ## ANTI-PATTERNS
 

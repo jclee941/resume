@@ -1,7 +1,7 @@
 # UNIT TESTS KNOWLEDGE BASE
 
-**Generated:** 2026-11-02
-**Commit:** `f2142ccf`
+**Generated:** 2026-11-16
+**Commit:** `ebccda00`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -26,7 +26,7 @@ Boundary: measured score 5; retained module-test domain with mixed legacy test i
 ## CONVENTIONS
 
 - Every `*.test.js` here matches root Jest discovery, including `data/` and `shared/`.
-- Some dashboard files import `node:test`; preserve their existing runner contract and check invocation explicitly.
+- Some dashboard files bind `globalThis.test || require('node:test')` so Jest discovery and plain `node --test` both work; keep that dual binding.
 - `npm run test:dashboard` targets app-colocated tests, not `tests/unit/job-dashboard/`.
 - Tests are predominantly CommonJS; keep `require`/`__dirname` compatibility with the Node 22 Jest lane.
 - Browser modules use dynamic import or VM harnesses where the suite already does so.
@@ -35,6 +35,8 @@ Boundary: measured score 5; retained module-test domain with mixed legacy test i
 - A generated Worker must exist for build-dependent assertions; an absent artifact is not a passing runtime check.
 - `portfolio-worker/lib/` mirrors builder modules; top-level portfolio suites also inspect source contracts.
 - Shared-package export tests exercise published subpaths; colocated package tests have separate ownership.
+- DOM-dependent portfolio suites use `../helpers/fake-dom.js` instead of a browser.
+- `worker-routes.test.js` and `portfolio-worker/lib/cards.test.js` are the largest suites; extend by domain rather than growing them.
 
 ## ANTI-PATTERNS
 
