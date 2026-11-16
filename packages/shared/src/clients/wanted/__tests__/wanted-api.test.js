@@ -261,22 +261,22 @@ describe('JobsEndpoint', () => {
       { data: [], total_count: 0 },
       { data: [], total_count: 0 },
     ];
-    client.request = mock.fn(async () => responses.shift());
+    client.chaosRequest = mock.fn(async () => responses.shift());
 
     await endpoint.searchByKeyword('node');
     await endpoint.searchByKeyword('node', { years: -1 });
     await endpoint.searchByKeyword('node', { years: 5 });
 
-    const undefinedYears = client.request.mock.calls[0].arguments[0];
-    const minusOneYears = client.request.mock.calls[1].arguments[0];
-    const validYears = client.request.mock.calls[2].arguments[0];
+    const undefinedYears = client.chaosRequest.mock.calls[0].arguments[0];
+    const minusOneYears = client.chaosRequest.mock.calls[1].arguments[0];
+    const validYears = client.chaosRequest.mock.calls[2].arguments[0];
     assert.ok(!undefinedYears.includes('years='));
     assert.ok(!minusOneYears.includes('years='));
     assert.ok(validYears.includes('years=5'));
   });
 
   it('searchByKeyword() handles missing data array', async () => {
-    client.request = mock.fn(async () => ({ total_count: 0 }));
+    client.chaosRequest = mock.fn(async () => ({ total_count: 0 }));
 
     const result = await endpoint.searchByKeyword('missing');
 

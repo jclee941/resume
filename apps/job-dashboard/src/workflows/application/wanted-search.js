@@ -1,24 +1,14 @@
-import { DEFAULT_USER_AGENT } from '@resume/shared/ua';
+import { WantedAPI } from '@resume/shared/clients/wanted';
 import { refreshWantedSession } from '../../handlers/wanted/mint-session.js';
 import { readPlatformSession } from '../../services/platform-session.js';
 import { enrichWantedJobs, formatWantedExperience } from './wanted-detail.js';
 
 const MAX_WANTED_KEYWORDS = 12;
-const WANTED_PAGE_SIZE = 100;
 
 /**
  * @typedef {import('./platforms.js').PlatformJob} PlatformJob
  * @typedef {import('./platforms.js').PlatformSearchContext} PlatformSearchContext
  * @typedef {import('./platforms.js').PlatformSearchCriteria} PlatformSearchCriteria
- */
-
-/**
- * @typedef {import('./wanted-detail.js').WantedExperienceRange & {
- *   id: string | number;
- *   company?: { name?: string };
- *   position?: string;
- *   address?: { location?: string };
- * }} WantedApiRawJob
  */
 
 /**
@@ -35,36 +25,31 @@ function wantedKeywords(criteria) {
 }
 
 /**
- * Wanted's /api/v4/jobs answers HTTP 422 ("country: Missing data for required
- * field") without `country`, and filters regions by `locations`.
+ * Share keyword transport, pagination and normalization with direct auto-apply.
  * @param {string} session
  * @param {string | undefined} keyword
  * @param {string | undefined} location
  * @returns {Promise<PlatformJob[]>}
  */
 async function queryWanted(session, keyword, location) {
-  const params = new URLSearchParams({
-    country: 'kr',
-    job_sort: 'job.latest_order',
-    years: '-1',
-    locations: location || 'all',
-    limit: String(WANTED_PAGE_SIZE),
-    offset: '0',
-  });
-  if (keyword) params.append('query', keyword);
-  const response = await fetch(`https://www.wanted.co.kr/api/v4/jobs?${params}`, {
-    headers: { Cookie: session, 'User-Agent': DEFAULT_USER_AGENT },
-  });
-  if (!response.ok) throw new Error(`Wanted API error: ${response.status}`);
-  /** @type {{ data?: WantedApiRawJob[] }} */
-  const data = await response.json();
-  return (data.data || []).map((job) => ({
+  const client = new WantedAPI(session);
+  /** @type {{ jobs: import('@resume/types/wanted').WantedJob[] }} */
+  const result = keyword
+    ? await client.searchByKeyword(keyword, {
+        locations: location || 'all',
+        sort: 'job.latest_order',
+      })
+    : await client.searchJobs({ locations: location || 'all', limit: 100 });
+  return result.jobs.map((job) => ({
     id: `wanted-${job.id}`,
-    company: job.company?.name || 'Unknown',
+    company: job.company || 'Unknown',
     position: job.position || 'Unknown',
-    url: `https://www.wanted.co.kr/wd/${job.id}`,
-    location: job.address?.location || '',
-    experience: formatWantedExperience(job),
+    url: job.sourceUrl,
+    location: job.location || '',
+    experience: formatWantedExperience({
+      annual_from: job.experienceMin,
+      annual_to: job.experienceMax,
+    }),
     description: '',
   }));
 }

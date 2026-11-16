@@ -137,7 +137,7 @@ test('throws the first error when every keyword fails', async (t) => {
 
   await assert.rejects(
     searchWanted(ctx, { keywords: ['security', 'devsecops'] }),
-    /Wanted API error: 500/
+    /API request failed: 500/
   );
   assert.equal(requests.length, 2);
 });
@@ -149,10 +149,10 @@ test('sends the country Wanted requires, else the API answers 422', async () => 
   await searchWanted(ctx, { keywords: ['security'] });
 
   const [url] = requests;
-  assert.equal(url.pathname, '/api/v4/jobs');
+  assert.equal(url.pathname, '/api/chaos/search/v1/position');
   assert.equal(url.searchParams.get('country'), 'kr');
-  assert.equal(url.searchParams.get('job_sort'), 'job.latest_order');
-  assert.equal(url.searchParams.get('limit'), '100');
+  assert.equal(url.searchParams.get('sort'), 'job.latest_order');
+  assert.equal(url.searchParams.get('limit'), '20');
 });
 
 test('throws when no Wanted session is stored and none can be minted', async () => {
@@ -283,7 +283,7 @@ test('mints a Wanted session when KV has none', async () => {
     const url = new URL(String(input));
     if (url.pathname === '/v1/auth/token') return Response.json({ token: 'minted' });
     if (url.pathname === '/api/v4/user') return Response.json({ data: { id: 7 } });
-    if (url.pathname !== '/api/v4/jobs') return Response.json({ job: {} });
+    if (url.pathname !== '/api/chaos/search/v1/position') return Response.json({ job: {} });
     listCookies.push(init.headers?.Cookie);
     return jsonResponse([1])();
   };

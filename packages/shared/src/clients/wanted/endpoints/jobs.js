@@ -19,6 +19,8 @@ import { normalizeJob, normalizeJobDetail, normalizeCompany, JOB_CATEGORIES } fr
  * @property {number | string} [limit]
  * @property {number | string} [offset]
  * @property {number | string} [years]
+ * @property {string} [locations]
+ * @property {string} [sort]
  */
 
 /**
@@ -84,19 +86,32 @@ export class JobsEndpoint {
    */
   async searchByKeyword(keyword, options = {}) {
     const params = new URLSearchParams();
+    params.append('country', 'kr');
     params.append('query', keyword);
-    params.append('limit', String(options.limit || 20));
-    params.append('offset', String(options.offset || 0));
+    // The position search returns an empty HTTP 200 response above its page limit.
+    const limit = Math.min(Number(options.limit || 20), 20);
+    params.append('limit', String(limit));
+    if (options.locations) params.append('locations', options.locations);
+    if (options.sort) params.append('sort', options.sort);
 
     if (options.years !== undefined && options.years !== -1) {
       params.append('years', String(options.years));
     }
 
-    const response = await this.#client.request(`/search/job?${params}`);
-    return {
-      jobs: (response.data || []).map(normalizeJob),
-      total: response.total_count || response.data?.length || 0,
-    };
+    /** @type {Map<string, ReturnType<typeof normalizeJob>>} */
+    const jobs = new Map();
+    let total = 0;
+    for (let page = 0; page < 10; page++) {
+      params.set('offset', String(Number(options.offset || 0) + page * limit));
+      const response = await this.#client.chaosRequest(`/search/v1/position?${params}`);
+      const data = response.data || [];
+      total = response.total_count ?? total;
+      for (const job of data.map(normalizeJob)) {
+        if (!jobs.has(String(job.id))) jobs.set(String(job.id), job);
+      }
+      if (data.length < limit) break;
+    }
+    return { jobs: [...jobs.values()], total: total || jobs.size };
   }
 
   /**
