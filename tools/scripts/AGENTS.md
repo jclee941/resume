@@ -1,7 +1,7 @@
 # AUTOMATION SCRIPTS KNOWLEDGE BASE
 
-**Generated:** 2026-11-02
-**Commit:** `f2142ccf`
+**Generated:** 2026-11-16
+**Commit:** `ebccda00`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -45,6 +45,8 @@ scripts/
 | Config classification     | [Security guide](security/AGENTS.md)            | Vars-versus-secrets guard                      |
 | Locale sync               | [Utilities guide](utils/AGENTS.md)              | Path helpers and generation                    |
 | Repository/runtime checks | [Verification guide](verification/AGENTS.md)    | Offline policies and remote probes             |
+| Local process runner      | `local-dev-up/main.go`, `services.go`           | `-portfolio` or `-all` flags                   |
+| Observability helpers     | `monitoring/`                                   | Deploy/setup monitoring, deployment watch      |
 
 ## CONVENTIONS
 
@@ -56,6 +58,7 @@ scripts/
 - Standalone rollout tools in `deploy/` are distinct from the orchestration tools in `deployment/`.
 - `deploy/`, `deployment/`, and `monitoring/` are manual helpers, absent from root Go test targets.
 - `local-dev-up --all` enables only the portfolio service; it does not restore a local job-server.
+- `local-dev-up` and `utils/auto-job-search` are `package main` programs absent from `npm run test:go`.
 
 ## ANTI-PATTERNS
 

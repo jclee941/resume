@@ -1,7 +1,7 @@
 # SHARED PACKAGE KNOWLEDGE BASE
 
-**Generated:** 2026-11-02
-**Commit:** `f2142ccf`
+**Generated:** 2026-11-16
+**Commit:** `ebccda00`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -32,6 +32,7 @@ Scope reason: score 6; retained shared-runtime and export boundary.
 - `session` re-exports normalization, constants, and cookie helpers; dedicated subpaths also exist.
 - Cookie signing uses `auth/hmac`; the old cookie-header comment names a nonexistent crypto subpath.
 - Keep domain barrels thin and module I/O explicit.
+- `TokenBucketRateLimiter` denies on storage errors and after exhausted CAS retries; keep it fail-closed.
 - Browser support uses optional `@cloudflare/puppeteer`; cryptography uses WebCrypto.
 - Prefer structured Logger transports for new logging; console transport and existing diagnostic calls are not forbidden by ESLint.
 - Run `npm run test:shared` for colocated Node tests; `npm run test:jest` also covers shared consumers.

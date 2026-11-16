@@ -1,7 +1,7 @@
 # SCRIPTS UTILS KNOWLEDGE BASE
 
-**Generated:** 2026-11-02
-**Commit:** `f2142ccf`
+**Generated:** 2026-11-16
+**Commit:** `ebccda00`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -35,6 +35,8 @@ Boundary: measured score 5; retained reusable data-generation domain with explic
 - CLI options are `--as-of`, `--source-dir`, and `--output-dir`; date precedence is flag, `RESUME_AS_OF`, UTC today.
 - Output helpers bind directory identity, clean partially written snapshots on error, and close handles.
 - Keep application-variant validation distinct from the canonical master schema.
+- `generateWebData` is also imported by a Jest public-surface test; keep its signature stable.
+- `auto-job-search/` is a Go `package main` in the `tools/scripts` module with no root test target.
 
 ## ANTI-PATTERNS
 

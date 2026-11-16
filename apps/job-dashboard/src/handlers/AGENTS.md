@@ -1,7 +1,7 @@
 # HANDLERS KNOWLEDGE BASE
 
-**Generated:** 2026-11-02
-**Commit:** `f2142ccf`
+**Generated:** 2026-11-16
+**Commit:** `ebccda00`
 **Branch:** `master`
 
 ## OVERVIEW
@@ -17,7 +17,7 @@ handlers/
   applications/  CRUD, approvals, history sync, query/repository helpers
   auto-apply/    Run/start/status/config, scoring, and duplicate checks
   browser/       Browser Rendering smoke check
-  email/         Inbound mail for jobkorea-2fa@jclee.me (JobKorea 2FA codes)
+  email/         Inbound mail for the dedicated JobKorea 2FA address
   jobkorea/      Session minting, page helpers, two-factor and device trust
   public-jobs/   On-demand public-sector posting collection
   scheduled/     Cron router and auto-apply start plan
@@ -49,7 +49,7 @@ handlers/
 - Use typed client-facing errors for unsupported explicit candidates.
 - Daily cron refreshes only Wanted before history sync and Workflow starts.
 - Cron and on-demand JobKorea history use `fetchJobKoreaHistoryAfterLogin`, not KV cookie replay.
-- Email Routing sends only `jobkorea-2fa@jclee.me` to the Worker; `email/inbound-mail.js` stores a JobKorea code in KV `jobkorea:2fa:code` (300 s) and relays Kakao forwarding confirmations to Telegram.
+- Email Routing sends only the dedicated 2FA address to the Worker; `email/inbound-mail.js` stores a JobKorea code in KV `jobkorea:2fa:code` (300 s) and relays Kakao forwarding confirmations to Telegram.
 - The JobKorea login sends at most four email codes per UTC day and keeps device trust cookies in `auth:jobkorea-trust`.
 - `ProfileSyncHandler` passes `mintJobKoreaSession` as `jobkoreaLogin` to the sync service.
 
