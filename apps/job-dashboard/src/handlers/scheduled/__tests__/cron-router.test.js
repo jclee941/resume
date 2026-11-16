@@ -130,7 +130,7 @@ describe('cron-router', () => {
     assert.deepEqual(applications[0].params, {
       triggerType: 'cron-auto-apply',
       source: 'cron',
-      platforms: ['wanted', 'remember'],
+      platforms: ['wanted', 'remember', 'jobkorea'],
       searchCriteria: { keywords: ['DevOps', 'SRE'], keyword: 'DevOps' },
       minMatchScore: 65,
       maxDailyApplications: 7,
@@ -304,7 +304,7 @@ describe('cron-router', () => {
         syncApplicationHistory: (syncEnv, options) =>
           syncApplicationHistory(syncEnv, {
             ...options,
-            platforms: ['wanted', 'remember'],
+            platforms: ['wanted', 'remember', 'jobkorea'],
             adapters: {
               wanted: async () => {
                 now += 119_000;

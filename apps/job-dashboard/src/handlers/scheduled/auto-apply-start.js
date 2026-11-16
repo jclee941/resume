@@ -11,10 +11,11 @@ import { getConfig } from '../auto-apply/db-helpers.js';
 /**
  * Wanted has API discovery and API submission from the Worker. Remember answers 403 to
  * Cloudflare egress (its WAF), so its discovery and submission reach Remember through the
- * Browser Rendering REST API (REMEMBER_BROWSER_ACCOUNT_ID/API_TOKEN); JobKorea has no
- * discovery step and Saramin is intentionally disabled.
+ * Browser Rendering REST API (REMEMBER_BROWSER_ACCOUNT_ID/API_TOKEN). JobKorea is searched with a
+ * Worker fetch of its 즉시지원-filtered search page and applies through 즉시지원 in a Browser Run
+ * browser that logs in first. Saramin is intentionally disabled.
  */
-const AUTO_APPLY_CRON_PLATFORMS = ['wanted', 'remember'];
+const AUTO_APPLY_CRON_PLATFORMS = ['wanted', 'remember', 'jobkorea'];
 
 /**
  * @param {AutoApplyStartEnv} env

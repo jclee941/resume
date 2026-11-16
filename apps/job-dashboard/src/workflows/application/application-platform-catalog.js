@@ -2,6 +2,8 @@ import { createDashboardAtsDryRunClient } from './ats-dry-run-client.js';
 
 export const DEFAULT_APPLICATION_PLATFORMS = ['wanted', 'linkedin', 'remember'];
 export const ATS_DRY_RUN_PLATFORMS = ['greenhouse', 'lever', 'ashby'];
+/** Platforms whose submitter can open the application form without sending it (dry runs). */
+export const SUBMIT_PREVIEW_PLATFORMS = ['jobkorea'];
 
 const DIRECT_APPLICATION_PLATFORMS = [...DEFAULT_APPLICATION_PLATFORMS, 'jobkorea', 'saramin'];
 const ALL_APPLICATION_PLATFORMS = [...DIRECT_APPLICATION_PLATFORMS, ...ATS_DRY_RUN_PLATFORMS];

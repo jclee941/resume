@@ -57,7 +57,8 @@ import {
  *   JOB_DB: import('./application/database.js').D1DatabaseLike & import('./application/approval-gates.js').ApprovalDb;
  *   SESSIONS: import('../services/notifications.js').KvNamespaceLike & { get(key: string): Promise<string | null> };
  *   ENCRYPTION_KEY?: string;
- *   MYBROWSER?: import('@cloudflare/puppeteer').BrowserWorker;
+ *   MYBROWSER: import('@cloudflare/puppeteer').BrowserWorker;
+ *   BROWSER_SESSION: import('../services/browser-session.js').DurableObjectNamespaceBinding;
  *   AI?: import('./application/profile.js').AiBinding;
  *   [key: string]: unknown;
  * }} ApplicationWorkflowEnv

@@ -1,5 +1,6 @@
 import { submitToAtsDryRunOnly } from './application-platform-catalog.js';
 import { submitWithBrowserRendering } from './browser-rendering-submit.js';
+import { submitJobKoreaApplication } from './jobkorea-submit.js';
 import { submitRememberApplication } from './remember-submit.js';
 import { submitWantedApplication } from './wanted-submit.js';
 
@@ -14,7 +15,7 @@ import { submitWantedApplication } from './wanted-submit.js';
  *     MYBROWSER?: import('@cloudflare/puppeteer').BrowserWorker;
  *     SESSIONS: { get: Function; put: Function };
  *     ENCRYPTION_KEY?: string;
- *   };
+ *   } & import('./jobkorea-submit.js').JobKoreaSubmitEnv;
  * }} SubmitContext
  *
  * @typedef {{
@@ -29,6 +30,7 @@ import { submitWantedApplication } from './wanted-submit.js';
  * @typedef {{
  *   sourceUrl?: string;
  *   job?: Record<string, unknown>;
+ *   preview?: boolean;
  * }} SubmitterOptions
  *
  * @typedef {{
@@ -38,6 +40,7 @@ import { submitWantedApplication } from './wanted-submit.js';
  *   resume?: SubmitResume | null;
  *   coverLetter?: string;
  *   job?: Record<string, unknown>;
+ *   preview?: boolean;
  * }} SubmitApplicationParams
  */
 
@@ -48,14 +51,14 @@ import { submitWantedApplication } from './wanted-submit.js';
  */
 export async function submitApplication(
   ctx,
-  { platform, jobId, sourceUrl, resume, coverLetter, job }
+  { platform, jobId, sourceUrl, resume, coverLetter, job, preview }
 ) {
   /** @type {Record<string, () => Promise<SubmitResult> | SubmitResult>} */
   const submitters = {
     wanted: () => submitToWanted(ctx, jobId, resume, coverLetter),
     linkedin: () => submitToLinkedIn(ctx, jobId, resume, coverLetter),
     remember: () => submitToRemember(ctx, jobId, resume, coverLetter),
-    jobkorea: () => submitToJobKorea(ctx, jobId, resume, coverLetter, { sourceUrl, job }),
+    jobkorea: () => submitToJobKorea(ctx, jobId, resume, coverLetter, { preview }),
     saramin: () => submitToSaramin(ctx, jobId, resume, coverLetter, { sourceUrl, job }),
     greenhouse: () => submitToAtsDryRunOnly('greenhouse'),
     lever: () => submitToAtsDryRunOnly('lever'),
@@ -111,22 +114,17 @@ export async function submitToRemember(ctx, jobId, _resume, _coverLetter) {
 }
 
 /**
+ * JobKorea 즉시지원 sends the account's stored resume, so the resume and cover letter are not sent.
+ * `preview` stops at the OnPass popup without applying.
  * @param {SubmitContext} ctx
  * @param {string} jobId
- * @param {SubmitResume | null | undefined} resume
- * @param {string} [coverLetter]
+ * @param {SubmitResume | null | undefined} _resume
+ * @param {string} [_coverLetter]
  * @param {SubmitterOptions} [options]
  * @returns {Promise<SubmitResult>}
  */
-export async function submitToJobKorea(ctx, jobId, resume, coverLetter, options = {}) {
-  return submitWithBrowserRendering(ctx, {
-    platform: 'jobkorea',
-    jobId,
-    sourceUrl: options.sourceUrl,
-    resume,
-    coverLetter,
-    job: options.job,
-  });
+export async function submitToJobKorea(ctx, jobId, _resume, _coverLetter, options = {}) {
+  return submitJobKoreaApplication(ctx.env, jobId, { preview: options.preview === true });
 }
 
 /**

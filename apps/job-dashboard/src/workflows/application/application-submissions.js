@@ -7,6 +7,7 @@ import {
   safePreviewText,
   WORKFLOW_APPROVAL,
 } from './application-submission-gates.js';
+import { previewSubmissions } from './submission-previews.js';
 
 export { attachWorkflowApproval, WORKFLOW_APPROVAL };
 
@@ -108,6 +109,7 @@ export async function submitApprovedApplications(ctx, step, workflow, approvedJo
     }
   } else if (dryRun) {
     applicationResults.push(...createAtsSubmissionPreviews(jobs, resumeId));
+    applicationResults.push(...(await previewSubmissions(ctx, step, jobs)));
     // prettier-ignore
     workflow.steps.push({ step: 'apply-jobs', status: 'dry-run', count: jobs.length, previewed: applicationResults.length, networkWrites: 0 });
   }
