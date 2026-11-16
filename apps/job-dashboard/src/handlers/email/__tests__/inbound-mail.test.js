@@ -22,7 +22,7 @@ function jobkoreaMail({ code = '482913', dkim = true, from = 'noreply@jobkorea.c
   return [
     ...(dkim ? ['DKIM-Signature: v=1; a=rsa-sha256; d=jobkorea.co.kr; s=sel; b=abc'] : []),
     `From: =?UTF-8?B?${Buffer.from('잡코리아').toString('base64')}?= <${from}>`,
-    'To: someone@kakao.com',
+    'To: someone@example.com',
     `Subject: =?UTF-8?B?${Buffer.from('[잡코리아] 2단계 인증번호 안내').toString('base64')}?=`,
     'MIME-Version: 1.0',
     'Content-Type: multipart/alternative; boundary="b1"',
@@ -61,7 +61,7 @@ describe('handleInboundEmail', () => {
     const env = { SESSIONS: kv() };
     const raw = jobkoreaMail({ code: '7351', dkim: false });
 
-    await handleInboundEmail(message({ raw, from: 'srs0=ab=cd@kakao.com' }), env, {
+    await handleInboundEmail(message({ raw, from: 'srs0=ab=cd@daum.net' }), env, {
       clock: () => NOW,
     });
 
