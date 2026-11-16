@@ -239,6 +239,32 @@ test('a pending request from another workflow skips the job without sleep or not
   assert.equal(workflow.stats.jobsRejected, 0);
 });
 
+test('scored jobs already applied are counted in the gate step and approve nothing', async () => {
+  const step = createStepMock();
+  const ctx = createApprovalContext({ appliedCompanies: ['Acme', 'Globex'] });
+  const workflow = newWorkflow();
+
+  const { approvedJobs } = await processApprovalGates(
+    ctx,
+    step,
+    workflow,
+    [jobOf('a', 95, 'Acme'), jobOf('b', 95, 'Globex')],
+    true,
+    90
+  );
+
+  const gate = workflow.steps.find((entry) => entry.step === 'approval-gate');
+  assert.equal(gate.alreadyApplied, 2);
+  assert.equal(gate.approved, 0);
+  assert.deepEqual(
+    gate.approvalMetadata.map((entry) => entry.status),
+    ['already-applied', 'already-applied']
+  );
+  assert.equal(workflow.stats.jobsAlreadyApplied, 2);
+  assert.deepEqual(approvedJobs, []);
+  assert.deepEqual(ctx.created, []);
+});
+
 test('a human-rejected earlier request keeps the job skipped', async () => {
   const step = createStepMock();
   const ctx = createApprovalContext({

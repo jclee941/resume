@@ -16,6 +16,7 @@ const FOREIGN_COMPANY_PACKET_PATH =
  *   source: string;
  *   adapterCapability: ServerAtsCapability | null;
  *   packetPath: string | null;
+ *   status?: string;
  *   humanApproval?: {
  *     status: string;
  *     destination: string;
@@ -44,6 +45,21 @@ const FOREIGN_COMPANY_PACKET_PATH =
  */
 export function attachServerAtsCapability(job, capability) {
   return { ...job, [SERVER_ATS_CAPABILITY]: capability };
+}
+
+/**
+ * Tallies a gate result that neither approves nor leaves a decision pending.
+ * @param {{ jobsRejected: number; jobsAlreadyRequested?: number; jobsAlreadyApplied?: number }} stats
+ * @param {string} status
+ * @returns {void}
+ */
+export function countSkippedOutcome(stats, status) {
+  if (status === 'rejected') stats.jobsRejected++;
+  else if (status === 'already-requested') {
+    stats.jobsAlreadyRequested = (stats.jobsAlreadyRequested ?? 0) + 1;
+  } else if (status === 'already-applied') {
+    stats.jobsAlreadyApplied = (stats.jobsAlreadyApplied ?? 0) + 1;
+  }
 }
 
 /**

@@ -3,7 +3,11 @@ import {
   isCompanyAlreadyApplied,
 } from '../../handlers/auto-apply/duplicate-company.js';
 import { attachWorkflowApproval } from './application-submissions.js';
-import { buildApprovalMetadata, withHumanApproval } from './approval-metadata.js';
+import {
+  buildApprovalMetadata,
+  countSkippedOutcome,
+  withHumanApproval,
+} from './approval-metadata.js';
 
 export { attachServerAtsCapability } from './approval-metadata.js';
 
@@ -46,6 +50,7 @@ export { attachServerAtsCapability } from './approval-metadata.js';
  *     jobsApproved: number;
  *     jobsRejected: number;
  *     jobsAlreadyRequested?: number;
+ *     jobsAlreadyApplied?: number;
  *     [key: string]: unknown;
  *   };
  *   steps: unknown[];
@@ -119,27 +124,23 @@ export async function processApprovalGates(
     if (isApprovedResult(approvalResult.status)) {
       approvedJobs.push(createApprovedJob(approvalResult));
       workflow.stats.jobsApproved++;
-    } else if (approvalResult.status === 'rejected') {
-      workflow.stats.jobsRejected++;
-    } else if (approvalResult.status === 'already-requested') {
-      workflow.stats.jobsAlreadyRequested = (workflow.stats.jobsAlreadyRequested ?? 0) + 1;
+    } else {
+      countSkippedOutcome(workflow.stats, approvalResult.status);
     }
   }
 
-  workflow.steps.push({
-    step: 'approval-gate',
-    status: 'completed',
+  const summary = {
     approved: workflow.stats.jobsApproved,
     rejected: workflow.stats.jobsRejected,
     alreadyRequested: workflow.stats.jobsAlreadyRequested ?? 0,
-    approvalMetadata: approvalResults.map((result) => result.approvalMetadata),
-  });
-  await ctx.logWorkflowStep(workflow.id, 'approval-gate', 'completed', {
-    approved: workflow.stats.jobsApproved,
-    rejected: workflow.stats.jobsRejected,
-    alreadyRequested: workflow.stats.jobsAlreadyRequested ?? 0,
-    approvalMetadata: approvalResults.map((result) => result.approvalMetadata),
-  });
+    alreadyApplied: workflow.stats.jobsAlreadyApplied ?? 0,
+    approvalMetadata: approvalResults.map((result) => ({
+      ...result.approvalMetadata,
+      status: result.status,
+    })),
+  };
+  workflow.steps.push({ step: 'approval-gate', status: 'completed', ...summary });
+  await ctx.logWorkflowStep(workflow.id, 'approval-gate', 'completed', summary);
 
   return { approvedJobs, approvalResults };
 }
