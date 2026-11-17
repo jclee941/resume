@@ -93,7 +93,7 @@ export async function searchJobKorea(_ctx, criteria, { fetchImpl = fetch } = {})
           const job = toJobKoreaJob(posting);
           if (!merged.has(job.id)) merged.set(job.id, job);
         }
-        if (postings.length === 0 || merged.size === sizeBefore) break;
+        if (merged.size === sizeBefore) break;
       }
     } catch (error) {
       errors.push(error);

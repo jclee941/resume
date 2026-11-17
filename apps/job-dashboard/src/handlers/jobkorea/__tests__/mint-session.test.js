@@ -32,15 +32,13 @@ function createFakeInput() {
 // order mint-session.js's internal helpers call page.evaluate(): isLoggedIn,
 // then detectCaptcha on every login poll that is not yet logged in.
 function createFakePage({ evaluateQueue = [true], cookies = JOBKOREA_COOKIES, inputs = {} } = {}) {
-  const evaluateCalls = [];
   return {
     setRequestInterception: mock.fn(async () => {}),
     on: mock.fn(() => {}),
     goto: mock.fn(async () => {}),
     $: mock.fn(async (selector) => inputs[selector] ?? null),
     $$: mock.fn(async () => [createFakeCandidate()]),
-    evaluate: mock.fn(async (fn, arg) => {
-      evaluateCalls.push(arg);
+    evaluate: mock.fn(async () => {
       if (evaluateQueue.length === 0) {
         throw new Error('createFakePage: no queued evaluate() response left');
       }
@@ -51,7 +49,6 @@ function createFakePage({ evaluateQueue = [true], cookies = JOBKOREA_COOKIES, in
     close: mock.fn(async () => {}),
     url: () => JOBKOREA_LOGIN_URL,
     title: mock.fn(async () => 'JobKorea Login'),
-    evaluateCalls,
   };
 }
 

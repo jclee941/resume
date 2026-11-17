@@ -11,10 +11,8 @@ export const MAX_SUBMIT_PREVIEWS = 3;
  */
 
 /**
- * Dry-run previews for platforms whose submitter can open the application form without sending
- * it: the best MAX_SUBMIT_PREVIEWS approved jobs of those platforms are opened up to the final
- * submit control and reported, and nothing is submitted or recorded. A failed preview is reported
- * as such and never fails the run.
+ * Opens the best MAX_SUBMIT_PREVIEWS approved forms up to the final submit control without
+ * submitting or recording them; a failed preview is reported and never fails the run.
  * @param {PreviewContext} ctx
  * @param {import('cloudflare:workers').WorkflowStep} step
  * @param {import('./application-submission-gates.js').GateJob[]} jobs

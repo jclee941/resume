@@ -24,7 +24,7 @@ function challengePage({ sendAnswer = 'OK', verifyAnswer = 'OK', onSend = () => 
   const clicks = [];
   const pending = [];
   const answers = { '/TwoFactorAuth/Send': sendAnswer, '/TwoFactorAuth/Verify': verifyAnswer };
-  const page = {
+  return {
     clicks,
     url: () => 'https://www.jobkorea.co.kr/user/TwoFactorAuth/Index?token=t',
     waitForResponse: mock.fn(
@@ -53,7 +53,6 @@ function challengePage({ sendAnswer = 'OK', verifyAnswer = 'OK', onSend = () => 
     type: mock.fn(async () => {}),
     waitForNavigation: mock.fn(async () => {}),
   };
-  return page;
 }
 
 const codeArrives =
