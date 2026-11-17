@@ -33,10 +33,8 @@ export async function findControl(page, pattern) {
   return page.evaluate(
     ({ selector, source, flags }) => {
       const matcher = new RegExp(source, flags);
-      const nodes = Array.from(
-        /** @type {NodeListOf<HTMLElement & { value?: string }>} */ (
-          document.querySelectorAll(selector)
-        )
+      const nodes = /** @type {NodeListOf<HTMLElement & { value?: string }>} */ (
+        document.querySelectorAll(selector)
       );
       for (const [index, node] of nodes.entries()) {
         const text = (node.innerText || node.value || node.textContent || '')

@@ -39,8 +39,8 @@ export function detailText(html) {
     )
     .replace(/\s+/g, ' ')
     .trim();
-  const start = text.search(ROLE_SECTION);
-  return text.slice(Math.max(start, 0), Math.max(start, 0) + DETAIL_TEXT_CHARS);
+  const start = Math.max(text.search(ROLE_SECTION), 0);
+  return text.slice(start, start + DETAIL_TEXT_CHARS);
 }
 
 /**

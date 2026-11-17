@@ -69,7 +69,14 @@ export async function submitApprovedApplications(ctx, step, workflow, approvedJo
         continue;
       }
       if (jobKoreaTwoFactor && job.source === 'jobkorea') {
-        applicationResults.push(createTwoFactorSkip(job));
+        // No further login attempts; skipped jobs count as neither failures nor applications.
+        applicationResults.push({
+          success: false,
+          skipped: true,
+          status: 'skipped',
+          jobId: job.id,
+          reason: JOBKOREA_2FA_REQUIRED,
+        });
         continue;
       }
 
@@ -214,22 +221,6 @@ async function submitApprovedApplication(ctx, workflow, job, resumeId) {
   } catch (error) {
     return createSubmitFailure(job.id, error instanceof Error ? error.message : String(error));
   }
-}
-
-/**
- * JobKorea asked for two-factor authentication earlier in this run: no login is attempted, and
- * the job is neither a failure nor an application, so it never reaches the daily cap.
- * @param {import('./application-submission-gates.js').GateJob} job
- * @returns {{ success: false; skipped: true; status: 'skipped'; jobId: unknown; reason: string }}
- */
-function createTwoFactorSkip(job) {
-  return {
-    success: false,
-    skipped: true,
-    status: 'skipped',
-    jobId: job.id,
-    reason: JOBKOREA_2FA_REQUIRED,
-  };
 }
 
 /**

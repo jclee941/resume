@@ -106,8 +106,10 @@ export class JobsEndpoint {
       const response = await this.#client.chaosRequest(`/search/v1/position?${params}`);
       const data = response.data || [];
       total = response.total_count ?? total;
-      for (const job of data.map(normalizeJob)) {
-        if (!jobs.has(String(job.id))) jobs.set(String(job.id), job);
+      for (const rawJob of data) {
+        const job = normalizeJob(rawJob);
+        const id = String(job.id);
+        if (!jobs.has(id)) jobs.set(id, job);
       }
       if (data.length < limit) break;
     }

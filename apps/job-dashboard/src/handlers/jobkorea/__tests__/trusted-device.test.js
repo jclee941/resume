@@ -32,7 +32,7 @@ describe('rememberTrustedDevice', () => {
     const after = [
       cookie('ASP.NET_SessionId', 's1'),
       cookie('C%5FUSER', 'u2', NOW_S + DAY_S),
-      cookie('TFA_TRUST', 't1', NOW_S + 30 * DAY_S),
+      cookie('TFA_TRUST', 'trust-cookie_value!', NOW_S + 30 * DAY_S),
       cookie('tracker', 'x', NOW_S + 400 * DAY_S, '.example.com'),
     ];
 
@@ -40,7 +40,7 @@ describe('rememberTrustedDevice', () => {
 
     assert.deepEqual(changed, ['C%5FUSER', 'TFA_TRUST']);
     const { value, options } = env.SESSIONS.store.get('auth:jobkorea-trust');
-    assert.doesNotMatch(value, /t1/);
+    assert.doesNotMatch(value, /trust-cookie_value!/);
     const stored = JSON.parse(await decrypt(value, { ENCRYPTION_KEY }));
     assert.deepEqual(
       stored.map(({ name }) => name),
