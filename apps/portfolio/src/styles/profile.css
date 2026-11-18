@@ -64,6 +64,11 @@
   padding-left: var(--space-4);
 }
 
+/* Award issuer sits on its own line in every locale, whatever the award name length. */
+.profile-card__list li > .profile-card__muted {
+  display: block;
+}
+
 .profile-card__list li::before {
   content: '>';
   position: absolute;
