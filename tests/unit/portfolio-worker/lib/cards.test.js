@@ -952,13 +952,22 @@ describe('Cards Module', () => {
     });
 
     test.each([
-      ['https://www.linkedin.com/in/%EC%9E%AC%EC%B2%A0-%EC%9D%B4-070331192/', '재철-이-070331192'],
+      ['https://www.linkedin.com/in/%ED%99%8D%EA%B8%B8%EB%8F%99/', '홍길동'],
       ['https://www.linkedin.com/in/broken-%E0%A4%A/', 'broken-%E0%A4%A'],
     ])('shows the LinkedIn handle of %s as %s', (linkedin, handle) => {
       const html = generateContactGrid({ github: 'https://github.com/test', linkedin });
 
       expect(html).toContain(`href="${linkedin}"`);
       expect(html).toContain(`<span class="contact-item__value">${handle}</span>`);
+    });
+
+    test('hides an auto-generated LinkedIn slug but keeps the link', () => {
+      const linkedin = 'https://www.linkedin.com/in/%ED%99%8D-%EA%B8%B8%EB%8F%99-0a1b2c3d/';
+      const html = generateContactGrid({ github: 'https://github.com/test', linkedin });
+
+      expect(html).toContain(`href="${linkedin}"`);
+      expect(html).toContain('aria-label="LinkedIn (새 탭에서 열림)"');
+      expect(html).not.toContain('0a1b2c3d</span>');
     });
   });
 

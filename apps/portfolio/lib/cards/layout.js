@@ -80,18 +80,23 @@ function generateInfrastructureCards(infraData) {
 
 /**
  * Visible handle of a profile URL: its last path segment ("octocat", "@name").
+ * LinkedIn's auto-generated slugs ("name-surname-1a2b3c4d") are not handles, so they stay hidden.
  * @param {string | undefined} url
  * @returns {string}
  */
 function contactHandle(url) {
   if (!url || !URL.canParse(url)) return '';
-  const segment = new URL(url).pathname.split('/').filter(Boolean).pop() || '';
+  const { hostname, pathname } = new URL(url);
+  const segment = pathname.split('/').filter(Boolean).pop() || '';
+  let handle = segment;
   try {
-    return decodeURIComponent(segment);
+    handle = decodeURIComponent(segment);
   } catch (error) {
     if (!(error instanceof URIError)) throw error;
-    return segment;
   }
+  const generatedLinkedInSlug =
+    /(^|\.)linkedin\.com$/.test(hostname) && /-[0-9a-f]{6,}$/i.test(handle);
+  return generatedLinkedInSlug ? '' : handle;
 }
 
 /**

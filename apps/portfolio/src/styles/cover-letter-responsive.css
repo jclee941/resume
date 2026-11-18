@@ -3,6 +3,11 @@
     padding: var(--space-3) var(--space-4);
   }
 
+  /* The decorative badge gives its width to the file path, which would otherwise truncate. */
+  .cover-letter__hint {
+    display: none;
+  }
+
   .cover-letter__headline {
     max-width: none;
     padding: var(--space-12) var(--space-4) var(--space-3);
