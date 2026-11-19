@@ -50,6 +50,7 @@ const PROFILE_LABELS = {
  * @typedef {Object} ProfileEducation
  * @property {string} school
  * @property {string} [major]
+ * @property {string} [schoolType]
  * @property {string} [status]
  * @property {string} [startDate]
  * @property {string} [endDate]

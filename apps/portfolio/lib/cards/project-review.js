@@ -138,6 +138,7 @@ function buildProjectCaseNotes(project, labels) {
  */
 function projectDiagramFlowText(diagram) {
   const edges = Array.isArray(diagram.edges) ? diagram.edges : [];
+  /** @type {(key: 'from' | 'to', id: string) => number} */
   const count = (key, id) => edges.filter((edge) => edge[key] === id).length;
   const branches = edges.some((edge) => count('from', edge.from) > 1 || count('to', edge.to) > 1);
   if (!branches) return diagram.nodes.map((node) => node.label).join(' → ');
