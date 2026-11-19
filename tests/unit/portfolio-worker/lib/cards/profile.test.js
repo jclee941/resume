@@ -68,6 +68,13 @@ describe('cards/profile generateProfileBento', () => {
     );
   });
 
+  it('shows the school type before the graduation status', () => {
+    const html = generateProfileBento({
+      education: { school: '예시대학교', schoolType: '4년제', status: '졸업 예정' },
+    });
+    expect(html).toContain('<span class="profile-card__status">(4년제 · 졸업 예정)</span>');
+  });
+
   it.each([
     [
       'ko',

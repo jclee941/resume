@@ -7,7 +7,7 @@ const PROJECT_LABELS = {
     proof: '결과',
     diagram: '구성 흐름',
     live: '공개 중',
-    active: '운영 중',
+    active: '진행 중',
     completed: '완료',
   },
   en: {
@@ -25,7 +25,7 @@ const PROJECT_LABELS = {
     proof: '結果',
     diagram: '構成フロー',
     live: '公開中',
-    active: '運用中',
+    active: '進行中',
     completed: '完了',
   },
 };
@@ -129,8 +129,34 @@ function buildProjectCaseNotes(project, labels) {
   return `<dl class="project-case-notes">${rows}</dl>`;
 }
 
+/**
+ * Text alternative for a project diagram. A straight chain reads as one arrow sequence; when any
+ * node fans out or merges, each source lists its targets so parallel branches are not shown as
+ * consecutive steps.
+ * @param {{ nodes: Array<{ id: string, label: string }>, edges?: Array<{ from: string, to: string }> }} diagram
+ * @returns {string}
+ */
+function projectDiagramFlowText(diagram) {
+  const edges = Array.isArray(diagram.edges) ? diagram.edges : [];
+  const count = (key, id) => edges.filter((edge) => edge[key] === id).length;
+  const branches = edges.some((edge) => count('from', edge.from) > 1 || count('to', edge.to) > 1);
+  if (!branches) return diagram.nodes.map((node) => node.label).join(' → ');
+
+  const labels = new Map(diagram.nodes.map((node) => [node.id, node.label]));
+  return diagram.nodes
+    .map((node) => {
+      const targets = edges
+        .filter((edge) => edge.from === node.id)
+        .map((edge) => labels.get(edge.to));
+      return targets.length > 0 ? `${node.label} → ${targets.join(' / ')}` : '';
+    })
+    .filter(Boolean)
+    .join(', ');
+}
+
 module.exports = {
   buildProjectCaseNotes,
+  projectDiagramFlowText,
   detectLocale,
   projectAnchor,
   projectDescriptionRemainder,

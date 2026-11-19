@@ -13,12 +13,12 @@ function applyJapaneseSecurity(html) {
       'Cloudflare WorkersでCSP nonce・strict-dynamic、HSTS、COOP/CORP、frame-ancestors noneをレスポンスヘッダーとして適用します。'
     )
     .replace(
-      /Grafana, Prometheus, Loki로 로그와 운영 이벤트를 확인하고[\s\S]*?대시보드 기반으로[\s\S]*?상태를 검토합니다\./g,
-      'Grafana・Prometheus・Lokiでログと運用イベントを確認し、ダッシュボードで状態を確認します。'
+      /사이트 운영 로그는 Cloudflare Workers Logs에서 확인합니다\.[\s\S]*?홈랩에서는 Grafana로[\s\S]*?Prometheus 메트릭과 Loki 로그를 함께 봅니다\./g,
+      'サイトの運用ログはCloudflare Workers Logsで確認します。ホームラボではGrafanaでPrometheusメトリクスとLokiログをあわせて確認します。'
     )
     .replace(
-      /MCP, Terraform, GitHub Actions를 통해 반복 운영 절차와 배포 검증을[\s\S]*?코드로[\s\S]*?관리합니다\./g,
-      'MCP・Terraform・GitHub Actionsで反復的な運用手順とデプロイ検証をコードとして管理します。'
+      /GitHub Actions로 사이트 빌드와 테스트를 검증하고,[\s\S]*?홈랩 구성은 Terraform으로[\s\S]*?관리합니다\./g,
+      'GitHub Actionsでサイトのビルドとテストを検証し、ホームラボの構成はTerraformで管理します。'
     );
 }
 
