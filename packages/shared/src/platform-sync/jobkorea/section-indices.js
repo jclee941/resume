@@ -26,6 +26,7 @@ function entryKeys(fields, indexName) {
  * Entry keys for the SSoT overlay, read from the live JobKorea edit form: the first
  * school entry, and for the sections a save replaces wholesale (careers, licenses,
  * awards) the stored `c<id>` rows in form order followed by `<n>_<timestamp>` keys, the
+ * stored self-introduction row,
  * format the editor gives rows it adds. The mappers' `c1`, `c2`… fallback names no
  * stored row: JobKorea reported such a save as successful without storing those rows.
  * @param {FormField[]} baseFields
@@ -49,5 +50,9 @@ export function deriveJobKoreaSectionIndices(baseFields, now = Date.now()) {
   if (school) indices.school = school;
   const [highSchool] = entryKeys(baseFields, 'HighSchool.index');
   if (highSchool) indices.highSchool = highSchool;
+  const intro = entryKeys(baseFields, 'ResumeProfile.index').filter((key) =>
+    STORED_ROW_KEY.test(key)
+  );
+  if (intro.length > 0) indices.intro = intro;
   return indices;
 }
