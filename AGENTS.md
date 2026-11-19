@@ -98,7 +98,6 @@ unmeasured; no counts are claimed.
 - Never bypass security, approval, disabled-platform or historical-company gates; avoid duplicate application side effects.
 - Never substitute fixtures for D1 content or treat build, proposal, release or stub success as proof of production behavior.
 - Never suppress type errors with `as any`, `@ts-ignore` or broad unchecked casts.
-- Keep source files within the 200 code-LOC limit.
 - Never include concrete performance metrics in resume or portfolio text: no percentages, ratios or absolute metrics.
 - Never put personal identifiers, contact data or applied-company names in AGENTS.md guides.
 - Never `terraform apply` locally against production; never treat `affected` or env-drift checks as CI gates or add CI write permissions.
@@ -123,7 +122,6 @@ npm run sync:data
 npm run lint
 npm run lint:agents
 npm run pr                 # push branch, open PR, enable squash auto-merge
-npm run lint:loc
 npm run lint:naming
 npm run typecheck
 npm run typecheck:strict

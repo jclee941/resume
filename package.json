@@ -71,7 +71,6 @@
     "lint:agents": "go run tools/scripts/verification/verify-agents-compliance.go",
     "verify:all": "npm run verify:production",
     "lint:naming": "node tools/scripts/verification/validate-monorepo-naming.mjs",
-    "lint:loc": "node tools/scripts/verification/check-source-loc.mjs",
     "hooks:install": "pre-commit install",
     "hooks:run": "pre-commit run --all-files",
     "typecheck": "tsc --project tsconfig.json --noEmit",

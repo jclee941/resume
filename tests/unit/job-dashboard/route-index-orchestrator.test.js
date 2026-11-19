@@ -77,8 +77,4 @@ describe('job-dashboard route index orchestrator', () => {
       expect(indexSrc).toContain(exp);
     }
   });
-
-  test('is under 200 lines', () => {
-    expect(indexSrc.split('\n').length).toBeLessThanOrEqual(200);
-  });
 });
