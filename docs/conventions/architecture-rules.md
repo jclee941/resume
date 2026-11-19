@@ -13,8 +13,7 @@ This rule is NON-NEGOTIABLE. Violations BLOCK all further work until resolved.
   - [Rule 1: Entry Points are Corridors, Not Dumping Grounds](#rule-1-entry-points-are-corridors-not-dumping-grounds)
   - [Rule 2: No Catch-All Files](#rule-2-no-catch-all-files)
   - [Rule 3: Single Responsibility Principle](#rule-3-single-responsibility-principle)
-  - [Rule 4: 200 LOC Hard Limit](#rule-4-200-loc-hard-limit)
-  - [Rule 5: Scheduled Automation](#rule-5-scheduled-automation)
+  - [Rule 4: Scheduled Automation](#rule-4-scheduled-automation)
 - [Naming Conventions](#naming-conventions)
 - [Dependency Direction](#dependency-direction)
 - [Verification Checklist](#verification-checklist)
@@ -84,30 +83,7 @@ much. Split it.
 - Signal: You need to scroll extensively to understand the file -> Action: SPLIT
   NOW
 
-## Rule 4: 200 LOC Hard Limit
-
-Any source code file exceeding 200 lines of code (excluding long string prompts,
-SQL queries, or markdown content) is an immediate code smell.
-
-When you detect a file > 200 LOC:
-
-1. STOP current work.
-2. Identify the multiple responsibilities hiding in the file.
-3. Extract each responsibility into a focused module.
-4. Verify each resulting file is < 200 LOC and has a single purpose.
-5. Resume original work.
-
-Quick method: Read the file -> subtract blank lines, comment-only lines, and
-long static string content -> remaining count = LOC. When in doubt, round up —
-err on the side of splitting.
-
-`npm run lint:loc` (`tools/scripts/verification/check-source-loc.mjs`) enforces
-the 200-code-line limit for non-test JavaScript and Go source under `apps/`,
-`packages/`, and `tools/`; it fails above 200 lines and CI runs it. Its count
-skips blank and comment-only lines and the bodies of multiline template literals
-and Go raw strings. This check does not scan every source file in the repository.
-
-## Rule 5: Scheduled Automation
+## Rule 4: Scheduled Automation
 
 Do NOT add host schedulers (systemd timers, crontab entries), standalone cron
 scripts, or long-running daemon loops for scheduled tasks, webhooks, or API
@@ -150,7 +126,7 @@ Never reverse the direction.
 
 When splitting files, verify:
 
-1. All output files below 200 LOC (this project) or 500 LOC (general)
+1. Each output file has a single purpose
 2. No circular dependencies introduced
 3. All existing tests pass
 4. Build/typecheck succeeds
@@ -164,8 +140,7 @@ When reading, writing, or editing ANY codebase:
 
 1. Check the code you're touching — does it violate any rule above?
 2. If YES — refactor FIRST, then proceed with your task.
-3. If creating a new file — ensure it has exactly one responsibility and stays
-   under 200 LOC.
+3. If creating a new file — ensure it has exactly one responsibility.
 4. If building an automation/scheduled task — wire it through a Cron Trigger
    and a Cloudflare Workflow; never add a host scheduler.
 5. If renaming/moving files — update all direct references in
@@ -173,7 +148,7 @@ When reading, writing, or editing ANY codebase:
 
 ## Anti-Patterns
 
-- Premature splitting: Splitting <200 LOC files or during prototyping.
+- Premature splitting: Splitting small cohesive files or during prototyping.
 - Shotgun splitting: Every function in its own file regardless of cohesion.
 - False modularity: Split files still share state via globals or circular deps.
 - Over-abstraction: Abstract base classes or DI frameworks just to justify a

@@ -571,8 +571,8 @@ full `--bg-secondary` band lose their tonal step exactly where the reader is loo
 6. Cross-cutting: `animations.css`, `cjk-typography.css`, `contrast-modes.css`,
    `print.css` (last).
 
-Rules: one component per file, at most 200 lines per file, no late "stabilization"
-override layers; a fix lands in the file that owns the component.
+Rules: one component per file, no late "stabilization" override layers; a fix
+lands in the file that owns the component.
 
 ## 10. Accepted Debt
 

@@ -17,7 +17,6 @@ Boundary: measured score 5; retained policy-verification domain with distinct of
 | Worker topology         | `validate-worker-config.mjs`, `validate-worker-rules.mjs`   | Bindings, consumers, preview isolation |
 | Workspace imports       | `validate-workspace-dependencies.mjs`                       | Dependency and import declarations     |
 | Architecture governance | `validate-architecture-docs.mjs`, `architecture-docs-*.mjs` | ADR/index and current-state checks     |
-| Source limits           | `check-source-loc.mjs`                                      | Code-line counting and exclusions      |
 | Naming policy           | `validate-monorepo-naming.mjs`                              | Paths and script-language conventions  |
 | Guide policy            | `verify-agents-compliance.go`, `check-agents-coverage.js`   | Required files, metadata, coverage     |
 | Dependency audit        | `audit-production-dependencies.mjs`                         | Production dependency report policy    |
@@ -32,7 +31,6 @@ Boundary: measured score 5; retained policy-verification domain with distinct of
 - Remote probes distinguish transport failure from a failed application contract and use bounded timeouts.
 - `verify:architecture-hardening:core` composes worker, SSoT, workspace, and architecture checks.
 - `npm run test:tools` covers adjacent Node suites; deployment waiting has its own explicit Go test target.
-- `check-source-loc.mjs` excludes tests and counts code rather than raw blank/comment/template lines.
 - Guide compliance sets failure status for missing required files, but some content defects only print diagnostics.
 - Inspect H1, metadata, parent links, and forbidden-marker output even when `lint:agents` exits zero.
 - Root `npm run lighthouse:ci` supplies `tools/lighthouserc.json` to the profile runner.

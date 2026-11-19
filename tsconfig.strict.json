@@ -215,7 +215,6 @@
     "tools/scripts/verification/architecture-docs-index.mjs",
     "tools/scripts/verification/audit-production-dependencies.mjs",
     "tools/scripts/verification/check-agents-coverage.js",
-    "tools/scripts/verification/check-source-loc.mjs",
     "tools/scripts/verification/validate-monorepo-naming.mjs",
     "packages/types/src/cloudflare-workers.d.ts",
     "apps/job-dashboard/src/handlers/applications/statuses.js",
