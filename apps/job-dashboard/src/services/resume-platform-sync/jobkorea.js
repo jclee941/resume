@@ -199,7 +199,8 @@ export async function syncJobKoreaFromSsot(env, ssot, options) {
     }
     const targetFields = buildJobKoreaFormData(
       ssot,
-      deriveJobKoreaSectionIndices(editor.fields, now)
+      deriveJobKoreaSectionIndices(editor.fields, now),
+      now
     ).map(({ name, value }) => ({ name: String(name), value }));
     const mergedFields = smartMergeFields(editor.fields, targetFields, {
       ...DEFAULT_EDIT_TOKENS,

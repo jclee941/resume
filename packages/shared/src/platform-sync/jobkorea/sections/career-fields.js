@@ -6,9 +6,18 @@ import {
 import { EMPTY_CAREER_FIELDS_PRE_RETIRE, EMPTY_CAREER_FIELDS_POST_RETIRE } from './constants.js';
 import { parseRange, pushField } from './validators.js';
 
-// The editor's 재직중 checkbox writes 3 when checked; stored resigned rows read 2. Any other
-// value is taken as resigned, and the save then demands an end month (CEYM).
+// The editor's 재직중 checkbox writes 3 when checked; stored resigned rows read 2. Checking it also
+// fills the end month (CEYM) with the current month, and the save rejects a career without one.
 const RETIRE_ST = { employed: 3, retired: 2 };
+const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
+
+/**
+ * @param {number} now epoch milliseconds
+ * @returns {string} the current Korean month as YYYYMM
+ */
+function currentKstMonth(now) {
+  return new Date(now + KST_OFFSET_MS).toISOString().slice(0, 7).replace('-', '');
+}
 
 /**
  * @typedef {{
@@ -79,9 +88,10 @@ function buildCareerSummary(ssot) {
  * Map careers to JobKorea form fields.
  * @param {CareerSsot | null | undefined} ssot - SSOT resume data
  * @param {string[]} [indices] - Server-generated entry indices (e.g. ['c14','c844','c845']).
+ * @param {number} [now] - epoch milliseconds; a current career ends in this month
  * @returns {Array<{ name: string, value: string }>}
  */
-export function mapCareersToFormFields(ssot, indices) {
+export function mapCareersToFormFields(ssot, indices, now = Date.now()) {
   const careers = Array.isArray(ssot?.careers) ? ssot.careers : [];
   if (careers.length === 0) return [];
 
@@ -102,7 +112,7 @@ export function mapCareersToFormFields(ssot, indices) {
     );
     pushField(fields, `Career[${key}].C_Part`, career?.department || '');
     pushField(fields, `Career[${key}].CSYM`, start);
-    pushField(fields, `Career[${key}].CEYM`, end);
+    pushField(fields, `Career[${key}].CEYM`, isCurrent ? currentKstMonth(now) : end);
     pushField(
       fields,
       `Career[${key}].RetireSt`,

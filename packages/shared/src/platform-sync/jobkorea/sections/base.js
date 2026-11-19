@@ -38,10 +38,10 @@ import {
  *     language: string[], highSchool: string, skill: string[],
  *     project: string[] }
  */
-export function buildJobKoreaFormData(ssot, sectionIndices = {}) {
+export function buildJobKoreaFormData(ssot, sectionIndices = {}, now = Date.now()) {
   return [
     ...mapResumeTitleToFormFields(ssot),
-    ...mapCareersToFormFields(ssot, sectionIndices.career),
+    ...mapCareersToFormFields(ssot, sectionIndices.career, now),
     ...mapSchoolToFormFields(ssot, sectionIndices.school),
     ...mapLicensesToFormFields(ssot, sectionIndices.license),
     ...mapMilitaryToFormFields(ssot),
