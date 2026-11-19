@@ -1,9 +1,9 @@
+import { normalizeCompanyName, normalizeWorkTypeForProfile } from '@resume/shared/normalize';
 import {
-  normalizeCareerRole,
-  normalizeCompanyName,
-  normalizeWorkTypeForProfile,
-} from '@resume/shared/normalize';
-import { EMPTY_CAREER_FIELDS_PRE_RETIRE, EMPTY_CAREER_FIELDS_POST_RETIRE } from './constants.js';
+  EMPTY_CAREER_FIELDS_PRE_RETIRE,
+  EMPTY_CAREER_FIELDS_POST_RETIRE,
+  JK_RANK_CODES,
+} from './constants.js';
 import { parseRange, pushField } from './validators.js';
 
 // The editor's 재직중 checkbox writes 3 when checked; stored resigned rows read 2. Checking it also
@@ -36,6 +36,7 @@ function currentKstMonth(now) {
  *   company?: string;
  *   department?: string;
  *   role?: string;
+ *   rank?: string;
  *   jobkoreaRetireReasonCode?: string | number;
  *   jobkoreaRetireReason?: string;
  *   jobkoreaJobCode?: string;
@@ -130,7 +131,9 @@ export function mapCareersToFormFields(ssot, indices, now = Date.now()) {
         '');
     pushField(fields, `Career[${key}].Retire_Rsn_Code`, retireReasonCode);
     pushField(fields, `Career[${key}].Retire_Rsn`, retireReason);
-    pushField(fields, `Career[${key}].M_MainJob_Jikwi`, normalizeCareerRole(career?.role));
+    // 직급 is the Rank_Sub_Code radio; the hidden legacy M_MainJob_Jikwi keeps one character.
+    pushField(fields, `Career[${key}].Rank_Sub_Code`, JK_RANK_CODES[career?.rank ?? ''] ?? '');
+    pushField(fields, `Career[${key}].M_MainJob_Jikwi`, '');
     pushField(fields, `Career[${key}].Job_Type_Code`, '');
     const jobCode =
       career?.jobkoreaJobCode || ssot?.platformVariants?.jobkorea?.defaultJobCode || '';

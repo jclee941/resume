@@ -29,4 +29,20 @@ describe('mapCareersToFormFields', () => {
     assert.equal(valueOf(fields, 'Career[c8].RetireSt'), '2');
     assert.equal(valueOf(fields, 'Career[c8].CEYM'), '202602');
   });
+
+  it('sends the recorded rank as the 직급 code and clears the legacy one-character field', () => {
+    const fields = mapCareersToFormFields(
+      {
+        careers: [
+          { company: 'A', period: '2025.03 ~ 2026.02', role: '보안 인프라 엔지니어', rank: '대리' },
+          { company: 'B', period: '2013.03 ~ 2014.10', role: '엔지니어' },
+        ],
+      },
+      ['c7', 'c8']
+    );
+
+    assert.equal(valueOf(fields, 'Career[c7].Rank_Sub_Code'), '5');
+    assert.equal(valueOf(fields, 'Career[c7].M_MainJob_Jikwi'), '');
+    assert.equal(valueOf(fields, 'Career[c8].Rank_Sub_Code'), '');
+  });
 });

@@ -10,6 +10,18 @@ export const JK_LOCATION_CODES = {
 };
 export const JK_DEFAULT_HOPE_LOCATION = ['서울'];
 
+/** Career 직급 (Rank_Sub_Code) radio values in the resume editor. */
+export const JK_RANK_CODES = {
+  사원: 1,
+  주임: 3,
+  계장: 3,
+  대리: 5,
+  과장: 7,
+  차장: 9,
+  부장: 11,
+  임원: 13,
+};
+
 export const GRAD_TYPE = { 졸업: 10, 졸업예정: 5, 재학중: 4, 중퇴: 2, 수료: 9, 휴학: 3 };
 export const MILITARY_STAT = { 군필: 4, 미필: 2, 면제: 1, 해당없음: 5, 사회복무요원: 4 };
 export const MILITARY_KIND = {
