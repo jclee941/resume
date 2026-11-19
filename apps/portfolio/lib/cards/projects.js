@@ -9,6 +9,7 @@ const {
   detectLocale,
   projectAnchor,
   projectDescriptionRemainder,
+  projectDiagramFlowText,
   projectLabelsFor,
 } = require('./project-review');
 const { renderProjectDiagram } = require('./project-diagram');
@@ -187,7 +188,7 @@ function generateProjectCards(projectsData, dataHash) {
         idx < FEATURED_DIAGRAMS && project.diagram
           ? renderProjectDiagram(project.diagram, {
               title: `${project.title} ${labels.diagram}`,
-              desc: project.diagram.nodes.map((node) => node.label).join(' → '),
+              desc: projectDiagramFlowText(project.diagram),
             })
           : '';
       const descriptionRemainder = projectDescriptionRemainder(project);

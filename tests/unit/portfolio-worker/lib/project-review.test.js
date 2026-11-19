@@ -1,6 +1,7 @@
 const projectReview = require('../../../../apps/portfolio/lib/cards/project-review');
 
-const { buildProjectCaseNotes, projectAnchor, projectLabelsFor } = projectReview;
+const { buildProjectCaseNotes, projectAnchor, projectDiagramFlowText, projectLabelsFor } =
+  projectReview;
 
 describe('project review cards', () => {
   const projects = [
@@ -122,5 +123,28 @@ describe('project review cards', () => {
       'Next.',
       'Last.',
     ]);
+  });
+
+  describe('projectDiagramFlowText', () => {
+    const nodes = ['a', 'b', 'c', 'd'].map((id) => ({ id, label: id.toUpperCase() }));
+
+    test('reads a straight chain as one arrow sequence', () => {
+      const edges = [
+        { from: 'a', to: 'b' },
+        { from: 'b', to: 'c' },
+        { from: 'c', to: 'd' },
+      ];
+      expect(projectDiagramFlowText({ nodes, edges })).toBe('A → B → C → D');
+    });
+
+    test('lists parallel targets per source instead of chaining branches', () => {
+      const edges = [
+        { from: 'a', to: 'b' },
+        { from: 'a', to: 'c' },
+        { from: 'b', to: 'd' },
+        { from: 'c', to: 'd' },
+      ];
+      expect(projectDiagramFlowText({ nodes, edges })).toBe('A → B / C, B → D, C → D');
+    });
   });
 });

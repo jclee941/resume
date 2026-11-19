@@ -973,8 +973,8 @@ describe('Cards Module', () => {
 
   describe('generateProjectCards - activity metadata branches', () => {
     test.each([
-      ['ko', '프로젝트 설명입니다.', '현재', '공개 중', '운영 중', '완료'],
-      ['ja', 'プロジェクトの説明です。', '現在', '公開中', '運用中', '完了'],
+      ['ko', '프로젝트 설명입니다.', '현재', '공개 중', '진행 중', '완료'],
+      ['ja', 'プロジェクトの説明です。', '現在', '公開中', '進行中', '完了'],
       ['en', 'Project description.', 'Present', 'LIVE', 'ACTIVE', 'COMPLETED'],
     ])(
       'localizes each status without changing badge classes for %s',
