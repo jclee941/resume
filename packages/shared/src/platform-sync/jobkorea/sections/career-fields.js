@@ -6,6 +6,10 @@ import {
 import { EMPTY_CAREER_FIELDS_PRE_RETIRE, EMPTY_CAREER_FIELDS_POST_RETIRE } from './constants.js';
 import { parseRange, pushField } from './validators.js';
 
+// The editor's 재직중 checkbox writes 3 when checked; stored resigned rows read 2. Any other
+// value is taken as resigned, and the save then demands an end month (CEYM).
+const RETIRE_ST = { employed: 3, retired: 2 };
+
 /**
  * @typedef {{
  *   headline?: string;
@@ -99,7 +103,11 @@ export function mapCareersToFormFields(ssot, indices) {
     pushField(fields, `Career[${key}].C_Part`, career?.department || '');
     pushField(fields, `Career[${key}].CSYM`, start);
     pushField(fields, `Career[${key}].CEYM`, end);
-    pushField(fields, `Career[${key}].RetireSt`, isCurrent ? 1 : 2);
+    pushField(
+      fields,
+      `Career[${key}].RetireSt`,
+      isCurrent ? RETIRE_ST.employed : RETIRE_ST.retired
+    );
     const retireReasonCode = isCurrent
       ? ''
       : (career?.jobkoreaRetireReasonCode ??
