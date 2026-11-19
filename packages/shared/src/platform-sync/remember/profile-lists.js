@@ -89,7 +89,7 @@ function desiredAppendedInfo(ssot) {
     ['url', contact.github],
     ['url', contact.website],
     ['url', contact.linkedin],
-    ['website_blog', contact.velog],
+    ['website_blog', contact.blog],
   ]
     .filter(([, value]) => typeof value === 'string' && /^https?:\/\//.test(value))
     .map(([category, value]) => ({ category: String(category), value: String(value) }));
