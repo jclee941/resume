@@ -10,7 +10,10 @@ export const JK_LOCATION_CODES = {
 };
 export const JK_DEFAULT_HOPE_LOCATION = ['서울'];
 
-/** Career 직급 (Rank_Sub_Code) radio values in the resume editor. */
+/**
+ * Career 직급 (Rank_Sub_Code) radio values in the resume editor.
+ * @type {Record<string, number>}
+ */
 export const JK_RANK_CODES = {
   사원: 1,
   주임: 3,
