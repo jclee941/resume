@@ -9,6 +9,8 @@ import {
 } from './profile-sections.js';
 
 const SSOT_ACTIVITY_TYPES = new Set(['CERTIFICATE', 'AWARD']);
+// contact.blog is listed as a system the owner operates.
+const BLOG_LINK_TITLE = '운영 중인 블로그 시스템';
 
 /**
  * @typedef {{ updated: string[]; errors: Array<{ section: string; error: string }> }} WantedSyncResults
@@ -128,7 +130,7 @@ export async function syncWantedResume(api, data, resumeId, sourceData, logger =
   if (blog && !links.some((link) => link.url?.trim() === blog)) {
     const order = links.reduce((next, link) => Math.max(next, link.order + 1), 0);
     await runStep(results, 'links', () =>
-      api.resume.addLink(resumeId, { order, title: 'Blog', url: blog })
+      api.resume.addLink(resumeId, { order, title: BLOG_LINK_TITLE, url: blog })
     );
   }
 
