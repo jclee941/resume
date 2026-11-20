@@ -1042,6 +1042,11 @@
           "type": "string",
           "description": "GitHub profile URL"
         },
+        "blog": {
+          "type": "string",
+          "format": "uri",
+          "description": "Blog URL"
+        },
         "website": {
           "type": "string",
           "format": "uri",

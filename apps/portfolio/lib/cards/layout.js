@@ -28,6 +28,7 @@ const CONTACT_LABELS = {
  * @property {string} [githubBot]
  * @property {string} github
  * @property {string} linkedin
+ * @property {string} [blog]
  * @property {string} email
  * @property {string} website
  */
@@ -79,7 +80,8 @@ function generateInfrastructureCards(infraData) {
 }
 
 /**
- * Visible handle of a profile URL: its last path segment ("octocat", "@name").
+ * Visible handle of a profile URL: its last path segment ("octocat", "@name"), or the host
+ * for a site root ("blog.example.com").
  * LinkedIn's auto-generated slugs ("name-surname-1a2b3c4d") are not handles, so they stay hidden.
  * @param {string | undefined} url
  * @returns {string}
@@ -96,7 +98,8 @@ function contactHandle(url) {
   }
   const generatedLinkedInSlug =
     /(^|\.)linkedin\.com$/.test(hostname) && /-[0-9a-f]{6,}$/i.test(handle);
-  return generatedLinkedInSlug ? '' : handle;
+  if (generatedLinkedInSlug) return '';
+  return handle || hostname;
 }
 
 /**
@@ -128,6 +131,7 @@ function generateContactGrid(contactData, locale = 'ko') {
             ? link(contactData.linkedin, 'LinkedIn')
             : ''
         }
+        ${contactData.blog && URL.canParse(contactData.blog) ? link(contactData.blog, 'Blog') : ''}
         <a class="contact-item contact-item--email" href="mailto:${escapeHtml(email)}" data-contact-email="${escapeHtml(email)}"><span class="contact-item__label">${labels.email}</span> <span class="contact-item__value">${escapeHtml(email)}</span></a>
         <span class="contact-copy-status" role="status" aria-live="polite" aria-atomic="true"></span>
   `;

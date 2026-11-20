@@ -44,7 +44,7 @@ const ssot = {
     { name: 'CKA', issuer: 'CNCF', status: 'active' },
     { name: 'CISSP', issuer: 'ISC2', status: '준비중' },
   ],
-  contact: { github: 'https://github.com/x', velog: 'https://velog.io/@x', email: 'x@y.z' },
+  contact: { github: 'https://github.com/x', blog: 'https://blog.example.com', email: 'x@y.z' },
   languages: [
     { name: 'Korean', level: 'Native' },
     { name: 'English', level: 'Working proficiency (technical reading & writing)' },
@@ -178,7 +178,7 @@ describe('mapToRememberProfile', () => {
       { category: 'role', value: '2026 공모전 장려상 (대학교)' },
       { category: 'certificate', value: 'CKA (CNCF)' },
       { category: 'url', value: 'https://github.com/x' },
-      { category: 'website_blog', value: 'https://velog.io/@x' },
+      { category: 'website_blog', value: 'https://blog.example.com' },
       { id: 4, category: 'role', value: '옛 수상', _destroy: true },
     ]);
   });
