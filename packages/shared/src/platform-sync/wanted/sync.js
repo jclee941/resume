@@ -21,12 +21,14 @@ const SSOT_ACTIVITY_TYPES = new Set(['CERTIFICATE', 'AWARD']);
  *   skills?: Parameters<typeof syncSkills>[3];
  *   activities?: Array<Parameters<typeof syncActivities>[3][number] & { activity_type?: string }>;
  *   language_certs?: Parameters<typeof syncLanguageCerts>[3];
+ *   links?: Array<{ url?: string | null; order: number }>;
  *   about?: string;
  * } & Parameters<typeof syncContact>[3]} WantedResumeDetail
  *
  * @typedef {{
  *     getResumeDetail(resumeId: string | number): Promise<WantedResumeDetail>;
  *     updateProfile(profile: { headline?: string; description?: string }): Promise<unknown>;
+ *     resume: Pick<import('../../clients/wanted/endpoints/resume.js').ResumeEndpoint, 'addLink'>;
  *   } & Parameters<typeof syncAbout>[0] &
  *   Parameters<typeof syncCareers>[0] &
  *   Parameters<typeof syncEducations>[0]} WantedResumeApi
@@ -34,7 +36,10 @@ const SSOT_ACTIVITY_TYPES = new Set(['CERTIFICATE', 'AWARD']);
  * @typedef {Parameters<typeof syncActivities>[2] &
  *   Parameters<typeof syncLanguageCerts>[2] &
  *   Parameters<typeof syncAbout>[2] &
- *   Parameters<typeof syncContact>[2] & { careers?: Parameters<typeof syncCareers>[4] }} WantedSourceData
+ *   Parameters<typeof syncContact>[2] & {
+ *     careers?: Parameters<typeof syncCareers>[4];
+ *     contact?: { blog?: string };
+ *   }} WantedSourceData
  */
 
 /**
@@ -117,6 +122,15 @@ export async function syncWantedResume(api, data, resumeId, sourceData, logger =
     syncAbout(api, resumeId, sourceData, resumeDetail.about || '')
   );
   await runStep(results, 'contact', () => syncContact(api, resumeId, sourceData, resumeDetail));
+
+  const blog = sourceData.contact?.blog?.trim();
+  const links = resumeDetail.links ?? [];
+  if (blog && !links.some((link) => link.url?.trim() === blog)) {
+    const order = links.reduce((next, link) => Math.max(next, link.order + 1), 0);
+    await runStep(results, 'links', () =>
+      api.resume.addLink(resumeId, { order, title: 'Blog', url: blog })
+    );
+  }
 
   return results;
 }

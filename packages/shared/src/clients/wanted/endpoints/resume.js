@@ -1,3 +1,5 @@
+import { WantedAPIError } from '../http-client.js';
+
 /**
  * @typedef {import('../http-client.js').HttpClient} HttpClient
  */
@@ -39,6 +41,26 @@ export class ResumeEndpoint {
       body: data,
     });
     return response;
+  }
+
+  /**
+   * @param {string | number} resumeId
+   * @param {{ order: number; title: string; url: string }} data
+   */
+  async addLink(resumeId, { order, title, url }) {
+    const path = `/resumes/v2/${resumeId}/links`;
+    // The editor creates an ordered row before saving its title and URL.
+    const response = await this.#client.chaosRequest(path, {
+      method: 'POST',
+      body: { order },
+    });
+    const id = (response?.data ?? response)?.link?.id;
+    if (!Number.isSafeInteger(id) || id <= 0) {
+      throw new WantedAPIError('Wanted did not return a resume link ID');
+    }
+    const itemPath = `${path}/${id}`;
+    await this.#client.chaosRequest(itemPath, { method: 'PATCH', body: { title } });
+    await this.#client.chaosRequest(itemPath, { method: 'PATCH', body: { url } });
   }
 
   /**
