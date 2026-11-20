@@ -47,7 +47,7 @@ describe('Wanted blog link sync', () => {
     assert.ok(result.updated.includes('links'));
     assert.deepEqual(calls, [
       [linksPath, { method: 'POST', body: { order: 4 } }],
-      [`${linksPath}/8`, { method: 'PATCH', body: { title: 'Blog' } }],
+      [`${linksPath}/8`, { method: 'PATCH', body: { title: '운영 중인 블로그 시스템' } }],
       [`${linksPath}/8`, { method: 'PATCH', body: { url: blog } }],
     ]);
   });

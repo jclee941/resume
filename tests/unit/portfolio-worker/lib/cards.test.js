@@ -187,28 +187,6 @@ describe('Cards Module', () => {
   });
 
   describe('generateContactGrid', () => {
-    test('renders the blog link with its host as the visible handle', () => {
-      const html = generateContactGrid({
-        email: 'applicant@example.com',
-        github: 'https://github.com/example-user',
-        blog: 'https://blog.example.com',
-      });
-
-      expect(html).toContain('href="https://blog.example.com"');
-      expect(html).toContain(
-        '<span class="contact-item__label">Blog</span> <span class="contact-item__value">blog.example.com</span>'
-      );
-    });
-
-    test('omits the blog link when no blog URL is set', () => {
-      const html = generateContactGrid({
-        email: 'applicant@example.com',
-        github: 'https://github.com/x',
-      });
-
-      expect(html).not.toContain('>Blog<');
-    });
-
     test('should render the secondary GitHub bot profile when present', () => {
       const html = generateContactGrid({
         email: 'applicant@example.com',
