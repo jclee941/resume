@@ -1,130 +1,105 @@
-import assert from 'node:assert/strict';
 import { it } from 'node:test';
+import assert from 'node:assert/strict';
 import { runInNewContext } from 'node:vm';
 import { withJobKoreaEditor } from '../jobkorea-editor.js';
-
-const EDIT_URL = 'https://www.jobkorea.co.kr/resume/edit/42';
-const TITLE_FIELD = 'UserResume.M_Resume_Title';
-
-class TestForm {
-  isConnected = true;
-
-  constructor({ id, name = '', action = '', fields = [] }) {
-    this.attributes = { id, name, action };
-    this.fields = fields;
-    this.elements = { namedItem: (key) => fields.find(([name]) => name === key) ?? null };
-  }
-
-  getAttribute(key) {
-    return this.attributes[key] ?? null;
-  }
-}
-
-function editorFixture(forms, { lateForm, visibleSelector } = {}) {
-  const document = {
-    forms: [...forms],
-    baseURI: EDIT_URL,
-    title: '이력서 수정',
-    getElementById: () => null,
-    getElementsByName: () => [],
-    querySelector: (selector) =>
-      document.forms.find((form) => `#${form.attributes.id}` === selector) ?? null,
-    querySelectorAll: (selector) =>
-      visibleSelector && selector.includes(visibleSelector) ? [{ getClientRects: () => [{}] }] : [],
-  };
-  const execute = (fn, ...args) =>
-    runInNewContext(`(${fn})(...args)`, {
-      args,
-      document,
-      location: new URL(EDIT_URL),
-      URL,
-      HTMLFormElement: TestForm,
-      HTMLInputElement: class {},
-      FormData: class {
-        constructor(form) {
-          this.entries = () => form.fields[Symbol.iterator]();
-        }
-      },
-      getComputedStyle: () => ({ visibility: 'visible' }),
-    });
+const origin = 'https://www.jobkorea.co.kr';
+const api = '/resume/api/resume-display/v2/resumes';
+const version = `"rv1-${'a'.repeat(64)}"`;
+function fixture({ status = 200, id = '42', etag = version, timeout = false, login = false } = {}) {
+  let listener,
+    closed = false;
+  const writes = [];
+  const target = `${origin}/resume/edit/42`;
   const page = {
-    setCookie: async () => {},
-    on: () => {},
-    setRequestInterception: async () => {},
-    goto: async () => {},
-    close: async () => {},
-    url: () => EDIT_URL,
-    title: async () => document.title,
-    waitForSelector: async () => {
-      throw new Error('timeout');
+    url: () => (login ? `${origin}/Login/Login_Tot.asp` : target),
+    on() {},
+    async setCookie() {},
+    async setRequestInterception() {},
+    async close() {
+      closed = true;
     },
-    waitForFunction: async (fn, { timeout }, ...args) => {
-      assert.ok(timeout > 0 && timeout <= 20_000);
-      const first = execute(fn, ...args);
-      if (first) return first;
-      if (lateForm) {
-        document.forms.push(lateForm);
-        const next = execute(fn, ...args);
-        if (next) return next;
-      }
-      throw new Error('timeout');
+    waitForResponse(pred, opts) {
+      assert.ok(opts.timeout > 0 && opts.timeout <= 20000);
+      return new Promise((resolve) => {
+        listener = () => {
+          const res = (url, method) => ({
+            url: () => url,
+            request: () => ({ method: () => method }),
+            headers: () => ({ etag }),
+            json: async () => ({ resumeNo: id, content: { general: { title: 'test' } } }),
+            status: () => status,
+            ok: () => status === 200,
+          });
+          assert.equal(pred(res(`${origin + api}/drafts`, 'GET')), false);
+          assert.equal(pred(res(`https://foreign.invalid${api}/drafts`, 'POST')), false);
+          const own = res(`${origin + api}/drafts`, 'POST');
+          assert.equal(pred(own), true);
+          resolve(timeout ? null : own);
+        };
+      });
     },
-    evaluate: async (fn, ...args) => execute(fn, ...args),
+    async goto(url) {
+      assert.equal(url, target);
+      assert.ok(listener, 'listener registered before navigation');
+      listener();
+    },
+    async evaluate(fn, ...args) {
+      if (!args.length)
+        return { title: login ? '로그인' : '이력서 수정', login, twoFactor: false, notice: false };
+      return runInNewContext(`(${fn})(...args)`, {
+        args,
+        location: new URL(target),
+        AbortSignal,
+        fetch: async (path, init) => {
+          writes.push({ path, init });
+          return new Response(null, { status: 200, headers: { ETag: version } });
+        },
+      });
+    },
   };
-  return { withBrowserSession: async (_env, run) => run({ newPage: async () => page }) };
+  return {
+    run: (fn) =>
+      withJobKoreaEditor({}, { rNo: '42' }, fn, {
+        withBrowserSession: async (_env, work) => work({ newPage: async () => page }),
+      }),
+    writes,
+    closed: () => closed,
+  };
 }
-
-for (const { identity, action, key } of [
-  { identity: 'save action', action: '/user/resume/save?cache=1', key: 'LastEditDateTicks' },
-  { identity: 'mapped title field', action: '', key: TITLE_FIELD },
-]) {
-  it(`waits for a renamed resume form and serializes it by ${identity}`, async () => {
-    const unrelated = new TestForm({ id: 'search', action: '/search', fields: [['q', 'fixture']] });
-    const fields = [[key, 'fixture']];
-    const lateForm = new TestForm({ id: 'new-editor', action, fields });
-    const result = await withJobKoreaEditor(
-      {},
-      { rNo: '42' },
-      async (editor) => editor.fields.map(({ name, value }) => `${name}=${value}`).join('&'),
-      editorFixture([unrelated], { lateForm })
-    );
-    assert.equal(result, `${key}=fixture`);
+it('uses only the observed draft and writes from the same editor with conditional method override', async () => {
+  const f = fixture();
+  await f.run(async (editor) => {
+    assert.equal(editor.etag, version);
+    assert.equal(editor.content.general.title, 'test');
+    assert.equal(f.writes.length, 0);
+    await editor.save('title', { title: 'changed' }, editor.etag);
   });
-}
-
-it('reports up to five forms and interstitial signals without recording field or query values', async () => {
-  const forms = Array.from(
-    { length: 6 },
-    (_, i) =>
-      new TestForm({
-        id: `form-${i}`,
-        name: `aux-${i}`,
-        action: '/search?fixture-query#fixture-fragment',
-        fields: [['q', 'fixture-field-value']],
-      })
-  );
-  await assert.rejects(
-    withJobKoreaEditor(
-      {},
-      { rNo: '42' },
-      async () => assert.fail('unexpected editor'),
-      editorFixture(forms, { visibleSelector: '#tfaCertNum' })
-    ),
-    (error) => {
-      assert.match(error.message, /path=\/resume\/edit\/<id>/);
-      const metadata = /forms=(\[.*?\]),/.exec(error.message)?.[1];
-      assert.ok(metadata);
-      assert.deepEqual(
-        JSON.parse(metadata),
-        forms.slice(0, 5).map((form) => ({
-          id: form.attributes.id,
-          name: form.attributes.name,
-          action: '/search',
-        }))
-      );
-      assert.match(error.message, /login=false, 2fa=true, notice=false/);
-      assert.doesNotMatch(error.message, /fixture-query|fixture-fragment|fixture-field-value/);
-      return true;
-    }
-  );
+  assert.ok(f.closed());
+  assert.equal(f.writes.length, 1);
+  const [{ path, init }] = f.writes;
+  assert.equal(path, `${api}/42/sections/title`);
+  assert.equal(init.method, 'POST');
+  assert.equal(init.headers['X-HTTP-Method-Override'], 'PUT');
+  assert.equal(init.headers['If-Match'], version);
+  assert.equal(init.credentials, 'same-origin');
+  assert.deepEqual(JSON.parse(init.body), { title: 'changed' });
 });
+it('accepts a draft whose resumeNo is numeric', async () => {
+  const f = fixture({ id: 42 });
+  await f.run(async (editor) => assert.equal(editor.content.general.title, 'test'));
+});
+for (const [label, options, pattern] of [
+  ['login timeout', { timeout: true, login: true }, /login=true.*status=unavailable/],
+  ['wrong resume', { id: '43' }, /path=\/resume\/edit\/<id>.*status=200/],
+  ['missing version', { etag: '' }, /status=200/],
+  ['forbidden', { status: 403 }, /status=403/],
+])
+  it(`refuses ${label} and reports a sanitized diagnostic`, async () => {
+    const f = fixture(options);
+    await assert.rejects(
+      f.run(() => assert.fail('unexpected editor')),
+      pattern
+    );
+    assert.ok(f.closed());
+    assert.equal(f.writes.length, 0);
+  });
