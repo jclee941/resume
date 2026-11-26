@@ -16,7 +16,7 @@ export function isResumeVersion(value) {
  * @typedef {import('@cloudflare/puppeteer').Page} Page
  * @typedef {{
  *   content: Record<string, unknown>, etag: string,
- *   save(section: string, payload: object, version: string): Promise<{status: number, etag: string | null}>
+ *   save(section: string, payload: object, version: string): Promise<{status: number, etag: string | null, problem: string | null}>
  * }} Editor
  */
 
@@ -149,7 +149,34 @@ export async function withJobKoreaEditor(
                   body: JSON.stringify(data),
                   signal: AbortSignal.timeout(20_000),
                 });
-                return { status: response.status, etag: response.headers.get('etag') };
+                const etag = response.headers.get('etag');
+                if (response.ok) return { status: response.status, etag, problem: null };
+                // Keep the rejection's codes, messages and field paths, never submitted values.
+                const body = await response.json().catch(() => null);
+                /** @param {unknown} o */
+                const pick = (o) =>
+                  o && typeof o === 'object'
+                    ? Object.fromEntries(
+                        ['code', 'error', 'message', 'title', 'detail', 'field', 'path'].flatMap(
+                          (k) => {
+                            const v = /** @type {Record<string, unknown>} */ (o)[k];
+                            return typeof v === 'string' ? [[k, v]] : [];
+                          }
+                        )
+                      )
+                    : {};
+                const list = ['errors', 'fieldErrors', 'violations', 'details']
+                  .map((k) => body?.[k])
+                  .find(Array.isArray);
+                const summary = {
+                  ...pick(body),
+                  ...(list ? { items: list.slice(0, 5).map(pick) } : {}),
+                };
+                return {
+                  status: response.status,
+                  etag,
+                  problem: JSON.stringify(summary).slice(0, 400),
+                };
               },
               target,
               `${RESUMES}/${encodeURIComponent(rNo)}/sections/${encodeURIComponent(section)}`,

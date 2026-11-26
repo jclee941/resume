@@ -62,7 +62,7 @@ export async function syncJobKoreaFromSsot(
             ...result,
             success: false,
             failedSection: section,
-            error: `JobKorea ${section} save failed (status=${response?.status ?? 'unconfirmed'})`,
+            error: `JobKorea ${section} save failed (status=${response?.status ?? 'unconfirmed'})${response?.problem ? `: ${response.problem}` : ''}`,
           };
         saved.push(section);
         if (!isResumeVersion(response.etag))
