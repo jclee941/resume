@@ -34,7 +34,7 @@ Boundary: score 1; retained distinct domain for repository automation and review
 - PR titles follow Conventional Commits; documentation branches use `docs/*`, as declared in the PR template.
 - `CODEOWNERS` routes the default and listed paths to the repository maintainer.
 - Policy (repository settings, not declared in files): ruleset `master: PR + Validate` requires a PR, squash only, required check `Validate`, no bypass, no direct push; auto-merge and delete-branch-on-merge are enabled.
-- Changes land via `npm run pr` from a feature branch (push, PR, squash auto-merge); `dependabot-auto-merge.yml` auto-merges Dependabot patch/minor PRs and never checks out PR code.
+- Changes land via `npm run pr` from a feature branch (local lint and both typechecks, push, PR, squash auto-merge); `dependabot-auto-merge.yml` auto-merges Dependabot patch/minor PRs and never checks out PR code.
 - Playwright E2E is on demand, not a step in the validation workflow.
 
 ## ANTI-PATTERNS

@@ -22,7 +22,7 @@ Boundary: score 2; retained immutable-release and publication-state-machine doma
 | Transaction           | `publish/transaction.go`      | Snapshot, ownership, upload, publish, cleanup |
 | API adapter           | `publish/github_client.go`    | Release and tag operations                    |
 | Test doubles          | `publish/fake_client_test.go` | Transaction behavior without external writes  |
-| PR helper             | `pr/main.go`                  | `npm run pr`: push, PR, squash auto-merge     |
+| PR helper             | `pr/main.go`                  | `npm run pr`: lint+typecheck, push, PR, merge |
 
 ## CONVENTIONS
 
