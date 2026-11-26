@@ -5,10 +5,6 @@ import { encrypt } from '@resume/shared/crypto';
 import { syncResumePlatform } from '../resume-platform-sync/index.js';
 import { syncJobKoreaFromSsot } from '../resume-platform-sync/jobkorea.js';
 import { syncWantedFromSsot } from '../resume-platform-sync/wanted.js';
-import {
-  toJobKoreaBrowserCookies,
-  withJobKoreaEditor,
-} from '../resume-platform-sync/jobkorea-editor.js';
 
 const ENCRYPTION_KEY = btoa('0123456789abcdef0123456789abcdef');
 
@@ -42,141 +38,87 @@ async function envWithSessions(sessions, extra = {}) {
   };
 }
 
-const LIVE_FORM = [
-  { name: 'UnivSchool.Index', value: 'c3' },
-  { name: 'UnivSchool[c3].Schl_Name', value: '예시대학교' },
-  { name: 'UnivSchool[c3].Grad_YM', value: '202802' },
-  { name: 'UnivSchool[c3].Grad_Type_Code', value: '4' },
-  { name: 'UnivSchool[c3].Grade', value: '4.0' },
-  { name: 'Award.Index', value: 'c1' },
-  { name: 'InputStat.AwardInputStat', value: 'False' },
-  { name: 'Award[c1].Award_Name', value: '예시 대회 경진대회 우수상' },
-];
-
-const SECTIONS = [
-  {
-    syncId: 'InputStat_AwardInputStat',
-    before: { syncId: 'InputStat_AwardInputStat', flag: 'False', label: '필드추가' },
-    after: { syncId: 'InputStat_AwardInputStat', flag: 'True', label: '필드삭제' },
-  },
-];
-
-const PHOTO = { dropped: true, image: true, flags: [{ name: 'Photo_Stat', value: 'True' }] };
-
-function fakeEditor({
-  fields = LIVE_FORM,
-  tokens = { LastEditDateTicks: '638000' },
-  saveText = '{"saveResult":{"IsSuccess":true}}',
-  dialogs = [],
-} = {}) {
-  const save = mock.fn(async () => ({ status: 200, text: saveText }));
-  const withEditor = mock.fn(async (_env, _session, fn) =>
-    fn({ fields, tokens, sections: SECTIONS, dialogs, photo: PHOTO, save })
+const version = (digit) => `"rv1-${digit.repeat(64)}"`;
+function fakeEditor(responses = []) {
+  const content = {
+    general: { title: 'original', certificateDescription: 'retain' },
+    awards: [],
+    certificates: [],
+    languages: [],
+    languageTests: [],
+    trainings: [],
+    educationSummary: { belowHighSchool: false },
+    educations: [],
+  };
+  const save = mock.fn(async () => responses.shift() ?? { status: 200, etag: version('b') });
+  const withEditor = mock.fn(async (_env, _session, run) =>
+    run({ content, etag: version('a'), save })
   );
-  return { save, withEditor };
+  return { save, withEditor, content };
 }
 
 describe('Cloudflare-native JobKorea resume sync', () => {
-  it('previews the education and award changes from the live editor form', async () => {
-    const env = await envWithSessions({ jobkorea: 'ACNT=1; SES=2' }, { JOBKOREA_RNO: '777' });
+  const env = { JOBKOREA_RNO: '42' };
+  const jobkoreaLogin = async () => 'A=1';
+  it('previews changed fields but sends no saves or private values', async () => {
     const { save, withEditor } = fakeEditor();
-
-    const result = await syncJobKoreaFromSsot(env, SSOT, { dryRun: true, withEditor, now: 1000 });
-
-    assert.equal(result.success, true);
-    assert.equal(result.dryRun, true);
-    assert.deepEqual(result.rows.Award, { live: ['c1'], saved: ['c1', '1_1000'] });
-    assert.deepEqual(result.sections, SECTIONS);
-    assert.deepEqual(result.inputStat, { 'InputStat.AwardInputStat': 'False' });
-    assert.deepEqual(result.liveRowFields.Award, ['Award_Name']);
-    assert.deepEqual(result.liveAwards, ['예시 대회 경진대회 우수상']);
-    assert.deepEqual(result.photo, PHOTO);
-    assert.deepEqual(withEditor.mock.calls[0].arguments[1], {
-      cookieString: 'ACNT=1; SES=2',
-      rNo: '777',
+    const result = await syncJobKoreaFromSsot(env, SSOT, {
+      dryRun: true,
+      jobkoreaLogin,
+      withEditor,
     });
-    const changes = Object.fromEntries(result.changes.map((c) => [c.name, [c.before, c.after]]));
-    assert.deepEqual(changes['UnivSchool[c3].Grad_Type_Code'], ['4', '5']);
-    assert.deepEqual(changes['UnivSchool[c3].Grad_YM'], ['202802', '202702']);
-    assert.deepEqual(changes['Award[c1].Award_Name'], [
-      '예시 대회 경진대회 우수상',
-      '2026 예시 공모전 장려상',
+    assert.deepEqual(
+      result.wouldSync.map((x) => x.section),
+      ['abilities', 'education', 'title']
+    );
+    assert.deepEqual(result.saved, []);
+    assert.equal(save.mock.callCount(), 0);
+    assert.ok(!JSON.stringify(result).includes(SSOT.education.school));
+    assert.match(result.photo, /unsupported/);
+  });
+  it('chains the response ETag and stops at the first conflict', async () => {
+    const { save, withEditor } = fakeEditor([
+      { status: 200, etag: version('b') },
+      { status: 412, etag: null },
     ]);
-    assert.deepEqual(changes['Award[1_1000].Award_Name'], [null, '예시 대회 공모전 우수상']);
-    assert.equal(save.mock.callCount(), 0);
+    const result = await syncJobKoreaFromSsot(env, SSOT, {
+      dryRun: false,
+      jobkoreaLogin,
+      withEditor,
+    });
+    assert.deepEqual(result.saved, ['abilities']);
+    assert.equal(result.success, false);
+    assert.equal(result.failedSection, 'education');
+    assert.deepEqual(
+      save.mock.calls.map(({ arguments: [section, , etag] }) => [section, etag]),
+      [
+        ['abilities', version('a')],
+        ['education', version('b')],
+      ]
+    );
   });
-
-  it('saves the merged form from the editor page, keeping live fields and form tokens', async () => {
-    const env = await envWithSessions({ jobkorea: 'ACNT=1' }, { JOBKOREA_RNO: '777' });
-    const { save, withEditor } = fakeEditor();
-
-    const result = await syncJobKoreaFromSsot(env, SSOT, { dryRun: false, withEditor, now: 1000 });
-
+  it('stops on a successful response without a new version', async () => {
+    const { save, withEditor } = fakeEditor([{ status: 200, etag: null }]);
+    const result = await syncJobKoreaFromSsot(env, SSOT, {
+      dryRun: false,
+      jobkoreaLogin,
+      withEditor,
+    });
+    assert.equal(result.success, false);
+    assert.deepEqual(result.saved, ['abilities']);
+    assert.equal(save.mock.callCount(), 1);
+  });
+  it('never saves an unchanged section', async () => {
+    const { save, withEditor, content } = fakeEditor();
+    const result = await syncJobKoreaFromSsot(
+      env,
+      { platformVariants: { jobkorea: { headline: content.general.title } } },
+      { dryRun: false, jobkoreaLogin, withEditor }
+    );
     assert.equal(result.success, true);
-    const body = new URLSearchParams(save.mock.calls[0].arguments[0]);
-    assert.equal(body.get('UnivSchool[c3].Grad_Type_Code'), '5');
-    assert.equal(body.get('UnivSchool[c3].Grad_YM'), '202702');
-    assert.equal(body.get('UnivSchool[c3].Grade'), '4.0');
-    assert.equal(body.get('LastEditDateTicks'), '638000');
-    assert.equal(body.get('InputStat.AwardInputStat'), 'True');
-    assert.deepEqual(body.getAll('Award.index'), ['c1', '1_1000']);
-  });
-
-  it('refuses a save that would drop live fields from a replaced row', async () => {
-    const env = await envWithSessions({ jobkorea: 'ACNT=1' }, { JOBKOREA_RNO: '777' });
-    const liveCareer = Array.from({ length: 80 }, (_, i) => ({
-      name: `Career[c14].Field${i}`,
-      value: 'kept',
-    }));
-    const { save, withEditor } = fakeEditor({
-      fields: [...LIVE_FORM, { name: 'Career.index', value: 'c14' }, ...liveCareer],
-    });
-    const ssot = {
-      ...SSOT,
-      careers: [{ company: 'Example', period: '2020.01 ~ 2021.01', role: 'Engineer' }],
-    };
-
-    const result = await syncJobKoreaFromSsot(env, ssot, { dryRun: false, withEditor, now: 1000 });
-
-    assert.equal(result.success, false);
-    assert.match(result.error, /would lose live fields in the save: Career\[c14\]/);
+    assert.deepEqual(result.wouldSync, []);
     assert.equal(save.mock.callCount(), 0);
   });
-
-  it('refuses to save when JobKorea showed a dialog while the form was prepared', async () => {
-    const env = await envWithSessions({ jobkorea: 'ACNT=1' }, { JOBKOREA_RNO: '777' });
-    const { save, withEditor } = fakeEditor({ dialogs: ['경력을 삭제하시겠습니까?'] });
-
-    const result = await syncJobKoreaFromSsot(env, SSOT, { dryRun: false, withEditor });
-
-    assert.equal(result.success, false);
-    assert.match(result.error, /refusing to save: 경력을 삭제하시겠습니까\?/);
-    assert.equal(save.mock.callCount(), 0);
-  });
-
-  it('reports the message JobKorea returns when it rejects the save', async () => {
-    const env = await envWithSessions({ jobkorea: 'ACNT=1' }, { JOBKOREA_RNO: '777' });
-    const { withEditor } = fakeEditor({
-      saveText: '{"saveResult":{"IsSuccess":false,"ErrorMessage":"담당직무를 입력해주세요"}}',
-    });
-
-    const result = await syncJobKoreaFromSsot(env, SSOT, { dryRun: false, withEditor });
-
-    assert.equal(result.success, false);
-    assert.equal(result.error, '담당직무를 입력해주세요');
-  });
-
-  it('refuses to save when the editor form is empty', async () => {
-    const env = await envWithSessions({ jobkorea: 'ACNT=1' }, { JOBKOREA_RNO: '777' });
-    const { save, withEditor } = fakeEditor({ fields: [] });
-
-    const result = await syncJobKoreaFromSsot(env, SSOT, { dryRun: false, withEditor });
-
-    assert.equal(result.success, false);
-    assert.match(result.error, /resume form was empty/);
-    assert.equal(save.mock.callCount(), 0);
-  });
-
   it('reports a missing KV session as expired, or a missing resume number, without opening the editor', async () => {
     const { withEditor } = fakeEditor();
     const noSession = await syncJobKoreaFromSsot(
@@ -204,206 +146,10 @@ describe('Cloudflare-native JobKorea resume sync', () => {
       dryRun: true,
       withEditor,
       jobkoreaLogin,
-      now: 1000,
     });
 
     assert.equal(result.success, true);
     assert.deepEqual(withEditor.mock.calls[0].arguments[1], { login: jobkoreaLogin, rNo: '777' });
-  });
-});
-
-function fakeEditorPage({
-  formFound = true,
-  alert,
-  url = 'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=42',
-} = {}) {
-  let sectionReads = 0;
-  let onDialog = () => {};
-  const clicked = [];
-  const dialog = {
-    message: () => alert,
-    dismiss: mock.fn(async () => {}),
-    accept: mock.fn(async () => {}),
-  };
-  const page = {
-    setRequestInterception: mock.fn(async () => {}),
-    on: mock.fn((event, handler) => {
-      if (event === 'dialog') onDialog = handler;
-    }),
-    setCookie: mock.fn(async () => {}),
-    goto: mock.fn(async () => {
-      if (alert) onDialog(dialog);
-    }),
-    waitForFunction: mock.fn(async (_fn, _options, selector) => {
-      if (selector === '#frm1') {
-        if (!formFound) throw new Error('timeout');
-        return {};
-      }
-    }),
-    evaluate: mock.fn(async (fn, first, second) => {
-      if (!formFound && fn.name === 'readMissingFormEvidence') {
-        return { title: '로그인', forms: [], login: true, twoFactor: false, notice: false };
-      }
-      if (first === undefined) return { dropped: false, image: false, flags: [] };
-      if (Array.isArray(first) && second === undefined) {
-        sectionReads += 1;
-        return [
-          { syncId: 'InputStat_CareerInputStat', flag: 'True', label: '필드추가' },
-          {
-            syncId: 'InputStat_AwardInputStat',
-            flag: sectionReads === 1 ? 'False' : 'True',
-            label: '필드추가',
-          },
-        ];
-      }
-      if (Array.isArray(first)) {
-        clicked.push(...first);
-        return undefined;
-      }
-      if (Array.isArray(second)) {
-        return {
-          fields: [{ name: 'UnivSchool.Index', value: 'c3' }],
-          tokens: { LastEditDateTicks: '638000' },
-        };
-      }
-      return { status: 200, text: `saved ${first} ${second}` };
-    }),
-    url: () => url,
-    title: async () => '로그인 | 잡코리아',
-    close: mock.fn(async () => {}),
-  };
-  const withBrowserSession = mock.fn(async (_env, fn) => fn({ newPage: async () => page }));
-  return { page, withBrowserSession, clicked, dialog };
-}
-
-describe('JobKorea editor over Browser Rendering', () => {
-  it('opens the editor with jobkorea.co.kr cookies, reads the form, and saves from the page', async () => {
-    const { page, withBrowserSession, clicked } = fakeEditorPage();
-
-    const outcome = await withJobKoreaEditor(
-      {},
-      { cookieString: 'A=1; B=x=y', rNo: '42' },
-      async (editor) => {
-        assert.deepEqual(editor.fields, [{ name: 'UnivSchool.Index', value: 'c3' }]);
-        assert.deepEqual(editor.tokens, { LastEditDateTicks: '638000' });
-        assert.deepEqual(editor.photo, { dropped: false, image: false, flags: [] });
-        assert.deepEqual(editor.sections, [
-          {
-            syncId: 'InputStat_CareerInputStat',
-            before: { syncId: 'InputStat_CareerInputStat', flag: 'True', label: '필드추가' },
-            after: { syncId: 'InputStat_CareerInputStat', flag: 'True', label: '필드추가' },
-          },
-          {
-            syncId: 'InputStat_AwardInputStat',
-            before: { syncId: 'InputStat_AwardInputStat', flag: 'False', label: '필드추가' },
-            after: { syncId: 'InputStat_AwardInputStat', flag: 'True', label: '필드추가' },
-          },
-        ]);
-        return editor.save('a=1');
-      },
-      { withBrowserSession }
-    );
-
-    assert.deepEqual(outcome, { status: 200, text: 'saved /User/Resume/Save a=1' });
-    assert.equal(page.setRequestInterception.mock.calls[0].arguments[0], true);
-    const onRequest = page.on.mock.calls.find(({ arguments: args }) => args[0] === 'request')
-      .arguments[1];
-    const ad = {
-      resourceType: () => 'script',
-      url: () => 'https://ads.example.com/stalled.js',
-      abort: mock.fn(async () => {}),
-      continue: mock.fn(async () => {}),
-    };
-    onRequest(ad);
-    assert.equal(ad.abort.mock.callCount(), 1);
-    assert.equal(ad.continue.mock.callCount(), 0);
-    assert.deepEqual(
-      page.setCookie.mock.calls[0].arguments,
-      toJobKoreaBrowserCookies('A=1; B=x=y')
-    );
-    assert.equal(toJobKoreaBrowserCookies('A=1; B=x=y')[1].value, 'x=y');
-    assert.equal(
-      page.goto.mock.calls[0].arguments[0],
-      'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=42'
-    );
-    assert.deepEqual(clicked, ['InputStat_AwardInputStat']);
-    assert.deepEqual(page.waitForFunction.mock.calls[1].arguments.slice(2), [
-      ['InputStat_AwardInputStat'],
-    ]);
-    assert.equal(page.close.mock.callCount(), 1);
-  });
-
-  it('dismisses every dialog, including JobKorea delete confirmations', async () => {
-    const { withBrowserSession, dialog } = fakeEditorPage({ alert: '경력을 삭제하시겠습니까?' });
-
-    const dialogs = await withJobKoreaEditor(
-      {},
-      { cookieString: 'A=1', rNo: '42' },
-      async (editor) => editor.dialogs,
-      { withBrowserSession }
-    );
-
-    assert.deepEqual(dialogs, ['경력을 삭제하시겠습니까?']);
-    assert.equal(dialog.dismiss.mock.callCount(), 1);
-    assert.equal(dialog.accept.mock.callCount(), 0);
-  });
-
-  it('flags an expired session from the JobKorea alert when the form never appears', async () => {
-    const { page, withBrowserSession } = fakeEditorPage({
-      formFound: false,
-      alert: '세션이 만료 되었습니다.',
-      url: 'https://www.jobkorea.co.kr/Login/Login_ToT.asp',
-    });
-
-    await assert.rejects(
-      withJobKoreaEditor({}, { cookieString: 'A=1', rNo: '42' }, async () => 'unreachable', {
-        withBrowserSession,
-      }),
-      (error) => {
-        assert.equal(error.code, 'JOBKOREA_SESSION_EXPIRED');
-        assert.match(error.message, /path=\/Login\/Login_ToT\.asp/);
-        assert.match(error.message, /sessionAlert=true/);
-        return true;
-      }
-    );
-    assert.equal(page.close.mock.callCount(), 1);
-  });
-
-  it('logs in inside the browser it borrowed and opens the editor with that login', async () => {
-    const { page, withBrowserSession } = fakeEditorPage();
-    let loginBrowser;
-    const login = mock.fn(async (_env, { withBrowserSession: sameBrowser }) =>
-      sameBrowser({}, async (browser) => {
-        loginBrowser = browser;
-        return 'L=1; M=2';
-      })
-    );
-
-    await withJobKoreaEditor({}, { login, rNo: '42' }, async () => 'edited', {
-      withBrowserSession,
-    });
-
-    assert.equal(withBrowserSession.mock.callCount(), 1);
-    assert.equal(await loginBrowser.newPage(), page);
-    assert.deepEqual(page.setCookie.mock.calls[0].arguments, toJobKoreaBrowserCookies('L=1; M=2'));
-  });
-
-  it('rejects with the login failure itself and opens no editor page', async () => {
-    const { page, withBrowserSession } = fakeEditorPage();
-    const captcha = Object.assign(new Error('JobKorea presented a CAPTCHA'), {
-      code: 'JOBKOREA_CAPTCHA_REQUIRED',
-    });
-    const login = async () => {
-      throw captcha;
-    };
-
-    await assert.rejects(
-      withJobKoreaEditor({}, { login, rNo: '42' }, async () => 'unreachable', {
-        withBrowserSession,
-      }),
-      (error) => error === captcha
-    );
-    assert.equal(page.goto.mock.callCount(), 0);
   });
 });
 
