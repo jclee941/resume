@@ -69,33 +69,42 @@ export function rememberFetch(env, options = {}) {
 async function renderFetch(apiFetch, account, token, url, init) {
   const target = new URL(url);
   const pageOrigin = target.origin === LOGIN_ORIGIN ? LOGIN_ORIGIN : APP_ORIGIN;
+  const method = init.method ?? 'GET';
   const headers = headerPairs(init.headers);
-  const marker = `rememberfetch${crypto.randomUUID().replace(/-/g, '')}`;
-  const script = buildFetchScript(marker, url, {
-    method: init.method ?? 'GET',
+  const request = {
+    method,
     headers: Object.fromEntries(
       headers.filter(([key]) => !FORBIDDEN_HEADERS.has(key.toLowerCase()))
     ),
     body: init.body == null ? null : String(init.body),
-  });
-  /** @type {Record<string, unknown>} */
-  const payload = {
-    url: `${pageOrigin}${STABLE_PATH}`,
-    addScriptTag: [{ content: script }],
-    waitForSelector: { selector: `#${marker}`, timeout: PAGE_TIMEOUT_MS },
   };
   const cookies = cookieParam(headers, target);
-  if (cookies.length > 0) payload.cookies = cookies;
-  const response = await apiFetch(`${BROWSER_RENDERING_URL}/${account}/browser-rendering/content`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  const body = await response.json().catch(() => null);
-  if (!response.ok || !body?.success || typeof body.result !== 'string') {
-    throw new Error(`Remember Browser Rendering request failed (${response.status})`);
+  // A page-side network error ("Failed to fetch") is usually transient; repeat only safe reads.
+  const attempts = method.toUpperCase() === 'GET' ? 2 : 1;
+  let result = null;
+  for (let attempt = 0; attempt < attempts && (!result || result.error); attempt++) {
+    const marker = `rememberfetch${crypto.randomUUID().replace(/-/g, '')}`;
+    /** @type {Record<string, unknown>} */
+    const payload = {
+      url: `${pageOrigin}${STABLE_PATH}`,
+      addScriptTag: [{ content: buildFetchScript(marker, url, request) }],
+      waitForSelector: { selector: `#${marker}`, timeout: PAGE_TIMEOUT_MS },
+    };
+    if (cookies.length > 0) payload.cookies = cookies;
+    const response = await apiFetch(
+      `${BROWSER_RENDERING_URL}/${account}/browser-rendering/content`,
+      {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }
+    );
+    const body = await response.json().catch(() => null);
+    if (!response.ok || !body?.success || typeof body.result !== 'string') {
+      throw new Error(`Remember Browser Rendering request failed (${response.status})`);
+    }
+    result = readMarker(body.result, marker);
   }
-  const result = readMarker(body.result, marker);
   if (!result || result.error) {
     const message = `Remember browser fetch ${target.host}: ${result?.error ?? 'no result'}`;
     throw Object.assign(new Error(message), { code: REMEMBER_BROWSER_FETCH_FAILED });
