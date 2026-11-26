@@ -146,19 +146,82 @@ async function addSyncedSections(page) {
 }
 
 /**
- * @param {{ url(): string; title(): Promise<string> }} page
+ * Find the form in the page, not just an element with the old ID.
+ * @param {string} selector
+ * @param {string} savePath
+ * @returns {HTMLFormElement | undefined}
+ */
+function findResumeForm(selector, savePath) {
+  const preferred = document.querySelector(selector);
+  if (preferred instanceof HTMLFormElement) return preferred;
+
+  const forms = Array.from(document.forms);
+  return (
+    forms.find((form) => {
+      const action = form.getAttribute('action');
+      if (!action || !URL.canParse(action, document.baseURI)) return false;
+      const { origin, pathname } = new URL(action, document.baseURI);
+      const path = pathname.toLowerCase().replace(/\/$/, '');
+      return (
+        origin === location.origin && (path === savePath.toLowerCase() || path === '/resume/save')
+      );
+    }) ?? forms.find((form) => form.elements.namedItem('UserResume.M_Resume_Title'))
+  );
+}
+
+/** Collect only form metadata and interstitial signals, not page text or field values. */
+function readMissingFormEvidence() {
+  /** @param {string} selector */
+  const visible = (selector) =>
+    Array.from(document.querySelectorAll(selector)).some(
+      (element) =>
+        element.getClientRects().length > 0 && getComputedStyle(element).visibility === 'visible'
+    );
+  const title =
+    /이력서 수정|로그인|2단계 인증|공지사항/.exec(document.title)?.[0] ?? 'unrecognized';
+  return {
+    title,
+    forms: Array.from(document.forms)
+      .slice(0, 5)
+      .map((form) => {
+        const action = form.getAttribute('action');
+        const url =
+          action && URL.canParse(action, document.baseURI)
+            ? new URL(action, document.baseURI)
+            : null;
+        return {
+          id: form.getAttribute('id')?.slice(0, 80) ?? '',
+          name: form.getAttribute('name')?.slice(0, 80) ?? '',
+          action: url && /^https?:$/.test(url.protocol) ? url.pathname.slice(0, 120) : '',
+        };
+      }),
+    login: title === '로그인' || visible('form input[type="password"]'),
+    twoFactor: title === '2단계 인증' || visible('#tfaCertNum, #tfaBtnSend'),
+    notice:
+      title === '공지사항' || visible('dialog[open], [role="alertdialog"], [aria-modal="true"]'),
+  };
+}
+
+/**
+ * @param {EditorPage} page
  * @param {string[]} dialogs
  * @returns {Promise<Error & { code?: string }>}
  */
 async function editorMissingError(page, dialogs) {
   const path = new URL(page.url()).pathname;
-  const title = await page.title().catch(() => '');
-  const alert = dialogs.length > 0 ? `, alert=${dialogs.join(' | ')}` : '';
+  const evidence = await page.evaluate(readMissingFormEvidence).catch(() => null);
+  const expired = dialogs.some((message) => message.includes('세션'));
+  const login = /\/login/i.test(path) || (evidence?.login ?? 'unknown');
+  const twoFactor = /\/twofactorauth\b/i.test(path) || (evidence?.twoFactor ?? 'unknown');
+  const notice = /\/notice\b/i.test(path) || dialogs.length > 0 || (evidence?.notice ?? 'unknown');
+  const safePath = path.replace(/(\/resume\/edit\/).+/i, '$1<id>');
   /** @type {Error & { code?: string }} */
   const error = new Error(
-    `JobKorea resume form ${RESUME_FORM_SELECTOR} not found (path=${path}, title=${title}${alert})`
+    `JobKorea resume form ${RESUME_FORM_SELECTOR} not found (path=${safePath}, ` +
+      `title=${evidence?.title ?? 'unavailable'}, forms=${evidence ? JSON.stringify(evidence.forms) : 'unavailable'}, ` +
+      `login=${login}, 2fa=${twoFactor}, notice=${notice}, dialogs=${dialogs.length}, sessionAlert=${expired})`
   );
-  if (/\/login/i.test(path) || dialogs.some((message) => message.includes('세션'))) {
+  if (login === true || expired) {
     error.code = JOBKOREA_SESSION_EXPIRED;
   }
   return error;
@@ -212,19 +275,23 @@ export async function withJobKoreaEditor(
           page,
           `${JOBKOREA_RESUME_EDIT_URL}?RNo=${encodeURIComponent(rNo)}`
         );
-        await page
-          .waitForSelector(RESUME_FORM_SELECTOR, { timeout: FORM_WAIT_TIMEOUT_MS })
+        const resumeForm = await page
+          .waitForFunction(
+            findResumeForm,
+            { timeout: FORM_WAIT_TIMEOUT_MS },
+            RESUME_FORM_SELECTOR,
+            JOBKOREA_RESUME_SAVE_PATH
+          )
           .catch(async () => {
             throw await editorMissingError(page, dialogs);
           });
         const sections = await addSyncedSections(page);
         const photo = await page.evaluate(readPhotoState);
         const { fields, tokens } = await page.evaluate(
-          (selector, tokenNames) => {
-            const form = document.querySelector(selector);
+          (form, tokenNames) => {
             /** @type {Array<{ name: string; value: string }>} */
             const serialized = [];
-            if (form instanceof HTMLFormElement) {
+            if (form instanceof HTMLFormElement && form.isConnected) {
               for (const [name, value] of new FormData(form).entries()) {
                 if (typeof value === 'string') serialized.push({ name, value });
               }
@@ -237,7 +304,7 @@ export async function withJobKoreaEditor(
             }
             return { fields: serialized, tokens: found };
           },
-          RESUME_FORM_SELECTOR,
+          resumeForm,
           EDIT_TOKEN_NAMES
         );
         return await fn({

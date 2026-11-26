@@ -97,13 +97,65 @@ describe('rememberFetch', () => {
     );
   });
 
-  it('marks a failed in-page fetch as retryable', async () => {
-    const apiFetch = apiFetchReturning({ error: 'Failed to fetch' }, []);
+  it('retries a transient in-page GET failure once and returns the success', async () => {
+    const calls = [];
+    const apiFetch = async (url, init) => {
+      const payload = JSON.parse(init.body);
+      calls.push(payload);
+      const result =
+        calls.length === 1
+          ? { error: 'Failed to fetch' }
+          : { status: 200, body: '{"ok":true}', headers: [] };
+      return Response.json({
+        success: true,
+        result: renderedPage(markerOf(payload), result),
+      });
+    };
+    const fetchImpl = rememberFetch(ENV, { apiFetch });
+
+    const response = await fetchImpl(
+      'https://open-profile-api.rememberapp.co.kr/v2/open_profiles/me'
+    );
+
+    assert.equal(calls.length, 2);
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), { ok: true });
+  });
+
+  it('preserves the existing error after two transient in-page GET failures', async () => {
+    const calls = [];
+    const apiFetch = apiFetchReturning({ error: 'Failed to fetch' }, calls);
     const fetchImpl = rememberFetch(ENV, { apiFetch });
 
     await assert.rejects(fetchImpl('https://career-api.rememberapp.co.kr/job_postings/search'), {
       code: REMEMBER_BROWSER_FETCH_FAILED,
       message: /Failed to fetch/,
     });
+    assert.equal(calls.length, 2);
+  });
+
+  it('does not retry an in-page HTTP 4xx response', async () => {
+    const calls = [];
+    const apiFetch = apiFetchReturning({ status: 404, body: 'missing', headers: [] }, calls);
+    const fetchImpl = rememberFetch(ENV, { apiFetch });
+
+    const response = await fetchImpl(
+      'https://open-profile-api.rememberapp.co.kr/v2/open_profiles/me'
+    );
+
+    assert.equal(calls.length, 1);
+    assert.equal(response.status, 404);
+    assert.equal(await response.text(), 'missing');
+  });
+
+  it('does not retry transient failures for non-GET requests', async () => {
+    const calls = [];
+    const apiFetch = apiFetchReturning({ error: 'Failed to fetch' }, calls);
+    const fetchImpl = rememberFetch(ENV, { apiFetch });
+
+    await assert.rejects(fetchImpl('https://rememberapp.co.kr/auths/login', { method: 'POST' }), {
+      code: REMEMBER_BROWSER_FETCH_FAILED,
+    });
+    assert.equal(calls.length, 1);
   });
 });

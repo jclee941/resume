@@ -49,7 +49,7 @@ export function attachServerAtsCapability(job, capability) {
 
 /**
  * Tallies a gate result that neither approves nor leaves a decision pending.
- * @param {{ jobsRejected: number; jobsAlreadyRequested?: number; jobsAlreadyApplied?: number }} stats
+ * @param {{ jobsRejected: number; jobsAlreadyRequested?: number; jobsAlreadyApplied?: number; jobsPreviouslyFailed?: number }} stats
  * @param {string} status
  * @returns {void}
  */
@@ -59,6 +59,8 @@ export function countSkippedOutcome(stats, status) {
     stats.jobsAlreadyRequested = (stats.jobsAlreadyRequested ?? 0) + 1;
   } else if (status === 'already-applied') {
     stats.jobsAlreadyApplied = (stats.jobsAlreadyApplied ?? 0) + 1;
+  } else if (status === 'previously-failed') {
+    stats.jobsPreviouslyFailed = (stats.jobsPreviouslyFailed ?? 0) + 1;
   }
 }
 

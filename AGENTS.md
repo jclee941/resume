@@ -121,7 +121,7 @@ npm run build              # content ensure -> sync:data -> build:worker
 npm run sync:data
 npm run lint
 npm run lint:agents
-npm run pr                 # push branch, open PR, enable squash auto-merge
+npm run pr                 # lint + typecheck(:strict), push branch, open PR, enable squash auto-merge
 npm run lint:naming
 npm run typecheck
 npm run typecheck:strict

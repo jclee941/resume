@@ -29,7 +29,7 @@ const ctx = {
       prepare(query) {
         assert.match(
           query,
-          /SELECT (id(, status)?|DISTINCT company) FROM (applications|approval_requests)/
+          /(SELECT (id(, status)?|DISTINCT company) FROM (applications|approval_requests))|FROM application_workflows/
         );
         return { bind: () => ({ first: async () => null }), all: async () => ({ results: [] }) };
       },

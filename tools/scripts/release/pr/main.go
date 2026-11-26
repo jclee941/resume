@@ -1,5 +1,6 @@
-// Command pr opens a pull request for the current feature branch and enables squash auto-merge.
-// Required checks must pass before GitHub merges; see .github/AGENTS.md for the policy.
+// Command pr runs the fast CI gates locally, then opens a pull request for the current feature
+// branch and enables squash auto-merge. Required checks must pass before GitHub merges; see
+// .github/AGENTS.md for the policy.
 package main
 
 import (
@@ -10,6 +11,14 @@ import (
 )
 
 const baseRef = "origin/master"
+
+// preflight mirrors the Validate steps that most often rejected first pushes: lint and both
+// typecheck passes (CI runs tsconfig.strict.json, which local edits rarely exercised).
+var preflight = [][]string{
+	{"npm", "run", "lint"},
+	{"npm", "run", "typecheck"},
+	{"npm", "run", "typecheck:strict"},
+}
 
 func run(name string, args ...string) (string, error) {
 	cmd := exec.Command(name, args...)
@@ -46,6 +55,15 @@ func main() {
 
 	title := must("git", "log", "-1", "--format=%s")
 	body := must("git", "log", baseRef+"..HEAD", "--format=- %s")
+
+	for _, step := range preflight {
+		cmd := exec.Command(step[0], step[1:]...)
+		cmd.Stdout = os.Stderr
+		cmd.Stderr = os.Stderr
+		if err := cmd.Run(); err != nil {
+			fail("preflight %s failed: %v; fix it before pushing", strings.Join(step, " "), err)
+		}
+	}
 
 	must("git", "push", "--set-upstream", "origin", branch)
 	url := must("gh", "pr", "create", "--base", "master", "--head", branch, "--title", title, "--body", body)
