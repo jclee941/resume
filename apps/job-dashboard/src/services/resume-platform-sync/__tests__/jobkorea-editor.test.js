@@ -5,7 +5,14 @@ import { withJobKoreaEditor } from '../jobkorea-editor.js';
 const origin = 'https://www.jobkorea.co.kr';
 const api = '/resume/api/resume-display/v2/resumes';
 const version = `"rv1-${'a'.repeat(64)}"`;
-function fixture({ status = 200, id = '42', etag = version, timeout = false, login = false } = {}) {
+function fixture({
+  status = 200,
+  id = '42',
+  etag = version,
+  timeout = false,
+  login = false,
+  saveResponse = () => new Response(null, { status: 200, headers: { ETag: version } }),
+} = {}) {
   let listener,
     closed = false;
   const writes = [];
@@ -52,7 +59,7 @@ function fixture({ status = 200, id = '42', etag = version, timeout = false, log
         AbortSignal,
         fetch: async (path, init) => {
           writes.push({ path, init });
-          return new Response(null, { status: 200, headers: { ETag: version } });
+          return saveResponse();
         },
       });
     },
@@ -83,6 +90,26 @@ it('uses only the observed draft and writes from the same editor with conditiona
   assert.equal(init.headers['If-Match'], version);
   assert.equal(init.credentials, 'same-origin');
   assert.deepEqual(JSON.parse(init.body), { title: 'changed' });
+});
+it('reports a rejected save by codes and field paths without submitted values', async () => {
+  const f = fixture({
+    saveResponse: () =>
+      Response.json(
+        {
+          code: 'INVALID_REQUEST',
+          errors: [
+            { field: 'careers[0].positionGrade', message: 'invalid', rejectedValue: 'secret' },
+          ],
+        },
+        { status: 400 }
+      ),
+  });
+  await f.run(async (editor) => {
+    const result = await editor.save('career', { careers: [] }, editor.etag);
+    assert.equal(result.status, 400);
+    assert.match(result.problem ?? '', /INVALID_REQUEST.*careers\[0\]\.positionGrade/);
+    assert.doesNotMatch(result.problem ?? '', /secret/);
+  });
 });
 it('accepts a draft whose resumeNo is numeric', async () => {
   const f = fixture({ id: 42 });
