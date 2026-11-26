@@ -11,11 +11,14 @@ import {
 
 export { attachServerAtsCapability } from './approval-metadata.js';
 
+/** Earlier runs whose automated submission of a job failed before the gate stops offering it. */
+const MAX_PRIOR_SUBMISSION_FAILURES = 2;
+
 /**
  * @typedef {{
  *   prepare(query: string): {
  *     bind(...values: unknown[]): {
- *       first(): Promise<{ id?: unknown; status?: unknown } | null>;
+ *       first(): Promise<{ id?: unknown; status?: unknown; failures?: unknown } | null>;
  *       run(): Promise<unknown>;
  *     };
  *     all(): Promise<{ results?: Array<{ company?: unknown }> }>;
@@ -51,6 +54,7 @@ export { attachServerAtsCapability } from './approval-metadata.js';
  *     jobsRejected: number;
  *     jobsAlreadyRequested?: number;
  *     jobsAlreadyApplied?: number;
+ *     jobsPreviouslyFailed?: number;
  *     [key: string]: unknown;
  *   };
  *   steps: unknown[];
@@ -134,6 +138,7 @@ export async function processApprovalGates(
     rejected: workflow.stats.jobsRejected,
     alreadyRequested: workflow.stats.jobsAlreadyRequested ?? 0,
     alreadyApplied: workflow.stats.jobsAlreadyApplied ?? 0,
+    previouslyFailed: workflow.stats.jobsPreviouslyFailed ?? 0,
     approvalMetadata: approvalResults.map((result) => ({
       ...result.approvalMetadata,
       status: result.status,
@@ -214,6 +219,17 @@ async function evaluateApproval(
     return { status: 'already-applied', job, reason: 'Company already applied', approvalMetadata };
   }
 
+  if (
+    (await countPriorSubmissionFailures(db, workflow.id, job.id)) >= MAX_PRIOR_SUBMISSION_FAILURES
+  ) {
+    return {
+      status: 'previously-failed',
+      job,
+      reason: 'Automated submission failed in earlier runs',
+      approvalMetadata,
+    };
+  }
+
   // An earlier request for this job (any workflow) means the owner was already asked. A
   // rejection always sticks; an undecided or approved-but-unsent one only stops runs that need
   // a human, because auto-approval decides for the owner. The gate's own id is excluded so a
@@ -272,6 +288,27 @@ async function evaluateApproval(
 
   await ctx.createApprovalRequest(workflow.id, job, 'rejected', job.matchScore, approvalMetadata);
   return { status: 'rejected', job, reason: 'Match score below threshold', approvalMetadata };
+}
+
+/**
+ * Counts the other runs whose apply-job step recorded a failure for the job.
+ * @param {ApprovalDb} db
+ * @param {string} workflowId
+ * @param {unknown} jobId
+ * @returns {Promise<number>}
+ */
+async function countPriorSubmissionFailures(db, workflowId, jobId) {
+  const row = await db
+    .prepare(
+      `SELECT COUNT(DISTINCT w.id) AS failures
+       FROM application_workflows w, json_each(w.data, '$.errors') e
+       WHERE w.id != ?
+         AND json_extract(e.value, '$.step') = 'apply-job'
+         AND json_extract(e.value, '$.jobId') = ?`
+    )
+    .bind(workflowId, jobId)
+    .first();
+  return Number(row?.failures ?? 0);
 }
 
 /**

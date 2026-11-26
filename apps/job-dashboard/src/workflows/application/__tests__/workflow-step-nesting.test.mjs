@@ -50,6 +50,7 @@ function createApprovalContext({
   failNotifyOnce = [],
   existingRequests = [],
   appliedCompanies = [],
+  priorFailures = {},
 } = {}) {
   const created = [];
   const notifications = [];
@@ -73,6 +74,9 @@ function createApprovalContext({
               return { meta: { changes: 1 } };
             },
             first: async () => {
+              if (/FROM application_workflows/.test(query)) {
+                return { failures: priorFailures[values[1]] ?? 0 };
+              }
               if (!/FROM approval_requests/.test(query)) return null;
               const [jobId, ownRequestId] = values;
               return (
@@ -263,6 +267,34 @@ test('scored jobs already applied are counted in the gate step and approve nothi
   assert.equal(workflow.stats.jobsAlreadyApplied, 2);
   assert.deepEqual(approvedJobs, []);
   assert.deepEqual(ctx.created, []);
+});
+
+test('a job whose submission failed in two earlier runs is skipped and counted', async () => {
+  const step = createStepMock();
+  const ctx = createApprovalContext({ priorFailures: { a: 2, b: 1 } });
+  const workflow = newWorkflow();
+
+  const { approvedJobs } = await processApprovalGates(
+    ctx,
+    step,
+    workflow,
+    [jobOf('a', 95), jobOf('b', 95)],
+    true,
+    90
+  );
+
+  const gate = workflow.steps.find((entry) => entry.step === 'approval-gate');
+  assert.deepEqual(
+    gate.approvalMetadata.map((entry) => entry.status),
+    ['previously-failed', 'auto-approved']
+  );
+  assert.equal(gate.previouslyFailed, 1);
+  assert.equal(workflow.stats.jobsPreviouslyFailed, 1);
+  assert.deepEqual(
+    approvedJobs.map((job) => job.id),
+    ['b']
+  );
+  assert.deepEqual(ctx.created, [{ jobId: 'b', status: 'auto-approved' }]);
 });
 
 test('a human-rejected earlier request keeps the job skipped', async () => {

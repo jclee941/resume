@@ -188,7 +188,8 @@ function createEmptyApplicationsDb() {
       }
       if (
         query.includes('SELECT id FROM applications') ||
-        query.includes('SELECT id, status FROM approval_requests')
+        query.includes('SELECT id, status FROM approval_requests') ||
+        query.includes('FROM application_workflows w, json_each(w.data')
       ) {
         return {
           bind() {
