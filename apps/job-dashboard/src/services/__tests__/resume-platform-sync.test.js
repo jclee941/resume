@@ -234,11 +234,16 @@ function fakeEditorPage({
     goto: mock.fn(async () => {
       if (alert) onDialog(dialog);
     }),
-    waitForSelector: mock.fn(async () => {
-      if (!formFound) throw new Error('timeout');
+    waitForFunction: mock.fn(async (_fn, _options, selector) => {
+      if (selector === '#frm1') {
+        if (!formFound) throw new Error('timeout');
+        return {};
+      }
     }),
-    waitForFunction: mock.fn(async () => {}),
-    evaluate: mock.fn(async (_fn, first, second) => {
+    evaluate: mock.fn(async (fn, first, second) => {
+      if (!formFound && fn.name === 'readMissingFormEvidence') {
+        return { title: '로그인', forms: [], login: true, twoFactor: false, notice: false };
+      }
       if (first === undefined) return { dropped: false, image: false, flags: [] };
       if (Array.isArray(first) && second === undefined) {
         sectionReads += 1;
@@ -322,7 +327,7 @@ describe('JobKorea editor over Browser Rendering', () => {
       'https://www.jobkorea.co.kr/User/Resume/Edit?RNo=42'
     );
     assert.deepEqual(clicked, ['InputStat_AwardInputStat']);
-    assert.deepEqual(page.waitForFunction.mock.calls[0].arguments.slice(2), [
+    assert.deepEqual(page.waitForFunction.mock.calls[1].arguments.slice(2), [
       ['InputStat_AwardInputStat'],
     ]);
     assert.equal(page.close.mock.callCount(), 1);
@@ -357,7 +362,7 @@ describe('JobKorea editor over Browser Rendering', () => {
       (error) => {
         assert.equal(error.code, 'JOBKOREA_SESSION_EXPIRED');
         assert.match(error.message, /path=\/Login\/Login_ToT\.asp/);
-        assert.match(error.message, /alert=세션이 만료 되었습니다\./);
+        assert.match(error.message, /sessionAlert=true/);
         return true;
       }
     );
