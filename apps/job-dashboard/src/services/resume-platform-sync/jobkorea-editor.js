@@ -117,7 +117,7 @@ export async function withJobKoreaEditor(
         const etag = response?.headers().etag;
         if (
           !response?.ok() ||
-          draft?.resumeNo !== rNo ||
+          String(draft?.resumeNo) !== String(rNo) ||
           !draft.content ||
           typeof draft.content !== 'object' ||
           !isResumeVersion(etag) ||

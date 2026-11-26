@@ -84,6 +84,10 @@ it('uses only the observed draft and writes from the same editor with conditiona
   assert.equal(init.credentials, 'same-origin');
   assert.deepEqual(JSON.parse(init.body), { title: 'changed' });
 });
+it('accepts a draft whose resumeNo is numeric', async () => {
+  const f = fixture({ id: 42 });
+  await f.run(async (editor) => assert.equal(editor.content.general.title, 'test'));
+});
 for (const [label, options, pattern] of [
   ['login timeout', { timeout: true, login: true }, /login=true.*status=unavailable/],
   ['wrong resume', { id: '43' }, /path=\/resume\/edit\/<id>.*status=200/],
